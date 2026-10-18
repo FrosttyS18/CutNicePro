@@ -116,24 +116,49 @@ describe("fontes do OrbitingMediaHero (contrato 03B.2)", () => {
   });
 });
 
-describe("orbitFrame (motor puro 03B.2)", () => {
+describe("orbitFrame (motor puro 03B.3 — órbita elíptica relativa ao hero)", () => {
   const p = makeOrbitParams(mulberry32(20261018), 1)[0];
 
   it("movimento contínuo: posição muda com o tempo", () => {
-    const a = orbitFrame(0, p, 1000, 800, 0.34, 0.78);
-    const b = orbitFrame(2000, p, 1000, 800, 0.34, 0.78);
+    const a = orbitFrame(0, p, 1000, 800);
+    const b = orbitFrame(2000, p, 1000, 800);
     expect(Math.hypot(b.x - a.x, b.y - a.y)).toBeGreaterThan(10);
   });
 
-  it("profundidade: raio maior ⇒ escala/opacidade/z maiores", () => {
-    const near = orbitFrame(0, { ...p, rMid: 0.05, rAmp: 0, ph: 0 }, 1000, 800, 0.34, 0.78);
-    const far = orbitFrame(0, { ...p, rMid: 0.95, rAmp: 0, ph: 0 }, 1000, 800, 0.34, 0.78);
+  it("centro da órbita = centro exato do container (qualquer aspecto)", () => {
+    // ângulos opostos com a mesma profundidade são simétricos em torno do centro
+    const e = orbitFrame(0, { ...p, rAmp: 0, a0: 0 }, 1000, 800);
+    const w = orbitFrame(0, { ...p, rAmp: 0, a0: Math.PI }, 1000, 800);
+    expect((e.x + w.x) / 2).toBeCloseTo(500, 1);
+    const n = orbitFrame(0, { ...p, rAmp: 0, a0: Math.PI / 2 }, 1000, 800);
+    const s = orbitFrame(0, { ...p, rAmp: 0, a0: -Math.PI / 2 }, 1000, 800);
+    expect((n.y + s.y) / 2).toBeCloseTo(400, 1);
+  });
+
+  it("raios proporcionais ao container (sem min(w,h)): elipse acompanha o aspecto", () => {
+    const far = (w: number, h: number) =>
+      orbitFrame(0, { ...p, rMid: 1, rAmp: 0, a0: 0 }, w, h);
+    const wide = far(1600, 400);
+    expect(wide.x).toBeGreaterThan(1400); // usa a LARGURA, não o min
+    const tall = orbitFrame(0, { ...p, rMid: 1, rAmp: 0, a0: Math.PI / 2 }, 600, 1200);
+    expect(tall.y).toBeLessThan(200); // usa a ALTURA no eixo vertical
+  });
+
+  it("profundidade: u maior ⇒ escala/opacidade/z maiores; interior discreto", () => {
+    const near = orbitFrame(0, { ...p, rMid: 0.06, rAmp: 0 }, 1000, 800);
+    const far = orbitFrame(0, { ...p, rMid: 0.95, rAmp: 0 }, 1000, 800);
     expect(far.scale).toBeGreaterThan(near.scale);
     expect(far.opacity).toBeGreaterThan(near.opacity);
     expect(far.z).toBeGreaterThan(near.z);
-    // fantasmas no centro: opacidade baixa preserva a legibilidade central
     expect(near.opacity).toBeLessThan(0.2);
     expect(far.opacity).toBeGreaterThan(0.9);
+  });
+
+  it("cartão dimensionado como fração moderada da largura do hero", () => {
+    const f1 = orbitFrame(0, p, 1000, 800);
+    const f2 = orbitFrame(0, p, 2000, 800);
+    expect(f2.w).toBeCloseTo(f1.w * 2, 0);
+    expect(f2.w).toBeLessThan(2000 * 0.13);
   });
 
   it("composição determinística: mesma seed ⇒ mesmos parâmetros", () => {

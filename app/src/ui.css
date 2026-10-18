@@ -190,7 +190,7 @@
   flex: none;
   width: 32px;
   height: 32px;
-  margin: -7px 0 0 4px;
+  margin: -7px 10px 0 -6px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -221,10 +221,6 @@
   display: flex;
   align-items: center;
   gap: 9px;
-}
-.breadcrumb__glyph {
-  color: var(--sh-dim);
-  display: flex;
 }
 .breadcrumb__list {
   display: flex;
@@ -367,7 +363,7 @@
 /* ---------- orbiting media hero (implementação original 03B.2) ---------- */
 .home__orbit {
   position: absolute;
-  inset: 0 0 220px 0;
+  inset: 0;
   z-index: 0;
   overflow: hidden;
   pointer-events: none;
@@ -376,10 +372,10 @@
   position: absolute;
   top: 0;
   left: 0;
-  border-radius: 12px;
+  border-radius: 10px;
   overflow: hidden;
-  border: 1px solid #262626;
-  background: var(--sh-surface);
+  border: 1px solid #303030;
+  background: #1b1b1b;
   will-change: transform, opacity;
 }
 .orbit__card img {

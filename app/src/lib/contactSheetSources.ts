@@ -25,12 +25,10 @@ export const CARD_RATIOS = {
   wide: 16 / 9,
 } as const;
 
-/** Configuração padrão do OrbitingMediaHero (calibrada pela inspeção 03B.2). */
+/** Configuração padrão do OrbitingMediaHero (calibrada pela inspeção 03B.2
+ *  e recomposição 03B.3 — qualidade visual sobre quantidade). */
 export const ORBIT_DEFAULTS = {
-  cardCount: 24,
-  /** Frações de min(w,h) para o raio orbital mínimo/máximo. */
-  rMinFactor: 0.34,
-  rMaxFactor: 0.78,
+  cardCount: 16,
 } as const;
 
 import card45a from "../assets/placeholders/card-01.svg";

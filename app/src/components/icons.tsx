@@ -107,27 +107,6 @@ export function IconSettings({ size = 24, className }: IconProps) {
   );
 }
 
-export function IconBreadLogo({ size = 16, className }: IconProps) {
-  return (
-    <svg
-      width={size}
-      height={size}
-      viewBox="0 0 16 16"
-      fill="none"
-      className={className}
-      aria-hidden="true"
-    >
-      <path
-        transform="translate(1.333 1.333)"
-        d="M0.5 3.333C0.5 1.769 1.769 0.5 3.333 0.5L10 0.5C11.565 0.5 12.833 1.769 12.833 3.333L12.833 10C12.833 11.565 11.565 12.833 10 12.833L3.333 12.833C1.769 12.833 0.5 11.565 0.5 10Z"
-        stroke="currentColor"
-        strokeWidth="1"
-      />
-      <path transform="translate(5.333 1.333)" d="M0 0L0.667 0L0.667 13.333L0 13.333Z" fill="currentColor" />
-    </svg>
-  );
-}
-
 export function IconHeart({ size = 16, className }: IconProps) {
   return (
     <svg width={size} height={size} viewBox="0 0 16 16" fill="none" className={className} aria-hidden="true">
@@ -166,46 +145,16 @@ export function IconPlus({ size = 12, className }: IconProps) {
   );
 }
 
-/** Chevron duplo à esquerda — recolher barra lateral (stroke 2, nítido). */
-export function IconPanelCollapse({ size = 16, className }: IconProps) {
+/**
+ * Painel lateral dividido — controle de expandir/recolher a sidebar.
+ * Vetorial nítido (viewBox 24, stroke 1.5): moldura arredondada com a
+ * coluna esquerda destacada, fiel ao glifo do design oficial.
+ */
+export function IconSidePanel({ size = 16, className }: IconProps) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className} aria-hidden="true">
-      <path
-        d="M11 17l-5-5 5-5"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <path
-        d="M18 17l-5-5 5-5"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
-}
-
-/** Chevron duplo à direita — expandir barra lateral (stroke 2, nítido). */
-export function IconPanelExpand({ size = 16, className }: IconProps) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className} aria-hidden="true">
-      <path
-        d="M13 17l5-5-5-5"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <path
-        d="M6 17l5-5-5-5"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
+      <rect x="3" y="4.5" width="18" height="15" rx="3.5" stroke="currentColor" strokeWidth="1.5" />
+      <line x1="9.25" y1="5" x2="9.25" y2="19" stroke="currentColor" strokeWidth="1.5" />
     </svg>
   );
 }

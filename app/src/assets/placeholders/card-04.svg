@@ -1,12 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="480" height="600" viewBox="0 0 480 600" role="img" aria-label="Miniatura de vídeo pendente">
-  <rect width="480" height="600" fill="#181818"/>
-  <rect x="1" y="1" width="478" height="598" fill="none" stroke="#262626" stroke-width="2"/>
-  <g stroke="#3C3C3C" stroke-width="10" fill="none" stroke-linecap="round" transform="translate(240 275)">
-    <circle r="96"/>
-    <line x1="-34" y1="-38" x2="34" y2="38"/>
-    <line x1="34" y1="-38" x2="-34" y2="38"/>
-    <line x1="-70" y1="0" x2="-46" y2="0"/>
-    <line x1="46" y1="0" x2="70" y2="0"/>
-  </g>
-  <text x="240" y="540" fill="#4A4A4A" font-family="Poppins, sans-serif" font-size="22" text-anchor="middle">CutNicePro</text>
+  <rect width="480" height="600" fill="#1B1B1B"/>
+  <rect x="1" y="1" width="478" height="598" fill="none" stroke="#303030" stroke-width="2" rx="10"/>
+  <circle cx="240.0" cy="300.0" r="53" fill="#262626"/>
+  <path d="M 236 292 L 249 300.0 L 236 308 Z" fill="#555555"/>
 </svg>

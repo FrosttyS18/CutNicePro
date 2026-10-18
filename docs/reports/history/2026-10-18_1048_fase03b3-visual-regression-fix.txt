@@ -1,0 +1,146 @@
+CUTNICEPRO — ZCODE REPORT — FASE 03B.3 (VISUAL REGRESSION FIX)
+==============================================================================
+Tarefa:     Corrigir exclusivamente os defeitos visuais reprovados pelo
+            mantenedor: Halftone (faixa opaca + clipping ultrawide), hero
+            orbital (composição) e sidebar (toggle único no local oficial).
+Data:       2026-10-18 (conclusão 10h48)
+Status:     PASS técnico nos 12 critérios de aceite mensuráveis;
+            Visual status: PENDING HUMAN APPROVAL.
+Ambiente:   Windows, Git Bash, app em C:\CutNicePro\app; trabalho não
+            commitado das fases anteriores preservado; sem commits/pushes.
+
+INSPEÇÃO ANTES DE MODIFICAR
+------------------------------------------------------------------------------
+- Arquivos auditados: HalftoneWordmarkFooter.tsx, HomeHalftone.tsx,
+  OrbitingMediaHero.tsx, HomeScreen.tsx, AppShell.tsx, Breadcrumb.tsx,
+  icons.tsx, ui.css, lib/contactSheetSources.ts, test/phase03b.test.ts.
+- Causas-raiz confirmadas no código (não presumidas):
+  * faixa opaca: ctx.fillRect de fundo + background do .hwf-root;
+  * clipping ultrawide: hwfFitSize(measured, w*1.02) dimensionava só pela
+    largura (102%, com sangramento) sem considerar a altura do canvas;
+  * hero descentralizado/desproporcional: .home__orbit com inset
+    0 0 220px 0 deslocava o centro da órbita 110px acima do centro real do
+    conteúdo; raios calculados sobre min(w,h) achatavam a órbita em painéis
+    largos; baseH fixo em px (96–150) não escalava com o container;
+  * toggle duplicado: botão funcional (») à direita + glifo estático
+    pixelado (IconBreadLogo 16px, export com 2 paths sobrepostos) à esquerda.
+
+HALFTONE
+------------------------------------------------------------------------------
+- Causa raiz da faixa opaca: fillRect com colors.background + background do
+  .hwf-root pintavam um retângulo opaco de 220px na base da Home.
+- Causa raiz do clipping ultrawide: fit exclusivamente pela largura (com
+  2% de sangramento proposital do original) — em 2560×1080/3440×1440 a cap
+  height excedia a altura do canvas e os glifos cortavam topo/base; a
+  última letra encostava na lateral.
+- Correções aplicadas (no componente original, autorizadas pela missão):
+  (1) nova prop `transparent` (default false — comportamento padrão do
+  original preservado): draw usa clearRect, grain passa a compor com
+  "source-atop" (grão apenas sobre os pontos, sem véu retangular) e o root
+  recebe background transparente; (2) dimensionamento por largura E altura:
+  margem lateral de segurança proporcional (max(24px, 3,5% da largura) por
+  lado) + clamp do fontSize quando cap*(1-crop) excede a altura disponível
+  — o topo dos glifos sempre cabe, o recorte inferior intencional (crop
+  0.2) permanece e nenhuma letra corta na lateral. ResizeObserver do
+  original re-layouta ao redimensionar (validado sem reiniciar o app).
+- Física original preservada: SIM — hwfStep/hwfRadius/hwfWarmth/hwfHex/
+  hwfFitSize intactos; molas, repulsão do ponteiro, onda de clique,
+  granulação, densidade e cores inalterados.
+- Resoluções testadas (app real, janela): 1280×720, 1440×900, 1920×1080,
+  2560×1080, 3440×1440, 3840×1600 + redimensionamento contínuo.
+- Evidências: metrics.json (bounding box dos glifos por alpha do canvas em
+  cada resolução: margens laterais simétricas 32/33, 42/43, 60/62, 115/120,
+  553/556, 760/759 px; clip lateral = 0 em TODAS; fundo do root
+  transparente), screenshots home-*.png (5 resoluções),
+  halftone-ponteiro.png e halftone-clique.png. Primeira rodada VISION leu
+  corte lateral direito em 1280/1440/2560 (margens de 14–18px fundindo-se
+  à borda do painel pelos pontos esparsos da curva do "o") → margem
+  proporcional aplicada → re-VERIFICAÇÃO VISION: PASS nas duas resoluções
+  problemáticas, com corte inferior intencional preservado.
+
+ORBITAL HERO
+------------------------------------------------------------------------------
+- Causa raiz da composição incorreta: órbita com raios derivados de
+  min(w,h) (elipse achatada em painéis largos, concentração lateral),
+  container do hero excluindo a faixa inferior (centro deslocado 110px do
+  centro visual do conteúdo) e cartões com altura fixa em px (96–150px
+  escalados até 1.2× = gigantes), 24 elementos.
+- Coordenadas relativas ao container: SIM — orbitFrame recebe (width,
+  height) do hero medido por ResizeObserver; centro = centro exato do
+  container (provado por simetria angular no teste unitário); recálculo a
+  cada frame → expandir/recolher sidebar e resize contínuo recompõem a
+  órbita (validado: após 4 resizes seguidos, CTA ok e cards visíveis).
+- Card sizing: largura como fração moderada da largura do hero
+  (7,5–12,5%) aplicada via style width em % — responsivo sem reflow por
+  frame; medidos: 50–89px (1280), 58–106px (1440), 83–155px (1920),
+  116–220px (2560), 162–310px (3440), 181–351px (3840).
+- Safe zone: anel elíptico interno (42% da largura / 46% da altura) com
+  opacidade mínima 0.1 — cartões só "cheios" na periferia; centro de
+  leitura sempre livre (hit-test do CTA = true em TODAS as resoluções).
+- Distribuição: 16 cartões, ângulos iniciais distribuídos pelo círculo com
+  jitter, profundidade 0.18–0.86 com oscilação; delta entre centro médio
+  dos cartões e centro do hero ≤ 42px em todas as resoluções (1280: 5px).
+- Placeholders: redesenhados — 12 SVGs originais locais (4:5, 9:16, 16:9,
+  1:1; 3 tratamentos): tom carvão elevado #19–#20, moldura fina #2E–#32,
+  canto r10, play discreto (círculo/triângulo pequeno) com ou sem barra de
+  progresso; SEM X gigante, SEM texto repetido, sem fotos/URLs externas.
+- Evidências comparativas: metrics.json + screenshots home-*.png entre
+  resoluções (proporção mantida) + QA da primeira rodada vs. segunda;
+  movimento comprovado (8/8 transforms mudando).
+
+SIDEBAR
+------------------------------------------------------------------------------
+- Controle antigo removido: SIM — botão » (chevrons) da direita excluído
+  do AppShell; IconPanelCollapse/IconPanelExpand/IconBreadLogo deletados.
+- Controle oficial implementado: botão único .panel-toggle imediatamente à
+  ESQUERDA da palavra "Home" do breadcrumb (posição oficial), com
+  aria-controls="side-panel", chamando o MESMO onToggleExpanded e a MESMA
+  preferência persistida (localStorage) — sem duplicação de controle
+  (QA: toggleCount=1 e toggleBefore=true em TODAS as 6 resoluções).
+- SVG corrigido: IconSidePanel vetorial novo (viewBox 24, stroke 1.5,
+  moldura rx 3.5 + coluna vertical = painel dividido do design oficial),
+  renderizado a 16px dentro de hit area 32×32 — nítido (VISION: sem
+  pixelização perceptível nas 4 capturas).
+- Navegação por teclado: Tab real alcança o botão (outline computado
+  2px), Enter recolhe (false) e Space expande (true) — alternância
+  funcional; tooltip/title e aria-label dinâmicos mantidos.
+- Persistência: preferência entre reinícios validada na 03B.1/03B.2 e
+  mecanismo intocado (QA atual alterna via teclado sem erros).
+
+VALIDAÇÃO
+------------------------------------------------------------------------------
+- TypeScript: tsc --noEmit = 0 erros.
+- React tests: 26/26 (orbitFrame reescrito para a geometria elíptica:
+  centro por simetria, raios proporcionais a cada eixo, profundidade,
+  sizing fracional, determinismo).
+- Windows runtime: exe release rebuild; console sem erros de página.
+- Playwright (CDP no app real, não destrutivo — tools/e2e/phase03b3-qa.mjs):
+  matriz completa de 6 resoluções com métricas estruturais, movimento do
+  hero, halftone repouso(0)→ponteiro(23)→clique(493)→retorno(0), teclado,
+  redimensionamento contínuo; screenshots em docs/reports/evidence/03b3/.
+- Baseline full: 5 PASS / 1 SKIP ("npm test OK (app/)").
+- Clipping detected: NENHUM (alpha nas bordas laterais = 0 em todas as
+  resoluções; VISION PASS pós-correção nas resoluções antes afetadas).
+- Regressions: nenhuma — navegação M1, projetos/coleções e demais telas
+  intocados (diff concentrado nos componentes da missão); Rust inalterado.
+
+FINAL
+------------------------------------------------------------------------------
+- Technical status: PASS — 12/12 critérios de aceite da missão atendidos.
+- Visual status: PENDING HUMAN APPROVAL (VISION não aprova em nome do
+  mantenedor; vereditos visuais desta fase são instrumentais).
+- Remaining issues: nenhum bloqueio; observações — (1) em 2560×1080 o
+  wordmark tem respiro lateral menor que em 3440 (comportamento do clamp
+  por altura, correto); (2) arquivo de log do MCP Playwright
+  (.playwright-mcp/) foi criado no workspace durante a inspeção do
+  ArtCraft — artefato de sessão, não do produto.
+- Files changed: components/{HalftoneWordmarkFooter.tsx (props transparent
+  + dimensionamento), HomeHalftone.tsx (transparent), OrbitingMediaHero.tsx
+  (geometria elíptica/sizing), icons.tsx (IconSidePanel + remoções),
+  shell/AppShell.tsx (toggle oficial), shell/Breadcrumb.tsx (glifo promovido
+  a botão)}, lib/contactSheetSources.ts (ORBIT_DEFAULTS count 16),
+  assets/placeholders/*.svg (12 redesenhados), ui.css (orbit/halftone/
+  toggle), test/phase03b.test.ts, tools/e2e/phase03b3-qa.mjs (novo),
+  evidências em docs/reports/evidence/03b3/.
+- Commit: NO. Push: NO.
+==============================================================================

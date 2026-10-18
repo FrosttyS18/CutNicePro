@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { IconHome, IconPanelCollapse, IconPanelExpand, IconProjects, IconSettings } from "../icons";
+import { IconHome, IconProjects, IconSettings, IconSidePanel } from "../icons";
 import { Breadcrumb, type Crumb } from "./Breadcrumb";
 import avatarUrl from "../../assets/avatar-perfil.png";
 import logoSidebarUrl from "../../assets/logo-sidebar.svg";
@@ -68,7 +68,11 @@ export function AppShell({
         </div>
       </aside>
 
-      <nav className={expanded ? "side-panel side-panel--open" : "side-panel"} aria-label="Seções">
+      <nav
+        id="side-panel"
+        className={expanded ? "side-panel side-panel--open" : "side-panel"}
+        aria-label="Seções"
+      >
         {section === "home" ? (
           <>
             <h2 className="side-panel__title">Home</h2>
@@ -112,17 +116,18 @@ export function AppShell({
       <main className={expanded ? "shell-main shell-main--expanded" : "shell-main"}>
         <div className="panel">
           <div className="panel-head">
-            <Breadcrumb crumbs={crumbs} />
             <button
               type="button"
               className="panel-toggle"
               onClick={onToggleExpanded}
               aria-label={expanded ? "Recolher barra lateral" : "Expandir barra lateral"}
               aria-expanded={expanded}
+              aria-controls="side-panel"
               title={expanded ? "Recolher barra lateral" : "Expandir barra lateral"}
             >
-              {expanded ? <IconPanelCollapse size={16} /> : <IconPanelExpand size={16} />}
+              <IconSidePanel size={16} />
             </button>
+            <Breadcrumb crumbs={crumbs} />
           </div>
           <div className="panel-body">{children}</div>
         </div>

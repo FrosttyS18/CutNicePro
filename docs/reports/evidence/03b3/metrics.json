@@ -1,0 +1,212 @@
+[
+ {
+  "res": "1280x720",
+  "hero": {
+   "x": 361,
+   "y": 70,
+   "w": 895,
+   "h": 626
+  },
+  "cardsTotal": 16,
+  "cardsVisible": 15,
+  "cardWMin": 50,
+  "cardWMax": 89,
+  "orbitCenterDelta": {
+   "dx": 1,
+   "dy": 13
+  },
+  "halftone": {
+   "w": 895,
+   "h": 220
+  },
+  "glyph": {
+   "left": 32,
+   "right": 33,
+   "top": 126,
+   "bottom": 2
+  },
+  "sideClip": {
+   "left": 0,
+   "right": 0
+  },
+  "opaquePlate": "rgba(0, 0, 0, 0)",
+  "toggleCount": 1,
+  "toggleBefore": true,
+  "ctaHit": true
+ },
+ {
+  "res": "1440x900",
+  "hero": {
+   "x": 361,
+   "y": 70,
+   "w": 1055,
+   "h": 806
+  },
+  "cardsTotal": 16,
+  "cardsVisible": 15,
+  "cardWMin": 58,
+  "cardWMax": 106,
+  "orbitCenterDelta": {
+   "dx": 8,
+   "dy": 13
+  },
+  "halftone": {
+   "w": 1055,
+   "h": 220
+  },
+  "glyph": {
+   "left": 42,
+   "right": 43,
+   "top": 108,
+   "bottom": 2
+  },
+  "sideClip": {
+   "left": 0,
+   "right": 0
+  },
+  "opaquePlate": "rgba(0, 0, 0, 0)",
+  "toggleCount": 1,
+  "toggleBefore": true,
+  "ctaHit": true
+ },
+ {
+  "res": "1920x1080",
+  "hero": {
+   "x": 361,
+   "y": 70,
+   "w": 1535,
+   "h": 986
+  },
+  "cardsTotal": 16,
+  "cardsVisible": 15,
+  "cardWMin": 84,
+  "cardWMax": 154,
+  "orbitCenterDelta": {
+   "dx": 19,
+   "dy": 10
+  },
+  "halftone": {
+   "w": 1535,
+   "h": 220
+  },
+  "glyph": {
+   "left": 60,
+   "right": 62,
+   "top": 60,
+   "bottom": 2
+  },
+  "sideClip": {
+   "left": 0,
+   "right": 0
+  },
+  "opaquePlate": "rgba(0, 0, 0, 0)",
+  "toggleCount": 1,
+  "toggleBefore": true,
+  "ctaHit": true
+ },
+ {
+  "res": "2560x1080",
+  "hero": {
+   "x": 361,
+   "y": 70,
+   "w": 2175,
+   "h": 986
+  },
+  "cardsTotal": 16,
+  "cardsVisible": 15,
+  "cardWMin": 117,
+  "cardWMax": 219,
+  "orbitCenterDelta": {
+   "dx": 32,
+   "dy": 3
+  },
+  "halftone": {
+   "w": 2175,
+   "h": 220
+  },
+  "glyph": {
+   "left": 115,
+   "right": 120,
+   "top": 2,
+   "bottom": 2
+  },
+  "sideClip": {
+   "left": 0,
+   "right": 0
+  },
+  "opaquePlate": "rgba(0, 0, 0, 0)",
+  "toggleCount": 1,
+  "toggleBefore": true,
+  "ctaHit": true
+ },
+ {
+  "res": "3440x1440",
+  "hero": {
+   "x": 361,
+   "y": 70,
+   "w": 3055,
+   "h": 1346
+  },
+  "cardsTotal": 16,
+  "cardsVisible": 15,
+  "cardWMin": 163,
+  "cardWMax": 309,
+  "orbitCenterDelta": {
+   "dx": 46,
+   "dy": -6
+  },
+  "halftone": {
+   "w": 3055,
+   "h": 220
+  },
+  "glyph": {
+   "left": 553,
+   "right": 556,
+   "top": 2,
+   "bottom": 2
+  },
+  "sideClip": {
+   "left": 0,
+   "right": 0
+  },
+  "opaquePlate": "rgba(0, 0, 0, 0)",
+  "toggleCount": 1,
+  "toggleBefore": true,
+  "ctaHit": true
+ },
+ {
+  "res": "3840x1600",
+  "hero": {
+   "x": 361,
+   "y": 70,
+   "w": 3455,
+   "h": 1506
+  },
+  "cardsTotal": 16,
+  "cardsVisible": 15,
+  "cardWMin": 182,
+  "cardWMax": 351,
+  "orbitCenterDelta": {
+   "dx": 45,
+   "dy": -16
+  },
+  "halftone": {
+   "w": 3455,
+   "h": 220
+  },
+  "glyph": {
+   "left": 760,
+   "right": 759,
+   "top": 2,
+   "bottom": 2
+  },
+  "sideClip": {
+   "left": 0,
+   "right": 0
+  },
+  "opaquePlate": "rgba(0, 0, 0, 0)",
+  "toggleCount": 1,
+  "toggleBefore": true,
+  "ctaHit": true
+ }
+]

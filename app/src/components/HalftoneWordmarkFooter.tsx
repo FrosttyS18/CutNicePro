@@ -72,6 +72,9 @@ export interface HalftoneWordmarkFooterProps {
   monoFamily?: string
   /** Root height. A definite length, never a percentage. */
   height?: string
+  /** 03B.3: canvas/root transparentes — sem a placa de fundo retangular.
+   *  Preserva toda a física (molas, repulsão, onda, grain sobre os pontos). */
+  transparent?: boolean
   /** Extra root class names. */
   className?: string
 }
@@ -200,13 +203,14 @@ export default function HalftoneWordmarkFooter({
   fontWeight = 800,
   monoFamily = MONO_STACK,
   height = "560px",
+  transparent = false,
   className = "",
 }: HalftoneWordmarkFooterProps) {
   const colors = { ...(PRESETS[preset] || PRESETS.night), ...(palette || {}) }
   const rootRef = React.useRef(null as HTMLElement | null)
   const canvasRef = React.useRef(null as HTMLCanvasElement | null)
-  const opts = React.useRef({ colors, dotGap, radius, crop, grain, interactive, fontFamily, fontWeight, wordmark })
-  opts.current = { colors, dotGap, radius, crop, grain, interactive, fontFamily, fontWeight, wordmark }
+  const opts = React.useRef({ colors, dotGap, radius, crop, grain, interactive, fontFamily, fontWeight, wordmark, transparent })
+  opts.current = { colors, dotGap, radius, crop, grain, interactive, fontFamily, fontWeight, wordmark, transparent }
   const key = [wordmark, dotGap, crop, grain, fontFamily, fontWeight, colors.background, colors.ink, colors.warm].join("|")
 
   React.useEffect(() => {
@@ -251,11 +255,22 @@ export default function HalftoneWordmarkFooter({
       const face = o.fontWeight + " 100px " + o.fontFamily
       m.font = face
       const word = o.wordmark || " "
-      const fit = hwfFitSize(m.measureText(word).width, w * 1.02)
+      // 03B.3: margem lateral de segurança proporcional (sem corte involuntário
+      // da última letra; os pontos esparsos das bordas curvas dos glifos não
+      // podem se fundir com a borda do painel) e clamp pela ALTURA disponível —
+      // o topo dos glifos precisa caber considerando o recorte intencional (crop).
+      const safeX = Math.max(24, Math.round(w * 0.035))
+      let fit = hwfFitSize(m.measureText(word).width, Math.max(1, w - safeX * 2))
       m.font = o.fontWeight + " " + fit + "px " + o.fontFamily
-      const box = m.measureText(word)
-      const cap = box.actualBoundingBoxAscent || fit * 0.72
+      let box = m.measureText(word)
+      let cap = box.actualBoundingBoxAscent || fit * 0.72
       const c = Math.max(0, Math.min(0.6, o.crop))
+      if (cap * (1 - c) > h) {
+        fit = Math.max(8, fit * (h / (cap * (1 - c))))
+        m.font = o.fontWeight + " " + fit + "px " + o.fontFamily
+        box = m.measureText(word)
+        cap = box.actualBoundingBoxAscent || fit * 0.72
+      }
       m.fillStyle = "#000"
       m.textBaseline = "alphabetic"
       m.fillText(word, (w - box.width) / 2, h + cap * c)
@@ -306,8 +321,12 @@ export default function HalftoneWordmarkFooter({
     const draw = (now: number) => {
       const o = opts.current
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
-      ctx.fillStyle = o.colors.background
-      ctx.fillRect(0, 0, w, h)
+      if (o.transparent) {
+        ctx.clearRect(0, 0, w, h)
+      } else {
+        ctx.fillStyle = o.colors.background
+        ctx.fillRect(0, 0, w, h)
+      }
 
       const r = o.interactive && !reduced ? Math.max(0, o.radius) : 0
       const ringAge = ring.t < 0 ? 1e9 : now - ring.t
@@ -365,7 +384,7 @@ export default function HalftoneWordmarkFooter({
 
       if (grainTile && o.grain > 0) {
         ctx.globalAlpha = Math.min(1, o.grain) * 0.09
-        ctx.globalCompositeOperation = "overlay"
+        ctx.globalCompositeOperation = o.transparent ? "source-atop" : "overlay"
         const pattern = ctx.createPattern(grainTile, "repeat")
         if (pattern) {
           ctx.fillStyle = pattern
@@ -462,6 +481,7 @@ export default function HalftoneWordmarkFooter({
       style={
         {
           height,
+          ...(transparent ? { background: "transparent" } : null),
           "--hwf-bg": colors.background,
           "--hwf-ink": colors.ink,
           "--hwf-mono": monoFamily,

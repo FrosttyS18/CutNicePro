@@ -1,5 +1,3 @@
-import { IconBreadLogo } from "../icons";
-
 export interface Crumb {
   label: string;
   navigate?: () => void;
@@ -10,15 +8,14 @@ interface Props {
 }
 
 /**
- * Breadcrumb do painel principal: [logo] Seção > … > Atual.
+ * Breadcrumb do painel principal: Seção > … > Atual.
  * Crumbs anteriores são botões (navegação); o atual é texto branco.
+ * (03B.3: o glifo inicial foi promovido a botão de expandir/recolher a
+ * sidebar, posicionado antes deste breadcrumb no AppShell.)
  */
 export function Breadcrumb({ crumbs }: Props) {
   return (
     <nav className="breadcrumb" aria-label="Trilha de navegação">
-      <span className="breadcrumb__glyph" aria-hidden="true">
-        <IconBreadLogo size={16} />
-      </span>
       <ol className="breadcrumb__list">
         {crumbs.map((c, i) => {
           const current = i === crumbs.length - 1;

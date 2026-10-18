@@ -24,6 +24,7 @@ export function HomeHalftone({ className }: { className?: string }) {
         fontWeight={800}
         height="100%"
         interactive={true}
+        transparent={true}
       />
     </div>
   );
