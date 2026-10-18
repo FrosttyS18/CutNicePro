@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="480" height="600" viewBox="0 0 480 600" role="img" aria-label="Miniatura de vídeo pendente">
+  <rect width="480" height="600" fill="#1A1A1A"/>
+  <rect x="1" y="1" width="478" height="598" fill="none" stroke="#262626" stroke-width="2"/>
+  <g stroke="#363636" stroke-width="10" fill="none" stroke-linecap="round" transform="translate(240 285)">
+    <circle r="96"/>
+    <line x1="-34" y1="-38" x2="34" y2="38"/>
+    <line x1="34" y1="-38" x2="-34" y2="38"/>
+    <line x1="-70" y1="0" x2="-46" y2="0"/>
+    <line x1="46" y1="0" x2="70" y2="0"/>
+  </g>
+  <text x="240" y="540" fill="#4A4A4A" font-family="Poppins, sans-serif" font-size="22" text-anchor="middle">CutNicePro</text>
+</svg>

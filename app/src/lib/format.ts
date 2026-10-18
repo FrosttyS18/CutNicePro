@@ -8,6 +8,14 @@ export function formatDate(ms: number): string {
   });
 }
 
+/** Data compacta dd.mm.aaaa — formato usado pelo design 03B nas metas de cards. */
+export function formatCompactDate(ms: number): string {
+  const d = new Date(ms);
+  const dd = String(d.getDate()).padStart(2, "0");
+  const mm = String(d.getMonth() + 1).padStart(2, "0");
+  return `${dd}.${mm}.${d.getFullYear()}`;
+}
+
 export function formatDateTime(ms: number): string {
   return new Date(ms).toLocaleString("pt-BR", {
     day: "2-digit",

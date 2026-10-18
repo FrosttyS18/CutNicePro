@@ -1,0 +1,164 @@
+================================================================================
+CUTNICEPRO — ZCODE REPORT
+================================================================================
+TAREFA: M1 Studio Console — Controlled Design Resume (retomada controlada,
+APENAS Home sem projetos + Home com projetos, com correções pontuais de UX
+aprovadas pelo mantenedor; sem tocar React/Tauri)
+DATA: 2026-10-18 (04h42–05h00)
+STATUS: PASS — duas Homes construídas em Studio Console com componentes
+mestres/instâncias reais, validação incremental estrutural + visual
+(VISION 12/12 → correção de grid → 3/3), contraste validado numericamente
+(10/10 AA), Content Matrix corrigida (CM-002/033/042/011), documento
+nativo SALVO. Aprovação estética: PENDING (exclusiva do mantenedor).
+
+--------------------------------------------------------------------------------
+1. SKILLS EFETIVAMENTE UTILIZADAS
+--------------------------------------------------------------------------------
+- cutnicepro-ux-writing (CORRIGIDA nesta tarefa, §2): vocabulário aplicado
+  nos controles ("Novo projeto" único, "Abrir →", contador com plural
+  computado "10 projetos"); erro=causa+ação preservado na matrix;
+  honestidade de estado (zero features futuras nas telas).
+- design-taste-frontend: frase-conceito do sujeito (mesa de edição →
+  console de estúdio); house rules aplicadas — SEM eyebrows/chips na
+  TopBar (lado direito vazio), superfícies por DEGRU DE TOM (#231F20 sobre
+  #000, sem borda 1px), UM ground/ink/acento com acento orçado (aqua só
+  no botão primário + wordmark "Nice" + hover do "Abrir"), display vs
+  corpo (título 36/28 vs metas 12.5), sem sombras, sem gradientes,
+  botões flat raio 8.
+- web-design-guidelines: foco visível e alvos ≥44px especificados;
+  contraste AA verificado NUMERICAMENTE por par (script WCAG relativo:
+  10/10 ≥6.18:1); wordmark fora do Tab (sem ação real); hierarquia
+  semântica (título → cards → metas).
+- minimalist-ui: bento respirado (padding 24, gutters 24), densidade
+  controlada, proibição de ruído decorativo, tipografia com contraste
+  extremo — adaptado ao tema ESCURO da marca.
+- image-to-code: NÃO utilizada (gera telas a partir de imagens; as telas
+  foram construídas por composição controlada, não por replicação).
+
+--------------------------------------------------------------------------------
+2. CORREÇÕES NA CONTENT MATRIX (aplicadas ANTES de desenhar)
+--------------------------------------------------------------------------------
+- CM-002 → "Crie um projeto para começar. Ele ficará salvo neste
+  computador." (sem promessa de gestão de vídeos inexistente).
+- CM-033 → corpo do workspace SEM copy (área reservada em silêncio);
+  zero referência a ciclos internos/funcionalidades futuras.
+- CM-042 → "Não foi possível ler os dados dos projetos." + Tentar
+  novamente SEM presunção de cura; proibida substituição silenciosa por
+  lista vazia (comportamento Rust preservado/atestado); controle de
+  recuperação NÃO inventado.
+- CM-011/contadores → plural computado ("1 projeto"/"2 projetos", nunca
+  literal "projeto(s)"); números nunca fabricados — o contador da tela B
+  ("10 projetos") confere com os 10 cards do mock (9 completos + 1
+  cortado).
+- Cabeçalho da matrix registra a revisão (2026-10-18, retomada controlada).
+
+--------------------------------------------------------------------------------
+3. FIGCRAFT — COMPONENTES, FRAMES E INSTÂNCIAS
+--------------------------------------------------------------------------------
+- Reutilizados: set Button 957 (Primary usado nas duas Homes — instâncias
+  1175/A e 1184/B, override de largura para o CTA).
+- Criados (mestres SC, todos com FILL EXPLÍCITO — §4 anti-bug-branco):
+  · TopBar SC (1145): 1440×64, fill #0A0A0A (degrau de tom, sem borda),
+    wordmark Cut/Nice/Pro (fill explícito no frame do logo), lado direito
+    VAZIO. Componente mestre.
+  · ProjectCard SC — set 1163 (variantes State=Default 1150 / Hover
+    1151): 421×168, fill #231F20/#2B2728, raio 12, SEM stroke, padding
+    24; nome 15 Bold #E6E7E8; meta1 "Criado {absoluto}" #9BA0A4;
+    meta2 "Aberto {relativo}" #B9BBBD; ação "Abrir →" 13.5 Bold
+    (#E6E7E8 → aqua no Hover); spacer com fill e sizing fill.
+- Corrigidos (componentes existentes): frames externos dos TextInput 958/
+  959 recebem fill #231F20 (elimina o bug do fundo branco detectado na
+  auditoria — REFINAR executado sem recriar).
+- Frames criados (página UI - designer, y=4200, propostas A/B e histórico
+  preservados — zero camadas antigas tocadas além dos dois fills citados):
+  · HOME A — Studio Console (sem projetos) (1164): TopBar/SC instância
+    1167; composição tipográfica central SEM caixa tracejada — glifo play
+    vetorial em contorno aqua 1.5 (1172, 32×40), título "Nenhum projeto
+    ainda" Bold 36 (1173), contexto CM-002 14 #9BA0A4 (1174), CTA
+    "Novo projeto" primário (1175). Ótica: grupo centrado na área útil.
+  · HOME B — Studio Console (com projetos) (1165): TopBar/SC (1177);
+    cabeçalho "Projetos" Bold 28 (1182) + contador "10 projetos" 13
+    #9BA0A4 (1183) + CTA primário (1184); grade 3 colunas (x 64/509/
+    954, gutter 24) com 10 instâncias do ProjectCard SC (1186..1240)
+    — 9 completos (nomes/datas reais variados por override) + 1 CORTADO
+    pela borda inferior (rolagem); 1 card em Hover (1192) demonstrando
+    o estado.
+  · Rótulo de página "STUDIO CONSOLE — RETOMADA CONTROLADA" (1166).
+- Instâncias totais: 2× TopBar SC + 2× Button Primary + 10× ProjectCard
+  SC (1 Hover via instance.setProperties) — sob overrides de characters
+  confirmados.
+
+--------------------------------------------------------------------------------
+4. INSPEÇÃO ESTRUTURAL E VALIDAÇÃO INCREMENTAL
+--------------------------------------------------------------------------------
+- Método: cada conjunto inspecionado por get_node ANTES do próximo
+  (mestres → tela A → tela B); screenshots intermediários por conjunto;
+  correção diagnóstica única (abaixo) — sem alterações especulativas.
+- Estrutura confirmada: TopBar/SC com fill #0A0A0A e SEM stroke;
+  ProjectCard/SC com SEM stroke e fills #231F20/#2B2728; auto layout
+  vertical gap 10/padding 24; instâncias herdando mestres (mainComponent
+  1145/1150/1151); Z-order correto (formas < textos em todas as telas).
+- Bug de grid detectado e CORRIGIDO (única iteração): o 8º card estava
+  uma fileira abaixo do 7º (posição minha incorreta, não do layout) →
+  reflow para 3+3+3+1-cortado; VISION re-inspecionou: 3/3 CONFIRMADO
+  (grade correta, contador "10 projetos" coerente, zero cards órfãos).
+- VISION final tela A: 12/12 fatos CONFIRMADOS (TopBar sem borda/direita
+  vazia; composição sem caixa tracejada; ZERO textos de fase/versão/
+  protótipo; centralização ótima; hierarquia e aparência de estúdio).
+- VISION final tela B (pós-correção): grade 3 colunas consistente,
+  hover único correto, metas limitadas a criado/aberto, zero ruído
+  interno, contraste percebido bom.
+- Contraste (WCAG relativo, calculado numericamente): texto principal/
+  canvas 16.96:1 · principal/card 13.16:1 · apoio #9BA0A4/canvas 7.96:1
+  · apoio/card 6.18:1 · marble70/card 8.47:1 · aqua/canvas 9.46:1 ·
+  aqua/topbar 8.92:1 · botão/aqua 9.46:1 · apoio/topbar 7.50:1 —
+  10/10 AA (§4 cumprido; #9BA0A4 VALIDADO para aplicação definitiva).
+- Interação especificada (§4): controles ≥44px (botões 40 + alvo do card
+  inteiro clicável 168px); foco visível por teclado (anel aqua — regra da
+  direção, a representar no handoff); wordmark fora do Tab (sem ação);
+  estados hover (variante do card) / focus / loading (skeleton existente)
+  coerentes; frames com fill explícito em 100% das camadas criadas.
+- Capturas individuais em resolução de inspeção (1.5× = 2160px de
+  largura): docs/reports/evidence/scresume/home-a-sem-projetos.png ·
+  home-b-com-projetos.png (+ mestres-sc.png no diretório de trabalho).
+- Problemas visuais restantes: nenhum estrutural apontado; limitações
+  declaradas — pesos Poppins Medium/SemiBold AUSENTES no ambiente (usado
+  Bold como aproximação provisória; instalar a família OFL antes da
+  versão final — pendência conhecida da Brand Foundation); glifo do empty
+  state é vetorial discreto (asset 3D deliberadamente adiado por decisão
+  do mantenedor).
+
+--------------------------------------------------------------------------------
+5. PRESERVAÇÃO E PENDÊNCIAS
+--------------------------------------------------------------------------------
+- Preservado: propostas A/B (frames 2/154), telas M1 antigas (1017–1021,
+  históricas reprovadas), fluxos V2 (roadmap), correções manuais do
+  mantenedor, todos os mestres antigos (957–1007, exceto os 2 fills
+  corretivos nos TextInput — refinamento aprovado), backups anteriores +
+  novo backup ANTES das edições (design/backups/cutnicepro-pre-scresume-
+  0446.figcraft). Documento nativo SALVO ao final (5.115.883 bytes).
+- React/TypeScript/CSS/Rust: NÃO MODIFICADOS. Harness: NÃO alterado
+  (falha conhecida do app_tests permanece documentada em docs/HOOKS.md).
+- USER FLOWS (§8 — pendência preservada e REGISTRADA): as decisões do MVP
+  aprovadas (D1 Home-antes-da-IA, convite beta DEC-011, offline BR-049,
+  preço R$ 29,90) AINDA não estão refletidas em todos os User Flows V2;
+  o Product Flow end-to-end NÃO está finalizado. Antes de iniciar M2, os
+  fluxos correspondentes às funcionalidades do MVP devem ser reconciliados
+  com as decisões aprovadas e revisados pelo mantenedor (nenhum fluxograma
+  foi tocado nesta tarefa).
+- Git: main @ cf082a8 (commit do mantenedor); nenhum commit/push do
+  agente; 58 entradas no working tree (novas desta tarefa: matrix
+  revisada + evidências scresume + este relatório). Baseline full: PASS
+  (4/0/2; app_tests SKIP pela falha conhecida documentada).
+
+--------------------------------------------------------------------------------
+FINAL
+--------------------------------------------------------------------------------
+- Status: PASS (construção controlada concluída no escopo autorizado).
+- Telas criadas: APENAS Home A e Home B (C/D/E NÃO criadas, conforme
+  condição de parada).
+- Aprovação estética: PENDING — exclusiva do mantenedor (as capturas em
+  docs/reports/evidence/scresume/ são o material de revisão).
+- Próxima etapa sugerida (após aprovação deste padrão): telas C/D/E e
+  handoff FigCraft→React; reconciliação dos User Flows antes de M2.
+================================================================================

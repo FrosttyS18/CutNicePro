@@ -62,3 +62,14 @@ todos os hooks são no-op (identificação via `${ZCODE_PROJECT_DIR}`).
 - Sem testes pesados: validações são de sintaxe; o Stop roda apenas o modo fast (suítes completas ficam para o `--full` explícito; timeout interno de 240 s por suíte quando houver; timeout configurado do hook Stop: 90 s — vigora a partir do próximo reinício do ZCode, até lá 300 s).
 - Se um bloqueio for legítimo (operação destrutiva realmente necessária): usar comando mais
   restrito, ou pedir ao usuário para executar manualmente / desativar o toggle temporariamente.
+
+## Limitação conhecida — app_tests não encontra o app (2026-10-18, M1DR)
+
+O `baseline_checks.check_app_tests` procura `package.json` apenas na RAIZ do
+repositório. Desde a Fase 03 o aplicativo vive em `app/` (com `npm test` =
+vitest, 9/9, e `cargo test` no `src-tauri`, 7/7 — ambos válidos e executados
+nas fases). Resultado: a baseline reporta `SKIP — "sem package.json (app nao
+implementada)"`, o que é FALSO para o estado atual do projeto.
+Correção proposta (PENDENTE de autorização — deliberadamente NÃO aplicada em
+tarefa de UX): estender o harness para considerar `app/package.json` e rodar
+a suíte lá. Registrado também em `docs/design/M1DR-AUDIT.md`.

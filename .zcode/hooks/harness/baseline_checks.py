@@ -95,19 +95,23 @@ def check_app_tests(root, fast):
     def fn():
         if fast:
             return "SKIP", "modo fast (hook Stop): rodar baseline --full antes de concluir implementacoes"
-        pkg_path = os.path.join(root, "package.json")
-        if not os.path.isfile(pkg_path):
+        # O app Node vive em app/ (Vite/Tauri); a raiz nao tem package.json.
+        candidates = [root, os.path.join(root, "app")]
+        pkg_root = next((p for p in candidates
+                         if os.path.isfile(os.path.join(p, "package.json"))), None)
+        if pkg_root is None:
             return "SKIP", "sem package.json (app nao implementado)"
-        with open(pkg_path, "r", encoding="utf-8") as f:
+        with open(os.path.join(pkg_root, "package.json"), "r", encoding="utf-8") as f:
             scripts = (json.load(f).get("scripts") or {})
         if not scripts.get("test"):
             return "SKIP", "package.json sem script de teste"
         npm = shutil.which("npm")
         _require(npm, "npm nao encontrado no PATH")
-        proc = subprocess.run([npm, "test"], cwd=root, capture_output=True,
+        proc = subprocess.run([npm, "test"], cwd=pkg_root, capture_output=True,
                               text=True, timeout=240)
         _require(proc.returncode == 0, "npm test falhou: " + (proc.stdout or proc.stderr or "")[-300:])
-        return "PASS", "npm test OK"
+        where = "raiz" if pkg_root == root else "app/"
+        return "PASS", f"npm test OK ({where})"
     return fn
 
 

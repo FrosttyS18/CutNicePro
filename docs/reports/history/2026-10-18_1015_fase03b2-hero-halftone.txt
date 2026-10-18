@@ -1,0 +1,131 @@
+CUTNICEPRO — ZCODE REPORT — FASE 03B.2 (ARTCRAFT-INSPIRED HERO + HALFTONE ORIGINAL)
+==============================================================================
+Tarefa:     Resolver as duas pendências visuais da Home — (A) hero de mídias
+            inspirado no header público do ArtCraft, implementação
+            independente; (B) integração INTEGRAL do HalftoneWordmarkFooter
+            original fornecido pelo mantenedor.
+Data:       2026-10-18 (conclusão 10h15)
+Status:     PASS técnico — ambos os componentes implementados, testados e
+            comprovados comportamentalmente no app real; aprovação visual
+            final: PENDING (mantenedor).
+Ambiente:   Windows, Git Bash, app em C:\CutNicePro\app
+
+PRESERVAÇÃO
+------------------------------------------------------------------------------
+- Nenhum commit/push. Rust, IPC, persistência, splash, navegação, sidebar
+  03B.1, telas de biblioteca e testes existentes preservados (Rust 14/14).
+- PNGs estáticos home-contact-sheet.png / home-strip-bottom.png continuam
+  fora da renderização (arquivados apenas como referência de handoff).
+
+ARTCRAFT INSPECTION
+------------------------------------------------------------------------------
+- Public reference accessed: SIM — getartcraft.com em navegador real
+  (Playwright/Chromium). DOM: header inteiro coberto por UM canvas WebGL
+  (1689×1173); os cartões não têm elementos DOM individuais.
+- Behaviors observed (4 capturas: t0/+2s/+5s/hover, + leitura VISION):
+  ~30-35 cartões 16:9 simultâneos; anel 360° ao redor do bloco central;
+  órbita ANTI-HORÁRIA com deslocamento angular distinto por cartão
+  (≈10-30°/s — movimento não uniforme); cartões crescem enquanto orbitam;
+  sobreposições com z-order (frente opaca cobre trás); opacidade correlata à
+  distância do CENTRO (cartões cortados pelas bordas permanecem opacos);
+  "fantasmas" pequenos/esmaecidos atravessam o centro sem quebrar a
+  legibilidade do texto; cartões frontais (sem rotação 3D), cantos
+  arredondados, sem borda desenhada.
+- Features not verified (e portanto NÃO implementadas): trajetória espiral
+  exata vs orbital pura; perfil de velocidade por raio; se as miniaturas são
+  vídeos; curva exata do fade; blur de profundidade real; qualquer parallax
+  ou reação ao cursor (nenhum efeito de ponteiro confirmado na referência).
+- Especificação curta do movimento documentada no cabeçalho do componente.
+
+ORBITING MEDIA HERO
+------------------------------------------------------------------------------
+- Component: app/src/components/OrbitingMediaHero.tsx (implementação
+  ORIGINAL do CutNicePro; nenhuma dependência nova).
+- Animation approach: por cartão — ângulo inicial, velocidade angular e
+  oscilação de raio próprios; órbita anti-horária contínua; escala
+  (0.45–1.20), opacidade (0.12–1.00, quadrática) e z-order derivam do raio
+  aparente (fantasmas no centro, cheios na periferia) — exatamente o padrão
+  inspecionado. SEM interação de cursor (não confirmada na referência).
+- Independent cards: SIM — 24 elementos div/img individuais posicionados por
+  transform (não spritesheet, não background-position, não flex columns).
+- Placeholder contract: ContactCardSource { src, alt, ratio } — a troca
+  futura pelas thumbnails oficiais é só de dados; o motor não muda.
+- Multiple aspect ratios: ratio POR CARTÃO (9:16 = 0.5625, 4:5 = 0.8, 1:1,
+  16:9 ≈ 1.778); 12 SVGs placeholders originais locais (sem URLs externas,
+  sem material de terceiros) em app/src/assets/placeholders/.
+- Performance: um único requestAnimationFrame escrevendo transform/opacity/
+  zIndex direto nos nós (zero React state por frame); will-change; pausa por
+  IntersectionObserver + visibilitychange; ResizeObserver remede; cleanup
+  integral no unmount; prefers-reduced-motion recebe composição estática;
+  seed determinística (mulberry32) para composição reproduzível.
+- Evidence: hero-t0/t2s/t5s.png + prova computacional (10/10 transforms
+  mudando em t0→2s e t2→5s) + hit-test do CTA (elementFromPoint — hero não
+  intercepta o ponteiro).
+
+HALFTONE ORIGINAL
+------------------------------------------------------------------------------
+- Source received: SIM — código integral colado pelo mantenedor no chat
+  (2026-10-18, durante a 03B.2; a seção de código da mensagem original da
+  missão havia chegado vazia — verificado e registrado antes). Presença
+  confirmada de TODAS as funções exigidas: hwfHex, hwfRadius, hwfStep,
+  hwfWarmth, hwfFitSize, HWF_CSS, HalftoneWordmarkFooter.
+- Original functions preserved: SIM — app/src/components/
+  HalftoneWordmarkFooter.tsx contém o código original INTEGRAL e INALTERADO
+  (única adição: comentário de proveniência acima do código; física de
+  molas, repulsão, onda de clique, granulação, crop, rAF e sleep/wake
+  intactos).
+- Integration: wrapper app/src/components/HomeHalftone.tsx — personalização
+  SOMENTE por props: wordmark="CutNicePro", preset="night",
+  palette.warm="#02C2BE", palette.background="#0A0A0A" (container da Home),
+  fontFamily Poppins 800 (fonte da marca), columns=[], backToTop=false,
+  label/meta vazios; .hwf-top/.hwf-rule ocultos via CSS escopado no wrapper
+  (remoção VISUAL do rodapé de terceiros, sem tocar no canvas). Região
+  inferior da Home (220px), respeitando a área reservada do design.
+- Wordmark: "CutNicePro" gigante pontilhado, preenchendo a largura do
+  container (fit original w*1.02 — o leve corte da última letra à direita é
+  comportamento do código original, preservado), recorte inferior 0.2.
+- Interaction color: Deep Aqua #02C2BE (comprovada por contagem de pixels).
+- Pointer response: pixels aqua 0 → 190 com pontos deslocados em torno do
+  cursor (screenshot + prova computacional).
+- Click response: pico de 955–1110 pixels aqua em anel visível atravessando
+  as letras (screenshot + prova computacional).
+- Static images absent: SIM — nenhum PNG substituto; wordmark 100% canvas.
+- Evidence: halftone-repouso/ponteiro/clique/retorno.png; retorno ao repouso
+  comprovado (190 → 0 após afastar o cursor — molas devolvem os pontos).
+- Nenhum texto "halden"/Halden Studio/Work/Studio/Contact/Back to top na
+  renderização (varredura VISION: zero ocorrências).
+
+VALIDATION
+------------------------------------------------------------------------------
+- React tests: 23/23 (novos: contrato com 4 proporções; orbitFrame —
+  movimento contínuo, profundidade escala/opacidade/z, determinismo).
+- Typecheck: tsc --noEmit = 0 erros. Build vite OK; tauri build --no-bundle OK.
+- Windows runtime: exe real executado; console sem erros de página (único
+  aviso: willReadFrequently do próprio sampler de pixels do teste).
+- Playwright (CDP no app real, NÃO destrutivo — tools/e2e/phase03b2-smoke.mjs):
+  hero em movimento (10/10), CTA clicável, halftone repouso→ponteiro→clique→
+  retorno com métricas de pixels, Home expandida/recolhida, biblioteca M1
+  preservada com dados existentes.
+- Baseline full: 5 PASS / 1 SKIP ("npm test OK (app/)"). Rust: 14/14.
+- Regressions: nenhuma identificada.
+- VISION (5 artefatos): PASS em todos — cartões com variação de
+  tamanho/opacidade, bloco central legível, wordmark cortado na borda
+  inferior, zero textos de terceiros, estilo sóbrio, hover teal localizado,
+  onda de clique, movimento real entre t0 e t5s. Ressalva informativa:
+  cartões exibem placeholders até as thumbnails oficiais chegarem (estado
+  projetado).
+
+FINAL
+------------------------------------------------------------------------------
+- Technical status: PASS — Decisão A e Decisão B cumpridas.
+- Visual status: conformidade verificada por VISION; a Home tem agora a
+  hierarquia completa (breadcrumb → área artística atrás → título/subtítulo/
+  CTA → wordmark halftone na base), com os dois motores independentes.
+- Remaining issues: (1) thumbnails oficiais do mantenedor substituirão os
+  placeholders via contrato de dados (sem tocar nos motores); (2) aprovação
+  visual final pendente; (3) observado: última letra do wordmark levemente
+  cortada à direita — comportamento do fit original (w*1.02), preservado
+  conforme a missão.
+- Human approval: PENDING.
+- Commit: NO. Push: NO.
+==============================================================================

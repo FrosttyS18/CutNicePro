@@ -1,0 +1,174 @@
+================================================================================
+CUTNICEPRO — ZCODE REPORT
+================================================================================
+TAREFA: M1 UX Content + Visual Direction Approval Gate — concluir a
+preparação de UX Writing e direção visual da Home ANTES de retomar a
+criação de interfaces (skill corrigida + Content Matrix + direção visual;
+ZERO telas/componentes/código criados).
+DATA: 2026-10-18 (04h28–04h40)
+STATUS: PASS — entregas do gate prontas para revisão do mantenedor.
+FigCraft NÃO modificado; aplicação NÃO modificada; construção de UI NÃO
+autorizada. Interface existente permanece REPROVADA (base para REFINAR).
+
+--------------------------------------------------------------------------------
+SKILLS
+--------------------------------------------------------------------------------
+- Skills consulted (carregadas EFETIVAMENTE via Skill tool, não apenas
+  instaladas): cutnicepro-ux-writing (disponível pós-reinício — requisito
+  cumprido) · design-taste-frontend · web-design-guidelines · minimalist-ui.
+  image-to-code: AVALIADA e não aplicada nesta tarefa (suas instruções são
+  para GERAR telas a partir de imagens — a tarefa proíbe criar telas; a
+  análise das referências já havia sido feita na M1DR-AUDIT com extração
+  do DNA por VISION, sem overlaps com o fluxo da skill).
+- Concrete guidelines applied:
+  · cutnicepro-ux-writing → vocabulário único nos CONTROLES da Content
+    Matrix ("Novo projeto"/"Criar"/"Cancelar"/"Abrir"), erro=causa+ação
+    (CM-040..042), datas por tipo de dado (criação=absoluto, acesso=
+    relativo), zero ruído interno na interface comercial (CM-005/CM-034).
+  · design-taste-frontend → "a ideia vem do sujeito" (frase-conceito do
+    Studio Console); house rules aplicadas à direção: sem eyebrow/chips
+    (TopBar limpa), superfícies por degrau de tom (nunca linha/sombra),
+    um ground/ink/acento com acento orçado, display vs micro, sem cards
+    idênticos em fileira como padrão, botões flat raio decidido (8px),
+    foco visível, "no styled accent word".
+  · web-design-guidelines → critérios de acessibilidade/interação levados
+    à direção (focus visible, alvos ≥44px, tab order, aria-labels no
+    loading CM-018, contraste AA verificado numericamente).
+  · minimalist-ui → disciplina "premium utilitarian": bento respirado com
+    paddings generosos (24–40px), densidade controlada, tipografia com
+    contraste extremo, proibição de ruído decorativo — adaptada ao tema
+    ESCURO da marca (o protocolo é claro; manteve-se os princípios
+    estruturais, não a paleta clara).
+- UX Writing corrections (as 4 exigidas, aplicadas à skill):
+  1. Datas: reescrita — a regra agora é por TIPO de dado (criação=
+     absoluto, acesso=relativo), proibida a oscilação do MESMO dado entre
+     cards; eliminada a contradição "nunca misturar no mesmo card".
+  2. Empty state: exemplo reescrito sem features futuras como existentes
+     ("Organize seus vídeos em projetos…"); importar/legendas/cortes
+     explicitamente FORA do empty state comercial.
+  3. Princípio 1 reescrito: "Consistência terminológica com adaptação de
+     contexto" — controles seguem o glossário à risca; textos editoriais
+     podem parafrasear o conceito (ex.: título editorial do empty state).
+  4. Novo princípio 6: "Zero ruído interno na interface do cliente" —
+     fases M1/M2, "protótipo", versões destacadas e jargão de processo
+     proibidos na UI comercial; recurso inexistente simplesmente não
+     aparece (exceção única: onboarding do beta redigido para o usuário).
+- Skill validation: frontmatter OK (name/description íntegros); baseline
+  full: "16 skills com frontmatter ok" — PASS; checagem automática das 4
+  correções: 4/4 presentes; integridade preservada (demais orientações
+  mantidas; glossário ampliado com 1 entrada nova — estado sem projetos).
+
+--------------------------------------------------------------------------------
+CONTENT (docs/design/M1-CONTENT-MATRIX.md — tudo PROPOSTO, nada aplicado)
+--------------------------------------------------------------------------------
+- Screens covered: 5 — Home sem projetos · Home com projetos · Diálogo
+  Novo projeto · Projeto aberto · Loading/erro/recuperação.
+- Labels reviewed: 33 itens (CM-001..CM-044) com identificador, texto,
+  contexto, ação, justificativa de UX e ESTADO DE FUNCIONALIDADE por item
+  (existe M1 / inexistente M2 / parcial / removido).
+- Misleading copy corrected: "· N cortes" (dado fictício de M4) → ausente
+  (CM-016); promessa de importar/legendas no empty state → contexto
+  apenas do que existe (CM-002); roadmap interno visível na tela
+  (CM-033) → texto de área pronta + nota de próximo ciclo SEM sigla "M2";
+  "Protótipo funcional M1…"/"M1 · protótipo"/"v0.1.0" na UI → removidos
+  do design comercial (CM-004/005/034); duplicação local-first no diálogo
+  → 1 menção (CM-021, helper antigo CM-024 removido); "Descartar" →
+  "Cancelar"; "Revisar" → "Tentar novamente".
+- Terminology consistency: 1 rótulo por ação em todos os controles
+  (criar="Novo projeto" ×2 telas, confirmar="Criar", cancelar="Cancelar",
+  abrir="Abrir"); contador sem sufixo redundante (CM-011); datas com
+  formato único por tipo de dado (CM-014/015/032); placeholders regulares
+  sem duplicar label (CM-023).
+- Pending copy decisions (listadas no doc para o mantenedor): TopBar
+  direita comercial (CM-005 — recomendação: vazia) · aviso offline no M1
+  (CM-043 — pode ser desnecessário até M6) · wordmark textual vs logo
+  definitivo.
+
+--------------------------------------------------------------------------------
+VISUAL DIRECTION (docs/design/M1-VISUAL-DIRECTION.md — UMA direção proposta)
+--------------------------------------------------------------------------------
+- References analyzed: as 5 do mantenedor (DNA da M1DR-AUDIT: preto
+  profundo + grotesca leve + acento escasso + display vs micro-caps +
+  bento arredondado + profundidade por material 3D + microtexto curto).
+- Layout strategy (conceito "Studio Console"): a mesa de edição vira
+  console escuro de estúdio — frase-conceito preenchida pelo SUJEITO
+  (competidor genérico não a preenche); TopBar 64px mínima (wordmark
+  apenas), conteúdo com margens 64px, título de página como primeiro
+  elemento, ação única à direita, modal centrado no centro óptico com
+  TopBar ativa.
+- Typography: Poppins família única; display 40 (vazia)/30 (cheia)
+  SemiBold tracking -0.02; card 16 SemiBold dominante; corpo 14; apoio
+  12.5; micro técnico 11 caps tracking 0.08 (futuro); tabular nas datas;
+  Bold só no wordmark. (Medium/SemiBold a instalar no ambiente de design.)
+- Color hierarchy: ground #000 → superfícies #231F20/#2B2728 por DEGRU DE
+  TOM (sem bordas 1px/sombras); ink #E6E7E8; apoio proposto #9BA0A4
+  (novo token marble50, ≈6,9:1 AA — substitui o off-token #6F7276
+  reprovado); Deep Aqua ORÇADO (não regra "exatamente 1"): obrigatório em
+  ação primária+wordmark "Nice"+anel de foco; permitido pontual (play do
+  empty, Info); proibido em massa (pills/chips/ícones repetidos).
+- Component strategy: mapa por componente (§7 da direção) cruzado com o
+  M1DR-AUDIT — REUTILIZAR (IconButton-estrutura, StatusFeedback, Loading,
+  mecânica de sets) · REFINAR (TopBar, Button, TextInput, ProjectCard,
+  EmptyState, ícones→linha fina) · DESCARTAR (pill aqua por card, AddNew
+  no grid, caixa tracejada do empty, chips internos).
+- Accessibility criteria: AA verificado numericamente (pares §10);
+  focus ring aqua 2px; alvos ≥44px; tab order; aria-labels (CM-018);
+  placeholder legível.
+- 3D pontual: apenas 1 momento (âncora do empty state — asset de vidro
+  escuro com reflexo aqua, ou glifo vetorial se não houver asset); sem
+  glassmorphism em componentes.
+- Differences from rejected design: tabela-resumo no doc (12 mudanças
+  chave: display tipográfico dominante, cards por tom, aqua orçado, zero
+  dados fictícios, zero ruído interno, grid honesto ≤6, metas distintas,
+  correção dos fills brancos etc.).
+- Pendências do mantenedor na direção: 5 (TopBar direita, wordmark vs
+  logo, asset 3D, célula fantasma, promoção de tokens novos).
+
+--------------------------------------------------------------------------------
+REAPROVEITAMENTO E CRITÉRIO DE RETOMADA (§5/§6)
+--------------------------------------------------------------------------------
+- Classificação do M1DR-AUDIT utilizada como base em toda a direção; os
+  componentes funcionais NÃO foram descartados (REFINAR é o caminho dos
+  mestres existentes; correções de bug — fills brancos — apenas em novas
+  cópias na retomada).
+- FigCraft NÃO modificado (nenhum comando de criação/edição executado);
+  React/CSS/Rust intactos; todos os arquivos e backups preservados.
+- Critério de retomada registrado: (1) Content Matrix revisada ✔ (entregue
+  — pendente revisão do mantenedor) · (2) direção visual documentada ✔ ·
+  (3) skills consultadas ✔ · (4) conformidade com identidade oficial ✔ ·
+  (5) lista de componentes a reutilizar/refinar ✔ (§7 da direção) ·
+  (6) aprovação explícita do mantenedor ✖ — GATE ABERTO AGUARDANDO O
+  MANTENEDOR. Após aprovação: retomar SOMENTE Home vazia + Home com
+  projetos; demais telas dependem da aprovação desse padrão.
+
+--------------------------------------------------------------------------------
+VALIDAÇÃO
+--------------------------------------------------------------------------------
+- Consistência documental: script de checagem 6/6 OK (4 arquivos
+  presentes; matrix sem variantes banidas; datas conformes; remoção de
+  ruído explícita; referências cruzadas CM/audit/categorias na direção;
+  4 correções da skill presentes).
+- Baseline full: PASS — 4 passed / 0 failed / 2 skipped.
+- Ferramentas de criação visual: NENHUMA executada.
+- Falha conhecida do harness (separada, sem modificação): app_tests SKIP
+  com mensagem falsa ("sem package.json (app nao implementada)") porque
+  procura apenas package.json na raiz; o app vive em app/ (vitest 9/9 +
+  cargo 7/7 válidos). Documentada em docs/HOOKS.md e M1DR-AUDIT.md;
+  correção PENDENTE de autorização (fora de escopo de UX).
+- Git: main @ cf082a8 (commit do mantenedor); nenhum commit/push do
+  agente; working tree 56 entradas (novos desta tarefa: M1-CONTENT-
+  MATRIX.md, M1-VISUAL-DIRECTION.md, skill corrigida, relatório).
+
+--------------------------------------------------------------------------------
+FINAL
+--------------------------------------------------------------------------------
+- Status: PASS (gate entregue).
+- FigCraft modified: NO · Application code modified: NO.
+- Content ready for review: YES (M1-CONTENT-MATRIX.md — 33 itens, 3
+  pendências de cópia).
+- Visual direction ready for review: YES (M1-VISUAL-DIRECTION.md —
+  Studio Console, 5 pendências).
+- UI construction authorized: NO (exige aprovação explícita; escopo
+  pós-aprovação = apenas Home vazia + Home com projetos).
+- Human approval: PENDING.
+================================================================================

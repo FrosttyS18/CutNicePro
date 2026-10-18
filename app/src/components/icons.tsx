@@ -1,0 +1,211 @@
+/** Ícones vetoriais extraídos do design oficial (FigCraft, handoff 03B).
+ *  Strokes/fills usam currentColor para permitir estados (ativo teal / inativo dim). */
+
+interface IconProps {
+  size?: number;
+  className?: string;
+}
+
+export function IconHome({ size = 24, className }: IconProps) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      className={className}
+      aria-hidden="true"
+    >
+      <path
+        transform="translate(3 3)"
+        d="M18 16.24L18 9.507C18 8.964 17.89 8.428 17.676 7.929C17.462 7.43 17.148 6.981 16.755 6.607L10.378 0.55C10.006 0.197 9.513 0 9 0C8.488 0 7.995 0.197 7.623 0.55L1.245 6.607C0.852 6.981 0.538 7.43 0.324 7.929C0.11 8.428 0 8.964 0 9.507L0 16.24C0 16.77 0.211 17.279 0.586 17.654C0.961 18.029 1.47 18.24 2 18.24L16 18.24C16.53 18.24 17.039 18.029 17.414 17.654C17.789 17.279 18 16.77 18 16.24Z"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        transform="translate(9 13.24)"
+        d="M0 2C0 1.47 0.211 0.961 0.586 0.586C0.961 0.211 1.47 0 2 0L4 0C4.53 0 5.039 0.211 5.414 0.586C5.789 0.961 6 1.47 6 2L6 8L0 8L0 2Z"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+export function IconProjects({ size = 24, className }: IconProps) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      className={className}
+      aria-hidden="true"
+    >
+      <path
+        transform="translate(12 4)"
+        d="M0 4L0 0"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+      />
+      <path
+        transform="translate(8 16)"
+        d="M3 0L0 0"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+      />
+      <path
+        transform="translate(4 4)"
+        d="M1.447 1.106L0 4L0 14.5C0 15.328 0.672 16 1.5 16L14.5 16C15.328 16 16 15.328 16 14.5L16 4L14.553 1.106C14.214 0.428 13.521 0 12.764 0L3.236 0C2.479 0 1.786 0.428 1.447 1.106Z"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+      />
+      <path
+        transform="translate(5 8)"
+        d="M0 0L14 0"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+export function IconSettings({ size = 24, className }: IconProps) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      className={className}
+      aria-hidden="true"
+    >
+      <path
+        transform="translate(2.252 2)"
+        d="M0.004 13.632C0.038 13.309 0.272 13.049 0.741 12.528L1.771 11.375C2.024 11.055 2.203 10.5 2.203 10C2.203 9.5 2.023 8.944 1.772 8.625L0.741 7.472C0.272 6.952 0.038 6.691 0.004 6.368C-0.03 6.045 0.145 5.741 0.495 5.134L0.989 4.277C1.362 3.629 1.549 3.305 1.866 3.177C2.184 3.047 2.543 3.149 3.261 3.353L4.481 3.696C4.94 3.802 5.421 3.742 5.84 3.527L6.177 3.333C6.536 3.103 6.812 2.763 6.965 2.365L7.299 1.368C7.519 0.708 7.629 0.378 7.889 0.188C8.152 0 8.5 0 9.193 0L10.308 0C11.003 0 11.35 0 11.611 0.189C11.873 0.378 11.982 0.708 12.202 1.368L12.536 2.365C12.689 2.763 12.965 3.103 13.324 3.333L13.661 3.527C14.08 3.742 14.561 3.802 15.019 3.697L16.239 3.353C16.958 3.149 17.317 3.047 17.635 3.176C17.952 3.306 18.139 3.629 18.512 4.277L19.006 5.134C19.356 5.741 19.531 6.044 19.496 6.368C19.463 6.691 19.229 6.951 18.76 7.472L17.73 8.625C17.477 8.944 17.298 9.5 17.298 10C17.298 10.5 17.478 11.056 17.729 11.375L18.76 12.528C19.229 13.048 19.463 13.309 19.497 13.632C19.531 13.955 19.356 14.259 19.006 14.866L18.512 15.723C18.139 16.371 17.952 16.695 17.635 16.823C17.317 16.953 16.958 16.851 16.24 16.647L15.02 16.304C14.561 16.198 14.079 16.258 13.66 16.473L13.324 16.667C12.964 16.897 12.689 17.237 12.536 17.635L12.202 18.632C11.982 19.292 11.872 19.622 11.612 19.812C11.35 20 11.002 20 10.308 20L9.194 20C8.499 20 8.152 20 7.891 19.811C7.629 19.622 7.519 19.293 7.3 18.633"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+      />
+      <path
+        transform="translate(2.248 7.994)"
+        d="M0.489 10.786C1.569 9.706 5.241 6.07 5.601 5.65C5.981 5.206 5.673 4.606 5.857 2.746C5.945 1.846 6.139 1.172 6.693 0.67C7.353 0.046 7.893 0.046 9.753 0.004C11.373 0.046 11.565 -0.134 11.733 0.286C11.853 0.586 11.493 0.766 11.061 1.246C10.101 2.206 9.537 2.686 9.483 2.986C9.093 4.306 10.629 5.086 11.469 4.246C11.787 3.928 13.257 2.446 13.401 2.326C13.509 2.23 13.768 2.234 13.893 2.386C14.001 2.492 14.013 2.506 14.001 2.986C13.99 3.43 13.995 4.068 13.996 4.726C13.998 5.578 13.953 6.526 13.593 7.006C12.873 8.086 11.673 8.146 10.593 8.194C9.573 8.254 8.733 8.146 8.469 8.338C8.253 8.446 7.113 9.646 5.733 11.026L3.273 13.486C1.233 15.106 -1.011 12.586 0.489 10.786Z"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
+
+export function IconBreadLogo({ size = 16, className }: IconProps) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 16 16"
+      fill="none"
+      className={className}
+      aria-hidden="true"
+    >
+      <path
+        transform="translate(1.333 1.333)"
+        d="M0.5 3.333C0.5 1.769 1.769 0.5 3.333 0.5L10 0.5C11.565 0.5 12.833 1.769 12.833 3.333L12.833 10C12.833 11.565 11.565 12.833 10 12.833L3.333 12.833C1.769 12.833 0.5 11.565 0.5 10Z"
+        stroke="currentColor"
+        strokeWidth="1"
+      />
+      <path transform="translate(5.333 1.333)" d="M0 0L0.667 0L0.667 13.333L0 13.333Z" fill="currentColor" />
+    </svg>
+  );
+}
+
+export function IconHeart({ size = 16, className }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 16 16" fill="none" className={className} aria-hidden="true">
+      <path
+        transform="translate(1.25 1.953)"
+        d="M13.172 2.478C12.962 1.993 12.66 1.554 12.283 1.184C11.905 0.814 11.459 0.52 10.97 0.317C10.463 0.107 9.919 -0.001 9.37 0C8.6 0 7.848 0.211 7.195 0.609C7.039 0.705 6.891 0.809 6.75 0.923C6.609 0.809 6.461 0.705 6.305 0.609C5.652 0.211 4.9 0 4.13 0C3.575 0 3.037 0.106 2.53 0.317C2.039 0.52 1.597 0.813 1.217 1.184C0.839 1.553 0.537 1.993 0.328 2.478C0.111 2.983 0 3.519 0 4.07C0 4.591 0.106 5.133 0.317 5.684C0.494 6.145 0.747 6.623 1.07 7.106C1.583 7.87 2.287 8.667 3.162 9.475C4.612 10.814 6.048 11.739 6.109 11.777L6.48 12.014C6.644 12.119 6.855 12.119 7.019 12.014L7.389 11.777C7.45 11.738 8.884 10.814 10.336 9.475C11.211 8.667 11.916 7.87 12.428 7.106C12.752 6.623 13.006 6.145 13.181 5.684C13.392 5.133 13.498 4.591 13.498 4.07C13.5 3.519 13.389 2.983 13.172 2.478Z"
+        fill="currentColor"
+      />
+    </svg>
+  );
+}
+
+export function IconArchiveBox({ size = 22, className }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 22 22" fill="none" className={className} aria-hidden="true">
+      <path
+        transform="translate(8.479 10.312)"
+        d="M4.354 1.375C4.537 1.375 4.711 1.303 4.84 1.174C4.969 1.045 5.042 0.87 5.042 0.688C5.042 0.505 4.969 0.33 4.84 0.201C4.711 0.072 4.537 0 4.354 0L0.688 0C0.505 0 0.33 0.072 0.201 0.201C0.072 0.33 0 0.505 0 0.688C0 0.87 0.072 1.045 0.201 1.174C0.33 1.303 0.505 1.375 0.688 1.375L4.354 1.375Z"
+        fill="currentColor"
+      />
+      <path
+        transform="translate(1.146 2.062)"
+        fillRule="evenodd"
+        d="M2.861 0.001L16.848 0.001C17.21 0.001 17.523 0.001 17.781 0.022C18.053 0.044 18.323 0.093 18.583 0.225C18.971 0.423 19.287 0.739 19.485 1.127C19.617 1.387 19.666 1.657 19.688 1.93C19.709 2.186 19.709 2.5 19.709 2.862L19.709 3.098C19.709 3.46 19.709 3.773 19.688 4.031C19.674 4.309 19.605 4.581 19.485 4.833C19.287 5.221 18.972 5.537 18.584 5.735C18.502 5.776 18.419 5.81 18.334 5.836L18.334 12.818C18.334 13.563 18.334 14.164 18.295 14.651C18.254 15.152 18.166 15.592 17.959 15.999C17.63 16.646 17.104 17.172 16.457 17.502C16.05 17.709 15.61 17.795 15.109 17.836C14.623 17.876 14.021 17.876 13.276 17.876L6.433 17.876C5.688 17.876 5.087 17.876 4.6 17.836C4.099 17.795 3.659 17.708 3.252 17.501C2.605 17.172 2.079 16.646 1.749 15.999C1.542 15.592 1.456 15.152 1.414 14.651C1.375 14.164 1.375 13.563 1.375 12.818L1.375 5.836C1.29 5.809 1.207 5.775 1.127 5.735C0.738 5.537 0.422 5.221 0.225 4.833C0.104 4.581 0.035 4.309 0.021 4.031C0 3.774 0 3.46 0 3.098L0 2.861C0 2.499 0 2.186 0.021 1.929C0.035 1.65 0.104 1.378 0.225 1.127C0.422 0.738 0.738 0.422 1.127 0.225C1.378 0.104 1.65 0.035 1.929 0.021C2.185 0 2.499 0.001 2.861 0.001ZM16.958 5.958L16.958 12.787C16.958 13.568 16.958 14.114 16.923 14.538C16.889 14.954 16.825 15.193 16.734 15.374C16.536 15.762 16.22 16.077 15.833 16.275C15.651 16.367 15.412 16.431 14.996 16.465C14.572 16.499 14.027 16.5 13.246 16.5L6.462 16.5C5.681 16.5 5.136 16.5 4.712 16.465C4.296 16.43 4.057 16.367 3.877 16.275C3.488 16.078 3.173 15.762 2.975 15.374C2.883 15.193 2.819 14.954 2.785 14.537C2.751 14.114 2.75 13.568 2.75 12.787L2.75 5.959L16.958 5.958ZM2.04 1.392C1.853 1.408 1.784 1.434 1.751 1.451C1.621 1.517 1.516 1.622 1.45 1.752C1.432 1.786 1.407 1.854 1.391 2.041C1.376 2.236 1.375 2.492 1.375 2.888L1.375 3.072C1.375 3.468 1.375 3.724 1.391 3.919C1.407 4.106 1.433 4.175 1.45 4.208C1.516 4.338 1.621 4.443 1.751 4.509C1.785 4.527 1.853 4.552 2.04 4.568C2.235 4.583 2.491 4.584 2.887 4.584L16.821 4.584C17.217 4.584 17.473 4.584 17.668 4.568C17.855 4.552 17.924 4.526 17.957 4.509C18.087 4.443 18.192 4.338 18.258 4.208C18.276 4.174 18.301 4.106 18.317 3.919C18.332 3.724 18.333 3.468 18.333 3.072L18.333 2.888C18.333 2.492 18.333 2.236 18.317 2.041C18.301 1.854 18.276 1.785 18.258 1.752C18.192 1.622 18.087 1.517 17.957 1.451C17.924 1.433 17.855 1.408 17.668 1.392C17.386 1.377 17.103 1.371 16.821 1.376L2.887 1.376C2.491 1.376 2.235 1.376 2.04 1.392Z"
+        fill="currentColor"
+      />
+    </svg>
+  );
+}
+
+export function IconPlus({ size = 12, className }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 12 12" fill="none" className={className} aria-hidden="true">
+      <path d="M6 1V11M1 6H11" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+/** Chevron duplo à esquerda — recolher barra lateral (stroke 2, nítido). */
+export function IconPanelCollapse({ size = 16, className }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className} aria-hidden="true">
+      <path
+        d="M11 17l-5-5 5-5"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M18 17l-5-5 5-5"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+/** Chevron duplo à direita — expandir barra lateral (stroke 2, nítido). */
+export function IconPanelExpand({ size = 16, className }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className} aria-hidden="true">
+      <path
+        d="M13 17l5-5-5-5"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M6 17l5-5-5-5"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}

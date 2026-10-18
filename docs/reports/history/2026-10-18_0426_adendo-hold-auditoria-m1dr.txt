@@ -1,0 +1,117 @@
+================================================================================
+CUTNICEPRO — ZCODE REPORT
+================================================================================
+TAREFA: Adendo pós-HOLD — Auditoria de revisão do design M1 existente
+(classificação REUTILIZAR / REFINAR / DESCARTAR DO DESIGN FUTURO), sem
+recriar componentes, sem wireframes, sem tocar React/Rust/Harness/FigCraft.
+DATA: 2026-10-18 (04h08–04h26)
+STATUS: PASS — auditoria concluída e persistida; skill de UX Writing criada
+(com aviso de reinício); falha do harness documentada (não corrigida);
+nenhum artefato visual criado/modificado; interface segue NÃO aprovada.
+AGUARDANDO aprovação e direcionamentos do mantenedor.
+
+--------------------------------------------------------------------------------
+1. EXECUÇÃO RESUMIDA
+--------------------------------------------------------------------------------
+- HOLD respeitado: nenhuma camada do FigCraft foi criada, alterada ou
+  apagada; nenhuma linha de React/CSS/Rust tocada; harness intacto.
+- Fontes da auditoria: (a) inspeção estrutural das camadas (registro de
+  criação da M1DR + get_node); (b) análise VISION das 2 evidências do hold;
+  (c) DNA visual extraído por VISION das 5 referências do mantenedor
+  (extraídas em PNG do ZIP interno do .figcraft — export direto das imagens
+  grandes dava timeout); (d) Brand Foundation + tokens.
+- Entregas: docs/design/M1DR-AUDIT.md (classificação completa nas 3
+  categorias exigidas) · .zcode/skills/cutnicepro-ux-writing/ (nova skill —
+  ver aviso de REINÍCIO) · nota da falha do harness em docs/HOOKS.md
+  (somente documentação) · este relatório.
+
+--------------------------------------------------------------------------------
+M1 DESIGN AUDIT (síntese — íntegra em docs/design/M1DR-AUDIT.md)
+--------------------------------------------------------------------------------
+- DNA das referências (5/5 analisadas; ref-01/05 com UI, 02–04 marca 3D):
+  preto profundo + grotesca leve + UM acento saturado por tela (nunca em
+  massa) + contraste extremo de escala (display vs micro-caps com
+  letterspacing) + bento arredondado respirado + profundidade por
+  material/3D (não por sombras de UI) + microtexto curto e declarativo.
+  12 critérios objetivos de alinhamento extraídos (checklist no doc).
+- REUTILIZAR (10 itens): mecânica mestre/instância/variante (sets 957/970/
+  981/994 com overrides e variant-swap funcionando); tokens oficiais onde
+  aplicados; auto layout + paddings consistentes; matriz de estados A–E
+  (espelha o app real); esqueletos de ProjectCard/TextInput/StatusFeedback/
+  Loading/TopBar; escala de raio 8/12/16; grid 3-col; AppShell como padrão.
+- REFINAR (16 itens, cada um com evidência e direção): contraste do texto
+  de apoio (#6F7276 ≈3,4:1 sobre #231F20 — abaixo de AA; cor off-token —
+  promover a token com ≥4,5:1); aqua em excesso (~12 pontos vs "um acento
+  por tela" das refs — Ghost como default, Primary só no CTA principal);
+  hierarquia do card (pill "Abrir" vence o título — card inteiro clicável,
+  metas distinguindo criação vs acesso); UX Writing (4 rótulos para criar;
+  local-first 2× no dialog; "Revisar" vago); empty state (fora do centro
+  ótico; copy promete features futuras); dialog C (acima do centro; overlay
+  escurece a TopBar sem padrão); grid B (metade inferior vazia; AddNew
+  misturado no grid); tela D (dropzone sem conteúdo interno); ícones
+  (glifos tipográficos → line icons finos); datas (formato único pt-BR,
+  regra relativo/absoluto); placeholder itálico; nomes técnicos dos
+  mestres; AppShell/Modal formais.
+- DESCARTAR DO DESIGN FUTURO (11 itens — registros históricos PRESERVADOS
+  no documento até autorização de limpeza): metas fictícias "· N cortes"
+  (feature M4 renderizada como real); copy do empty state prometendo
+  importar/legendas; 3 rótulos excedentes de criação; subtítulo local-first
+  duplicado; formato "18 out 2026"; contador "6 projetos" vs 5 reais; FILL
+  BRANCO default em frames sem fill (bug estrutural confirmado: logo do
+  TopBar 1008, spacer full-width 1012 — a "linha clara" da barra, frames
+  externos dos TextInput 958/959, spacers do Status 992/993, rótulo da
+  área 945 — corrigir apenas em novas cópias, NADA tocado no hold); pills
+  "Abrir" 5×; glifos-tipográficos-como-ícones; "Revisar"; placa branca do
+  logotipo (logo definitivo é decisão de marca pendente).
+- Validação cruzada: nenhum apontamento do mantenedor foi contrariado —
+  todos confirmados por inspeção estrutural e/ou análise visual.
+
+--------------------------------------------------------------------------------
+UX WRITING SKILL (instalada — AVISO DE REINÍCIO)
+--------------------------------------------------------------------------------
+- Criada: .zcode/skills/cutnicepro-ux-writing/SKILL.md — princípios (um
+  conceito/uma palavra; curto e declarativo; honestidade de estado; erro =
+  causa+ação; sentence case), glossário oficial (ação de criar = "Novo
+  projeto" ÚNICO; cancelar = "Cancelar"; etc.), padrões (datas relativo/
+  absoluto, contadores, empty states, diálogos, validação, placeholders) e
+  checklist de anti-padrões. Baseline validou o frontmatter (16 skills OK).
+- **REINÍCIO OBRIGATÓRIO: a skill só será carregada/invocável após
+  reiniciar o ZCode. Não depender dela nesta sessão.**
+
+--------------------------------------------------------------------------------
+HARNESS (falha documentada — NÃO alterada)
+--------------------------------------------------------------------------------
+- check_app_tests procura package.json apenas na RAIZ; o app vive em app/
+  (vitest 9/9 + cargo 7/7 válidos). Baseline reporta SKIP com mensagem
+  FALSA ("app nao implementada"). Nota permanente adicionada a
+  docs/HOOKS.md + M1DR-AUDIT.md; correção proposta fica PENDENTE de
+  autorização (fora do escopo de tarefa de UX, conforme adendo).
+- Baseline full desta tarefa: PASS — 4 passed / 0 failed / 2 skipped
+  (skills_frontmatter agora 16/16 OK, incluindo a nova).
+
+--------------------------------------------------------------------------------
+FIGCRAFT / GIT
+--------------------------------------------------------------------------------
+- FigCraft: INTACTO desde o checkpoint (salvo + backup
+  cutnicepro-hold-m1dr-0404); nesta tarefa apenas LEITURAS (get_node) e
+  extração das imagens de referência do ZIP (cópia para
+  docs/reports/evidence/m1dr-audit/). Zero modificações.
+- Git: main @ cf082a8 (commit do mantenedor; nenhum commit/push do
+  agente). Working tree: 53 entradas (47 anteriores + novos: M1DR-AUDIT.md,
+  skill, nota HOOKS.md, refs de auditoria, este relatório). Nada descartado.
+- Novos arquivos da tarefa: docs/design/M1DR-AUDIT.md ·
+  .zcode/skills/cutnicepro-ux-writing/SKILL.md · docs/HOOKS.md (nota) ·
+  docs/reports/evidence/m1dr-audit/ref-01..05.png (+ nada além).
+
+--------------------------------------------------------------------------------
+FINAL
+--------------------------------------------------------------------------------
+- Status: PASS (auditoria entregue; hold mantido).
+- Wireframes/telas: NENHUM criado (proibido pelo adendo e não executado).
+- Interface M1: continua NÃO aprovada; nenhuma marcação de aprovação feita.
+- Próxima ação: AGUARDAR aprovação e direcionamentos do mantenedor — a
+  retomada do design deve partir da classificação REFINAR/DESCARTAR e dos
+  12 critérios de alinhamento em docs/design/M1DR-AUDIT.md.
+- Lembrete operacional: reiniciar o ZCode para ativar a skill
+  cutnicepro-ux-writing antes de qualquer trabalho de redação de UI.
+================================================================================

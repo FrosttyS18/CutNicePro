@@ -207,3 +207,260 @@ mod tests {
         assert!(store.create_project("outro").is_err());
     }
 }
+
+// ---------------------------------------------------------------------------
+// Coleções (Fase 03B) — arquivo próprio `collections.json`, aditivo e
+// retrocompatível: `projects.json` e os comandos M1 permanecem intactos.
+// ---------------------------------------------------------------------------
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub struct CollectionMeta {
+    pub id: String,
+    pub name: String,
+    pub icon: String,
+    pub created_at_ms: u64,
+    pub updated_at_ms: u64,
+    pub project_ids: Vec<String>,
+}
+
+pub const COLLECTION_NAME_MAX: usize = 80;
+
+pub fn valid_collection_icon(icon: &str) -> bool {
+    icon == "heart" || icon == "archive-box"
+}
+
+pub struct CollectionStore {
+    path: PathBuf,
+}
+
+impl CollectionStore {
+    /// Abre (ou cria) o store em `<base>/cutnicepro/collections.json`.
+    pub fn open(base: &Path) -> Result<CollectionStore, String> {
+        let dir = base.join("cutnicepro");
+        fs::create_dir_all(&dir)
+            .map_err(|e| format!("não foi possível criar a pasta de dados: {e}"))?;
+        Ok(CollectionStore {
+            path: dir.join("collections.json"),
+        })
+    }
+
+    pub fn load(&self) -> Result<Vec<CollectionMeta>, String> {
+        if !self.path.exists() {
+            return Ok(Vec::new());
+        }
+        let raw = fs::read_to_string(&self.path)
+            .map_err(|e| format!("falha ao ler {}: {e}", self.path.display()))?;
+        serde_json::from_str(&raw)
+            .map_err(|e| format!("arquivo de coleções corrompido: {e}"))
+    }
+
+    fn save(&self, collections: &[CollectionMeta]) -> Result<(), String> {
+        let tmp = self.path.with_extension("json.tmp");
+        let bak = self.path.with_extension("json.bak");
+        let body = serde_json::to_string_pretty(collections)
+            .map_err(|e| format!("falha ao serializar coleções: {e}"))?;
+        fs::write(&tmp, body).map_err(|e| format!("falha ao gravar dados (disco?): {e}"))?;
+        if self.path.exists() {
+            fs::rename(&self.path, &bak)
+                .map_err(|e| format!("falha ao preservar backup: {e}"))?;
+        }
+        fs::rename(&tmp, &self.path)
+            .map_err(|e| format!("falha ao finalizar gravação: {e}"))?;
+        let _ = fs::remove_file(&bak);
+        Ok(())
+    }
+
+    fn unique_name(existing: &[CollectionMeta], want: &str) -> String {
+        let taken: Vec<&str> = existing.iter().map(|c| c.name.as_str()).collect();
+        if !taken.contains(&want) {
+            return want.to_string();
+        }
+        for n in 2..u32::MAX {
+            let cand = format!("{want} ({n})");
+            if !taken.contains(&cand.as_str()) {
+                return cand;
+            }
+        }
+        want.to_string()
+    }
+
+    pub fn create_collection(&self, raw_name: &str, icon: &str) -> Result<CollectionMeta, String> {
+        let name = raw_name.trim();
+        if name.is_empty() {
+            return Err("informe um nome para a coleção".into());
+        }
+        if name.chars().count() > COLLECTION_NAME_MAX {
+            return Err(format!(
+                "nome muito longo (máximo {COLLECTION_NAME_MAX} caracteres)"
+            ));
+        }
+        if !valid_collection_icon(icon) {
+            return Err("ícone de coleção inválido".into());
+        }
+        let mut collections = self.load()?;
+        let now = now_ms();
+        let collection = CollectionMeta {
+            id: uuid::Uuid::new_v4().to_string(),
+            name: Self::unique_name(&collections, name),
+            icon: icon.to_string(),
+            created_at_ms: now,
+            updated_at_ms: now,
+            project_ids: Vec::new(),
+        };
+        collections.push(collection.clone());
+        self.save(&collections)?;
+        Ok(collection)
+    }
+
+    fn position(&self, collections: &[CollectionMeta], id: &str) -> Result<usize, String> {
+        collections
+            .iter()
+            .position(|c| c.id == id)
+            .ok_or_else(|| "coleção não encontrada".to_string())
+    }
+
+    /// Adiciona um projeto à coleção (idempotente: duplicado não altera nada,
+    /// mas ainda atualiza `updated_at_ms`? Não — duplicado é no-op completo).
+    pub fn add_project(
+        &self,
+        collection_id: &str,
+        project_id: &str,
+        known_project_ids: &[String],
+    ) -> Result<CollectionMeta, String> {
+        if !known_project_ids.iter().any(|p| p == project_id) {
+            return Err("projeto não encontrado".to_string());
+        }
+        let mut collections = self.load()?;
+        let idx = self.position(&collections, collection_id)?;
+        if collections[idx].project_ids.iter().any(|p| p == project_id) {
+            return Ok(collections[idx].clone());
+        }
+        collections[idx].project_ids.push(project_id.to_string());
+        collections[idx].updated_at_ms = now_ms();
+        let out = collections[idx].clone();
+        self.save(&collections)?;
+        Ok(out)
+    }
+
+    pub fn remove_project(
+        &self,
+        collection_id: &str,
+        project_id: &str,
+    ) -> Result<CollectionMeta, String> {
+        let mut collections = self.load()?;
+        let idx = self.position(&collections, collection_id)?;
+        let before = collections[idx].project_ids.len();
+        collections[idx].project_ids.retain(|p| p != project_id);
+        if collections[idx].project_ids.len() != before {
+            collections[idx].updated_at_ms = now_ms();
+        }
+        let out = collections[idx].clone();
+        self.save(&collections)?;
+        Ok(out)
+    }
+}
+
+#[cfg(test)]
+mod collection_tests {
+    use super::*;
+
+    fn temp_collection_store(tag: &str) -> CollectionStore {
+        let base = std::env::temp_dir().join(format!(
+            "cnp-03b-test-{tag}-{}",
+            uuid::Uuid::new_v4()
+        ));
+        CollectionStore::open(&base).expect("collection store init")
+    }
+
+    fn project_ids(names: &[(&str, &str)]) -> Vec<String> {
+        names.iter().map(|(id, _)| id.to_string()).collect()
+    }
+
+    #[test]
+    fn create_collection_persists_across_reopen() {
+        let store = temp_collection_store("persist");
+        let c = store.create_collection("Mr beast", "archive-box").unwrap();
+        assert_eq!(c.name, "Mr beast");
+        assert_eq!(c.icon, "archive-box");
+        assert!(c.project_ids.is_empty());
+        let store2 = CollectionStore {
+            path: store.path.clone(),
+        };
+        let list = store2.load().unwrap();
+        assert_eq!(list.len(), 1);
+        assert_eq!(list[0].id, c.id);
+    }
+
+    #[test]
+    fn empty_name_and_bad_icon_are_rejected() {
+        let store = temp_collection_store("validate");
+        assert!(store.create_collection("", "heart").is_err());
+        assert!(store.create_collection("   ", "heart").is_err());
+        assert!(store.create_collection("Nome", "star").is_err());
+    }
+
+    #[test]
+    fn duplicate_names_get_unique_suffix() {
+        let store = temp_collection_store("dup");
+        store.create_collection("Favoritos", "heart").unwrap();
+        let b = store.create_collection("Favoritos", "heart").unwrap();
+        assert_eq!(b.name, "Favoritos (2)");
+    }
+
+    #[test]
+    fn add_and_remove_project_updates_persistence() {
+        let store = temp_collection_store("addremove");
+        let c = store.create_collection("Entrevistas", "archive-box").unwrap();
+        let ids = project_ids(&[("p1", "A"), ("p2", "B")]);
+
+        let updated = store.add_project(&c.id, "p1", &ids).unwrap();
+        assert_eq!(updated.project_ids, vec!["p1".to_string()]);
+
+        // idempotente: adicionar de novo não duplica
+        let again = store.add_project(&c.id, "p1", &ids).unwrap();
+        assert_eq!(again.project_ids.len(), 1);
+
+        let removed = store.remove_project(&c.id, "p1").unwrap();
+        assert!(removed.project_ids.is_empty());
+
+        let store2 = CollectionStore {
+            path: store.path.clone(),
+        };
+        let list = store2.load().unwrap();
+        assert!(list[0].project_ids.is_empty(), "remoção persistida");
+    }
+
+    #[test]
+    fn add_unknown_project_or_collection_is_error() {
+        let store = temp_collection_store("unknown");
+        let c = store.create_collection("X", "heart").unwrap();
+        let ids = project_ids(&[("p1", "A")]);
+        assert!(store.add_project(&c.id, "fantasma", &ids).is_err());
+        assert!(store.add_project("id-inexistente", "p1", &ids).is_err());
+        assert!(store.remove_project("id-inexistente", "p1").is_err());
+    }
+
+    #[test]
+    fn corrupt_collections_file_is_reported() {
+        let store = temp_collection_store("corrupt");
+        store.create_collection("ok", "heart").unwrap();
+        fs::write(&store.path, "{ não é json").unwrap();
+        let err = store.load().unwrap_err();
+        assert!(err.contains("corrompido"), "erro explica a causa: {err}");
+    }
+
+    #[test]
+    fn collections_do_not_touch_projects_file() {
+        let base = std::env::temp_dir()
+            .join(format!("cnp-03b-test-isolate-{}", uuid::Uuid::new_v4()));
+        let projects = Store::open(&base).unwrap();
+        let collections = CollectionStore::open(&base).unwrap();
+        projects.create_project("Vídeo 1").unwrap();
+        collections.create_collection("Coleção 1", "heart").unwrap();
+        // projects.json permanece íntegro e independente
+        let plist = projects.load().unwrap();
+        assert_eq!(plist.len(), 1);
+        assert_eq!(plist[0].name, "Vídeo 1");
+    }
+}

@@ -1,0 +1,177 @@
+================================================================================
+CUTNICEPRO — ZCODE REPORT — CHECKPOINT DE INTERRUPÇÃO (HOLD)
+================================================================================
+TAREFA: M1 Design Recovery + FigCraft UI Foundation — INTERROMPIDA POR DECISÃO
+DO MANTENEDOR (hold recebido durante a construção das telas, antes da validação)
+DATA: 2026-10-18 (04h00–04h06)
+STATUS: HOLD — execução visual PARADA; tudo preservado; NADA marcado como
+visualmente aprovado; aguardando próxima instrução do mantenedor.
+
+--------------------------------------------------------------------------------
+1. CONTEXTO DA INTERRUPÇÃO
+--------------------------------------------------------------------------------
+- O mantenedor avaliou os componentes e telas M1 apresentados no FigCraft e
+  identificou problemas de UX Writing, contraste, hierarquia, composição e
+  alinhamento às referências — reprovação registrada.
+- Ordem recebida: PARAR criação; preservar integralmente código funcional M1,
+  documentos, alterações do FigCraft e arquivos não commitados; não apagar/
+  reconstruir; não alterar React/Rust; registrar estado; NÃO marcar a
+  interface como visualmente aprovada; aguardar.
+- Ações executadas APÓS o hold (apenas preservação/registro, sem criação
+  visual): salvar o documento FigCraft (work estava dirty e seria perdido em
+  crash), backup do nativo, export de 2 PNGs de evidência do estado, coleta
+  git/baseline, e este relatório.
+
+--------------------------------------------------------------------------------
+2. ESTADO DO FIGCRAFT (SALVAMENTO E CONTEÚDO)
+--------------------------------------------------------------------------------
+- Documento: design/cutnicepro-fase01-propostas.figcraft — SALVO no momento
+  do hold (5.112.482 bytes, 2026-10-18 04:04). Antes do hold o estado estava
+  dirty (não salvo); salvar foi decisão de PRESERVAÇÃO (evitar perda), não de
+  progressão visual.
+- Backup pós-hold: design/backups/cutnicepro-hold-m1dr-0404.figcraft
+  (idêntico ao salvo). Backups anteriores intactos (pre-02A2/02A3/02A4/02A5).
+- Página UI - designer: propostas A (frame 2) e B (frame 154) INTACTAS e
+  preservadas como referências históricas. Páginas roadmap e Referencias
+  intactas.
+- Nova área criada na fase interrompida (antes do hold): rótulo
+  "CUTNICEPRO — MVP M1 / HOME EXPERIENCE" (frame 945) + componentes + telas
+  (IDs abaixo) — TODO o conteúdo permanece no documento, NADA foi apagado.
+
+COMPONENTES MESTRES/SETS CRIADOS (página UI - designer):
+- Button — set 957, variantes Variant=Primary (946) / Ghost (947)
+- IconButton — 948 (40×40, stroke #3A3A3C, glifo ⋯)
+- TextInput — set 970, variantes State=Default (958) / Error (959)
+- ProjectCard — set 981, variantes Variant=Default (971) / AddNew (972,
+  tracejado); card 432×152, auto layout vertical, pill "Abrir" aqua
+- StatusFeedback — set 994, variantes Variant=Error (982) / Info (983)
+- EmptyState — 995 (560×380, glifo play aqua, CTA "Criar primeiro projeto")
+- LoadingState — 996 (skeleton 432×152)
+- TopBar — 1007 (1440×64, logo Cut/Nice/Pro, chips M1·protótipo visual e
+  v0.1.0, borda inferior #1F1F1F)
+- Correções aplicadas aos mestres durante a construção: fill do frame
+  "actions" do ProjectCard corrigido de branco para #231F20; dashes no
+  AddNew e no dropzone de D.
+- OBSERVAÇÃO DE GOVERNANÇA: os componentes/mestres estão com os nomes
+  técnicos internos (m-button-primary etc.); renomeação semântica dos
+  mestres/sets era trabalho pendente da fase interrompida.
+
+TELAS (frames 1440×900, fill #000000):
+- M1-A · Home — sem projetos (1017): CONCLUÍDA — TopBar (instância 1022) +
+  EmptyState (instância 1072) centrado.
+- M1-B · Home — com projetos (1018): CONCLUÍDA — TopBar (1032), título
+  "Projetos" + contador, Button Primary (1081, override width 144), grid
+  3×2 com 6 instâncias de ProjectCard: 5 Default com overrides de nome/data
+  (Podcast — Ep. 12; Reels — Ginástica RTS; Vlog — Viagem PC; Entrevista —
+  Marco Silva; Cortes — Stand-up) + 1 AddNew (1118, variant trocada via
+  instance.setProperties).
+- M1-C · Criar projeto (1019): CONCLUÍDA — TopBar (1042), overlay 72%
+  (1127), dialog 480×360 (1128) com título/subtítulo local-first, instância
+  TextInput Default (1131) e ações Ghost "Cancelar" (1137) + Primary
+  "Criar" (1139, texto sobrescrito de "Novo projeto").
+- M1-D · Projeto aberto (1020): PARCIAL (~60%) — TopBar (1052) +
+  breadcrumb "← Projetos" (1141) + título "Podcast — Ep. 12" (1142) + meta
+  (1143) + dropzone tracejado 992×420 (1144) criados; FALTAM: ícone interno
+  do dropzone, textos "Importar mídia"/nota M2, pill de ação e nota
+  inferior; painel lateral de metadados não iniciado.
+- M1-E · Estados auxiliares (1021): NÃO INICIADA (apenas frame vazio +
+  TopBar instância 1062).
+
+INSTÂNCIAS REAIS CRIADAS (componentes mestres em uso): 5× TopBar, 2× Button
+(1 Ghost + 1 Primary com override), 1× Button Primary extra em B, 6×
+ProjectCard, 1× EmptyState, 1× TextInput — instâncias com overrides de
+characters confirmados funcionando (B) e variant swap confirmado (AddNew).
+
+EVIDÊNCIAS DO ESTADO NA INTERRUPÇÃO (export pós-hold, sem alterações):
+- docs/reports/evidence/m1dr-hold/m1-telas-estado-na-interrupcao.png
+  (telas A–E; D parcial; E vazia)
+- docs/reports/evidence/m1dr-hold/m1-componentes-estado-na-interrupcao.png
+  (todos os mestres/sets)
+- design/exports/m1-components.png (export anterior ao hold)
+
+--------------------------------------------------------------------------------
+3. TRABALHOS INCOMPLETOS DA FASE INTERROMPIDA
+--------------------------------------------------------------------------------
+1) Tela D (projeto aberto) — conteúdo interno do dropzone + painel de meta.
+2) Tela E (estados auxiliares) — Loading/Erro persistência/Validação/
+   Recuperação (instâncias de LoadingState 996 e StatusFeedback 994).
+3) Revisão de UX Writing/contraste/hierarquia/composição/alinhamento às
+   referências — MOTIVO DA REPROVAÇÃO; exige redirecionamento do mantenedor
+   (a corrigir na retomada, APÓS novas instruções).
+4) Renomeação semântica dos mestres/sets (nomes técnicos atuais).
+5) AppShell e Modal como mestres próprios — na fase interrompida foram
+   compostos por padrão (TopBar instância + conteúdo; dialog composto em C);
+   decisão de componentização formal ficou pendente.
+6) Validação visual completa (VISION + comparação com referências da página
+   Referencias — 5 imagens) — NÃO EXECUTADA; nenhuma aprovação declarada.
+7) Handoff REUTILIZAR/REFATORAR/CRIAR (mapeamento FigCraft↔React) — esboço
+   da auditoria de código feito (contagens abaixo), mapeamento formal
+   pendente.
+8) Product Design Implementation Gate no AGENTS.md — NÃO aplicado (item da
+   tarefa interrompida).
+9) Registro ART-008 (Home Experience) no PRODUCT-BRAIN §10 — NÃO aplicado.
+10) Relatório final da fase — substituído por este checkpoint.
+
+AUDITORIA DE CÓDIGO M1 (concluída antes do hold — base do handoff futuro):
+- Código autoral: 474 linhas TS/TSX (UI, sem testes) + 428 CSS (tokens+global)
+  + 261 Rust (src-tauri, incl. 83 de testes) + 85 testes TS = ~1.248 linhas.
+- Config: 142 linhas (package.json, tsconfig, vite, index.html, tauri.conf,
+  Cargo.toml). Gerado/deps: node_modules 117 MB, dist 265 KB, src-tauri/
+  target 4,0 GB, ícones 56 arquivos — contabilizados à parte, não são
+  código autoral a reescrever.
+- Contratos IPC (list/create/open_project), persistência JSON atômica e
+  testes (cargo 7/7, vitest 9/9) — INTACTOS e preservados; NENHUMA linha de
+  React/CSS/Rust foi alterada nesta fase.
+
+--------------------------------------------------------------------------------
+4. ARQUIVOS ALTERADOS / ESTADO GERAL (além do FigCraft)
+--------------------------------------------------------------------------------
+- NESTA FASE INTERROMPIDA (M1 Design Recovery): somente o documento FigCraft
+  (salvo + backup) e os 3 PNGs de evidência; nenhum .md/.ts/.rs/.css
+  modificado após o início da fase.
+- Fases anteriores ainda não commitadas (preservadas): docs/product/*
+  (PRD/DECISIONS/BUSINESS-RULES/USER-JOURNEYS/BACKLOG/TRACEABILITY/BRAIN com
+  updates Fase 03), AGENTS.md, .gitignore, docs/portfolio/, design/exports/,
+  design/flow-v2/, docs/reports/ (histórico+LATEST), tools/ (audit/flow/e2e),
+  docs/reports/evidence/m1/.
+- Aplicativo M1 (app/) e evidências E2E: ver Git abaixo — COMMITADOS PELO
+  MANTENEDOR durante esta fase.
+
+--------------------------------------------------------------------------------
+GIT
+--------------------------------------------------------------------------------
+- Branch: main · HEAD: cf082a8 "feat(app): scaffold Tauri MVP shell with
+  local project persistence (M1)" — COMMIT REALIZADO PELO MANTENEDOR
+  (observado durante o checkpoint; HEAD anterior era 80f578e; nenhum commit
+  foi feito pelo agente).
+- Working tree: 47 entradas modificadas/não rastreadas (documentos das fases
+  02A–03 + artefatos de design + relatórios; detalhes na seção 4). Nada
+  descartado; nenhuma limpeza executada.
+- Push: não realizado pelo agente. Commits pelo agente: NENHUM (permanente
+  nas fases).
+
+--------------------------------------------------------------------------------
+VALIDAÇÃO (somente leitura, pós-hold)
+--------------------------------------------------------------------------------
+- Baseline full: PASS — 4 passed / 0 failed / 2 skipped (app_tests SKIP:
+  harness procura package.json na raiz; app está em app/ — pendência de
+  harness conhecida e registrada).
+- Não foram executados testes destrutivos; nenhum teste de app (cargo/
+  vitest) re-executado nesta parada (nada foi alterado no código).
+
+--------------------------------------------------------------------------------
+FINAL — CHECKPOINT
+--------------------------------------------------------------------------------
+- Status: HOLD confirmado. Implementação visual PARADA; nenhum componente/
+  tela criado ou alterado após o hold (apenas salvamento/backup/export de
+  evidência).
+- Preservação: TOTAL — código M1 funcional (commitado pelo mantenedor em
+  cf082a8), documentos canônicos, FigCraft completo (salvo + backup
+  cutnicepro-hold-m1dr-0404), arquivos não commitados intactos.
+- Interface M1: NÃO aprovada visualmente — reprovação do mantenedor
+  registrada (UX Writing, contraste, hierarquia, composição, alinhamento);
+  nenhum artefato marcado como APPROVED; Product Brain permanece sem
+  ART-008 (a fase não concluiu o registro).
+- Próximo passo: AGUARDANDO INSTRUÇÃO DO MANTENEDOR (direcionamentos sobre
+  os problemas apontados antes de qualquer retomada do design).
+================================================================================

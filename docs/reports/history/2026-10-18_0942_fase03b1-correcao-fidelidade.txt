@@ -1,0 +1,131 @@
+CUTNICEPRO — ZCODE REPORT — FASE 03B.1 (CORREÇÃO DE FIDELIDADE)
+==============================================================================
+Tarefa:     Correção localizada — Halftone, Contact Sheet e Sidebar
+Data:       2026-10-18 (conclusão 09h42)
+Status:     PARTIAL — SIDEBAR concluída; HALFTONE e CONTACT SHEET BLOCKED
+            por fonte/licença (comprovados); aprovação visual: PENDING
+Ambiente:   Windows, Git Bash, app em C:\CutNicePro\app
+
+PRESERVAÇÃO DO PRODUTO
+------------------------------------------------------------------------------
+- Git auditado: branch main, mudanças 03B não commitadas preservadas; NENHUM
+  commit/push executado. A 03B.1 NÃO tocou em Rust/persistência/regras de
+  negócio (diff 03B.1 concentrado em HomeScreen, icons, AppShell, ui.css,
+  testes, assets e smoke).
+- Telas de biblioteca, workspace, diálogos e backend intocados.
+
+HALFTONE
+------------------------------------------------------------------------------
+- Original source located: NO — "Texto colado(20261018-114445).txt" não
+  existe no workspace (C:\CutNicePro, Desktop, Downloads, Documents, .zcode,
+  Temp; busca por janela de horário 11h35–12h00 e grep de conteúdo).
+- Source reused: NO — página oficial 21st.dev (HTML, variante .md e llms.txt)
+  expõe apenas metadados e comando de instalação; endpoint de registry
+  responde "[Authentication required]" sem api_key; sem mirror público em
+  GitHub. Nenhuma autenticação foi contornada.
+- Original mechanics preserved: N/A — código original indisponível; a missão
+  proíbe terceira versão própria, então a implementação própria anterior
+  (HalftoneWordmark.tsx, canvas) foi REMOVIDA da renderização e deletada.
+- Wordmark / Warm color (#02C2BE) / preset: N/A até a fonte chegar.
+- Static PNG removed: YES — home-strip-bottom.png removido de
+  app/src/assets (mantido apenas como referência em design/handoff/03b/);
+  nenhuma ocorrência de "halden" no app (grep em tsx/ts/css).
+- Pointer and click validated: N/A (sem componente válido para validar).
+- STATUS: BLOCKED por fonte. Desbloqueio: (a) colar o código original no
+  chat/sessão, ou (b) fornecer o arquivo txt, ou (c) api_key do 21st.dev
+  (conta gratuita) para o comando oficial de instalação.
+
+CONTACT SHEET
+------------------------------------------------------------------------------
+- Original source available: NO — React Bits Pro é license-gated. Evidência
+  oficial (llms.txt do reactbits.dev, linhas 298-299): "Pro is a separate,
+  license-gated registry... only ever serves the free library" e "Never
+  suggest that command without a license". O comando
+  @reactbits-starter/contact-sheet-tw exige registry com license key no
+  components.json + .env.local (comprador). Sem cópia licenciada no
+  workspace; nenhuma engenharia reversa ou bypass executado.
+- License status: comercial (Pro); repositório free é MIT + Commons Clause e
+  NÃO contém o ContactSheet (confirmado no catálogo).
+- Actual animation approach: NENHUMA — o sprite de 7 colunas foi REMOVIDO
+  (ContactSheet.tsx deletado; home-contact-sheet.png fora da renderização e
+  fora de app/src/assets). Nenhuma aproximação improvisada apresentada.
+- Placeholders: YES — 6 SVGs ORIGINAIS locais 4:5 (aspect 0.8 do preset
+  oficial) em app/src/assets/placeholders/, sem material de terceiros, sem
+  URLs externas, substituíveis por thumbnails via dados.
+- Contrato de dados: app/src/lib/contactSheetSources.ts —
+  ContactCardSource {src, alt}, CONTACT_SHEET_DEFAULTS {aspect: 0.8,
+  count: 18}, assertLocalSources() testado. Extensão futura (9:16/16:9/1:1)
+  registrada como instâncias separadas com aspect próprio — não implementada
+  nesta correção, conforme a missão.
+- Radial motion / Independent cards / Hover-catch: N/A (bloqueado).
+- Static PNG removed: YES (busca em JSX/CSS/imports: zero ocorrências).
+- Blockers: license key ReactBits Pro OU cópia licenciada autorizada pelo
+  mantenedor + componentes.json com registry + .env.local.
+- STATUS: BLOCKED por licença. Nota factual: o clipboard do usuário contém
+  o comando de instalação oficial do ContactSheet — quando a licença estiver
+  no projeto, a integração é direta.
+
+SIDEBAR
+------------------------------------------------------------------------------
+- Icon dimensions (após correção): todos renderizados a 24×24.
+  Home: viewBox 24, conteúdo ~18u, stroke 2. Projetos: viewBox corrigido de
+  32→24 com transforms realinhados ao component original do Figma (caixa
+  16×16 em (4,4), linha da tampa y=8, haste (12,4)→(12,8), traço
+  (8,16)→(11,16)) — conteúdo 16u, stroke 2 (antes: conteúdo ~12px e stroke
+  visual 1.5px, 33% menor que o home). Settings (hugeicons
+  configuration-01, família original do design): conteúdo ~20u, stroke 1.5.
+- Icon sources: SVGs inline em icons.tsx derivados dos exports oficiais do
+  FigCraft; avatar 42×42; logo diagonal 49×41 vetorial.
+- Toggle location: CORRIGIDO — botão real no header do painel de conteúdo
+  (panel-head), à direita do breadcrumb, com chevron duplo vetorial stroke 2
+  (nítido, sem pixelização), hit area 32×32, hover, focus-visible (anel
+  aqua), aria-label e aria-expanded dinâmicos. O logo do rail voltou a ser
+  puramente decorativo (não clicável). Persistência da preferência mantida
+  (localStorage) — e o save saiu do updater do setState (correção de pureza
+  aplicada na 03B anterior, confirmada aqui).
+- Keyboard interaction: validada com Tab REAL (outline computado "solid
+  2px" no elemento ativo), Enter expande, Space recolhe (aria-expanded
+  verificado em cada passo).
+- Visual fixes: VISION — rail PASS (áreas visuais consistentes, sem
+  pixelização/desalinhamento), expandida PASS, recolhida PASS (colapso
+  limpo, sem resíduos), foco PASS (após recaptura com Tab — a primeira
+  captura usou foco programático, que não ativa :focus-visible no Chromium;
+  evidência substituída), ícone ativo de projetos consistente PASS.
+
+VALIDATION
+------------------------------------------------------------------------------
+- Screenshots: 9 em docs/reports/evidence/03b1/ (home pós-correção, sidebar
+  expandida/recolhida, rail ampliado, foco, pós-Enter, persistência,
+  projetos/coleções preservados).
+- Animation evidence: N/A — ambas as animações estão BLOCKED e nenhuma
+  substituta foi apresentada (protocolo da missão). Evidências comportamentais
+  existentes são do toggle (mouse/Enter/Space/persistência).
+- React tests: 21/21 (19 anteriores + 2 novos do contrato de fontes locais).
+- TypeScript: tsc --noEmit = 0 erros. Build vite OK; tauri build --no-bundle OK.
+- Desktop smoke test: VERDE (tools/e2e/phase03b1-smoke.mjs, NÃO destrutivo —
+  não limpa appdata): toggle por mouse, Enter, Space, preferência persistida
+  após reinício do processo, navegação M1 com projeto e coleção existentes
+  visíveis; console do app sem erros.
+- Harness: baseline full 5 PASS / 1 SKIP ("npm test OK (app/)").
+- Regressions: nenhuma. Rust/persistência intocados nesta fase; E2E destrutivo
+  da 03B não repetido (conforme missão).
+
+FINAL
+------------------------------------------------------------------------------
+- Technical status: PARTIAL — correções tecnicamente possíveis concluídas;
+  dois componentes bloqueados por fonte/licença (comprovados, sem contorno).
+- Visual fidelity status: SIDEBAR verificada por VISION (6/6 após recaptura
+  do foco). HOME em estado intermediário DELIBERADO: áreas do ContactSheet e
+  do Halftone reservadas e vazias — PASS técnico não é PASS visual; a Home
+  sem as animações oficiais NÃO está visualmente completa.
+- Completed corrections: remoção do sprite de colunas; remoção do halftone
+  próprio; remoção dos 2 PNGs da renderização; zero "halden"; placeholders
+  originais + contrato de dados; ícones padronizados (viewBox/área óptica/
+  traço); toggle real no header do painel com acessibilidade completa;
+  logo do rail decorativo.
+- Remaining blockers: (1) fonte do HalftoneWordmarkFooter (arquivo txt,
+  código colado ou api_key 21st.dev); (2) licença ReactBits Pro do
+  ContactSheet (ou cópia licenciada autorizada).
+- Human approval: PENDING (aprovação visual final pertence ao mantenedor).
+- Commit: NO. Push: NO.
+==============================================================================

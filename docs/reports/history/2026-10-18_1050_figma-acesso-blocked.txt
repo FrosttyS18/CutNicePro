@@ -1,0 +1,128 @@
+================================================================================
+CUTNICEPRO — ZCODE REPORT — ACESSO FIGMA / RETOMADA 03B (STATUS: BLOCKED)
+================================================================================
+TAREFA: Correção do acesso Figma — (1) verificar hipótese de fileKey
+incorreto; (2) testar MCP remoto oficial com OAuth; (3) se acesso OK,
+retomar a Fase 03B (implementação); se não, preparar estrutura para pacote
+de handoff e encerrar BLOCKED com relatório completo.
+DATA: 2026-10-18 (10h30–10h50)
+STATUS: BLOCKED — acesso programático ao design indisponível pelos dois
+caminhos oficiais (Desktop exige assento Dev/Full; remoto restrito ao
+catálogo de clientes Figma). Nenhuma implementação visual executada
+(0 telas, 0 componentes, 0 estilos alterados; M1 preservado). Pacote de
+handoff especificado e estrutura local preparada.
+
+--------------------------------------------------------------------------------
+FIGMA MCP — DIAGNÓSTICO COMPLETO
+--------------------------------------------------------------------------------
+- FileKey efetivamente enviado (verificado por re-execução instrumentada):
+  a chamada original da 03B usou `145VbdUiESu3M4HltWvCAM` — ERRO DE
+  TRANSCRIÇÃO MEU (o correto é `145VbdUiESu3MvHltWvCAM`). Hipótese
+  eliminada por teste A/B: AMBOS os fileKeys foram reenviados ao Desktop
+  e retornaram EXATAMENTE a mesma mensagem de acesso negado → o fileKey
+  incorreto não era a causa do bloqueio (embora fosse um erro real).
+- Servidor utilizado: (a) Desktop `http://127.0.0.1:3845/mcp` — JSON-RPC
+  direto via Python (http.client), sessão `Mcp-Session-Id` capturada no
+  initialize, notificação 202 Accepted, `tools/list` OK com as 6
+  ferramentas (get_design_context, get_metadata, get_screenshot,
+  get_motion_context, get_variable_defs, get_figjam). (b) Remoto
+  `https://mcp.figma.com/mcp` — HTTP transport, OAuth 2.0 Bearer
+  (WWW-Authenticate com protected-resource metadata).
+- Tipo de autenticação: Desktop = nenhuma (servidor local, o controle é
+  de assento/permission no arquivo); Remoto = OAuth 2.0 com registro
+  dinâmico de cliente — registro em `api.figma.com/v1/oauth/mcp/register`
+  respondeu **403 Forbidden** (2 tentativas, variações de
+  redirect_uri/auth_method). A documentação oficial confirma: somente
+  clientes do catálogo Figma MCP (VS Code, Cursor, Claude Code, Codex)
+  conectam; novos clientes exigem waitlist. Sem client_id não há fluxo de
+  autorização a abrir no navegador — por isso nenhuma autorização foi
+  solicitada ao mantenedor (não havia como completá-la).
+- Resultado do acesso Desktop: tools/call → isError=true, texto integral:
+  "This resource couldn't be accessed. IMPORTANT: Before continuing, you
+  must tell the user to make sure their paid Figma seat includes Dev Mode
+  access, they have the right permissions for this file, and the provided
+  link is valid." (idêntico para 1:2 e 1:57, ambos fileKeys).
+- Resultado do acesso remoto: 401 Unauthorized sem token (com
+  WWW-Authenticate Bearer); 401 com header Originator; 403 no registro
+  dinâmico. Causa registrada acima.
+- Frame consultado (teste único previsto): node `1:57` (get_metadata) nos
+  dois fileKeys no Desktop — ambos negados; nenhum design retornado.
+- Erro completo: transcrito acima (mensagem única do servidor, sem código
+  adicional). Remote 403 do register: corpo vazio além do status.
+- Configurações modificadas: NENHUMA. Nenhum MCP global/projeto alterado,
+  nenhum arquivo de credenciais criado (o teste de registro dinâmico não
+  produziu client_id/secret; nada foi persistido). Cliente de consulta
+  criado apenas como ferramenta de repo: tools/figma/figma_client.py.
+- Necessidade de reiniciar o ZCode: NÃO para o caminho Desktop (o cliente
+  fala HTTP direto, sem depender de config de MCP). Reinício só seria
+  necessário se, no futuro, o mantenedor quisesse o Figma como MCP nativo
+  do ZCode via config — fora do escopo desta tarefa.
+- Chamadas ao remoto (limites do plano gratuito): 5 no total (1 sem
+  token, 2 com Originator, 2 de registro) — mínimo necessário, sem
+  repetições.
+
+--------------------------------------------------------------------------------
+DESVIO EXECUTADO (PRODUTIVO, SEM IMPLEMENTAÇÃO VISUAL)
+--------------------------------------------------------------------------------
+Conforme §5 da tarefa, preparei a estrutura local para receber o pacote:
+1. docs/design/HANDOFF-03B-PACKAGE.md — especificação completa do pacote:
+   design context dos 6 frames (o item indispensável; get_design_context
+   traz hierarquia/layout/cores/tipografia/código/imagens inline),
+   screenshots 1440×900 dos 6 nodes, variables.json (paleta local
+   #0A0A0A/#1E1E1E/#929292...), assets avulsos (logo SVG do splash,
+   ícones sidebar, miniaturas do contact sheet com licença anotada —
+   repo público) e instruções de comportamento (contact sheet, halftone,
+   abas, metadados). Estrutura de destino: design/handoff/03b/.
+2. tools/figma/figma_client.py — cliente JSON-RPC completo (sessão
+   Desktop com Mcp-Session-Id; comandos shot/context/meta/vars/raw)
+   pronto para extrair TUDO automaticamente no instante em que o assento
+   Dev Mode estiver ativo (mesmos comandos, zero mudanças).
+3. Auditoria parcial do app já registrada para a retomada: componentes
+   (EmptyState/ErrorBanner/NewProjectDialog/ProjectList/ProjectView),
+   lib (format/ipc/projects/types), IPC (list/create/open_project),
+   persistência Rust intocada; correção cirúrgica do harness mapeada
+   (check_app_tests linhas 94–112: procurar package.json também em app/
+   e rodar npm test lá) — a executar na ETAPA E da 03B, conforme
+   autorizado pela missão original.
+4. Evidências: docs/reports/evidence/figma-03b/ criada (contém apenas o
+   texto de erro do teste com fileKey correto — nenhum asset do Figma
+   foi obtido).
+
+--------------------------------------------------------------------------------
+POSSIBILIDADE DE RETOMAR A MISSÃO 03B
+--------------------------------------------------------------------------------
+Retomada imediata quando QUALQUER uma destas condições for atendida:
+a) Assento Dev Mode ativo no Figma Desktop da conta do mantenedor (o
+   cliente local já funciona; basta reexecutar os comandos de extração).
+b) Pacote de handoff entregue em design/handoff/03b/ (extraído por
+   cliente já autorizado, ex.: MCP do Figma conectado ao ChatGPT),
+   conforme HANDOFF-03B-PACKAGE.md.
+Nenhuma tela foi implementada de memória (proibição respeitada); o app
+React/Tauri e todo o histórico permanecem intactos.
+
+--------------------------------------------------------------------------------
+GIT / VALIDAÇÃO
+--------------------------------------------------------------------------------
+- Branch: main · HEAD: cf082a8 (commit do mantenedor; nenhum commit/push
+  do agente). Working tree: 65 entradas (novas desta tarefa: apenas
+  tools/figma/figma_client.py, HANDOFF-03B-PACKAGE.md, evidência do
+  erro, este relatório — demais são fases anteriores preservadas).
+- Baseline full: PASS — 4 passed / 0 failed / 2 skipped (app_tests SKIP
+  pela falha conhecida — correção mapeada e agendada para a ETAPA E da
+  03B, não executada agora porque a missão não avançou à engenharia).
+- React/Rust/CSS: NÃO modificados. FigCraft: NÃO tocado. Nenhum
+  componente visual criado.
+
+--------------------------------------------------------------------------------
+FINAL
+--------------------------------------------------------------------------------
+- Delivery status: BLOCKED (acesso ao design), com estrutura de handoff
+  preparada e caminho de retomada documentado.
+- Screens completed: 0 (proibição de implementar de memória respeitada).
+- User visual approval: N/A (nada implementado).
+- Restart required: NÃO (caminho Desktop independe de reinício).
+- Próximo procedimento (escolha do mantenedor): ativar Dev Mode no
+  assento Figma OU extrair o pacote via cliente autorizado (ChatGPT MCP)
+  seguindo docs/design/HANDOFF-03B-PACKAGE.md → avisar → a Fase 03B
+  retoma do ponto exato (extração → ETAPAS A–E).
+================================================================================

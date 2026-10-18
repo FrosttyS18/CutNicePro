@@ -1,0 +1,147 @@
+CUTNICEPRO — ZCODE REPORT
+==============================================================================
+Tarefa:     Fase 03B v2 — Implementação oficial das 6 telas via FigCraft
+            Attached MCP (modo leitura) em React+TS+Tauri
+Data:       2026-10-18 (sessão de continuação; conclusão 09h03)
+Status:     PASS COM RESSALVAS (aceite visual do mantenedor pendente)
+Ambiente:   Windows (win32 10.0.26200), Git Bash, app em C:\CutNicePro\app
+
+FIGCRAFT HANDOFF (ETAPA A)
+------------------------------------------------------------------------------
+- Documento canônico "CutNicePro Fase 01 - Propostas UI", página "UI - designer"
+  (frames 1331/1338/1384/1427/1482/1540) usado EXCLUSIVAMENTE em MODO DE
+  LEITURA: nenhum save_file, nenhuma camada criada/editada, nenhum texto/cor/
+  posição alterados, arquivo nativo não sobrescrito (permanece DIRTY pela
+  importação do mantenedor — não salvo por esta tarefa).
+- Estrutura extraída por get_node seletivo (profundidade 2–3) de todos os 6
+  frames + subnós (breadcrumb, cards, header de pasta, ícones) — geometria,
+  cores exatas, tipografia e z-order documentados em
+  design/handoff/03b/CONTEXT.md.
+- Assets exportados (13 novos em design/handoff/03b/): logo-splash.svg,
+  logo-sidebar.svg, icon-{home,projects,settings,breadcrumb-logo,heart,
+  archive-box}.svg, home-contact-sheet.png (2x), home-strip-bottom.png (2x),
+  avatar-perfil.png (2x), thumb-mock-projeto.png — copiados para app/src/assets.
+- VISION (agente) produziu relatório visual completo das 6 telas antes da
+  implementação (política VISION FIRST).
+- Limitações registradas: (1) halftone-wordmark-footer.tsx (MIT do mantenedor)
+  NÃO presente na pasta nem no repo → implementação própria; (2) mocks
+  fotográficos (avatar, thumbs, contact sheet) sem licença de redistribuição
+  verificada → uso local, NÃO publicáveis em repo público; (3) component do
+  ícone home no arquivo tem stroke default teal (artefato de componente criado
+  no estado ativo) → semântica implementada: ativo=teal, inativo=#929292.
+
+IMPLEMENTAÇÃO (ETAPAS B/C/D)
+------------------------------------------------------------------------------
+Novos (17 arquivos src + 6 assets): components/{icons,TabBar,ContactSheet,
+HalftoneWordmark,NewCollectionDialog}.tsx; components/shell/{AppShell,
+Breadcrumb}.tsx; screens/{SplashScreen,HomeScreen,ProjectsScreen,
+CollectionsScreen,CollectionScreen}.tsx; lib/{prefs,collections}.ts;
+ui.css; vite-env.d.ts; test/phase03b.test.ts.
+Modificados: App.tsx (roteamento+splash+shell), main.tsx, lib/{types,ipc,
+format}.ts, src-tauri/{storage.rs,lib.rs}, .zcode/hooks/harness/
+baseline_checks.py. Removidos: EmptyState.tsx e ProjectList.tsx (substituídos
+pelas telas oficiais; fluxo coberto pelo novo E2E).
+- Splash: logo vetorial real centrado; cobre apenas o boot real (leitura da
+  persistência); fade 270ms; sem delays artificiais; reduced-motion pula fade.
+- AppShell: rail 92px full-height (avatar, ícones home/projetos, settings
+  desabilitado, divisor, logo diagonal) + painel secundário 269px (header de
+  seção + pills 221×34) + painel principal r20 #0A0A0A com breadcrumb
+  ([logo] Seção > Atual) e divisor #202020. Colapso/expansão pelo clique no
+  logo do rail (gatilho não especificado no design — decisão registrada),
+  preferência persistida em localStorage; pills saem do tab order quando
+  colapsados (visibility). Home curta = MESMO shell sem painel secundário.
+- Telas: Home (área artística + "Bem-Vindo ao Cut Nice Pro" Poppins 34 bold +
+  subtítulo 20 #929292 + botão "Criar Projeto" 221×34); Projetos>Todos (abas
+  Todos/Clipes com underline teal, card tracejado 221×147 dash 4-4 #929292,
+  cards de projeto 221px com thumb r8+overlay 30%+badge "Novo"); Coleções
+  (cards 221×61 ícone+nome+contador); Interior (breadcrumb 3 níveis, header
+  ícone 32×32 r4 #202020 + nome 14 semibold + metas + "Última atualização"
+  inline, abas compactas ~10.2).
+- Backend coleções ADITIVO: collections.json próprio (projects.json e comandos
+  M1 intocados); comandos list/create/add/remove com validação (nome ≤80,
+  ícone heart|archive-box, ids existentes, idempotência).
+- Dados sempre reais: contadores das abas/cards derivados da persistência;
+  zero mocks de conteúdo; datas dd.mm.aaaa (formato do design); plurais pt-BR.
+- Divergências conscientes do arquivo (documentadas): textos "+ Enviar novo
+  vídeo"→"Novo projeto" e "Adicionar Nova Coleção"→"Adicionar nova coleção"
+  (ação real M1 + sentence case da skill ux-writing); abas/breadcrumb/ícones
+  inativos #1E1E1E→#929292 (ilegível sobre #0A0A0A; direção AA aprovada);
+  último crumb da tela 6 →#FFFFFF (padrão das demais telas); badge 9px (design
+  7.85px ilegível); card "+ Adicionar projeto" extra na tela 6 (funcionalidade
+  real exigida pela jornada); metas do card = data de atualização (M1 sem
+  clipes). Workspace M1 preservado dentro do painel (textos legados de roadmap
+  M2-M4 fora do escopo das 6 telas — pendência registrada).
+
+ANIMAÇÕES
+------------------------------------------------------------------------------
+- ContactSheet: ReactBits Pro é PAGO (licença comercial, verificado em
+  pro.reactbits.dev / reactbits.dev — fontes citadas no chat) → componente
+  PRÓPRIO: 7 colunas sprite (background-position), expansão no hover (flex),
+  deriva vertical sutil 12s; prefers-reduced-motion desativa transições e
+  deriva.
+- HalftoneWordmark: implementação PRÓPRIA em canvas (o arquivo MIT do
+  mantenedor não estava disponível): texto amostrado em grade → círculos com
+  raio por cobertura, onda diagonal sutil, DPR-aware, IntersectionObserver +
+  skip de frames; reduced-motion desenha 1 frame estático. Wordmark
+  "CutNicePro" (nunca "halden"), sem footer/links/laranja.
+
+VALIDAÇÃO (ETAPA E)
+------------------------------------------------------------------------------
+- TypeScript: tsc --noEmit = 0 erros.
+- Vitest: 19/19 (9 M1 preservados + 10 novos: coleções/plurais/datas/prefs).
+- Rust: cargo test 14/14 (7 projetos + 7 coleções, incl. isolamento de
+  arquivos e corrupção reportada).
+- Build produção: vite build + tauri build --no-bundle OK (NOTA: cargo build
+  --release direto NÃO embute o frontend — aprendizado registrado).
+- E2E desktop real (tools/e2e/phase03b-desktop.e2e.mjs): VERDE — boot→splash→
+  Home; sidebar colapsada/expandida; criação de projeto pela Home→workspace
+  (AC-011); voltar→Todos; Coleções→criar→interior (breadcrumb 3 níveis);
+  adicionar projeto à coleção; FECHAR e RELANÇAR o processo → projetos E
+  coleções persistidos (projects.json + collections.json no disco);
+  reabrir projeto; responsividade 1280×720, 1920×1080, 1440×900 via CDP
+  Browser.setWindowBounds. 12 screenshots em docs/reports/evidence/03b/;
+  console.log do app vazio (0 erros de página).
+- Comparação visual (VISION, 3 rodadas): veredito FIEL COM AJUSTES → 3 correções
+  aplicadas (hero ~100px→~4-5px da referência; card tracejado inline baseline;
+  "Última atualização" inline à esquerda) → re-verificação PASS (Home), PASS
+  COM RESSALVA documental (splash: captura cai no fade de 270ms; fundo do
+  overlay é #000 opaco por CSS e o splash sai do DOM após o fade — estado
+  final não é capturável por design).
+- Auditoria web-design-guidelines aplicada com fixes: nav semântico no painel
+  secundário, visibility para tirar pills ocultas do foco, color-scheme dark,
+  width/height explícitos nas imagens, loading lazy na faixa inferior,
+  aria-labels/focus-visible em todos os interativos, role=alert nos erros.
+  Ressalvas aceitas: transição de flex no ContactSheet (layout, 7 colunas,
+  custo mínimo), loop decorativo com reduced-motion respeitado, remoção de
+  projeto da coleção sem confirmação (ação reversível de baixo custo).
+- Harness: check_app_tests corrigido (procura package.json também em app/;
+  executa npm test lá) — baseline full: 5 PASS / 1 SKIP (sem testes python),
+  incluindo "npm test OK (app/)".
+- Incidentes resolvidos no caminho: build sem frontend embutido (→tauri build
+  --no-bundle); exe travado por processo remanescente (taskkill antes de
+  rebuild); 1 falha transitória de CDP em 4 execuções do E2E (re-execução
+  verde); saveSidebarExpanded dentro do updater de setState (efeito impuro —
+  movido para fora); rmSync do appdata com lock de WebView2 órfão (E2E agora
+  normaliza o estado da sidebar após reinício).
+
+GIT
+------------------------------------------------------------------------------
+- Nenhum commit, push, merge ou deploy executado (sem autorização).
+- FigCraft em modo leitura: documento não salvo por esta tarefa.
+
+FINAL
+------------------------------------------------------------------------------
+- As 6 telas do design oficial estão implementadas no app real com
+  funcionalidade e persistência locais, testes unitários (33 no total) e E2E
+  do binário com reinício de processo. Fidelidade visual verificada por
+  VISION (PASS; ressalvas cosméticas e divergências documentadas acima).
+- Pendências para o mantenedor: (1) aceite visual final das 6 telas
+  (screenshots em docs/reports/evidence/03b/ × referências em
+  design/handoff/03b/); (2) decisão sobre publicação — mocks fotográficos do
+  design (avatar/thumbs/contact sheet) NÃO são publicáveis sem verificação de
+  licença; (3) revisão futura do workspace M1 (textos de roadmap legados);
+  (4) "Todos" e "Projetos" na tela 6 mostram o mesmo conteúdo em M1 (design
+  mantém ambos).
+- Conforme a condição de parada da missão: implementação, testes e relatório
+  concluídos — PARANDO AQUI.
+==============================================================================

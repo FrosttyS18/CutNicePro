@@ -1,0 +1,203 @@
+================================================================================
+CUTNICEPRO — ZCODE REPORT
+================================================================================
+TAREFA: Home UX Redesign / Project Library Architecture — corrigir a
+arquitetura de UX e preparar proposta visual fundamentada ANTES de qualquer
+alta fidelidade (sem UI final, sem tocar React/Rust, sem novos mestres).
+DATA: 2026-10-18 (05h05–05h25)
+STATUS: PASS — arquitetura entregue: auditoria real de componentes
+(duplicação reconhecida + plano de consolidação), fluxo lógico
+reconciliado com as decisões MVP, requisitos de biblioteca 0/1/10/50/200+,
+direção visual "Cut Room", UX writing completo e 5 wireframes low-fi no
+FigCraft (frames simples, zero componentes criados). Documento nativo
+SALVO (com backup prévio). High-fidelity NÃO aprovada; implementação
+React NÃO autorizada; aguardando revisão do mantenedor.
+
+--------------------------------------------------------------------------------
+1. EXECUÇÃO RESUMIDA
+--------------------------------------------------------------------------------
+- Skills consultadas EFETIVAMENTE nesta sessão (mesmas já carregadas via
+  Skill tool nas tarefas anteriores desta sessão, conteúdo integral em
+  contexto): cutnicepro-ux-writing (vocabulário da biblioteca §6 da
+  arquitetura), design-taste-frontend (frase-conceito do sujeito — "a
+  sala de corte"; house rules: display vs micro-caps, acento orçado,
+  superfícies por tom, sem teatro de rolagem), web-design-guidelines
+  (estados de foco/teclado/AA especificados), minimalist-ui (densidade
+  editorial, controles compactos). image-to-code: NÃO aplicada (gera
+  código/telas a partir de imagens — inadequada a uma tarefa que proíbe
+  construção de UI; a análise de imagens foi feita por extração + leitura).
+- Referências: 5 do mantenedor (DNA da M1DR-AUDIT); libraries.dev via
+  WebFetch (HTML sem CSS renderizado — limitação registrada; achados
+  aplicáveis: voz de copy curta e confiante, grid de cards-demo,
+  "efeito é o produto, não decoração"; efeitos beams/orbs/goo NÃO
+  adotados, proibidos pela tarefa e reavaliáveis apenas pós-layout com
+  teste de desempenho no Windows); pesquisa de padrões de bibliotecas de
+  mídia profissionais (Premiere Project panel, Resolve Media Pool, guias
+  DAM — princípios: grid/lista alternáveis, metadados em colunas, busca
+  local, ordenação — adotados sem copiar interfaces; fontes:
+  helpx.adobe.com "Customize Project panel views", digitalproduction.com
+  "Switching from Premiere Pro to DaVinci Resolve", forum.blackmagicdesign
+  "Must-Have UI & Workflow Features").
+- Canônicos relidos: FR-002/003/004, NFR-002/005, US-002/003/006,
+  AC-004..008, BR-004/032, JRN-002/003, Product Brain §9–10, Content
+  Matrix, M1DR-AUDIT, M1-VISUAL-DIRECTION, Brand Foundation (limitação
+  de pesos Poppins confirmada).
+- Backup ANTES de qualquer edição: design/backups/cutnicepro-pre-libarch-
+  0514.figcraft. Nada apagado; nenhum mestre/instância existente tocado.
+
+--------------------------------------------------------------------------------
+COMPONENT REUSE AUDIT
+--------------------------------------------------------------------------------
+- Existing masters (inventário component.list real): Button set 957
+  (Primary 946 — 4 inst., Ghost 947 — 1) · IconButton 948 (0) ·
+  TextInput set 970 (Default 958 — 1, Error 959 — 0) · ProjectCard
+  antigo set 981 (Default 971 — 5, AddNew 972 — 1) · StatusFeedback set
+  994 (0) · EmptyState 995 (1) · Loading 996 (0) · TopBar antigo 1007
+  (5).
+- Newly created masters (SC-resume, objeto da auditoria): TopBar SC 1145
+  (2 inst.) · ProjectCard SC set 1163 (Default 1150 — 9, Hover 1151 — 1).
+- Redundant components: TopBar SC 1145 é ~90% reconciliável com 1007 via
+  propriedades (fill/stroke/padding/direita = conteúdo); ProjectCard SC
+  1163 é ~90% reconciliável com 981 (dimensões/borda = propriedades;
+  Default/Hover vs Default/AddNew = troca de variantes). CAUSA RAIZ
+  reconhecida: criei famílias novas para preservar o registro reprovado
+  e por velocidade — violou a direção "REFINAR existentes"; capacidade
+  duplicada sem ganho (§1 da arquitetura, com comparação propriedade a
+  propriedade).
+- Consolidation candidates (PLANO — só com autorização, nada executado):
+  1) TopBar ÚNICO com propriedade showRightSlot + slot; 2) ProjectCard
+  ÚNICO com variantes Density=Comfortable/Compact + State=Default/Hover/
+  Selected e booleana showPreview com SLOT 16:9 (o slot resolve o
+  requisito de miniatura M1→M2); 3) Button ganha variante Quiet (texto
+  puro) substituindo text-layer solto; 4) EmptyState deixa de ser
+  componente (composição editorial por tela). REGRA registrada: nenhuma
+  nova família sem prova documentada de que variantes/props/slots são
+  insuficientes.
+
+--------------------------------------------------------------------------------
+PROJECT LIBRARY UX (requisitos definidos — detalhe na arquitetura §4)
+--------------------------------------------------------------------------------
+- Search: busca por nome, local, debounce; ESC limpa; ⌘/Ctrl+F foca
+  (atalho a validar); estado "sem resultado" DISTINTO do vazio, sempre
+  com "Limpar busca"; filtro persiste na sessão.
+- Sorting: "Aberto recentemente" (padrão — retomada JRN-002) · "Criado
+  recentemente" · "Nome (A–Z)"; seletor compacto; persistida por sessão.
+- Grid mode: fluido 4 col @1440 (cards de MÍDIA 312×236: slot 16:9
+  312×176 + faixa de info 60px); 3 col @960; hover = tom↑ + realce aqua
+  na moldura da mídia + "Continuar →".
+- List mode: linhas 48px com colunas nome/criado/aberto + miniatura
+  monograma 24px; metadados tabulares; ⋯ reservado (V1: duplicar/excluir
+  FR-017 — só quando as regras existirem).
+- Preview strategy: SLOT 16:9 com fallback tipográfico (monograma do
+  projeto) — DECLARADO como estado M1, não como preview de vídeo; quando
+  o M2 importar mídia, o MESMO slot recebe o frame real (componente
+  nasce preparado, nada é reescrito). Nenhum preview declarado como
+  implementado.
+- Empty state: composição tipográfica editorial (CM-001..003 corrigidos)
+  + CTA único; 1 projeto = grid equilibrado (texto do item único a
+  validar); carregando = skeleton no lugar dos cards; erro = causa+ação
+  (CM-040..042).
+- 200-project scalability: rolagem REAL (header fixo + conteúdo rolável
+  — SEM card cortado simulado, prática banida); virtualização de lista
+  como requisito técnico do handoff React; validação visual por AMOSTRAS
+  representativas (WF-3/WF-4) + especificação do comportamento completo;
+  contador absoluto verídico ("212 projetos") sempre conferível; reflow
+  de janela 960→3 col; teclado Tab/Enter (setas a validar).
+- Pending decisions: 8 itens registrados (§8 da arquitetura), incluindo
+  busca/ordenação/lista como emenda ao escopo M1 (impacto FR-002 e app),
+  texto do item único, monograma, atalhos, autorização da consolidação
+  de componentes e reconciliação formal dos User Flows antes de M2.
+
+--------------------------------------------------------------------------------
+DESIGN DIRECTION — "Cut Room" (substitui o layout Studio Console)
+--------------------------------------------------------------------------------
+- References inspected: 5 do mantenedor (DNA M1DR-AUDIT) + libraries.dev
+  (fetch HTML — acabamento visual não verificável sem render; limitação
+  declarada) + padrões NLE/DAM (pesquisa web).
+- Conceito (frase do sujeito): a sala de corte se torna a Home — mesa de
+  revisão escura onde projetos são cartões de mídia 16:9 em prateleiras
+  densas; o editor reconhece o vídeo antes de ler o nome (wall of
+  selects de estúdio).
+- Visual differences from rejected Studio Console: cards só-texto →
+  cards de MÍDIA (thumb dominante + info compacta); 3col fixa → grid
+  fluido 4–5col denso; título tímido → cabeçalho editorial eyebrow-caps
+  + display 40 + contador integrado; sem navegação → toolbar de
+  biblioteca (busca/ordenação/grid-lista); aqua em pills → aqua SÓ em
+  ação primária + foco + realce de seleção; sem identidade → monogramas
+  tipográficos como assinatura; teatro de scroll → comportamento real
+  especificado.
+- Component density: cards 312×236 (grid 10) / 249×208 (grid 200+) /
+  linhas 48px (lista) — densidade proporcional à informação (audit:
+  "cards grandes para poucas informações" corrigido).
+- Typography: display Bold 40 · nome SemiBold 14 (Bold provisório até
+  instalar Medium/SemiBold — pendência Brand Foundation) · corpo Regular
+  14 · apoio 12 #9BA0A4 (AA validado na fase anterior) · eyebrow caps 11
+  tracking 0.08 · tabular no contador.
+- Dark surfaces: canvas #000 → card #231F20 → hover #2B2728 → seleção
+  com realce aqua 1.5px NA MOLDURA DA MÍDIA; toolbar em superfície tonal
+  única; degraus de tom, sem bordas em repouso, sem sombras (modal
+  futuro excetuado).
+- Brand consistency: Poppins família única; Pure Black canvas; Deep Aqua
+  como identidade orçada (nunca preenchimento); monograma = assinatura
+  própria; zero glassmorphism/gradientes; efeitos libraries.dev
+  explicitamente ADIADOS para pós-aprovação de layout com verificação de
+  desempenho no Windows.
+
+--------------------------------------------------------------------------------
+USER FLOW / WIREFRAMES / VALIDAÇÃO
+--------------------------------------------------------------------------------
+- Fluxo lógico reconciliado (§3 da arquitetura): primeira abertura →
+  [convite ◇] → ambiente → HOME (D1) → biblioteca/busca/vazio/erro →
+  novo projeto → workspace → retorno/continuidade; config de IA SOMENTE
+  contextual (DEC-012). Subfluxos não finalizados REGISTRADOS (convite
+  DEC-011 ◇; verificação de ambiente AC-001..003; item indisponível
+  BR-032; compra JRN-012; offline BR-049 ◇) — nenhuma funcionalidade
+  comercial inventada; o Overview end-to-end NÃO está finalizado e os
+  User Flows V2 seguem pendentes de reconciliação formal antes de M2.
+- Wireframe coverage (FigCraft, área de planejamento y=5450+, frames
+  simples SEM novos mestres/instâncias — nada existente alterado):
+  WF-1 Home 0 projetos (1246) · WF-2 Biblioteca ~10 com toolbar + grid
+  4col + hover + spec (1252) · WF-3 Biblioteca 200+ com grid 5col
+  compacto + contador 212 + indicador de rolagem real + spec de N≥50
+  (1283) · WF-4 Modo Lista com colunas e hover (1311) · WF-5 Sem
+  resultado de busca (1324) · rótulo de área (1329).
+- Product rules: nenhuma violada — amostras de conteúdo são exemplos
+  declarados de design (nomes/datas), sem métricas fictícias, sem
+  promessas M2–M4, sem preview de vídeo fingido, sem ruído interno
+  (low-fi usa cinzas neutros + aqua clareada APENAS como marcação de
+  estados/CTA nos wireframes — não são tokens finais).
+- Existing files preserved: TODOS (componentes, telas antigas, fluxos,
+  propostas A/B); backup cutnicepro-pre-libarch-0514; doc salvo ao final
+  (5.119.929 bytes). React/Rust intocados; Harness não alterado (falha
+  app_tests conhecida e registrada — mensagem SKIP permanece falsa para
+  app/, correção pendente de autorização).
+- Remaining gaps: alta fidelidade (pendente de aprovação da direção);
+  telas C/D/E; handoff FigCraft→React; pesos Poppins Medium/SemiBold;
+  asset 3D; reconciliação dos User Flows; decisão sobre emenda de escopo
+  (busca/ordenação/lista no M1).
+
+--------------------------------------------------------------------------------
+GIT
+--------------------------------------------------------------------------------
+- Branch: main · HEAD: cf082a8 (commit do mantenedor; nenhum commit/push
+  pelo agente). Working tree: 61 entradas (novas desta tarefa:
+  M1-LIBRARY-ARCHITECTURE.md, 5 PNGs de evidência, este relatório;
+  demais = fases anteriores preservadas). Baseline full: PASS (4/0/2 —
+  skips conhecidos).
+
+--------------------------------------------------------------------------------
+FINAL
+--------------------------------------------------------------------------------
+- Delivery status: PASS (arquitetura, auditoria, fluxo, requisitos,
+  direção e wireframes entregues; escopo respeitado integralmente).
+- High-fidelity approved: NO · React implementation authorized: NO.
+- Ready for user review: YES — material: docs/design/M1-LIBRARY-
+  ARCHITECTURE.md + wireframes WF-1..5 no FigCraft (página UI - designer,
+  y=5450+) + PNGs em docs/reports/evidence/library-arch/ (wf1-home-0-
+  projetos.png, wf2-biblioteca-10.png, wf3-biblioteca-200.png, wf4-modo-
+  lista.png, wf5-sem-resultado.png).
+- Human approval: PENDING — decisão do mantenedor sobre a direção Cut
+  Room, os wireframes e as 8 pendências (inclusive emenda de escopo e
+  consolidação de componentes) antes de qualquer retomada de design
+  visual ou código.
+================================================================================
