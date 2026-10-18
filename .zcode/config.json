@@ -5,6 +5,10 @@
         "command": "C:\\Program Files\\FigCraft\\figcraft-cli.exe",
         "args": ["mcp"]
       },
+      "figcraft-app": {
+        "command": "C:\\Users\\adcka\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+        "args": ["C:\\CutNicePro\\.zcode\\figcraft\\figcraft_app_server.py"]
+      },
       "graphify": {
         "command": "C:\\CutNicePro\\.tooling\\venvs\\graphify\\Scripts\\python.exe",
         "args": [

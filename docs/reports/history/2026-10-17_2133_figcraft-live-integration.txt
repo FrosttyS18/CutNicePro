@@ -1,0 +1,87 @@
+╔════════════════════════════════════════════╗
+║       CUTNICEPRO — ZCODE REPORT            ║
+╚════════════════════════════════════════════╝
+
+TASK
+  Name: FigCraft Live Integration + Auditoria de Documentação
+  Status: PARTIAL — attached BLOCKED por intervenção do usuário (evidenciado); todo o restante PASS.
+  Scope: Integração MCP FigCraft (validação real), verificação do Stop fast, correção documental, verificação Git. Nenhuma funcionalidade da aplicação; nenhuma tela de produto.
+  Objective: Validar/preparar integração real ZCode<->FigCraft desktop (modo attached), manter headless, corrigir inconsistências de docs e auditar Git.
+  Result: Modo attached testado com 3 provas reais e BLOQUEADO por single-instance + app do usuário rodando sem --control (runbook pronto). Headless validado de ponta a ponta com operações reais e captura confirmada visualmente. Stop fast nativo verificado. Docs corrigidas. Git íntegro, sem commits.
+
+IMPLEMENTATION
+  Completed: (1) Stop fast nativo verificado; (2) diagnóstico do app FigCraft (em execução, sem canal de controle, single-instance comprovado com 2 provas); (3) teste real de ponta a ponta no servidor headless: criação (frame+texto), modificação (fill+stroke), inspeção (JSON de retorno), export PNG @2x, screenshot, descarte limpo via file.new (documento voltou a Untitled vazio, dirty=false); (4) confirmação visual INDEPENDENTE da captura via subagente VISION (política VISION FIRST); (5) runbook do attached sob demanda criado (docs/FIGCRAFT-ATTACHED.md) com snippet de config e one-shot stdio; (6) correções documentais em HOOKS.md e TOOLING.md; (7) verificação Git completa.
+  Not completed: Attached contra o app real — BLOCKED: exige o usuário fechar e reabrir o FigCraft com --control 7979 (o app é single-instance; não é possível instância de teste em paralelo; a instância do usuário não foi tocada).
+  Changes: Somente documentação + 1 PNG de evidência. Nenhum hook alterado; nenhuma config MCP alterada (headless preservado como está; attached NÃO registrado para não quebrar startup).
+  Architecture impact: Nenhum código de aplicação. Estratégia de uso do FigCraft definida: headless como padrão; attached sob demanda via runbook.
+
+FILES
+  Created: docs/FIGCRAFT-ATTACHED.md (runbook + limitações 0.6.0); docs/reports/evidence/2026-10-17_figcraft-mcp-test.png (33.191 bytes, 960x640); docs/reports/history/2026-10-17_2133_figcraft-live-integration.txt; docs/reports/LATEST.txt (regenerado).
+  Modified: docs/HOOKS.md (timeout 90 s vigora no próximo reinício; validação nativa posterior registrada); docs/TOOLING.md (exceção autorizada dos hooks USER no isolamento; estado atual das ferramentas; seção figcraft-app reescrita com estado real; seção Reinício atualizada).
+  Deleted: Nenhum arquivo. Documento de teste descartado dentro do engine headless via file.new (nunca foi salvo em disco).
+  Unexpected changes: NONE no repositório. Observação de ambiente: o processo figcraft.exe do usuário trocou de PID durante a tarefa (19556 -> 33812; app reiniciado em momento não determinável — possivelmente pelo forwarding single-instance ou pelo usuário; recent_files vazio, sem documentos abertos, porta 7979 fechada, nenhum dano conhecido).
+
+VALIDATION
+  Typecheck: SKIP — sem código de aplicação alterado.
+  Lint: SKIP — sem lint configurado.
+  Unit tests: SKIP — sem código de aplicação.
+  Integration tests: PASS — 9 chamadas MCP reais bem-sucedidas contra o servidor figcraft headless na sessão (list_commands, create_node x2, set_properties, export, screenshot, run_command file.new, inspect_document x2), com leitura de retorno conferindo cada passo.
+  Regression tests: PASS — baseline full: 4 PASS / 0 FAIL / 2 SKIP (suítes SKIP: sem aplicação).
+  Visual tests: PASS — PNG exportado verificado tecnicamente (assinatura PNG válida, 960x640 = 480x320 @2x) e visualmente (subagente VISION descreveu independentemente: retângulo arredondado laranja com contorno azul e texto "TESTE MCP CutNicePro" — exatamente o criado via MCP: fill #F59E0B, stroke #3B82F6, cornerRadius 16).
+  Runtime verification: PASS — Stop fast nativo (entrada real 21:12:42, mode fast, duration_s 0.06, baseline PASS 4/0/2, exatamente 1 entrada = sem loops); attached: 3 provas reais documentadas (erro de inicialização sem app; single-instance sem segunda instância/porta; porta 7979 fechada com app aberto).
+  Total passed: 18 verificações (4 baseline + 9 chamadas MCP + 2 técnicas do PNG + 1 VISION + 1 Stop fast + 1 git íntegro).
+  Total failed: 0
+  Total skipped: 2 (suítes da baseline) + 4 categorias SKIP acima justificadas.
+
+HOOKS / HARNESS
+  Hooks active: 4 de 4 (config USER, hooks.enabled=true).
+  PreToolUse: OPERACIONAL — todos os Bash desta tarefa passaram sem bloqueio (nenhum comando destrutivo utilizado; nenhum bloqueio indevido).
+  PostToolUse: OPERACIONAL — eventos nativos registrados para as edições de documentação desta tarefa (audit-log, session_id real).
+  Stop: REAL VALIDATION PASS — entrada nativa fast 2026-10-17T21:12:42 (sess_6ade4069-62ca-463c-ad92-55380fa08473): mode fast, duration_s 0.06, baseline PASS 4/0/2. Sem loops e sem execuções repetitivas: exatamente 1 entrada por encerramento de tarefa (4 entradas Stop no total do log, cada uma identificada: 2 simuladas/1 antiga real/1 fast real). Nenhum teste destrutivo executado.
+  Baseline: PASS — full 4/0/2 (execução final da tarefa).
+  Gate result: Stop não é gate; status desta tarefa derivado das evidências.
+  Evidence: .zcode/hooks/audit/audit-log.jsonl (Stop 21:12:42; PostToolUse das edições de docs); respostas JSON das chamadas MCP (transcript da sessão).
+
+MCP / SKILLS
+  Tools used: MCP figcraft headless (9 chamadas reais); subagente VISION (descrição independente da captura); skills não acionadas; graphify não acionado (sem alteração de código para indexar).
+  Connection status: figcraft CONECTADO e funcional (evidência de ponta a ponta nesta tarefa). graphify NÃO revalidado nesta tarefa (sem necessidade; última validação real 2026-10-17).
+  Failures: attached BLOCKED (não é falha do servidor headless): (a) figcraft-cli mcp --attach 7979 falha na inicialização sem app escutando; (b) app single-instance impede instância de teste paralela (lançamento com --control redireciona e a porta nunca abre); (c) app do usuário está em execução SEM --control (porta 7979 fechada).
+  Pending activation: figcraft-app attached — runbook em docs/FIGCRAFT-ATTACHED.md (usuário fecha o app, reabre com --control 7979, testa attach one-shot e, se quiser sessão interativa, registra no .zcode/config.json + 1 reinício do ZCode); timeout 90 s do Stop vigora no próximo reinício; graphify build quando houver código; confinamento de arquivos FigCraft (inexistente no 0.6.0).
+
+GIT
+  Branch: main
+  HEAD: fc1e295cd115cf60a3e01b5137ed0571ff6aa955 (inalterado — nenhum commit criado nesta tarefa, conforme instrução)
+  Working tree: modificado — M docs/HOOKS.md, M docs/TOOLING.md, M docs/reports/LATEST.txt; não rastreados — docs/FIGCRAFT-ATTACHED.md, docs/reports/evidence/, docs/reports/history/2026-10-17_2117_consolidacao-final-ambiente.txt (relatório anterior, preservado) e o TXT deste relatório ao ser gravado.
+  Commits created: 0
+  Push performed: NO
+  Merge performed: NO
+  Uncommitted changes: apenas os listados acima (todos esperados desta tarefa + relatórios)
+  Alterações inesperadas: NENHUMA.
+
+EVIDENCE
+  Commands executed (principais): grep do audit-log (Stop); tasklist/netstat (app e porta, 3 amostras); Start-Process figcraft --control 7979 + polling da porta 20 s; printf|figcraft-cli mcp --attach (prova anterior); verificação de assinatura/dimensões do PNG via Python; baseline full; git status/rev-parse.
+  Relevant logs: audit-log.jsonl (Stop fast 21:12:42 com mode/duration_s); respostas MCP (create_node id 2 frame 480x320 fill #101418->#F59E0B stroke #3B82F6; text id 3 "TESTE MCP CutNicePro" 28px; export 33191 bytes; file.new {index:1}; inspect final Untitled/dirty=false/path=null).
+  Screenshots: docs/reports/evidence/2026-10-17_figcraft-mcp-test.png (retida como evidência; conteúdo confirmado por VISION).
+  Test artifacts: nenhum além do PNG de evidência (documento de teste descartado no engine; nenhum arquivo de teste no disco).
+  Reproduction details: headless: mcp__figcraft__ create_node/set_properties/inspect_document/export/screenshot/run_command file.new. attached: docs/FIGCRAFT-ATTACHED.md (runbook completo). Stop: ler audit-log.jsonl.
+
+ISSUES
+  Bugs found: Nenhum no ambiente de trabalho. Observação: troca de PID do figcraft.exe do usuário (19556->33812) durante a tarefa, causa não determinável (sem documentos abertos; sem perda conhecida).
+  Unresolved failures: Attached BLOCKED (depende de intervenção do usuário — não é falha corrigível por código).
+  Regressions: Nenhuma.
+  Risks: (1) attached exige reinício do app pelo usuário — enquanto isso, sessões de design usam headless (equivalente funcional sem a janela ao vivo); (2) ao registrar figcraft-app no config, esquecer de remover depois quebraria startups com o app fechado (runbook orienta remoção); (3) timeout Stop 90 s só vigora após reinício do ZCode.
+  Blockers: Modo attached contra o app real (único item bloqueado).
+
+FINAL
+  Delivery status: ENTREGUE (PARTIAL por causa do attached BLOCKED — condição real documentada com evidências e caminho de ativação).
+  Requirements met: 7 de 8 critérios: headless funcionando (PASS); attached efetivamente testado nas condições possíveis (3 provas reais); operações no app comprovadas NÃO suportadas sem reinício do app (documentado); limitações com evidências (PASS); documentação atualizada (PASS); Stop fast real verificado (PASS); baseline full aprovada (PASS); nenhuma funcionalidade implementada (PASS).
+  Remaining work: Nada desta tarefa. Ativação do attached quando o usuário desejar (runbook).
+  User action required: Para sessões de design conectadas ao app: fechar o FigCraft e reabrir com --control 7979 (comando exato em docs/FIGCRAFT-ATTACHED.md). Opcional: reiniciar o ZCode para o timeout de 90 s do Stop.
+  Restart required: NO (obrigatório nenhum; opcional p/ timeout; attached segue runbook próprio quando ativado).
+  Ready for next task: YES — aguardando autorização.
+
+REPORT
+  Latest file: docs/reports/LATEST.txt
+  Historical file: docs/reports/history/2026-10-17_2133_figcraft-live-integration.txt
+
+END OF REPORT

@@ -1,0 +1,87 @@
+╔════════════════════════════════════════════╗
+║       CUTNICEPRO — ZCODE REPORT            ║
+╚════════════════════════════════════════════╝
+
+TASK
+  Name: FigCraft Attached — Validação Final e Registro no Workspace
+  Status: PASS — integração attached validada com operações reais e registrada; carregamento no ZCode fica PENDING RESTART (por design, exige reinício).
+  Scope: Integração MCP attached do FigCraft desktop (etapas 1-5 da tarefa). Nenhuma funcionalidade da aplicação; nenhuma tela de produto; hooks não alterados; headless não modificado.
+  Objective: Inicializar o app com --control 7979, validar o servidor attached de ponta a ponta com operações reais em documento descartável, registrar figcraft-app no workspace sem risco a futuros startups e documentar ativação/desativação.
+  Result: App rodando com canal de controle (porta 7979 LISTENING, proprietário = PID do figcraft.exe). Attached validado: handshake, 18 ferramentas, inspeção do app real, criação/modificação/leitura/captura/exportação em aba descartável com confirmação visual independente. Servidor figcraft-app registrado via wrapper auto-recuperável (nunca quebra startup). Documento não salvo do usuário (2 imagens coladas) preservado intacto.
+
+IMPLEMENTATION
+  Completed: (E1) confirmação de ausência de processos; lançamento oficial com --control 7979; processo ativo; porta LISTENING; propriedade da porta verificada pelo PID. (E2) validação attached real completa (detalhes em VALIDATION). (E3) wrapper .zcode/figcraft/figcraft_app_server.py (attach -> auto-launch com marker -> fallback headless), registro do figcraft-app no .zcode/config.json preservando figcraft e graphify, marker design/FIGCRAFT-ATTACHED.on criado, JSON validado, wrapper testado ao vivo (bug os.execv com espaços em caminho encontrado e corrigido via subprocess.Popen), ativação/desativação documentada, sem duplicações (3 servidores distintos). (E4) controles respeitados: nenhum processo encerrado, nenhum documento existente modificado, nada global, hooks intactos, motor headless intacto, sem operações destrutivas, sem repetição de comandos de criação sob dúvida. (E5) baseline full + git auditados.
+  Not completed: Carregar o servidor figcraft-app na sessão ATUAL do ZCode — impossível sem reinício (MCPs conectam no início da sessão). Caminho de fallback do wrapper (porta fechada + marker ausente) validado por inspeção de código; disparo real pendente de ocorrência natural.
+  Changes: Novo wrapper Python (stdlib), entrada figcraft-app no .zcode/config.json, marker de ativação, docs atualizadas, 1 PNG de evidência. Headless, hooks e ferramentas existentes: INALTERADOS.
+  Architecture impact: Nenhum código de aplicação. Estratégia MCP FigCraft final: figcraft (headless, determinístico) + figcraft-app (attached auto-recuperável com marker) coexistindo sem conflito.
+
+FILES
+  Created: .zcode/figcraft/figcraft_app_server.py (wrapper); design/FIGCRAFT-ATTACHED.on (marker de ativação); docs/reports/evidence/2026-10-17_figcraft-attached-test.png (31.807 bytes, 1040x720); docs/reports/history/2026-10-17_2150_figcraft-attached-final-validation.txt; docs/reports/LATEST.txt (regenerado).
+  Modified: .zcode/config.json (+figcraft-app, preservando figcraft/graphify); docs/FIGCRAFT-ATTACHED.md (reescrito: estado validado, wrapper, ativar/desativar); docs/TOOLING.md (seção figcraft-app atualizada).
+  Deleted: Nenhum. Aba de teste TESTE-MCP-ATTACHED fechada com descarte dentro do app (file.close force).
+  Unexpected changes: NONE — working tree contém exatamente o esperado (ver GIT).
+
+VALIDATION
+  Typecheck: SKIP — sem código de aplicação (wrapper compilado via py_compile: PASS).
+  Lint: SKIP — sem lint configurado.
+  Unit tests: SKIP — sem código de aplicação.
+  Integration tests: PASS — 11 chamadas tools/call reais contra o servidor ATTACHED via stdio (inspect_ui x2, inspect_document x3, run_command file.new, create_node x2, set_properties, export, run_command file.close) + 6 initializes; wrapper testado ao vivo com handshake completo e inspect_ui através dele.
+  Regression tests: PASS — baseline full: 4 PASS / 0 FAIL / 2 SKIP (suítes SKIP: sem aplicação).
+  Visual tests: PASS — export PNG @2x (1040x720) gravado PELO APP via canal de controle; assinatura PNG válida; subagente VISION confirmou independentemente: frame navy escuro arredondado com contorno ciano espesso e texto "ATTACHED OK 7979" em ciano — exatamente o criado via MCP (#0F172A, #22D3EE, raio 20).
+  Runtime verification: PASS — porta 7979 LISTENING em 127.0.0.1 com proprietário = PID 13332 do figcraft.exe (netstat+tasklist); banner do servidor "attached to the FigCraft app at 127.0.0.1:7979" (não headless); inspect_ui attached retornou a janela real do desktop (title "CutNicePro • – FigCraft", focused=true) — dado exclusivo do app em execução; leitura de retorno (inspect_document) confirmou cada operação; documento do usuário reinspecionado após o descarte: mesmas 2 imagens, intacto.
+  Total passed: 27 verificações (5 da etapa 1 + 13 da etapa 2 + 3 da etapa 3 incl. correção do wrapper verificada + 4 baseline + 2 saúde app/git).
+  Total failed: 0
+  Total skipped: 2 (suítes da baseline) + 4 categorias SKIP acima justificadas.
+
+HOOKS / HARNESS
+  Hooks active: 4 de 4 (intactos — nenhum hook alterado nesta tarefa, conforme exigido).
+  PreToolUse: OPERACIONAL — todos os Bash passaram sem bloqueio (nenhum comando destrutivo).
+  PostToolUse: OPERACIONAL — eventos nativos registrados para os arquivos criados/editados (wrapper, config, marker, docs).
+  Stop: Operacional (validado nativamente em tarefas anteriores; entradas fast reais com mode/duration_s no audit-log). O disparo desta tarefa ocorrerá após a entrega e será a próxima entrada fast do log.
+  Baseline: PASS — full 4/0/2 (execução final).
+  Gate result: Stop não é gate; status desta tarefa deriva das evidências.
+  Evidence: .zcode/hooks/audit/audit-log.jsonl (PostToolUse desta tarefa); docs/reports/evidence/2026-10-17_figcraft-attached-test.png; transcripts JSON-RPC (banner attached, initialize, tools/list 18, respostas das chamadas).
+
+MCP / SKILLS
+  Tools used: figcraft-cli mcp --attach 7979 (stdio, 6 sessões one-shot); wrapper figcraft_app_server.py (teste ao vivo); subagente VISION (confirmação visual independente); skills não acionadas; graphify não acionado.
+  Connection status: ATTACHED VALIDADO contra o app real (a partir de agora o backend attached é distinguível pelo banner/instructions/inspect_ui — nunca confundido com headless). figcraft headless: preservado e imune (processo 3928 da sessão permaneceu vivo e intocado). graphify: inalterado.
+  Failures: Nenhum residual. Bug encontrado e corrigido no wrapper: os.execv quebra caminhos com espaços no Windows ("unknown subcommand Files\FigCraft\...") -> substituído por subprocess.Popen com lista (stdio herdado); retestado ao vivo com sucesso.
+  Pending activation: figcraft-app carregar no ZCode após o reinício (config válida); fallback do wrapper em disparo real (porta fechada + marker ausente); graphify build quando houver código; confinamento de arquivos FigCraft (inexistente no 0.6.0).
+
+GIT
+  Branch: main
+  HEAD: fc1e295 (inalterado — nenhum commit criado nesta tarefa)
+  Working tree: M .zcode/config.json, M docs/HOOKS.md(1), M docs/TOOLING.md, M docs/reports/LATEST.txt; ?? .zcode/figcraft/, design/, docs/FIGCRAFT-ATTACHED.md, docs/reports/evidence/, docs/reports/history/2026-10-17_2117_*.txt, 2026-10-17_2133_*.txt (relatórios anteriores preservados) e o TXT deste relatório. (1) HOOKS.md modificado na tarefa anterior (não reeditado nesta).
+  Commits created: 0
+  Push performed: NO
+  Merge performed: NO
+  Uncommitted changes: apenas os listados — todos esperados; NENHUMA alteração inesperada.
+
+EVIDENCE
+  Commands executed (principais): tasklist/netstat (antes e depois do lançamento; propriedade da porta por PID); PowerShell Start-Process figcraft --control 7979; 6 pipes stdio com initialize/tools/call contra o attached; teste ao vivo do wrapper (2 versões — antes/depois da correção); py_compile; json.tool; verificação de assinatura/dimensões do PNG; baseline full; git status.
+  Relevant logs: banner "figcraft MCP server (attached to the FigCraft app at 127.0.0.1:7979) on stdio"; serverInfo {figcraft 0.6.0, Backend: attached}; tools/list = 18; inspect_ui windows=[{title 'CutNicePro • – FigCraft', focused true}]; create id=2 FRAME 520x360 / id=3 TEXT "ATTACHED OK 7979"; export {bytes 31807, path ...evidence/2026-10-17_figcraft-attached-test.png}; file.close {ok true}; pós-limpeza: documento CutNicePro com 2 "Pasted image" intactas.
+  Screenshots: docs/reports/evidence/2026-10-17_figcraft-attached-test.png (retida; confirmada por VISION).
+  Test artifacts: nenhum além do PNG de evidência (aba de teste descartada no app; nada em disco).
+  Reproduction details: lançar app com --control 7979 e piping JSON-RPC em figcraft-cli mcp --attach 7979; wrapper: python .zcode/figcraft/figcraft_app_server.py; ativar/desativar: marker design/FIGCRAFT-ATTACHED.on (docs/FIGCRAFT-ATTACHED.md).
+
+ISSUES
+  Bugs found: 1 — os.execv com caminhos contendo espaços quebra argv no Windows (wrapper). Corrigido e revalidado ao vivo.
+  Unresolved failures: Nenhuma.
+  Regressions: Nenhuma (baseline full PASS; headless preservado; hooks intactos).
+  Risks: (1) figcraft-app só efetiva após reinício do ZCode (esperado); (2) com marker presente, abrir o workspace lança o FigCraft automaticamente — comportamento desejado, desligável removendo o marker; (3) fallback do wrapper sem disparo real observado; (4) app single-instance: attached exige o app aberto COM --control (wrapper cuida quando o app está fechado).
+  Blockers: Nenhum.
+  Observação ao usuário: o app reabriu com um documento NÃO SALVO chamado "CutNicePro" (recuperação de sessão, 2 imagens coladas) — identificado antes dos testes, NÃO modificado, permanece aberto e intacto.
+
+FINAL
+  Delivery status: ENTREGUE — integração attached concluída, validada e registrada com segurança de startup.
+  Requirements met: 6 de 6 critérios (headless preservado; attached funcionando com operações reais comprovadas; configuração MCP válida; nenhuma regressão; git sem alterações inesperadas; evidências persistidas). Carga do servidor na sessão: PENDING RESTART (informado explicitamente).
+  Remaining work: Nada desta tarefa. Desenvolvimento do CutNicePro segue NÃO iniciado.
+  User action required: REINICIAR O ZCODE para carregar o servidor figcraft-app. Opcional: salvar ou descartar o documento não salvo "CutNicePro" aberto no app.
+  Restart required: YES (para o figcraft-app conectar como MCP da sessão).
+  Ready for next task: YES — após o reinício, aguardando autorização.
+
+REPORT
+  Latest file: docs/reports/LATEST.txt
+  Historical file: docs/reports/history/2026-10-17_2150_figcraft-attached-final-validation.txt
+
+END OF REPORT

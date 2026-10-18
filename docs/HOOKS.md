@@ -42,7 +42,12 @@ todos os hooks são no-op (identificação via `${ZCODE_PROJECT_DIR}`).
 - session_start: **2/2** — registra no workspace, no-op fora.
 - completion_audit: **PASS** — rodou a baseline (4 PASS / 2 SKIP) e exit 0.
 - Evidências no `audit-log.jsonl` (entradas com `session_id` `t`/`t-sess` são dos testes).
-- Teste com **eventos reais**: PENDING RESTART — hooks de config carregam no início da sessão.
+- **Validação nativa posterior (2026-10-17, após reinício):** SessionStart real 20:50:00
+  (resume); PreToolUse BLOCK real 21:02:51 (bloqueio de `rm -rf` em alvo descartável —
+  comando não executou); PostToolUse reais 21:03:23+ (incluindo PASS com compilação .py e
+  parse .json reais em 21:09:41–21:10:35); Stop real 21:04:59 (versão antiga) e **Stop fast
+  real 21:12:42** (`mode: fast`, `duration_s: 0.06`, baseline PASS 4/0/2, sem loops).
+  Estado atual: todos os eventos nativos validados.
 
 ## Como desativar
 
@@ -54,7 +59,6 @@ todos os hooks são no-op (identificação via `${ZCODE_PROJECT_DIR}`).
 ## Políticas
 
 - Sem loops: apenas `PreToolUse` bloqueia (exit 2); `Stop` nunca pede continuação.
-- Sem testes pesados: validações são de sintaxe; baseline roda testes apenas quando existirem
-  (timeout interno de 240 s por suíte; timeout do hook Stop: 300 s).
+- Sem testes pesados: validações são de sintaxe; o Stop roda apenas o modo fast (suítes completas ficam para o `--full` explícito; timeout interno de 240 s por suíte quando houver; timeout configurado do hook Stop: 90 s — vigora a partir do próximo reinício do ZCode, até lá 300 s).
 - Se um bloqueio for legítimo (operação destrutiva realmente necessária): usar comando mais
   restrito, ou pedir ao usuário para executar manualmente / desativar o toggle temporariamente.
