@@ -91,6 +91,37 @@ mecanismo a definir; produto comercial com assinatura.
 
 ## 7. Escopo
 
+### CUTNICEPRO MVP v0.1 — SCOPE BASELINE (Fase 03, 2026-10-18)
+
+Congelamento de escopo para construção (não proíbe evolução; mudanças futuras registram
+impacto no BACKLOG). Marcos de entrega M1..M6 detalhados no BACKLOG.
+
+- **In Scope (MVP):** aplicativo Windows local-first; importação de vídeos; geração
+  inteligente de cortes; legendas automáticas; revisão; edição essencial; ajuste de
+  enquadramento; exportação MP4; persistência de projetos; fila sequencial de
+  processamento (DEC-013); IA LOCAL e BYOK (conjunto restrito validado — DEC-012);
+  assinatura mensal sem créditos (DEC-010) com checkout sandbox para protótipos.
+- **Out of Scope (fora do MVP inicial; permanecem no roadmap):** biblioteca de vídeos por
+  nicho; colaboração em equipe; publicação automática em redes; processamento paralelo
+  avançado; editor multipista completo; outras plataformas; integrações não essenciais;
+  sistema de créditos internos.
+- **Validated (decisões aprovadas):** DEC-010 modelo sem créditos; preço R$ 29,90/mês
+  COMO HIPÓTESE DE TESTE; D1 Home antes da config de IA; DEC-012 Local/BYOK (matriz
+  conceitual); DEC-002 (sem login no MVP técnico); DEC-013 fila sequencial (hipótese de
+  MVP sujeita a validação técnica).
+- **Pending Technical Validation:** formatos/codecs (BR-007/028); mecanismos de motores
+  locais/BYOK por tarefa (transcrição, alinhamento, seleção, análise visual,
+  reenquadramento); armazenamento seguro de credenciais (BR-044); retomada de jobs
+  (BR-018); desempenho de fila sequencial.
+- **Pending Commercial Decision (PENDING USER DECISION):** mecanismo de acesso
+  definitivo (DEC-011 — beta usará convite simples); política offline detalhada (BR-049);
+  trial/dispositivos/licenciamento; provedor de pagamentos; detalhes pós-expiração
+  (BR-048).
+- **Não prometido:** compatibilidade com qualquer modelo de IA; processamento ilimitado;
+  uso do GLM Coding Plan como API comercial de inferência (BR-050); métricas de
+  usabilidade ainda não coletadas.
+
+
 ### MVP (Must)
 FR-001 a FR-016 (abaixo), um vídeo de origem por job, modos B (legendas) e A (cortes) com
 pipeline completo, editor avançado essencial, exportação local.

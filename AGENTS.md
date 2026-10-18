@@ -75,6 +75,13 @@ Plataforma de edição inteligente de vídeos (inspirada no OpusClip).
 - Em tarefas de interface: executar a aplicação, capturar evidências com o Playwright CLI (`.tooling/playwright/node_modules/.bin/playwright-cli`) quando aplicável, e comparar o resultado com a referência aprovada.
 - Não encerrar tarefas visuais afirmando fidelidade sem realmente inspecionar o resultado.
 
+## Regra permanente de governança de artefatos (Fase 02A.5)
+
+- Toda nova versão de UX deve ter identificação clara (nome, versão e estado); versões antigas nunca podem permanecer visualmente indistinguíveis das atuais.
+- Revisão técnica (Quality Gate PASS) NÃO substitui aprovação do mantenedor; apenas artefatos explicitamente APPROVED são especificação visual definitiva para implementação.
+- Artefatos reprovados permanecem identificados como históricos (REJECTED/ARCHIVED); o Product Brain (`docs/product/PRODUCT-BRAIN.md` §10) registra o estado oficial de cada artefato — consultá-lo antes de derivar trabalho visual.
+- Wireframes futuros devem apontar para jornadas/fluxos APPROVED; não renomear automaticamente propostas como versões definitivas; não manter várias versões oficiais simultâneas para o mesmo propósito.
+
 ## Regra permanente de validação FigCraft (Fase 02A.4)
 
 - Toda criação ou modificação visual no FigCraft deve verificar, incrementalmente: geometria, layout, hierarquia de camadas, **z-order**, conteúdo visível, tipografia, identidade visual e integridade de componentes/instâncias quando aplicável.

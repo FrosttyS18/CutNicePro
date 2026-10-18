@@ -75,21 +75,70 @@ motores Local/BYOK (DEC-012, PROPOSED), fila sequencial MVP (DEC-013, hipótese)
 
 ## 9. Backlog (índice)
 
+> Fase 03 (2026-10-18): marcos de entrega M1..M6 definidos no BACKLOG; **M1 IMPLEMENTADO**
+> (app Windows Tauri + React/TS, Home, criar/listar/abrir projetos, persistência JSON
+> local; evidências no relatório da fase). Stack técnica: Vite + React + TypeScript +
+> Tauri v2 (Rust) — UI separada da lógica (comandos Tauri para persistência).
+
+
+
 12 épicos, 37 histórias, 93 ACs — priorização MoSCoW e ordem de entrega em
 docs/product/BACKLOG.md. Estado geral: PLANNED.
 
-## 10. Última revisão
+## 10. Governança de artefatos visuais (Fase 02A.5)
 
-2026-10-17 — Fase 02A.1 (modelo comercial + BYOK + jornadas/regras/backlog expandidos +
-mapas visuais no FigCraft) por ZCode; aguardando avaliação.
+Estados oficiais: **APPROVED** (aprovado expressamente pelo mantenedor) ·
+**IN REVIEW** (tecnicamente validado, aguardando mantenedor) · **DRAFT**
+(preliminar) · **REFERENCE** (apoio/exploração, sem autoridade) ·
+**SUPERSEDED** (substituído por versão posterior aprovada) ·
+**REJECTED/ARCHIVED** (reprovado ou histórico) · **BLOCKED** (pendência
+crítica). Regra permanente: **apenas artefatos explicitamente APPROVED são
+especificação visual definitiva para implementação**; Quality Gate PASS ≠
+Product Design APPROVED; a documentação canônica prevalece sobre diagramas em
+divergência (respeitando estado APPROVED/PROPOSED de cada decisão); conflito
+entre decisões aprovadas → BLOCKED para resolução humana.
 
-## 11. Evidências
+| ID | Nome | Tipo | Versão | FigCraft (página/frame) | Gate téc. | Mantenedor | Supersede | Canônicos | Elegível p/ implementação |
+|---|---|---|---|---|---|---|---|---|---|
+| ART-001 | User Journey Map — CUTNICEPRO END-TO-END | Journey map | 02A.1 | roadmap / frame 436 | n/a (pré-gate) | — | — | JRN-001..014 | Não (DRAFT/REFERENCE) |
+| ART-002 | MASTER USER FLOW | User flow | 02A.1 | roadmap / frame 368 | n/a (pré-gate) | REPROVADO | — | JRN/BR/DEC | Não (REJECTED/ARCHIVED) |
+| ART-003 | PRODUCT DELIVERY ROADMAP | Roadmap | 02A.1 | roadmap / frame 656 | n/a (pré-gate) | — | — | EPIC/US/DEC; BACKLOG.md | Não (DRAFT) |
+| ART-004 | 00 — PRODUCT FLOW OVERVIEW V2 | Fluxo macro | V2 (02A.3) | roadmap / frame 728 | GATE V3 PASS (02A.4) | PENDING | candidata a superseder ART-002* | PRD §fluxo; JRN-001..013; DEC-012 | Não (IN REVIEW) |
+| ART-005 | 01 — FIRST RUN & ACCESS USER FLOW V2 | User flow piloto | V2 (02A.3) | roadmap / frame 799 | GATE V3 PASS (02A.4) | PENDING | candidata a superseder ART-002* | JRN-001/002/014; BR-037/049; DEC-011/012 | Não (IN REVIEW) |
+| ART-006 | Proposta A — Creative Studio | Proposta de UI | Fase 01 | UI - designer / frame 2 | n/a | — | — | UX-FOUNDATION §8 | Não (REFERENCE) |
+| ART-007 | Proposta B — AI Clip Workspace | Proposta de UI | Fase 01 | UI - designer / frame 154 | n/a | — | — | UX-FOUNDATION §8 | Não (REFERENCE) |
+
+\* Journey Map (ART-001) e Product Flow Overview (ART-004) são artefatos
+metodologicamente DISTINTOS (jornada × fluxo): um não supersede o outro. A
+aprovação de ART-004/005 tornaria ART-002 SUPERSEDED (mesmo propósito: user
+flow de referência visual) — hoje ART-002 permanece REJECTED/ARCHIVED.
+
+Pendências por artefato: ART-004 → aprovação do mantenedor + D1 (ordem da
+config de IA, PROPOSED no diagrama em âmbar). ART-005 → aprovação do
+mantenedor + DEC-011 (mecanismo de acesso) + BR-049 (política offline;
+detalhes PENDING USER DECISION). ART-003 → revisão contra BACKLOG.md quando
+do próximo ciclo de planejamento. Próxima ação comum: auditoria/aprovação do
+mantenedor; nenhum wireframe deve derivar destes artefatos antes de APPROVED.
+
+## 11. Última revisão
+
+2026-10-18 — Fase 03 (MVP freeze: D1 APPROVED, DEC-010 preço hipótese R$ 29,90,
+DEC-011 convite beta, BR-049 offline técnico; baseline MVP v0.1 no PRD; marcos M1..M6;
+M1 implementado) por ZCode. 2026-10-18 — Fase 02A.5 (governança de artefatos). 2026-10-17
+— Fase 02A.1 por ZCode; aguardando avaliação.
+
+2026-10-18 — Fase 02A.5 (governança de artefatos + organização da página
+roadmap + índice visual; estados oficiais e regra de elegibilidade) por
+ZCode. 2026-10-17 — Fase 02A.1 (modelo comercial + BYOK + jornadas/regras/
+backlog expandidos + mapas visuais) por ZCode; aguardando avaliação.
+
+## 12. Evidências
 
 Relatórios de tarefa: docs/reports/ (LATEST.txt + history/). Evidências de design:
 docs/reports/evidence/. Auditoria de consistência documental: TRACEABILITY.md §auditoria
 (script de cross-check de IDs executado — resultado registrado lá).
 
-## 12. Relação com o Graphify
+## 13. Relação com o Graphify
 
 Graphify: INSTALLED — INITIAL INDEX PENDING (sem código-fonte; docs/TOOLING.md).
 PRODUCT-BRAIN ≠ grafo de código: durante a fase de produto, a rastreabilidade é a

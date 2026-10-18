@@ -165,6 +165,39 @@ não implementa). Dep: decisão do mantenedor.
   sugere compra de créditos (BR-038); AC-088 custos externos esclarecidos quando BYOK
   (BR-041/FR-026).
 
+## Marcos de entrega M1..M6 (Fase 03 — foco em entregas funcionais)
+
+Mapeamento dos épicos/histórias existentes em incrementos demonstráveis. Sem datas e sem
+estimativas de horas (sem análise técnica por história). Cada marco exige: resultado
+funcional, histórias relacionadas, dependências, critérios de aceite, estratégia de
+validação e evidência de funcionamento.
+
+- **M1 — Aplicativo e projetos** (EPIC-001 parcial + EPIC-002 parcial): app Windows
+  inicializável; Home funcional com estado vazio; criar/listar/abrir projetos;
+  persistência local real; fechar e reabrir sem perder dados; erros básicos de
+  leitura/gravação. Histórias: US-002, US-003 (parcial — lista e retomada básica),
+  US-004, US-005 (parcial — storage definido: JSON local por comando Tauri). Validação:
+  cargo test (persistência) + vitest (UI) + build desktop + execução real com evidências.
+  **STATUS M1: IMPLEMENTADO (2026-10-18, Fase 03) — evidências no relatório da fase.**
+- **M2 — Importação e mídia** (EPIC-003 + EPIC-004): importar vídeos reais, validar
+  arquivos, metadados, preview, reprodução, associação a projetos.
+- **M3 — Legendas e primeira exportação** (EPIC-005 + EPIC-009 parcial + EPIC-011
+  mínimo): transcrição funcional, sincronização, edição de legenda, renderização,
+  exportação MP4 real — primeiro ciclo útil ponta a ponta.
+- **M4 — Cortes inteligentes** (EPIC-006): análise, trechos candidatos, seleção, revisão,
+  ajustes, exportação dos cortes (qualidade/confiabilidade acima de quantidade).
+- **M5 — Beta privado** (integração + EPIC-011 completo + US-036): fluxos integrados, IA
+  local/BYOK nos provedores suportados, tratamento de falhas, fila sequencial,
+  distribuição a 10–20 convidados (DEC-011 convite), feedback consentido, evidências de
+  testes reais.
+- **M6 — Preparação comercial** (EPIC-012): ativação, controle de assinatura, checkout
+  com provedor real, renovação/expiração, experiência de conta, monitoramento mínimo.
+  Não impede protótipos sandbox anteriores da experiência comercial.
+
+Funcionalidades fora do MVP inicial (biblioteca de vídeos, colaboração, publicação
+automática, paralelismo avançado, editor multipista, outras plataformas, créditos)
+permanecem no roadmap — não no backlog prioritário do MVP.
+
 ## Ordem de entrega (vertical e incremental)
 
 1. EPIC-001+002 (abrir/criar/retomar) → 2. EPIC-003+004 (importar/diagnóstico) →
@@ -180,7 +213,9 @@ viabilidade técnica (BR pendentes PENDING TECHNICAL VALIDATION).
 
 ## Bloqueadores e pendências técnicas
 
-- Lista de formatos/codecs (BR-007/BR-028), mecanismo de storage local (US-005),
+- Lista de formatos/codecs (BR-007/BR-028), mecanismo de storage local (US-005 —
+  RESOLVIDO para M1: JSON local via comandos Tauri em app-data; evolução a DB quando
+  mídia/jobs exigirem),
   retomada de jobs (BR-018), paralelização (BR-014/US-026) — PENDING TECHNICAL VALIDATION.
 - Catálogo/compatibilidade de modelos locais e mecanismo de armazenamento seguro de
   chaves (US-029/US-031) — PENDING TECHNICAL VALIDATION.

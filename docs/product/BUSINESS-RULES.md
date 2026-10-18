@@ -155,6 +155,9 @@
 - **BR-049 Comportamento offline proposto** — proposta: período de cortesia com validação
   periódica tolerante a ausência de internet, mantendo acesso local às funcionalidades
   já liberadas; detalhes (duração, o que fica disponível) PENDING USER DECISION.
+  Fase 03 (2026-10-18): processamento local offline PERMITIDO quando tecnicamente
+  viável (não bloqueia desenvolvimento); política comercial segue PENDING; projetos
+  nunca são apagados por falha de conexão (reafirmado).
   Estado: PROPOSED.
 - **BR-050 GLM Coding Plan não é API de produção** — planos de assistentes de código não
   se qualificam como provedor BYOK do produto. Estado: APPROVED (restrição do mantenedor).

@@ -1,0 +1,179 @@
+================================================================================
+CUTNICEPRO — ZCODE REPORT
+================================================================================
+TAREFA: Fase 02A.5 — Product Artifact Governance + FigCraft Organization
+(auditar/classificar os artefatos visuais, registrar governança no Product
+Brain e organizar a página roadmap com índice e rótulos de estado)
+DATA: 2026-10-18 (03h00–03h10)
+STATUS: PASS técnico — 7 artefatos auditados e classificados, nenhum APPROVED
+inventado, página roadmap organizada SEM movimentação destrutiva, Product
+Brain e AGENTS.md atualizados, gate V3 sem regressão, baseline PASS.
+
+--------------------------------------------------------------------------------
+1. EXECUÇÃO RESUMIDA
+--------------------------------------------------------------------------------
+- Backup ANTES de qualquer edição: design/backups/cutnicepro-pre-02A5-0301
+  .figcraft (último estado salvo; o documento estava dirty com edições novas
+  do mantenedor — imports na página Referencias, agora com 5 filhos —
+  PRESERVADAS e incluídas no save final).
+- Auditoria (§1): página roadmap inspecionada (5 frames confirmados) +
+  página UI - designer (2 frames, apenas registro de estado). Nomes e IDs
+  reais confirmados por get_node/inspect_document.
+- Estados oficiais (§2) e classificação inicial (§3) adotados EXATAMENTE
+  conforme histórico de auditorias — nenhuma aprovação declarada sem
+  evidência expressa do mantenedor.
+- Product Brain (§4): nova seção §10 "Governança de artefatos visuais" com
+  tabela completa (7 artefatos × 12 campos), regra permanente de
+  elegibilidade, distinção metodológica Journey Map × Flow Overview, e nota
+  de supersede condicional (ART-004/005 aprovados → ART-002 SUPERSEDED).
+  Seções renumeradas (Última revisão → §11; Evidências → §12; Graphify → §13).
+- Página roadmap (§5): SEM movimentar frames e SEM tocar geometria/z-order
+  internos — criados APENAS 12 elementos NOVOS no nível da página, fora dos
+  frames: 1 painel índice (GOV-INDEX, 927) + 5 chips de estado (935-939)
+  com textos. Páginas Referencias e UI - designer intocadas.
+- Índice visual (§6): painel com regiões 00/01/99, propostas A/B como
+  REFERENCE, legenda dos 7 estados, fonte da verdade (Brain §10) e regra
+  "Gate PASS ≠ APPROVED". Identidade oficial (Poppins, #231F20/#000000/
+  #02C2BE/#B9BBBD/#E5484D, chips com pílula r6) — sem decoração.
+- AGENTS.md (§7): seção "Regra permanente de governança de artefatos" (8
+  regras da tarefa, condensadas sem duplicar as seções 02A.4 existentes).
+- Decisões pendentes (§8): verificadas nos canônicos e registradas no Brain
+  e nos chips/índice (ver seção PRODUCT BRAIN abaixo).
+- Nenhum script novo, nenhuma verificação geométrica nova (§9 — gate V3
+  existente apenas re-executado para não-regressão).
+
+--------------------------------------------------------------------------------
+ARTIFACT GOVERNANCE
+--------------------------------------------------------------------------------
+- Total artifacts reviewed: 7 (5 na página roadmap + 2 propostas A/B em
+  UI - designer registradas como estado).
+- Approved: 0 (nenhum — não existe evidência expressa do mantenedor).
+- In review: 2 — ART-004 Product Flow Overview V2 (frame 728, Gate V3 PASS
+  02A.4) e ART-005 First Run & Access V2 (frame 799, Gate V3 PASS 02A.4).
+- Draft: 2 — ART-001 User Journey Map 02A.1 (frame 436; classificação
+  DRAFT/REFERENCE conforme §3) e ART-003 Product Delivery Roadmap 02A.1
+  (frame 656; sujeito à revisão do BACKLOG.md).
+- Reference: 3 — ART-006 Proposta A (frame 2, UI - designer), ART-007
+  Proposta B (frame 154, UI - designer) e as imagens de apoio da página
+  Referencias (sem ID próprio; registradas no índice como REFERENCE).
+- Rejected / archived: 1 — ART-002 Master User Flow 02A.1 (frame 368),
+  reprovado por representação lógica e visual; preservado como histórico.
+- Conflicting versions: 0 conflitos ativos. Nota de supersede CONDICIONAL:
+  ART-004/005 (mesmo propósito de ART-002) torná-lo-iam SUPERSEDED se
+  aprovados — hoje coexistem como REJECTED/ARCHIVED × IN REVIEW, com
+  distinção metodológica registrada (Journey Map ART-001 NÃO é supersedido
+  pelo Overview — artefatos de naturezas diferentes).
+- Source of truth: docs/product/PRODUCT-BRAIN.md §10 (tabela oficial de
+  estados); documentação canônica (PRD/JOURNEYS/RULES/DECISIONS) prevalece
+  sobre diagramas em divergência; regra "apenas APPROVED é especificação
+  visual definitiva" registrada no Brain e no AGENTS.md.
+
+--------------------------------------------------------------------------------
+FIGCRAFT ORGANIZATION
+--------------------------------------------------------------------------------
+- Page inspected: roadmap (id 286) — 5 frames auditados antes de qualquer
+  edição; Referencias (id 282, 5 filhos pós-import do mantenedor) e
+  UI - designer (id 1, frames 2 e 154) inspecionadas e PRESERVADAS.
+- Current artifacts: 00 — CURRENT WORK / IN REVIEW: frames 728 e 799
+  (coluna direita, x=2460) com chips aqua "00 · IN REVIEW" (738/739) e as
+  pendências D1 ◇ / DEC-011 ◇ / BR-049 ◇ nos rótulos.
+- Supporting artifacts: 01 — SUPPORTING UX: frames 436 (Journey Map) e 656
+  (Roadmap) com chips cinza "01 · DRAFT — APOIO UX" (935/937).
+- Historical artifacts: 99 — ARCHIVE / REJECTED: frame 368 (Master Flow)
+  com chip vermelho "99 · REJECTED — HISTÓRICO — NÃO UTILIZAR PARA
+  IMPLEMENTAÇÃO" (936).
+- Index created: SIM — painel "CUTNICEPRO — PRODUCT DESIGN ARTIFACTS"
+  (GOV-INDEX, id 927, 2330×310 em (0,-1480)) com regiões, estados
+  (legenda dos 7), propostas A/B como REFERENCE, fonte da verdade e regra
+  Gate PASS ≠ APPROVED. VISION 8/8 CONFIRMADO (gov-index.png + gov-chips.png
+  em design/flow-v2/).
+- Frames preserved: TODOS os 5 frames com geometria interna, ordem de
+  camadas e correções manuais do mantenedor INTACTAS — nenhum nó, seta,
+  losango ou texto interno tocado; nenhum frame movido.
+- Internal geometry changed: NENHUMA (apenas 12 camadas novas FORA dos
+  frames: 1 painel + 5 chips + 7 textos do índice; docdumps V2 inalterados
+  — gate E paridade mantida).
+- Manual changes preserved: SIM — imports novos do mantenedor em
+  Referencias e todo o estado do roadmap salvos junto (arquivo nativo
+  salvo: 5.030.054 bytes).
+
+--------------------------------------------------------------------------------
+PRODUCT BRAIN
+--------------------------------------------------------------------------------
+- Registry updated: SIM — §10 "Governança de artefatos visuais": tabela com
+  ID (ART-001..007), nome, tipo, versão, localização FigCraft, FRAME ID
+  real, gate técnico, estado do mantenedor, canônicos relacionados,
+  supersede condicional, pendências, próxima ação e elegibilidade para
+  implementação (todos "Não" — nenhum APPROVED).
+- Unresolved decisions (verificadas nos canônicos, NÃO resolvidas):
+  · D1 — config de IA antes da Home × contextual (INFORMATION-ARCHITECTURE
+    §D1 "a validar"; marcada PROPOSED em âmbar no Overview V2) — afeta o
+    fluxo 00, não bloqueia o produto inteiro.
+  · DEC-011 — mecanismo comercial de acesso (DECISIONS.md: PENDING USER
+    DECISION; 4 alternativas em aberto) — afeta First Run V2 e o produto
+    comercial (bloqueio de escopo de acesso, não do MVP local).
+  · BR-049 — política offline (BUSINESS-RULES.md: proposta, detalhes
+    PENDING USER DECISION) — afeta First Run V2 (ramo offline).
+  · DEC-010 detalhes de assinatura (preço/período de teste — PRD/BRAIN) —
+    comercial, não bloqueia os fluxos em revisão.
+  Nenhuma pendência classificada como BLOCKED de produto inteiro; todas
+  registradas como pendências de fluxo específico.
+- Artifacts eligible for implementation: 0 (regra: apenas APPROVED; hoje
+  2 IN REVIEW + 2 DRAFT + 3 REFERENCE + 1 REJECTED).
+- Pending approvals: 2 aprovações do mantenedor (ART-004 e ART-005);
+  revisões de apoio (ART-001 contra jornadas canônicas; ART-003 contra
+  BACKLOG.md) registradas como próximas ações.
+
+--------------------------------------------------------------------------------
+VALIDATION
+--------------------------------------------------------------------------------
+- Baseline full: PASS (4 pass / 0 fail / 2 skip — app não implementada;
+  harness existente, sem scripts novos).
+- Gate V3 (não-regressão): PASS — A 0 · B 0 · C 0 · D 0 · E 0 (docdumps
+  dos frames V2 inalterados pela organização; camadas novas ficaram fora
+  dos frames).
+- VISION: índice e chips 8/8 CONFIRMADO (título, 3 regiões, legenda de
+  estados, fonte da verdade, 5 chips corretos e contidos).
+- Unexpected changes: NENHUMA — os imports do mantenedor em Referencias
+  foram detectados na inspeção inicial e preservados (incluídos no save
+  final pelo próprio dirty state, sem intervenção).
+- Issues: 1 cosmético registrado pela VISION (marca ambígua na borda
+  direita da linha 00 do índice — sem impacto de legibilidade; texto
+  dentro da largura fixa com folga).
+
+--------------------------------------------------------------------------------
+GIT
+--------------------------------------------------------------------------------
+- Branch: main · HEAD: 80f578e "docs(repo): adota Conventional Commits,
+  exige commits identificaveis nos relatorios e distingue documentacao do
+  Graphify".
+- Modified: .gitignore, AGENTS.md (+2 seções permanentes 02A.4/02A.5),
+  design/cutnicepro-fase01-propostas.figcraft (agora 5.030.054 bytes),
+  docs/PRODUCT-BRIEF.md, docs/product/PRODUCT-BRAIN.md (§10 governança +
+  renumeração), docs/reports/LATEST.txt.
+- Untracked: design/flow-v2/ (manifest, docdumps, ztests, gov-*.png),
+  design/exports/ (6 PNGs), design/referencias/, docs/product/*,
+  docs/portfolio/, tools/, relatórios históricos.
+- Commits: NENHUM (proibido). Push: não realizado. As entregas das fases
+  02A–02A.5 CONTINUAM aguardando consolidação e versionamento (condição
+  verdadeira e registrada).
+
+--------------------------------------------------------------------------------
+FINAL
+--------------------------------------------------------------------------------
+- Status: PASS técnico (governança estabelecida e validada; aprovação de
+  produto permanece com o mantenedor).
+- Canonical product documents: PRD.md · USER-JOURNEYS.md · BUSINESS-RULES.md
+  · DECISIONS.md · INFORMATION-ARCHITECTURE.md · BACKLOG.md ·
+  PRODUCT-BRAIN.md (§10 = registro oficial de estados) · TRACEABILITY.md.
+- Current visual candidates: Product Flow Overview V2 (ART-004) e First
+  Run & Access V2 (ART-005) — ambos IN REVIEW, Gate V3 PASS, pendências
+  D1/DEC-011/BR-049 marcadas.
+- Historical artifacts: Master User Flow 02A.1 (ART-002, REJECTED/ARCHIVED,
+  preservado); Propostas A/B (ART-006/007, REFERENCE) e imagens de
+  Referencias (REFERENCE).
+- Ready for next UX phase: NÃO — PARADO conforme condição de parada;
+  nenhum User Flow novo, wireframe, UI Kit ou funcionalidade iniciado;
+  aguardando aprovação do mantenedor (que deve manifestar-se sobre
+  ART-004/ART-005 e as pendências D1/DEC-011/BR-049).
+================================================================================

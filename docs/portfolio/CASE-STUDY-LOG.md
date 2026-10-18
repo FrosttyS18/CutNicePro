@@ -60,3 +60,31 @@ Sem validação com usuários; premissa técnica local-first sem spike de perfor
 
 Fase 02 visual (redesign sob diretrizes) → implementação por incrementos do backlog →
 testes de usabilidade → medição dos critérios de sucesso do PRD §11.
+
+## Fase 03 (2026-10-18) — MVP freeze + primeiro incremento funcional M1
+
+**Decisões consolidadas (aprovadas pelo mantenedor):** assinatura mensal sem créditos
+(DEC-010) com preço experimental R$ 29,90/mês como HIPÓTESE DE TESTE; D1 resolvida — Home
+antes da configuração de IA (config contextual); acesso do beta por convite simples
+(DEC-011, forma técnica pendente); offline local permitido tecnicamente (BR-049, política
+comercial pendente). Escopo congelado no PRD §7 (MVP v0.1 — SCOPE BASELINE) e marcos
+M1..M6 definidos no backlog.
+
+**Escolha técnica (M1):** Vite + React + TypeScript (UI) + Tauri v2/Rust (runtime Windows,
+WebView2) — local-first, sem serviços externos. Separação UI ↔ lógica: a persistência vive
+exclusivamente em comandos Rust (`list/create/open_project`) sobre JSON local em app-data
+com escrita atômica; nenhum dado sai da máquina. Identidade aplicada via tokens da marca
+(Poppins, Pure/Attractive Black, Deep Aqua, White Marble).
+
+**M1 entregue e evidenciado:** aplicativo Windows inicializável (exe 3,3 MB + instalador
+NSIS); Home com estado vazio (CTA único); criar/listar/abrir projetos; persistência real
+comprovada por E2E no app compilado (criar → fechar processo → relançar → projeto
+presente) + `projects.json` inspecionado no disco; erros de leitura/gravação tratados
+(banner + retry) e testados (arquivo corrompido, nome inválido, id desconhecido).
+Evidências: docs/reports/evidence/m1/ (5 screenshots reais + console.log vazio) e relatório
+da fase (testes: cargo 7/7, vitest 9/9, tsc, build web, tauri build, E2E desktop EXIT=0).
+
+**Honestidade do case:** interface marcada como protótipo funcional (chips M1/v0.1.0);
+funcionalidades futuras exibidas como "em desenvolvimento/planejado" sem fingir
+funcionamento; nenhum usuário teste, assinante ou métrica declarado (inexistentes);
+validação visual humana do mantenedor pendente (Product Design Gate preservado).

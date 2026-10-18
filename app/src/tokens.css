@@ -1,0 +1,29 @@
+/* CutNicePro — design tokens (design/tokens/tokens.json v0.1.0, oficiais da marca) */
+:root {
+  /* brand */
+  --cnp-pure-black: #000000;
+  --cnp-attractive-black: #231f20;
+  --cnp-deep-aqua: #02c2be;
+  --cnp-white-marble: #e6e7e8;
+  /* aux */
+  --cnp-marble-70: #b9bbbd;
+  --cnp-aqua-hover: #5ad7d4;
+  --cnp-surface-raised: #2b2728;
+  --cnp-border: #3a3a3c;
+  /* semantic (provisórios — WCAG pendente na próxima fase visual) */
+  --cnp-error: #e5484d;
+  --cnp-success: #30a46c;
+  /* typography */
+  --cnp-font: "Poppins", system-ui, sans-serif;
+  /* radius (tokens) */
+  --cnp-radius-control: 6px;
+  --cnp-radius-panel: 8px;
+  --cnp-radius-modal: 12px;
+  /* space scale */
+  --cnp-space-1: 4px;
+  --cnp-space-2: 8px;
+  --cnp-space-3: 12px;
+  --cnp-space-4: 16px;
+  --cnp-space-6: 24px;
+  --cnp-space-8: 32px;
+}

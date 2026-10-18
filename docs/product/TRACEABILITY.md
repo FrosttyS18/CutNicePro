@@ -56,6 +56,16 @@ Resultados (2026-10-17, Fase 02A.1 — saída completa no relatório da tarefa):
 - Teste negativo do script: sandbox com duas referências falsas (numerações 999/099 dos
   prefixos FR/JRN) — ambas detectadas e o sandbox foi removido.
 
+### Cobertura da implementação M1 (Fase 03, 2026-10-18)
+
+Implementado e evidenciado: US-002 (AC-004 — CTA único e estado vazio), US-004 (AC-009
+criação por modal com nome; AC-010 local padrão em app-data; AC-011 workspace vazio),
+US-005 parcial (AC-012/AC-013 — persistência automática em JSON local, reabertura
+restaura projetos; teste cargo test dedicado), US-003 parcial (AC-006 lista com metadados
+básicos; AC-007 retomada básica por reabertura). AC-001..AC-003 (verificação de ambiente
+na 1ª execução) e AC-008 (diagnóstico de item indisponível) seguem para M2+ — não
+afirmados. Evidências: relatório Fase 03 (testes + execução desktop + screenshots).
+
 ### Lacunas conhecidas (declaradas, não mascaradas)
 
 - Jornadas sem requisito: atualização do app; instalação de dependências locais; mídia

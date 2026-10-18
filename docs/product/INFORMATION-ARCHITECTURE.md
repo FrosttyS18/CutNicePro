@@ -30,7 +30,7 @@ App
 
 | Etapa (jornada) | Materialização | Justificativa |
 |---|---|---|
-| Primeira execução (JRN-001) | Estado contextual (≤3 painéis) ou entrada direta — D1 a validar | Evitar onboarding artificial |
+| Primeira execução (JRN-001) | Entrada direta na Home; config de IA apenas contextual (D1 APPROVED — Fase 03) | Evitar onboarding artificial |
 | Home (JRN-002) | Tela | Ponto de retomada e identidade |
 | Criação de projeto (JRN-003) | Modal curto (nome + local com padrões) | Ação pontual, não merece tela |
 | Importação (JRN-004) | Dropzone + ação inline no Painel Mídia; progresso por item inline | Lote com feedback local |

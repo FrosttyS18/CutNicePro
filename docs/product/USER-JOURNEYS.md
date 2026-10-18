@@ -7,6 +7,9 @@
 
 ## JRN-001 — Primeira execução
 
+> Fase 03: D1 RESOLVIDA — entrada direta na Home; configuração de IA apenas
+> contextual (DECISIONS.md §Fase 03).
+
 - Ator: novo usuário. Objetivo: entrar no produto sem fricção. Gatilho: instalação concluída + 1ª abertura.
 - Pré-condições: Windows com requisitos mínimos (lista: PENDING TECHNICAL VALIDATION).
 - Etapas: 1) abre o executável → app inicializa com verificação de ambiente (FR-001) e

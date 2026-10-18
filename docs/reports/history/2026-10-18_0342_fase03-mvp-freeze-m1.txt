@@ -1,0 +1,201 @@
+================================================================================
+CUTNICEPRO — ZCODE REPORT
+================================================================================
+TAREFA: Fase 03 — MVP Product Freeze + First Functional Build (consolidação das
+decisões aprovadas + congelamento de escopo + marco M1 implementado e evidenciado)
+DATA: 2026-10-18 (03h15–03h40)
+STATUS: PASS — decisões consolidadas, baseline MVP v0.1 registrada, M1 REALMENTE
+implementado (app Windows + Home + projetos + persistência) com testes, build
+desktop e execução real do aplicativo evidenciadas. Interface PROVISÓRIA
+(provisória sujeita à aprovação visual do mantenedor).
+
+--------------------------------------------------------------------------------
+1. EXECUÇÃO RESUMIDA
+--------------------------------------------------------------------------------
+- Ambiente inspecionado ANTES de implementar (§7): Node v24.12.0, npm 11.6.2,
+  Rust 1.92.0 (x86_64-pc-windows-msvc), VS Build Tools 2022 (linker MSVC),
+  WebView2 Runtime 155.x — ZERO instalações de ferramentas foram necessárias.
+  Stack validada e adotada: Vite + React + TypeScript (UI) + Tauri v2/Rust
+  (runtime desktop Windows/WebView2) — candidatos conhecidos do projeto,
+  confirmados adequados; sem trocas de tecnologia, sem nuvem/microsserviços.
+- Canônicos atualizados incrementalmente (§4, sem renumerar IDs, sem duplicar):
+  DECISIONS (bloco Fase 03), INFORMATION-ARCHITECTURE (D1 resolvida),
+  BUSINESS-RULES (BR-049 reafirmada), USER-JOURNEYS (nota em JRN-001), PRD
+  (§7 CUTNICEPRO MVP v0.1 — SCOPE BASELINE), BACKLOG (marcos M1..M6 + storage
+  resolvido), TRACEABILITY (cobertura M1), PRODUCT-BRAIN (§9/§11), CASE-STUDY-LOG.
+- Implementação M1 em app/ (novo): UI React/TS + comandos Rust; persistência
+  JSON local com escrita atômica; ícone de marca gerado; .gitignore do app.
+- Testes (§9): vitest 9/9 · cargo test 7/7 (persistência, incl. corrupção) ·
+  tsc --noEmit · vite build OK · tauri build OK (exe + NSIS) · E2E no
+  APLICATIVO COMPILADO com reinício e persistência comprovada · VISION A–G.
+- Baseline full: PASS (4/0/2). Nenhum commit/push (§12).
+
+--------------------------------------------------------------------------------
+MVP DEFINITION
+--------------------------------------------------------------------------------
+- Approved decisions (registradas, diferenciação técnico×comercial mantida):
+  assinatura mensal SEM créditos (DEC-010 modelo já APPROVED); D1 — Home antes
+  da config de IA (APPROVED, config contextual); DEC-011 — beta por convite
+  simples (direção aprovada; forma técnica PENDING); BR-049 — processamento
+  local offline permitido tecnicamente (política comercial PENDING);
+  plataforma Windows local-first; IA LOCAL + BYOK com conjunto restrito
+  validado (DEC-012 PROPOSED mantido para implementação); fila sequencial
+  (DEC-013 hipótese); funcionalidades MVP = importação, cortes, legendas,
+  revisão, edição essencial, reenquadramento, exportação MP4, persistência.
+- Price hypothesis: R$ 29,90/mês — APPROVED PARA TESTE (hipótese comercial;
+  NÃO preço validado pelo mercado; registrado em DECISIONS/PRD).
+- Beta audience: 10–20 usuários convidados; objetivos de validação listados
+  (legendas, cortes, usabilidade, estabilidade, exportação, desempenho,
+  interesse comercial) — NENHUM teste de usuário executado (zero métricas
+  inventadas). Checkout: apenas sandbox/testes futuramente; sem dados reais
+  de cartão; sem assinantes (inexistentes).
+- In scope (MVP): ver PRD §7 baseline (resumo em §1). Out of scope: biblioteca
+  de vídeos por nicho, colaboração, publicação automática, paralelismo
+  avançado, editor multipista, outras plataformas, integrações não
+  essenciais, créditos internos (permanecem no roadmap).
+- Pending commercial decisions (PENDING USER DECISION, não bloqueiam M1):
+  mecanismo de acesso definitivo (DEC-011), política offline detalhada
+  (BR-049), trial/dispositivos/licenciamento, provedor de pagamentos,
+  detalhes pós-expiração (BR-048).
+
+--------------------------------------------------------------------------------
+PRODUCT BRAIN
+--------------------------------------------------------------------------------
+- Documents updated: PRD · DECISIONS · BUSINESS-RULES · USER-JOURNEYS ·
+  BACKLOG · TRACEABILITY · PRODUCT-BRAIN (§9 índice, §11 revisão).
+- Decisions updated: D1 APPROVED; DEC-010 adendo preço-hipótese; DEC-011
+  reavaliado (convite); BR-049 reavaliada; sem decisões antigas marcadas
+  APPROVED indiscriminadamente (apenas o explicitamente decidido).
+- Rules updated: BR-049 (adendo Fase 03). Nenhuma BR nova inventada.
+- Backlog milestones: M1 (app+projetos — IMPLEMENTADO) · M2 (importação) ·
+  M3 (legendas+exportação) · M4 (cortes) · M5 (beta) · M6 (comercial), com
+  resultado funcional/histórias/deps/AC/validação/evidência por marco.
+- Traceability: cobertura M1 registrada (US-002 AC-004; US-004 AC-009/010/011;
+  US-005 parcial AC-012/013; US-003 parcial AC-006/007) — AC não cobertos
+  (AC-001..003, AC-008) explicitamente deixados para M2+.
+- Unresolved contradictions: nenhuma encontrada. Jornadas/fluxos FigCraft
+  seguem IN REVIEW (aprovação visual é separada da aprovação de decisão).
+
+--------------------------------------------------------------------------------
+ARCHITECTURE
+--------------------------------------------------------------------------------
+- Frontend: React 18 + TypeScript (strict) + Vite 6; componentes pequenos
+  (App, Header implícito, ProjectList/EmptyState/NewProjectDialog/ProjectView/
+  ErrorBanner); estilos com tokens CSS da marca (sem framework de UI).
+- Desktop runtime: Tauri v2 (Rust) sobre WebView2 — app Windows real;
+  CSP default; janela 1280×800 mín 960×600; productName CutNicePro v0.1.0
+  (identifier com.cutnicepro.app).
+- Persistence: comandos Rust `list_projects`/`create_project`/`open_project`
+  sobre `<app-data>/cutnicepro/projects.json` — escrita atômica
+  (tmp→bak→swap), serialização serde; validação de nome (trim, ≤80,
+  unicidade com sufixo); last_opened/updated em ms. Nada sai da máquina.
+- Modules: app/src (UI + lib/ipc isolando invoke + lib puras testadas) ·
+  app/src-tauri/src (lib.rs comandos; storage.rs persistência+testes) ·
+  tools/e2e/m1-desktop.e2e.mjs (E2E do app compilado).
+- Dependencies (registro): npm — react 18.3.1, react-dom, @tauri-apps/api
+  2.1.1, @fontsource/poppins 5.1 (fontes locais, sem CDN); dev — vite 6,
+  @vitejs/plugin-react, typescript 5.6, vitest 2.1, @tauri-apps/cli 2.1.
+  Rust — tauri 2, serde/serde_json, uuid v4. Zero plugins Tauri (sem fs/
+  dialog/shell — não necessários ao M1). Nenhuma credencial hardcode.
+- Technical decisions: local-first JSON (evolui para DB com mídia/jobs);
+  UI nunca toca armazenamento direto (só via comandos); erros IPC como
+  mensagens pt-BR legíveis; E2E via CDP do WebView2
+  (WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS) — técnica documentada em
+  tools/e2e/m1-desktop.e2e.mjs.
+
+--------------------------------------------------------------------------------
+M1 IMPLEMENTATION
+--------------------------------------------------------------------------------
+- App initialization: OK — exe real inicia (validação primária do E2E:
+  lançamento pid + CDP + DOM pronto). Instalador NSIS gerado.
+- Home: OK — header de marca (logo com "Nice" em Deep Aqua, chips
+  "M1 · protótipo funcional"/"v0.1.0"), listagem ordenada por última
+  abertura, contador, CTA único.
+- Create project: OK — modal com validação (vazio/≤80), nomes duplicados
+  recebem sufixo "(2)/(3)" (cargo test), segue ao workspace vazio (AC-011).
+- Persist project: OK — projects.json gravado em app-data com escrita
+  atômica; arquivo inspecionado no disco durante o E2E ANTES de fechar.
+- List projects: OK — cards com nome + "Criado em" + "Aberto em/Nunca
+  aberto" + botão Abrir (AC-006 parcial).
+- Open project: OK — atualiza last_opened (timestamp persistido; cargo
+  test) e abre workspace com roadmap honesto M2..M4 (AC-007/AC-011).
+- Reopen application: OK — E2E fecha o PROCESSO (taskkill), relança o exe
+  e o projeto persistido reaparece (AC-012/013) — screenshots 03/04/05.
+- Error handling: OK — banner de erro com "Tentar novamente" para falha de
+  carga; erros de criação/abertura superficiados na UI; cargo test cobre
+  nome inválido, id desconhecido e ARQUIVO CORROMPIDO (erro explícito,
+  sem apagar silenciosamente).
+- Observações de escopo: funções futuras exibidas como "em desenvolvimento/
+  planejado" (não fingem funcionar); interface marcada como provisória.
+
+--------------------------------------------------------------------------------
+VALIDATION
+--------------------------------------------------------------------------------
+- Typecheck: PASS (tsc --noEmit, strict; integrado ao `npm run build`).
+- Build: PASS web (vite, 151 kB JS gzip 48,7 kB; fontes Poppins bundled) ·
+  PASS desktop (`tauri build` release: cutnicepro.exe 3.320.320 bytes +
+  CutNicePro_0.1.0_x64-setup.exe NSIS 1.266.984 bytes).
+- Unit tests: PASS — vitest 9/9 (validação de nome, ordenação imutável,
+  formatação pt-BR).
+- Integration tests: PASS — cargo test 7/7 em src-tauri (persistência entre
+  reaberturas do store, timestamps, duplicatas, limites, corrupção).
+- Persistence tests: PASS — além dos cargo tests, E2E do app COMPILADO
+  validou o ciclo real criar→fechar processo→relançar→persistido, com o
+  projects.json conferido no disco (id/nome/timestamps corretos).
+- Desktop runtime: PASS — o APLICATIVO WINDOWS REAL foi executado DUAS
+  VEZES (duas sessões, kill via taskkill entre elas), dirigido por
+  Playwright via CDP do WebView2; NÃO foi apenas servidor web. Web build
+  usado apenas para typecheck/bundle (diferenciação registrada).
+- Visual tests: PASS — 5 screenshots reais do app (docs/reports/evidence/
+  m1/01..05.png) revisados pelo VISION: A–G CONFIRMADO (marca, estado
+  vazio, CTA, workspace, listagem, persistência pós-reinício, sem placeholders
+  técnicos falsos; console.log do E2E vazio de erros). Ressalva cosmética:
+  ponto vermelho mínimo após "metadados." (telas 02/05) — artefato de
+  render, sem impacto (registrado).
+- Baseline full: PASS — 4 passed / 0 failed / 2 skipped (app_tests e
+  python_tests SKIP: harness procura package.json na raiz; app vive em
+  app/ com seus próprios testes executados e reportados acima).
+- Passed: cargo 7 · vitest 9 · tsc · vite build · tauri build · E2E desktop
+  (EXIT=0) · VISION A–G · baseline 4. Failed: 0. Skipped: 2 (baseline,
+  motivo acima). Validação MANUAL do mantenedor (rodar o app por conta
+  própria): pendente — recomendado (instalador em app/src-tauri/target/
+  release/bundle/nsis/).
+
+--------------------------------------------------------------------------------
+GIT
+--------------------------------------------------------------------------------
+- Branch: main · HEAD: 80f578e "docs(repo): adota Conventional Commits, exige
+  commits identificaveis nos relatorios e distingue documentacao do Graphify".
+- Modified: .gitignore, AGENTS.md, design/cutnicepro-fase01-propostas.figcraft
+  (02A.5), docs/PRODUCT-BRIEF.md, PRODUCT-BRAIN.md, PRD.md, DECISIONS.md,
+  BUSINESS-RULES.md, USER-JOURNEYS.md, INFORMATION-ARCHITECTURE.md,
+  BACKLOG.md, TRACEABILITY.md, docs/reports/LATEST.txt (+ fases anteriores
+  pendentes, preservadas sem mistura: código M1 isolado em app/ e tools/e2e/).
+- Untracked (novos desta fase): app/ (fontes; node_modules/dist/target
+  gitignored), tools/e2e/m1-desktop.e2e.mjs, docs/reports/evidence/m1/,
+  docs/portfolio/ (fase anterior), demais fases 02A+ ainda não commitadas.
+- Commits: NENHUM (proibido). Push: não realizado. Fases 02A–03 seguem
+  aguardando consolidação/versionamento autorizado.
+
+--------------------------------------------------------------------------------
+FINAL
+--------------------------------------------------------------------------------
+- Delivery status: PASS (M1 implementado, testado e evidenciado; documentação
+  consolidada sem duplicação; histórico preservado; artefatos FigCraft não
+  marcados como aprovados; Product Design Gate respeitado).
+- MVP definition status: CONGELADA (baseline MVP v0.1 no PRD §7; marcos
+  M1..M6 no BACKLOG; hipóteses de preço/beta corretamente classificadas).
+- M1 implementation status: COMPLETO para o escopo desta entrega (10/10
+  funcionalidades obrigatórias do §8 funcionando com persistência real).
+- Remaining work: M2 (importação/mídia) → M3 (legendas+exportação) → M4
+  (cortes) → M5 (beta) → M6 (comercial); aprovação visual da interface M1;
+  pesos Poppins Medium/SemiBold no ambiente de design (não impedem o app,
+  que já embute 400/500/600/700).
+- Ready for M2: SIM, tecnicamente (arquitetura suporta; dependências de M2 =
+  plugins de diálogo/fs a avaliar) — condicionado à auditoria do mantenedor.
+- User action required: auditar/aprovar a entrega M1 (screenshots +
+  instalador); manifestar-se sobre a interface provisória; autorizar
+  versionamento (commits) das fases acumuladas quando decidir.
+- Restart required: NÃO (nenhuma instalação exigiu reinício do ZCode;
+  nenhuma skill/MCP/hook alterado).
+================================================================================

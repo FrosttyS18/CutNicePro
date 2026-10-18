@@ -57,3 +57,30 @@
   distinguir importação múltipla (MVP), fila sequencial (candidato a MVP), paralelismo
   (futuro) e exportação em lote (MVP). Status: PROPOSED — PENDING USER DECISION +
   PENDING TECHNICAL VALIDATION de recursos.
+
+## Reavaliações da Fase 03 (2026-10-18 — aprovadas pelo mantenedor)
+
+- **D1 — Ordem da configuração de IA: RESOLVIDA.** Decisão: o usuário chega à HOME sem
+  ser obrigado a configurar motor de IA; a configuração é solicitada contextualmente ao
+  iniciar funcionalidade que a exija. Fluxos de convite/ativação do beta podem preceder a
+  Home para controle de acesso, sem exigir configuração técnica antecipada. Sem
+  onboarding longo obrigatório. Status: **APPROVED** (atualiza a pendência "D1 a validar"
+  da INFORMATION-ARCHITECTURE e a marcação PROPOSED do Overview V2).
+- **DEC-010 (adendo) — Preço experimental.** R$ 29,90/mês registrado como **hipótese
+  comercial APPROVED PARA TESTE** (não preço validado pelo mercado); detalhes (trial,
+  dispositivos, licenciamento offline) seguem PENDING USER DECISION. Checkout/cartão:
+  apenas sandbox com dados de teste; sem cobrança real e sem coleta de dados reais de
+  cartão até integração com provedor.
+- **DEC-011 (reavaliado) — Acesso do beta por convite.** Para o beta privado (10–20
+  convidados), adotar **convite simples** (sem autenticação comercial completa no MVP
+  técnico). Forma técnica exata: PENDING TECHNICAL VALIDATION; mecanismo comercial
+  definitivo permanece PENDING USER DECISION.
+- **BR-049 (reavaliada) — Offline.** Processamento local offline PERMITIDO quando
+  tecnicamente viável; política comercial de validação de assinatura offline segue
+  PENDING USER DECISION (não bloqueia o desenvolvimento técnico). Projetos nunca são
+  apagados por falha de conexão.
+- **Congelamento de escopo: CUTNICEPRO MVP v0.1 — SCOPE BASELINE** registrada no PRD §7
+  (In Scope / Out of Scope / Validated / Pending Technical Validation / Pending
+  Commercial Decision). Mudanças futuras: permitidas com registro de impacto no backlog.
+- **Marcos de entrega M1..M6** registrados no BACKLOG (M1 = aplicativo Windows + Home +
+  projetos + persistência — implementado nesta fase).
