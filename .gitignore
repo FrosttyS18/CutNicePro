@@ -14,6 +14,9 @@ node_modules/
 # Log de auditoria dos hooks (runtime, não versionar)
 .zcode/hooks/audit/
 
+# Marker local do MCP attached (config de máquina — não publicar)
+design/FIGCRAFT-ATTACHED.on
+
 # Sistema
 Thumbs.db
 .DS_Store

@@ -1,7 +1,10 @@
 # CutNicePro — Tooling
 
-Ambiente preparado em 2026-10-17. **Tudo restrito ao workspace `C:\CutNicePro`.** Nenhuma
-instalação global foi feita (sem `npm -g`, sem `uv tool`, sem alteração de PATH/config globais).
+Ambiente preparado em 2026-10-17. **Isolamento no projeto, com UMA exceção autorizada: os
+hooks de proteção rodam no escopo USER do ZCode** (`~/.zcode/cli/config.json`, autorização
+expressa de 2026-10-17) e invocam scripts versionados neste repositório; fora do workspace
+`C:\CutNicePro` eles são no-op e podem ser desativados pelo toggle de hooks. Fora isso,
+nenhuma instalação global (sem `npm -g`, sem `uv tool`, sem alteração de PATH/config globais).
 
 ## Visão geral
 
@@ -59,19 +62,13 @@ preservado dentro da própria skill.
   **não aceita** essas flags ("unknown option"). Confinamento de arquivos indisponível nesta
   versão — reavaliar quando o FigCraft for atualizado.
 
-### `figcraft-app` — modo conectado (PENDENTE, não registrado)
-Testado: sem o app rodando, o servidor falha na inicialização
-("can't reach the FigCraft app at 127.0.0.1:7979"), o que quebraria toda sessão. Para ativar:
-1. Iniciar o app: `figcraft --control 7979`
-2. Adicionar ao `mcp.servers` do `.zcode/config.json`:
-   ```json
-   "figcraft-app": {
-     "command": "C:\\Program Files\\FigCraft\\figcraft-cli.exe",
-     "args": ["mcp", "--attach", "7979"]
-   }
-   ```
-   (no app é possível passar os roots de confinamento ao iniciá-lo com
-   `--automation-read-root`/`--automation-write-root`, se a versão do app suportar).
+### `figcraft-app` — modo conectado (VALIDADO 2026-10-17; carrega no próximo reinício)
+Registrado no `.zcode/config.json` via wrapper auto-recuperável
+`.zcode/figcraft/figcraft_app_server.py`: anexa ao app (porta 7979), abre o app com
+`--control 7979` quando o marker `design/FIGCRAFT-ATTACHED.on` existe, ou cai no fallback
+headless — o startup do ZCode nunca quebra. Validação real completa (handshake, 18
+ferramentas, criação/modificação/leitura/captura/export em aba descartável, documento do
+usuário preservado): **`docs/FIGCRAFT-ATTACHED.md`**. Ativação/desativação pelo marker.
 
 ### `graphify` — stdio (VALIDADO como servidor; consultas dependem do grafo)
 - Comando: `C:\CutNicePro\.tooling\venvs\graphify\Scripts\python.exe -m graphify.serve --graph C:\CutNicePro\graphify-out\graph.json`
@@ -115,9 +112,20 @@ Testado: sem o app rodando, o servidor falha na inicialização
 
 ## Reinício do ZCode
 
-Skills e MCPs do workspace só são carregados após reiniciar o ZCode nesta workspace. Depois do
-reinício: conferir em Settings → MCP os servidores `figcraft` e `graphify`, e `/skills` para as
-15 skills.
+Skills (15) e MCPs (`figcraft`, `figcraft-app`, `graphify`) estão carregados e validados desde 2026-10-17
+(descoberta + chamadas reais; ver `docs/SETUP-REPORT.md` e `docs/HOOKS.md`). Reinício só é
+necessário para: alterações futuras em `.zcode/config.json` (skills/MCPs), para o timeout
+de 90 s do Stop vigorar, ou ao ativar o `figcraft-app` pelo runbook.
+
+## Portabilidade (avaliado em 2026-10-17, antes da publicação)
+
+Este repositório foi montado em uma máquina Windows específica. Em outro computador,
+ajustar antes de usar: `.zcode/config.json` (caminhos absolutos do `figcraft-cli.exe` e do
+Python), `.zcode/figcraft/figcraft_app_server.py` (APP/CLI/ROOT), os scripts de hook
+(`PROJECT_ROOT` em `common.py`) e o `harness` (`DEFAULT_ROOT`). O marker
+`design/FIGCRAFT-ATTACHED.on` é local (gitignored) e inócuo se ausente — o servidor
+`figcraft-app` cai no fallback headless. Conteúdos de terceiros e licenças: ver
+`THIRD-PARTY-NOTICES.md` (atenção ao item 5 — pendência de licença).
 
 ## Hooks de proteção (escopo USER — autorizado em 2026-10-17)
 
@@ -135,4 +143,5 @@ reinício: conferir em Settings → MCP os servidores `figcraft` e `graphify`, e
   sem bloqueios indevidos); a partir da otimização o Stop registra `mode` e `duration_s`.
 - Desativação: toggle de hooks na interface do ZCode (global) ou `"hooks": {"enabled": false}`.
 - Documentação completa, matriz de testes e políticas: **`docs/HOOKS.md`**.
-- Ativação real dos eventos: PENDING RESTART (hooks de configuração carregam no início da sessão).
+- Eventos nativos validados em 2026-10-17 pós-reinício (SessionStart, PreToolUse BLOCK,
+  PostToolUse e Stop fast — detalhes e timestamps em `docs/HOOKS.md`).
