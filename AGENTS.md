@@ -48,6 +48,16 @@ Plataforma de edição inteligente de vídeos (inspirada no OpusClip).
 - Somente fatos verificáveis, contagens reais e evidências reais; falhas e pendências nunca são omitidas; teste simulado não é evento real; exit 0 do hook Stop não é prova de PASS.
 - A tarefa só é considerada concluída após gravar, verificar (reler) e apresentar o relatório.
 
+## GIT COMMIT CONVENTION (regra permanente)
+
+- Mensagens em **português brasileiro**, no formato Conventional Commits: `tipo(escopo): descrição objetiva`.
+- Tipos permitidos: `feat`, `fix`, `docs`, `refactor`, `test`, `perf`, `chore`, `build`, `ci`.
+- Descrições curtas, claras e específicas; escopo sempre que identificável; usar o corpo da mensagem para decisões arquiteturais, riscos ou limitações.
+- Proibido: mensagens genéricas (`update`, `changes`, `final`), títulos só com hashes/timestamps, misturar alterações sem relação em um commit, commits desnecessários por pequena edição.
+- Priorizar commits coesos de entregas verificadas (validações executadas antes do commit).
+- Não usar `--amend`, rebase ou qualquer reescrita de histórico sem autorização explícita; sem tags/releases automáticas; commits/pushes/merges somente com autorização específica.
+- Histórico anterior à adoção desta convenção é preservado como está.
+
 ## Validação visual
 
 - Em tarefas de interface: executar a aplicação, capturar evidências com o Playwright CLI (`.tooling/playwright/node_modules/.bin/playwright-cli`) quando aplicável, e comparar o resultado com a referência aprovada.
@@ -57,5 +67,6 @@ Plataforma de edição inteligente de vídeos (inspirada no OpusClip).
 
 - Manter decisões importantes registradas no projeto (`docs/`, ADRs).
 - Consultar o Graphify antes de alterações estruturais relevantes e atualizá-lo após modificações significativas; um grafo desatualizado nunca é tratado como verdade absoluta.
+- **Documentação Markdown ≠ Graphify:** os `.md` são a documentação permanente do projeto (escritos e mantidos deliberadamente); o Graphify é ferramenta complementar de análise que constrói um grafo da base de código — não gera os Markdown e não os substitui (detalhes e estado atual em `docs/TOOLING.md`).
 - A documentação complementa, mas não substitui a verificação do código-fonte atual.
 - Não reescrever documentação inteira sem necessidade; não confiar cegamente em resumos antigos quando for possível consultar a implementação atual.

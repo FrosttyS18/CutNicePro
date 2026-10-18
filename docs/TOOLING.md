@@ -110,6 +110,22 @@ usuário preservado): **`docs/FIGCRAFT-ATTACHED.md`**. Ativação/desativação 
   (runwayml, figma, framer, linear.app, raycast, superhuman, warp, notion, miro, sanity,
   webflow, cursor).
 
+## Graphify — papel e estado
+
+**Distinção arquitetural (permanente):** os arquivos Markdown do projeto são a
+**documentação permanente**, escrita e mantida deliberadamente (AGENTS.md = instruções
+persistentes dos agentes; docs/ = documentação técnica; docs/reports/ = auditoria
+historicamente necessária; logs de hooks = runtime). O **Graphify é ferramenta
+complementar**: constrói um grafo de conhecimento da base de código e de suas relações
+para consulta durante alterações estruturais. Ele NÃO gera os Markdown, NÃO substitui
+documentação, testes ou leitura do código, e não recebe módulos artificiais para "alimentar"
+o grafo.
+
+Estado atual: `GRAPHIFY: INSTALLED — INITIAL INDEX PENDING`
+(venv + MCP instalados e validados; `graphify-out/` ainda não existe porque a aplicação
+não possui código-fonte. O primeiro índice será construído quando o código começar a
+existir e atualizado após modificações estruturais relevantes.)
+
 ## Reinício do ZCode
 
 Skills (15) e MCPs (`figcraft`, `figcraft-app`, `graphify`) estão carregados e validados desde 2026-10-17

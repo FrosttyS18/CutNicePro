@@ -84,12 +84,13 @@ MCP / SKILLS
 
 GIT
   Branch:
-  HEAD:
-  Working tree:
-  Commits created:
-  Push performed:
-  Merge performed:
-  Uncommitted changes:
+  HEAD: (hash completo)
+  Latest commit: (título do HEAD)
+  Commits created: (nesta tarefa; hash abreviado + título de cada)
+  Push: SUCCESS / BLOCKED / NOT EXECUTED
+  Remote: (origin → repositório; branch remota)
+  Working tree: CLEAN / MODIFIED / UNTRACKED
+  Pending files: (arquivos ainda não commitados, se houver — nunca omitir)
 
 EVIDENCE
   Commands executed:
@@ -129,6 +130,10 @@ END OF REPORT
 - Diferenciar sempre: código implementado × código compilado × teste automatizado aprovado
   × funcionalidade executada e validada × validação manual pendente.
 - Registrar contagens reais; se nenhum teste foi executado, informar claramente.
+- A seção GIT deve apresentar **hash completo do HEAD, título do HEAD e, para cada commit
+  criado na tarefa, hash abreviado + título real** (Conventional Commits — ver AGENTS.md),
+  além do resultado do push e do estado real do working tree (relatórios TXT pendentes de
+  commit devem ser listados em "Pending files", nunca ocultados).
 - O hook Stop registra a baseline, mas **não é gate**: exit 0 do Stop não significa PASS.
 - O status final reflete as evidências efetivas da tarefa.
 
