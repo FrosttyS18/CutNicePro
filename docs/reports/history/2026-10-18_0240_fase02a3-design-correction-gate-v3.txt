@@ -1,0 +1,196 @@
+================================================================================
+CUTNICEPRO — ZCODE REPORT
+================================================================================
+TAREFA: Fase 02A.3 — Design Correction + FigCraft Quality Gate V3
+(correção controlada dos dois diagramas V2 + sistema de validação expandido,
+preservando alterações manuais do mantenedor)
+DATA: 2026-10-18 (02h00–02h35)
+STATUS: PASS técnico — todos os critérios de aceite §11 atendidos; aprovação
+estética final permanece com o usuário (PENDING).
+
+--------------------------------------------------------------------------------
+1. EXECUÇÃO RESUMIDA
+--------------------------------------------------------------------------------
+- Documentação obrigatória lida antes de executar (AGENTS.md, BRAND-FOUNDATION,
+  tokens.json, PRD, USER-JOURNEYS, IA, BUSINESS-RULES, DECISIONS, BRAIN,
+  TRACEABILITY, REPORTING-STANDARD) + arquivos da implementação anterior.
+- Procedimento de preservação (§2) cumprido na ordem: attached confirmado →
+  documento inspecionado → divergências vs manifest registradas → backup →
+  modelo/manifest sincronizados com as decisões do mantenedor → só então
+  correções aplicadas. Nenhum frame regenerado do modelo antigo.
+- Correções aplicadas por RECRIAÇÃO PONTUAL (5 losangos + 13 conectores +
+  3 conectores do frame 00) e set_properties para o resto — sem reconstrução.
+- Gate expandido para 5 dimensões com 12 testes negativos (6 novos).
+- PNGs reexportados, nativo salvo, baseline full PASS.
+
+--------------------------------------------------------------------------------
+### MANUAL CHANGES PRESERVATION
+--------------------------------------------------------------------------------
+- FigCraft inspected: SIM (mcp figcraft-app attached real, backend no
+  documento aberto "CutNicePro Fase 01 - Propostas UI", dirty com histórico de
+  edições do usuário: Move/Edit text/Resize/Color/Add stroke/Edit vector).
+- Manual changes detected (mantenedor, todas intencionais):
+  1. Fills dos CINCO frames da página roadmap alterados para #000000
+     (Pure Black) — incluindo os V1 (368/436/656) e os dois V2 (728/799).
+  2. Frame V1 "PRODUCT DELIVERY ROADMAP" redimensionado pelo usuário de
+     2330→1653 px de largura (fora do escopo V2 — intocado).
+  3. Texto de versão do frame 00 movido para DENTRO do chip de versão.
+  4. Losangos ampliados verticalmente com centros preservados:
+     N03 300x120→260x216 (centro 938,480); NL 280x120→250x182 (1768,480);
+     N08 300x120→244x182 (2158,480); N09 320x120→250x182 (2568,480);
+     N06 280x112→202x152 (938,906).
+- Manual changes preserved: TODAS. Backgrounds #000000 mantidos (e adotados
+  como regra); texto-no-chip mantido; roadmap V1 intocado; INTENÇÃO dos
+  losangos (símbolos maiores, centros fixos) incorporada ao modelo.
+- Model synchronized: SIM — flow_model_v2.py atualizado (losangos 240x240 na
+  espinha / 150x150 no ramo, MESMOS CENTROS do usuário; espinha do frame 00
+  re-centrada y 706; refs semânticas; terminologia) e manifest regenerado.
+- Manifest synchronized: SIM — design/flow-v2/manifest-v2.json (PLANEJAMENTO
+  OK: 0 erros lógicos/geométricos/texto).
+- Unresolved divergences: NENHUMA estrutural. Registro: proporções finais dos
+  losangos (1:1 exato) normalizaram as editadas pelo usuário (1,20–1,37)
+  conforme regra §3 — a decisão visual do mantenedor (símbolos grandes,
+  centros fixos) foi preservada e refinada.
+
+--------------------------------------------------------------------------------
+### GEOMETRY
+--------------------------------------------------------------------------------
+- Decision diamonds inspected: 6 (N03, NL, N08, N09, N06 + glifo da legenda).
+- Aspect ratio results: N03 240/240=1,000 · NL 240/240=1,000 · N08 240/240=1,000
+  · N09 240/240=1,000 · N06 150/150=1,000 · legenda 16/16=1,000. Todos dentro
+  de 1:1 ±2% (verificado no planejador E nos bounds reais do docdump E).
+- Invalid diamonds: 0.
+- Text overflow: 0 — nova regra de ÁREA REAL INSCRITA (tw/hw + th/hh ≤ 0,95,
+  geometria do losango, não bounding box): "Ambiente compatível?" quebra em 2
+  linhas controladas; "Repetir verificação?" simplificado para "Repetir?"
+  (significado preservado pelo rótulo da aresta "SIM · repetir verificação").
+- Padding violations: 0 (h≥20/v≥14 nos cartões; textos centralizados).
+- Connector violations: 0 — 13 conectores do frame 01 e 3 do frame 00
+  recriados com extremos nos NOVOS vértices dos losangos (contato ≤1,5 px,
+  gate); rótulos SIM/NÃO reposicionados fora das formas.
+- Geometry gate: PASS (B=0 erros; defeitos equivalentes detectados no
+  selftest: losango 1,4x reprovado; texto fora da área inscrita reprovado).
+- Ausência de deformação pós-export confirmada visualmente (VISION 11/11).
+
+--------------------------------------------------------------------------------
+### BRAND COMPLIANCE
+--------------------------------------------------------------------------------
+- Canvas background: #000000 (Pure Black) nos DOIS frames V2 — alteração do
+  mantenedor PRESERVADA e elevada a regra do gate (E reprova qualquer outro
+  valor; teste negativo com #231F20 detectado).
+- Surface colors: componentes em #231F20 (Attractive Black: terminais de
+  fim/saída, losangos, notas, chips) e #2B2728 (surfaceRaised: cartões de
+  processo/estado) — zero uso de #231F20 como canvas; sem gradientes; sem
+  glassmorphism.
+- Accent colors: Deep Aqua #02C2BE (fluxo principal, borders de decisão/terminal
+  fim, terminal início); semânticas provisárias documentadas: erro #E5484D,
+  pendente/proposta #F5A524 (tokens.json ainda define success/error/warning
+  como null — registradas como provisórias até definição WCAG).
+- Typography: Poppins em 100% das camadas de texto (gate E: família conferida
+  no documento; Regular/Italic/Bold — limitação de ambiente conhecida).
+- Token violations: 0 (gate C no modelo + gate E no documento — fill de nó
+  fora do token é reprovado; teste negativo #444444 detectado).
+- Brand gate: PASS.
+
+--------------------------------------------------------------------------------
+### TRACEABILITY
+--------------------------------------------------------------------------------
+- References checked: 100% dos refs do modelo (JRN/BR/DEC) contra os canônicos.
+- Invalid identifiers: 0 (todos existem em USER-JOURNEYS/BUSINESS-RULES/
+  DECISIONS).
+- Semantic mismatches: 5 ENCONTRADOS e CORRIGIDOS (confirmação da auditoria):
+  Importar mídia JRN-003→JRN-004; Processamento JRN-004→JRN-007; Revisar
+  resultados JRN-005→JRN-008; Refinar no editor JRN-006→JRN-009; Exportar
+  JRN-007→JRN-010 (mapeamento verificado nos títulos canônicos: JRN-004
+  Importação de mídia; JRN-007 Processamento; JRN-008 Resultados; JRN-009
+  Edição avançada; JRN-010 Exportação). Adicional: N11 ref DEC-012→JRN-013
+  (jornada canônica da configuração de IA) com DEC-012 mantido no rótulo.
+- Corrected references: modelo + rótulos visuais + manifest (5+1 correções).
+- Pending UX decisions: D1 (config de IA obrigatória antes da Home ×
+  contextual no workspace) — NÃO decidida unilateralmente: P2 marcado como
+  pending (borda âmbar, "D1 ◇") + anotação PROPOSTA visível citando a IA
+  canônica ("evitar onboarding artificial", entrada direta→Home, D1 a
+  validar). Terminologia: "Exportar & publicar"→"Exportar para publicação"
+  (compatível com PRD FR-014/FR-015: exportação de arquivos para publicação,
+  sem postagem automática).
+- Gate D novo: referência válida = ID existe E keywords canônicas presentes no
+  nó (ponteiros/nós BR-DEC exigem apenas existência); teste negativo
+  (JRN-009 em Importar mídia) detectado.
+
+--------------------------------------------------------------------------------
+### QUALITY GATE
+--------------------------------------------------------------------------------
+- Positive tests: GATE V3 PASS — "A lógica 0 · B geometria 0 · C identidade
+  0 · D semântica 0 · E documento 0 divergências" (28 nós · 31 arestas;
+  execução completa nesta sessão, saída acima).
+- Negative tests: 12/12 DETECTADOS (selftest): aresta pendente; decisão sem
+  2ª saída; nó sobreposto; conector desconectado; nó inalcançável; fonte
+  12 px; losango deformado 1,4x; texto fora da área real do losango;
+  background #231F20 no canvas; fill de nó fora do token; referência
+  semântica incorreta (ID existente na etapa errada); divergência
+  modelo×documento (+12 px). Isolados (dumps sintéticos em temp; documentos
+  do usuário não tocados pelos testes).
+- Failures detected: 12/12 injetados; 0 falsos negativos nesta bateria.
+- Undetected scenarios (limitações declaradas): contraste WCAG numérico não
+  automatizado (tokens semânticos provisórios); qualidade estética/composição
+  final exige olhar humano (VISION usado como apoio, aprovação é do
+  mantenedor); docdumps são transcrições compactas dos get_node reais (a API
+  trunca >50 KB) — bounds/fills/fontes das camadas estruturais conferidos;
+  textos internos de contêineres cobertos pelos dumps depth-2 parciais +
+  parâmetros de criação do manifest.
+- Model/document parity: 28/28 nós com bounds ±1,5 px; 31/31 conectores
+  VECTOR nativos com dashes aplicados; fills/tokens e background conferidos.
+
+--------------------------------------------------------------------------------
+### VISUAL REVIEW
+--------------------------------------------------------------------------------
+- Overview improvements: espinha re-centrada (y 640–772 em frame de 1360 —
+  banda vazia intermediária eliminada); anotação D1 em âmbar; mini-losango da
+  legenda 1:1; rótulos JRN corrigidos; "Exportar para publicação"; P2 pending.
+- First Run improvements: 5 losangos 1:1 e grandes (240 px espinha / 150 ramo,
+  centros do mantenedor preservados); textos centralizados na área inscrita;
+  13 conectores reancorados nos vértices novos; rótulos SIM/NÃO afastados das
+  formas; N11 com ref JRN-013.
+- Screenshots: design/exports/product-flow-overview-v2.png (477.057 bytes,
+  1,5x) · design/exports/firstrun-access-user-flow-v2.png (635.552 bytes, 1,5x)
+  + WIPs da sessão em design/flow-v2/.
+- VISION (subagente): 11/11 CONFIRMADO (inclui proporções, conexões borda a
+  borda, legibilidade, tokens, ausência de artefatos); incertezas declaradas
+  pelo VISION (hex exato, razão exata) são cobertas pelo gate determinístico.
+- Remaining visual issues: nenhuma identificada pelos gates ou pela VISION;
+  refinamentos estéticos adicionais ficam a critério do mantenedor.
+- Human approval: PENDING.
+
+--------------------------------------------------------------------------------
+### GIT
+--------------------------------------------------------------------------------
+- Branch: main.
+- HEAD + title: 80f578e "docs(repo): adota Conventional Commits, exige commits
+  identificaveis nos relatorios e distingue documentacao do Graphify".
+- Modified files: .gitignore, AGENTS.md, design/cutnicepro-fase01-propostas.figcraft
+  (agora 1.856.976 bytes com edições do usuário + 02A.3), docs/PRODUCT-BRIEF.md,
+  docs/reports/LATEST.txt.
+- Untracked files: design/flow-v2/ (manifest, docdumps, WIPs), design/exports/
+  (6 PNGs V1+V2), design/referencias/, docs/product/*, docs/portfolio/,
+  tools/ (audit + flow), relatórios históricos, backups gitignored.
+- Commits: NENHUM (proibido nesta tarefa). Push: não realizado.
+
+--------------------------------------------------------------------------------
+### FINAL
+--------------------------------------------------------------------------------
+- Status: PASS técnico (critérios §11: alterações manuais preservadas ✓ ·
+  modelo/documento sincronizados ✓ · losangos 1:1 ±2% ✓ · textos legíveis e
+  contidos ✓ · background #000000 ✓ · tokens por função ✓ · conectores
+  válidos ✓ · semântica corrigida ✓ · negativos demonstrados ✓ · diagramas
+  refinados ✓ · harness sem regressões ✓).
+- Requirements met: todos; preservação §10 respeitada (propostas A/B, Journey
+  Map, Master V1, Roadmap e demais artefatos intocados; nenhum commit/push;
+  nenhuma tela/UI-Kit/frontend; nenhuma biblioteca instalada).
+- Known limitations: WCAG numérico pendente (tokens semânticos provisórios);
+  transcrição compacta de docdumps (API trunca >50 KB); proporção do frame 00
+  1,7:1 (~16:9 aproximado, prioridade para eliminar bandas vazias).
+- Remaining blockers: nenhum técnico. DEC-011/BR-049/D1 seguem PENDENTES por
+  decisão do mantenedor (marcados em âmbar nos diagramas).
+- Ready for additional flows: AGUARDANDO AUDITORIA E APROVAÇÃO DO MANTENEDOR
+  (condição de parada §14 — nenhum outro User Flow foi alterado).
+================================================================================

@@ -1,0 +1,2136 @@
+{
+ "version": "02A.2-V2",
+ "generated": "2026-10-17",
+ "grid": {
+  "min_pad_h": 20,
+  "min_pad_v": 14,
+  "min_font": 14,
+  "title_font": 16,
+  "min_gap_v": 72
+ },
+ "line_language": {
+  "main": {
+   "color": "#02C2BE",
+   "weight": 2.0,
+   "dashes": null
+  },
+  "return": {
+   "color": "#B9BBBD",
+   "weight": 1.5,
+   "dashes": [
+    8,
+    6
+   ]
+  },
+  "reference": {
+   "color": "#E6E7E8",
+   "weight": 2.0,
+   "dashes": [
+    2,
+    5
+   ]
+  },
+  "error": {
+   "color": "#E5484D",
+   "weight": 1.5,
+   "dashes": null
+  },
+  "pending": {
+   "color": "#F5A524",
+   "weight": 1.5,
+   "dashes": [
+    8,
+    6
+   ]
+  },
+  "pending_go": {
+   "color": "#F5A524",
+   "weight": 1.5,
+   "dashes": null
+  }
+ },
+ "frames": {
+  "00": {
+   "name": "00 — PRODUCT FLOW OVERVIEW V2",
+   "x": 2460,
+   "y": -123,
+   "w": 2330,
+   "h": 1360,
+   "title": "00 — PRODUCT FLOW OVERVIEW — V2",
+   "subtitle": "Fluxo macro do produto · 8 etapas · exceções detalhadas nos fluxos dedicados · reconstrução auditada (02A.2)"
+  },
+  "01": {
+   "name": "01 — FIRST RUN & ACCESS USER FLOW V2",
+   "x": 2460,
+   "y": 1337,
+   "w": 3656,
+   "h": 1160,
+   "title": "01 — FIRST RUN & ACCESS — V2",
+   "subtitle": "Piloto de reconstrução · fluxo principal unidirecional → · exceções abaixo · políticas pendentes em ÂMBAR (◇) · JRN-001 · JRN-002 · JRN-014 · BR-037 · BR-049 · DEC-011 · DEC-012"
+  }
+ },
+ "nodes": [
+  {
+   "id": "OV-T0",
+   "frame": "00",
+   "type": "terminal_start",
+   "x": 48,
+   "y": 676,
+   "w": 150,
+   "h": 60,
+   "texts": [
+    [
+     "INÍCIO",
+     14,
+     "Bold"
+    ]
+   ],
+   "ref": "JRN-001",
+   "style": {
+    "fill": "#02C2BE",
+    "stroke": "#02C2BE",
+    "stroke_w": 0,
+    "r": "h/2",
+    "text_color": "#000000"
+   },
+   "texts_planned": [
+    [
+     [
+      "I N Í C I O",
+      14,
+      "Bold"
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "OV-P1",
+   "frame": "00",
+   "type": "process",
+   "x": 236,
+   "y": 640,
+   "w": 196,
+   "h": 132,
+   "texts": [
+    [
+     "Primeira execução",
+     16,
+     "Bold"
+    ],
+    [
+     "ambiente & acesso · JRN-001",
+     14,
+     "Regular"
+    ]
+   ],
+   "ref": "JRN-001",
+   "style": {
+    "fill": "#2B2728",
+    "stroke": "#3A3A3C",
+    "stroke_w": 1,
+    "r": 8,
+    "text_color": "#E6E7E8"
+   },
+   "texts_planned": [
+    [
+     [
+      "P r i m e i r a",
+      16,
+      "Bold"
+     ],
+     [
+      "e x e c u ç ã o",
+      16,
+      "Bold"
+     ]
+    ],
+    [
+     [
+      "a m b i e n t e   &   a c e s s o",
+      14,
+      "Regular"
+     ],
+     [
+      "·   J R N - 0 0 1",
+      14,
+      "Regular"
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "OV-P2",
+   "frame": "00",
+   "type": "process",
+   "accent": "pending",
+   "x": 470,
+   "y": 640,
+   "w": 196,
+   "h": 132,
+   "texts": [
+    [
+     "Onboarding & IA",
+     16,
+     "Bold"
+    ],
+    [
+     "config de IA · JRN-013 · D1 ◇",
+     14,
+     "Regular"
+    ]
+   ],
+   "ref": "JRN-013",
+   "style": {
+    "fill": "#2B2728",
+    "stroke": "#F5A524",
+    "stroke_w": 1.5,
+    "r": 8,
+    "text_color": "#E6E7E8"
+   },
+   "texts_planned": [
+    [
+     [
+      "O n b o a r d i n g   &",
+      16,
+      "Bold"
+     ],
+     [
+      "I A",
+      16,
+      "Bold"
+     ]
+    ],
+    [
+     [
+      "c o n f i g   d e   I A   ·",
+      14,
+      "Regular"
+     ],
+     [
+      "J R N - 0 1 3   ·   D 1   ◇",
+      14,
+      "Regular"
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "OV-P3",
+   "frame": "00",
+   "type": "process",
+   "x": 704,
+   "y": 640,
+   "w": 196,
+   "h": 132,
+   "texts": [
+    [
+     "Home — Projetos",
+     16,
+     "Bold"
+    ],
+    [
+     "biblioteca · JRN-002",
+     14,
+     "Regular"
+    ]
+   ],
+   "ref": "JRN-002",
+   "style": {
+    "fill": "#2B2728",
+    "stroke": "#3A3A3C",
+    "stroke_w": 1,
+    "r": 8,
+    "text_color": "#E6E7E8"
+   },
+   "texts_planned": [
+    [
+     [
+      "H o m e   —",
+      16,
+      "Bold"
+     ],
+     [
+      "P r o j e t o s",
+      16,
+      "Bold"
+     ]
+    ],
+    [
+     [
+      "b i b l i o t e c a   ·",
+      14,
+      "Regular"
+     ],
+     [
+      "J R N - 0 0 2",
+      14,
+      "Regular"
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "OV-P4",
+   "frame": "00",
+   "type": "process",
+   "x": 938,
+   "y": 640,
+   "w": 196,
+   "h": 132,
+   "texts": [
+    [
+     "Importar mídia",
+     16,
+     "Bold"
+    ],
+    [
+     "vídeo longo · JRN-004",
+     14,
+     "Regular"
+    ]
+   ],
+   "ref": "JRN-004",
+   "style": {
+    "fill": "#2B2728",
+    "stroke": "#3A3A3C",
+    "stroke_w": 1,
+    "r": 8,
+    "text_color": "#E6E7E8"
+   },
+   "texts_planned": [
+    [
+     [
+      "I m p o r t a r   m í d i a",
+      16,
+      "Bold"
+     ]
+    ],
+    [
+     [
+      "v í d e o   l o n g o   ·",
+      14,
+      "Regular"
+     ],
+     [
+      "J R N - 0 0 4",
+      14,
+      "Regular"
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "OV-P5",
+   "frame": "00",
+   "type": "process",
+   "x": 1172,
+   "y": 640,
+   "w": 196,
+   "h": 132,
+   "texts": [
+    [
+     "Processamento IA",
+     16,
+     "Bold"
+    ],
+    [
+     "cortes + scores · JRN-007",
+     14,
+     "Regular"
+    ]
+   ],
+   "ref": "JRN-007",
+   "style": {
+    "fill": "#2B2728",
+    "stroke": "#3A3A3C",
+    "stroke_w": 1,
+    "r": 8,
+    "text_color": "#E6E7E8"
+   },
+   "texts_planned": [
+    [
+     [
+      "P r o c e s s a m e n t o",
+      16,
+      "Bold"
+     ],
+     [
+      "I A",
+      16,
+      "Bold"
+     ]
+    ],
+    [
+     [
+      "c o r t e s   +   s c o r e s   ·",
+      14,
+      "Regular"
+     ],
+     [
+      "J R N - 0 0 7",
+      14,
+      "Regular"
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "OV-P6",
+   "frame": "00",
+   "type": "process",
+   "x": 1406,
+   "y": 640,
+   "w": 196,
+   "h": 132,
+   "texts": [
+    [
+     "Revisar resultados",
+     16,
+     "Bold"
+    ],
+    [
+     "seleção & validação · JRN-008",
+     14,
+     "Regular"
+    ]
+   ],
+   "ref": "JRN-008",
+   "style": {
+    "fill": "#2B2728",
+    "stroke": "#3A3A3C",
+    "stroke_w": 1,
+    "r": 8,
+    "text_color": "#E6E7E8"
+   },
+   "texts_planned": [
+    [
+     [
+      "R e v i s a r",
+      16,
+      "Bold"
+     ],
+     [
+      "r e s u l t a d o s",
+      16,
+      "Bold"
+     ]
+    ],
+    [
+     [
+      "s e l e ç ã o   &",
+      14,
+      "Regular"
+     ],
+     [
+      "v a l i d a ç ã o   ·",
+      14,
+      "Regular"
+     ],
+     [
+      "J R N - 0 0 8",
+      14,
+      "Regular"
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "OV-P7",
+   "frame": "00",
+   "type": "process",
+   "x": 1640,
+   "y": 640,
+   "w": 196,
+   "h": 132,
+   "texts": [
+    [
+     "Refinar no editor",
+     16,
+     "Bold"
+    ],
+    [
+     "ajustes finos · JRN-009",
+     14,
+     "Regular"
+    ]
+   ],
+   "ref": "JRN-009",
+   "style": {
+    "fill": "#2B2728",
+    "stroke": "#3A3A3C",
+    "stroke_w": 1,
+    "r": 8,
+    "text_color": "#E6E7E8"
+   },
+   "texts_planned": [
+    [
+     [
+      "R e f i n a r   n o",
+      16,
+      "Bold"
+     ],
+     [
+      "e d i t o r",
+      16,
+      "Bold"
+     ]
+    ],
+    [
+     [
+      "a j u s t e s   f i n o s   ·",
+      14,
+      "Regular"
+     ],
+     [
+      "J R N - 0 0 9",
+      14,
+      "Regular"
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "OV-P8",
+   "frame": "00",
+   "type": "process",
+   "x": 1874,
+   "y": 640,
+   "w": 196,
+   "h": 132,
+   "texts": [
+    [
+     "Exportar para publicação",
+     16,
+     "Bold"
+    ],
+    [
+     "saída final · JRN-010",
+     14,
+     "Regular"
+    ]
+   ],
+   "ref": "JRN-010",
+   "style": {
+    "fill": "#2B2728",
+    "stroke": "#3A3A3C",
+    "stroke_w": 1,
+    "r": 8,
+    "text_color": "#E6E7E8"
+   },
+   "texts_planned": [
+    [
+     [
+      "E x p o r t a r   p a r a",
+      16,
+      "Bold"
+     ],
+     [
+      "p u b l i c a ç ã o",
+      16,
+      "Bold"
+     ]
+    ],
+    [
+     [
+      "s a í d a   f i n a l   ·",
+      14,
+      "Regular"
+     ],
+     [
+      "J R N - 0 1 0",
+      14,
+      "Regular"
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "OV-T1",
+   "frame": "00",
+   "type": "terminal_end",
+   "x": 2108,
+   "y": 670,
+   "w": 170,
+   "h": 72,
+   "texts": [
+    [
+     "CICLO CONCLUÍDO",
+     14,
+     "Bold"
+    ]
+   ],
+   "ref": null,
+   "style": {
+    "fill": "#231F20",
+    "stroke": "#02C2BE",
+    "stroke_w": 1.5,
+    "r": "h/2",
+    "text_color": "#02C2BE"
+   },
+   "texts_planned": [
+    [
+     [
+      "C I C L O",
+      14,
+      "Bold"
+     ],
+     [
+      "C O N C L U Í D O",
+      14,
+      "Bold"
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "OV-NOTE1",
+   "frame": "00",
+   "type": "note_ref",
+   "x": 420,
+   "y": 200,
+   "w": 480,
+   "h": 64,
+   "texts": [
+    [
+     "DETALHE → Fluxo 01 — First Run & Access (V2)",
+     14,
+     "Italic"
+    ]
+   ],
+   "ref": "BR-002",
+   "style": {
+    "fill": null,
+    "stroke": "#B9BBBD",
+    "stroke_w": 1,
+    "r": 6,
+    "text_color": "#B9BBBD",
+    "stroke_dashes": [
+     4,
+     3
+    ]
+   },
+   "texts_planned": [
+    [
+     [
+      "D E T A L H E   →   F l u x o   0 1   —   F i r s t   R u n   &   A c c e s s   ( V 2 )",
+      14,
+      "Italic"
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "N01",
+   "frame": "01",
+   "type": "terminal_start",
+   "x": 48,
+   "y": 444,
+   "w": 280,
+   "h": 72,
+   "texts": [
+    [
+     "INÍCIO — PRIMEIRA ABERTURA",
+     14,
+     "Bold"
+    ]
+   ],
+   "ref": "JRN-001",
+   "style": {
+    "fill": "#02C2BE",
+    "stroke": "#02C2BE",
+    "stroke_w": 0,
+    "r": "h/2",
+    "text_color": "#000000"
+   },
+   "texts_planned": [
+    [
+     [
+      "I N Í C I O   —   P R I M E I R A",
+      14,
+      "Bold"
+     ],
+     [
+      "A B E R T U R A",
+      14,
+      "Bold"
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "N02",
+   "frame": "01",
+   "type": "process",
+   "x": 388,
+   "y": 430,
+   "w": 320,
+   "h": 100,
+   "texts": [
+    [
+     "Verificação de ambiente",
+     16,
+     "Bold"
+    ],
+    [
+     "SO · GPU · disco · permissões",
+     14,
+     "Regular"
+    ]
+   ],
+   "ref": "JRN-001",
+   "style": {
+    "fill": "#2B2728",
+    "stroke": "#3A3A3C",
+    "stroke_w": 1,
+    "r": 8,
+    "text_color": "#E6E7E8"
+   },
+   "texts_planned": [
+    [
+     [
+      "V e r i f i c a ç ã o   d e   a m b i e n t e",
+      16,
+      "Bold"
+     ]
+    ],
+    [
+     [
+      "S O   ·   G P U   ·   d i s c o   ·   p e r m i s s õ e s",
+      14,
+      "Regular"
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "N03",
+   "frame": "01",
+   "type": "decision",
+   "x": 818,
+   "y": 360,
+   "w": 240,
+   "h": 240,
+   "texts": [
+    [
+     "Ambiente compatível?",
+     16,
+     "Bold"
+    ]
+   ],
+   "ref": "JRN-014",
+   "style": {
+    "fill": "#231F20",
+    "stroke": "#02C2BE",
+    "stroke_w": 1.5,
+    "r": 0,
+    "text_color": "#E6E7E8"
+   },
+   "texts_planned": [
+    [
+     [
+      "A m b i e n t e",
+      16,
+      "Bold"
+     ],
+     [
+      "c o m p a t í v e l ?",
+      16,
+      "Bold"
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "N04",
+   "frame": "01",
+   "type": "process",
+   "accent": "pending",
+   "x": 1188,
+   "y": 420,
+   "w": 340,
+   "h": 120,
+   "texts": [
+    [
+     "Verificação de acesso",
+     16,
+     "Bold"
+    ],
+    [
+     "assinatura · BR-037 · DEC-011 ◇",
+     14,
+     "Regular"
+    ]
+   ],
+   "ref": "BR-037",
+   "style": {
+    "fill": "#2B2728",
+    "stroke": "#F5A524",
+    "stroke_w": 1.5,
+    "r": 8,
+    "text_color": "#E6E7E8"
+   },
+   "texts_planned": [
+    [
+     [
+      "V e r i f i c a ç ã o   d e   a c e s s o",
+      16,
+      "Bold"
+     ]
+    ],
+    [
+     [
+      "a s s i n a t u r a   ·   B R - 0 3 7   ·   D E C - 0 1 1   ◇",
+      14,
+      "Regular"
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "NL",
+   "frame": "01",
+   "type": "decision",
+   "x": 1648,
+   "y": 360,
+   "w": 240,
+   "h": 240,
+   "texts": [
+    [
+     "App online?",
+     16,
+     "Bold"
+    ]
+   ],
+   "ref": "BR-049",
+   "style": {
+    "fill": "#231F20",
+    "stroke": "#02C2BE",
+    "stroke_w": 1.5,
+    "r": 0,
+    "text_color": "#E6E7E8"
+   },
+   "texts_planned": [
+    [
+     [
+      "A p p   o n l i n e ?",
+      16,
+      "Bold"
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "N08",
+   "frame": "01",
+   "type": "decision",
+   "accent": "pending",
+   "x": 2038,
+   "y": 360,
+   "w": 240,
+   "h": 240,
+   "texts": [
+    [
+     "Acesso ativo?",
+     16,
+     "Bold"
+    ],
+    [
+     "mecanismo DEC-011 ◇",
+     14,
+     "Regular"
+    ]
+   ],
+   "ref": "DEC-011",
+   "style": {
+    "fill": "#231F20",
+    "stroke": "#F5A524",
+    "stroke_w": 1.5,
+    "r": 0,
+    "text_color": "#E6E7E8"
+   },
+   "texts_planned": [
+    [
+     [
+      "A c e s s o   a t i v o ?",
+      16,
+      "Bold"
+     ]
+    ],
+    [
+     [
+      "m e c a n i s m o   D E C - 0 1 1   ◇",
+      14,
+      "Regular"
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "N09",
+   "frame": "01",
+   "type": "decision",
+   "x": 2448,
+   "y": 360,
+   "w": 240,
+   "h": 240,
+   "texts": [
+    [
+     "Primeira execução?",
+     16,
+     "Bold"
+    ]
+   ],
+   "ref": "JRN-001",
+   "style": {
+    "fill": "#231F20",
+    "stroke": "#02C2BE",
+    "stroke_w": 1.5,
+    "r": 0,
+    "text_color": "#E6E7E8"
+   },
+   "texts_planned": [
+    [
+     [
+      "P r i m e i r a",
+      16,
+      "Bold"
+     ],
+     [
+      "e x e c u ç ã o ?",
+      16,
+      "Bold"
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "N11",
+   "frame": "01",
+   "type": "process",
+   "x": 2828,
+   "y": 420,
+   "w": 340,
+   "h": 120,
+   "texts": [
+    [
+     "First-run: tour + IA",
+     16,
+     "Bold"
+    ],
+    [
+     "config de IA · JRN-013 (DEC-012)",
+     14,
+     "Regular"
+    ]
+   ],
+   "ref": "JRN-013",
+   "style": {
+    "fill": "#2B2728",
+    "stroke": "#3A3A3C",
+    "stroke_w": 1,
+    "r": 8,
+    "text_color": "#E6E7E8"
+   },
+   "texts_planned": [
+    [
+     [
+      "F i r s t - r u n :   t o u r   +   I A",
+      16,
+      "Bold"
+     ]
+    ],
+    [
+     [
+      "c o n f i g   d e   I A   ·   J R N - 0 1 3   ( D E C - 0 1 2 )",
+      14,
+      "Regular"
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "N12",
+   "frame": "01",
+   "type": "terminal_end",
+   "x": 3268,
+   "y": 444,
+   "w": 340,
+   "h": 72,
+   "texts": [
+    [
+     "HOME · BIBLIOTECA",
+     14,
+     "Bold"
+    ]
+   ],
+   "ref": "JRN-002",
+   "style": {
+    "fill": "#231F20",
+    "stroke": "#02C2BE",
+    "stroke_w": 1.5,
+    "r": "h/2",
+    "text_color": "#02C2BE"
+   },
+   "texts_planned": [
+    [
+     [
+      "H O M E   ·   B I B L I O T E C A",
+      14,
+      "Bold"
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "N05",
+   "frame": "01",
+   "type": "process",
+   "x": 788,
+   "y": 700,
+   "w": 320,
+   "h": 96,
+   "texts": [
+    [
+     "Diagnóstico exibido",
+     16,
+     "Bold"
+    ],
+    [
+     "causa + correção sugerida",
+     14,
+     "Regular"
+    ]
+   ],
+   "ref": "JRN-014",
+   "style": {
+    "fill": "#2B2728",
+    "stroke": "#3A3A3C",
+    "stroke_w": 1,
+    "r": 8,
+    "text_color": "#E6E7E8"
+   },
+   "texts_planned": [
+    [
+     [
+      "D i a g n ó s t i c o   e x i b i d o",
+      16,
+      "Bold"
+     ]
+    ],
+    [
+     [
+      "c a u s a   +   c o r r e ç ã o   s u g e r i d a",
+      14,
+      "Regular"
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "N06",
+   "frame": "01",
+   "type": "decision",
+   "x": 863,
+   "y": 831,
+   "w": 150,
+   "h": 150,
+   "texts": [
+    [
+     "Repetir?",
+     15,
+     "Bold"
+    ]
+   ],
+   "ref": "JRN-014",
+   "style": {
+    "fill": "#231F20",
+    "stroke": "#02C2BE",
+    "stroke_w": 1.5,
+    "r": 0,
+    "text_color": "#E6E7E8"
+   },
+   "texts_planned": [
+    [
+     [
+      "R e p e t i r ?",
+      15,
+      "Bold"
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "N07",
+   "frame": "01",
+   "type": "terminal_exit",
+   "x": 788,
+   "y": 1016,
+   "w": 320,
+   "h": 56,
+   "texts": [
+    [
+     "SAÍDA — CORRIGIR FORA DO APP",
+     14,
+     "Bold"
+    ]
+   ],
+   "ref": null,
+   "style": {
+    "fill": "#231F20",
+    "stroke": "#E5484D",
+    "stroke_w": 1.5,
+    "r": "h/2",
+    "text_color": "#E5484D"
+   },
+   "texts_planned": [
+    [
+     [
+      "S A Í D A   —   C O R R I G I R   F O R A   D O   A P P",
+      14,
+      "Bold"
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "N10",
+   "frame": "01",
+   "type": "state",
+   "x": 1988,
+   "y": 700,
+   "w": 340,
+   "h": 110,
+   "texts": [
+    [
+     "Ação requerendo acesso",
+     16,
+     "Bold"
+    ],
+    [
+     "ativar assinatura · BR-037",
+     14,
+     "Regular"
+    ]
+   ],
+   "ref": "BR-037",
+   "style": {
+    "fill": "#2B2728",
+    "stroke": "#3A3A3C",
+    "stroke_w": 1,
+    "r": 8,
+    "text_color": "#E6E7E8"
+   },
+   "texts_planned": [
+    [
+     [
+      "A ç ã o   r e q u e r e n d o   a c e s s o",
+      16,
+      "Bold"
+     ]
+    ],
+    [
+     [
+      "a t i v a r   a s s i n a t u r a   ·   B R - 0 3 7",
+      14,
+      "Regular"
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "N13",
+   "frame": "01",
+   "type": "note_ref",
+   "x": 2480,
+   "y": 960,
+   "w": 340,
+   "h": 76,
+   "texts": [
+    [
+     "JRN-012 · compra fora do app (DEC-010)",
+     14,
+     "Italic"
+    ]
+   ],
+   "ref": "JRN-012",
+   "style": {
+    "fill": null,
+    "stroke": "#B9BBBD",
+    "stroke_w": 1,
+    "r": 6,
+    "text_color": "#B9BBBD",
+    "stroke_dashes": [
+     4,
+     3
+    ]
+   },
+   "texts_planned": [
+    [
+     [
+      "J R N - 0 1 2   ·   c o m p r a   f o r a   d o   a p p",
+      14,
+      "Italic"
+     ],
+     [
+      "( D E C - 0 1 0 )",
+      14,
+      "Italic"
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "N14",
+   "frame": "01",
+   "type": "pending",
+   "x": 1598,
+   "y": 850,
+   "w": 340,
+   "h": 110,
+   "texts": [
+    [
+     "Política offline PENDENTE",
+     16,
+     "Bold"
+    ],
+    [
+     "cortesia proposta · BR-049 ◇",
+     14,
+     "Regular"
+    ]
+   ],
+   "ref": "BR-049",
+   "style": {
+    "fill": "#2B2728",
+    "stroke": "#F5A524",
+    "stroke_w": 1.5,
+    "r": 8,
+    "text_color": "#E6E7E8"
+   },
+   "texts_planned": [
+    [
+     [
+      "P o l í t i c a   o f f l i n e   P E N D E N T E",
+      16,
+      "Bold"
+     ]
+    ],
+    [
+     [
+      "c o r t e s i a   p r o p o s t a   ·   B R - 0 4 9   ◇",
+      14,
+      "Regular"
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "N15",
+   "frame": "01",
+   "type": "offpage_out",
+   "x": 2380,
+   "y": 735,
+   "w": 44,
+   "h": 44,
+   "texts": [
+    [
+     "A",
+     14,
+     "Bold"
+    ]
+   ],
+   "ref": "BR-037",
+   "style": {
+    "fill": "#231F20",
+    "stroke": "#B9BBBD",
+    "stroke_w": 1.5,
+    "r": "h/2",
+    "text_color": "#B9BBBD"
+   },
+   "texts_planned": []
+  },
+  {
+   "id": "N16",
+   "frame": "01",
+   "type": "offpage_in",
+   "x": 1358,
+   "y": 350,
+   "w": 44,
+   "h": 44,
+   "texts": [
+    [
+     "A",
+     14,
+     "Bold"
+    ]
+   ],
+   "ref": "BR-037",
+   "style": {
+    "fill": "#231F20",
+    "stroke": "#02C2BE",
+    "stroke_w": 1.5,
+    "r": "h/2",
+    "text_color": "#02C2BE"
+   },
+   "texts_planned": []
+  }
+ ],
+ "edges": [
+  {
+   "id": "E-OV-00",
+   "frame": "00",
+   "kind": "main",
+   "from": "OV-T0",
+   "to": "OV-P1",
+   "path": [
+    [
+     198,
+     706
+    ],
+    [
+     236,
+     706
+    ]
+   ],
+   "label": null,
+   "style": {
+    "color": "#02C2BE",
+    "weight": 2.0,
+    "dashes": null
+   }
+  },
+  {
+   "id": "E-OV-01",
+   "frame": "00",
+   "kind": "main",
+   "from": "OV-P1",
+   "to": "OV-P2",
+   "path": [
+    [
+     432,
+     706
+    ],
+    [
+     470,
+     706
+    ]
+   ],
+   "label": null,
+   "style": {
+    "color": "#02C2BE",
+    "weight": 2.0,
+    "dashes": null
+   }
+  },
+  {
+   "id": "E-OV-02",
+   "frame": "00",
+   "kind": "main",
+   "from": "OV-P2",
+   "to": "OV-P3",
+   "path": [
+    [
+     666,
+     706
+    ],
+    [
+     704,
+     706
+    ]
+   ],
+   "label": null,
+   "style": {
+    "color": "#02C2BE",
+    "weight": 2.0,
+    "dashes": null
+   }
+  },
+  {
+   "id": "E-OV-03",
+   "frame": "00",
+   "kind": "main",
+   "from": "OV-P3",
+   "to": "OV-P4",
+   "path": [
+    [
+     900,
+     706
+    ],
+    [
+     938,
+     706
+    ]
+   ],
+   "label": null,
+   "style": {
+    "color": "#02C2BE",
+    "weight": 2.0,
+    "dashes": null
+   }
+  },
+  {
+   "id": "E-OV-04",
+   "frame": "00",
+   "kind": "main",
+   "from": "OV-P4",
+   "to": "OV-P5",
+   "path": [
+    [
+     1134,
+     706
+    ],
+    [
+     1172,
+     706
+    ]
+   ],
+   "label": null,
+   "style": {
+    "color": "#02C2BE",
+    "weight": 2.0,
+    "dashes": null
+   }
+  },
+  {
+   "id": "E-OV-05",
+   "frame": "00",
+   "kind": "main",
+   "from": "OV-P5",
+   "to": "OV-P6",
+   "path": [
+    [
+     1368,
+     706
+    ],
+    [
+     1406,
+     706
+    ]
+   ],
+   "label": null,
+   "style": {
+    "color": "#02C2BE",
+    "weight": 2.0,
+    "dashes": null
+   }
+  },
+  {
+   "id": "E-OV-06",
+   "frame": "00",
+   "kind": "main",
+   "from": "OV-P6",
+   "to": "OV-P7",
+   "path": [
+    [
+     1602,
+     706
+    ],
+    [
+     1640,
+     706
+    ]
+   ],
+   "label": null,
+   "style": {
+    "color": "#02C2BE",
+    "weight": 2.0,
+    "dashes": null
+   }
+  },
+  {
+   "id": "E-OV-07",
+   "frame": "00",
+   "kind": "main",
+   "from": "OV-P7",
+   "to": "OV-P8",
+   "path": [
+    [
+     1836,
+     706
+    ],
+    [
+     1874,
+     706
+    ]
+   ],
+   "label": null,
+   "style": {
+    "color": "#02C2BE",
+    "weight": 2.0,
+    "dashes": null
+   }
+  },
+  {
+   "id": "E-OV-08",
+   "frame": "00",
+   "kind": "main",
+   "from": "OV-P8",
+   "to": "OV-T1",
+   "path": [
+    [
+     2070,
+     706
+    ],
+    [
+     2108,
+     706
+    ]
+   ],
+   "label": null,
+   "style": {
+    "color": "#02C2BE",
+    "weight": 2.0,
+    "dashes": null
+   }
+  },
+  {
+   "id": "E-OV-RET",
+   "frame": "00",
+   "kind": "return",
+   "from": "OV-P8",
+   "to": "OV-P3",
+   "path": [
+    [
+     1972,
+     772
+    ],
+    [
+     1972,
+     920
+    ],
+    [
+     802,
+     920
+    ],
+    [
+     802,
+     772
+    ]
+   ],
+   "label": {
+    "text": "novo projeto / retorno à Home",
+    "x": 1337,
+    "y": 894
+   },
+   "style": {
+    "color": "#B9BBBD",
+    "weight": 1.5,
+    "dashes": [
+     8,
+     6
+    ]
+   }
+  },
+  {
+   "id": "E-OV-IT",
+   "frame": "00",
+   "kind": "return",
+   "from": "OV-P7",
+   "to": "OV-P6",
+   "path": [
+    [
+     1738,
+     640
+    ],
+    [
+     1738,
+     530
+    ],
+    [
+     1504,
+     530
+    ],
+    [
+     1504,
+     640
+    ]
+   ],
+   "label": {
+    "text": "iterar até satisfatório",
+    "x": 1621,
+    "y": 506
+   },
+   "style": {
+    "color": "#B9BBBD",
+    "weight": 1.5,
+    "dashes": [
+     8,
+     6
+    ]
+   }
+  },
+  {
+   "id": "E-OV-REF",
+   "frame": "00",
+   "kind": "reference",
+   "from": "OV-P1",
+   "to": "OV-NOTE1",
+   "path": [
+    [
+     334,
+     640
+    ],
+    [
+     334,
+     232
+    ],
+    [
+     420,
+     232
+    ]
+   ],
+   "label": null,
+   "style": {
+    "color": "#E6E7E8",
+    "weight": 2.0,
+    "dashes": [
+     2,
+     5
+    ]
+   }
+  },
+  {
+   "id": "E01",
+   "frame": "01",
+   "kind": "main",
+   "from": "N01",
+   "to": "N02",
+   "path": [
+    [
+     328,
+     480
+    ],
+    [
+     388,
+     480
+    ]
+   ],
+   "label": null,
+   "style": {
+    "color": "#02C2BE",
+    "weight": 2.0,
+    "dashes": null
+   }
+  },
+  {
+   "id": "E02",
+   "frame": "01",
+   "kind": "main",
+   "from": "N02",
+   "to": "N03",
+   "path": [
+    [
+     708,
+     480
+    ],
+    [
+     818,
+     480
+    ]
+   ],
+   "label": null,
+   "style": {
+    "color": "#02C2BE",
+    "weight": 2.0,
+    "dashes": null
+   }
+  },
+  {
+   "id": "E03",
+   "frame": "01",
+   "kind": "main",
+   "from": "N03",
+   "to": "N04",
+   "path": [
+    [
+     1058,
+     480
+    ],
+    [
+     1188,
+     480
+    ]
+   ],
+   "label": {
+    "text": "SIM",
+    "x": 1100,
+    "y": 454
+   },
+   "style": {
+    "color": "#02C2BE",
+    "weight": 2.0,
+    "dashes": null
+   }
+  },
+  {
+   "id": "E04",
+   "frame": "01",
+   "kind": "error",
+   "from": "N03",
+   "to": "N05",
+   "path": [
+    [
+     938,
+     600
+    ],
+    [
+     938,
+     700
+    ]
+   ],
+   "label": {
+    "text": "NÃO",
+    "x": 950,
+    "y": 650
+   },
+   "style": {
+    "color": "#E5484D",
+    "weight": 1.5,
+    "dashes": null
+   }
+  },
+  {
+   "id": "E05",
+   "frame": "01",
+   "kind": "return",
+   "from": "N05",
+   "to": "N06",
+   "path": [
+    [
+     938,
+     796
+    ],
+    [
+     938,
+     831
+    ]
+   ],
+   "label": null,
+   "style": {
+    "color": "#B9BBBD",
+    "weight": 1.5,
+    "dashes": [
+     8,
+     6
+    ]
+   }
+  },
+  {
+   "id": "E06",
+   "frame": "01",
+   "kind": "return",
+   "from": "N06",
+   "to": "N02",
+   "path": [
+    [
+     863,
+     906
+    ],
+    [
+     548,
+     906
+    ],
+    [
+     548,
+     530
+    ]
+   ],
+   "label": {
+    "text": "SIM · repetir verificação",
+    "x": 560,
+    "y": 880
+   },
+   "style": {
+    "color": "#B9BBBD",
+    "weight": 1.5,
+    "dashes": [
+     8,
+     6
+    ]
+   }
+  },
+  {
+   "id": "E07",
+   "frame": "01",
+   "kind": "main",
+   "from": "N06",
+   "to": "N07",
+   "path": [
+    [
+     938,
+     981
+    ],
+    [
+     938,
+     1016
+    ]
+   ],
+   "label": {
+    "text": "NÃO",
+    "x": 950,
+    "y": 984
+   },
+   "style": {
+    "color": "#02C2BE",
+    "weight": 2.0,
+    "dashes": null
+   }
+  },
+  {
+   "id": "E08",
+   "frame": "01",
+   "kind": "main",
+   "from": "N04",
+   "to": "NL",
+   "path": [
+    [
+     1528,
+     480
+    ],
+    [
+     1648,
+     480
+    ]
+   ],
+   "label": null,
+   "style": {
+    "color": "#02C2BE",
+    "weight": 2.0,
+    "dashes": null
+   }
+  },
+  {
+   "id": "E09",
+   "frame": "01",
+   "kind": "main",
+   "from": "NL",
+   "to": "N08",
+   "path": [
+    [
+     1888,
+     480
+    ],
+    [
+     2038,
+     480
+    ]
+   ],
+   "label": {
+    "text": "SIM",
+    "x": 1920,
+    "y": 454
+   },
+   "style": {
+    "color": "#02C2BE",
+    "weight": 2.0,
+    "dashes": null
+   }
+  },
+  {
+   "id": "E10",
+   "frame": "01",
+   "kind": "pending",
+   "from": "NL",
+   "to": "N14",
+   "path": [
+    [
+     1768,
+     600
+    ],
+    [
+     1768,
+     850
+    ]
+   ],
+   "label": {
+    "text": "NÃO · offline",
+    "x": 1780,
+    "y": 650
+   },
+   "style": {
+    "color": "#F5A524",
+    "weight": 1.5,
+    "dashes": [
+     8,
+     6
+    ]
+   }
+  },
+  {
+   "id": "E11",
+   "frame": "01",
+   "kind": "pending",
+   "from": "N14",
+   "to": "N12",
+   "path": [
+    [
+     1650,
+     960
+    ],
+    [
+     1650,
+     1100
+    ],
+    [
+     3338,
+     1100
+    ],
+    [
+     3338,
+     516
+    ]
+   ],
+   "label": {
+    "text": "PROPOSTA · modo cortesia (BR-049 ◇)",
+    "x": 2340,
+    "y": 1076
+   },
+   "style": {
+    "color": "#F5A524",
+    "weight": 1.5,
+    "dashes": [
+     8,
+     6
+    ]
+   }
+  },
+  {
+   "id": "E12",
+   "frame": "01",
+   "kind": "main",
+   "from": "N08",
+   "to": "N09",
+   "path": [
+    [
+     2278,
+     480
+    ],
+    [
+     2448,
+     480
+    ]
+   ],
+   "label": {
+    "text": "SIM",
+    "x": 2320,
+    "y": 454
+   },
+   "style": {
+    "color": "#02C2BE",
+    "weight": 2.0,
+    "dashes": null
+   }
+  },
+  {
+   "id": "E13",
+   "frame": "01",
+   "kind": "pending_go",
+   "from": "N08",
+   "to": "N10",
+   "path": [
+    [
+     2158,
+     600
+    ],
+    [
+     2158,
+     700
+    ]
+   ],
+   "label": {
+    "text": "NÃO",
+    "x": 2170,
+    "y": 650
+   },
+   "style": {
+    "color": "#F5A524",
+    "weight": 1.5,
+    "dashes": null
+   }
+  },
+  {
+   "id": "E14",
+   "frame": "01",
+   "kind": "reference",
+   "from": "N10",
+   "to": "N13",
+   "path": [
+    [
+     2250,
+     810
+    ],
+    [
+     2250,
+     936
+    ],
+    [
+     2650,
+     936
+    ],
+    [
+     2650,
+     960
+    ]
+   ],
+   "label": {
+    "text": "ver fluxo de compra",
+    "x": 2280,
+    "y": 908
+   },
+   "style": {
+    "color": "#E6E7E8",
+    "weight": 2.0,
+    "dashes": [
+     2,
+     5
+    ]
+   }
+  },
+  {
+   "id": "E15a",
+   "frame": "01",
+   "kind": "return",
+   "from": "N10",
+   "to": "N15",
+   "path": [
+    [
+     2328,
+     757
+    ],
+    [
+     2380,
+     757
+    ]
+   ],
+   "label": {
+    "text": "após ativar → A",
+    "x": 2335,
+    "y": 790
+   },
+   "style": {
+    "color": "#B9BBBD",
+    "weight": 1.5,
+    "dashes": [
+     8,
+     6
+    ]
+   }
+  },
+  {
+   "id": "E15b",
+   "frame": "01",
+   "kind": "return",
+   "from": "N16",
+   "to": "N04",
+   "path": [
+    [
+     1380,
+     394
+    ],
+    [
+     1380,
+     420
+    ]
+   ],
+   "label": {
+    "text": "A · reverificar acesso",
+    "x": 1415,
+    "y": 368
+   },
+   "style": {
+    "color": "#B9BBBD",
+    "weight": 1.5,
+    "dashes": [
+     8,
+     6
+    ]
+   }
+  },
+  {
+   "id": "E16",
+   "frame": "01",
+   "kind": "main",
+   "from": "N09",
+   "to": "N11",
+   "path": [
+    [
+     2688,
+     480
+    ],
+    [
+     2828,
+     480
+    ]
+   ],
+   "label": {
+    "text": "SIM",
+    "x": 2734,
+    "y": 454
+   },
+   "style": {
+    "color": "#02C2BE",
+    "weight": 2.0,
+    "dashes": null
+   }
+  },
+  {
+   "id": "E17",
+   "frame": "01",
+   "kind": "main",
+   "from": "N09",
+   "to": "N12",
+   "path": [
+    [
+     2568,
+     360
+    ],
+    [
+     3438,
+     360
+    ],
+    [
+     3438,
+     444
+    ]
+   ],
+   "label": {
+    "text": "NÃO · recorrente",
+    "x": 2900,
+    "y": 334
+   },
+   "style": {
+    "color": "#02C2BE",
+    "weight": 2.0,
+    "dashes": null
+   }
+  },
+  {
+   "id": "E18",
+   "frame": "01",
+   "kind": "main",
+   "from": "N11",
+   "to": "N12",
+   "path": [
+    [
+     3168,
+     480
+    ],
+    [
+     3268,
+     480
+    ]
+   ],
+   "label": null,
+   "style": {
+    "color": "#02C2BE",
+    "weight": 2.0,
+    "dashes": null
+   }
+  }
+ ],
+ "validation": {
+  "logic_errors": [],
+  "geometry_errors": [],
+  "text_fit_errors": []
+ }
+}

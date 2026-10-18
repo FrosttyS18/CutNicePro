@@ -1,0 +1,13 @@
+{
+  "_fonte": "get_node real via MCP figcraft-app, aba 'Untitled' descartável (Fase 02A.4). Estado NEGATIVO proposital: texto ZTEST-T no FUNDO (encoberto pelo losango) e rótulo ZTEST-L sob o conector (linha atravessa os glifos). Evidência visual: ztest-negativos.png (VISION: 'DECISÃO?' INVISÍVEL; 'SIM' riscado pela linha).",
+  "name": "ZTEST-F",
+  "type": "FRAME",
+  "fills": [{"color": "#000000"}],
+  "absoluteBounds": {"x": 0, "y": 0, "width": 640, "height": 400},
+  "children": [
+    {"name": "ZTEST-L", "type": "TEXT", "fontSize": 14, "characters": "SIM", "fontStyle": "Bold", "absoluteBounds": {"x": 60, "y": 140, "width": 60, "height": 21}},
+    {"name": "ZTEST-T", "type": "TEXT", "fontSize": 16, "characters": "DECISÃO?", "fontStyle": "Bold", "textAlign": "center", "absoluteBounds": {"x": 200, "y": 139, "width": 240, "height": 24}},
+    {"name": "ZTEST-D", "type": "VECTOR", "vertices": 4, "segments": 4, "fills": [{"color": "#D9D9D9"}], "absoluteBounds": {"x": 160, "y": 40, "width": 320, "height": 220}},
+    {"name": "ZTEST-E", "type": "VECTOR", "vertices": 2, "segments": 1, "weight": 2, "segs": [[40, 150, 160, 150]], "absoluteBounds": {"x": 40, "y": 150, "width": 120, "height": 0}}
+  ]
+}

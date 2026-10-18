@@ -58,10 +58,29 @@ Plataforma de edição inteligente de vídeos (inspirada no OpusClip).
 - Não usar `--amend`, rebase ou qualquer reescrita de histórico sem autorização explícita; sem tags/releases automáticas; commits/pushes/merges somente com autorização específica.
 - Histórico anterior à adoção desta convenção é preservado como está.
 
+## PRODUCT DESIGN GATE (regra permanente)
+
+1. Nenhuma tela nova sem vínculo a uma jornada (JRN) e a um requisito (FR/NFR) em `docs/product/`.
+2. Nenhuma funcionalidade implementada sem regra de negócio (BR) e critério de aceite (AC) aplicáveis.
+3. O backlog (`docs/product/BACKLOG.md`) governa dependências e prioridades aprovadas.
+4. Consultar o Product Brain (`docs/product/PRODUCT-BRAIN.md`) antes de decisões estruturais.
+5. Decisões relevantes atualizam os documentos canônicos afetados e suas referências no Brain (atualização incremental, sem reescrever tudo).
+6. Fases de UX e produto exigem aprovação do mantenedor antes do design visual definitivo.
+7. As propostas da Fase 01 são exploração histórica, não especificação final.
+8. Mudanças de requisito registram impacto sobre jornadas, telas, componentes e testes (rastreabilidade em `docs/product/TRACEABILITY.md`).
+9. Nunca fabricar evidências de pesquisa ou métricas para o case de portfólio (`docs/portfolio/CASE-STUDY-LOG.md`).
+
 ## Validação visual
 
 - Em tarefas de interface: executar a aplicação, capturar evidências com o Playwright CLI (`.tooling/playwright/node_modules/.bin/playwright-cli`) quando aplicável, e comparar o resultado com a referência aprovada.
 - Não encerrar tarefas visuais afirmando fidelidade sem realmente inspecionar o resultado.
+
+## Regra permanente de validação FigCraft (Fase 02A.4)
+
+- Toda criação ou modificação visual no FigCraft deve verificar, incrementalmente: geometria, layout, hierarquia de camadas, **z-order**, conteúdo visível, tipografia, identidade visual e integridade de componentes/instâncias quando aplicável.
+- O FigCraft 0.6.0 empilha por ordem de inserção (`node.create` entra NO TOPO; `children` no dump = fundo→topo; `node.reorder {id, index}` reordena, 0 = fundo). Contrato dos fluxos: **formas < conectores < textos** — criar nessa ordem; ao recriar formas com textos existentes, mover para baixo imediatamente.
+- Nunca criar grandes lotes de objetos sem inspecionar os recém-criados (get_node + screenshot). Sucesso do MCP não é PASS visual.
+- PASS visual exige: verificação estrutural (ordem real das camadas, bounds, fills) + screenshot inspecionado; o gate `tools/flow/flow_gate_v2.py` inclui a dimensão Z (texto encoberto por forma opaca; rótulo atravessado por traço) — sem Z-PASS não há Visual PASS.
 
 ## Memória e documentação
 

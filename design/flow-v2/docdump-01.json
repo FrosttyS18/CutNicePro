@@ -1,0 +1,910 @@
+{
+ "_fonte": "get_node real via MCP figcraft-app (799) pós-correção manual do mantenedor, Fase 02A.4. ARRAY = ORDEM DE EMPILHAMENTO REAL (fundo→topo, provado empiricamente). segs = segmentos absolutos [x0,y0,x1,y1] dos vetores abertos; shape=diamond para vetores fechados de 4 vértices.",
+ "name": "01 — FIRST RUN & ACCESS USER FLOW V2",
+ "type": "FRAME",
+ "fills": [
+  {
+   "color": "#000000"
+  }
+ ],
+ "absoluteBounds": {
+  "x": 2460,
+  "y": 1337,
+  "width": 3656,
+  "height": 1180
+ },
+ "children": [
+  {
+   "name": "N06",
+   "type": "VECTOR",
+   "open": false,
+   "shape": "diamond",
+   "fills": [
+    {
+     "color": "#231F20"
+    }
+   ],
+   "absoluteBounds": {
+    "x": 3323,
+    "y": 2168,
+    "width": 150,
+    "height": 150
+   }
+  },
+  {
+   "name": "N09",
+   "type": "VECTOR",
+   "open": false,
+   "shape": "diamond",
+   "fills": [
+    {
+     "color": "#231F20"
+    }
+   ],
+   "absoluteBounds": {
+    "x": 4908,
+    "y": 1697,
+    "width": 240,
+    "height": 240
+   }
+  },
+  {
+   "name": "N08",
+   "type": "VECTOR",
+   "open": false,
+   "shape": "diamond",
+   "fills": [
+    {
+     "color": "#231F20"
+    }
+   ],
+   "absoluteBounds": {
+    "x": 4498,
+    "y": 1697,
+    "width": 240,
+    "height": 240
+   }
+  },
+  {
+   "name": "NL",
+   "type": "VECTOR",
+   "open": false,
+   "shape": "diamond",
+   "fills": [
+    {
+     "color": "#231F20"
+    }
+   ],
+   "absoluteBounds": {
+    "x": 4108,
+    "y": 1697,
+    "width": 240,
+    "height": 240
+   }
+  },
+  {
+   "name": "N01",
+   "type": "FRAME",
+   "fills": [
+    {
+     "color": "#02C2BE"
+    }
+   ],
+   "absoluteBounds": {
+    "x": 2508,
+    "y": 1781,
+    "width": 280,
+    "height": 72
+   }
+  },
+  {
+   "name": "N02",
+   "type": "FRAME",
+   "fills": [
+    {
+     "color": "#2B2728"
+    }
+   ],
+   "absoluteBounds": {
+    "x": 2848,
+    "y": 1767,
+    "width": 320,
+    "height": 100
+   }
+  },
+  {
+   "name": "N04",
+   "type": "FRAME",
+   "fills": [
+    {
+     "color": "#2B2728"
+    }
+   ],
+   "absoluteBounds": {
+    "x": 3648,
+    "y": 1757,
+    "width": 340,
+    "height": 120
+   }
+  },
+  {
+   "name": "N05",
+   "type": "FRAME",
+   "fills": [
+    {
+     "color": "#2B2728"
+    }
+   ],
+   "absoluteBounds": {
+    "x": 3248,
+    "y": 2037,
+    "width": 320,
+    "height": 96
+   }
+  },
+  {
+   "name": "N07",
+   "type": "FRAME",
+   "fills": [
+    {
+     "color": "#231F20"
+    }
+   ],
+   "absoluteBounds": {
+    "x": 3248,
+    "y": 2353,
+    "width": 320,
+    "height": 56
+   }
+  },
+  {
+   "name": "N10",
+   "type": "FRAME",
+   "fills": [
+    {
+     "color": "#2B2728"
+    }
+   ],
+   "absoluteBounds": {
+    "x": 4448,
+    "y": 2037,
+    "width": 340,
+    "height": 110
+   }
+  },
+  {
+   "name": "N11",
+   "type": "FRAME",
+   "fills": [
+    {
+     "color": "#2B2728"
+    }
+   ],
+   "absoluteBounds": {
+    "x": 5288,
+    "y": 1757,
+    "width": 340,
+    "height": 120
+   }
+  },
+  {
+   "name": "N12",
+   "type": "FRAME",
+   "fills": [
+    {
+     "color": "#231F20"
+    }
+   ],
+   "absoluteBounds": {
+    "x": 5728,
+    "y": 1781,
+    "width": 340,
+    "height": 72
+   }
+  },
+  {
+   "name": "N13",
+   "type": "FRAME",
+   "fills": [
+    {
+     "color": "#231F20"
+    }
+   ],
+   "absoluteBounds": {
+    "x": 4940,
+    "y": 2297,
+    "width": 340,
+    "height": 76
+   }
+  },
+  {
+   "name": "N14",
+   "type": "FRAME",
+   "fills": [
+    {
+     "color": "#2B2728"
+    }
+   ],
+   "absoluteBounds": {
+    "x": 4058,
+    "y": 2187,
+    "width": 340,
+    "height": 110
+   }
+  },
+  {
+   "name": "N15",
+   "type": "ELLIPSE",
+   "fills": [
+    {
+     "color": "#231F20"
+    }
+   ],
+   "absoluteBounds": {
+    "x": 4840,
+    "y": 2072,
+    "width": 44,
+    "height": 44
+   }
+  },
+  {
+   "name": "N16",
+   "type": "ELLIPSE",
+   "fills": [
+    {
+     "color": "#231F20"
+    }
+   ],
+   "absoluteBounds": {
+    "x": 3818,
+    "y": 1687,
+    "width": 44,
+    "height": 44
+   }
+  },
+  {
+   "name": "title",
+   "type": "TEXT",
+   "fontSize": 28,
+   "absoluteBounds": {
+    "x": 2508,
+    "y": 1381,
+    "width": 900,
+    "height": 42
+   }
+  },
+  {
+   "name": "subtitle",
+   "type": "TEXT",
+   "fontSize": 15,
+   "absoluteBounds": {
+    "x": 2508,
+    "y": 1427,
+    "width": 2600,
+    "height": 23
+   }
+  },
+  {
+   "name": "version",
+   "type": "TEXT",
+   "fontSize": 14,
+   "absoluteBounds": {
+    "x": 5668,
+    "y": 1385,
+    "width": 400,
+    "height": 21
+   }
+  },
+  {
+   "name": "lbl-NL",
+   "type": "TEXT",
+   "fontSize": 16,
+   "absoluteBounds": {
+    "x": 4108,
+    "y": 1805,
+    "width": 180,
+    "height": 24
+   }
+  },
+  {
+   "name": "lbl-N08a",
+   "type": "TEXT",
+   "fontSize": 16,
+   "absoluteBounds": {
+    "x": 4508,
+    "y": 1794,
+    "width": 220,
+    "height": 24
+   }
+  },
+  {
+   "name": "lbl-N08b",
+   "type": "TEXT",
+   "fontSize": 14,
+   "absoluteBounds": {
+    "x": 4508,
+    "y": 1819,
+    "width": 220,
+    "height": 21
+   }
+  },
+  {
+   "name": "lbl-N09",
+   "type": "TEXT",
+   "fontSize": 16,
+   "absoluteBounds": {
+    "x": 4908,
+    "y": 1805,
+    "width": 240,
+    "height": 24
+   }
+  },
+  {
+   "name": "lbl-N06",
+   "type": "TEXT",
+   "fontSize": 15,
+   "absoluteBounds": {
+    "x": 3323,
+    "y": 2232,
+    "width": 150,
+    "height": 23
+   }
+  },
+  {
+   "name": "lbl-N15",
+   "type": "TEXT",
+   "fontSize": 14,
+   "absoluteBounds": {
+    "x": 4840,
+    "y": 2085,
+    "width": 44,
+    "height": 21
+   }
+  },
+  {
+   "name": "lbl-N16",
+   "type": "TEXT",
+   "fontSize": 14,
+   "absoluteBounds": {
+    "x": 3818,
+    "y": 1700,
+    "width": 44,
+    "height": 21
+   }
+  },
+  {
+   "name": "E01",
+   "type": "VECTOR",
+   "open": true,
+   "weight": 2,
+   "segs": [
+    [
+     2788,
+     1817,
+     2848,
+     1817
+    ]
+   ]
+  },
+  {
+   "name": "E11",
+   "type": "VECTOR",
+   "open": true,
+   "weight": 1.5,
+   "segs": [
+    [
+     4110,
+     2297,
+     4110,
+     2437
+    ],
+    [
+     4110,
+     2437,
+     5798,
+     2437
+    ],
+    [
+     5798,
+     2437,
+     5798,
+     1853
+    ]
+   ],
+   "dashes": [
+    8,
+    6
+   ]
+  },
+  {
+   "name": "E14",
+   "type": "VECTOR",
+   "open": true,
+   "weight": 2,
+   "segs": [
+    [
+     4710,
+     2147,
+     4710,
+     2273
+    ],
+    [
+     4710,
+     2273,
+     5110,
+     2273
+    ],
+    [
+     5110,
+     2273,
+     5110,
+     2297
+    ]
+   ],
+   "dashes": [
+    2,
+    5
+   ]
+  },
+  {
+   "name": "E15a",
+   "type": "VECTOR",
+   "open": true,
+   "weight": 1.5,
+   "segs": [
+    [
+     4788,
+     2094,
+     4840,
+     2094
+    ]
+   ],
+   "dashes": [
+    8,
+    6
+   ]
+  },
+  {
+   "name": "E15b",
+   "type": "VECTOR",
+   "open": true,
+   "weight": 1.5,
+   "segs": [
+    [
+     3840,
+     1731,
+     3840,
+     1757
+    ]
+   ],
+   "dashes": [
+    8,
+    6
+   ]
+  },
+  {
+   "name": "E18",
+   "type": "VECTOR",
+   "open": true,
+   "weight": 2,
+   "segs": [
+    [
+     5628,
+     1817,
+     5728,
+     1817
+    ]
+   ]
+  },
+  {
+   "name": "lbl-E03",
+   "type": "TEXT",
+   "fontSize": 14,
+   "absoluteBounds": {
+    "x": 3560,
+    "y": 1791,
+    "width": 60,
+    "height": 21
+   }
+  },
+  {
+   "name": "lbl-E04",
+   "type": "TEXT",
+   "fontSize": 14,
+   "absoluteBounds": {
+    "x": 3410,
+    "y": 1987,
+    "width": 60,
+    "height": 21
+   }
+  },
+  {
+   "name": "lbl-E06",
+   "type": "TEXT",
+   "fontSize": 14,
+   "absoluteBounds": {
+    "x": 3020,
+    "y": 2217,
+    "width": 230,
+    "height": 21
+   }
+  },
+  {
+   "name": "lbl-E07",
+   "type": "TEXT",
+   "fontSize": 14,
+   "absoluteBounds": {
+    "x": 3410,
+    "y": 2321,
+    "width": 60,
+    "height": 21
+   }
+  },
+  {
+   "name": "lbl-E09",
+   "type": "TEXT",
+   "fontSize": 14,
+   "absoluteBounds": {
+    "x": 4380,
+    "y": 1791,
+    "width": 60,
+    "height": 21
+   }
+  },
+  {
+   "name": "lbl-E10",
+   "type": "TEXT",
+   "fontSize": 14,
+   "absoluteBounds": {
+    "x": 4240,
+    "y": 1987,
+    "width": 130,
+    "height": 21
+   }
+  },
+  {
+   "name": "lbl-E11",
+   "type": "TEXT",
+   "fontSize": 14,
+   "absoluteBounds": {
+    "x": 4800,
+    "y": 2413,
+    "width": 360,
+    "height": 21
+   }
+  },
+  {
+   "name": "lbl-E12",
+   "type": "TEXT",
+   "fontSize": 14,
+   "absoluteBounds": {
+    "x": 4780,
+    "y": 1791,
+    "width": 60,
+    "height": 21
+   }
+  },
+  {
+   "name": "lbl-E13",
+   "type": "TEXT",
+   "fontSize": 14,
+   "absoluteBounds": {
+    "x": 4630,
+    "y": 1987,
+    "width": 60,
+    "height": 21
+   }
+  },
+  {
+   "name": "lbl-E14",
+   "type": "TEXT",
+   "fontSize": 14,
+   "absoluteBounds": {
+    "x": 4740,
+    "y": 2245,
+    "width": 180,
+    "height": 21
+   }
+  },
+  {
+   "name": "lbl-E15a",
+   "type": "TEXT",
+   "fontSize": 14,
+   "absoluteBounds": {
+    "x": 4795,
+    "y": 2123,
+    "width": 140,
+    "height": 21
+   }
+  },
+  {
+   "name": "lbl-E15b",
+   "type": "TEXT",
+   "fontSize": 14,
+   "absoluteBounds": {
+    "x": 3875,
+    "y": 1701,
+    "width": 200,
+    "height": 21
+   }
+  },
+  {
+   "name": "lbl-E16",
+   "type": "TEXT",
+   "fontSize": 14,
+   "absoluteBounds": {
+    "x": 5194,
+    "y": 1791,
+    "width": 60,
+    "height": 21
+   }
+  },
+  {
+   "name": "lbl-E17",
+   "type": "TEXT",
+   "fontSize": 14,
+   "absoluteBounds": {
+    "x": 5360,
+    "y": 1671,
+    "width": 160,
+    "height": 21
+   }
+  },
+  {
+   "name": "ann-pending",
+   "type": "TEXT",
+   "fontSize": 14,
+   "absoluteBounds": {
+    "x": 2520,
+    "y": 1977,
+    "width": 460,
+    "height": 63
+   }
+  },
+  {
+   "name": "ann-continua",
+   "type": "TEXT",
+   "fontSize": 14,
+   "absoluteBounds": {
+    "x": 5650,
+    "y": 2469,
+    "width": 430,
+    "height": 42
+   }
+  },
+  {
+   "name": "N03",
+   "type": "VECTOR",
+   "open": false,
+   "shape": "diamond",
+   "fills": [
+    {
+     "color": "#231F20"
+    }
+   ],
+   "absoluteBounds": {
+    "x": 3278,
+    "y": 1697,
+    "width": 240,
+    "height": 240
+   }
+  },
+  {
+   "name": "E02",
+   "type": "VECTOR",
+   "open": true,
+   "weight": 2,
+   "segs": [
+    [
+     3168,
+     1817,
+     3278,
+     1817
+    ]
+   ]
+  },
+  {
+   "name": "E03",
+   "type": "VECTOR",
+   "open": true,
+   "weight": 2,
+   "segs": [
+    [
+     3518,
+     1817,
+     3648,
+     1817
+    ]
+   ]
+  },
+  {
+   "name": "E04",
+   "type": "VECTOR",
+   "open": true,
+   "weight": 1.5,
+   "segs": [
+    [
+     3398,
+     1937,
+     3398,
+     2037
+    ]
+   ]
+  },
+  {
+   "name": "E05",
+   "type": "VECTOR",
+   "open": true,
+   "weight": 1.5,
+   "segs": [
+    [
+     3398,
+     2133,
+     3398,
+     2168
+    ]
+   ],
+   "dashes": [
+    8,
+    6
+   ]
+  },
+  {
+   "name": "E06",
+   "type": "VECTOR",
+   "open": true,
+   "weight": 1.5,
+   "segs": [
+    [
+     3323,
+     2243,
+     3008,
+     2243
+    ],
+    [
+     3008,
+     2243,
+     3008,
+     1867
+    ]
+   ],
+   "dashes": [
+    8,
+    6
+   ]
+  },
+  {
+   "name": "E07",
+   "type": "VECTOR",
+   "open": true,
+   "weight": 2,
+   "segs": [
+    [
+     3398,
+     2323,
+     3398,
+     2353
+    ]
+   ]
+  },
+  {
+   "name": "E08",
+   "type": "VECTOR",
+   "open": true,
+   "weight": 2,
+   "segs": [
+    [
+     3988,
+     1817,
+     4108,
+     1817
+    ]
+   ]
+  },
+  {
+   "name": "E09",
+   "type": "VECTOR",
+   "open": true,
+   "weight": 2,
+   "segs": [
+    [
+     4348,
+     1817,
+     4498,
+     1817
+    ]
+   ]
+  },
+  {
+   "name": "E10",
+   "type": "VECTOR",
+   "open": true,
+   "weight": 1.5,
+   "segs": [
+    [
+     4228,
+     1937,
+     4228,
+     2187
+    ]
+   ],
+   "dashes": [
+    8,
+    6
+   ]
+  },
+  {
+   "name": "E12",
+   "type": "VECTOR",
+   "open": true,
+   "weight": 2,
+   "segs": [
+    [
+     4738,
+     1817,
+     4908,
+     1817
+    ]
+   ]
+  },
+  {
+   "name": "E13",
+   "type": "VECTOR",
+   "open": true,
+   "weight": 1.5,
+   "segs": [
+    [
+     4618,
+     1937,
+     4618,
+     2037
+    ]
+   ]
+  },
+  {
+   "name": "E16",
+   "type": "VECTOR",
+   "open": true,
+   "weight": 2,
+   "segs": [
+    [
+     5148,
+     1817,
+     5288,
+     1817
+    ]
+   ]
+  },
+  {
+   "name": "E17",
+   "type": "VECTOR",
+   "open": true,
+   "weight": 2,
+   "segs": [
+    [
+     5028,
+     1697,
+     5898,
+     1697
+    ],
+    [
+     5898,
+     1697,
+     5898,
+     1781
+    ]
+   ]
+  },
+  {
+   "name": "lbl-N03",
+   "type": "TEXT",
+   "fontSize": 16,
+   "absoluteBounds": {
+    "x": 3278,
+    "y": 1793,
+    "width": 200,
+    "height": 24
+   }
+  }
+ ]
+}

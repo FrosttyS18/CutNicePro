@@ -20,3 +20,6 @@ design/FIGCRAFT-ATTACHED.on
 # Sistema
 Thumbs.db
 .DS_Store
+
+# Backups locais do arquivo FigCraft (nao publicar)
+design/backups/

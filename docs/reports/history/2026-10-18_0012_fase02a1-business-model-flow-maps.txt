@@ -1,0 +1,122 @@
+╔════════════════════════════════════════════╗
+║       CUTNICEPRO — ZCODE REPORT            ║
+╚════════════════════════════════════════════╝
+
+TASK
+  Name: Fase 02A.1 — Business Model + Product Brain + User Flow Map
+  Status: PASS — modelo comercial APPROVED incorporado; arquitetura Local/BYOK formalizada; jornadas/regras/backlog corrigidos e ampliados; TRÊS artefatos visuais construídos na página `roadmap` existente do FigCraft attached, validados (estrutura + VISION) e salvos; nenhum código/UI Kit/tela de produto.
+  Scope: Exclusivamente modelo de negócio, documentação, correção de lacunas e mapas visuais. Sem implementação, sem commits/pushes, sem alterar hooks/MCPs/skills ou propostas A/B.
+  Objective: Incorporar assinatura mensal sem créditos + IA local/BYOK; corrigir contagens do Brain; versionar a auditoria; construir Journey Map + Master User Flow + Product Roadmap na página roadmap; atualizar case de portfólio.
+  Result: DEC-010..013, BR-037..050, FR-022..029, JRN-012..014, EPIC-011/012, US-029..037, AC-067..093; PRD §6a/§13; Brain com contagens recalculadas (inconsistência corrigida); script de auditoria versionado com testes +/−; 3 artefatos (~390 nós) na página roadmap; 3 PNGs + arquivo nativo salvos; Readiness PARTIAL.
+
+IMPLEMENTATION
+  Completed: (§2) DEC-010 assinatura sem créditos (APPROVED, decisão do mantenedor) com ressalva de custos externos; DEC-011 reavaliação de DEC-002 por fases SEM apagar histórico; DEC-012 Local/BYOK; DEC-013 fila sequencial MVP (hipótese). (§3) PRD §13 matriz conceitual por tarefa (6 tarefas × local/BYOK, tudo PENDING TECHNICAL, sem fornecedores); BR-039..047 cobrem descoberta/validação/privacidade/credenciais/falhas/troca/fallback proibido; BR-050 GLM ≠ API de produção. (§4) estados comerciais com Mermaid (PrimeiraAtivacao→Ativa→Expirada→AcessoLimitado + FalhaValidação/SemInternet) e BR-048/049 com política PENDING USER DECISION; nenhum cenário perde projetos silenciosamente. (§5) JRN-012..014 (ativação; configuração de IA com subfluxos A/B; exceções consolidadas); BR-015 reescrito sem impressão de créditos. (§6) BUSINESS-RULES §Comercialização (14 regras novas, domínio próprio). (§7) backlog: EPIC-011 AI Engine Setup (Must), EPIC-012 Assinatura (Should, comercial, bloqueado por DEC-011), US-036 fila sequencial (hipótese), US-037 falhas externas; ordem de entrega revisada (EPIC-011 mínimo antes do pipeline). (§8) Brain: contagem FR corrigida (era "18 no MVP" com intervalo divergente; recalculado: 29 FR totais — 23 MVP, 2 MVP-hipótese, 1 comercial, 3 V1) + seções de pendências atualizadas; TRACEABILITY com matrizes novas (JRN-012..014, FR-022..029) e DEC-002×DEC-010 resolvida por DEC-011 (sem contradição); CASE-STUDY-LOG +4 entradas datadas. Auditoria versionada em tools/audit/id_audit.py (--root, comportamento preservado): POSITIVO repo real (0 quebradas/0 lacunas; FR 29, NFR 7, JRN 14, BR 50, EPIC 12, US 37, AC 93, DEC 13) + NEGATIVO sandbox (2 referências falsas detectadas). (§9-14) três artefatos no FigCraft attached (detalhes adiante). Harness intocado.
+  Not completed: nada do escopo. Pendências por natureza: DEC-011/preço/trial/dispositivos/política pós-expiração/offline (PENDING USER DECISION); 7 BRs técnicas + modelos/segredos (PENDING TECHNICAL VALIDATION).
+  Changes: documentação + design/exports + arquivo FigCraft (página roadmap) + tools/audit + .gitignore (+design/backups). Nenhum código de aplicação; hooks/MCPs/skills intactos; propostas A/B intocadas na página UI - designer.
+  Architecture impact: camada comercial/byok formalizada sobre a fundação 02A; mapas visuais como fonte de navegação da experiência para a Fase 02.
+
+FILES
+  Created: docs/product/PRD.md seções novas (§6a, §13) e FR-022..029 (edição); JRN-012..014; BR-037..050; DEC-010..013; EPIC-011/012 + US-029..037 + AC-067..093; tools/audit/id_audit.py; design/backups/cutnicepro-pre-02A1-2339.figcraft (1.672.370 B); design/exports/{user-journey-map,master-user-flow,product-roadmap}.png (336.034 / 424.825 / 247.910 B; 2330x1010/1660/880); docs/reports/history/2026-10-18_0012_*.txt; LATEST.txt.
+  Modified: PRD/BUSINESS-RULES/USER-JOURNEYS/BACKLOG/PRODUCT-BRAIN/TRACEABILITY/CASE-STUDY-LOG/AGENTS(não nesta)/.gitignore; design/cutnicepro-fase01-propostas.figcraft (1.719.074 B salvo: artefatos da página roadmap + edições do próprio usuário preservadas).
+  Deleted: .tmp_vision_crops/ (temporários do VISION, removidos); nenhum arquivo do projeto.
+  Unexpected changes: USUÁRIO ATIVO DURANTE A TAREFA no FigCraft — recortou/colou e moveu o Journey Map (re-id 287→436, agora em y=-123; preservado no arranjo do usuário) e manteve histórico de undo compartilhado (ações Move/Paste/Cut interlecionadas com meus lotes). Nada perdido; documentado.
+
+VALIDATION
+  Typecheck: SKIP — sem código de aplicação (script de auditoria compilado/executado: PASS).
+  Lint: SKIP — sem código.
+  Unit tests: SKIP — sem aplicação (auditoria documental com teste negativo real cumpre o papel de teste nesta fase).
+  Integration tests: PASS — ciclo completo MCP attached (~430 comandos: ~25 batches rotulados; criação/edição/export/save) com retorno verificado por lote; auditoria +/− do script versionado.
+  Regression tests: PASS — baseline full: 4 PASS / 0 FAIL / 2 SKIP (executada ao final).
+  Visual tests: PASS — 5 rodadas VISION: JM (1ª achou fundo branco padrão nas linhas + colisões de gutter → corrigidos com fill #231F20/células 186/padding; 2ª achou truncamento na coluna 11 → textos encurtados; 3ª localizou causa geométrica real: gap 10 herdado estourava o clip em 40px → gap 0; 4ª CONFIRMAÇÃO FINAL: coluna 11 íntegra nas 6 linhas com ~110px de margem); Master Flow (estrutura completa, nós/losangos/pílulas/setas/ramos vermelho-âmbar distinguíveis, sem transbordo fora de caixas nem sobreposição grave; limitação de conectores documentada no próprio artefato); Roadmap (11 faixas, chips 3 status corretos, sem cortes; gap chip→texto corrigido e confirmado; descrição da faixa 01 integral). PNGs validados tecnicamente (assinatura/dimensões).
+  Runtime verification: PASS — attached durante toda a construção (janela real; backend identificado); arquivo nativo salvo 2x (pós-construção e pós-ajustes); páginas Referencias e UI - designer preservadas (childCounts 2/2 confirmados).
+  Total passed: 6 agregados (baseline 4 + auditoria IDs com teste negativo + validação visual final dos 3 artefatos).
+  Total failed: 0. Total skipped: 2 (suítes) + 4 categorias SKIP justificadas.
+
+HOOKS / HARNESS
+  Hooks active: 4 de 4 (inalterados — exigência da tarefa respeitada).
+  PreToolUse: OPERACIONAL — sem bloqueios (nenhum comando destrutivo; rm restrito a temporários).
+  PostToolUse: OPERACIONAL — eventos nativos para os ~14 documentos editados/criados.
+  Stop: Operacional (fast; disparo pós-entrega).
+  Baseline: PASS — full 4/0/2.
+  Gate result: Stop não é gate.
+  Evidence: audit-log.jsonl; saídas id_audit.py (2 execuções + sandbox); transcripts VISION.
+
+MCP / SKILLS
+  Tools used: mcp__figcraft-app__ (inspect_ui x3, inspect_document x2, get_node x2, create_node x3, batch x25, set_properties x6, export x6, save_file x2) — 100% das operações visuais em ATTACHED (headless nunca usado como substituto); VISION x5 (política VISION FIRST); WebSearch não usado nesta.
+  Connection status: figcraft-app ATTACHED o tempo todo (validado no início: janela real; app do usuário aberto com --control).
+  Failures: 3 erros meus de execução, todos corrigidos e verificados: (a) addVariant sem set prévio [tarefa anterior]; (b) filho referenciado no MESMO batch do pai (2x — S1 e S5b; documentado como regra: ids só existem após o lote); (c) mapeamento errado de 2 ids no S5b (texto/seta tratados como frame). Nenhum residual.
+  Pending activation: Graphify INITIAL INDEX PENDING (sem código — preservado sem fingimento).
+
+BUSINESS MODEL
+  Subscription model: ASSINATURA MENSAL com acesso à plataforma contratada (DEC-010 — APPROVED pelo mantenedor).
+  Internal credits: NENHUM — sem créditos por corte/transcrição/exportação; nenhuma interface pode sugerir compra de créditos (BR-038).
+  Local AI: opção de primeira classe com descoberta/compatibilidade por tarefa/teste (BR-039; requisitos de modelos/GPU PENDING TECHNICAL — não exigir GPU havendo alternativa).
+  BYOK: API própria com validação, modelos quando suportado, custos externos informados ANTES do uso, chave salva com segurança (BR-040/041/044).
+  External cost disclosure: custos do provedor ou dos recursos locais são do usuário e sempre esclarecidos; nunca anunciar "grátis/ilimitado" sem limitações (BR-041/043; PRD §6a).
+  Licensing pending decisions: mecanismo de acesso (DEC-011: conta/chave/dispositivo/validação periódica), preço, trial, política de dispositivos, política pós-expiração (BR-048), comportamento offline detalhado (BR-049), fila sequencial MVP (DEC-013). Nada implementado.
+
+PRODUCT BRAIN
+  New requirements: FR-022..029 (8; total FR 29).
+  New business rules: BR-037..050 (14; total 50 — APPROVED 7, PROPOSED 36, PENDING TECHNICAL 7, pendências USER embutidas em 037/048/049).
+  New decisions: DEC-010..013 (4; total 13).
+  Updated journeys: JRN-012..013..014 adicionadas (total 14) + cobertura de exceções consolidada.
+  Backlog changes: EPIC-011/012 novos; US-029..037; AC-067..093 (totais: 12 épicos, 37 US, 93 AC); EPIC-010 reescrito (US-036 fila sequencial como hipótese Should; paralelismo segue Won't-now); ordem de entrega revisada.
+  Traceability results: matrizes estendidas; auditoria versionada: 0 referências quebradas, 0 lacunas (FR 29/NFR 7/JRN 14/BR 50/EPIC 12/US 37/AC 93/DEC 13); teste negativo detectou 2 falsas; DEC-002×DEC-010 declaradas resolvidas por DEC-011; contagem FR do Brain corrigida (erro herdado da 02A).
+  Inconsistência de contagem (exigida pela tarefa): corrigida — Brain dizia "18 no MVP (FR-001..016 + FR-018)" (16+1=17≠18); recalculado e documentado: MVP 23 · MVP-hipótese 2 · Comercial 1 · V1 3 = 29.
+
+FIGCRAFT ROADMAP
+  Attached backend: SIM — validado no início (janela real "CutNicePro Fase 01 - Propostas UI – FigCraft" focused; porta 7979 do figcraft.exe).
+  Existing page used: SIM — página `roadmap` pré-existente (id 286) do documento do usuário; páginas `Referencias` (2 imagens do usuário) e `UI - designer` (propostas A/B históricas) preservadas intactas; NENHUMA nova página criada; backup do arquivo em disco ANTES das edições (design/backups/cutnicepro-pre-02A1-2339.figcraft).
+  Journey map: frame 436 (2330x1010; 11 etapas × 6 linhas: ETAPA/OBJETIVO/AÇÃO/RESPOSTA/DIFICULDADE ◇/OPORTUNIDADE ◇; auto layout por linha; hipóteses marcadas ◇; refs JRN/BR/DEC/FR por etapa; 8 filhos diretos, ~90 nós).
+  Master user flow: frame 368 (2330x1660; 6 seções semânticas S1-S6: First Run & Subscription · Project & Media · AI Engine Setup · Processing Modes · Review & Export · Recovery & Return; começa em START na PRIMEIRA ABERTURA; termina em END voltando ao projeto/Home).
+  Product roadmap: frame 656 (2330x880; 11 incrementos vinculados a EPIC/US/docs com status CONCLUÍDO(1)/PLANEJADO(9)/PENDENTE DE DECISÃO(1)/BLOQUEADO(0) e dependências; sem datas).
+  Nodes: ~390 criados na página roadmap (todos editáveis, nativos: frames/vectors/texts/arrows; hierarquia raiz→seção→nó).
+  Decision nodes: 9 losangos (S1 ambiente?/1ª execução? · S2 mídia válida? · S3 motor pronto?/Local ou BYOK? · S4 modo?/resultado? · S5 editar?/ok?).
+  Connectors: ~41 setas (camadas arrow nativas) + labels sim/não + chips →Sn de continuação. LIMITAÇÃO DOCUMENTADA (no próprio artefato e aqui): a versão 0.6.0 NÃO possui conectores dinâmicos vinculados a nós — as setas são posicionadas manualmente (verificado via list_commands: nenhum comando connector).
+  Disconnected branches: 0 — toda ramificação termina em estado válido, chip de continuação ou nota de retorno (↩); ramos de erro (borda #E5484D) e pendentes (âmbar #F5A524) identificáveis; cores semânticas complementares DECLARADAS PROVISÓRIAS (fora dos 4 tokens oficiais).
+  Exported PNGs: design/exports/user-journey-map.png (336.034 B, 2330x1010) · master-user-flow.png (424.825 B, 2330x1660) · product-roadmap.png (247.910 B, 2330x880) — todos com assinatura PNG válida.
+  Native file: design/cutnicepro-fase01-propostas.figcraft salvo (1.719.074 B) — inclui edições do usuário feitas durante a tarefa (preservadas).
+  Intervenção do usuário durante a construção: recorte/colagem e movimentação do Journey Map (re-id 287→436) — acomodada sem perda; histórico compartilhado de undo registrado como risco operacional (reportado em ISSUES).
+
+READINESS
+  Gate: PRODUCT MODEL & UX FLOW READINESS — PARTIAL.
+  Approved decisions: DEC-010 (assinatura mensal sem créditos — mantenedor), DEC-007/008/009 (históricas); BR-031/036/038/041/048-princípio/050 + BR-037 (modelo).
+  Pending technical validation: BR-006/007/014/018/028/034/044 + catálogo/compatibilidade de modelos locais + armazenamento seguro de chaves + alvos de performance + retomada de jobs.
+  Pending user decisions: DEC-011 (mecanismo de acesso), preço/trial/dispositivos, BR-048 (política pós-expiração), BR-049 (offline), DEC-013 (fila sequencial MVP), D1 (onboarding), aprovação geral do PRD/jornadas/backlog.
+  Ready for wireframes: CONDICIONAL — estrutura de fluxos/jornadas suporta wireframes de baixo risco; UI definitiva depende das aprovações (PRODUCT DESIGN GATE).
+
+GIT
+  Branch: main
+  HEAD + title: 80f578ed455369b34f7742feff4f3046b0e3a517 — docs(repo): adota Conventional Commits, exige commits identificaveis nos relatorios e distingue documentacao do Graphify
+  Commits created: NENHUM (§17: sem commits/pushes nesta tarefa — respeitado). Push: NOT EXECUTED.
+  Working tree: MODIFIED/UNTRACKED — M .gitignore, AGENTS.md (nota: modificação herdada da 02A pendente), design/cutnicepro-fase01-propostas.figcraft, docs/PRODUCT-BRIEF.md, docs/reports/LATEST.txt; ?? tools/, docs/product/ (8 canônicos novos/atuados), docs/portfolio/, design/exports/ (3 PNGs novos + 2 anteriores), design/referencias/ (5 PNGs DO USUÁRIO — direitos NÃO verificados; não publicar sem verificação), backups gitignored, relatórios pendentes (2352, 2358 e este).
+  Unexpected changes: NENHUMA além das edições do usuário já descritas (FigCraft + design/referencias/).
+  Segurança: nenhuma chave/segredo criado (BYOK é especificação; FR-024 exige armazenamento seguro FUTURO); nada sensível novo versionável.
+
+EVIDENCE
+  Commands executed (principais): id_audit.py x3 (repo + sandbox negativo + re-run); ~25 batches MCP (rotulados por seção); exports x6; saves x2; baseline full; git status/log; verificação técnica dos 3 PNGs; backup do .figcraft antes de editar.
+  Relevant logs: saída do id_audit (0/0 + 2 falsas detectadas); undo-history do app mostrando intervenções do usuário (Move/Paste/Cut) e meus lotes rotulados; respostas dos batches (ok/id); VISION ×5 (transcripts).
+  Screenshots: os 3 PNGs de design/exports (evidência principal).
+  Test artifacts: sandbox do teste negativo removido; .tmp_vision_crops removido.
+  Reproduction details: mapas — abrir design/cutnicepro-fase01-propostas.figcraft página `roadmap`; auditoria — python tools/audit/id_audit.py [--root X]; baseline — python .zcode/hooks/harness/baseline_checks.py.
+
+ISSUES
+  Bugs found: 3 erros meus de API (batch autorreferenciado x2; mapa de ids errado x1) + 2 defeitos visuais iterativos (fill branco padrão de frames sem fill — comportamento do FigCraft 0.6.0; gap herdado estourando clip) — TODOS corrigidos e revalidados por VISION.
+  Unresolved failures: Nenhuma.
+  Regressions: Nenhuma (baseline PASS; hooks/skills/MCPs intactos; páginas históricas preservadas).
+  Risks: (1) usuário editando o FigCraft simultaneamente — undo compartilhado pode desfazer criações programáticas (mitigação: salvar com frequência + este relatório documenta o estado; recomendação: coordenar edições); (2) cores semânticas provisórias no fluxo (#E5484D/#F5A524/#30A46C) fora dos tokens oficiais — definir na Fase 02; (3) PNGs de referência do usuário sem direitos verificados — NÃO commitar sem auditoria; (4) setas manuais exigem manutenção ao mover nós (limitação 0.6.0 documentada).
+  Blockers: Nenhum técnico.
+
+FINAL
+  Delivery status: ENTREGUE — modelo comercial + BYOK incorporados à documentação canônica; lacunas corrigidas; três artefatos visuais construídos, validados e salvos na página roadmap existente.
+  Requirements met: 16/16 entregáveis da §18 (PRD/negócio, regras IA/comerciais, jornadas, decisões, Brain, backlog, rastreabilidade, 3 mapas, 3 PNGs, nativo, case log, auditoria, baseline, relatório).
+  Remaining blockers: nenhum; decisões comerciais/técnicas pendentes listadas (fluxo normal).
+  GitHub synchronization: inalterada (origin/main @ 80f578e; sem push nesta tarefa, conforme autorização).
+  Restart required: NO
+  Ready for Phase 02: CONDICIONAL — aguardando revisão visual dos mapas e aprovações (Readiness PARTIAL).
+
+REPORT
+  Latest file: docs/reports/LATEST.txt
+  Historical file: docs/reports/history/2026-10-18_0012_fase02a1-business-model-flow-maps.txt
+
+END OF REPORT

@@ -1,6 +1,10 @@
 # CutNicePro — Product Brief
 
-> Documento de visão. Nenhuma funcionalidade foi implementada; a stack de produção ainda não foi definida.
+> **SUPERSDEDIDO** pelo PRD como definição canônica do produto (decisão da Fase 02A,
+> 2026-10-17 — DEC-009). Mantido como registro histórico da visão inicial; não atualizar
+> aqui — ver `docs/product/PRD.md` e o índice em `docs/product/PRODUCT-BRAIN.md`.
+
+Documento de visão. Nenhuma funcionalidade foi implementada; a stack de produção ainda não foi definida.
 
 ## Visão
 

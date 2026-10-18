@@ -1,0 +1,737 @@
+{
+ "_fonte": "get_node real via MCP figcraft-app (728), Fase 02A.4. ARRAY = ORDEM DE EMPILHAMENTO REAL (fundo→topo). segs = segmentos absolutos [x0,y0,x1,y1] de vetores abertos; characters usado p/ estimar a área de tinta do texto (traço só é violação se atingir os glifos, não o padding da caixa).",
+ "name": "00 — PRODUCT FLOW OVERVIEW V2",
+ "type": "FRAME",
+ "fills": [
+  {
+   "color": "#000000"
+  }
+ ],
+ "absoluteBounds": {
+  "x": 2460,
+  "y": -123,
+  "width": 2330,
+  "height": 1360
+ },
+ "children": [
+  {
+   "name": "version-chip",
+   "type": "FRAME",
+   "fills": [
+    {
+     "color": "#2B2728"
+    }
+   ],
+   "absoluteBounds": {
+    "x": 4342,
+    "y": -83,
+    "width": 400,
+    "height": 32
+   }
+  },
+  {
+   "name": "OV-T0",
+   "type": "FRAME",
+   "fills": [
+    {
+     "color": "#02C2BE"
+    }
+   ],
+   "absoluteBounds": {
+    "x": 2508,
+    "y": 553,
+    "width": 150,
+    "height": 60
+   }
+  },
+  {
+   "name": "OV-P1",
+   "type": "FRAME",
+   "fills": [
+    {
+     "color": "#2B2728"
+    }
+   ],
+   "absoluteBounds": {
+    "x": 2696,
+    "y": 517,
+    "width": 196,
+    "height": 132
+   }
+  },
+  {
+   "name": "OV-P2",
+   "type": "FRAME",
+   "fills": [
+    {
+     "color": "#2B2728"
+    }
+   ],
+   "absoluteBounds": {
+    "x": 2930,
+    "y": 517,
+    "width": 196,
+    "height": 132
+   }
+  },
+  {
+   "name": "OV-P3",
+   "type": "FRAME",
+   "fills": [
+    {
+     "color": "#2B2728"
+    }
+   ],
+   "absoluteBounds": {
+    "x": 3164,
+    "y": 517,
+    "width": 196,
+    "height": 132
+   }
+  },
+  {
+   "name": "OV-P4",
+   "type": "FRAME",
+   "fills": [
+    {
+     "color": "#2B2728"
+    }
+   ],
+   "absoluteBounds": {
+    "x": 3398,
+    "y": 517,
+    "width": 196,
+    "height": 132
+   }
+  },
+  {
+   "name": "OV-P5",
+   "type": "FRAME",
+   "fills": [
+    {
+     "color": "#2B2728"
+    }
+   ],
+   "absoluteBounds": {
+    "x": 3632,
+    "y": 517,
+    "width": 196,
+    "height": 132
+   }
+  },
+  {
+   "name": "OV-P6",
+   "type": "FRAME",
+   "fills": [
+    {
+     "color": "#2B2728"
+    }
+   ],
+   "absoluteBounds": {
+    "x": 3866,
+    "y": 517,
+    "width": 196,
+    "height": 132
+   }
+  },
+  {
+   "name": "OV-P7",
+   "type": "FRAME",
+   "fills": [
+    {
+     "color": "#2B2728"
+    }
+   ],
+   "absoluteBounds": {
+    "x": 4100,
+    "y": 517,
+    "width": 196,
+    "height": 132
+   }
+  },
+  {
+   "name": "OV-P8",
+   "type": "FRAME",
+   "fills": [
+    {
+     "color": "#2B2728"
+    }
+   ],
+   "absoluteBounds": {
+    "x": 4334,
+    "y": 517,
+    "width": 196,
+    "height": 132
+   }
+  },
+  {
+   "name": "OV-T1",
+   "type": "FRAME",
+   "fills": [
+    {
+     "color": "#231F20"
+    }
+   ],
+   "absoluteBounds": {
+    "x": 4568,
+    "y": 547,
+    "width": 170,
+    "height": 72
+   }
+  },
+  {
+   "name": "OV-NOTE1",
+   "type": "FRAME",
+   "fills": [
+    {
+     "color": "#231F20"
+    }
+   ],
+   "absoluteBounds": {
+    "x": 2880,
+    "y": 77,
+    "width": 480,
+    "height": 64
+   }
+  },
+  {
+   "name": "title",
+   "type": "TEXT",
+   "fontSize": 28,
+   "characters": "00 — PRODUCT FLOW OVERVIEW — V2",
+   "absoluteBounds": {
+    "x": 2508,
+    "y": -79,
+    "width": 900,
+    "height": 42
+   }
+  },
+  {
+   "name": "subtitle",
+   "type": "TEXT",
+   "fontSize": 15,
+   "characters": "Fluxo macro do produto · 8 etapas · exceções detalhadas nos fluxos dedicados · reconstrução auditada (02A.2)",
+   "absoluteBounds": {
+    "x": 2508,
+    "y": -33,
+    "width": 1200,
+    "height": 23
+   }
+  },
+  {
+   "name": "E-OV-00",
+   "type": "VECTOR",
+   "open": true,
+   "weight": 2,
+   "segs": [
+    [
+     2658,
+     583,
+     2696,
+     583
+    ]
+   ]
+  },
+  {
+   "name": "E-OV-01",
+   "type": "VECTOR",
+   "open": true,
+   "weight": 2,
+   "segs": [
+    [
+     2892,
+     583,
+     2930,
+     583
+    ]
+   ]
+  },
+  {
+   "name": "E-OV-02",
+   "type": "VECTOR",
+   "open": true,
+   "weight": 2,
+   "segs": [
+    [
+     3126,
+     583,
+     3164,
+     583
+    ]
+   ]
+  },
+  {
+   "name": "E-OV-03",
+   "type": "VECTOR",
+   "open": true,
+   "weight": 2,
+   "segs": [
+    [
+     3360,
+     583,
+     3398,
+     583
+    ]
+   ]
+  },
+  {
+   "name": "E-OV-04",
+   "type": "VECTOR",
+   "open": true,
+   "weight": 2,
+   "segs": [
+    [
+     3594,
+     583,
+     3632,
+     583
+    ]
+   ]
+  },
+  {
+   "name": "E-OV-05",
+   "type": "VECTOR",
+   "open": true,
+   "weight": 2,
+   "segs": [
+    [
+     3828,
+     583,
+     3866,
+     583
+    ]
+   ]
+  },
+  {
+   "name": "E-OV-06",
+   "type": "VECTOR",
+   "open": true,
+   "weight": 2,
+   "segs": [
+    [
+     4062,
+     583,
+     4100,
+     583
+    ]
+   ]
+  },
+  {
+   "name": "E-OV-07",
+   "type": "VECTOR",
+   "open": true,
+   "weight": 2,
+   "segs": [
+    [
+     4296,
+     583,
+     4334,
+     583
+    ]
+   ]
+  },
+  {
+   "name": "E-OV-08",
+   "type": "VECTOR",
+   "open": true,
+   "weight": 2,
+   "segs": [
+    [
+     4530,
+     583,
+     4568,
+     583
+    ]
+   ]
+  },
+  {
+   "name": "lbl-RET",
+   "type": "TEXT",
+   "fontSize": 14,
+   "characters": "novo projeto / retorno à Home",
+   "absoluteBounds": {
+    "x": 3657,
+    "y": 771,
+    "width": 280,
+    "height": 21
+   },
+   "textAlign": "center"
+  },
+  {
+   "name": "lbl-IT",
+   "type": "TEXT",
+   "fontSize": 14,
+   "characters": "iterar até satisfatório",
+   "absoluteBounds": {
+    "x": 3961,
+    "y": 413,
+    "width": 240,
+    "height": 21
+   },
+   "textAlign": "center"
+  },
+  {
+   "name": "footer-chip",
+   "type": "FRAME",
+   "fills": [
+    {
+     "color": "#231F20"
+    }
+   ],
+   "absoluteBounds": {
+    "x": 3930,
+    "y": 1101,
+    "width": 812,
+    "height": 44
+   }
+  },
+  {
+   "name": "legend-title",
+   "type": "TEXT",
+   "fontSize": 14,
+   "characters": "LEGENDA",
+   "absoluteBounds": {
+    "x": 2508,
+    "y": 1035,
+    "width": 200,
+    "height": 21
+   }
+  },
+  {
+   "name": "lg1",
+   "type": "VECTOR",
+   "open": true,
+   "weight": 2,
+   "segs": [
+    [
+     2508,
+     1071,
+     2552,
+     1071
+    ]
+   ]
+  },
+  {
+   "name": "lg1t",
+   "type": "TEXT",
+   "fontSize": 14,
+   "characters": "fluxo principal",
+   "absoluteBounds": {
+    "x": 2560,
+    "y": 1059,
+    "width": 150,
+    "height": 21
+   }
+  },
+  {
+   "name": "lg2",
+   "type": "VECTOR",
+   "open": true,
+   "weight": 1.5,
+   "segs": [
+    [
+     2710,
+     1071,
+     2754,
+     1071
+    ]
+   ]
+  },
+  {
+   "name": "lg2t",
+   "type": "TEXT",
+   "fontSize": 14,
+   "characters": "retorno / alternativa",
+   "absoluteBounds": {
+    "x": 2762,
+    "y": 1059,
+    "width": 170,
+    "height": 21
+   }
+  },
+  {
+   "name": "lg3",
+   "type": "VECTOR",
+   "open": true,
+   "weight": 2,
+   "segs": [
+    [
+     2950,
+     1071,
+     2994,
+     1071
+    ]
+   ]
+  },
+  {
+   "name": "lg3t",
+   "type": "TEXT",
+   "fontSize": 14,
+   "characters": "referência a outro fluxo",
+   "absoluteBounds": {
+    "x": 3002,
+    "y": 1059,
+    "width": 190,
+    "height": 21
+   }
+  },
+  {
+   "name": "lg4",
+   "type": "VECTOR",
+   "open": true,
+   "weight": 1.5,
+   "segs": [
+    [
+     3220,
+     1071,
+     3264,
+     1071
+    ]
+   ]
+  },
+  {
+   "name": "lg4t",
+   "type": "TEXT",
+   "fontSize": 14,
+   "characters": "caminho de erro",
+   "absoluteBounds": {
+    "x": 3272,
+    "y": 1059,
+    "width": 150,
+    "height": 21
+   }
+  },
+  {
+   "name": "lg5",
+   "type": "VECTOR",
+   "open": true,
+   "weight": 1.5,
+   "segs": [
+    [
+     3450,
+     1071,
+     3494,
+     1071
+    ]
+   ]
+  },
+  {
+   "name": "lg5t",
+   "type": "TEXT",
+   "fontSize": 14,
+   "characters": "pendente / proposta (◇)",
+   "absoluteBounds": {
+    "x": 3502,
+    "y": 1059,
+    "width": 190,
+    "height": 21
+   }
+  },
+  {
+   "name": "lg6",
+   "type": "FRAME",
+   "fills": [
+    {
+     "color": "#02C2BE"
+    }
+   ],
+   "absoluteBounds": {
+    "x": 2508,
+    "y": 1110,
+    "width": 28,
+    "height": 14
+   }
+  },
+  {
+   "name": "lg6t",
+   "type": "TEXT",
+   "fontSize": 14,
+   "characters": "terminal (início/fim)",
+   "absoluteBounds": {
+    "x": 2544,
+    "y": 1105,
+    "width": 170,
+    "height": 21
+   }
+  },
+  {
+   "name": "lg7",
+   "type": "FRAME",
+   "fills": [
+    {
+     "color": "#2B2728"
+    }
+   ],
+   "absoluteBounds": {
+    "x": 2760,
+    "y": 1110,
+    "width": 28,
+    "height": 14
+   }
+  },
+  {
+   "name": "lg7t",
+   "type": "TEXT",
+   "fontSize": 14,
+   "characters": "etapa / estado",
+   "absoluteBounds": {
+    "x": 2796,
+    "y": 1105,
+    "width": 120,
+    "height": 21
+   }
+  },
+  {
+   "name": "lg8",
+   "type": "VECTOR",
+   "open": false,
+   "shape": "diamond",
+   "fills": [
+    {
+     "color": "#231F20"
+    }
+   ],
+   "absoluteBounds": {
+    "x": 3105,
+    "y": 1116,
+    "width": 16,
+    "height": 16
+   }
+  },
+  {
+   "name": "lg8t",
+   "type": "TEXT",
+   "fontSize": 14,
+   "characters": "decisão (◇ = pendente)",
+   "absoluteBounds": {
+    "x": 3136,
+    "y": 1105,
+    "width": 180,
+    "height": 21
+   }
+  },
+  {
+   "name": "lg9",
+   "type": "ELLIPSE",
+   "fills": [
+    {
+     "color": "#231F20"
+    }
+   ],
+   "absoluteBounds": {
+    "x": 3420,
+    "y": 1117,
+    "width": 14,
+    "height": 14
+   }
+  },
+  {
+   "name": "lg9t",
+   "type": "TEXT",
+   "fontSize": 14,
+   "characters": "conector off-page (A)",
+   "absoluteBounds": {
+    "x": 3442,
+    "y": 1112,
+    "width": 180,
+    "height": 21
+   }
+  },
+  {
+   "name": "E-OV-RET",
+   "type": "VECTOR",
+   "open": true,
+   "weight": 1.5,
+   "segs": [
+    [
+     4432,
+     649,
+     4432,
+     797
+    ],
+    [
+     4432,
+     797,
+     3262,
+     797
+    ],
+    [
+     3262,
+     797,
+     3262,
+     649
+    ]
+   ],
+   "dashes": [
+    8,
+    6
+   ]
+  },
+  {
+   "name": "E-OV-IT",
+   "type": "VECTOR",
+   "open": true,
+   "weight": 1.5,
+   "segs": [
+    [
+     4198,
+     517,
+     4198,
+     407
+    ],
+    [
+     4198,
+     407,
+     3964,
+     407
+    ],
+    [
+     3964,
+     407,
+     3964,
+     517
+    ]
+   ],
+   "dashes": [
+    8,
+    6
+   ]
+  },
+  {
+   "name": "E-OV-REF",
+   "type": "VECTOR",
+   "open": true,
+   "weight": 2,
+   "segs": [
+    [
+     2794,
+     517,
+     2794,
+     109
+    ],
+    [
+     2794,
+     109,
+     2880,
+     109
+    ]
+   ],
+   "dashes": [
+    2,
+    5
+   ]
+  },
+  {
+   "name": "ann-d1",
+   "type": "TEXT",
+   "fontSize": 14,
+   "characters": "◇ D1 PENDENTE — PROPOSTA: configuração de IA contextual no workspace (entrada direta à Home), não etapa obrigatória antes da Home. Decisão do mantenedor.",
+   "absoluteBounds": {
+    "x": 2830,
+    "y": 667,
+    "width": 560,
+    "height": 63
+   }
+  }
+ ]
+}

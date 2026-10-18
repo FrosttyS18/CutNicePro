@@ -1,0 +1,142 @@
+╔════════════════════════════════════════════╗
+║       CUTNICEPRO — ZCODE REPORT            ║
+╚════════════════════════════════════════════╝
+
+TASK
+  Name: Fase 02A — Product Discovery + UX ponta a ponta + Product Brain
+  Status: PASS — fundação documental completa, consistente (auditoria por script: 0 referências quebradas) e honesta quanto a hipóteses; nenhum código/tela/UI Kit criado.
+  Scope: Exclusivamente discovery, definição de produto, UX architecture e backlog planning. Sem FigCraft design, sem implementação, sem commits/pushes (não autorizados nesta tarefa).
+  Objective: Compreender e documentar o produto de ponta a ponta (primeira abertura → continuidade), eliminando lacunas antes do design visual; estabelecer Product Brain como índice permanente e o PRODUCT DESIGN GATE como regra.
+  Result: 9 documentos canônicos novos + 2 atualizados; 188 IDs rastreáveis (FR 21, NFR 7, JRN 11, BR 36, EPIC 10, US 28, AC 66, DEC 9) com 0 referências quebradas e 0 lacunas de numeração; benchmark com fontes datadas; Readiness Gate PARTIAL (aprovações do mantenedor pendentes, como exigido).
+
+IMPLEMENTATION
+  Completed: (§2) estado do projeto consultado (PRD absorve o PRODUCT-BRIEF com nota de supersessão; UX-FOUNDATION/brand/UI-kit/diretrizes preservados; propostas A/B mantidas como exploração). (§3) discovery: problema como HIPÓTESE, 6 proto-personas (HYPOTHESIS), benchmark secundário OpusClip/CapCut/Descript com fontes e data (2026-10-17). (§4) PRD.md: visão, objetivos separados, proposta de valor, escopo MVP/V1/futuro/fora, premissa local-first como DEC-001 (não decisão irrevogável), restrições, métricas como METAS (nenhum resultado inventado). (§5) USER-JOURNEYS.md: 11 jornadas no formato completo (ator/objetivo/gatilho/pré-condições/etapas ação→resposta/estados/decisões/erros/resultado/BR/FR/sucesso). (§6/§7) BUSINESS-RULES.md: 36 regras em 8 domínios + estados e transições de App/Projeto/Mídia/Job/Corte/Exportação com 2 diagramas Mermaid e regra anti-contradição. (§8) INFORMATION-ARCHITECTURE.md: sitemap, decisões de materialização por etapa (tela/painel/modal/inline), navegação, estados vazios/erro por área e matriz de transições com regras de guarda. (§9) PRODUCT-BRAIN.md: índice canônico com regra de atualização incremental e relação com o Graphify (sem fingir indexação). (§10) BACKLOG.md: 10 épicos/28 histórias/66 ACs, MoSCoW justificado, dependências, ordem de entrega vertical (Home→projetos→importação→jobs+modo B→cortes→exportação→editor→legendas avançadas→V1). (§11) TRACEABILITY.md: matrizes jornada/requisito/regra + auditoria + lacunas declaradas. (§12) plano de validação UX (H1-H7 + tarefas de usabilidade) — NADA executado. (§13) CASE-STUDY-LOG.md com linha do tempo autêntica distinguindo pesquisa secundária/hipótese/decisão/teste real (nenhum). (§15) PRODUCT DESIGN GATE (9 regras) no AGENTS.md preservando hooks/git/branding/relatórios. (§16) auditoria documental por script + baseline full. DECISIONS.md criado (DEC-001..009).
+  Not completed: Nenhum item do escopo. Pendências por natureza: aprovações do mantenedor e 6 BRs PENDING TECHNICAL VALIDATION (listadas).
+  Changes: Somente documentação (Markdown) + 2 correções de exatidão pós-auditoria (TRACEABILITY/BRAIN). Nenhum código, tela, componente, FigCraft editado por mim, hook/MCP alterado.
+  Architecture impact: Governança de produto estabelecida (Brain como fonte única indexada; gate de design; rastreabilidade 188 IDs). Não há arquitetura de software ainda — intencional.
+
+FILES
+  Created: docs/product/PRD.md; USER-JOURNEYS.md; BUSINESS-RULES.md; INFORMATION-ARCHITECTURE.md; DECISIONS.md; BACKLOG.md; PRODUCT-BRAIN.md; TRACEABILITY.md; docs/portfolio/CASE-STUDY-LOG.md; docs/reports/history/2026-10-17_2358_*.txt; LATEST.txt (regenerado). (Script de auditoria em .tooling/docs-refs/id_audit.py — área de trabalho ignorada.)
+  Modified: AGENTS.md (+PRODUCT DESIGN GATE); docs/PRODUCT-BRIEF.md (nota de supersessão pelo PRD — DEC-009); docs/product/TRACEABILITY.md e PRODUCT-BRAIN.md (ajustes de exatidão pós-auditoria, antes do fechamento).
+  Deleted: Nenhum.
+  Unexpected changes: USUÁRIO ATIVO DURANTE A TAREFA — design/cutnicepro-fase01-propostas.figcraft modificado às 23:19 (42.743→1.672.370 bytes; 5 imagens embutidas) e novo design/referencias/ com 5 PNGs (~1250px, 23:14-23:15), consistentes com o usuário colando referências de marca no FigCraft aberto. Nada disso foi criado/modificado por mim; preservado intacto; NÃO commitado; origem/licença das imagens a verificar antes de qualquer publicação futura.
+
+VALIDATION
+  Typecheck: SKIP — sem código.
+  Lint: SKIP — sem código.
+  Unit tests: SKIP — sem código de aplicação (nenhum teste artificial inventado).
+  Integration tests: SKIP — sem aplicação.
+  Regression tests: PASS — baseline full: 4 PASS / 0 FAIL / 2 SKIP.
+  Visual tests: SKIP — sem artefato visual produzido nesta tarefa.
+  Runtime verification: PASS — auditoria de consistência documental executada por script (id_audit.py): 8 conjuntos canônicos varridos; 0 referências quebradas; 0 lacunas de numeração; 0 duplicações reais (repetições detectadas = menções internas legítimas nos arquivos canônicos).
+  Total passed: 5 agregados (4 baseline + 1 auditoria de IDs com resultado limpo).
+  Total failed: 0
+  Total skipped: 2 (suítes) + 5 categorias SKIP justificadas.
+
+HOOKS / HARNESS
+  Hooks active: 4 de 4 (inalterados).
+  PreToolUse: OPERACIONAL — sem bloqueios.
+  PostToolUse: OPERACIONAL — eventos nativos para os documentos criados/editados.
+  Stop: Operacional (fast; disparo pós-entrega).
+  Baseline: PASS — full 4/0/2.
+  Gate result: Stop não é gate.
+  Evidence: audit-log.jsonl; saída do id_audit.py (transcript).
+
+MCP / SKILLS
+  Tools used: WebSearch x3 (benchmark com fontes datadas); ferramentas nativas Read/Write/Edit/Bash. Nenhum MCP de design usado; skills preservadas (15/15 pela baseline).
+  Connection status: inalterados (sem uso nesta tarefa).
+  Failures: Nenhuma.
+  Pending activation: Graphify INITIAL INDEX PENDING (sem código — regra respeitada; nenhuma configuração alterada para fingir índice).
+
+PRODUCT DEFINITION
+  Problem statement: HIPÓTESE documentada (PRD §1) — transformar vídeos longos/editados em cortes publicáveis sem dispersão de ferramentas; NEEDS VALIDATION.
+  Target audience hypotheses: 6 proto-personas (HYPOTHESIS; nenhuma validada; nenhuma entrevista realizada).
+  Product objectives: usuário (menos tempo, confiança, continuidade) e produto (1º corte rápido, zero perda, transparência, fundação evolutiva) — PRD §5.
+  MVP proposal: FR-001..016+018 — modos A/B com pipeline completo, editor essencial, exportação local, sem login (DEC-002), Windows local-first (DEC-001, hipótese).
+  Scope exclusions: burlar reconhecimento, garantir viralização/monetização, nuvem obrigatória, conta no MVP; V1: lote multi-vídeo, templates, histórico de exportações.
+  Pending decisions: aprovação do PRD/escopo; DEC-001..005 e DEC-006 (direção UX); ordem do backlog; D1 onboarding vs. entrada direta.
+
+USER JOURNEYS
+  Journeys documented: 11 (JRN-001..011), formato completo (não lista de telas).
+  Primary flows: primeira execução, recorrente, projeto, importação, modo, configuração, processamento, resultados, edição, exportação.
+  Alternative flows: embutidos (D1 onboarding; modos A/B/C; cancelamentos; falha parcial; retomada; duplicação).
+  Error/recovery flows: por jornada (codec/corrompido/sem áudio; falha por item; cancelamento preservando parciais; mídia removida com revalidação; crash com estado consistente) + JRN-011 consolidado.
+  Missing flows (declarados): atualização do aplicativo; instalação de dependências locais faltantes; mídia parcialmente legível — dependem de decisão técnica.
+
+BUSINESS RULES
+  Total rules: 36 (BR-001..036, 8 domínios + direitos).
+  Approved: 2 (BR-031 metadados sem alegações; BR-036 separação técnica×plataforma — restrições do mantenedor).
+  Proposed: 28.
+  Pending validation: 6 PENDING TECHNICAL VALIDATION (BR-006, BR-007, BR-014, BR-018, BR-028, BR-034).
+  Contradictions: 0 (inclui regra anti-contradição de estados EXPORTED/COMPLETED).
+
+PRODUCT BRAIN
+  Canonical documents: 12 indexados (PRD, jornadas, BRs, IA, DEC, backlog, rastreabilidade, UX-foundation, brand, UI-kit/diretrizes, case log, brief histórico).
+  Relationships mapped: matrizes em TRACEABILITY (jornada↔FR↔BR↔US↔AC↔validação↔status).
+  Unresolved references: 0 (script). Lacunas declaradas: 3 fluxos faltantes + 6 BRs técnicas.
+  Graphify status: INSTALLED — INITIAL INDEX PENDING (correto: sem código; sem fingimento).
+  Documentation consistency: sem duplicação integral (Brain é índice — DEC-009); PRODUCT-BRIEF superseded com ponteiro.
+
+BACKLOG
+  Epics: 10 (EPIC-001..010). User stories: 28 (US-001..028). Acceptance criteria: 66 (AC-001..066, todas testáveis).
+  Must Have: EPIC-001..006, EPIC-009 (essencial de exportação) + US de trim/reenquadramento básicos.
+  Should Have: editor avançado completo, estilos de legenda, foco em rosto, áudio, duplicar/excluir, normalização.
+  Could Have: animação por palavra. Won't Have Now: lote multi-vídeo, templates, histórico (V1 — EPIC-010).
+  Dependencies: cadeia 1→2→3/4→5→6→9→8→7→10 (sem ciclos); 6 pendências técnicas listadas.
+  Blockers: nenhum estrutural; tudo PLANNED (nenhuma história iniciada — não há código).
+
+TRACEABILITY
+  Journeys covered: 11/11 com FR+BR+US+AC+validação.
+  Requirements covered: FR-001..021 todos mapeados a ≥1 US (V1 mapeados a US-026..028 por decisão de escopo, não lacuna); NFR-001..007 mapeados (NFR-002 com alvos PENDING).
+  Orphan requirements: 0. Stories without acceptance criteria: 0 (28/28).
+  Known gaps: declarados (§4 TRACEABILITY): 3 fluxos sem jornada (dependência técnica), 6 BRs técnicas, pesos Poppins no ambiente.
+
+PORTFOLIO
+  Evidence log: docs/portfolio/CASE-STUDY-LOG.md — linha do tempo com 8 entradas datadas e evidências reais (relatórios, design, GitHub).
+  Hypotheses documented: H1-H7 + 6 proto-personas (nenhuma validada — declarado).
+  Validated research: apenas secundária (benchmark com fontes/datadas — PRD §3).
+  Future usability tests: 6 tarefas definidas (PRD §12); nenhum teste executado ou simulado.
+
+READINESS GATE
+  Status: PARTIAL
+  Evidence: documentação completa + auditoria de IDs limpa + baseline full PASS; porém hipóteses críticas (problema, públicos, direção UX, prioridades) aguardam aprovação do mantenedor — ausência de aprovação NÃO foi mascarada como decisão.
+  Critical open decisions: PRD/escopo MVP; DEC-001..006; ordem de entrega; D1 onboarding.
+  Ready for wireframes: CONDICIONAL — estruturas de baixo risco (Home/IA já derivada) podem avançar em wireframe; design visual definitivo exige as aprovações acima (PRODUCT DESIGN GATE).
+
+GIT
+  Branch: main
+  HEAD: 80f578ed455369b34f7742feff4f3046b0e3a517
+  Latest commit: docs(repo): adota Conventional Commits, exige commits identificaveis nos relatorios e distingue documentacao do Graphify
+  Commits created: NENHUM (§17 da tarefa: sem commits/pushes sem autorização adicional — respeitado).
+  Push: NOT EXECUTED (autorização não concedida nesta tarefa).
+  Remote: origin → https://github.com/FrosttyS18/CutNicePro.git (origin/main = 80f578e, inalterado).
+  Working tree: MODIFIED/UNTRACKED — pendências listadas abaixo com precisão (nenhum commit extra criado para "limpar" a árvore).
+  Pending files: M AGENTS.md; M docs/PRODUCT-BRIEF.md; M design/cutnicepro-fase01-propostas.figcraft (modificação do USUÁRIO — ver Unexpected changes); M docs/reports/LATEST.txt; ?? design/referencias/ (5 PNGs do usuário); ?? docs/product/{PRD,USER-JOURNEYS,BUSINESS-RULES,INFORMATION-ARCHITECTURE,DECISIONS,BACKLOG,PRODUCT-BRAIN,TRACEABILITY}.md; ?? docs/portfolio/; ?? docs/reports/history/2026-10-17_2352_*.txt (relatório anterior, pendente conhecido) e o TXT deste relatório.
+
+EVIDENCE
+  Commands executed (principais): WebSearch x3 (benchmark); escrita/edição dos 11 documentos; id_audit.py (auditoria de IDs, saída completa no transcript); baseline full; git status/diff/ls para diagnóstico das alterações do usuário (figcraft 42.743→1.672.370 bytes às 23:19; design/referencias 5 PNGs às 23:14-15).
+  Relevant logs: saída do id_audit.py (0 quebradas / 0 lacunas); baseline full PASS; mtimes dos arquivos do usuário.
+  Screenshots: NONE (nenhum artefato visual produzido).
+  Test artifacts: nenhum.
+  Reproduction details: python .tooling/docs-refs/id_audit.py; docs/product/TRACEABILITY.md §4-5.
+
+ISSUES
+  Bugs found: 2 imprecisões minhas corrigidas antes do fechamento (contagem de BRs no Brain; registro da auditoria no TRACEABILITY — agora afirma "primeira execução, sem correção necessária", o real).
+  Unresolved failures: Nenhuma.
+  Regressions: Nenhuma (baseline PASS; hooks/skills/MCPs intactos; histórico Git intocado).
+  Risks: (1) hipóteses não validadas — risco de construir escopo errado se aprovadas sem pesquisa; mitigação: gate + plano de validação; (2) imagens de referência do usuário com origem/licença desconhecidas — verificar direitos ANTES de qualquer commit futuro que as inclua; (3) 6 BRs técnicas podem restringir o MVP (formatos, retomada, fila).
+  Blockers: Nenhum técnico.
+
+FINAL
+  Delivery status: ENTREGUE — fundação de produto ponta a ponta com governança e rastreabilidade verificáveis.
+  Requirements met: 13/13 entregáveis da §18 (PRD, jornadas, BRs+estados, IA, Brain, backlog, rastreabilidade, plano de validação, case log, gate no AGENTS, auditoria, relatório, reuso sem duplicação).
+  Remaining blockers: nenhum; aprovações do mantenedor pendentes (fluxo normal da fase).
+  GitHub synchronization: inalterada (origin/main @ 80f578e; sem push nesta tarefa, conforme autorização).
+  Restart required: NO
+  Ready for Phase 02: CONDICIONAL — após avaliação do Product Brain/jornadas/BRs/backlog pelo usuário (Readiness PARTIAL), prosseguir à fase visual sob as diretrizes e o gate.
+
+REPORT
+  Latest file: docs/reports/LATEST.txt
+  Historical file: docs/reports/history/2026-10-17_2358_fase02a-product-discovery.txt
+
+END OF REPORT

@@ -1,0 +1,153 @@
+================================================================================
+CUTNICEPRO — ZCODE REPORT
+================================================================================
+TAREFA: Fase 02A.4 — Z-Order Regression Fix + FigCraft Layer Validation
+(corrigir a lacuna de validação de empilhamento revelada pela regressão da
+02A.3, preservando as correções manuais do mantenedor)
+DATA: 2026-10-18 (02h40–02h55)
+STATUS: PASS técnico — causa raiz provada empiricamente, dimensão Z adicionada
+ao gate, testes positivos/negativos REAIS executados, replay da regressão
+02A.3 detectado, documento real validado. Nenhuma alteração de composição.
+
+--------------------------------------------------------------------------------
+1. EXECUÇÃO RESUMIDA
+--------------------------------------------------------------------------------
+- Preservação (§1) cumprida ANTES de qualquer modificação: attached
+  confirmado; documento real inspecionado (ordem de camadas lida por
+  get_node/inspect_document); correções manuais do mantenedor identificadas e
+  registradas (abaixo); backup verificado
+  design/backups/cutnicepro-pre-02A4-0239.figcraft (1.856.976 bytes, idêntico
+  ao estado salvo — nada foi regenerado).
+- Investigação da causa raiz (§2) por teste ISOLADO em aba descartável
+  ("Untitled", fechada com descarte ao final — documento do mantenedor
+  intocado durante os testes).
+- Contrato de ordem visual (§3) codificado no gate; Quality Gate estendido
+  (§4); testes positivos e negativos REAIS (§5); procedimento registrado no
+  gerador (§6); regra permanente adicionada ao AGENTS.md (§7).
+- Validação final (§8): gate completo PASS, selftest 16/16, replay da
+  regressão, baseline full PASS. Diagramas NÃO foram modificados (composição
+  aprovada preservada); capturas exportadas apenas como evidência de teste.
+
+--------------------------------------------------------------------------------
+### LAYER AUDIT
+--------------------------------------------------------------------------------
+- Root cause: PROVADA EMPERICAMENTE. O FigCraft 0.6.0 empilha por ORDEM DE
+  INSERÇÃO: node.create entra NO TOPO da pilha; o array "children" dos dumps
+  é a ordem de empilhamento FUNDO→TOPO (confirmado: batchRename documenta
+  "layers are numbered in stacking order, bottom first"; teste isolado com
+  node.reorder mostrou o elemento movido a index 0 indo ao fundo e o texto
+  sob o losango sumindo do render). Na 02A.3, os losangos foram RECRiados via
+  create_node DEPOIS dos textos existirem → entraram no TOPO → os 6 textos
+  dos losangos ficaram encobertos pelos fills #231F20. O gate da 02A.3
+  validava apenas geometria/bounds/fills — não ordem de renderização — e o
+  relatório declarou PASS indevido. O comando de correção é
+  `node.reorder {id, index}` (existe nativamente; index 0 = fundo).
+- FigCraft layer order (frame 01, fundo→topo, real): N06, N09, N08, NL(921,
+  recriado pelo mantenedor), nós-frame N01..N14, elipses N15/N16, textos de
+  título/subtítulo/versão, textos dos losangos, conector E01 e demais,
+  rótulos lbl-E*, anotações, N03, conectores E02..E17, lbl-N03 (topo). A
+  ordem de fundo (losangos antes dos nós) foi o ajuste manual do mantenedor.
+- Affected elements: N03, NL (recriado como id 921), N08, N09, N06 e seus
+  textos lbl-N03/lbl-NL/lbl-N08a/lbl-N08b/lbl-N09/lbl-N06 (6 textos
+  encobertos na 02A.3).
+- Manual changes preserved: TODAS — histórico de undo do app registra a
+  correção do mantenedor ("Send to back" ×5, "Bring backward/front/forward",
+  "Cut/Paste" do NL); a ordem atual foi lida do documento REAL e transcrita
+  para o docdump-01; NENHUM elemento foi reposicionado/reordenado por esta
+  tarefa; arquivo nativo não precisou ser alterado (backup = estado atual).
+- Incorrect stacking detected: 0 no estado atual (gate Z = 0 falhas). No
+  replay do estado 02A.3 (losangos no topo): 6 textos encobertos detectados
+  (lbl-N03, lbl-NL, lbl-N08a, lbl-N08b, lbl-N09, lbl-N06) — o defeito
+  histórico que o gate anterior não via.
+- Correct stacking verified: contrato "formas < conectores < textos" atendido
+  no documento real (frame 00 e frame 01: 0 violações Z1/Z2); VISION
+  confirmou visualmente os 6 textos dos losangos visíveis
+  (zorder-losangos-textos-atual.png).
+
+--------------------------------------------------------------------------------
+### QUALITY GATE
+--------------------------------------------------------------------------------
+- Z-order validation: nova dimensão Z no flow_gate_v2.py — Z1: texto cuja
+  ÁREA DE TINTA estimada é coberta por forma opaca acima na ordem de
+  renderização (losangos usam geometria real do diamante, não bbox); Z2:
+  rótulo atravessado por traço de conector acima dele (segmentos absolutos ×
+  caixa de tinta com margem = peso/2 + 1). A checagem opera sobre a ordem
+  EFETIVA do documento real (children do dump), não sobre o modelo Python.
+- Positive tests: (1) caso REAL em aba descartável (losango+texto+conector+
+  rótulo na ordem correta): gate Z = 0 falhas, VISION confirmou visível;
+  (2) documento real completo (frames 00 e 01): Z = 0 falhas.
+- Negative tests: (1) caso REAL com texto no fundo: Z1 detectado ("texto
+  'ZTEST-T' encoberto pela forma opaca 'ZTEST-D'"); (2) caso REAL com rótulo
+  sob conector: Z2 detectado ("rótulo 'ZTEST-L' atravessado pelo conector
+  'ZTEST-E'"); VISION confirmou visualmente ("DECISÃO?" invisível; "SIM"
+  riscado pela linha). (3) Replay permanente da REGRESSÃO 02A.3 no selftest:
+  6 textos encobertos detectados. Selftest total: 16/16 (12 sintéticos +
+  3 reais + replay da regressão).
+- Real document validation: GATE V3 PASS — "A lógica 0 · B geometria 0 ·
+  C identidade 0 · D semântica 0 · E documento 0 divergências" (28 nós · 31
+  arestas; docdumps 00/01 reescritos com a ORDEM REAL de empilhamento +
+  segmentos absolutos dos conectores + dashes/textAlign — a checagem E
+  continua conferindo bounds/fills/fontes).
+- Limitations (declaradas): a caixa de tinta dos glifos é ESTIMADA
+  (0,62-0,68 × fontSize × caracteres; alinhamento lido do dump) — traço que
+  roça apenas o padding da caixa de texto não é flagged (comportamento
+  correto, verificado em lbl-IT × E-OV-IT: linha no padding, glifos intactos
+  no render); a API MCP trunca dumps >50 KB (transcrição compacta com
+  busca individual da cauda); grupos/camadas aninhadas são validados no
+  nível do array de children do frame (textos dentro de frames de nó ficam
+  acima do fill do próprio nó por hierarquia — sem risco de encobrimento
+  cruzado, pois os losangos estão no fundo da pilha).
+- Final status: PASS (16/16 negativos detectados; 0 falsos positivos no
+  documento real).
+
+--------------------------------------------------------------------------------
+### FIGCRAFT
+--------------------------------------------------------------------------------
+- Backend: ATTACHED real (mcp figcraft-app; documento
+  "CutNicePro Fase 01 - Propostas UI" aberto; abas: este + "Untitled"
+  descartável usada para os testes e fechada com descarte).
+- Document inspected: SIM — get_node/inspect_document antes de qualquer
+  modificação; histórico de undo do app preservado (não foi usado undo/redo
+  pelo agente nesta tarefa).
+- Frames inspected: "00 — PRODUCT FLOW OVERVIEW V2" (728) e "01 — FIRST RUN
+  & ACCESS USER FLOW V2" (799) — ordem completa de children lida e
+  transcrita; frames V1 (368/436/656) e propostas A/B intocados.
+- Text visibility: 6/6 textos de losango visíveis (gate Z + VISION em
+  zorder-losangos-textos-atual.png).
+- Connector visibility: conectores intactos, sem sobrepor rótulos (Z2 = 0);
+  setas e tracejados preservados.
+- Unexpected changes: NENHUMA no documento do mantenedor (nenhum create/
+  set/reorder executado no documento principal nesta tarefa; apenas leituras,
+  screenshots e exports de evidência).
+
+--------------------------------------------------------------------------------
+### GIT
+--------------------------------------------------------------------------------
+- Branch: main · HEAD: 80f578e "docs(repo): adota Conventional Commits,
+  exige commits identificaveis nos relatorios e distingue documentacao do
+  Graphify".
+- Modified: .gitignore, AGENTS.md (nova regra permanente FigCraft),
+  design/cutnicepro-fase01-propostas.figcraft (state 02A.3 já reportado),
+  docs/PRODUCT-BRIEF.md, docs/reports/LATEST.txt.
+- Untracked novos desta fase: design/flow-v2/ztest-*.json/.png,
+  zorder-losangos-textos-atual.png, docdumps reescritos; demais = fases
+  anteriores ainda não commitadas por instrução.
+- Commits: NENHUM (proibido). Push: não realizado.
+
+--------------------------------------------------------------------------------
+### FINAL
+--------------------------------------------------------------------------------
+- Delivery status: PASS técnico. Critérios de aceite §8 atendidos: o gate
+  IDENTIFICA o defeito que passou despercebido na 02A.3 (replay: 6 textos
+  encobertos detectados); testes negativos reais executados em documento
+  FigCraft descartável; ordem real das camadas conferida; alterações
+  manuais preservadas (nenhuma modificação no documento principal);
+  baseline full PASS (4/0/2).
+- Remaining issues: nenhum técnico conhecido. A correção manual do
+  mantenedor permanece como o estado do documento; o gerador agora produz/-
+  exige a ordem correta desde a primeira construção (procedimento Z-ORDER em
+  flow_model_v2.py + regra permanente em AGENTS.md).
+- Ready for additional flows: NÃO — aguardando auditoria e aprovação do
+  mantenedor (condição de parada §10: nenhuma outra tarefa iniciada).
+- Human approval: PENDING.
+================================================================================

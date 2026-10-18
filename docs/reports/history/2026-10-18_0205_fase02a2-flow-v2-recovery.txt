@@ -1,0 +1,202 @@
+================================================================================
+CUTNICEPRO — ZCODE REPORT
+================================================================================
+TAREFA: Fase 02A.2 — Recuperação do fluxo de usuário no FigCraft + Gate de
+qualidade de design (reconstrução V2 após REPROVAÇÃO externa do Master User
+Flow V1)
+DATA: 2026-10-18 (início 2026-10-17)
+STATUS: PARTIAL — piloto entregue e aprovado por gates determinísticos;
+"Ready for full flow redesign: PENDING USER APPROVAL" (parada exigida pela
+tarefa após Overview + 1 piloto).
+
+--------------------------------------------------------------------------------
+1. EXECUÇÃO RESUMIDA
+--------------------------------------------------------------------------------
+- Reprovação do V1 registrada como nova avaliação; V1 preservado íntegro
+  (frames 368/436/656 na página roadmap) e backup criado ANTES de qualquer
+  edição: design/backups/cutnicepro-pre-02A2-0041.figcraft (1.719.074 bytes).
+- Estudo de referências: artigo UX Planet fornecido pelo usuário lido NA
+  ÍNTEGRA via leitor web (WebFetch direto retornou HTTP 403 — limitação
+  registrada; conteúdo obtido por ferramenta alternativa de leitura).
+  Princípios aplicados: fluxo unidirecional, uma meta por fluxo, legenda
+  obrigatória, ponto de entrada único claro, rótulos curtos, formas com
+  significado (terminal/etapa/decisão), caminhos alternativos desenhados
+  (nunca em notas). NN/g consultado por busca (User Journeys vs User Flows,
+  2023; Wireflows, 2016): distinção jornada×fluxo e valor de wireflows.
+- ETAPA A (modelo lógico): tools/flow/flow_model_v2.py — 28 nós com IDs
+  estáveis (OV-T0..OV-P8, OV-T1, OV-NOTE1; N01..N16, NL) tipados
+  (terminal/process/decision/state/pending/note_ref/offpage) com referências
+  JRN/BR/DEC; 31 arestas com origem/destino/waypoints/rótulo/tipo
+  (main/return/reference/error/pending/pending_go). Manifest único:
+  design/flow-v2/manifest-v2.json.
+- ETAPA B (geometria calculada): grid mínimo h20/v14 px, fonte mínima 14 px,
+  título 16-28 px; container adaptando-se ao texto (texto nunca reduzido —
+  falha dura do planejador se não couber). Rotas ortogonais com canais
+  explícitos; validador geométrico no próprio modelo ANTES de desenhar.
+- ETAPA C-F (construção incremental): frames "00 — PRODUCT FLOW OVERVIEW V2"
+  (2330x1360) e "01 — FIRST RUN & ACCESS USER FLOW V2" (3656x1180, paisagem)
+  criados na página roadmap existente (x=2460), com inspeção estrutural
+  durante a construção (get_node em checkpoints) e 2 ciclos de revisão visual
+  com correção de defeitos encontrados.
+- ETAPA G (gates + validação humana): ver seção 5.
+
+--------------------------------------------------------------------------------
+2. USER FLOW AUDIT (resposta aos pontos da reprovação do V1)
+--------------------------------------------------------------------------------
+- Método corrigido: MODELO ANTES DO DESENHO. O grafo lógico é código
+  versionado; cada aresta tem origem, destino, rota e rótulo; o desenho é
+  execução do manifest, não improviso.
+- Decisões: 5 losangos REAIS (vetores nativos) com texto centrado, cada um
+  com >=2 saídas rotuladas (SIM/NÃO + qualificadores). Zero "caixas isoladas".
+- Caminhos de retorno completos: retry de verificação (E06), retorno à Home
+  (E-OV-RET), iteração de revisão (E-OV-IT), re-verificação pós-ativação
+  (E15a/E15b — conector off-page "A", notação ISO 5807) e proposta de
+  cortesia offline (E11). Nenhum beco sem saída.
+- ACHADO TOPOLÓGICO RELEVANTE: demonstrou-se (dezenas de iterações do
+  validador geométrico) que o grafo com a aresta de retorno longa
+  N10→N04 desenhada é NÃO-PLANO nesta densidade — todo roteamento cruza
+  algo. Solução profissional: conector off-page (par A→/←A), padrão de
+  fluxograma para retornos longos, mantendo 0 cruzamentos.
+- Layout V2: fluxo principal unidirecional esquerda→direita (padrão UX
+  Planet), exceções abaixo do eixo principal, hierarquia clara
+  (principal aqua > retorno cinza > referência pontilhada > erro vermelho >
+  pendente âmbar).
+- Pendências explícitas: DEC-011 (mecanismo de acesso) e BR-049 (cortesia
+  offline) marcadas em âmbar com ◇ + anotação apontando para
+  docs/product/DECISIONS.md; compra fora do app (DEC-010/JRN-012) como nota
+  de referência pontilhada, não como etapa.
+
+--------------------------------------------------------------------------------
+3. FIGCRAFT GEOMETRY (verificável, não declarativa)
+--------------------------------------------------------------------------------
+- Conectores NATIVOS: suporte a traços e pontas confirmado por teste real
+  antes de usar: node.set "dashes [..]" e "endCap/startCap
+  triangleArrow" renderizam corretamente (screenshot analisado por VISION).
+  lineArrow não renderizou visível em linha pontilhada → todos os conectores
+  usam triangleArrow; referência usa dashes [2,5] (seta confirmada).
+- Grade: paddings h>=20/v>=14 nos nós; espaçamentos verticais entre linhas
+  >=72 px; rótulos >=14 px; títulos 16 px (nós) e 28 px (frames).
+- Legenda completa nos DOIS frames (5 linhas + 4 formas) — não existia no V1.
+- Editabilidade: 28 nós + 31 conectores como camadas nativas nomeadas por ID
+  (buscáveis: N01..N16, E01..E18, OV-*); textos editáveis em Poppins;
+  estrutura auditável por get_node (docdumps persistidos).
+- V1 preservado; arquivo nativo salvo (1.816.526 bytes) sem tocar nos frames
+  do usuário (Journey Map 436, Master V1 368, Roadmap 656, páginas
+  Referencias/UI-designer intactos).
+
+--------------------------------------------------------------------------------
+4. VISUAL QUALITY
+--------------------------------------------------------------------------------
+- VISION (subagente obrigatório) executado 4 vezes: teste de capacidades,
+  revisão intermediária do Overview, revisão do piloto, confirmação final
+  8/8 CONFIRMADO.
+- Defeitos encontrados e CORRIGIDOS durante os ciclos:
+  (a) losangos renderizados com fill cinza-claro padrão (#D9D9D9) tornando
+      texto ilegível → fill #231F20 aplicado e confirmado;
+  (b) seta ausente na linha pontilhada → estilo de referência migrado para
+      dashes [2,5] com seta confirmada;
+  (c) legenda movida para faixa inferior (eliminou banda vazia; manteve
+      proporção próxima de widescreen) — 1ª tentativa de move deixou camadas
+      fora do frame (clip) → detectado pela VISION, camadas recriadas;
+  (d) quebra de token "JRN-/004" em 3 cartões → quebras explícitas;
+  (e) anotações reposicionadas para não serem atravessadas por linhas;
+  (f) chip de versão com contraste baixo → borda cinza claro.
+- Ressalvas declaradas: frame 00 em 2330x1360 (1,7:1, ~16:9 aproximado);
+  entradas de conectores em N12/N14 intencionalmente descentralizadas
+  (evitar cruzamentos — documentado no modelo).
+
+--------------------------------------------------------------------------------
+5. VALIDATION (gates determinísticos + teste negativo)
+--------------------------------------------------------------------------------
+- tools/flow/flow_gate_v2.py:
+  LÓGICA (por frame): 0 arestas pendentes; decisões com >=2 saídas rotuladas;
+  1 início + terminais de fim/saída; 100% dos nós alcançáveis (par off-page
+  A↔A tratado como aresta lógica).
+  GEOMETRIA: 0 extremos desconectados (contato com borda <=1,5 px); 0
+  sobreposições (amostra as 4 arestas × forma real do losango); 0 segmentos
+  atravessando nós; 0 cruzamentos de conectores; rótulos em área segura e
+  sem colisão; fontes >=14 px.
+  DOCUMENTO (docdump do app real): 28/28 nós com bounds ±1,5 px do plano;
+  31/31 conectores como VECTOR nativo com dashes aplicados; fontes conferidas.
+  RESULTADO: "GATE PASS — lógica 0 erros · geometria 0 erros · documento 0
+  divergências" (saída completa executada nesta sessão).
+- TESTE NEGATIVO (obrigatório): 6/6 defeitos injetados DETECTADOS (aresta
+  pendente, decisão sem 2ª saída, nó sobreposto, conector desconectado, nó
+  inalcançável, fonte 12 px). O próprio teste negativo melhorou o gate:
+  revelou que a checagem de sobreposição só amostrava a aresta superior do
+  retângulo (corrigida para as 4 arestas).
+- Gate D pegou 1 divergência real modelo×documento (nota DETALHE movida só
+  no app) → modelo corrigido e regenerado (fonte da verdade mantida).
+- Baseline full: PASS (4 pass / 0 fail / 2 skip — app não implementada).
+- Limitações honestas: dump estrutural via MCP trunca acima de ~50 KB →
+  docdumps persistidos como transcrição compacta dos get_node reais
+  (design/flow-v2/docdump-00.json / docdump-01.json); fontes internas de
+  contêineres verificadas nos dumps depth-2 parciais + parâmetros de criação
+  do manifest; o export "fig" do FigCraft é binário proprietário (ZIP +
+  canvas.fig "fig-kiwie"), inviável para verificação programática (tentado e
+  registrado).
+
+--------------------------------------------------------------------------------
+6. ENTREGÁVEIS
+--------------------------------------------------------------------------------
+- design/cutnicepro-fase01-propostas.figcraft — atualizado e SALVO com os
+  frames V2 (V1 preservado; backup pré-edição em design/backups/).
+- design/exports/product-flow-overview-v2.png (429.902 bytes, escala 1,5x)
+- design/exports/firstrun-access-user-flow-v2.png (628.590 bytes, 1,5x)
+- tools/flow/flow_model_v2.py (modelo+planejador) · tools/flow/flow_gate_v2.py
+  (gate+selftest) · design/flow-v2/manifest-v2.json · docdumps · PNGs de WIP.
+- Documento do modelo lógico COM IDs = o próprio módulo + manifest JSON
+  (estrutura de dados legível com todos os nós/arestas/rotas/rótulos/refs).
+
+--------------------------------------------------------------------------------
+7. COMPARAÇÃO OBJETIVA V1 × V2
+--------------------------------------------------------------------------------
+Critério da reprovação            | V1 (02A.1)              | V2 (02A.2)
+Setas conectadas borda a borda    | não verificável         | 31/31, gate <=1,5 px
+Saídas de decisão                 | caixas isoladas         | 5 losangos, >=2 saídas rotuladas
+Caminhos de retorno completos     | ausentes                | 5 (retry/home/iterar/off-page/proposta)
+Tracejados nativos                | não usados              | 3 padrões nativos validados
+Legenda                           | inexistente             | 2 frames, 5 linhas + 4 formas
+Padding/fontes                    | inconsistentes          | grid mínimo + fontes >=14 (gate)
+Cruzamentos/sobreposições         | não controlados         | 0 (gate; off-page p/ não-planaridade)
+Nós inalcançáveis/arestas pendentes| não controlados        | 0 (gate + selftest 6/6)
+Aderência documento×plano         | inexistente             | 0 divergências (gate D)
+Editabilidade rastreável          | parcial                 | camadas nomeadas por ID + manifest
+
+--------------------------------------------------------------------------------
+8. GIT
+--------------------------------------------------------------------------------
+- HEAD: 80f578e (main) "docs(repo): adota Conventional Commits, exige commits
+  identificaveis nos relatorios e distingue documentacao do Graphify".
+- Commits nesta tarefa: NENHUM (a tarefa proíbe commits; working tree sujo é
+  esperado — contém também produtos das fases 02A/02A.1 ainda não commitados
+  por instrução anterior).
+- Push: não realizado. Working tree: modificados (.gitignore, AGENTS.md,
+  .figcraft, PRODUCT-BRIEF, LATEST.txt) + não rastreados (design/flow-v2/,
+  exports V1+V2, docs/product/*, docs/portfolio/, tools/, relatórios
+  históricos 2352/2358/0012 e este).
+
+--------------------------------------------------------------------------------
+9. PENDÊNCIAS E LIMITAÇÕES
+--------------------------------------------------------------------------------
+- Aprovação humana do piloto: PENDENTE (mantenedor). Nenhum outro fluxo foi
+  redesenhado (ordem da tarefa: parar após Overview + 1 piloto).
+- UX Planet via WebFetch: HTTP 403 (conteúdo obtido integralmente por leitor
+  web alternativo — registrado).
+- 1ª tentativa de mover a legenda deixou camadas fora do frame por
+  interpretação errada de x relativo — detectada pela VISION e corrigida por
+  recriação; registrada como lição (mover vetor exige recálculo de path, não
+  delta de x).
+- Graphify: re-indexação pendente (ferramentas novas em tools/flow/;
+  graphify-out não regenerado nesta tarefa).
+
+--------------------------------------------------------------------------------
+FINAL
+--------------------------------------------------------------------------------
+Método recuperado e PROVADO por gates determinísticos com teste negativo:
+modelo lógico versionado → geometria calculada → conectores nativos →
+construção incremental inspecionada → validação de documento real → revisão
+VISION humana. Overview V2 + piloto First Run V2 entregues, validados e
+salvos; V1 preservado com backup.
+Ready for full flow redesign: PENDING USER APPROVAL.
+================================================================================
