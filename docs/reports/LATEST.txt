@@ -3,89 +3,110 @@
 ╚════════════════════════════════════════════╝
 
 TASK
-  Name: Fase 01 — Product UX + FigCraft Design Exploration
-  Status: PASS
-  Scope: Exclusivamente UX, direção visual e exploração de layouts no FigCraft attached. Nenhum frontend/backend/banco/motor implementado; nenhum componente React; nenhuma biblioteca instalada; nenhum commit.
-  Objective: Validar attached na sessão, documentar fundação de UX e criar duas propostas de organização/experiência para a interface principal, com validação visual real e artefatos entregues ao usuário.
-  Result: UX-FOUNDATION.md criado; duas propostas construídas no app real via MCP attached (Creative Studio e AI Clip Workspace), cada uma com ciclo completo inspeção→export→revisão VISION→correção→reexport→confirmação; documento nativo salvo no workspace; 2 PNGs de apresentação 1440x900. Attached confirmado por evidências estruturais (janela real do desktop vs backend headless).
+  Name: Brand Foundation + FigCraft Design Audit + GitHub Sync
+  Status: PARTIAL — Brand/auditoria/UI Kit/testes: PASS; Publicação GitHub: BLOCKED (licença upstream ausente), com commits locais criados e remoto configurado.
+  Scope: Identidade oficial, auditoria estrutural, verificação de componentes nativos, UI Kit, diretrizes de revisão e sincronização GitHub. Nenhuma aplicação implementada; propostas A/B preservadas sem redesenho.
+  Objective: Consolidar marca e critérios de componentização, auditar tecnicamente as propostas existentes e publicar o repositório — com bloqueio de push se a auditoria de publicação reprovar.
+  Result: Marca documentada com tokens; auditoria estrutural executada com contagens reais (confirmou as deficiências apontadas); suporte nativo a componentes/instâncias/variantes CONFIRMADO na 0.6.0 com prova controlada (mestres, instâncias com overrides, variante de estado, geração de código React); UI Kit e diretrizes criados; 3 commits locais + origin configurados; PUSH BLOQUEADO: skill web-design-guidelines copiada de repositório SEM licença está no commit inicial fc1e295 (remediação documentada).
 
 IMPLEMENTATION
-  Completed: (1) Validação attached: servidor figcraft-app carregado na sessão; primeiro inspect_ui falhou (app fechado); diagnóstico (nenhum processo, porta livre, marker presente, documento do usuário já salvo em Downloads) e lançamento oficial com --control 7979 (porta LISTENING de propriedade do PID 35284 do figcraft.exe); inspect_ui attached retornou janela real ("CutNicePro Fase 01 – FigCraft", focused, main) + homeRecents; contraste explícito: mcp__figcraft__ = backend "headless" SEM windows vs mcp__figcraft-app__ = janela real. (2) Skills consultadas: minimalist-ui (aplicada por princípios de contenção — cor escassa, bordas 1px, raio 6-8, rótulos uppercase com tracking — sobre base escura de domínio de edição, NÃO a paleta clara editorial, com justificativa registrada), frontend-ui-engineering (estados e composição), image-to-code e web-design-guidelines consultadas (aplicação plena fica para a fase de código); referência de domínio runwayml/DESIGN.md estudada (dark cinematográfico, tipografia única, interface invisível); curadoria design-md-shortlist considerada. (3) docs/product/UX-FOUNDATION.md: princípios, arquitetura de navegação (4 áreas), fluxos (importação, geração, revisão/edição, exportação), hierarquia de ferramentas N1-N4, estados por superfície, formatos e mapeamento das duas propostas. (4) Proposta A — Creative Studio (~151 nós): topbar com ações N1, painel esquerdo Mídia/Cortes, preview central 816x459 com controles, timeline (régua, V1 com clipes proporcionais às durações, A1, CC, playhead), inspetor direito (corte selecionado, legendas com estilos/posição/animação, reenquadramento 9:16/1:1/16:9 com mini-prévia vertical, áudio, exportar). (5) Proposta B — AI Clip Workspace (~127 nós): stepper de pipeline (Importar-Gerar-Revisar-Exportar, etapa 3 ativa), coluna de importação com dropzone e fontes, lista dos cortes gerados (miniaturas COM geometria por formato, transcrição, potencial, badges "Revisado", ações por item), faixa de processamento, painel de prévia vertical 9:16 do corte selecionado, ações rápidas, exportação individual/lote, barra de status. (6) Documento salvo em design/cutnicepro-fase01-propostas.figcraft e PNGs exportados pelo app.
-  Not completed: Nada do escopo. Identidade visual definitiva NÃO definida (decisão do usuário entre as propostas, conforme instruído).
-  Changes: Nenhum código de aplicação. Novos: UX-FOUNDATION.md, documento .figcraft, 2 PNGs. Documento pessoal do usuário NÃO tocado (salvo por ele em Downloads; não aberto).
-  Architecture impact: Fundação de UX estabelecida; duas direções de organização candidatas para a interface principal, aguardando avaliação do mantenedor antes do design system e da implementação.
+  Completed: (§1) attached validado na sessão (janela real; app já aberto com --control; documento das propostas ativo e limpo). (§2) direção de UX documentada como PROPOSTA (UX-FOUNDATION §8: AI Clip Workspace principal / Creative Studio editor avançado; não concorrentes). (§3) BRAND-FOUNDATION.md + design/tokens/{tokens.json,tokens.md}: Poppins (4 pesos + tabular), paleta oficial 4 cores + auxiliares tonais, contraste WCAG calculado (marble/black 17:1; aqua/black 9,4:1; marble/attractive 13:1; aqua/attractive 7,2:1 — AAA), materiais dark-glass-3D com critérios de uso restrito, escala 4/8/12/16/24/32, raios 4/6/8/12. (§4) auditoria estrutural com contagens reais via get_node+analisador (abaixo). (§5) verificação de comandos nativos + teste controlado em documento descartável separado (abaixo). (§6) UI-KIT-ARCHITECTURE.md (15 componentes candidatos, variantes/props/estados, mapeamento FigCraft↔frontend). (§7) NEXT-REVISION-GUIDELINES.md (diagnóstico medido + 16 exigências + 4 gates de aprovação). (§8) auditoria de publicação completa (abaixo), commits locais, origin configurado; push RETIDO conforme regra.
+  Not completed: Push (BLOCKED — ver GITHUB PUBLICATION). Instalação dos pesos Poppins Medium/SemiBold (pendência registrada; ambiente expõe só Regular/Italic/Bold).
+  Changes: Somente documentação, tokens, avisos de terceiros, .gitignore (+marker local), commits locais. Propostas A/B intocadas (arquivo .figcraft preservado; auditoria foi somente-leitura; testes em docs descartáveis fechados com descarte).
+  Architecture impact: Fundação de marca + critérios estruturais que governam a Fase 02 (redesign sob as diretrizes); nenhum código de aplicação.
 
 FILES
-  Created: docs/product/UX-FOUNDATION.md; design/cutnicepro-fase01-propostas.figcraft (42.743 bytes, nativo); design/exports/proposta-a-creative-studio.png (156.035 bytes, 1440x900); design/exports/proposta-b-ai-clip-workspace.png (191.896 bytes, 1440x900); docs/reports/history/2026-10-17_2226_fase01-ux-figcraft-design.txt; docs/reports/LATEST.txt (regenerado).
-  Modified: Nenhum arquivo pré-existente alterado nesta tarefa (documento de design é novo; app aberto em aba própria nomeada).
-  Deleted: Nenhum.
-  Unexpected changes: NONE — git status contém apenas itens esperados (design/, docs/product/ novos + pendências não-commitadas das tarefas anteriores já reportadas).
+  Created: docs/brand/BRAND-FOUNDATION.md; design/tokens/tokens.json; design/tokens/tokens.md; docs/design/UI-KIT-ARCHITECTURE.md; docs/design/NEXT-REVISION-GUIDELINES.md; THIRD-PARTY-NOTICES.md; docs/reports/evidence/2026-10-17_figcraft-component-test.png (15.570 B) e ...component-test-buttons.png (22.854 B); docs/reports/history/2026-10-17_2330_*.txt; LATEST.txt (regenerado).
+  Modified: docs/product/UX-FOUNDATION.md (novo §8 direção de experiência — proposta); docs/TOOLING.md (seção Portabilidade); .gitignore (design/FIGCRAFT-ATTACHED.on local, não publicado).
+  Deleted: Nenhum (documentos de teste descartados DENTRO do app via file.close force; nada em disco).
+  Unexpected changes: NONE.
 
 VALIDATION
-  Typecheck: SKIP — nenhum código (apenas documento de design; nenhum script alterado).
+  Typecheck: SKIP — sem código de aplicação.
   Lint: SKIP — sem código.
   Unit tests: SKIP — sem código de aplicação.
-  Integration tests: PASS — ~330 comandos de engine executados via MCP attached (4 batches de construção em A, 3 em B, 7 batches de correção, 2 saves, 7 exports, file.new) com leitura de retorno ok em cada batch (rollback automático não disparou nenhuma vez).
+  Integration tests: PASS — ~45 operações MCP attached reais nesta tarefa (inspecionar árvores, criar/componentizar/instanciar/variantes/overrides, renomear propriedades, gerar código, exportar, fechar docs descartáveis), todas com retorno verificado.
   Regression tests: PASS — baseline full: 4 PASS / 0 FAIL / 2 SKIP.
-  Visual tests: PASS — 6 rodadas do subagente VISION (2 por proposta + conferências): Proposta A — 1a rodada achou 9 defeitos (seleção contraditória entre painéis, duração divergente, contagem 6x4, chip Auto-reframe transbordando o quadro de vídeo, clipes fora de proporção, títulos com overflow, miniatura órfã, ponto isolado, espaçamentos); correções aplicadas (incluindo diagnóstico de erro de indexação de IDs meu, corrigido e verificado); rodada final 4/4 conformes (única ressalva: reticências intencionais de truncamento + unificação de título aplicada). Proposta B — 1a rodada 3 defeitos (seleção/preview divergentes, semântica do badge, miniaturas ignorando formatos); corrigidos; rodada final confirma seleção coerente com a prévia, badges "Revisado" em 2 cartões coerentes com o cabeçalho, geometrias distintas (retrato/retrato/quadrado/paisagem) com rótulos coerentes; micro-ajustes finais (timecodes ao lado das miniaturas, rótulo 1:1 sobre o quadrado, barras separadas dos timecodes) aplicados e o último export reflete o estado final. PNGs validados tecnicamente (assinatura, 1440x900).
-  Runtime verification: PASS — attached real: janela do desktop presente e focada em cada inspect_ui; exportação dos PNGs feita PELO APP via canal de controle; save_file persistiu o .figcraft no workspace (regravado após os ajustes finais).
-  Total passed: 16 agregados de verificação (4 baseline + 2 PNGs técnicos + 6 rodadas VISION com critérios objetivos + 4 evidências de attached: janela/contraste-headless/porta-PID/estado-do-app).
+  Visual tests: PASS — 2 capturas de evidência do teste de componentes conferidas por VISION: ClipCard instanciado (fundo escuro, título com override "A resposta que viralizou", barra com segmento aqua, SEM blocos brancos) e 4 botões (2 turquesa escuro + 2 claro com contorno, texto centralizado legível, sem sobreposições; nota: 1 botão encosta na borda da captura — recorte da imagem, não do componente).
+  Runtime verification: PASS — attached durante toda a tarefa (janela real; contraste com headless já estabelecido em tarefas anteriores); arquivo das propostas permaneceu dirty=false após a auditoria e os testes em abas separadas.
+  Total passed: 13 agregados (4 baseline + 2 VISION + 7 verificações estruturais/de componente com retorno real).
   Total failed: 0
-  Total skipped: 2 (suítes da baseline) + 4 categorias SKIP justificadas.
+  Total skipped: 2 (suítes baseline) + 4 categorias SKIP justificadas.
 
 HOOKS / HARNESS
   Hooks active: 4 de 4 (inalterados).
-  PreToolUse: OPERACIONAL — nenhum bloqueio (nenhum comando destrutivo; mkdir/cp/ls/git apenas).
-  PostToolUse: OPERACIONAL — eventos nativos registrados para UX-FOUNDATION.md e relatórios.
-  Stop: Operacional (fast; disparo desta tarefa ocorre após a entrega, conforme desenho).
-  Baseline: PASS — full 4/0/2 (execução final).
-  Gate result: Stop não é gate; status deriva das evidências.
-  Evidence: .zcode/hooks/audit/audit-log.jsonl (PostToolUse desta tarefa); respostas dos batches MCP (transcript).
+  PreToolUse: OPERACIONAL — sem bloqueios (nenhum comando destrutivo; git add/commit/remote permitidos; push não tentado).
+  PostToolUse: OPERACIONAL — eventos nativos para os arquivos criados/editados.
+  Stop: Operacional (fast; disparo pós-entrega).
+  Baseline: PASS — full 4/0/2 (executada antes dos commits).
+  Gate result: Stop não é gate.
+  Evidence: audit-log.jsonl; respostas MCP (transcript).
 
 MCP / SKILLS
-  Tools used: mcp__figcraft-app__ (inspect_ui, run_command file.new, create_node, batch x14, set_properties, export x7, save_file x2) — TODAS as operações de design em attached; mcp__figcraft__inspect_ui (contraste headless, 1 chamada); subagente VISION x6 (política VISION FIRST); skills minimalist-ui/frontend-ui-engineering consultadas; graphify não acionado.
-  Connection status: figcraft-app ATTACHED durante toda a construção (janela real presente; fallback headless NUNCA usado como substituto silencioso). figcraft (headless) preservado. graphify inalterado.
-  Failures: Inicial: figcraft-app inspect_ui com app fechado ("request was not sent") — resolvido pelo procedimento sancionado (lançamento com --control 7979; marker presente). Nenhuma falha residual.
-  Pending activation: Nenhuma nova. (Existentes: graphify build quando houver código; confinamento FigCraft 0.6.0.)
+  Tools used: mcp__figcraft-app__ (inspect_ui x2, get_node x2, run_command file.new/text.fonts/component.*/instance.*/file.close/file.export, create_node x6, batch x4, export x2, set_properties x3); VISION x2 (capturas do teste); skills consultadas por referência de contexto.
+  Connection status: figcraft-app ATTACHED o tempo todo; figcraft headless e graphify inalterados.
+  Failures: 2 erros meus corrigidos no ato: (a) addVariant sem set prévio → fluxo correto combineVariants; (b) referência a id previsto dentro do mesmo batch (ids só existem após o lote) → refeito em duas etapas. Nenhum residual.
+  Pending activation: Poppins Medium/SemiBold (ambiente); aplicação dos tokens/variáveis no arquivo de design (Fase 02).
 
-GIT
-  Branch: main
-  HEAD: fc1e295 (inalterado — nenhum commit, conforme instrução)
-  Working tree: além dos itens pendentes das tarefas anteriores (já reportados: config.json, HOOKS.md, TOOLING.md, .zcode/figcraft/, docs/FIGCRAFT-ATTACHED.md, relatórios, evidence/), NOVOS nesta tarefa: design/ (documento nativo, marker, exports) e docs/product/UX-FOUNDATION.md + TXTs deste relatório.
-  Commits created: 0
-  Push performed: NO
-  Merge performed: NO
-  Uncommitted changes: apenas os listados; NENHUMA alteração inesperada.
+DESIGN AUDIT
+  Proposal A nodes: 152 (61 rect, 83 text, 7 ellipse)
+  Proposal B nodes: 128 (45 rect, 78 text, 4 ellipse)
+  Semantic frames: A: 1 (apenas a raiz) · B: 1 — grupos semânticos: 0 em ambas
+  Master components: 0 · Instances: 0 (em ambas)
+  Auto layout coverage: 0% (0 frames com layout; 151 e 127 nós posicionados absolutamente)
+  Structural issues (medidos): profundidade máxima 1 nas duas propostas; centenas de camadas direto na raiz; 17 cores distintas em A / 15 em B repetidas sem tokens (top: #9AA3AF ×33 em A; #E7ECF2 ×26 em B); 9-10 combinações tipográficas ad hoc (Inter; Poppins ausente); elementos duplicados como cópias (linhas de lista, toggles, chips); nomeação presente mas plano (sem hierarquia). Conclusão: confirma objetivamente o diagnóstico do mantenedor; metas de correção em docs/design/NEXT-REVISION-GUIDELINES.md.
+
+FIGCRAFT COMPONENT TEST
+  Commands available (0.6.0, verificado): component.create/createMultiple/combineVariants/addVariant/editProperty/addProperty/bindProperty/properties/list, instance.create/place/setProperties/swap/slotInsert, component.makeSlot/exposeInstance/detach/resetInstance/resetOverride/pushChanges/restoreMain, object.convertToFrame/convertToGroup/resizeToFit, variable.bind, style.create + library.publish/list, inspect.code/inspect.componentCode/component.playground, codeConnect.set/import/export, select.sameInstance.
+  Commands unavailable: nenhum dos consultados. Limitação de fluxo: component.addVariant exige conjunto prévio (usar combineVariants antes) — documentado.
+  Master created: Button (variant set State=Default/Hover, Deep Aqua + hover #5AD7D4 com contorno) e ClipCard (frames internos Thumb/Info/Title/Meta/ScoreRow, auto layout horizontal/vertical, fills da paleta oficial).
+  Instances created: 4 no 1º doc (2 botão + 2 ClipCard) + 2 no doc de captura — todas INSTÂNCIAS REAIS (type=INSTANCE, mainComponent/mainComponentName presentes; nenhuma cópia simulada).
+  Hierarchy verified: get_node confirma INSTANCE→mainComponent 11, filhos espelhados (Thumb/Info/…), override real ("overrides":["characters"] com "A resposta que viralizou"); variante aplicada via instance.setProperties {State:Hover} (ok); correção de fill no MESTRE propagou às instâncias automaticamente; component.list: set Button (1 inst/variante) + ClipCard (2 inst).
+  Screenshot: docs/reports/evidence/2026-10-17_figcraft-component-test.png (ClipCard instanciado) e 2026-10-17_figcraft-component-test-buttons.png (4 botões) — ambas conferidas por VISION.
+  Result: PASS — componentização nativa plena na versão instalada; bônus: inspect.componentCode gerou React+CSS do ClipCard (flexbox/valores corretos), validando o caminho de handoff.
+  Notas honestas: a 1ª captura saiu só do card (export usou seleção residual) → captura complementar dos botões refeita; barra do teste mostra trilha e preenchimento lado a lado (simplificação; no design real o fill sobrepõe a trilha).
+
+BRAND FOUNDATION
+  Typography: Poppins; Regular 400 / Medium 500 / SemiBold 600 / Bold 700; números tabulares em timecodes/métricas; escala 11/12/13/16/20+; proibido <10px. Limitação do ambiente: só Regular/Italic/Bold expostos no FigCraft local (verificado via text.fonts) — instalar Medium/SemiBold (OFL) antes da Fase 02.
+  Colors: oficiais Pure Black #000000 (base), Attractive Black #231F20 (superfícies), Deep Aqua #02C2BE (ações/seleção/progresso/ativo), White Marble #E6E7E8 (texto). Auxiliares tonais funcionais documentados (marble-70, aqua-hover, surface-raised, border/track) — não substituem a identidade. Contraste calculado (ratios acima, AAA).
+  Tokens: design/tokens/tokens.json (máquina) + tokens.md (aplicação e mapeamento p/ variáveis FigCraft e CSS custom properties futuras).
+  References: dark glass 3D (fumê/refrativo/iridescente/ribbons/dispersão/specular/dark cinematic) com critérios ESTRITOS de uso (onboarding/empty states de marca; proibido em painéis operacionais; não é glassmorphism de componente). Poppins = SIL OFL (referenciada, nenhum arquivo de fonte distribuído).
+  Pending design decisions: pesos Medium/SemiBold; tokens semânticos de status com contraste verificado; aplicação concreta nas propostas (Fase 02 — não é troca de cores); produção dos ativos 3D originais.
+
+GITHUB PUBLICATION
+  Repository visibility: PÚBLICO (API: private=false; default_branch main; size 0 — vazio, sem refs: ls-remote sem saída).
+  History audit: 4 commits locais a publicar: fc1e295 (inicial, preservado), b1773bc (infra attached/harness/docs), 7f0bdd4 (Fase 01 UX + propostas), ae43630 (brand/tokens/UI Kit/auditoria/avisos) + commit do relatório (criado após este documento; SHA via git log). Conteúdo de TODOS auditado (git ls-files + ls-tree fc1e295 + varreduras).
+  Sensitive files found: NENHUM segredo/credencial real (varredura em 2 estágios: padrões de palavras → padrões de VALORES: sk-/AKIA/ghp_/xox/BEGIN PRIVATE/JWT — zero ocorrências). Informativo: caminhos com o usuário local ("adcka") em 3 arquivos (.zcode/config.json, docs/HOOKS.md, docs/TOOLING.md) e e-mail do mantenedor como autor dos commits — decisão do próprio dono do repositório público; sem credenciais.
+  Asset licensing: Poppins referenciada sem distribuição (OFL) OK; PNGs todos originais (gerados no FigCraft) OK; skills de taste-skill (MIT) e addyosmani (MIT) OK com atribuição — THIRD-PARTY-NOTICES.md criado; docs do figcraft (Apache-2.0) OK com aviso; graphify (Apache-2.0) OK; **vercel-labs/agent-skills SEM LICENÇA** → .zcode/skills/web-design-guidelines/SKILL.md (cópia verbatim) presente no commit fc1e295 (confirmado via ls-tree) → redistribuição não autorizada.
+  Commit: b1773bc, 7f0bdd4, ae43630 (+ commit do relatório). origin configurado (https://github.com/FrosttyS18/CutNicePro.git).
+  Push: NÃO EXECUTADO — BLOCKED pela licença ausente acima (regra da tarefa: conteúdo indevidamente licenciado bloqueia push; a remoção só no próximo commit não resolve pois o blob permanece no histórico).
+  Remote HEAD: N/A (repositório remoto vazio; nada publicado).
+  Publication status: BLOCKED — remediações possíveis (exigem decisão/autorização do mantenedor): (a) reconstruir o commit inicial sem esse caminho (substituir a skill local por resumo original + link, mantendo a cópia apenas local via .gitignore) — por ser o commit raiz, é reescrita de histórico local NUNCA enviada a lugar algum (remote vazio), mas exige autorização explícita; (b) obter autorização expressa dos autores upstream; (c) manter o repo privado/atrasar a publicação até (a) ou (b). Nenhuma ação de esconder via commit posterior foi tomada.
 
 EVIDENCE
-  Commands executed (principais): tasklist/netstat (diagnóstico anexado + PID dono da porta); PowerShell Start-Process figcraft --control 7979; 14 batches MCP (~330 comandos node.create/node.set); exports e saves via MCP; verificação técnica dos PNGs (Python); baseline full; git status.
-  Relevant logs: inspect_ui attached com windows [{title "…– FigCraft", focused true}] e homeRecents mostrando o arquivo do usuário (não aberto); mcp__figcraft__inspect_ui {"backend":"headless"} sem windows (contraste); sequência de correções A e B com leitura de retorno ok:true/id por comando.
-  Screenshots: design/exports/proposta-a-creative-studio.png e design/exports/proposta-b-ai-clip-workspace.png (exports reais do app, revisados pelo VISION).
-  Test artifacts: nenhum descartável remanescente (todo o conteúdo construído faz parte das propostas).
-  Reproduction details: abrir design/cutnicepro-fase01-propostas.figcraft no FigCraft (2 frames 1440x900); PNGs para avaliação; fluxos e hierarquia em docs/product/UX-FOUNDATION.md.
-
-DIFERENÇAS DE UX (resumo objetivo)
-  A — Creative Studio: editor-first. Preview central grande + timeline estruturada + inspetor denso; para edição fina corte a corte; alta densidade funcional com hierarquia tipográfica; operações frequentes (trim, legendas, formato) a um clique do contexto.
-  B — AI Clip Workspace: resultado-first. Pipeline explícito (stepper), lista de cortes com prévia/meta/potencial por item, painel de prévia vertical 9:16 do corte selecionado e ações de lote; para revisar volume e exportar em massa; menor densidade visual nas operações frequentes.
-  Mesmo pipeline e escopo; diferença = superfície prioritária e ritmo de trabalho (controle fino x velocidade de revisão).
+  Commands executed (principais): git ls-remote + API GitHub (visibilidade/licenças de 6 repos); audit_tree.py sobre get_node A/B (contagens); component.* / instance.* (prova controlada); text.fonts (Poppins); file.export x2 + VISION x2; varreduras de segredos (2 estágios); git add/commit x3 + remote add; baseline full.
+  Relevant logs: saídas JSON de component.list (set Button: 1 inst/variante; ClipCard: 2 inst), get_node (type INSTANCE, mainComponent 11, overrides ["characters"]), instance.setProperties ok, inspect.componentCode (React+CSS do ClipCard), ls-tree fc1e295 confirando web-design-guidelines.
+  Screenshots: 2 PNGs de evidência do teste de componentes (conferidos por VISION).
+  Test artifacts: nenhum permanente além dos PNGs (docs descartáveis fechados com force no app).
+  Reproduction details: auditoria: get_node id 2/154 depth 12 + .tooling/docs-refs/audit_tree.py; componentes: sequência file.new → mestres → component.create → combineVariants → editProperty → instance.create → setProperties → get_node; licenças: api.github.com/repos/<repo> (campo license).
 
 ISSUES
-  Bugs found: Nenhum no ambiente. Erros meus de construção encontrados e corrigidos pelas rodadas VISION (indexação errada de IDs em correções da Proposta A; inconsistências de conteúdo estado/dados em A e B; geometria das miniaturas em B) — todos verificados após correção.
-  Unresolved failures: Nenhuma.
-  Regressions: Nenhuma (baseline PASS; hooks/headless/config inalterados).
-  Risks: (1) Identidade visual definitiva pendente de decisão do usuário — as propostas usam tokens provisórios coerentes; (2) leituras de texto pequeno pelo VISION tiveram 2 misreads pontuais (timecodes) sem impacto estrutural; (3) mockups estáticos não representam estados interativos (hover/scroll) — previsto para a fase de implementação com web-design-guidelines.
-  Blockers: Nenhum.
+  Bugs found: 2 erros meus de execução (addVariant fora de ordem; id previsto em batch) — corrigidos e revalidados na hora.
+  Unresolved failures: Publicação GitHub (BLOCKED — decisão do mantenedor necessária; 3 opções documentadas).
+  Regressions: Nenhuma (baseline PASS; propostas preservadas dirty=false; hooks/headless intactos).
+  Risks: (1) enquanto o push não ocorre, o backup externo do projeto não existe — histórico só local; (2) skills MIT/Apache publicadas dependem dos avisos em THIRD-PARTY-NOTICES.md (mantê-lo atualizado); (3) FigCraft 0.6.0 sem flags de confinamento (conhecido).
+  Blockers: Push (licença upstream da web-design-guidelines).
 
 FINAL
-  Delivery status: ENTREGUE — Fase 01 concluída dentro do escopo (UX + duas propostas em FigCraft attached, sem código de aplicação).
-  Requirements met: Todos os itens da tarefa (validação attached, UX antes do layout, 2 propostas estruturalmente distintas, qualidade visual com ciclo de correção, artefatos nativos + PNGs, evidências, baseline, git auditado, relatório integral).
-  Remaining work: Decisão do usuário entre as propostas (ou direção híbrida) → só então design system e implementação.
-  User action required: Avaliar os PNGs (e o .figcraft) das Propostas A e B e autorizar a próxima fase.
+  Delivery status: ENTREGUE (PARTIAL pela publicação bloqueada — tudo o mais PASS).
+  Requirements met: 10 de 11 critérios da §9 (marca, tokens, arquivo nativo preservado, auditoria com contagens reais, componentes verificados + teste controlado, UI Kit, diretrizes, baseline, zero desenvolvimento); GitHub sincronizado NÃO — BLOCKED com causa e remediação precisas.
+  Remaining work: Decisão do mantenedor sobre a remediação da licença (a/b/c) para liberar o push; Fase 02 (revisão visual sob as diretrizes + tokens + componentes).
+  User action required: Escolher a remediação da publicação (recomendado: opção (a) — reconstruir o commit raiz excluindo a cópia não licenciada; autorização explícita necessária pois altera fc1e295, que jamais foi publicado). Opcional: instalar Poppins Medium/SemiBold.
   Restart required: NO
-  Ready for next task: YES — aguardando avaliação e autorização.
+  Ready for next task: YES — aguardando decisão de publicação e autorização da Fase 02.
 
 REPORT
   Latest file: docs/reports/LATEST.txt
-  Historical file: docs/reports/history/2026-10-17_2226_fase01-ux-figcraft-design.txt
+  Historical file: docs/reports/history/2026-10-17_2330_brand-foundation-design-audit-github.txt
 
 END OF REPORT

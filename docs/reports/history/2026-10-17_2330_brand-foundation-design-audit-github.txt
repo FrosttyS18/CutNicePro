@@ -1,0 +1,112 @@
+╔════════════════════════════════════════════╗
+║       CUTNICEPRO — ZCODE REPORT            ║
+╚════════════════════════════════════════════╝
+
+TASK
+  Name: Brand Foundation + FigCraft Design Audit + GitHub Sync
+  Status: PARTIAL — Brand/auditoria/UI Kit/testes: PASS; Publicação GitHub: BLOCKED (licença upstream ausente), com commits locais criados e remoto configurado.
+  Scope: Identidade oficial, auditoria estrutural, verificação de componentes nativos, UI Kit, diretrizes de revisão e sincronização GitHub. Nenhuma aplicação implementada; propostas A/B preservadas sem redesenho.
+  Objective: Consolidar marca e critérios de componentização, auditar tecnicamente as propostas existentes e publicar o repositório — com bloqueio de push se a auditoria de publicação reprovar.
+  Result: Marca documentada com tokens; auditoria estrutural executada com contagens reais (confirmou as deficiências apontadas); suporte nativo a componentes/instâncias/variantes CONFIRMADO na 0.6.0 com prova controlada (mestres, instâncias com overrides, variante de estado, geração de código React); UI Kit e diretrizes criados; 3 commits locais + origin configurados; PUSH BLOQUEADO: skill web-design-guidelines copiada de repositório SEM licença está no commit inicial fc1e295 (remediação documentada).
+
+IMPLEMENTATION
+  Completed: (§1) attached validado na sessão (janela real; app já aberto com --control; documento das propostas ativo e limpo). (§2) direção de UX documentada como PROPOSTA (UX-FOUNDATION §8: AI Clip Workspace principal / Creative Studio editor avançado; não concorrentes). (§3) BRAND-FOUNDATION.md + design/tokens/{tokens.json,tokens.md}: Poppins (4 pesos + tabular), paleta oficial 4 cores + auxiliares tonais, contraste WCAG calculado (marble/black 17:1; aqua/black 9,4:1; marble/attractive 13:1; aqua/attractive 7,2:1 — AAA), materiais dark-glass-3D com critérios de uso restrito, escala 4/8/12/16/24/32, raios 4/6/8/12. (§4) auditoria estrutural com contagens reais via get_node+analisador (abaixo). (§5) verificação de comandos nativos + teste controlado em documento descartável separado (abaixo). (§6) UI-KIT-ARCHITECTURE.md (15 componentes candidatos, variantes/props/estados, mapeamento FigCraft↔frontend). (§7) NEXT-REVISION-GUIDELINES.md (diagnóstico medido + 16 exigências + 4 gates de aprovação). (§8) auditoria de publicação completa (abaixo), commits locais, origin configurado; push RETIDO conforme regra.
+  Not completed: Push (BLOCKED — ver GITHUB PUBLICATION). Instalação dos pesos Poppins Medium/SemiBold (pendência registrada; ambiente expõe só Regular/Italic/Bold).
+  Changes: Somente documentação, tokens, avisos de terceiros, .gitignore (+marker local), commits locais. Propostas A/B intocadas (arquivo .figcraft preservado; auditoria foi somente-leitura; testes em docs descartáveis fechados com descarte).
+  Architecture impact: Fundação de marca + critérios estruturais que governam a Fase 02 (redesign sob as diretrizes); nenhum código de aplicação.
+
+FILES
+  Created: docs/brand/BRAND-FOUNDATION.md; design/tokens/tokens.json; design/tokens/tokens.md; docs/design/UI-KIT-ARCHITECTURE.md; docs/design/NEXT-REVISION-GUIDELINES.md; THIRD-PARTY-NOTICES.md; docs/reports/evidence/2026-10-17_figcraft-component-test.png (15.570 B) e ...component-test-buttons.png (22.854 B); docs/reports/history/2026-10-17_2330_*.txt; LATEST.txt (regenerado).
+  Modified: docs/product/UX-FOUNDATION.md (novo §8 direção de experiência — proposta); docs/TOOLING.md (seção Portabilidade); .gitignore (design/FIGCRAFT-ATTACHED.on local, não publicado).
+  Deleted: Nenhum (documentos de teste descartados DENTRO do app via file.close force; nada em disco).
+  Unexpected changes: NONE.
+
+VALIDATION
+  Typecheck: SKIP — sem código de aplicação.
+  Lint: SKIP — sem código.
+  Unit tests: SKIP — sem código de aplicação.
+  Integration tests: PASS — ~45 operações MCP attached reais nesta tarefa (inspecionar árvores, criar/componentizar/instanciar/variantes/overrides, renomear propriedades, gerar código, exportar, fechar docs descartáveis), todas com retorno verificado.
+  Regression tests: PASS — baseline full: 4 PASS / 0 FAIL / 2 SKIP.
+  Visual tests: PASS — 2 capturas de evidência do teste de componentes conferidas por VISION: ClipCard instanciado (fundo escuro, título com override "A resposta que viralizou", barra com segmento aqua, SEM blocos brancos) e 4 botões (2 turquesa escuro + 2 claro com contorno, texto centralizado legível, sem sobreposições; nota: 1 botão encosta na borda da captura — recorte da imagem, não do componente).
+  Runtime verification: PASS — attached durante toda a tarefa (janela real; contraste com headless já estabelecido em tarefas anteriores); arquivo das propostas permaneceu dirty=false após a auditoria e os testes em abas separadas.
+  Total passed: 13 agregados (4 baseline + 2 VISION + 7 verificações estruturais/de componente com retorno real).
+  Total failed: 0
+  Total skipped: 2 (suítes baseline) + 4 categorias SKIP justificadas.
+
+HOOKS / HARNESS
+  Hooks active: 4 de 4 (inalterados).
+  PreToolUse: OPERACIONAL — sem bloqueios (nenhum comando destrutivo; git add/commit/remote permitidos; push não tentado).
+  PostToolUse: OPERACIONAL — eventos nativos para os arquivos criados/editados.
+  Stop: Operacional (fast; disparo pós-entrega).
+  Baseline: PASS — full 4/0/2 (executada antes dos commits).
+  Gate result: Stop não é gate.
+  Evidence: audit-log.jsonl; respostas MCP (transcript).
+
+MCP / SKILLS
+  Tools used: mcp__figcraft-app__ (inspect_ui x2, get_node x2, run_command file.new/text.fonts/component.*/instance.*/file.close/file.export, create_node x6, batch x4, export x2, set_properties x3); VISION x2 (capturas do teste); skills consultadas por referência de contexto.
+  Connection status: figcraft-app ATTACHED o tempo todo; figcraft headless e graphify inalterados.
+  Failures: 2 erros meus corrigidos no ato: (a) addVariant sem set prévio → fluxo correto combineVariants; (b) referência a id previsto dentro do mesmo batch (ids só existem após o lote) → refeito em duas etapas. Nenhum residual.
+  Pending activation: Poppins Medium/SemiBold (ambiente); aplicação dos tokens/variáveis no arquivo de design (Fase 02).
+
+DESIGN AUDIT
+  Proposal A nodes: 152 (61 rect, 83 text, 7 ellipse)
+  Proposal B nodes: 128 (45 rect, 78 text, 4 ellipse)
+  Semantic frames: A: 1 (apenas a raiz) · B: 1 — grupos semânticos: 0 em ambas
+  Master components: 0 · Instances: 0 (em ambas)
+  Auto layout coverage: 0% (0 frames com layout; 151 e 127 nós posicionados absolutamente)
+  Structural issues (medidos): profundidade máxima 1 nas duas propostas; centenas de camadas direto na raiz; 17 cores distintas em A / 15 em B repetidas sem tokens (top: #9AA3AF ×33 em A; #E7ECF2 ×26 em B); 9-10 combinações tipográficas ad hoc (Inter; Poppins ausente); elementos duplicados como cópias (linhas de lista, toggles, chips); nomeação presente mas plano (sem hierarquia). Conclusão: confirma objetivamente o diagnóstico do mantenedor; metas de correção em docs/design/NEXT-REVISION-GUIDELINES.md.
+
+FIGCRAFT COMPONENT TEST
+  Commands available (0.6.0, verificado): component.create/createMultiple/combineVariants/addVariant/editProperty/addProperty/bindProperty/properties/list, instance.create/place/setProperties/swap/slotInsert, component.makeSlot/exposeInstance/detach/resetInstance/resetOverride/pushChanges/restoreMain, object.convertToFrame/convertToGroup/resizeToFit, variable.bind, style.create + library.publish/list, inspect.code/inspect.componentCode/component.playground, codeConnect.set/import/export, select.sameInstance.
+  Commands unavailable: nenhum dos consultados. Limitação de fluxo: component.addVariant exige conjunto prévio (usar combineVariants antes) — documentado.
+  Master created: Button (variant set State=Default/Hover, Deep Aqua + hover #5AD7D4 com contorno) e ClipCard (frames internos Thumb/Info/Title/Meta/ScoreRow, auto layout horizontal/vertical, fills da paleta oficial).
+  Instances created: 4 no 1º doc (2 botão + 2 ClipCard) + 2 no doc de captura — todas INSTÂNCIAS REAIS (type=INSTANCE, mainComponent/mainComponentName presentes; nenhuma cópia simulada).
+  Hierarchy verified: get_node confirma INSTANCE→mainComponent 11, filhos espelhados (Thumb/Info/…), override real ("overrides":["characters"] com "A resposta que viralizou"); variante aplicada via instance.setProperties {State:Hover} (ok); correção de fill no MESTRE propagou às instâncias automaticamente; component.list: set Button (1 inst/variante) + ClipCard (2 inst).
+  Screenshot: docs/reports/evidence/2026-10-17_figcraft-component-test.png (ClipCard instanciado) e 2026-10-17_figcraft-component-test-buttons.png (4 botões) — ambas conferidas por VISION.
+  Result: PASS — componentização nativa plena na versão instalada; bônus: inspect.componentCode gerou React+CSS do ClipCard (flexbox/valores corretos), validando o caminho de handoff.
+  Notas honestas: a 1ª captura saiu só do card (export usou seleção residual) → captura complementar dos botões refeita; barra do teste mostra trilha e preenchimento lado a lado (simplificação; no design real o fill sobrepõe a trilha).
+
+BRAND FOUNDATION
+  Typography: Poppins; Regular 400 / Medium 500 / SemiBold 600 / Bold 700; números tabulares em timecodes/métricas; escala 11/12/13/16/20+; proibido <10px. Limitação do ambiente: só Regular/Italic/Bold expostos no FigCraft local (verificado via text.fonts) — instalar Medium/SemiBold (OFL) antes da Fase 02.
+  Colors: oficiais Pure Black #000000 (base), Attractive Black #231F20 (superfícies), Deep Aqua #02C2BE (ações/seleção/progresso/ativo), White Marble #E6E7E8 (texto). Auxiliares tonais funcionais documentados (marble-70, aqua-hover, surface-raised, border/track) — não substituem a identidade. Contraste calculado (ratios acima, AAA).
+  Tokens: design/tokens/tokens.json (máquina) + tokens.md (aplicação e mapeamento p/ variáveis FigCraft e CSS custom properties futuras).
+  References: dark glass 3D (fumê/refrativo/iridescente/ribbons/dispersão/specular/dark cinematic) com critérios ESTRITOS de uso (onboarding/empty states de marca; proibido em painéis operacionais; não é glassmorphism de componente). Poppins = SIL OFL (referenciada, nenhum arquivo de fonte distribuído).
+  Pending design decisions: pesos Medium/SemiBold; tokens semânticos de status com contraste verificado; aplicação concreta nas propostas (Fase 02 — não é troca de cores); produção dos ativos 3D originais.
+
+GITHUB PUBLICATION
+  Repository visibility: PÚBLICO (API: private=false; default_branch main; size 0 — vazio, sem refs: ls-remote sem saída).
+  History audit: 4 commits locais a publicar: fc1e295 (inicial, preservado), b1773bc (infra attached/harness/docs), 7f0bdd4 (Fase 01 UX + propostas), ae43630 (brand/tokens/UI Kit/auditoria/avisos) + commit do relatório (criado após este documento; SHA via git log). Conteúdo de TODOS auditado (git ls-files + ls-tree fc1e295 + varreduras).
+  Sensitive files found: NENHUM segredo/credencial real (varredura em 2 estágios: padrões de palavras → padrões de VALORES: sk-/AKIA/ghp_/xox/BEGIN PRIVATE/JWT — zero ocorrências). Informativo: caminhos com o usuário local ("adcka") em 3 arquivos (.zcode/config.json, docs/HOOKS.md, docs/TOOLING.md) e e-mail do mantenedor como autor dos commits — decisão do próprio dono do repositório público; sem credenciais.
+  Asset licensing: Poppins referenciada sem distribuição (OFL) OK; PNGs todos originais (gerados no FigCraft) OK; skills de taste-skill (MIT) e addyosmani (MIT) OK com atribuição — THIRD-PARTY-NOTICES.md criado; docs do figcraft (Apache-2.0) OK com aviso; graphify (Apache-2.0) OK; **vercel-labs/agent-skills SEM LICENÇA** → .zcode/skills/web-design-guidelines/SKILL.md (cópia verbatim) presente no commit fc1e295 (confirmado via ls-tree) → redistribuição não autorizada.
+  Commit: b1773bc, 7f0bdd4, ae43630 (+ commit do relatório). origin configurado (https://github.com/FrosttyS18/CutNicePro.git).
+  Push: NÃO EXECUTADO — BLOCKED pela licença ausente acima (regra da tarefa: conteúdo indevidamente licenciado bloqueia push; a remoção só no próximo commit não resolve pois o blob permanece no histórico).
+  Remote HEAD: N/A (repositório remoto vazio; nada publicado).
+  Publication status: BLOCKED — remediações possíveis (exigem decisão/autorização do mantenedor): (a) reconstruir o commit inicial sem esse caminho (substituir a skill local por resumo original + link, mantendo a cópia apenas local via .gitignore) — por ser o commit raiz, é reescrita de histórico local NUNCA enviada a lugar algum (remote vazio), mas exige autorização explícita; (b) obter autorização expressa dos autores upstream; (c) manter o repo privado/atrasar a publicação até (a) ou (b). Nenhuma ação de esconder via commit posterior foi tomada.
+
+EVIDENCE
+  Commands executed (principais): git ls-remote + API GitHub (visibilidade/licenças de 6 repos); audit_tree.py sobre get_node A/B (contagens); component.* / instance.* (prova controlada); text.fonts (Poppins); file.export x2 + VISION x2; varreduras de segredos (2 estágios); git add/commit x3 + remote add; baseline full.
+  Relevant logs: saídas JSON de component.list (set Button: 1 inst/variante; ClipCard: 2 inst), get_node (type INSTANCE, mainComponent 11, overrides ["characters"]), instance.setProperties ok, inspect.componentCode (React+CSS do ClipCard), ls-tree fc1e295 confirando web-design-guidelines.
+  Screenshots: 2 PNGs de evidência do teste de componentes (conferidos por VISION).
+  Test artifacts: nenhum permanente além dos PNGs (docs descartáveis fechados com force no app).
+  Reproduction details: auditoria: get_node id 2/154 depth 12 + .tooling/docs-refs/audit_tree.py; componentes: sequência file.new → mestres → component.create → combineVariants → editProperty → instance.create → setProperties → get_node; licenças: api.github.com/repos/<repo> (campo license).
+
+ISSUES
+  Bugs found: 2 erros meus de execução (addVariant fora de ordem; id previsto em batch) — corrigidos e revalidados na hora.
+  Unresolved failures: Publicação GitHub (BLOCKED — decisão do mantenedor necessária; 3 opções documentadas).
+  Regressions: Nenhuma (baseline PASS; propostas preservadas dirty=false; hooks/headless intactos).
+  Risks: (1) enquanto o push não ocorre, o backup externo do projeto não existe — histórico só local; (2) skills MIT/Apache publicadas dependem dos avisos em THIRD-PARTY-NOTICES.md (mantê-lo atualizado); (3) FigCraft 0.6.0 sem flags de confinamento (conhecido).
+  Blockers: Push (licença upstream da web-design-guidelines).
+
+FINAL
+  Delivery status: ENTREGUE (PARTIAL pela publicação bloqueada — tudo o mais PASS).
+  Requirements met: 10 de 11 critérios da §9 (marca, tokens, arquivo nativo preservado, auditoria com contagens reais, componentes verificados + teste controlado, UI Kit, diretrizes, baseline, zero desenvolvimento); GitHub sincronizado NÃO — BLOCKED com causa e remediação precisas.
+  Remaining work: Decisão do mantenedor sobre a remediação da licença (a/b/c) para liberar o push; Fase 02 (revisão visual sob as diretrizes + tokens + componentes).
+  User action required: Escolher a remediação da publicação (recomendado: opção (a) — reconstruir o commit raiz excluindo a cópia não licenciada; autorização explícita necessária pois altera fc1e295, que jamais foi publicado). Opcional: instalar Poppins Medium/SemiBold.
+  Restart required: NO
+  Ready for next task: YES — aguardando decisão de publicação e autorização da Fase 02.
+
+REPORT
+  Latest file: docs/reports/LATEST.txt
+  Historical file: docs/reports/history/2026-10-17_2330_brand-foundation-design-audit-github.txt
+
+END OF REPORT
