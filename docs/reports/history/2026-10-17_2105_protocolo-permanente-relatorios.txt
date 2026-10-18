@@ -1,0 +1,87 @@
+╔════════════════════════════════════════════╗
+║       CUTNICEPRO — ZCODE REPORT            ║
+╚════════════════════════════════════════════╝
+
+TASK
+  Name: Protocolo Permanente de Relatórios e Auditoria (+ auditoria pós-reinício)
+  Status: PASS
+  Scope: Apenas protocolo de entrega/auditoria e verificações de ambiente. Nenhum código de aplicação.
+  Objective: Instituir protocolo obrigatório de relatórios (AGENTS.md + docs + persistência TXT + formato no chat) e auditar o ambiente após o reinício do ZCode.
+  Result: Protocolo ativo e inaugurado por este relatório. Auditoria pós-reinício aprovada em todos os itens observáveis (skills, MCPs, hooks nativos, isolamento, baseline); disparo nativo do hook Stop permanece PENDING REAL VALIDATION por ocorrer somente após a entrega.
+
+IMPLEMENTATION
+  Completed: Seção "PROTOCOLO OBRIGATÓRIO DE ENTREGA E AUDITORIA" adicionada ao AGENTS.md (conteúdo anterior preservado); docs/REPORTING-STANDARD.md criado (regras, formato, preenchimento, apresentação); docs/reports/history/ criado; auditoria pós-reinício executada (seção HOOKS/HARNESS e MCP/SKILLS deste relatório); teste controlado de bloqueio nativo PreToolUse com alvo descartável.
+  Not completed: Observação do disparo nativo do hook Stop desta sessão (só ocorre após a entrega desta resposta; entradas Stop anteriores no log são de teste simulado da sessão passada).
+  Changes: Somente documentação e diretórios de relatório. Nenhum script de hook, skill, MCP ou ferramenta foi alterado nesta tarefa.
+  Architecture impact: Nenhum impacto de runtime. O protocolo passa a valer para TODAS as próximas tarefas do workspace.
+
+FILES
+  Created: docs/REPORTING-STANDARD.md; docs/reports/history/2026-10-17_2105_protocolo-permanente-relatorios.txt; docs/reports/LATEST.txt.
+  Modified: AGENTS.md (apenas nova seção inserida; demais seções intactas).
+  Deleted: .zcode/hooks/audit/rt-target/ (alvo descartável do teste de bloqueio, removido com comando permitido rm -r sem -f).
+  Unexpected changes: NONE — 15 skills intactas (.zcode/skills), .zcode/config.json do projeto inalterado, config USER sem modificações nesta tarefa.
+
+VALIDATION
+  Typecheck: SKIP — nenhum código-fonte alterado nesta tarefa (compilação dos 5 scripts de hook coberta pela baseline).
+  Lint: SKIP — sem lint configurado no projeto (app não implementada).
+  Unit tests: SKIP — sem código de aplicação.
+  Integration tests: SKIP — sem aplicação.
+  Regression tests: PASS — baseline do harness: 4 PASS / 0 FAIL / 2 SKIP (agents_md, mcp_config, skills_frontmatter 15/15, hook_scripts 5/5; app_tests e python_tests SKIP esperado).
+  Visual tests: SKIP — sem interface nesta tarefa.
+  Runtime verification: PASS — eventos nativos reais dos hooks (SessionStart 20:50:00, PreToolUse BLOCK 21:02:51, PostToolUse x2 21:03:23/24) e chamadas MCP reais (figcraft inspect_ui OK; graphify conectada, dado pendente).
+  Total passed: 4 checks de baseline + 4 eventos nativos de hook observados + 1 chamada MCP funcional plena (figcraft inspect_ui).
+  Total failed: 0
+  Total skipped: 2 (baseline) + 5 categorias SKIP acima justificadas.
+
+HOOKS / HARNESS
+  Hooks active: 4 de 4 no escopo USER (hooks.enabled=true confirmado): SessionStart, PreToolUse (^Bash$), PostToolUse (^(Edit|Write|ApplyPatch)$), Stop.
+  PreToolUse: REAL VALIDATION PASS — tentativa real de "rm -rf" sobre alvo descartável foi NEGADA pelo hook nativo (mensagem do guard devolvida ao agente; comando nunca executou; alvo permaneceu intacto). Entrada BLOCK no log às 21:02:51.
+  PostToolUse: REAL VALIDATION PASS — 2 eventos nativos registrados (gravações de REPORTING-STANDARD.md e AGENTS.md, resultado SKIP por extensão .md não validável — comportamento por design).
+  Stop: PENDING REAL VALIDATION — dispara após a entrega desta resposta; a primeira entrada Stop nativa desta sessão deve surgir no log ao final da tarefa.
+  Baseline: PASS — 4 PASS / 0 FAIL / 2 SKIP (executada nesta tarefa via .zcode/hooks/harness/baseline_checks.py).
+  Gate result: O hook Stop NÃO é gate (exit 0 sempre, por design anti-loop). O status PASS desta tarefa deriva das evidências listadas, não do retorno do hook.
+  Evidence: .zcode/hooks/audit/audit-log.jsonl — 4 entradas com session_id real sess_6ade4069-62ca-463c-ad92-55380fa08473 (SessionStart source=resume às 20:50:00; PreToolUse BLOCK às 21:02:51; PostToolUse SKIP .md às 21:03:23 e 21:03:24).
+
+MCP / SKILLS
+  Tools used: MCP figcraft (inspect_ui); MCP graphify (graph_stats); 15 skills do workspace visíveis na sessão; ferramentas nativas Read/Write/Edit/Bash.
+  Connection status: figcraft CONECTADO — ferramentas descobertas e chamada real inspect_ui retornou estado completo do engine headless (documento Untitled, tool=move, zoom 1.0, backend headless, v0.6.0). graphify CONECTADO — ferramentas descobertas e chamada real graph_stats respondeu (erro esperado: graph.json não existe).
+  Failures: Nenhuma falha de conexão. graphify sem dados de grafo (estado esperado; não é falha de requisito desta tarefa).
+  Pending activation: graphify build (quando existir base de código); servidor figcraft-app em modo attached (requer app aberto com "figcraft --control 7979"); confinamento de arquivos do FigCraft (flags não suportadas no binário 0.6.0 instalado).
+  Observação: descoberta + 1 chamada real por servidor NÃO equivale à validação completa das funcionalidades dos MCPs.
+
+GIT
+  Branch: N/A — C:\CutNicePro não é repositório Git; "git init" NÃO executado (exige autorização).
+  HEAD: N/A
+  Working tree: N/A (sem repositório)
+  Commits created: 0
+  Push performed: NO
+  Merge performed: NO
+  Uncommitted changes: N/A (sem repositório)
+
+EVIDENCE
+  Commands executed (principais): leitura/validação do config USER e do audit-log (python/json); criação de alvo descartável; tentativa real "rm -rf" (bloqueada pelo hook nativo); limpeza "rm -r" (permitida); baseline_checks.py; filtragem do log por session_id real; chamadas MCP reais inspect_ui e graph_stats.
+  Relevant logs: .zcode/hooks/audit/audit-log.jsonl (entradas citadas); resposta do inspect_ui (backend headless, status do documento); resposta do graph_stats ("graph.json not found: C:\CutNicePro\graphify-out\graph.json").
+  Screenshots: NONE — sem interface nesta tarefa.
+  Test artifacts: nenhum permanente (rt-target removido após o teste).
+  Reproduction details: Bloqueio: executar qualquer Bash "rm -rf" no workspace. PostToolUse: qualquer Write/Edit. SessionStart: iniciar/retomar sessão. Verificação: ler .zcode/hooks/audit/audit-log.jsonl.
+
+ISSUES
+  Bugs found: Nenhum novo.
+  Unresolved failures: Nenhuma.
+  Regressions: Nenhuma — baseline aprovada; skills/MCPs/hooks sem alterações indevidas.
+  Risks: (1) O caminho de falha do PostToolUse (additionalContext em validação FAIL) não teve evento nativo nesta tarefa para observar — comportamento simulado validado em 2026-10-17, real permanece a confirmar na primeira falha genuína. (2) Limitação conhecida do FigCraft 0.6.0 (sem flags de confinamento) segue de pé.
+  Blockers: Nenhum.
+
+FINAL
+  Delivery status: ENTREGUE — protocolo instituído e inaugurado com este relatório (arquivo + bloco único no chat).
+  Requirements met: Todos os requisitos da tarefa (1 a 9) atendidos; única ressalva é o Stop PENDING REAL VALIDATION, que por definição só é observável após a entrega.
+  Remaining work: Nada desta tarefa. O produto (frontend/backend/IA/motor de vídeo/design) permanece NÃO iniciado.
+  User action required: Nenhuma obrigatória. Opcional: revisar docs/REPORTING-STANDARD.md e o log de auditoria.
+  Restart required: NO — protocolo vive em AGENTS.md/docs (lidos a cada tarefa); hooks, MCPs e skills já carregados nesta sessão.
+  Ready for next task: YES — aguardando autorização do usuário (próximo passo anunciado: Harness de Engenharia).
+
+REPORT
+  Latest file: docs/reports/LATEST.txt
+  Historical file: docs/reports/history/2026-10-17_2105_protocolo-permanente-relatorios.txt
+
+END OF REPORT

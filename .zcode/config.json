@@ -1,0 +1,19 @@
+{
+  "mcp": {
+    "servers": {
+      "figcraft": {
+        "command": "C:\\Program Files\\FigCraft\\figcraft-cli.exe",
+        "args": ["mcp"]
+      },
+      "graphify": {
+        "command": "C:\\CutNicePro\\.tooling\\venvs\\graphify\\Scripts\\python.exe",
+        "args": [
+          "-m",
+          "graphify.serve",
+          "--graph",
+          "C:\\CutNicePro\\graphify-out\\graph.json"
+        ]
+      }
+    }
+  }
+}

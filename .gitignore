@@ -1,0 +1,19 @@
+# Dependências isoladas do projeto (recriáveis; ver docs/TOOLING.md)
+.tooling/venvs/
+.tooling/vendor/
+.tooling/playwright/node_modules/
+.tooling/playwright/package-lock.json
+.tooling/docs-refs/
+
+# Node
+node_modules/
+
+# Arquivos de trabalho das skills
+.taste-skill/
+
+# Log de auditoria dos hooks (runtime, não versionar)
+.zcode/hooks/audit/
+
+# Sistema
+Thumbs.db
+.DS_Store
