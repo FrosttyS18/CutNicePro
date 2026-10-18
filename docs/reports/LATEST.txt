@@ -3,85 +3,89 @@
 ╚════════════════════════════════════════════╝
 
 TASK
-  Name: Protocolo Permanente de Relatórios e Auditoria (+ auditoria pós-reinício)
+  Name: Fase 01 — Product UX + FigCraft Design Exploration
   Status: PASS
-  Scope: Apenas protocolo de entrega/auditoria e verificações de ambiente. Nenhum código de aplicação.
-  Objective: Instituir protocolo obrigatório de relatórios (AGENTS.md + docs + persistência TXT + formato no chat) e auditar o ambiente após o reinício do ZCode.
-  Result: Protocolo ativo e inaugurado por este relatório. Auditoria pós-reinício aprovada em todos os itens observáveis (skills, MCPs, hooks nativos, isolamento, baseline); disparo nativo do hook Stop permanece PENDING REAL VALIDATION por ocorrer somente após a entrega.
+  Scope: Exclusivamente UX, direção visual e exploração de layouts no FigCraft attached. Nenhum frontend/backend/banco/motor implementado; nenhum componente React; nenhuma biblioteca instalada; nenhum commit.
+  Objective: Validar attached na sessão, documentar fundação de UX e criar duas propostas de organização/experiência para a interface principal, com validação visual real e artefatos entregues ao usuário.
+  Result: UX-FOUNDATION.md criado; duas propostas construídas no app real via MCP attached (Creative Studio e AI Clip Workspace), cada uma com ciclo completo inspeção→export→revisão VISION→correção→reexport→confirmação; documento nativo salvo no workspace; 2 PNGs de apresentação 1440x900. Attached confirmado por evidências estruturais (janela real do desktop vs backend headless).
 
 IMPLEMENTATION
-  Completed: Seção "PROTOCOLO OBRIGATÓRIO DE ENTREGA E AUDITORIA" adicionada ao AGENTS.md (conteúdo anterior preservado); docs/REPORTING-STANDARD.md criado (regras, formato, preenchimento, apresentação); docs/reports/history/ criado; auditoria pós-reinício executada (seção HOOKS/HARNESS e MCP/SKILLS deste relatório); teste controlado de bloqueio nativo PreToolUse com alvo descartável.
-  Not completed: Observação do disparo nativo do hook Stop desta sessão (só ocorre após a entrega desta resposta; entradas Stop anteriores no log são de teste simulado da sessão passada).
-  Changes: Somente documentação e diretórios de relatório. Nenhum script de hook, skill, MCP ou ferramenta foi alterado nesta tarefa.
-  Architecture impact: Nenhum impacto de runtime. O protocolo passa a valer para TODAS as próximas tarefas do workspace.
+  Completed: (1) Validação attached: servidor figcraft-app carregado na sessão; primeiro inspect_ui falhou (app fechado); diagnóstico (nenhum processo, porta livre, marker presente, documento do usuário já salvo em Downloads) e lançamento oficial com --control 7979 (porta LISTENING de propriedade do PID 35284 do figcraft.exe); inspect_ui attached retornou janela real ("CutNicePro Fase 01 – FigCraft", focused, main) + homeRecents; contraste explícito: mcp__figcraft__ = backend "headless" SEM windows vs mcp__figcraft-app__ = janela real. (2) Skills consultadas: minimalist-ui (aplicada por princípios de contenção — cor escassa, bordas 1px, raio 6-8, rótulos uppercase com tracking — sobre base escura de domínio de edição, NÃO a paleta clara editorial, com justificativa registrada), frontend-ui-engineering (estados e composição), image-to-code e web-design-guidelines consultadas (aplicação plena fica para a fase de código); referência de domínio runwayml/DESIGN.md estudada (dark cinematográfico, tipografia única, interface invisível); curadoria design-md-shortlist considerada. (3) docs/product/UX-FOUNDATION.md: princípios, arquitetura de navegação (4 áreas), fluxos (importação, geração, revisão/edição, exportação), hierarquia de ferramentas N1-N4, estados por superfície, formatos e mapeamento das duas propostas. (4) Proposta A — Creative Studio (~151 nós): topbar com ações N1, painel esquerdo Mídia/Cortes, preview central 816x459 com controles, timeline (régua, V1 com clipes proporcionais às durações, A1, CC, playhead), inspetor direito (corte selecionado, legendas com estilos/posição/animação, reenquadramento 9:16/1:1/16:9 com mini-prévia vertical, áudio, exportar). (5) Proposta B — AI Clip Workspace (~127 nós): stepper de pipeline (Importar-Gerar-Revisar-Exportar, etapa 3 ativa), coluna de importação com dropzone e fontes, lista dos cortes gerados (miniaturas COM geometria por formato, transcrição, potencial, badges "Revisado", ações por item), faixa de processamento, painel de prévia vertical 9:16 do corte selecionado, ações rápidas, exportação individual/lote, barra de status. (6) Documento salvo em design/cutnicepro-fase01-propostas.figcraft e PNGs exportados pelo app.
+  Not completed: Nada do escopo. Identidade visual definitiva NÃO definida (decisão do usuário entre as propostas, conforme instruído).
+  Changes: Nenhum código de aplicação. Novos: UX-FOUNDATION.md, documento .figcraft, 2 PNGs. Documento pessoal do usuário NÃO tocado (salvo por ele em Downloads; não aberto).
+  Architecture impact: Fundação de UX estabelecida; duas direções de organização candidatas para a interface principal, aguardando avaliação do mantenedor antes do design system e da implementação.
 
 FILES
-  Created: docs/REPORTING-STANDARD.md; docs/reports/history/2026-10-17_2105_protocolo-permanente-relatorios.txt; docs/reports/LATEST.txt.
-  Modified: AGENTS.md (apenas nova seção inserida; demais seções intactas).
-  Deleted: .zcode/hooks/audit/rt-target/ (alvo descartável do teste de bloqueio, removido com comando permitido rm -r sem -f).
-  Unexpected changes: NONE — 15 skills intactas (.zcode/skills), .zcode/config.json do projeto inalterado, config USER sem modificações nesta tarefa.
+  Created: docs/product/UX-FOUNDATION.md; design/cutnicepro-fase01-propostas.figcraft (42.743 bytes, nativo); design/exports/proposta-a-creative-studio.png (156.035 bytes, 1440x900); design/exports/proposta-b-ai-clip-workspace.png (191.896 bytes, 1440x900); docs/reports/history/2026-10-17_2226_fase01-ux-figcraft-design.txt; docs/reports/LATEST.txt (regenerado).
+  Modified: Nenhum arquivo pré-existente alterado nesta tarefa (documento de design é novo; app aberto em aba própria nomeada).
+  Deleted: Nenhum.
+  Unexpected changes: NONE — git status contém apenas itens esperados (design/, docs/product/ novos + pendências não-commitadas das tarefas anteriores já reportadas).
 
 VALIDATION
-  Typecheck: SKIP — nenhum código-fonte alterado nesta tarefa (compilação dos 5 scripts de hook coberta pela baseline).
-  Lint: SKIP — sem lint configurado no projeto (app não implementada).
+  Typecheck: SKIP — nenhum código (apenas documento de design; nenhum script alterado).
+  Lint: SKIP — sem código.
   Unit tests: SKIP — sem código de aplicação.
-  Integration tests: SKIP — sem aplicação.
-  Regression tests: PASS — baseline do harness: 4 PASS / 0 FAIL / 2 SKIP (agents_md, mcp_config, skills_frontmatter 15/15, hook_scripts 5/5; app_tests e python_tests SKIP esperado).
-  Visual tests: SKIP — sem interface nesta tarefa.
-  Runtime verification: PASS — eventos nativos reais dos hooks (SessionStart 20:50:00, PreToolUse BLOCK 21:02:51, PostToolUse x2 21:03:23/24) e chamadas MCP reais (figcraft inspect_ui OK; graphify conectada, dado pendente).
-  Total passed: 4 checks de baseline + 4 eventos nativos de hook observados + 1 chamada MCP funcional plena (figcraft inspect_ui).
+  Integration tests: PASS — ~330 comandos de engine executados via MCP attached (4 batches de construção em A, 3 em B, 7 batches de correção, 2 saves, 7 exports, file.new) com leitura de retorno ok em cada batch (rollback automático não disparou nenhuma vez).
+  Regression tests: PASS — baseline full: 4 PASS / 0 FAIL / 2 SKIP.
+  Visual tests: PASS — 6 rodadas do subagente VISION (2 por proposta + conferências): Proposta A — 1a rodada achou 9 defeitos (seleção contraditória entre painéis, duração divergente, contagem 6x4, chip Auto-reframe transbordando o quadro de vídeo, clipes fora de proporção, títulos com overflow, miniatura órfã, ponto isolado, espaçamentos); correções aplicadas (incluindo diagnóstico de erro de indexação de IDs meu, corrigido e verificado); rodada final 4/4 conformes (única ressalva: reticências intencionais de truncamento + unificação de título aplicada). Proposta B — 1a rodada 3 defeitos (seleção/preview divergentes, semântica do badge, miniaturas ignorando formatos); corrigidos; rodada final confirma seleção coerente com a prévia, badges "Revisado" em 2 cartões coerentes com o cabeçalho, geometrias distintas (retrato/retrato/quadrado/paisagem) com rótulos coerentes; micro-ajustes finais (timecodes ao lado das miniaturas, rótulo 1:1 sobre o quadrado, barras separadas dos timecodes) aplicados e o último export reflete o estado final. PNGs validados tecnicamente (assinatura, 1440x900).
+  Runtime verification: PASS — attached real: janela do desktop presente e focada em cada inspect_ui; exportação dos PNGs feita PELO APP via canal de controle; save_file persistiu o .figcraft no workspace (regravado após os ajustes finais).
+  Total passed: 16 agregados de verificação (4 baseline + 2 PNGs técnicos + 6 rodadas VISION com critérios objetivos + 4 evidências de attached: janela/contraste-headless/porta-PID/estado-do-app).
   Total failed: 0
-  Total skipped: 2 (baseline) + 5 categorias SKIP acima justificadas.
+  Total skipped: 2 (suítes da baseline) + 4 categorias SKIP justificadas.
 
 HOOKS / HARNESS
-  Hooks active: 4 de 4 no escopo USER (hooks.enabled=true confirmado): SessionStart, PreToolUse (^Bash$), PostToolUse (^(Edit|Write|ApplyPatch)$), Stop.
-  PreToolUse: REAL VALIDATION PASS — tentativa real de "rm -rf" sobre alvo descartável foi NEGADA pelo hook nativo (mensagem do guard devolvida ao agente; comando nunca executou; alvo permaneceu intacto). Entrada BLOCK no log às 21:02:51.
-  PostToolUse: REAL VALIDATION PASS — 2 eventos nativos registrados (gravações de REPORTING-STANDARD.md e AGENTS.md, resultado SKIP por extensão .md não validável — comportamento por design).
-  Stop: PENDING REAL VALIDATION — dispara após a entrega desta resposta; a primeira entrada Stop nativa desta sessão deve surgir no log ao final da tarefa.
-  Baseline: PASS — 4 PASS / 0 FAIL / 2 SKIP (executada nesta tarefa via .zcode/hooks/harness/baseline_checks.py).
-  Gate result: O hook Stop NÃO é gate (exit 0 sempre, por design anti-loop). O status PASS desta tarefa deriva das evidências listadas, não do retorno do hook.
-  Evidence: .zcode/hooks/audit/audit-log.jsonl — 4 entradas com session_id real sess_6ade4069-62ca-463c-ad92-55380fa08473 (SessionStart source=resume às 20:50:00; PreToolUse BLOCK às 21:02:51; PostToolUse SKIP .md às 21:03:23 e 21:03:24).
+  Hooks active: 4 de 4 (inalterados).
+  PreToolUse: OPERACIONAL — nenhum bloqueio (nenhum comando destrutivo; mkdir/cp/ls/git apenas).
+  PostToolUse: OPERACIONAL — eventos nativos registrados para UX-FOUNDATION.md e relatórios.
+  Stop: Operacional (fast; disparo desta tarefa ocorre após a entrega, conforme desenho).
+  Baseline: PASS — full 4/0/2 (execução final).
+  Gate result: Stop não é gate; status deriva das evidências.
+  Evidence: .zcode/hooks/audit/audit-log.jsonl (PostToolUse desta tarefa); respostas dos batches MCP (transcript).
 
 MCP / SKILLS
-  Tools used: MCP figcraft (inspect_ui); MCP graphify (graph_stats); 15 skills do workspace visíveis na sessão; ferramentas nativas Read/Write/Edit/Bash.
-  Connection status: figcraft CONECTADO — ferramentas descobertas e chamada real inspect_ui retornou estado completo do engine headless (documento Untitled, tool=move, zoom 1.0, backend headless, v0.6.0). graphify CONECTADO — ferramentas descobertas e chamada real graph_stats respondeu (erro esperado: graph.json não existe).
-  Failures: Nenhuma falha de conexão. graphify sem dados de grafo (estado esperado; não é falha de requisito desta tarefa).
-  Pending activation: graphify build (quando existir base de código); servidor figcraft-app em modo attached (requer app aberto com "figcraft --control 7979"); confinamento de arquivos do FigCraft (flags não suportadas no binário 0.6.0 instalado).
-  Observação: descoberta + 1 chamada real por servidor NÃO equivale à validação completa das funcionalidades dos MCPs.
+  Tools used: mcp__figcraft-app__ (inspect_ui, run_command file.new, create_node, batch x14, set_properties, export x7, save_file x2) — TODAS as operações de design em attached; mcp__figcraft__inspect_ui (contraste headless, 1 chamada); subagente VISION x6 (política VISION FIRST); skills minimalist-ui/frontend-ui-engineering consultadas; graphify não acionado.
+  Connection status: figcraft-app ATTACHED durante toda a construção (janela real presente; fallback headless NUNCA usado como substituto silencioso). figcraft (headless) preservado. graphify inalterado.
+  Failures: Inicial: figcraft-app inspect_ui com app fechado ("request was not sent") — resolvido pelo procedimento sancionado (lançamento com --control 7979; marker presente). Nenhuma falha residual.
+  Pending activation: Nenhuma nova. (Existentes: graphify build quando houver código; confinamento FigCraft 0.6.0.)
 
 GIT
-  Branch: N/A — C:\CutNicePro não é repositório Git; "git init" NÃO executado (exige autorização).
-  HEAD: N/A
-  Working tree: N/A (sem repositório)
+  Branch: main
+  HEAD: fc1e295 (inalterado — nenhum commit, conforme instrução)
+  Working tree: além dos itens pendentes das tarefas anteriores (já reportados: config.json, HOOKS.md, TOOLING.md, .zcode/figcraft/, docs/FIGCRAFT-ATTACHED.md, relatórios, evidence/), NOVOS nesta tarefa: design/ (documento nativo, marker, exports) e docs/product/UX-FOUNDATION.md + TXTs deste relatório.
   Commits created: 0
   Push performed: NO
   Merge performed: NO
-  Uncommitted changes: N/A (sem repositório)
+  Uncommitted changes: apenas os listados; NENHUMA alteração inesperada.
 
 EVIDENCE
-  Commands executed (principais): leitura/validação do config USER e do audit-log (python/json); criação de alvo descartável; tentativa real "rm -rf" (bloqueada pelo hook nativo); limpeza "rm -r" (permitida); baseline_checks.py; filtragem do log por session_id real; chamadas MCP reais inspect_ui e graph_stats.
-  Relevant logs: .zcode/hooks/audit/audit-log.jsonl (entradas citadas); resposta do inspect_ui (backend headless, status do documento); resposta do graph_stats ("graph.json not found: C:\CutNicePro\graphify-out\graph.json").
-  Screenshots: NONE — sem interface nesta tarefa.
-  Test artifacts: nenhum permanente (rt-target removido após o teste).
-  Reproduction details: Bloqueio: executar qualquer Bash "rm -rf" no workspace. PostToolUse: qualquer Write/Edit. SessionStart: iniciar/retomar sessão. Verificação: ler .zcode/hooks/audit/audit-log.jsonl.
+  Commands executed (principais): tasklist/netstat (diagnóstico anexado + PID dono da porta); PowerShell Start-Process figcraft --control 7979; 14 batches MCP (~330 comandos node.create/node.set); exports e saves via MCP; verificação técnica dos PNGs (Python); baseline full; git status.
+  Relevant logs: inspect_ui attached com windows [{title "…– FigCraft", focused true}] e homeRecents mostrando o arquivo do usuário (não aberto); mcp__figcraft__inspect_ui {"backend":"headless"} sem windows (contraste); sequência de correções A e B com leitura de retorno ok:true/id por comando.
+  Screenshots: design/exports/proposta-a-creative-studio.png e design/exports/proposta-b-ai-clip-workspace.png (exports reais do app, revisados pelo VISION).
+  Test artifacts: nenhum descartável remanescente (todo o conteúdo construído faz parte das propostas).
+  Reproduction details: abrir design/cutnicepro-fase01-propostas.figcraft no FigCraft (2 frames 1440x900); PNGs para avaliação; fluxos e hierarquia em docs/product/UX-FOUNDATION.md.
+
+DIFERENÇAS DE UX (resumo objetivo)
+  A — Creative Studio: editor-first. Preview central grande + timeline estruturada + inspetor denso; para edição fina corte a corte; alta densidade funcional com hierarquia tipográfica; operações frequentes (trim, legendas, formato) a um clique do contexto.
+  B — AI Clip Workspace: resultado-first. Pipeline explícito (stepper), lista de cortes com prévia/meta/potencial por item, painel de prévia vertical 9:16 do corte selecionado e ações de lote; para revisar volume e exportar em massa; menor densidade visual nas operações frequentes.
+  Mesmo pipeline e escopo; diferença = superfície prioritária e ritmo de trabalho (controle fino x velocidade de revisão).
 
 ISSUES
-  Bugs found: Nenhum novo.
+  Bugs found: Nenhum no ambiente. Erros meus de construção encontrados e corrigidos pelas rodadas VISION (indexação errada de IDs em correções da Proposta A; inconsistências de conteúdo estado/dados em A e B; geometria das miniaturas em B) — todos verificados após correção.
   Unresolved failures: Nenhuma.
-  Regressions: Nenhuma — baseline aprovada; skills/MCPs/hooks sem alterações indevidas.
-  Risks: (1) O caminho de falha do PostToolUse (additionalContext em validação FAIL) não teve evento nativo nesta tarefa para observar — comportamento simulado validado em 2026-10-17, real permanece a confirmar na primeira falha genuína. (2) Limitação conhecida do FigCraft 0.6.0 (sem flags de confinamento) segue de pé.
+  Regressions: Nenhuma (baseline PASS; hooks/headless/config inalterados).
+  Risks: (1) Identidade visual definitiva pendente de decisão do usuário — as propostas usam tokens provisórios coerentes; (2) leituras de texto pequeno pelo VISION tiveram 2 misreads pontuais (timecodes) sem impacto estrutural; (3) mockups estáticos não representam estados interativos (hover/scroll) — previsto para a fase de implementação com web-design-guidelines.
   Blockers: Nenhum.
 
 FINAL
-  Delivery status: ENTREGUE — protocolo instituído e inaugurado com este relatório (arquivo + bloco único no chat).
-  Requirements met: Todos os requisitos da tarefa (1 a 9) atendidos; única ressalva é o Stop PENDING REAL VALIDATION, que por definição só é observável após a entrega.
-  Remaining work: Nada desta tarefa. O produto (frontend/backend/IA/motor de vídeo/design) permanece NÃO iniciado.
-  User action required: Nenhuma obrigatória. Opcional: revisar docs/REPORTING-STANDARD.md e o log de auditoria.
-  Restart required: NO — protocolo vive em AGENTS.md/docs (lidos a cada tarefa); hooks, MCPs e skills já carregados nesta sessão.
-  Ready for next task: YES — aguardando autorização do usuário (próximo passo anunciado: Harness de Engenharia).
+  Delivery status: ENTREGUE — Fase 01 concluída dentro do escopo (UX + duas propostas em FigCraft attached, sem código de aplicação).
+  Requirements met: Todos os itens da tarefa (validação attached, UX antes do layout, 2 propostas estruturalmente distintas, qualidade visual com ciclo de correção, artefatos nativos + PNGs, evidências, baseline, git auditado, relatório integral).
+  Remaining work: Decisão do usuário entre as propostas (ou direção híbrida) → só então design system e implementação.
+  User action required: Avaliar os PNGs (e o .figcraft) das Propostas A e B e autorizar a próxima fase.
+  Restart required: NO
+  Ready for next task: YES — aguardando avaliação e autorização.
 
 REPORT
   Latest file: docs/reports/LATEST.txt
-  Historical file: docs/reports/history/2026-10-17_2105_protocolo-permanente-relatorios.txt
+  Historical file: docs/reports/history/2026-10-17_2226_fase01-ux-figcraft-design.txt
 
 END OF REPORT
