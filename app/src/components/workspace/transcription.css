@@ -1,0 +1,38 @@
+.transcription-controls { padding-block: 10px; min-width: 0; }
+.transcription-controls__actions { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; }
+.transcription-controls__actions > span { font-size: 11px; overflow-wrap: anywhere; }
+.transcription-controls p { margin: 6px 0 0; }
+.transcription-progress { min-width: 0; padding: 36px 12px 20px; text-align: center; }
+.transcription-progress__number { display: block; font-size: clamp(32px, 5vw, 44px); font-weight: 600; font-variant-numeric: tabular-nums; line-height: 1.2; }
+.transcription-progress > p { margin: 16px 0 0; font-size: 14px; }
+.transcription-progress > .flow-muted { margin-top: 8px; font-size: 12px; }
+.transcription-progress > progress { display: block; margin-top: 28px; width: 100%; height: 6px; appearance: none; border: none; border-radius: 4px; overflow: hidden; background: var(--sh-surface); }
+.transcription-progress > progress::-webkit-progress-bar { background: var(--sh-surface); }
+.transcription-progress > progress::-webkit-progress-value { background: #f5f5f5; border-radius: 4px; }
+.transcription-progress > progress::-moz-progress-bar { background: #f5f5f5; border-radius: 4px; }
+.transcription-dialog .tool-dialog__header h2 { animation: transcription-breathe 3s ease-in-out infinite; }
+.transcription-progress { position: relative; isolation: isolate; overflow: hidden; border-radius: 12px; }
+.transcription-progress > :not(.thinking-orb) { position: relative; z-index: 1; }
+.thinking-orb { position: absolute; inset: -30px 0 0; margin: auto; width: 250px; height: 250px; pointer-events: none; opacity: .45; }
+.thinking-orb i { position: absolute; inset: 0; border-radius: 50%; background: radial-gradient(circle, #38b8ad 1px, transparent 1.6px) center / 10px 10px; mask-image: radial-gradient(ellipse, #000 15%, transparent 69%); animation: thinking-orbit 18s linear infinite; transform: rotateX(35deg); }
+.thinking-orb i:nth-child(2) { inset: 16px; opacity: .6; background-size: 12px 12px; animation-direction: reverse; animation-duration: 25s; }
+.thinking-orb i:nth-child(3) { inset: 36px; opacity: .5; background-size: 8px 8px; animation-duration: 31s; }
+.transcription-dialog.animation-paused :is(.thinking-orb i,.tool-dialog__header h2) { animation-play-state: paused; }
+.transcription-progress > .thinking-motion-toggle { position: absolute; right: 4px; top: 4px; width: 28px; height: 28px; display: grid; place-items: center; border: 0; border-radius: 5px; background: transparent; color: var(--sh-dim); cursor: pointer; }
+.thinking-motion-toggle:hover { background: var(--sh-surface); color: var(--ink); }
+.flow-dialog { overscroll-behavior: contain; }
+.transcription-confirm { padding: 20px 0 4px; font-size: 13px; line-height: 1.7; }
+.transcription-confirm__actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 24px; }
+.project-actions .transcription-controls { padding: 0; }
+.transcription-controls__actions > button { display: inline-flex; gap: 8px; align-items: center; }
+.project-actions .transcription-controls__actions > button, .editor-inspector .transcription-controls__actions > button { width: 100%; }
+@keyframes thinking-orbit { to { transform: rotateX(35deg) rotate(360deg); } }
+@keyframes transcription-breathe { 50% { opacity: .65; } }
+@media (prefers-reduced-motion: reduce) { .thinking-orb i, .transcription-dialog .tool-dialog__header h2 { animation: none; } }
+
+.tool-dialog.transcription-setup { width: min(360px,calc(100vw - 32px)); padding: 20px; }
+.transcription-setup__label { display: grid; gap: 9px; font-size: 12px; }
+.transcription-setup > .flow-muted { font-size: 11px; margin: 8px 0 0; line-height: 1.6; }
+.transcription-setup__options { margin: 18px 0; font-size: 12px; }
+.transcription-setup__options summary { cursor: pointer; color: var(--sh-dim); padding-block: 4px; }
+.transcription-setup__options .editor-checkbox { margin-top: 12px; }

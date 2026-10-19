@@ -1,0 +1,7 @@
+.floating-panel { position: fixed; inset: auto; margin: 0; z-index: 90; width: min(480px, calc(100vw - 16px)); max-height: calc(100dvh - 16px); box-shadow: 0 16px 64px #000a; user-select: none; }
+.floating-panel:not([open]) { display: none; }
+.floating-panel input:not([type=range]):not([type=color]), .floating-panel textarea { user-select: text; }
+.floating-panel__handle { cursor: grab; touch-action: none; }
+.floating-panel__handle:active { cursor: grabbing; }
+.floating-panel__handle:focus-visible { outline: 2px solid var(--sh-accent); outline-offset: 4px; border-radius: 4px; }
+.floating-panel__handle button { cursor: pointer; }

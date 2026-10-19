@@ -1,0 +1,28 @@
+CUTNICEPRO — editor e cortes: evidências de código, 2026-10-19
+
+Frontend inicial: vitest run, 124 testes; 123 PASS, 1 FAIL.
+Falha: fixture assumia captionModel=0; default real é 1. Fixture corrigida para
+testar explicitamente ausência de legenda e preservação da preferência atual.
+Repetição focada: editor-autocut.test.tsx, 7 PASS.
+Novas verificações independentes: cancel-flow.test.ts 2 PASS;
+workspace-clip.test.ts 1 PASS. Total frontend único aprovado: 127.
+
+Rust inicial: cargo test, 71 testes; 70 PASS, 1 FAIL.
+Falha de integração: FFmpeg de sistema não encontrado nesta sessão.
+Correção: cópia portátil de desenvolvimento, detecção sem usuário hardcoded,
+sem mudar PATH nem instalar no sistema. Teste não foi ignorado ou afrouxado.
+Repetição pertinente: cargo test --lib -- render:: media_tools:: media_analyze::
+9 PASS, incluindo MP4 real, cenas e fonte com libass.
+Teste real gera vídeo preto com áudio sintético, exporta intervalo 1–2s,
+confere 1920x1080, presença de áudio, duração dentro de 120ms e mais de 1.000
+pixels claros da legenda gravada no quadro. Fixture e temporários limpos.
+Teste de mídia de projeto real/Tauri/dialog nativo NÃO executado.
+
+TypeScript e Vite build PASS. Warning de bundle acima de 500kB permanece.
+Nenhuma validação estética, navegador, captura ou transcrição do usuário.
+Declarações de integrações IPC em React são contratos; não são Tauri real.
+Revisão adicional da persistência: cargo test --lib -- clips::store:: media_tools::
+3 PASS (inclui teste novo de rejeição de path traversal e teste que grava/reabre
+aprovação não vazia). Total Rust único aprovado: 73; total conjunto: 200.
+Build final TypeScript/Vite PASS, 650 módulos; warning de chunk acima de 500kB.
+Verificação de whitespace git diff --check: PASS após correção de espaços finais.

@@ -1,0 +1,22 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["title", "summary", "criteria"],
+  "properties": {
+    "title": { "type": "string" },
+    "summary": { "type": "string" },
+    "criteria": {
+      "type": "array", "minItems": 3, "maxItems": 3,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["label", "score", "explanation", "evidence"],
+        "properties": {
+          "label": { "enum": ["Gancho", "Desenvolvimento", "Fechamento"] },
+          "score": { "type": "integer", "minimum": 0, "maximum": 100 },
+          "explanation": { "type": "string" },
+          "evidence": { "type": "string" }
+        }
+      }
+    }
+  }
+}

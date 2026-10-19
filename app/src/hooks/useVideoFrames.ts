@@ -11,6 +11,7 @@ export function useVideoFrames(url: string | null, duration: number | null) {
     let cancelled = false;
     const frames: string[] = [];
     video.muted = true;
+    video.crossOrigin = "anonymous";
     video.preload = "auto";
     const stop = () => {
       video.onloadedmetadata = null; video.onseeked = null; video.onerror = null;

@@ -1,0 +1,150 @@
+CUTNICEPRO — ZCODE REPORT — M2A: FATIAS 0+1 DO MOTOR (IMPORTAÇÃO PERSISTENTE + ANÁLISE)
+==============================================================================
+Tarefa:     Fatia 0 (inventário técnico) + Fatia 1 (M2a: importação
+            persistente por cópia + análise ffprobe + scheme local + dialog
+            nativo + drop real), conforme plano aprovado com emenda dos 5
+            cuidados do mantenedor.
+Data:       2026-10-19 (conclusão 02h32)
+Status:     FUNCTIONAL: PASS (16/16 Tauri real; 30/30 cargo; 69/69 vitest;
+            baseline 5 PASS/1 SKIP). Regression: PASS (escopo testado).
+            Visual: PENDING HUMAN APPROVAL (nenhuma tela mudou — apenas
+            conexões reais). ZERO COMMITS.
+
+FATIA 0 — INVENTÁRIO (concluída)
+------------------------------------------------------------------------------
+- FFmpeg AUSENTE no PATH inicial (os e2e anteriores usavam o cache do
+  Playwright — fato registrado). Instalação AUTORIZADA pelo mantenedor via
+  `winget install --id Gyan.FFmpeg`: **FFmpeg/FFprobe 9.0.2-full_build
+  (gyan.dev)**, caminho e configuração de build documentados POR INTEIRO em
+  docs/engineering/ENGINE-DECISIONS.md §1 (fatos do binário: --enable-gpl
+  --enable-static, libx264/x265/libass/mediafoundation/whisper etc.; SEM
+  conclusão jurídica — apenas o banner do próprio binário).
+- Hardware registrado (Ryzen 7 5700X 8C/16T, 31,9 GB RAM) para a Fatia 2.
+- DEC-012/013 atualizadas com os fatos; SPEC da fatia em
+  docs/engineering/M2A-IMPORT-SPEC.md com os cuidados convertidos em
+  critérios de aceite AC-R1..AC-R5.
+
+FATIA 1 — O QUE FOI IMPLEMENTADO
+------------------------------------------------------------------------------
+RUST (novo; comandos finos delegando a módulos, conforme AGENTS.md):
+- media_store.rs — índice media/index.json (única fonte da verdade),
+  escrita tmp→swap + Mutex de processo em TODA mutação (publish/link/
+  analysis/remove). Referências EXPLÍCITAS project_ids (sem contador);
+  exclusão remove o id e apaga o arquivo só quando a lista esvazia.
+  Reconcile de inicialização (AC-R1): .part de job morto removido; arquivo
+  FINAL sem entrada é ADOTADO (entrada recriada, nunca apagado); entrada
+  sem arquivo físico → marcada unavailable (preservada); índice corrompido
+  → limpeza SUSPENSA com causa (app continua utilizável).
+- media_import.rs — cópia em stream (chunks 4 MB) com integridade em duas
+  dimensões (AC-R3): SHA-256 computado DOS BYTES ESCRITOS + bytes == stat
+  inicial + RE-STAT da origem (size+mtime) — origem modificada durante a
+  importação aborta com causa específica. Espaço livre checado antes e
+  durante (fs2); cancelamento por flag atômica; causes distintos
+  (Cancelled/SourceChanged/DiskFull/Io). allowed_ext valida formatos.
+- media_analyze.rs — ffprobe EXPLÍCITO (-v quiet -print_format json
+  -show_format -show_streams); parsing tipado (duração ms, WxH, codecs,
+  has_audio, fps); detecção PATH → WinGet Links → app-data/bin (com
+  diagnóstico no stderr quando ausente). Análise best-effort na importação:
+  sem FFmpeg o import CONCLUI e a ausência vem registrada com causa.
+- local_media_scheme.rs — scheme cnplocal (AC-R5): whitelist por sha256 do
+  índice, Range/206/Content-Range, ACAO:* (canvas do filmstrip não-taint —
+  comprovado no runtime), Content-Type por extensão.
+- lib.rs — 7 comandos novos (import_media/cancel_import/link_media/
+  get_media/analyze_media/remove_project_media/media_reconcile) + reconcile
+  no setup + plugin dialog registrado + scheme cnplocal. Cargo.toml: sha2,
+  fs2, tauri-plugin-dialog.
+
+FRONTEND (conectar sem redesenhar):
+- SourceForm: botão Enviar abre o DIALOG NATIVO (plugin-dialog, path REAL);
+  drag-and-drop REAL (AC-R4): dragDropEnabled reativado + eventos
+  tauri://drag-drop/over/leave com paths, highlight visual próprio,
+  listener com cleanup simétrico. O drop HTML5 antigo (File de sessão) foi
+  removido — não há fingimento de suporte.
+- App.handleImportFromPath: transacional (create_project → import_media →
+  workspace v2 com mediaId → navegação); em falha o projeto PERMANECE e a
+  causa/ação sobe (retry na própria tela). Progresso real (bytes) passado
+  ao PreparationDialog (progress determinado + botão Cancelar).
+- workspace v1→v2: mediaId opcional; readWorkspace migra v1 preservando
+  títulos/configurações (teste); attachPersistedMedia para URL cnplocal.
+- useWorkspaceData: reconexão AUTOMÁTICA ao reabrir projeto com mediaId
+  (getMedia → cnplocal → player), com causa/ação se a mídia sumir.
+- Player do overview com crossOrigin=anonymous (AC-R5).
+
+TESTES EXECUTADOS (todos os resultados são de execução real)
+------------------------------------------------------------------------------
+- cargo test: 30/30 (15 pré-existentes + 15 novos: publish/dedup/link/
+  remove-explicit/reconcile-adota/reconcile-unavailable/reconcile-suspende/
+  hash/cancel/mutação-da-origem/disk-full/ext/parse-ffprobe/no-video/
+  detecção).
+- vitest: 69/69 (65 pré + 4 novos: migração v1→v2; dado inválido → vazio;
+  mediaId opcional; mediaUrl cnplocal).
+- TAURI REAL (exe release + CDP; rotulado ≠ IPC simulado; mídia real de
+  1,3 MB gerada com o FFmpeg instalado): **16/16** —
+  [TAURI REAL] import por caminho real com análise PRESENTE
+  (h264/aac/640x360/6s/24fps has_audio), vínculo explícito no índice,
+  arquivo físico consistente, cnplocal 200+video/mp4, Range→206+100 bytes,
+  ACAO eficaz (vídeo crossOrigin + canvas getImageData sem taint),
+  projeto reaberto SEM reenviar com player em cnplocal (readyState 4),
+  reinício do app → mídia persistida + reconcile ok (adota 0/remove 0),
+  reconcile real: .part morto removido / final órfão ADOTADO com entrada
+  sem vínculos, índice corrompido → limpeza SUSPENSA (.part preservado) e
+  app utilizável. Evidência: docs/reports/evidence/m2a/results-runtime.json.
+- baseline full: 5 PASS / 1 SKIP. typecheck 0 erros; vite+tauri build OK.
+- Falhas/repetições (orçamento): 3 re-execuções do script runtime — TODAS
+  por defeito do PRÓPRIO TESTE, causa documentada: (1) evaluate não
+  resolve módulos bundlados → window.__TAURI_INTERNALS__.invoke; (2) ACAO/
+  Content-Range não são legíveis via fetch JS (headers CORS não-safelisted)
+  → prova prática via canvas + bytes/206; (3) waitFor strict-mode em
+  múltiplos cards + card errado por nome duplicado → .first() + title
+  exato. Nenhuma correção de PRODUTO foi necessária nelas. Correções de
+  PRODUTO durante a validação (1 ciclo): payload do import devolvia a
+  entrada ANTES da análise (agora re-lida a entrada pós-store_analysis) e
+  exe com dist antigo (rebuild completo).
+- Testes ignorados e por quê: gravação webm do EXE (limitação CDP
+  conhecida); VISION/screenshots estéticos (política permanente);
+  cancelamento VIA UI do dialog (o cancel_import está coberto em cargo e o
+  evento de progresso comprovado — automação do clique no dialog nativo
+  não é confiável no WebView2).
+
+LIMPEZA: os 11 projetos de teste criados pela validação (Fixture M2A*,
+Diag FF*) foram removidos do projects.json e a pasta media/ de teste
+apagada. Projetos reais do usuário preservados (Podcast Cortes — Ep. 12,
+16-9_05, 16-9_06). Chaves localStorage cnp.workspace.v1.<id-teste> órfãs
+permanecem (inofensivas; limpeza seria mexer no storage do WebView).
+
+LIMITAÇÕES E PENDÊNCIAS (honestas)
+------------------------------------------------------------------------------
+- Cancelamento pela UI e drop real com mouse físico não automatizáveis no
+  CDP (eventos nativos do SO); cobertos por: cancel_import testado, paths
+  de drop chegando ao SourceForm (mesma rota do dialog), listener com
+  cleanup. Validação interativa cabe ao mantenedor ao abrir o app.
+- remove_project_media pronto e testado, SEM gatilho de UI ainda (não há
+  exclusão de projeto na interface — pendência registrada).
+- Revalidação por hash na reabertura (mídia movida/alterada no disco)
+  fica para a próxima fatia (AC-008 parcial hoje: unavailable com causa).
+- O build gpl do FFmpeg está documentado por fatos; bundling/redistribuição
+  NÃO avaliados (fora do escopo; sem conclusão jurídica).
+- Espaço checado com fs2::available_space (sem reserva atômica de disco —
+  entre a checagem e a escrita há janela teórica; DiskFull no meio é
+  tratado e o .part limpo).
+
+ARQUIVOS
+------------------------------------------------------------------------------
+NOVOS: app/src-tauri/src/{media_store,media_import,media_analyze,
+local_media_scheme}.rs · app/src/test/m2a-media.test.ts ·
+tools/e2e/m2a-runtime-tauri.mjs · docs/engineering/{ENGINE-DECISIONS,
+M2A-IMPORT-SPEC}.md · tools/port/patch-lib-m2a.py (auxiliar) ·
+evidence/m2a/.
+ALTERADOS: app/src-tauri/src/lib.rs · Cargo.toml · tauri.conf.json
+(dragDropEnabled true) · capabilities/default.json (dialog) ·
+app/src/lib/ipc.ts · workspace-types.ts · services/workspace-store.ts ·
+lib/workspace.ts (v2 default) · hooks/useWorkspaceData.ts ·
+components/upload/{SourceForm,PreparationDialog}.tsx ·
+screens/UploadScreen.tsx · components/workspace/VideoPreview.tsx ·
+App.tsx · screens/upload.css · docs/product/{DECISIONS,PRODUCT-BRAIN,
+TRACEABILITY}.md.
+
+FINAL: FUNCTIONAL PASS · REGRESSION PASS (escopo) · VISUAL PENDING HUMAN
+APPROVAL · Commit: NO · Push: NO.
+PARADA PARA ACEITE DO MANTENEDOR antes da Fatia 2 (transcrição local).
+==============================================================================

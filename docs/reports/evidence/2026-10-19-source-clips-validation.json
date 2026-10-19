@@ -1,0 +1,166 @@
+{
+  "date": "2026-10-19",
+  "functionalStatus": "PARTIAL",
+  "regressionStatus": "PASS in tested scope",
+  "visualStatus": "PENDING HUMAN APPROVAL",
+  "codeTests": {
+    "finalFailed": 0,
+    "rustExplicitAsrResults": 1,
+    "rustGeneral": 82,
+    "frontend": 145,
+    "rustExplicitSemantic": 1,
+    "uniquePassed": 229,
+    "oldBenchmarkNotRepeated": 1
+  },
+  "build": {
+    "vite": "PASS",
+    "warning": "Existing bundle exceeds 500 kB",
+    "lint": "SKIP - no configured script",
+    "rust": "PASS",
+    "typescript": "PASS"
+  },
+  "baseline": {
+    "mode": "fast",
+    "skipped": 2,
+    "passed": 4,
+    "failed": 0
+  },
+  "asr": {
+    "results": [
+      {
+        "model": "turbo",
+        "variant": "baseline",
+        "wall_seconds": 32.58,
+        "edit_distance": 65,
+        "reference_prefix_words": 308,
+        "hypothesis_words": 306,
+        "noisy_reference_wer": 0.21103896103896103,
+        "confirmed_anchors": {
+          "opening_exact": false,
+          "ea_fc": true,
+          "desgraca": false
+        }
+      },
+      {
+        "model": "turbo",
+        "variant": "context",
+        "wall_seconds": 25.758,
+        "edit_distance": 53,
+        "reference_prefix_words": 308,
+        "hypothesis_words": 319,
+        "noisy_reference_wer": 0.17207792207792208,
+        "confirmed_anchors": {
+          "opening_exact": false,
+          "ea_fc": false,
+          "desgraca": false
+        }
+      },
+      {
+        "model": "turbo",
+        "variant": "vocabulary",
+        "wall_seconds": 10.253,
+        "edit_distance": 61,
+        "reference_prefix_words": 308,
+        "hypothesis_words": 318,
+        "noisy_reference_wer": 0.19805194805194806,
+        "confirmed_anchors": {
+          "opening_exact": false,
+          "ea_fc": true,
+          "desgraca": false
+        }
+      },
+      {
+        "model": "large",
+        "variant": "baseline",
+        "wall_seconds": 14.858,
+        "edit_distance": 70,
+        "reference_prefix_words": 308,
+        "hypothesis_words": 289,
+        "noisy_reference_wer": 0.22727272727272727,
+        "confirmed_anchors": {
+          "opening_exact": false,
+          "ea_fc": true,
+          "desgraca": false
+        }
+      },
+      {
+        "model": "large",
+        "variant": "context",
+        "wall_seconds": 15.648,
+        "edit_distance": 68,
+        "reference_prefix_words": 308,
+        "hypothesis_words": 326,
+        "noisy_reference_wer": 0.22077922077922077,
+        "confirmed_anchors": {
+          "opening_exact": false,
+          "ea_fc": true,
+          "desgraca": false
+        }
+      },
+      {
+        "model": "large",
+        "variant": "vocabulary",
+        "wall_seconds": 12.301,
+        "edit_distance": 73,
+        "reference_prefix_words": 308,
+        "hypothesis_words": 288,
+        "noisy_reference_wer": 0.237012987012987,
+        "confirmed_anchors": {
+          "opening_exact": false,
+          "ea_fc": true,
+          "desgraca": false
+        }
+      }
+    ],
+    "originalUnicodePrompt": "FAIL - preserved",
+    "referenceType": "Noisy automatic Opus transcript, not human gold",
+    "failedCaseRepeat": "PASS - ASCII vocabulary",
+    "adoptedExperimentalSettings": false,
+    "nativeInvocations": 7,
+    "sampleSeconds": 86,
+    "validConfigurations": 6,
+    "timingLimitation": "Initial cases overlapped CPU analysis; uncontrolled cache and warmup"
+  },
+  "semantic": {
+    "modelBytes": 2497280256,
+    "modelSha256": "7485fe6f11af29433bc51cab58009521f205840f5b4ae3a32fa7f92e8534fdf5",
+    "criteria": [
+      {
+        "label": "Gancho",
+        "score": 60,
+        "explanation": "A fala inicia com uma pergunta sobre o valor de algo, o que chama a atenção e estabelece o tema central do trecho.",
+        "evidence": "Pelo erro? É, então, é que nem o... Até hoje... É do PUBG."
+      },
+      {
+        "label": "Desenvolvimento",
+        "score": 70,
+        "explanation": "O tema se desenvolve com a discussão sobre o valor de itens do jogo e a apresentação de problemas técnicos com o PC durante a transmissão em live.",
+        "evidence": "O capão. O qual é? O sobretudo. Mas vocês têm que vender de vender isso... Hoje eu já não sei."
+      },
+      {
+        "label": "Fechamento",
+        "score": 50,
+        "explanation": "O trecho termina com uma advertência sobre a necessidade de proteção para o PC, mas não se conclui com uma solução definitiva.",
+        "evidence": "Tem que botar uma proteção aí, cara."
+      }
+    ],
+    "clipEnd": 515.0,
+    "device": "CPU",
+    "maxOutputTokens": 1100,
+    "title": "Valorização e problemas com o PC em live",
+    "threads": 8,
+    "model": "Qwen3-4B-Q4_K_M.gguf",
+    "qualityRefinement": "Instruction separates topic changes; final source evidence validation passed",
+    "clipStart": 461.4,
+    "peakMemory": "NOT MEASURED",
+    "testWallSeconds": 49.13,
+    "maxContext": 8192,
+    "firstFailure": "--log-disable suppressed generated stdout; removed",
+    "engine": "llama.cpp b11729",
+    "score": 60
+  },
+  "uiRuntime": "NOT TESTED - no app/browser automation",
+  "userProjectWrites": "NONE by task tools",
+  "commits": 0,
+  "push": "NOT EXECUTED"
+}

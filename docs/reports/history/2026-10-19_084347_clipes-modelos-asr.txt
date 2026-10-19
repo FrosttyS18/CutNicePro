@@ -1,0 +1,115 @@
+╔════════════════════════════════════════════╗
+║       CUTNICEPRO — ZCODE REPORT            ║
+╚════════════════════════════════════════════╝
+
+TASK
+  Name: 03K — biblioteca de clipes e comparação ASR.
+  Status: PARTIAL — código validado; uso da interface real pendente.
+  Scope: Fluxo global/individual, inspeção, controles e quatro modelos.
+  Objective: Organizar os cortes e avaliar CPU/GPU com dados reais.
+  Result: 215 testes de código PASS e dez execuções ASR concluídas.
+
+IMPLEMENTATION
+  Completed: Clipes reúne todos os projetos; Cortes abre somente o projeto
+    atual. Inspeção com vídeo, legendas, transcrição, critérios e ações.
+    Títulos consideram o trecho inteiro, sem nota fictícia de tendência.
+    Cancelar branco/centralizado, X alinhado, foco só por teclado e
+    seletores personalizados. Dois Whisper selecionáveis, CUDA automático
+    quando compatível e alternativa de usar somente o processador.
+  Not completed: Conferência Tauri real e precisão com referência humana.
+    Qwen/Parakeet foram testados, mas não integrados à seleção do app.
+  Changes: Consulta persistente por projeto; recuperação da fonte ao editar;
+    carregamento de apenas um modelo por execução, com alinhamento próprio.
+  Architecture impact: Componentes/hooks/services separados; nenhuma
+    dependência adicionada ao app. Ambiente ASR isolado para avaliação.
+
+FILES
+  Created: 28; relação completa no manifesto abaixo.
+  Modified: 45; relação completa no manifesto abaixo.
+  Deleted: 0.
+  Unexpected changes: Árvore anterior já continha muitas alterações;
+    preservadas. Inventário desta tarefa separado do estado total.
+  Manifest: docs/reports/evidence/2026-10-19-clipes-asr-files.txt
+
+VALIDATION
+  FUNCTIONAL STATUS: PARTIAL — CLI ASR/FFmpeg PASS; UI real não exercitada.
+  REGRESSION STATUS: PASS no escopo dos testes de código executados.
+  VISUAL STATUS: PENDING HUMAN APPROVAL.
+  Typecheck: PASS; build TypeScript/Vite PASS.
+  Lint: SKIP — não há script configurado.
+  Unit tests: PASS — 213 casos únicos.
+  Integration tests: PASS — dois casos reais: FFmpeg e contrato ASR/CUDA.
+  Regression tests: PASS — total consolidado de 136 frontend e 79 Rust.
+  Visual tests: SKIP — nenhuma aprovação estética presumida.
+  Runtime verification: PASS nos motores; quatro modelos, dez casos reais.
+  Total passed: 215 testes únicos; dez execuções ASR; quatro checks estruturais.
+  Total failed: 0 pendentes; falhas iniciais corrigidas e registradas na revisão.
+  Total skipped: 0 casos de código; dois checks da baseline fast.
+
+HOOKS / HARNESS
+  Hooks active: Configuração existente; execução automática não confirmada.
+  PreToolUse: Não presumido nesta sessão.
+  PostToolUse: Não presumido nesta sessão.
+  Stop: Ainda não observado nesta entrega.
+  Baseline: Fast manual — quatro PASS, zero FAIL, dois SKIP.
+  Gate result: Compilação/testes PASS; aceite funcional da UI pendente.
+  Evidence: docs/engineering/CLIP-LIBRARY-ASR-REVIEW.md
+
+MCP / SKILLS
+  Tools used: Terminal, arquivos, pesquisa oficial e recursos locais.
+    Skills: frontend-ui-engineering, cutnicepro-ux-writing,
+    incremental-implementation e web-design-guidelines.
+  Connection status: Ferramentas disponíveis; comparativo enviado ao painel.
+  Failures: Graphify/FigCraft não expostos; análise direta do código.
+  Pending activation: Nenhuma ativação efetuada.
+
+GIT
+  Branch: main.
+  HEAD: 1a15e2ea7a76b45667f786871b7c97f2837891c4
+  Latest commit: feat(workspace): add project rename, upload flow, and editor scaffolding
+  Commits created: 0.
+  Push: NOT EXECUTED.
+  Remote: origin → https://github.com/FrosttyS18/CutNicePro.git; origin/main.
+  Working tree: MODIFIED / UNTRACKED.
+  Pending files: 661 entradas; listagem integral em
+    docs/reports/evidence/2026-10-19-clipes-asr-pending.txt
+
+EVIDENCE
+  Commands executed: npm run build; Vitest inicial e repetições focadas;
+    cargo test --lib e testes focados; benchmark.py; export_results.py;
+    baseline_checks.py --fast; git diff --check.
+  Relevant logs: .tooling/vendor/asr-evaluation/; diff check final PASS.
+  Screenshots: Nenhuma; interface do app não automatizada.
+  Test artifacts: docs/reports/evidence/2026-10-19-asr-comparison.json
+  Reproduction details: Mesmos 30 s do Davy Jones; RTX 5070 de 12 GB;
+    um modelo por vez. Whisper completo: CPU 67,09 s / GPU 10,81 s.
+    Turbo nativo: CPU 25,92 s / GPU 32,04 s.
+    Parakeet: CPU 7,76 s / GPU 17,90 s.
+    Qwen na GPU: 29,68 s após download, apenas texto.
+    Execuções únicas com carga inicial; não constituem ranking definitivo.
+  Comparison: docs/references/ASR-BENCHMARK-2026-10-19.md
+
+ISSUES
+  Bugs found: Contagem fixa, lista no local errado, dependência do cache,
+    foco por mouse, controles nativos e consulta CUDA corrigidos.
+  Unresolved failures: Nenhuma falha de código conhecida nos testes executados.
+  Regressions: Não detectadas nesse escopo; UI real não testada.
+  Risks: Precisão sem WER/CER; placas abaixo de 8 GB não testadas;
+    permanece aviso de bundle grande. Distribuição dos motores pendente.
+  Blockers: Sem bloqueio de implementação; aceite humano pendente.
+
+FINAL
+  Delivery status: Implementação e comparação entregues para conferência.
+  Requirements met: Biblioteca global/por projeto, inspeção, controles,
+    escolha Whisper, GPU/CPU e teste dos quatro modelos solicitados.
+  Remaining work: Conferência no app, referência humana de transcrição
+    e empacotamento. Adaptadores Qwen/Parakeet continuam separados.
+  User action required: Conferir navegação/interface e revisar o comparativo.
+  Restart required: Reabrir o app para carregar as alterações do motor.
+  Ready for next task: Sim, com as pendências declaradas.
+
+REPORT
+  Latest file: docs/reports/LATEST.txt
+  Historical file: docs/reports/history/2026-10-19_084347_clipes-modelos-asr.txt
+
+END OF REPORT

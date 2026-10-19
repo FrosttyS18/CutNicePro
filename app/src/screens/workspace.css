@@ -8,8 +8,8 @@
 .flow-text-button { padding: 4px 0; border: 0; background: none; color: var(--sh-dim); font: inherit; font-size: 11px; cursor: pointer; }
 .flow-text-button:hover { color: #fff; }
 .flow-input { width: 100%; min-height: 36px; padding: 8px 10px; border: 1px solid var(--sh-divider); border-radius: 7px; background: #121212; color: #fff; font: inherit; font-size: 12px; }
-.project-workspace :is(button, input, select, textarea, summary, video):focus-visible,
-.flow-dialog :is(button, input, select):focus-visible { outline: 2px solid var(--sh-accent); outline-offset: 3px; }
+html[data-input-modality="keyboard"] .project-workspace :is(button, input, select, textarea, summary, video):focus-visible,
+html[data-input-modality="keyboard"] .flow-dialog :is(button, input, select):focus-visible { outline: 2px solid var(--sh-accent); outline-offset: 3px; }
 .flow-wide { width: 100%; margin-top: 16px; }
 .flow-dialog .flow-demo-label { margin-top: 20px; }
 .flow-dialog progress { width: 100%; height: 6px; accent-color: var(--sh-accent); }
@@ -129,6 +129,7 @@
 .import-progress > svg { color: var(--sh-dim); }
 .import-progress > p { overflow-wrap: anywhere; font-size: 13px; }
 .import-progress progress { margin-top: 16px; }
+.import-progress__number { display: block; margin-top: 16px; font-size: 36px; font-weight: 600; font-variant-numeric: tabular-nums; }
 .timeline-scroll { overflow-x: auto; overflow-y: hidden; padding: 12px 4px 4px; }
 .timeline-content { position: relative; min-width: 100%; }
 .timeline-ruler { display: flex; justify-content: space-between; margin-bottom: 12px; color: var(--sh-dim); font-size: 10px; font-variant-numeric: tabular-nums; }
@@ -142,7 +143,7 @@
 .timeline-seek { position: absolute; inset: 20px 0 0; margin: 0; display: block; }
 .timeline-seek input { width: 100%; height: 66px; margin: 0; opacity: 0; cursor: crosshair; }
 .timeline-seek input:focus { outline: none; }
-.timeline-content:has(.timeline-seek input:focus-visible) .timeline-track i::before { box-shadow: 0 0 0 3px #0a0a0a, 0 0 0 4px #b3b3b3; }
+html[data-input-modality="keyboard"] .timeline-content:has(.timeline-seek input:focus-visible) .timeline-track i::before { box-shadow: 0 0 0 3px #0a0a0a, 0 0 0 4px #b3b3b3; }
 .timeline-trim-shade { position: absolute; inset: 0 auto 0 0; background: rgb(0 0 0 / 65%); pointer-events: none; }
 .timeline-trim-shade--end { left: auto; right: 0; }
 .timeline-zoom { display: flex; align-items: center; gap: 8px; color: var(--sh-dim); font-size: 11px; }
@@ -194,4 +195,4 @@
 .editor-caption-presets__sample[data-model="3"], .editor-caption-presets__sample[data-model="6"], .editor-caption-presets__sample[data-model="9"] { text-transform: uppercase; font-weight: 700; }
 .editor-caption-presets input:checked + span { border-color: #e6e7e8; box-shadow: inset 0 0 0 1px #e6e7e8; }
 .editor-caption-presets label:hover .editor-caption-presets__sample { background: #292929; }
-.editor-caption-presets input:focus-visible + span { outline: 2px solid #b3b3b3; outline-offset: 3px; }
+html[data-input-modality="keyboard"] .editor-caption-presets input:focus-visible + span { outline: 2px solid #b3b3b3; outline-offset: 3px; }

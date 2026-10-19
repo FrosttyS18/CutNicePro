@@ -1,0 +1,107 @@
+CUTNICEPRO — ZCODE REPORT
+
+TASK
+  Name: 03I — controles do editor, legendas e menu de contexto.
+  Status: PARTIAL — código verificado; conferência no app pendente.
+  Scope: UI solicitada, atalhos, preferências e ações de arquivo/projeto.
+  Objective: Coerência visual e ações reais, preservando a transcrição aprovada.
+  Result: 178 testes únicos aprovados; compilação aprovada.
+
+IMPLEMENTATION
+  Completed: Avisos permanentes retirados; scroll discreto; menu por botão direito
+    e Shift+F10/Menu nos cards, preservando Novo. Ações: salvar vídeo, coleção,
+    SRT/TXT e excluir com confirmação. Fonte, predefinições e efeitos de legenda
+    ligados ao player e salvos por projeto. Início, play/pause, fim e Espaço,
+    com proteção de campos/diálogos. Salvamento reativo e antes de retranscrever.
+  Not completed: Conferência visual/fluxo no Tauri, reservada ao mantenedor.
+  Changes: Compartilhamento adiado pelo mantenedor; ASR preservado.
+  Architecture impact: Módulos separados; nenhuma dependência/modelo novo.
+
+FILES
+  Base: C:\CutNicePro
+  Created: lib/{captions,playback,project-menu}.ts; usePlaybackShortcut.ts;
+    CaptionVisual/FontControls/EffectControls/PresetGrid.tsx, PlaybackControls.tsx,
+    captions.css; ProjectContextMenu/Card.tsx, ProjectDeleteDialog.tsx,
+    ProjectCollectionDialog.tsx; backend file_output.rs, project_files.rs,
+    transcription/export.rs; editor-controls.test.tsx; EDITOR-CONTROLS-*.md;
+    evidence/editor-controls/{validation.json,working-tree.txt}; relatório histórico.
+  Modified: App, Project/Collection/UploadScreen, RecentProjects, ProjectWorkspace;
+    TranscriptionControls, useWorkspaceData, workspace-store/types, IPC, SourceForm,
+    upload/tools, CaptionPresetsDialog, VideoEditor/Preview, ProjectOverview,
+    EditorTimeline, FlowDialog, editor-refinement.css, project-actions.css;
+    backend lib.rs/transcription/mod.rs; Brain, rastreabilidade, plano,
+    decisões/continuidade do motor e LATEST.txt.
+  Deleted: ExportDialog.tsx, demonstrativo sem consumidores e com texto interno.
+  Unexpected changes: Trabalho anterior preservado; nenhum commit.
+
+VALIDATION
+  Typecheck: PASS — TypeScript final e compilação Rust.
+  Lint: SKIP — sem runner; git diff --check PASS.
+  Unit tests: PASS — 117 frontend e 61 Rust únicos; 14 casos novos.
+  Integration tests: PASS nos contratos/arquivos controlados.
+  Regression tests: PASS somente nos casos executados.
+  Visual tests: SKIP — PENDING HUMAN APPROVAL.
+  Runtime verification: SKIP — não abri nem controlei app/navegador.
+  Total passed: 178 únicos; reexecuções focadas não somadas.
+  Total failed: 0 nos testes.
+  Total skipped: 0 casos ignorados; interação Tauri/visual não executada.
+  Build: PASS; alerta preexistente de bundle Vite acima de 500 kB.
+
+HOOKS / HARNESS
+  Hooks active: Configuração existente; execução automática não comprovada.
+  PreToolUse / PostToolUse / Stop: Não alegados como executados.
+  Baseline: Suítes em código; harness completo não repetido.
+  Gate result: Código PASS; funcionamento ponta a ponta PARTIAL.
+  Evidence: docs/reports/evidence/editor-controls/validation.json.
+
+MCP / SKILLS
+  Tools used: Arquivos, terminal, Git e documentação oficial Tauri.
+  Skills: frontend-ui-engineering, cutnicepro-ux-writing e web-design-guidelines.
+  Connection status: Fontes acessíveis; sem ferramentas visuais.
+  Failures: Aplicador rejeitou patch com operações repetidas; corrigido.
+    Aviso inicial de argumento npm corrigido nas verificações finais.
+  Pending activation: Graphify sem índice; nenhuma indexação alegada.
+
+GIT
+  Branch: main
+  HEAD: 1a15e2ea7a76b45667f786871b7c97f2837891c4
+  Latest commit: feat(workspace): add project rename, upload flow, and editor scaffolding
+  Commits created: NONE.
+  Push: NOT EXECUTED.
+  Remote: origin → https://github.com/FrosttyS18/CutNicePro.git; tracking não alterado.
+  Working tree: MODIFIED + UNTRACKED, incluindo trabalho anterior.
+  Pending files: Lista integral em evidence/editor-controls/working-tree.txt,
+    incluindo LATEST.txt, histórico e evidências desta tarefa.
+
+EVIDENCE
+  Commands executed: npm test; npm run build; tsc --noEmit;
+    cargo test --lib; regressões focadas; git diff --check.
+  Relevant logs: validation.json resume resultados; não é log bruto.
+  Screenshots: 0; navegador: 0; nova inferência/download de modelo: 0.
+  Test artifacts: Markup Node, estilos/cues, temporários e falhas controladas.
+  Reproduction details: docs/engineering/EDITOR-CONTROLS-MANUAL-CHECK.md.
+
+ISSUES
+  Bugs found: Avisos repetitivos/internos, lixeira sobre card, estilos limitados,
+    transporte incompleto e estado de salvamento sem atualização reativa.
+  Unresolved failures: Nenhuma nos testes; seletor/teclado/layout reais pendentes.
+  Regressions: Nenhuma nos casos executados; não há garantia global.
+  Risks: Salvar vídeo copia a origem; render MP4 com efeitos segue pendente.
+    SRT não inclui estilos de fonte. Famílias do sistema dependem da instalação.
+  Blockers: Nenhum para conferência. Compartilhamento explicitamente adiado.
+
+FINAL
+  Delivery status: FUNCTIONAL PARTIAL; REGRESSION PASS no escopo; VISUAL PENDING HUMAN APPROVAL.
+  Requirements met: Implementação modular e testes das alterações solicitadas.
+  Remaining work: Sua conferência do menu, arquivos, estilos, scroll e transporte.
+  User action required: Reinicie o Tauri dev; botão direito num card novo;
+    teste coleção/SRT/TXT e salvar vídeo; altere fontes/efeitos, salve e reabra;
+    confira início/play/fim e Espaço. Não precisa gerar transcrição nova.
+  Restart required: Sim — comando Rust de arquivos adicionado.
+  Ready for next task: Pronto para conferência; sem commit/push.
+
+REPORT
+  Latest file: C:\CutNicePro\docs\reports\LATEST.txt
+  Historical file: C:\CutNicePro\docs\reports\history\2026-10-19_061553_editor-controles-contexto-legendas.txt
+
+END OF REPORT

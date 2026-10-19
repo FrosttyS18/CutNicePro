@@ -1,3 +1,4 @@
+import { AppSelect } from "../AppSelect";
 import { useId, useState } from "react";
 import { aspectRatios, captionModels, type AspectRatio } from "./tools";
 
@@ -46,9 +47,9 @@ export function CaptionOptions({ model, ratio, onModel, onRatio }: Props) {
             </div>
           </fieldset>
           <label className="caption-ratio">Escolha a proporção
-            <select value={ratio} onChange={(event) => onRatio(event.target.value as AspectRatio)}>
+            <AppSelect value={ratio} onChange={(event) => onRatio(event.target.value as AspectRatio)}>
               {aspectRatios.map((value) => <option key={value} value={value}>{value}</option>)}
-            </select>
+            </AppSelect>
           </label>
         </> : <div className="caption-models__empty">
           <p>Nenhum modelo salvo</p>

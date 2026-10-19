@@ -3,104 +3,114 @@
 ╚════════════════════════════════════════════╝
 
 TASK
-  Name: 03F — Refinamento do editor e handoff para ZCode
-  Status: PASS no escopo funcional testado.
-  Scope: Cursor/foco da timeline, modal de legendas e documentação.
-  Objective: Refinar a interface e preparar a continuidade do motor.
-  Result: Ajustes implementados; motor permanece para a próxima tarefa.
+  Name: 03L — Correções de origem, clipes e transcrição.
+  Status: PARTIAL
+  Scope: Seis problemas de interface/edição e comparação dos Whisper.
+  Objective: Isolar edições, corrigir prévias e tornar a análise específica.
+  Result: Ajustes implementados; 229 testes aprovados. Precisão ASR pendente.
 
 IMPLEMENTATION
-  Completed: Cursor com alça maior e haste neutra; removido contorno do bloco.
-    Teclado mantém indicação de foco no cursor e navegação temporal.
-    Legendas abre modal com dez opções visuais, incluindo Sem legenda.
-    Seleção salva na configuração; Escape/Concluir fecha e retorna foco.
-    Handoff registra estado, limites, arquivos e ordem proposta de integração.
-  Not completed: Instalação do motor, transcrição e exportação reais, por escopo.
-  Changes: Presets mantêm IDs existentes; amostras são estáticas.
-  Architecture impact: Sem dependências novas, migração ou mudança de backend.
+  Completed:
+    Seletor de modelo compacto; projeto mostra o vídeo original.
+    Edições isoladas por clipe; formato escolhido na geração e persistido.
+    Miniaturas sem deformação; escala das legendas verticais corrigida.
+    Transcrição em parágrafos, com espaços e navegação por palavra.
+    Análise local do texto com resumo, critérios e citações verificadas.
+    Transcrição alterada invalida análise e aprovação anteriores.
+  Not completed: Correção confiável das falas ASR; validação manual da UI.
+  Changes: 22 arquivos criados, 31 modificados, nenhum removido.
+  Architecture impact: Configurações separadas; análise usa o gate existente.
+    Sem novas dependências npm. Runtime textual instalado nas ferramentas locais.
 
 FILES
-  Created: app/src/components/editor/CaptionPresetsDialog.tsx;
-    tools/e2e/phase03f-editor-refinement.mjs;
-    docs/engineering/ENGINE-HANDOFF.md; docs/reports/evidence/03f/;
-    relatório histórico indicado abaixo.
-  Modified: app/src/components/editor/{EditorInspector.tsx,VideoEditor.tsx};
-    app/src/screens/workspace.css;
-    docs/product/{UPLOAD-SCREEN.md,PRODUCT-BRAIN.md,TRACEABILITY.md};
-    tasks/{plan.md,todo.md}; docs/reports/LATEST.txt.
-  Deleted: NONE.
-  Unexpected changes: NONE identificada; trabalho anterior preservado.
+  Created: 22, identificados no manifesto abaixo.
+  Modified: 31, identificados no mesmo manifesto.
+  Deleted: 0
+  Manifest: C:/CutNicePro/docs/reports/evidence/2026-10-19-source-clips-files.json
+  Unexpected changes: Nenhum novo caminho fora do escopo identificado.
+    As 661 pendências anteriores foram preservadas.
 
 VALIDATION
-  Typecheck: PASS — npm --prefix app run build.
-  Lint: SKIP — app sem script de lint.
-  Unit tests: SKIP — alteração de UI; casos anteriores não repetidos.
-  Integration tests: PASS — interface com IPC simulado, sem integração nativa.
-  Regression tests: PASS — seleção salva, foco, seek e layouts testados.
-  Visual tests: SKIP — aprovação estética do mantenedor.
-  Runtime verification: PASS — 4/4 em Edge headless, primeira rodada.
-  Total passed: 4 casos runtime; build aprovado separadamente.
-  Total failed: 0.
-  Total skipped: 5 grupos: lint, unitários, Rust, baseline e estética.
+  Typecheck: PASS
+  Lint: SKIP — não há comando configurado.
+  Unit tests: PASS — 226 casos de unidade/contrato.
+  Integration tests: PASS — FFmpeg real, análise local real e contrato ASR real.
+  Regression tests: PASS — no escopo executado; interface Tauri não exercitada.
+  Visual tests: SKIP — PENDING HUMAN APPROVAL.
+  Runtime verification: PARTIAL — motores executados; aplicativo não automatizado.
+  Total passed: 229 casos únicos: 145 frontend e 84 Rust.
+  Total failed: 0 pendentes em código; falhas iniciais registradas abaixo.
+  Total skipped: 1 benchmark antigo não repetido; 2 checks da baseline fast.
 
 HOOKS / HARNESS
-  Hooks active: Não verificados nesta execução Codex.
-  PreToolUse: Sem evidência usada como aprovação.
-  PostToolUse: Sem evidência usada como aprovação.
-  Stop: Não executado explicitamente.
-  Baseline: SKIP — escopo de UI/documentação.
-  Gate result: FUNCTIONAL PASS; REGRESSION PASS no escopo executado.
-  Evidence: docs/reports/evidence/03f/{runtime.json,validation.txt}.
+  Hooks active: Arquivos presentes; ativação automática não confirmada.
+  PreToolUse: Não verificado.
+  PostToolUse: Não verificado.
+  Stop: Não usado como prova de aprovação.
+  Baseline: PASS fast — 4 checks aprovados, 2 ignorados.
+  Gate result: PASS estrutural; entrega funcional PARTIAL.
+  Evidence: C:/CutNicePro/docs/reports/evidence/2026-10-19-source-clips-validation.json
 
 MCP / SKILLS
-  Tools used: FigCraft MCP standalone; frontend-ui-engineering e
-    incremental-implementation; padrões e referências consultados na 03E.
-  Connection status: PASS — frames2262/2391/2440 relidos sem salvar documento.
-  Failures: NONE nesta rodada de validação.
-  Pending activation: NONE; sem VISION ou subagentes.
+  Tools used: Terminal, patches, pesquisa oficial; skills frontend-ui-engineering,
+    cutnicepro-ux-writing, incremental-implementation e web-design-guidelines.
+  Connection status: Ferramentas locais operacionais.
+  Failures: FigCraft/Graphify indisponíveis; refactor guard não encontrado.
+  Pending activation: Nenhuma.
 
 GIT
   Branch: main
-  HEAD: f1adfe584fe1b174f4e68f956f140f4f964cf0c1
-  Latest commit: feat(intro): restore GSAP choreography on shared intro clock for phase 03B.10
-  Commits created: NONE.
-  Push: NOT EXECUTED.
-  Remote: origin → https://github.com/FrosttyS18/CutNicePro.git; origin/main.
-  Working tree: MODIFIED / UNTRACKED, incluindo alterações anteriores.
-  Pending files: Lista integral em docs/reports/evidence/03f/pending-files.txt.
+  HEAD: 1a15e2ea7a76b45667f786871b7c97f2837891c4
+  Latest commit: feat(workspace): add project rename, upload flow, and editor scaffolding
+  Commits created: 0
+  Push: NOT EXECUTED
+  Remote: origin → https://github.com/FrosttyS18/CutNicePro.git; origin/main
+  Working tree: MODIFIED / UNTRACKED
+  Pending files: 683, listados integralmente em:
+    C:/CutNicePro/docs/reports/evidence/2026-10-19-source-clips-pending.txt
 
 EVIDENCE
-  Commands executed: npm --prefix app run build;
-    node tools/e2e/phase03f-editor-refinement.mjs; git diff --check.
-  Relevant logs: docs/reports/evidence/03f/validation.txt e runtime.json.
-  Screenshots: NONE.
-  Test artifacts: Vídeo real existente de teste; IPC simulado; dumps FigCraft.
-  Reproduction details: Modal, modelo salvo, Escape e retorno de foco;
-    cursor por mouse/teclado; layouts600×700,1440×900,3440×1440;
-    console sem erros. Nenhum caso aprovado da 03E repetido.
+  Commands executed: npm test; npm run build; tsc --noEmit; cargo test;
+    testes explícitos semantic/refinement; baseline fast; comparação ASR.
+  Relevant logs: C:/CutNicePro/.tooling/vendor/asr-refinement/
+    C:/CutNicePro/.tooling/vendor/analysis/validation/
+  Screenshots: Nenhuma captura/automação do aplicativo nesta tarefa.
+  Test artifacts: Manifesto, validação e runtime em:
+    C:/CutNicePro/docs/reports/evidence/2026-10-19-analysis-runtime.json
+  Reproduction details:
+    Seis configurações Whisper válidas sobre os mesmos 86 segundos.
+    CUDA confirmado; somente um Whisper selecionado por execução.
+    Uma análise textual real de corte passou; execução de teste: 49,13 s.
+    Modelo textual: Qwen3-4B, separado dos modelos de transcrição.
+    Comparação detalhada:
+    C:/CutNicePro/docs/references/ASR-REFINEMENT-2026-10-19.md
 
 ISSUES
-  Bugs found: Foco contornava a timeline; legendas usava seletor simples.
-  Unresolved failures: NONE no escopo executado.
-  Regressions: Nenhuma identificada nos quatro casos; restante NOT TESTED.
-  Risks: Presets são prévias estáticas; não geram texto ou animação de palavra.
-    Mídia local ainda exige reconexão após reinício; YouTube é referência.
-    Aviso preexistente de bundle acima de500kB permanece.
-  Blockers: NONE para entrega de UI; motor/modelo ainda precisam de avaliação.
+  Bugs found: Compartilhamento de configurações, proporção das miniaturas,
+    seletor excessivo, formato ausente, análise genérica e palavras coladas.
+  Unresolved failures: A abertura ainda pode inserir “isso”; “essa desgraça”
+    não foi recuperada nos testes. Nenhum prompt experimental foi adotado.
+  Regressions: Nenhuma detectada nos testes executados.
+  Corrected failures: Saída Qwen suprimida por flag; prompt refinado após
+    confusão de assuntos. Caso Whisper com UTF-8 inválido repetido em ASCII.
+  Risks: Análise pode interpretar incorretamente outros trechos.
+    Ajustes finos dependem do armazenamento local. Distribuição dos motores
+    no instalador não concluída. Aviso preexistente de bundle acima de 500 kB.
+  Blockers: Precisão ASR sem correção comprovada; aceite manual pendente.
 
 FINAL
-  Delivery status: FUNCTIONAL PASS; REGRESSION PASS (escopo);
-    VISUAL PENDING HUMAN APPROVAL.
-  Requirements met: Refinamento solicitado e documentação para continuidade.
-  Remaining work: Aprovação visual e integração do motor com ZCode.
-  User action required: Revisar UI e usar o handoff na próxima tarefa.
-  Restart required: Apenas recarregar a UI se necessário.
-  Ready for next task: Sim. Começar por inventário e mídia persistente;
-    depois jobs, transcrição real e render; BYOK em fatia própria.
+  Delivery status: PARTIAL
+  FUNCTIONAL STATUS: PARTIAL
+  REGRESSION STATUS: PASS no escopo testado.
+  VISUAL STATUS: PENDING HUMAN APPROVAL
+  Requirements met: Seis ajustes implementados e compilados; análise real testada.
+  Remaining work: Precisão das falas apontadas e conferência da interface no app.
+  User action required: Avaliar a interface; nenhum comando manual solicitado.
+  Restart required: Backend precisa carregar a nova compilação; reinício não verificado.
+  Ready for next task: Entrega registrada com as pendências acima.
 
 REPORT
-  Handoff: C:/CutNicePro/docs/engineering/ENGINE-HANDOFF.md
   Latest file: C:/CutNicePro/docs/reports/LATEST.txt
-  Historical file: C:/CutNicePro/docs/reports/history/2026-10-19_011959_03f-editor-handoff.txt
+  Historical file: C:/CutNicePro/docs/reports/history/2026-10-19_175816_source-clips.txt
 
 END OF REPORT

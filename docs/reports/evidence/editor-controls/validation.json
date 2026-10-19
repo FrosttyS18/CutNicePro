@@ -1,0 +1,30 @@
+{
+  "date": "2026-10-19",
+  "task": "03I-editor-controls-context-captions",
+  "functionalStatus": "PARTIAL",
+  "regressionStatus": "PASS_WITHIN_EXECUTED_SCOPE",
+  "visualStatus": "PENDING_HUMAN_APPROVAL",
+  "uniquePassingCases": 178,
+  "rustCases": 61,
+  "frontendCases": 117,
+  "newCases": 14,
+  "executions": [
+    {"command": "cargo test --lib", "passed": 61, "failed": 0},
+    {"command": "npm test", "passed": 117, "failed": 0, "files": 16},
+    {"command": "npm run build", "status": "PASS", "note": "Duas execuções; segunda após ajustes de diálogo/layout. Aviso de bundle acima de 500 kB permanece."},
+    {"command": "tsc --noEmit", "status": "PASS", "note": "Também executado após ajustes finais de salvamento/coleção."},
+    {"command": "vitest run editor-controls workspace transcription-feedback", "passed": 21, "failed": 0, "note": "Repetição focada após revisão de estado de salvamento/foco e diálogo."},
+    {"command": "cargo test --lib project_files::", "passed": 1, "failed": 0, "note": "Após vincular o seletor nativo à janela principal."},
+    {"command": "git diff --check", "status": "PASS"}
+  ],
+  "testBoundary": "Estilos, persistência/migração, cues, markup Node, política de atalhos/menu, SRT/TXT, escrita atômica, falha e validação de destino. Não comprova interação real com seletor, canvas, CSS ou teclado no WebView.",
+  "browserRuns": 0,
+  "appOpenedByAgent": false,
+  "screenshots": 0,
+  "newModelDownloads": 0,
+  "dependenciesAdded": 0,
+  "sharing": "Explicitamente adiado pelo mantenedor",
+  "videoSave": "Cópia da origem; não é renderização MP4 com efeitos",
+  "commits": 0,
+  "reportBoundary": "Resumo dos resultados observados nas ferramentas, não log bruto. Contagens únicas excluem repetições."
+}

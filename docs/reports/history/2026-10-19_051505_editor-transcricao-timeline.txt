@@ -1,0 +1,109 @@
+CUTNICEPRO — ZCODE REPORT
+
+TASK
+  Name: Refinamento do editor, transcrição e timeline.
+  Status: PARTIAL — código verificado; conferência no app pendente.
+  Scope: Texto, sincronização, cursor, miniaturas, onda e ASR local.
+  Objective: Corrigir os problemas relatados sem expor informações internas na UI.
+  Result: Implementação modular e 149 testes únicos aprovados.
+
+IMPLEMENTATION
+  Completed: Texto contínuo com scroll interno; limpeza de traços de diálogo;
+    destaque com tempos reais; edição invalida alinhamento antigo; arraste
+    capturado pela régua/faixas, inclusive fora dos limites; navegação por teclado.
+    Geração FFmpeg de miniaturas/onda reais com cache; preview limitado à altura.
+    Small baixado com hash conferido; JSON completo do whisper.cpp e busca ampliada.
+    Nenhum aviso de modelo, migração ou tempos antigos mantido na interface.
+  Not completed: Execução Tauri e avaliação da qualidade/sincronização no vídeo real.
+  Changes: Detalhes internos ficam somente na documentação e roteiro de conferência.
+  Architecture impact: Módulos separados; sem novas dependências ou commits.
+
+FILES
+  Base: C:\CutNicePro
+  Created: app/src-tauri/src/media_preview/{mod,analysis,ffmpeg}.rs;
+    app/src-tauri/src/transcription/words.rs;
+    app/src/components/editor/TimelineSurface.tsx;
+    app/src/components/workspace/TranscriptSentence.tsx;
+    app/src/hooks/useTimelinePreview.ts; app/src/lib/{timeline,transcript-text}.ts;
+    app/src/screens/editor-refinement.css; app/src/test/editor-timing.test.tsx;
+    docs/engineering/EDITOR-TIMING-{SPEC,MANUAL-CHECK}.md;
+    docs/reports/evidence/editor-timing/{validation.json,working-tree.txt}; histórico.
+  Modified: app/src-tauri/src/lib.rs e transcription/{mod,types,parser,runner,tools}.rs;
+    editor/{EditorTimeline,VideoEditor}.tsx;
+    workspace/{TranscriptPanel,ProjectOverview,VideoPreview}.tsx;
+    hooks/{useVideoFrames,useWorkspaceData}.ts; lib/{workspace-types,transcription}.ts;
+    services/workspace-store.ts; screens/ProjectWorkspace.tsx;
+    tools/engine/setup-whisper.ps1; ENGINE-DECISIONS.md; M3A-MANUAL-CHECK.md;
+    PRODUCT-BRAIN.md; TRACEABILITY.md; tasks/plan.md; docs/reports/LATEST.txt.
+  Deleted: NONE.
+  Unexpected changes: NONE identificada; trabalho anterior preservado.
+
+VALIDATION
+  Typecheck: PASS — TypeScript; Rust compilado pelos testes, sem warnings Rust.
+  Lint: SKIP — runner não configurado; git diff --check PASS.
+  Unit tests: PASS — 52 Rust e 97 frontend únicos; 14 casos novos.
+  Integration tests: PASS no contrato JSON/persistência controlada; mídia real SKIP.
+  Regression tests: PASS somente nos casos executados.
+  Visual tests: SKIP — PENDING HUMAN APPROVAL.
+  Runtime verification: SKIP — sem abrir app/navegador, conforme solicitado.
+  Total passed: 149 casos únicos; Rust em rodadas de 49 + 2 + 1.
+  Total failed: 0 pendentes; erro inicial de literal Rust corrigido e revalidado.
+  Total skipped: 0 casos ignorados nas suítes; testes reais/visuais não executados.
+  Build: PASS; alerta Vite de bundle acima de 500 kB permanece.
+
+HOOKS / HARNESS
+  Hooks active: Configuração existente; execução automática não comprovada.
+  PreToolUse / PostToolUse / Stop: Não alegados como executados.
+  Baseline: Suítes em código; harness completo não repetido.
+  Gate result: Código PASS; funcionamento ponta a ponta PARTIAL.
+  Evidence: docs/reports/evidence/editor-timing/validation.json.
+
+MCP / SKILLS
+  Tools used: Terminal, arquivos, Git e fontes oficiais whisper.cpp/Hugging Face.
+  Skills: cutnicepro-ux-writing, frontend-ui-engineering, web-design-guidelines.
+  Connection status: Fontes consultadas; nenhuma ferramenta visual utilizada.
+  Failures: Metadados Hugging Face consultados via terminal após falha de leitura web.
+  Pending activation: Graphify sem índice; nenhuma indexação alegada.
+
+GIT
+  Branch: main
+  HEAD: 1a15e2ea7a76b45667f786871b7c97f2837891c4
+  Latest commit: feat(workspace): add project rename, upload flow, and editor scaffolding
+  Commits created: NONE.
+  Push: NOT EXECUTED.
+  Remote: origin → https://github.com/FrosttyS18/CutNicePro.git; tracking não alterado.
+  Working tree: MODIFIED + UNTRACKED, incluindo alterações anteriores.
+  Pending files: Lista integral em docs/reports/evidence/editor-timing/working-tree.txt,
+    incluindo LATEST.txt, histórico e evidências desta tarefa.
+
+EVIDENCE
+  Commands executed: cargo test --lib e dois filtros novos; npm test;
+    npm run build; tsc --noEmit; git diff --check.
+  Relevant logs: validation.json resume resultados observados; não é log bruto.
+  Screenshots: 0; navegador: 0; aplicativo aberto automaticamente: 0.
+  Test artifacts: Markup Node e ponteiro controlado não equivalem a interação real.
+  Reproduction details: docs/engineering/EDITOR-TIMING-MANUAL-CHECK.md.
+
+ISSUES
+  Bugs found: Scroll do texto, cursor restrito, faixas ausentes e leitura fragmentada.
+  Unresolved failures: Nenhuma nos testes; fluxos reais ainda não conferidos.
+  Regressions: Sem falha nos testes executados; não há garantia global.
+  Risks: Small pode ser mais lento; precisão equivalente ao Opus não foi comprovada.
+    Tempos por palavra nos registros antigos dependem de retranscrição.
+  Blockers: Nenhum para sua conferência manual.
+
+FINAL
+  Delivery status: FUNCTIONAL PARTIAL; REGRESSION PASS no escopo; VISUAL PENDING HUMAN APPROVAL.
+  Requirements met: Código implementado e testado; informações internas fora da UI.
+  Remaining work: Conferir prévias, arraste, viewport e fala no app.
+  User action required: Reinicie o Tauri dev; abra o editor, confira miniaturas/onda;
+    arraste pela régua para fora da faixa; use Transcrever novamente, reproduza
+    e confira destaque das palavras e qualidade da fala; teste janela normal/ultrawide.
+  Restart required: Sim — backend Rust alterado.
+  Ready for next task: Pronto para sua conferência; sem commit/push.
+
+REPORT
+  Latest file: C:\CutNicePro\docs\reports\LATEST.txt
+  Historical file: C:\CutNicePro\docs\reports\history\2026-10-19_051505_editor-transcricao-timeline.txt
+
+END OF REPORT

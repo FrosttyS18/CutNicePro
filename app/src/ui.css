@@ -838,3 +838,10 @@
 body { user-select: none; -webkit-user-select: none; }
 input, textarea, [contenteditable="true"], .transcript-segments p { user-select: text; -webkit-user-select: text; }
 img { -webkit-user-drag: none; }
+
+html[data-input-modality="pointer"] :focus-visible { outline: none !important; }
+.tool-dialog__close { display: grid; place-items: center; flex-shrink: 0; line-height: 1; padding: 0; }
+.tool-dialog .processing-cancel { display: flex; justify-content: center; align-items: center; background: #fff; color: #000; text-align: center; }
+.tool-dialog :is(.flow-button,.upload-primary) { text-align: center; justify-content: center; }
+
+html[data-input-modality="keyboard"] :focus-visible { outline: 2px solid var(--sh-accent); outline-offset: 3px; }

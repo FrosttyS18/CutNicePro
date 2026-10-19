@@ -124,6 +124,19 @@ mantenedor; nenhum wireframe deve derivar destes artefatos antes de APPROVED.
 
 ## 11. Última revisão
 
+2026-10-19 — **M2A (Fatia 0+1 do motor) IMPLEMENTADA e validada no Tauri real
+(16/16)**: importação persistente por cópia (hash SHA-256, integridade
+bytes+re-stat, cancelamento, espaço), índice serializado com referências
+explícitas por projeto, reconcile que ADOTA órfãos e suspende limpeza em
+índice corrompido, análise ffprobe (-show_format -show_streams) persistida,
+scheme cnplocal (Range/206 + ACAO eficaz p/ canvas), dialog nativo +
+drag-and-drop REAL com paths, workspace v1→v2 (mediaId) com migração
+preservando configurações. FFmpeg 9.0.2 documentado (fatos) em
+ENGINE-DECISIONS.md; SPEC/critérios AC-R1..R5 em M2A-IMPORT-SPEC.md.
+Estado visual: telas de upload/editor seguem PENDING HUMAN APPROVAL (sem
+mudança de UI nesta fatia — apenas conexão real). Próxima: Fatia 2
+(transcrição local, benchmark antes da escolha do motor).
+
 2026-10-19 — Home aprovada expressamente pelo mantenedor (ART-008). Autorizada a implementação das telas de envio, preparação, visão do projeto e editor antes da integração do motor (ART-009). `docs/product/UPLOAD-SCREEN.md` registra escopo, limites de demonstração e rastreabilidade. Permanecem fora desta entrega: transcrição real, download de vídeo, render/export e integração Local/BYOK. A autorização específica não aprova globalmente as demais jornadas históricas.
 
 2026-10-18 — **Decisão OPERACIONAL (não-produto): Protocolo Permanente de
@@ -161,3 +174,39 @@ das relações de implementação ao Graphify, sem afirmar indexação automáti
 2026-10-19 — Revisão 03E: mantenedor rejeitou fluxo de criação vazia, preparação simulada e proporções da 03D. UPLOAD-SCREEN.md registra correção solicitada e aceites de viewport; v1 histórico rejeitado, v2 pendente de aprovação humana. Home continua aprovada.
 
 2026-10-19 — Refinamento 03F de ART-009: modal de estilos e cursor/foco da timeline; UI ainda IN REVIEW. Estado e proposta de integração incremental do motor em docs/engineering/ENGINE-HANDOFF.md. Nenhuma IA instalada nem decisão de runtime/modelo promovida a aprovada.
+
+2026-10-19 — Pesquisa solicitada pelo mantenedor: docs/references/OPEN-SOURCE-ENGINE-RESEARCH.md compara 10 projetos por aderência, adoção pública e licença. Integrações são propostas, sem substituir decisões canônicas ou autorizar instalação. Correção pós-M2A de nomes/YouTube/warnings registrada na SPEC; runtime dessa correção permanece PARTIAL.
+
+2026-10-19 — Motor M3A inicial implementado por solicitação de ação imediata: whisper.cpp CPU + modelo Base multilíngue no workspace, transcrição pt, cancelamento, resultado persistido e integração aos painéis atuais. ENGINE-DECISIONS.md §5 e M3A-TRANSCRIPTION-SPEC.md registram arquitetura e limites. Mantenedor determinou testes em código, sem navegador/abertura do app; runtime, fluxo e qualidade ASR pendentes de sua verificação. Não conclui M3 completo, exportação ou escolha definitiva do modelo.
+
+2026-10-19 — Mantenedor reportou erro de posições, ausência de modal/porcentagem e ruído técnico na UI da M3A. Correção consome callback oficial do CLI, adapta segmentos externos, mantém dado salvo estrito e remove detalhes internos/controles de exportação não implementados. Testes de código incluem markup estático em Node; nenhuma execução do app ou navegador. Aprovação do vídeo original e estética continuam pendentes. Referência: M3A-TRANSCRIPTION-SPEC.md §Correção.
+
+2026-10-19 — Refinamento funcional do editor/transcrição: texto contínuo com rolagem interna, limpeza de marcadores de diálogo, palavras com tempos reais, cursor acessível com captura do ponteiro e geração local de miniaturas/onda em cache. Small é padrão provisório de desenvolvimento; sem benchmark nem promessa de precisão. Mantenedor reiterou que informações internas não pertencem à UI; não há aviso de modelo/migração/tempos antigos. Testes em código aprovados, sem app/navegador; runtime e estética continuam pendentes. Contrato e roteiro: EDITOR-TIMING-SPEC.md e EDITOR-TIMING-MANUAL-CHECK.md.
+
+2026-10-19 — 03H, IN REVIEW: mantenedor rejeitou texto sempre expandido, botão Cancelar sem coerência e onda esparsa; relatou destaque interrompido e pediu edição por palavra, exclusão e bloqueio do menu nativo. Implementados seções recolhíveis, ação flutuante de palavra com seek e correção preservando tempo, alinhamento parcial, DTW, onda v2 densa, exclusão confirmada/retomável e bloqueio de contexto padrão. Large v3 Turbo substitui Small no desenvolvimento, sem afirmar qualidade comprovada. Nenhuma informação de modelo/migração entra na UI. 164 testes únicos aprovados; nenhum app/navegador controlado. Seções são extractivas por fala/pausa/duração, sem classificador semântico de ganchos. Referência vigente: EDITOR-USABILITY-SPEC.md e roteiro correspondente. Home preservada.
+
+2026-10-19 — Mantenedor avaliou a transcrição como muito melhor e aprovou a área de texto da 03H, pedindo scroll refinado. Relato qualitativo, sem métricas inventadas ou aprovação global do editor. 03I IN REVIEW: avisos permanentes removidos; menus de projeto por contexto sem cobrir Novo, SRT/TXT e cópia da origem com seletor; fonte/estilos/efeitos persistidos; transporte e Espaço. Compartilhamento explicitamente adiado pelo mantenedor. ASR preservado. EDITOR-CONTROLS-SPEC.md e roteiro definem limites; 178 testes únicos de código aprovados, runtime/visual continuam humanos.
+
+2026-10-19 — 03J IN REVIEW, autorizado pelo /start do mantenedor: legendas em janela
+não modal móvel, clique/Espaço, controles de proporção/enquadramento/trim,
+Ferramentas com Phosphor MIT, transcrição com progresso visual inteiro limitado
+ao medido, confirmação de cancelamento e efeito pontilhado pausável. Adicionada
+base funcional de cortes: fala + cenas reais, pontuação heurística explicável,
+revisão persistente e render MP4 com legendas/áudio. Turbo preservado; pesquisa de
+alternativas em ASR-QUALITY-2026-10-19.md. FFmpeg portátil apenas de desenvolvimento,
+checksum conferido, sem alteração do sistema. 200 testes únicos em código PASS;
+integração FFmpeg real com fixture sintética PASS; Tauri/fluxo/estética pendentes
+do mantenedor. Não conclui histórico de versões, lote, rastreamento de rosto,
+classificação semântica por LLM ou instalador. SPEC, roteiro e revisão em
+EDITOR-AUTOCUT-*.md. Home e compartilhamento permanecem no estado anterior.
+
+2026-10-19 — 03K IN REVIEW, autorizado por /start: biblioteca Clipes global e
+Cortes por projeto, inspeção limitada ao trecho, leitura persistente independente
+de localStorage, títulos extraídos do conteúdo inteiro e controles compartilhados
+sem caixas do navegador. Dois Whisper selecionáveis; CUDA automático com alternativa
+CPU. Quatro modelos avaliados em dez casos reais, sem referência humana de WER.
+SPEC/aceite: docs/engineering/CLIP-LIBRARY-ASR-SPEC.md; revisão:
+docs/engineering/CLIP-LIBRARY-ASR-REVIEW.md; resultados:
+docs/references/ASR-BENCHMARK-2026-10-19.md. Aprovação visual pendente.
+
+2026-10-19 — 03L IN REVIEW, correção autorizada por /start: prévia do projeto conserva a origem; editor do vídeo e edições de cada corte isolados; formato explícito na geração e na identidade/persistência do corte; seletor de modelo compacto; inspeção em parágrafos e análise semântica local do texto, com evidências e invalidação após alteração da transcrição. Qwen3-4B textual é separado de Whisper ASR, sem processamento concorrente pelo gate. 229 casos únicos de código aprovados e seis configurações Whisper válidas sobre 86 s reais. Abertura e palavrão confirmados pelo mantenedor ainda erram; prompts experimentais não adotados. Status funcional PARTIAL, regressão PASS no escopo e visual PENDING HUMAN APPROVAL. Referências: SOURCE-CLIP-ISOLATION-SPEC/REVIEW.md e ASR-REFINEMENT-2026-10-19.md. Nenhum épico promovido a aceito.

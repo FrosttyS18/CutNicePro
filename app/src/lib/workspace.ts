@@ -6,7 +6,7 @@ export const defaultEditorSettings = (): EditorSettings => ({
 });
 
 export function emptyWorkspace(): WorkspaceData {
-  return { version: 1, media: null, transcript: [], transcriptMode: "empty", settings: defaultEditorSettings(), tool: "editor" };
+  return { version: 2, media: null, transcript: [], transcriptMode: "empty", settings: defaultEditorSettings(), tool: "editor" };
 }
 
 export function sourceName(source: UploadSource): string {
@@ -21,7 +21,7 @@ export function createWorkspace(source: UploadSource, options: UploadOptions): W
   } : { kind: "youtube" as const, name: sourceName(source), videoId: source.videoId, url: source.url,
     width: null, height: null, duration: null };
   return {
-    version: 1, media, transcriptMode: "empty", tool: options.tool,
+    version: 2, media, transcriptMode: "empty", tool: options.tool,
     settings: { ...defaultEditorSettings(), ratio: options.ratio, captionModel: options.model, trimEnd: media.duration },
     transcript: [],
   };

@@ -1,0 +1,247 @@
+{
+  "date": "2026-10-19",
+  "sample": {
+    "duration_seconds": 30,
+    "format": "16 kHz mono PCM",
+    "sha256": "bc96dda7b8b14fca927dd252940c17e3a4eb11998ee9501b687d4821a5ba5372"
+  },
+  "hardware": {
+    "gpu": "NVIDIA GeForce RTX 5070",
+    "vram_total_mib": 12227,
+    "vram_free_first_observation_mib": 4913,
+    "driver": "610.88",
+    "cpu_threads_per_job": 8
+  },
+  "method": "Sequential runs, one process/model at a time. Single run per case; first-run loading and kernel compilation affect totals. Whole-device GPU memory includes other applications. No human reference transcript; WER/CER not computed.",
+  "corrected_initial_failures": [
+    "Two faster-whisper runs failed before decoding because PyAV 19 rejected metadata_errors. Replaced file decoding with soundfile float32 PCM; repeated only those two cases."
+  ],
+  "results": [
+    {
+      "name": "parakeet-cpu",
+      "backend": "ggml b5454",
+      "audio_seconds": 30,
+      "timing_seconds": {
+        "load": 5.185029999999999,
+        "encode": 2.38315,
+        "decode": 0.06697,
+        "predict": 0.08956,
+        "total": 7.7602
+      },
+      "log_sha256": "9e6e9f1ce6c7d5422746765ca5136f57607a1270998e432adff5deb6e9e073e1",
+      "resources": {
+        "name": "parakeet-cpu",
+        "exit_code": 0,
+        "process_seconds_including_download": 8.264501199999359,
+        "peak_process_tree_ram_mb": 1428,
+        "peak_total_gpu_used_mb": 7390,
+        "gpu_memory_scope": "whole device including other applications"
+      },
+      "text": "Pois, galera, antes da gente entrar no GTA, eu queria só trazer uma observação aqui, porque assim. Você, Fênix, jogou bastante Battlefield 6. Você tá sabendo o que tá rolando agora? O quê? Não. Eu mandei pra você, né, ô Takes? O que acontece? Vem o novo passo de batalha aí e vocês sabem como é que a EA funciona, né? Vocês estão familiarizados aí. Recentemente, a EA deve odiar quando eu jogo os jogos dela, porque. Acho que eles aí falaram assim, não fala do meu jogo. Exatamente. Ninguém manda fazer merda, né? Ninguém manda fazer. Eu joguei o IAFC, que é metonho. Metonho.",
+      "word_alignment_contract": "TDT token times logged; application adapter not implemented"
+    },
+    {
+      "name": "parakeet-cuda",
+      "backend": "ggml b5454",
+      "audio_seconds": 30,
+      "timing_seconds": {
+        "load": 1.8973499999999999,
+        "encode": 6.78263,
+        "decode": 0.02539,
+        "predict": 9.15264,
+        "total": 17.895799999999998
+      },
+      "log_sha256": "13661eec2b528950899eecd9250a8cfb89c7f98cb93b286d68b2abe0f986ff37",
+      "resources": {
+        "name": "parakeet-cuda",
+        "exit_code": 0,
+        "process_seconds_including_download": 18.49678699998185,
+        "peak_process_tree_ram_mb": 613,
+        "peak_total_gpu_used_mb": 7521,
+        "gpu_memory_scope": "whole device including other applications"
+      },
+      "text": "Pois, galera, antes da gente entrar no GTA, eu queria só trazer uma observação aqui, porque assim. Você, Fênix, jogou bastante Battlefield 6. Você tá sabendo o que tá rolando agora? O quê? Não. Eu mandei pra você, né, ô Takes? O que acontece? Vem o novo passo de batalha aí e vocês sabem como é que a EA funciona, né? Vocês estão familiarizados aí. Recentemente, a EA deve odiar quando eu jogo os jogos dela, porque. Acho que eles aí falaram assim, não fala do meu jogo. Exatamente. Ué, ninguém manda fazer merda, né? Ninguém manda fazer. Eu joguei o IAFC, que é metonho. Metonho.",
+      "word_alignment_contract": "TDT token times logged; application adapter not implemented"
+    },
+    {
+      "name": "native-turbo-cpu",
+      "backend": "ggml b5454",
+      "audio_seconds": 30,
+      "timing_seconds": {
+        "load": 1.05676,
+        "encode": 21.338669999999997,
+        "decode": 0.04151,
+        "batchd": 2.46801,
+        "total": 25.916330000000002
+      },
+      "log_sha256": "58ce4abb9fc9461e8d6a107579108fcefb2489073e252c3a013f7972922a3553",
+      "resources": {
+        "name": "native-turbo-cpu",
+        "exit_code": 0,
+        "process_seconds_including_download": 26.494500099972356,
+        "peak_process_tree_ram_mb": 2183,
+        "peak_total_gpu_used_mb": 5018,
+        "gpu_memory_scope": "whole device including other applications"
+      },
+      "text": "Bom, galera, antes da gente entrar no GTA, eu queria só trazer uma observação aqui, porque assim... Você, Fênix, se jogou bastante Battlefield 6, você tá sabendo o que tá rolando agora? O quê? Não. Eu mandei pra você, né, o Taquete? Pode pegar. O que acontece? Vem um novo passo de batalha aí, e vocês sabem como é que a EA funciona, né? Vocês estão familiarizados aí. Recentemente, a EA deve odiar quando eu jogo os jogos dela, porque... Acho que eles devem falar assim, não fala do meu jogo, por favor. Exatamente. Ué, ninguém manda fazer merda, né? Ninguém manda fazer... Eu joguei o EA FC, que é medonho, medonho. Eu acho que estou",
+      "dtw_tokens": 179,
+      "word_alignment_contract": "not separately checked by Rust integration test"
+    },
+    {
+      "name": "native-turbo-cuda",
+      "backend": "ggml b5454",
+      "audio_seconds": 30,
+      "timing_seconds": {
+        "load": 3.3663499999999997,
+        "encode": 0.5285,
+        "decode": 0.0,
+        "batchd": 27.22496,
+        "total": 32.040279999999996
+      },
+      "log_sha256": "2bd4ad0cc5bc4ff5bdfa797e5d4f5240da59aa79d5a47a5dfd7c4f4830677b70",
+      "resources": {
+        "name": "native-turbo-cuda",
+        "exit_code": 0,
+        "process_seconds_including_download": 32.34534319996601,
+        "peak_process_tree_ram_mb": 892,
+        "peak_total_gpu_used_mb": 8159,
+        "gpu_memory_scope": "whole device including other applications"
+      },
+      "text": "Pois, galera, ó, antes da gente entrar no hotel, eu queria só trazer uma observação aqui, porque assim... Você, Fênix, você jogou bastante Battlefield 6, você tá sabendo o que tá rolando agora? O quê? Não. Eu mandei pra você, né, o Taquete, pode pegar. O que acontece? Vem um novo passo de batalha aí, e vocês sabem como é que a EA funciona, né? Vocês estão familiarizados aí. Recentemente, a EA deve odiar quando eu jogo os jogos dela, porque... Acho que eles aí falam assim, não fala do meu jogo, por favor. Exatamente, mas ninguém manda fazer merda, né? Ninguém manda fazer... Eu joguei o EA FC, que é medonho, medonho. a gente jogou",
+      "dtw_tokens": 179,
+      "word_alignment_contract": "PASS: Rust canonical parser and later word timestamps"
+    },
+    {
+      "name": "native-large-cuda",
+      "backend": "ggml b5454",
+      "audio_seconds": 30,
+      "timing_seconds": {
+        "load": 4.35661,
+        "encode": 0.64944,
+        "decode": 0.0,
+        "batchd": 5.05619,
+        "total": 10.809940000000001
+      },
+      "log_sha256": "73edc02031b12dfa2aef5b124054f47089a6098e2492a1ec606b93f21c4a541d",
+      "resources": {
+        "name": "native-large-cuda",
+        "exit_code": 0,
+        "process_seconds_including_download": 11.536060099955648,
+        "peak_process_tree_ram_mb": 565,
+        "peak_total_gpu_used_mb": 9937,
+        "gpu_memory_scope": "whole device including other applications"
+      },
+      "text": "Pô, isso, galera, antes da gente transitar, eu queria só trazer uma observação aqui, porque assim... Você, Fênix, você jogou bastante Battlefield 6? Você tá sabendo o que está rolando agora? O quê? Não. Eu mandei pra você, né, o Takashi? Pode pegar. O que acontece? Vem um novo passo de batalha aí, e vocês sabem como é que a EA funciona, né? Vocês estão familiarizados aí. Recentemente, a EA deve odiar quando eu jogo os jogos dela, porque... Acho que eles sempre falam assim, não fala do meu jogo. Exatamente. Ninguém manda fazer merda, né? Ninguém manda fazer. Eu joguei o EA FC, que é medonho. Medonho. A gente jogou",
+      "dtw_tokens": 175,
+      "word_alignment_contract": "PASS: Rust canonical parser and later word timestamps"
+    },
+    {
+      "name": "large-native-cpu",
+      "backend": "ggml b5454",
+      "audio_seconds": 30,
+      "timing_seconds": {
+        "load": 24.65574,
+        "encode": 24.06523,
+        "decode": 0.0,
+        "batchd": 15.68768,
+        "total": 67.0883
+      },
+      "log_sha256": "dfc59c676d981b0861312f610a3e7a66d783d1da3275d36c38c4a7b8272ae2d5",
+      "text": "Pô, isso, galera, antes da gente transitar, eu queria só trazer uma observação aqui, porque assim... Você, Fênix, você jogou bastante Battlefield 6? Você tá sabendo o que está rolando agora? O quê? Não. Eu mandei pra você, né, o Takashi? Pode pegar. O que acontece? Vem um novo passo de batalha aí, e vocês sabem como é que a EA funciona, né? Vocês estão familiarizados aí. Recentemente, a EA deve odiar quando eu jogo jogos dela, porque... Acho que eles sempre falam assim, não fala do meu jogo. Exatamente. Ninguém manda fazer merda, né? Ninguém manda fazer. Eu joguei o EA FC, que é medonho. Medonho. A gente jogou",
+      "dtw_tokens": 174,
+      "word_alignment_contract": "PASS: Rust canonical parser and later word timestamps"
+    },
+    {
+      "engine": "turbo",
+      "device": "cpu",
+      "audio_seconds": 30,
+      "load_seconds": 4.498316299985163,
+      "inference_seconds": 13.904993600037415,
+      "total_seconds": 18.403309900022577,
+      "text": "Bom, isso, galera, antes da gente entrar no GTA, eu queria só trazer uma observação aqui, porque assim... Você, Fênix, jogou bastante Battlefield 6. Você tá sabendo o que tá rolando agora? O quê? Não. Eu mandei pra você, né, o Taquete? Pode pegar. O que acontece? Vem um novo passo de batalha aí, e vocês sabem como é que a EA funciona, né? Vocês estão familiarizados aí. Recentemente, a EA deve odiar quando eu jogo os jogos dela, porque... Acho que eles devem falar assim, não fala do meu jogo, por favor. Exatamente, mas ninguém manda fazer merda, né? Ninguém manda fazer... Eu joguei o IFC, que é metonho, metonho.",
+      "torch": "2.11.0+cu128",
+      "cuda": "12.8",
+      "gpu": null,
+      "torch_peak_allocated_mb": null,
+      "backend": "faster-whisper 1.2.1 / CTranslate2 4.8.3",
+      "word_count": 111,
+      "resources": {
+        "name": "turbo-cpu",
+        "exit_code": 0,
+        "process_seconds_including_download": 24.415198099974077,
+        "peak_process_tree_ram_mb": 2022,
+        "peak_total_gpu_used_mb": 6002,
+        "gpu_memory_scope": "whole device including other applications"
+      }
+    },
+    {
+      "engine": "turbo",
+      "device": "cuda",
+      "audio_seconds": 30,
+      "load_seconds": 1.6191455000080168,
+      "inference_seconds": 11.053527699958067,
+      "total_seconds": 12.672673199966084,
+      "text": "Bom, isso, galera, antes da gente entrar no GTA, eu queria só trazer uma observação aqui, porque assim, você, Fênix, você jogou bastante Battlefield 6, você tá sabendo o que tá rolando agora? O quê? Não. Eu mandei pra você, né, o Taquete, pode pegar. O que acontece? Vem um novo passo de batalha aí, e vocês sabem como é que a EA funciona, né? Vocês estão familiarizados aí. Recentemente, a EA deve odiar quando eu jogo os jogos dela, porque... Acho que eles devem falar assim, não fala do meu jogo, por favor. Exatamente, mas ninguém manda fazer merda, né? Ninguém manda fazer. Eu joguei o EA FC, que é medonho, medonho. A gente jogou.",
+      "torch": "2.11.0+cu128",
+      "cuda": "12.8",
+      "gpu": "NVIDIA GeForce RTX 5070",
+      "torch_peak_allocated_mb": 0.0,
+      "backend": "faster-whisper 1.2.1 / CTranslate2 4.8.3",
+      "word_count": 116,
+      "resources": {
+        "name": "turbo-cuda",
+        "exit_code": 0,
+        "process_seconds_including_download": 18.573249600012787,
+        "peak_process_tree_ram_mb": 1748,
+        "peak_total_gpu_used_mb": 8169,
+        "gpu_memory_scope": "whole device including other applications"
+      }
+    },
+    {
+      "engine": "large",
+      "device": "cuda",
+      "audio_seconds": 30,
+      "load_seconds": 24.79603930003941,
+      "inference_seconds": 4.494878099998459,
+      "total_seconds": 29.29091740003787,
+      "text": "Pô, isso, galera, antes da gente transitar, eu queria só trazer uma observação aqui, porque assim... Você, Fênix, você jogou bastante Battlefield 6? Você tá sabendo o que está rolando agora? O quê? Não. Eu mandei pra você, né, o Taquete? Pode pegar. O que acontece? Vem um novo passo de batalha aí, e vocês sabem como é que a EA funciona, né? Vocês estão familiarizados aí. Recentemente, a EA deve odiar quando eu jogo jogos dela, porque... Acho que eles sempre falam assim, não fala do meu jogo. Exatamente. Ninguém manda fazer merda, né? Ninguém manda fazer... Eu joguei o EA FC, que é medonho. Medonho. Eu acho que não.",
+      "torch": "2.11.0+cu128",
+      "cuda": "12.8",
+      "gpu": "NVIDIA GeForce RTX 5070",
+      "torch_peak_allocated_mb": 0.0,
+      "backend": "faster-whisper 1.2.1 / CTranslate2 4.8.3",
+      "word_count": 111,
+      "resources": {
+        "name": "large-cuda",
+        "exit_code": 0,
+        "process_seconds_including_download": 37.93907369999215,
+        "peak_process_tree_ram_mb": 3542,
+        "peak_total_gpu_used_mb": 9631,
+        "gpu_memory_scope": "whole device including other applications"
+      }
+    },
+    {
+      "engine": "qwen",
+      "device": "cuda",
+      "audio_seconds": 30,
+      "load_seconds": 16.687895200040657,
+      "inference_seconds": 12.989205299993046,
+      "total_seconds": 29.677100500033703,
+      "text": "pois galera antes da gente transitar eu queria só trazer uma observação aqui porque assim você fênix jogou bastante Battlefield 6 você está sabendo o que está rolando agora o que não eu mandei para você né eu tá eu tá aqui para pegar o que acontece veio um novo passo de batalha aí e vocês sabem como é que aí funciona né estão familiarizados aí recentemente aí devi hoje a quando eu jogo jogos dela porque acho que eles sempre falam assim não fala do meu jogo exatamente ninguém manda fazer merda né ninguém manda fazer eu joguei o IFC que é metonho metonho a gente",
+      "torch": "2.11.0+cu128",
+      "cuda": "12.8",
+      "gpu": "NVIDIA GeForce RTX 5070",
+      "torch_peak_allocated_mb": 4480.79052734375,
+      "backend": "qwen-asr 0.0.6 / Transformers 4.57.6",
+      "word_count": 0,
+      "resources": {
+        "name": "qwen-cuda",
+        "exit_code": 0,
+        "process_seconds_including_download": 147.17164220003178,
+        "peak_process_tree_ram_mb": 4505,
+        "peak_total_gpu_used_mb": 10743,
+        "gpu_memory_scope": "whole device including other applications"
+      }
+    }
+  ]
+}

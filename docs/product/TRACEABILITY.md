@@ -130,3 +130,58 @@ modelos de IA + armazenamento de segredos) permanecem pendentes.
 JRN-003/004/006/008/009; FR-003/004/005/006/007/008/011/012/013: Novo projeto direciona ao envio; importação abre visão do vídeo; coleções organizam projetos. Aceites de navegação, player limitado por viewport, timeline visível, seleção controlada e caneta em UPLOAD-SCREEN.md §Correção 03E. Preparação 03D com timers e texto demonstrativo não é mais contrato vigente. Motor continua pendente.
 
 03F — JRN-006/008/009 e FR-007/008/011/012: seleção visual de estilos em modal e navegação temporal por mouse/teclado. Contrato em UPLOAD-SCREEN.md; dependências do motor no ENGINE-HANDOFF.md, sem alegar conclusão das funcionalidades de IA/export.
+
+### M2A — Importação persistente + análise (2026-10-19)
+
+- **US-007/008 (parcial)/009**: import_media (cópia persistente com
+  validação, detecção de áudio via ffprobe, progresso real por evento,
+  cancelamento) → `app/src-tauri/src/{media_import,media_analyze,media_store}.rs`;
+  UI conectada: `SourceForm` (dialog nativo + drop com paths),
+  `PreparationDialog` (progresso/cancelar reais), `App.handleImportFromPath`
+  (transacional — projeto preservado em falha). Duplicatas: deduplicação por
+  hash com referências explícitas project_ids (remove_project_media testado).
+- **Diagnóstico técnico**: analyze_media persiste duração/resolução/codec/
+  has_audio na entrada do índice; mídia ausente → entrada `unavailable`
+  (AC-008 parcial: causa "arquivo de mídia ausente" na UI de reabertura).
+- **Validação**: cargo 30/30 + vitest 69/69 + TAURI REAL 16/16
+  (evidence/m2a/results-runtime.json; AC-R1..R5 da M2A-IMPORT-SPEC.md).
+  NÃO cobre: download de atualização de mídia movida (hash revalidação em
+  reabertura futura), UI de exclusão de projeto (comando pronto, gatilho de
+  UI pendente).
+
+Correção M2A pós-entrega (2026-10-19): JRN-003/004 e FR de importação existentes — nome limpo para seleção/drop, indicação explícita de YouTube indisponível, preservação das referências antigas e apresentação de erro/progresso. M2A-IMPORT-SPEC.md registra o contrato corrigido; evidências m2a-fix (runtime parcial, sem nova aprovação do motor).
+
+M3A inicial (2026-10-19): JRN-006/009; FR-007..009/012 e FR-027; BR-009/013/015/024/025/043/045. ASR local em português, estágios reais, cancelamento e persistência por projeto em `app/src-tauri/src/transcription/`; integração em `useTranscription`, `TranscriptionControls` e painéis existentes. AC-031/032/033/037/038 cobertos parcialmente por contratos/testes, sem declarar aceite ponta a ponta. AC-035/036 (fila durável/registro consultável) e AC-039 (export) não concluídos. Runtime e qualidade humana reservados ao mantenedor por instrução explícita. SPEC e roteiro em `docs/engineering/M3A-*`.
+
+Correção M3A (2026-10-19): mesmos JRN/FR/BR/AC. Callback de progresso oficial do whisper.cpp → eventos tipados → modal acessível com porcentagem; feedback de importação por bytes; microcopy conforme skill UX Writing; adaptação de segmentos externos antes da validação estrita dos dados salvos. Aceite do vídeo que falhou continua humano, sem JSON original disponível. Contrato detalhado em M3A-TRANSCRIPTION-SPEC.md §Correção.
+
+Refinamento editor/transcrição (2026-10-19): JRN-006/009, FR-008/011/012, BR-020/025/026; painel limitado com texto contínuo, clique e destaque por palavra quando há offsets reais; edição invalida alinhamento; timeline com cursor capturado, teclado, imagens e picos locais reais. Contratos em EDITOR-TIMING-SPEC.md; testes editor-timing.test.tsx, transcription/words.rs e media_preview/{analysis,ffmpeg}.rs. 149 casos únicos aprovados em código (52 Rust e 97 frontend); marcação estática/ponteiro controlado não substituem Tauri real. Conferência de viewport, áudio, qualidade e prévias reservada ao mantenedor; sem aprovação visual.
+
+03H (2026-10-19): JRN-006/009/011; FR-011/012/016/017; BR-005/020/025/026; AC-015 antecipado por pedido explícito do mantenedor. Seções recolhíveis, correção/seek por palavra preservando intervalos, Cancelar secundário e onda v2; exclusão confirmada com recuperação persistente e respeito às referências de mídia; eventos de contexto preservados, menu padrão bloqueado. EDITOR-USABILITY-SPEC.md e editor-usability.test.tsx; regressões de tokens/DTW em words.rs e exclusão/recuperação em project_delete.rs/media_store.rs. 164 casos únicos de código aprovados; não equivale a ASR real ou aceite visual. Duplicação de projeto e classificação semântica de ganchos continuam fora desta entrega.
+
+03I (2026-10-19): JRN-003/006/009/011, FR-011/012/013/017, BR-005/020/025/026. Estilo opcional e validado → workspace-store → CaptionVisual no sample e vídeo; transporte/atalho guardado; menu contextual → coleção, exclusão, seletor/cópia e TXT/SRT. Testes editor-controls.test.tsx (11), file_output.rs, project_files.rs e transcription/export.rs (3). 178 casos únicos (117 frontend e 61 Rust), sem Tauri real. Compartilhamento adiado; render de vídeo com estilos continua pendente. Contrato EDITOR-CONTROLS-SPEC.md.
+
+03J (2026-10-19): JRN-007/008/009/010, FR-010/011/012/013/014/016,
+BR-019/020/021/023/026..031, AC-040..045 parcial. clips/{ranking,scenes,store,commands}
+→ useClips/ClipTools/ClipResults; render/{settings,ass,pipeline,commands} → MP4
+H.264/AAC com legenda gravada. Revisão e ID vinculados à mídia persistidos;
+aprovação verificada também no backend para exportar cortes identificados.
+Janela móvel/progresso/cancelamento têm contratos em progress-display/cancel-flow.
+Testes novos editor-autocut (7), cancel-flow (2), workspace-clip (1), Rust (12)
+mais regressões: 200 casos únicos aprovados, dos quais um usa FFmpeg/ffprobe reais
+com vídeo/áudio sintéticos e verifica pixels das legendas. Não é Tauri real,
+benchmark ASR, validação dos melhores ganchos ou aprovação estética. BR-022,
+AC-045 e requisitos de lote continuam parciais. Referência EDITOR-AUTOCUT-SPEC.md.
+
+03K (2026-10-19): JRN-003/006/007/008/009/010; FR-010/011/012/013/014/016/017;
+BR-019..023/026..031; AC-040..045 parcial. get_project_clips → useClipLibrary →
+ProjectsScreen/ClipGallery; ProjectWorkspace → galeria do projeto → ClipInspection;
+clip-media → inspeção/edição recuperada; content → títulos representativos e
+preservação de títulos personalizados. profiles/gpu → transcrição de um modelo
+selecionado, CUDA/CPU, DTW correspondente. clip-source/clip-library, testes de
+store/content/profiles/gpu e benchmark_contract cobrem contratos e persistência.
+215 casos únicos de código aprovados; dez casos ASR reais separados dessa contagem.
+Sem aprovação estética, WER ou teste completo da UI. Referências CLIP-LIBRARY-ASR-*
+e ASR-BENCHMARK-2026-10-19.md. Compartilhamento continua adiado.
+
+03L (2026-10-19): JRN-003/006/007/008/009/010; FR-008/009/010/011/012/013/014/016/017/022; BR-019..023/026..031, refinadas por BR-03L-01..05 e AC-03L-01..06 em SOURCE-CLIP-ISOLATION-SPEC.md. VideoPreview original → ProjectOverview; clip-workspace/workspace-store → isolamento por corte; Options.format → Clip.format/ID → ClipFormatPicker/ClipPoster/inspeção/editor/render. clip-transcript/ClipTranscript → parágrafos com seek por tempos existentes. semantic/analysis_types → geração/analyze_clip → ClipDetails; gate, esquema JSON, validação de citações e invalidação de aprovação/análise após mudança do texto. Testes novos source-clip-isolation (9), semantic_tests (3 contratos + 1 motor real), ranking (1), refinement_contract (1 sobre seis saídas ASR reais). Total único da entrega: 229 aprovados (145 frontend/84 Rust); sem execução da UI Tauri ou aprovação estética. ASR permanece PARTIAL, sem alegar WER contra referência humana ou qualidade de 98%.

@@ -54,8 +54,8 @@
 .source-form__row > .upload-primary { width: 197px; height: 50px; font-size: 20px; border-radius: 8px; }
 .upload-primary:hover:not(:disabled) { background: #e5e5e5; }
 .upload-primary:disabled { cursor: not-allowed; opacity: 0.5; }
-.upload-screen :is(button, input, select):focus-visible,
-.tool-dialog :is(button, input, select, video, [role="tabpanel"]):focus-visible {
+html[data-input-modality="keyboard"] .upload-screen :is(button, input, select):focus-visible,
+html[data-input-modality="keyboard"] .tool-dialog :is(button, input, select, video, [role="tabpanel"]):focus-visible {
   outline: 2px solid var(--sh-accent);
   outline-offset: 3px;
 }
@@ -129,7 +129,7 @@
 .caption-model:nth-child(3n) strong { color: var(--sh-accent); }
 .caption-model:nth-child(3n + 1) .caption-model__sample { text-transform: uppercase; }
 .caption-model > input:checked + .caption-model__sample { border-color: #007d7a; }
-.caption-model > input:focus-visible + .caption-model__sample { outline: 2px solid #007d7a; outline-offset: 2px; }
+html[data-input-modality="keyboard"] .caption-model > input:focus-visible + .caption-model__sample { outline: 2px solid #007d7a; outline-offset: 2px; }
 .caption-ratio { display: flex; align-items: center; gap: 8px; margin-top: 20px; font-size: 12px; }
 .caption-ratio select { min-height: 32px; padding: 4px 8px; border: 1px solid #d9d9d9; border-radius: 5px; background: #fff; color: #4b4b4b; font: inherit; }
 .caption-models__empty { padding: 24px 8px; text-align: center; }
@@ -151,4 +151,13 @@
   .source-form--compact .source-form__row > .upload-primary { width: 100%; }
   .caption-examples { margin-inline: 0; }
   .caption-example { height: 165px; }
+}
+
+/* M2A: destaque do drag-and-drop nativo (tauri://drag-over) */
+.source-form--drop {
+  outline: 1px dashed #51565a;
+  outline-offset: 4px;
+}
+.source-form--drop .source-form__row input {
+  border-color: var(--upload-accent, #02c2be);
 }

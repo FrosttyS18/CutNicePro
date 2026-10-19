@@ -1,0 +1,21 @@
+{
+  "results": [
+    {
+      "name": "Nome legado usa apenas o arquivo sem modificar título salvo",
+      "status": "PASS",
+      "previouslyPassed": true
+    },
+    {
+      "name": "Link YouTube informa indisponibilidade e não cria projeto",
+      "status": "PASS",
+      "previouslyPassed": true
+    },
+    {
+      "name": "Importação nativa usa nome limpo, progresso real repassado e player local",
+      "status": "FAIL",
+      "error": "AssertionError [ERR_ASSERTION]: [{\"command\":\"list_projects\",\"args\":{}},{\"command\":\"list_collections\",\"args\":{}},{\"command\":\"plugin:event|listen\",\"args\":{\"event\":\"tauri://drag-drop\",\"target\":{\"kind\":\"Any\"},\"handler\":1}},{\"command\":\"plugin:event|listen\",\"args\":{\"event\":\"tauri://drag-over\",\"target\":{\"kind\":\"Any\"},\"handler\":3}},{\"command\":\"plugin:event|listen\",\"args\":{\"event\":\"tauri://drag-leave\",\"target\":{\"kind\":\"Any\"},\"handler\":5}},{\"command\":\"plugin:dialog|open\",\"args\":{\"options\":{\"multiple\":false,\"directory\":false,\"filters\":[{\"name\":\"Vídeos\",\"extensions\":[\"mp4\",\"m4v\",\"mov\",\"webm\",\"mkv\",\"avi\"]}]}}},{\"command\":\"create_project\",\"args\":{\"name\":\"C:UsersadckaDownloadsVídeo 1.2\"}},{\"command\":\"plugin:event|listen\",\"args\":{\"event\":\"import://progress\",\"target\":{\"kind\":\"Any\"},\"handler\":7}},{\"command\":\"import_media\",\"args\":{\"projectId\":\"p-1\",\"srcPath\":\"C:UsersadckaDownloadsVídeo 1.2.webm\"}},{\"command\":\"plugin:event|unlisten\",\"args\":{\"event\":\"import://progress\",\"eventId\":8}},{\"command\":\"plugin:event|unlisten\",\"args\":{\"event\":\"tauri://drag-drop\",\"eventId\":2}},{\"command\":\"plugin:event|unlisten\",\"args\":{\"event\":\"tauri://drag-over\",\"eventId\":4}},{\"command\":\"plugin:event|unlisten\",\"args\":{\"event\":\"tauri://drag-leave\",\"eventId\":6}}]\n+ actual - expected\n\n+ 'C:UsersadckaDownloadsVídeo 1.2'\n- 'Vídeo 1.2'\n"
+    }
+  ],
+  "errors": [],
+  "setupFailure": "AssertionError [ERR_ASSERTION]: [{\"command\":\"list_projects\",\"args\":{}},{\"command\":\"list_collections\",\"args\":{}},{\"command\":\"plugin:event|listen\",\"args\":{\"event\":\"tauri://drag-drop\",\"target\":{\"kind\":\"Any\"},\"handler\":1}},{\"command\":\"plugin:event|listen\",\"args\":{\"event\":\"tauri://drag-over\",\"target\":{\"kind\":\"Any\"},\"handler\":3}},{\"command\":\"plugin:event|listen\",\"args\":{\"event\":\"tauri://drag-leave\",\"target\":{\"kind\":\"Any\"},\"handler\":5}},{\"command\":\"plugin:dialog|open\",\"args\":{\"options\":{\"multiple\":false,\"directory\":false,\"filters\":[{\"name\":\"Vídeos\",\"extensions\":[\"mp4\",\"m4v\",\"mov\",\"webm\",\"mkv\",\"avi\"]}]}}},{\"command\":\"create_project\",\"args\":{\"name\":\"C:UsersadckaDownloadsVídeo 1.2\"}},{\"command\":\"plugin:event|listen\",\"args\":{\"event\":\"import://progress\",\"target\":{\"kind\":\"Any\"},\"handler\":7}},{\"command\":\"import_media\",\"args\":{\"projectId\":\"p-1\",\"srcPath\":\"C:UsersadckaDownloadsVídeo 1.2.webm\"}},{\"command\":\"plugin:event|unlisten\",\"args\":{\"event\":\"import://progress\",\"eventId\":8}},{\"command\":\"plugin:event|unlisten\",\"args\":{\"event\":\"tauri://drag-drop\",\"eventId\":2}},{\"command\":\"plugin:event|unlisten\",\"args\":{\"event\":\"tauri://drag-over\",\"eventId\":4}},{\"command\":\"plugin:event|unlisten\",\"args\":{\"event\":\"tauri://drag-leave\",\"eventId\":6}}]\n+ actual - expected\n\n+ 'C:UsersadckaDownloadsVídeo 1.2'\n- 'Vídeo 1.2'\n"
+}

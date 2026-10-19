@@ -1,0 +1,31 @@
+{
+  "task": "M3A feedback and timestamp adapter correction",
+  "rustTests": {
+    "passed": 16,
+    "failed": 0,
+    "filteredUnrelated": 30
+  },
+  "frontendTests": {
+    "staticComponentMarkup": 5,
+    "failed": 0,
+    "contractsAndWorkspace": 12
+  },
+  "uniqueTestsPassed": 33,
+  "newTests": 12,
+  "build": "PASS",
+  "finalTypecheck": "PASS",
+  "cargoCheck": "PASS - no warnings",
+  "whitespace": "PASS",
+  "browserRuns": 0,
+  "appRuns": 0,
+  "realSpeechRuns": 0,
+  "originalVideoRetest": "PENDING MAINTAINER",
+  "rawFailedJsonAvailable": false,
+  "progressSource": "whisper.cpp v1.9.5 official CLI -pp stderr callback",
+  "percentagePolicy": "0 while preparing; native callback thereafter; 100 only after persistence",
+  "testDiscoveryFix": "Added TSX to existing Vitest include; static markup suite then executed successfully",
+  "sources": [
+    "https://github.com/ggml-org/whisper.cpp/blob/v1.9.5/examples/cli/cli.cpp",
+    "https://github.com/openai/whisper/blob/main/whisper/transcribe.py"
+  ]
+}

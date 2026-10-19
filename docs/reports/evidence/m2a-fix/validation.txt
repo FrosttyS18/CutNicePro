@@ -1,0 +1,11 @@
+Correção M2A — nomes, YouTube e warnings
+Frontend: 17/17 (media-name8 novos, workspace5, m2a-media4).
+Rust: cargo test --lib media_import::tests, 5/5 PASS; 25 outros filtrados.
+Aviso inicial de Duration não utilizado removido; SystemTime e thread também removidos.
+cargo check --tests final PASS sem warnings (50,14s), sem repetir testes aprovados.
+Build final TypeScript/Vite PASS. Aviso de import estático/dinâmico de event.js removido; aviso de bundle >500kB permanece (preexistente).
+Navegador Edge com IPC/eventos/dialog simulados e mídia real servida por interceptação: 2 casos PASS (título legado, YouTube sem criação), 1 FAIL do harness (caminho Windows perdeu separadores). Outros 3 casos não executados.
+Primeira execução também tinha mock incompleto de unregisterListener; corrigido na repetição, console errors[] nessa repetição.
+Fixture de caminhos corrigida depois por composição com String.fromCharCode(92), SEM nova execução. Não alegar PASS das etapas pendentes.
+Política AGENTS.md: UMA rodada inicial + no máximo UMA repetição justificada. Ambas usadas; runtime final PARTIAL.
+Nenhuma validação no executável Tauri ou dados reais do usuário nesta tarefa.

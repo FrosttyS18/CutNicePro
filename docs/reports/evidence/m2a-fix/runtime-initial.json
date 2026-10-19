@@ -1,0 +1,24 @@
+{
+  "results": [
+    {
+      "name": "Nome legado usa apenas o arquivo sem modificar título salvo",
+      "status": "PASS"
+    },
+    {
+      "name": "Link YouTube informa indisponibilidade e não cria projeto",
+      "status": "PASS"
+    },
+    {
+      "name": "Importação nativa usa nome limpo, progresso real repassado e player local",
+      "status": "FAIL",
+      "error": "TimeoutError: locator.waitFor: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('heading', { name: 'Vídeo 1.2', exact: true }) to be visible\u001b[22m\n"
+    }
+  ],
+  "errors": [
+    "TypeError: Cannot read properties of undefined (reading 'unregisterListener')",
+    "TypeError: Cannot read properties of undefined (reading 'unregisterListener')",
+    "TypeError: Cannot read properties of undefined (reading 'unregisterListener')",
+    "TypeError: Cannot read properties of undefined (reading 'unregisterListener')"
+  ],
+  "setupFailure": "TimeoutError: locator.waitFor: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('heading', { name: 'Vídeo 1.2', exact: true }) to be visible\u001b[22m\n"
+}

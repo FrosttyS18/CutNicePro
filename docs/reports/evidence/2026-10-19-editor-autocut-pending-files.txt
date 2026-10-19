@@ -1,0 +1,329 @@
+ M AGENTS.md
+ M app/package-lock.json
+ M app/package.json
+ M app/src-tauri/Cargo.lock
+ M app/src-tauri/Cargo.toml
+ M app/src-tauri/capabilities/default.json
+ M app/src-tauri/src/lib.rs
+ M app/src-tauri/src/storage.rs
+ M app/src-tauri/tauri.conf.json
+ M app/src/App.tsx
+ M app/src/components/editor/CaptionPresetsDialog.tsx
+ M app/src/components/editor/EditorInspector.tsx
+ M app/src/components/editor/EditorTimeline.tsx
+ M app/src/components/editor/VideoEditor.tsx
+ M app/src/components/upload/PreparationDialog.tsx
+ M app/src/components/upload/RecentProjects.tsx
+ M app/src/components/upload/SourceForm.tsx
+ M app/src/components/upload/ToolDialog.tsx
+ M app/src/components/upload/tools.ts
+ D app/src/components/workspace/ExportDialog.tsx
+ M app/src/components/workspace/FlowDialog.tsx
+ M app/src/components/workspace/ProjectOverview.tsx
+ M app/src/components/workspace/TranscriptPanel.tsx
+ M app/src/components/workspace/VideoPreview.tsx
+ M app/src/hooks/useVideoFrames.ts
+ M app/src/hooks/useWorkspaceData.ts
+ M app/src/lib/ipc.ts
+ M app/src/lib/workspace-types.ts
+ M app/src/lib/workspace.ts
+ M app/src/main.tsx
+ M app/src/screens/CollectionScreen.tsx
+ M app/src/screens/ProjectWorkspace.tsx
+ M app/src/screens/ProjectsScreen.tsx
+ M app/src/screens/UploadScreen.tsx
+ M app/src/screens/upload.css
+ M app/src/screens/workspace.css
+ M app/src/services/workspace-store.ts
+ M app/vite.config.ts
+ M docs/engineering/ENGINE-HANDOFF.md
+ M docs/product/BACKLOG.md
+ M docs/product/DECISIONS.md
+ M docs/product/PRODUCT-BRAIN.md
+ M docs/product/TRACEABILITY.md
+ M docs/reports/LATEST.txt
+ M tasks/plan.md
+?? .playwright-mcp/console-2026-10-18T14-20-18-838Z.log
+?? .zcode/plans/
+?? app/src-tauri/icons-src.png
+?? app/src-tauri/icons/128x128.png
+?? app/src-tauri/icons/128x128@2x.png
+?? app/src-tauri/icons/32x32.png
+?? app/src-tauri/icons/64x64.png
+?? app/src-tauri/icons/Square107x107Logo.png
+?? app/src-tauri/icons/Square142x142Logo.png
+?? app/src-tauri/icons/Square150x150Logo.png
+?? app/src-tauri/icons/Square284x284Logo.png
+?? app/src-tauri/icons/Square30x30Logo.png
+?? app/src-tauri/icons/Square310x310Logo.png
+?? app/src-tauri/icons/Square44x44Logo.png
+?? app/src-tauri/icons/Square71x71Logo.png
+?? app/src-tauri/icons/Square89x89Logo.png
+?? app/src-tauri/icons/StoreLogo.png
+?? app/src-tauri/icons/android/mipmap-hdpi/
+?? app/src-tauri/icons/android/mipmap-mdpi/
+?? app/src-tauri/icons/android/mipmap-xhdpi/
+?? app/src-tauri/icons/android/mipmap-xxhdpi/
+?? app/src-tauri/icons/android/mipmap-xxxhdpi/
+?? app/src-tauri/icons/icon.icns
+?? app/src-tauri/icons/icon.ico
+?? app/src-tauri/icons/icon.png
+?? app/src-tauri/icons/ios/
+?? app/src-tauri/resources/
+?? app/src-tauri/src/clips/
+?? app/src-tauri/src/file_output.rs
+?? app/src-tauri/src/local_media_scheme.rs
+?? app/src-tauri/src/media_analyze.rs
+?? app/src-tauri/src/media_import.rs
+?? app/src-tauri/src/media_preview/
+?? app/src-tauri/src/media_store.rs
+?? app/src-tauri/src/media_tools.rs
+?? app/src-tauri/src/processing.rs
+?? app/src-tauri/src/project_delete.rs
+?? app/src-tauri/src/project_files.rs
+?? app/src-tauri/src/render/
+?? app/src-tauri/src/transcription/
+?? app/src/assets/avatar-perfil.png
+?? app/src/assets/posters/
+?? app/src/assets/thumb-mock-projeto.png
+?? app/src/components/clips/
+?? app/src/components/editor/AudioWaveform.tsx
+?? app/src/components/editor/CaptionEffectControls.tsx
+?? app/src/components/editor/CaptionFontControls.tsx
+?? app/src/components/editor/CaptionPresetGrid.tsx
+?? app/src/components/editor/CaptionVisual.tsx
+?? app/src/components/editor/FramingToolbar.tsx
+?? app/src/components/editor/PlaybackControls.tsx
+?? app/src/components/editor/TimelineSurface.tsx
+?? app/src/components/editor/captions.css
+?? app/src/components/workspace/FloatingPanel.tsx
+?? app/src/components/workspace/ProcessingDialog.tsx
+?? app/src/components/workspace/ProjectCollectionDialog.tsx
+?? app/src/components/workspace/ProjectContextCard.tsx
+?? app/src/components/workspace/ProjectContextMenu.tsx
+?? app/src/components/workspace/ProjectDeleteButton.tsx
+?? app/src/components/workspace/ProjectDeleteDialog.tsx
+?? app/src/components/workspace/TranscriptSentence.tsx
+?? app/src/components/workspace/TranscriptWordEditor.tsx
+?? app/src/components/workspace/TranscriptWordPopover.tsx
+?? app/src/components/workspace/TranscriptionControls.tsx
+?? app/src/components/workspace/TranscriptionDialog.tsx
+?? app/src/components/workspace/floating-panel.css
+?? app/src/components/workspace/project-actions.css
+?? app/src/components/workspace/transcription.css
+?? app/src/hooks/useClips.ts
+?? app/src/hooks/useMeasuredProgress.ts
+?? app/src/hooks/usePlaybackShortcut.ts
+?? app/src/hooks/useTimelinePreview.ts
+?? app/src/hooks/useTranscription.ts
+?? app/src/lib/cancel-flow.ts
+?? app/src/lib/captions.ts
+?? app/src/lib/clips.ts
+?? app/src/lib/context-menu.ts
+?? app/src/lib/media-name.ts
+?? app/src/lib/playback.ts
+?? app/src/lib/progress-display.ts
+?? app/src/lib/project-menu.ts
+?? app/src/lib/timeline.ts
+?? app/src/lib/transcript-sections.ts
+?? app/src/lib/transcript-text.ts
+?? app/src/lib/transcription-feedback.ts
+?? app/src/lib/transcription.ts
+?? app/src/lib/waveform.ts
+?? app/src/screens/editor-refinement.css
+?? app/src/test/cancel-flow.test.ts
+?? app/src/test/editor-autocut.test.tsx
+?? app/src/test/editor-controls.test.tsx
+?? app/src/test/editor-timing.test.tsx
+?? app/src/test/editor-usability.test.tsx
+?? app/src/test/m2a-media.test.ts
+?? app/src/test/media-name.test.ts
+?? app/src/test/transcription-feedback.test.tsx
+?? app/src/test/transcription.test.ts
+?? app/src/test/workspace-clip.test.ts
+?? design/exports/firstrun-access-user-flow-v2.png
+?? design/exports/m1-components.png
+?? design/exports/master-user-flow.png
+?? design/exports/product-flow-overview-v2.png
+?? design/exports/product-roadmap.png
+?? design/exports/user-journey-map.png
+?? design/flow-v2/docdump-v2.figcraft
+?? design/flow-v2/firstrun-v2-wip.png
+?? design/flow-v2/gov-chips.png
+?? design/flow-v2/gov-index.png
+?? design/flow-v2/overview-v2-wip.png
+?? design/flow-v2/zorder-losangos-textos-atual.png
+?? design/flow-v2/ztest-negativos.png
+?? design/flow-v2/ztest-positivo.png
+?? design/handoff/03b/01-splash.png
+?? design/handoff/03b/02-home-expandida.png
+?? design/handoff/03b/03-home-curta.png
+?? design/handoff/03b/04-projetos-todos.png
+?? design/handoff/03b/05-projetos-colecoes.png
+?? design/handoff/03b/06-colecao-pasta.png
+?? design/handoff/03b/avatar-perfil.png
+?? design/handoff/03b/home-contact-sheet.png
+?? design/handoff/03b/home-strip-bottom.png
+?? design/handoff/03b/thumb-mock-projeto.png
+?? design/handoff/03d/flow-ui-v1.figcraft
+?? design/handoff/03d/frame-1.png
+?? design/handoff/03d/frame-2.png
+?? design/handoff/03d/frame-3.png
+?? design/referencias/
+?? docs/engineering/EDITOR-AUTOCUT-MANUAL-CHECK.md
+?? docs/engineering/EDITOR-AUTOCUT-REVIEW.md
+?? docs/engineering/EDITOR-AUTOCUT-SPEC.md
+?? docs/engineering/EDITOR-CONTROLS-MANUAL-CHECK.md
+?? docs/engineering/EDITOR-CONTROLS-SPEC.md
+?? docs/engineering/EDITOR-TIMING-MANUAL-CHECK.md
+?? docs/engineering/EDITOR-TIMING-SPEC.md
+?? docs/engineering/EDITOR-USABILITY-MANUAL-CHECK.md
+?? docs/engineering/EDITOR-USABILITY-SPEC.md
+?? docs/engineering/ENGINE-DECISIONS.md
+?? docs/engineering/M2A-IMPORT-SPEC.md
+?? docs/engineering/M3A-MANUAL-CHECK.md
+?? docs/engineering/M3A-TRANSCRIPTION-SPEC.md
+?? docs/references/ASR-QUALITY-2026-10-19.md
+?? docs/references/OPEN-SOURCE-ENGINE-RESEARCH.md
+?? docs/reports/evidence/03b/00-splash.png
+?? docs/reports/evidence/03b/01-home-expandida-1440.png
+?? docs/reports/evidence/03b/02-home-curta-1440.png
+?? docs/reports/evidence/03b/03-workspace-1440.png
+?? docs/reports/evidence/03b/04-projetos-todos-1440.png
+?? docs/reports/evidence/03b/05-projetos-colecoes-1440.png
+?? docs/reports/evidence/03b/06-colecao-pasta-1440.png
+?? docs/reports/evidence/03b/07-colecao-com-projeto-1440.png
+?? docs/reports/evidence/03b/08-apos-reinicio-colecoes-1440.png
+?? docs/reports/evidence/03b/09-projeto-reaberto-1440.png
+?? docs/reports/evidence/03b/10-home-1280x720.png
+?? docs/reports/evidence/03b/11-projetos-1920x1080.png
+?? docs/reports/evidence/03b1/01-home-03b1.png
+?? docs/reports/evidence/03b1/02-sidebar-expandida.png
+?? docs/reports/evidence/03b1/03-rail-icons.png
+?? docs/reports/evidence/03b1/04-sidebar-recolhida.png
+?? docs/reports/evidence/03b1/05-toggle-focus-visible.png
+?? docs/reports/evidence/03b1/06-pos-enter-expandida.png
+?? docs/reports/evidence/03b1/07-preferencia-persistida.png
+?? docs/reports/evidence/03b1/08-projetos-preservados.png
+?? docs/reports/evidence/03b1/09-colecoes-preservadas.png
+?? docs/reports/evidence/03b2/artcraft-inspection/
+?? docs/reports/evidence/03b2/biblioteca-preservada.png
+?? docs/reports/evidence/03b2/halftone-clique.png
+?? docs/reports/evidence/03b2/halftone-ponteiro.png
+?? docs/reports/evidence/03b2/halftone-repouso.png
+?? docs/reports/evidence/03b2/halftone-retorno.png
+?? docs/reports/evidence/03b2/hero-t0.png
+?? docs/reports/evidence/03b2/hero-t2s.png
+?? docs/reports/evidence/03b2/hero-t5s.png
+?? docs/reports/evidence/03b2/home-completa-1440.png
+?? docs/reports/evidence/03b2/home-recolhida.png
+?? docs/reports/evidence/03b3/halftone-clique.png
+?? docs/reports/evidence/03b3/halftone-ponteiro.png
+?? docs/reports/evidence/03b3/home-1280x720.png
+?? docs/reports/evidence/03b3/home-1440x900.png
+?? docs/reports/evidence/03b3/home-1920x1080.png
+?? docs/reports/evidence/03b3/home-2560x1080.png
+?? docs/reports/evidence/03b3/home-3440x1440.png
+?? docs/reports/evidence/03b3/toggle-foco.png
+?? docs/reports/evidence/03b4/artcraft/
+?? docs/reports/evidence/03b4/expandido-square.png
+?? docs/reports/evidence/03b4/expandido-teclado.png
+?? docs/reports/evidence/03b4/expandido-vertical.png
+?? docs/reports/evidence/03b4/expandido-wide.png
+?? docs/reports/evidence/03b4/home-1280x720.png
+?? docs/reports/evidence/03b4/home-1440x900.png
+?? docs/reports/evidence/03b4/home-3440x1440.png
+?? docs/reports/evidence/03b4/home-completa-1440.png
+?? docs/reports/evidence/03b4/hover-sem-efeito.png
+?? docs/reports/evidence/03b4/reduced-motion.png
+?? docs/reports/evidence/03b4/retorno-wide.png
+?? docs/reports/evidence/03b5/clique-120ms.png
+?? docs/reports/evidence/03b5/clique-720ms.png
+?? docs/reports/evidence/03b5/clique-esq.png
+?? docs/reports/evidence/03b5/clique-topo.png
+?? docs/reports/evidence/03b5/final/
+?? docs/reports/evidence/03b5/galaxy-repouso-1440.png
+?? docs/reports/evidence/03b5/galaxy-t0.png
+?? docs/reports/evidence/03b5/galaxy-t1.png
+?? docs/reports/evidence/03b5/galaxy-t2.png
+?? docs/reports/evidence/03b5/galaxy-t3.png
+?? docs/reports/evidence/03b5/galaxy-t4.png
+?? docs/reports/evidence/03b5/galaxy-t5.png
+?? docs/reports/evidence/03b5/galaxy-t6.png
+?? docs/reports/evidence/03b5/galaxy-t7.png
+?? docs/reports/evidence/03b5/galaxy-temporal.webm
+?? docs/reports/evidence/03b5/home-1280x720.png
+?? docs/reports/evidence/03b5/home-1920x1080.png
+?? docs/reports/evidence/03b5/home-2560x1080.png
+?? docs/reports/evidence/03b5/home-3440x1440.png
+?? docs/reports/evidence/03b5/home-recolhida-1440.png
+?? docs/reports/evidence/03b5/hover-A0.png
+?? docs/reports/evidence/03b5/hover-A1.png
+?? docs/reports/evidence/03b5/hover-B0.png
+?? docs/reports/evidence/03b5/hover-B1.png
+?? docs/reports/evidence/03b5/hover-esq.png
+?? docs/reports/evidence/03b5/hover-lock.png
+?? docs/reports/evidence/03b5/hover-topo.png
+?? docs/reports/evidence/03b5/retorno-fora.png
+?? docs/reports/evidence/03b5/sweep/
+?? docs/reports/evidence/03b6/ampliacoes/
+?? docs/reports/evidence/03b6/galaxy-dev-posters.webm
+?? docs/reports/evidence/03b6/home-1280x720.png
+?? docs/reports/evidence/03b6/home-1920x1080.png
+?? docs/reports/evidence/03b6/home-2560x1080.png
+?? docs/reports/evidence/03b6/home-3440x1440.png
+?? docs/reports/evidence/03b6/offline.png
+?? docs/reports/evidence/03b6/q0-hold.png
+?? docs/reports/evidence/03b6/q1-hold.png
+?? docs/reports/evidence/03b6/q2-hold.png
+?? docs/reports/evidence/03b6/q3-hold.png
+?? docs/reports/evidence/03b6/q4-hold.png
+?? docs/reports/evidence/03b6/q5-hold.png
+?? docs/reports/evidence/03b6/q6-hold.png
+?? docs/reports/evidence/03b6/q7-hold.png
+?? docs/reports/evidence/03b6/ratios/
+?? docs/reports/evidence/03b6/ratios2/
+?? docs/reports/evidence/03b6/tela-app.png
+?? docs/reports/evidence/03b6/temporal-exe/
+?? docs/reports/evidence/03b6/videos-A.png
+?? docs/reports/evidence/03b6/videos-B.png
+?? docs/reports/evidence/03b6/videos-C.png
+?? docs/reports/evidence/03c/figcraft-2455.png
+?? docs/reports/evidence/03c/figcraft-2457.png
+?? docs/reports/evidence/03c/figcraft-2459.png
+?? docs/reports/evidence/03c/figcraft-2461.png
+?? docs/reports/evidence/03d/fixture.webm
+?? docs/reports/evidence/2026-10-19-editor-autocut-files.txt
+?? docs/reports/evidence/2026-10-19-editor-autocut-pending-files.txt
+?? docs/reports/evidence/2026-10-19-editor-autocut-validation.txt
+?? docs/reports/evidence/editor-controls/
+?? docs/reports/evidence/editor-timing/
+?? docs/reports/evidence/editor-usability/
+?? docs/reports/evidence/library-arch/
+?? docs/reports/evidence/m1/01-empty-state.png
+?? docs/reports/evidence/m1/02-workspace-criado.png
+?? docs/reports/evidence/m1/03-home-com-projeto.png
+?? docs/reports/evidence/m1/04-apos-reinicio.png
+?? docs/reports/evidence/m1/05-projeto-reaberto.png
+?? docs/reports/evidence/m1dr-audit/
+?? docs/reports/evidence/m1dr-hold/
+?? docs/reports/evidence/m2a-fix/
+?? docs/reports/evidence/m2a/
+?? docs/reports/evidence/m3a-feedback-fix/
+?? docs/reports/evidence/m3a/
+?? docs/reports/evidence/scresume/
+?? docs/reports/history/2026-10-19_012424_agents-motor-pending.txt
+?? docs/reports/history/2026-10-19_012424_agents-motor.txt
+?? docs/reports/history/2026-10-19_0232_m2a-f0-f1-importacao-persistente.txt
+?? docs/reports/history/2026-10-19_035214_m2a-fixes-open-source.txt
+?? docs/reports/history/2026-10-19_041208_m3a-transcricao-local.txt
+?? docs/reports/history/2026-10-19_043229_m3a-feedback-posicoes.txt
+?? docs/reports/history/2026-10-19_051505_editor-transcricao-timeline.txt
+?? docs/reports/history/2026-10-19_054429_editor-uso-palavras-exclusao.txt
+?? docs/reports/history/2026-10-19_061553_editor-controles-contexto-legendas.txt
+?? docs/reports/history/2026-10-19_074003_editor-cortes-exportacao.txt
+?? tools/e2e/m2a-import-fixes.mjs
+?? tools/e2e/m2a-runtime-tauri.mjs
+?? tools/engine/
+?? tools/flow/__pycache__/
+?? tools/port/patch-lib-m2a.py

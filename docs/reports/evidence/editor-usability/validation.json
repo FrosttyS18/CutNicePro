@@ -1,0 +1,38 @@
+{
+  "date": "2026-10-19",
+  "task": "03H-editor-usability",
+  "functionalStatus": "PARTIAL",
+  "regressionStatus": "PASS_WITHIN_EXECUTED_SCOPE",
+  "visualStatus": "PENDING_HUMAN_APPROVAL",
+  "uniquePassingCases": 164,
+  "uniqueRustCases": 58,
+  "uniqueFrontendCases": 106,
+  "newCases": 15,
+  "executions": [
+    {"command": "cargo test --lib transcription::words::", "passed": 3, "failed": 0},
+    {"command": "npm test", "passed": 106, "failed": 0, "files": 15},
+    {"command": "cargo test --lib", "passed": 56, "failed": 0},
+    {"command": "npm run build", "status": "PASS", "note": "Primeira compilação após a implementação."},
+    {"command": "vitest run editor-usability editor-timing transcription-feedback", "passed": 22, "failed": 0, "note": "Revisão de popover, foco, semântica e microcopy justificou repetição focada."},
+    {"command": "npm run build", "status": "PASS", "note": "Código frontend final; alerta preexistente de chunk acima de 500 kB."},
+    {"command": "cargo test --lib media_store::", "passed": 8, "failed": 0, "note": "Novo tratamento de erro de exclusão física e caso de regressão."},
+    {"command": "cargo test --lib project_delete::", "passed": 2, "failed": 0},
+    {"command": "cargo test --lib project_delete::", "passed": 3, "failed": 0, "note": "Nova recuperação persistente identificada na revisão; teste adicional de reinício."},
+    {"command": "git diff --check", "status": "PASS"},
+    {"command": "whisper-cli --help", "status": "PASS", "note": "Confirmou dtw/no-flash-attn/max-context/suppress-nst; não executa inferência."}
+  ],
+  "model": {
+    "path": ".tooling/vendor/whisper/models/ggml-large-v3-turbo.bin",
+    "sizeBytes": 1624555275,
+    "sha256": "1fc70f774d38eb169993ac391eea357ef47c88757ef72ee5943879b7e8e2bc69",
+    "verified": true,
+    "source": "https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-large-v3-turbo.bin"
+  },
+  "testBoundary": "Testes em código, arquivos temporários, contratos, arrays PCM, markup Node e EventTarget controlado. Não comprovam render canvas, reprodução, DTW real ou ASR no vídeo do mantenedor.",
+  "browserRuns": 0,
+  "agentOpenedApp": false,
+  "realTranscriptionRuns": 0,
+  "screenshots": 0,
+  "commits": 0,
+  "reportBoundary": "Resumo dos resultados observados nas ferramentas; não é log bruto. Contagens únicas não somam reexecuções."
+}

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type DragEvent } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { ProjectMeta } from "../lib/types";
 import { useVideoSource } from "../hooks/useVideoSource";
 import { SourceForm } from "../components/upload/SourceForm";
@@ -18,7 +18,11 @@ interface Props {
   onRetry: () => void;
   onOpen: (id: string) => void;
   onViewAll: () => void;
+  onDelete: (id:string) => Promise<void>;
+  onCollectionsChanged?: () => Promise<void>;
   onCreate: (source: UploadSource, options: UploadOptions) => Promise<void>;
+  /** M2A: importação persistente por CAMINHO REAL (dialog/drop do Tauri). */
+  onFilePath?: (path: string, name: string, options: UploadOptions, onProgress: (copied: number, total: number) => void) => Promise<void>;
 }
 
 export function UploadScreen(props: Props) {
@@ -28,11 +32,13 @@ export function UploadScreen(props: Props) {
   const [tool, setTool] = useState<ToolId | null>(null);
   const [model, setModel] = useState(1);
   const [ratio, setRatio] = useState<AspectRatio>("16:9");
-  const [dragging, setDragging] = useState(false);
   const [dropError, setDropError] = useState<string | null>(null);
   const [youtube, setYoutube] = useState<string | null>(null);
   const [pending, setPending] = useState<{ source: UploadSource; options: UploadOptions } | null>(null);
   const [creating, setCreating] = useState(false);
+  const [importProgress, setImportProgress] = useState<{ copied: number; total: number } | null>(null);
+  const [pathName, setPathName] = useState<string | null>(null);
+  const [pendingPath, setPendingPath] = useState<{ path: string; name: string; options: UploadOptions } | null>(null);
   const [createError, setCreateError] = useState<string | null>(null);
   const creatingRef = useRef(false);
   const selectedTool = videoTools.find((value) => value.id === tool) ?? null;
@@ -44,6 +50,24 @@ export function UploadScreen(props: Props) {
       setYoutube(null);
       if (!tool) void importVideo({ kind: "local", video }, { tool: "editor", model: 0, ratio: "16:9" });
     });
+  }
+
+  // M2A: dialog nativo / drop do Tauri entregam caminho REAL → cópia
+  // persistente em app-data (transacional no App). Sem File de sessão.
+  function selectFilePath(path: string, name: string, options: UploadOptions = { tool: tool ?? "editor", model: tool ? model : 0, ratio: tool ? ratio : "16:9" }) {
+    if (creatingRef.current) return;
+    setDropError(null);
+    setYoutube(null);
+    if (!props.onFilePath) {
+      setDropError("Importação persistente indisponível nesta sessão.");
+      return;
+    }
+    creatingRef.current = true;
+    setPendingPath({ path, name, options }); setPending(null); setTool(null);
+    setCreating(true); setCreateError(null); setPathName(name);
+    void props.onFilePath(path, name, options, (copied, total) => setImportProgress({ copied, total }))
+      .catch((error) => setCreateError(error instanceof Error ? error.message : String(error)))
+      .finally(() => { creatingRef.current = false; setCreating(false); setImportProgress(null); });
   }
 
   function selectYouTube(url: string) {
@@ -70,37 +94,31 @@ export function UploadScreen(props: Props) {
     void importVideo(selected, { tool, model, ratio });
   }
 
-  function drop(event: DragEvent<HTMLElement>) {
-    event.preventDefault();
-    setDragging(false);
-    if (!event.dataTransfer.files.length) return;
-    if (event.dataTransfer.files.length > 1) { setDropError("Envie um vídeo por vez nesta tela."); return; }
-    selectFile(event.dataTransfer.files[0]);
-  }
+
 
   return (
-    <section className={dragging ? "upload-screen upload-screen--dragging" : "upload-screen"}
+    <section className="upload-screen"
       data-testid="upload-screen" aria-labelledby="upload-heading"
-      onDragOver={(event) => {
-        if (event.dataTransfer.types.includes("Files")) { event.preventDefault(); setDragging(true); }
-      }} onDragLeave={(event) => {
-        if (!event.currentTarget.contains(event.relatedTarget as Node | null)) setDragging(false);
-      }} onDrop={drop}>
+      aria-describedby={dropError ? "upload-drop-error" : undefined}>
       <h1 ref={heading} id="upload-heading" className="upload-sr-only" tabIndex={-1}>Enviar novo projeto</h1>
-      <div className="upload-screen__source"><SourceForm loading={source.loading} onFile={selectFile} onYouTube={selectYouTube} /></div>
+      <div className="upload-screen__source"><SourceForm loading={source.loading || creating} onFile={selectFile} onFilePath={selectFilePath} onYouTube={selectYouTube} /></div>
       {source.error && !tool && <p className="upload-message upload-message--error" role="alert">{source.error}</p>}
       {dropError && <p className="upload-message upload-message--error" role="alert">{dropError}</p>}
-      {dragging && <p className="upload-drop-label">Solte seu vídeo aqui</p>}
       <ToolCards onSelect={setTool} />
       <RecentProjects {...props} />
       <ToolDialog tool={selectedTool} video={youtube ? null : source.video} youtube={youtube} onYouTube={selectYouTube} onContinue={continueFlow}
+        onFilePath={selectFilePath}
         loading={source.loading} error={source.error}
         model={model} ratio={ratio} onModel={setModel} onRatio={setRatio} onFile={selectFile}
         onClose={() => { setTool(null); source.clearError(); }} />
-      <PreparationDialog open={Boolean(pending)} busy={creating} error={createError}
-        name={pending?.source.kind === "local" ? pending.source.video.file.name : "Vídeo do YouTube"}
-        onClose={() => setPending(null)}
-        onRetry={() => { if (pending) void importVideo(pending.source, pending.options); }} />
+      <PreparationDialog open={Boolean(pending || pendingPath) || creating} busy={creating} error={createError}
+        progress={importProgress}
+        name={pending?.source.kind === "local" ? pending.source.video.file.name : pathName ?? "Vídeo"}
+        onClose={() => { setPending(null); setPendingPath(null); setCreateError(null); }}
+        onRetry={() => {
+          if (pendingPath) selectFilePath(pendingPath.path, pendingPath.name, pendingPath.options);
+          else if (pending) void importVideo(pending.source, pending.options);
+        }} />
     </section>
   );
 }

@@ -1,0 +1,101 @@
+CUTNICEPRO — ZCODE REPORT
+
+TASK
+  Name: M3A — primeira implementação da transcrição local
+  Status: PARTIAL — código pronto; runtime e qualidade aguardam o mantenedor.
+  Scope: Vídeo importado → áudio → transcrição pt → projeto/editor.
+  Objective: Começar o motor real, com estrutura modular e testes automáticos.
+  Result: Implementado e compilado; motor/modelo baixados e hashes conferidos.
+
+IMPLEMENTATION
+  Completed: whisper.cpp CPU/Base, geração local, cancelamento e persistência.
+  Changes: Texto em segundos, busca/seek existentes, edição salva e reabertura.
+  Architecture impact: 10 arquivos Rust separados; hook, contratos e controles próprios.
+  Not completed: Validação ASR real, benchmark, exportação MP4/SRT, YouTube e BYOK.
+
+FILES
+  Base: C:\CutNicePro
+  Created: app/src-tauri/src/transcription/{commands,jobs,mod,parser,process,runner,store,tests,tools,types}.rs
+    app/src/lib/transcription.ts; app/src/hooks/useTranscription.ts;
+    app/src/components/workspace/TranscriptionControls.tsx e transcription.css;
+    app/src/test/transcription.test.ts; tools/engine/setup-whisper.ps1;
+    docs/engineering/M3A-TRANSCRIPTION-SPEC.md e M3A-MANUAL-CHECK.md;
+    docs/reports/evidence/m3a/{validation.json,working-tree.txt}; este relatório.
+  Modified: lib.rs; useWorkspaceData.ts; workspace-types.ts; workspace-store.ts;
+    ProjectWorkspace.tsx; ProjectOverview.tsx; TranscriptPanel.tsx; VideoEditor.tsx;
+    ENGINE-DECISIONS.md; ENGINE-HANDOFF.md; BACKLOG.md; DECISIONS.md;
+    PRODUCT-BRAIN.md; TRACEABILITY.md; tasks/plan.md; docs/reports/LATEST.txt.
+  Deleted: Nenhum arquivo existente; removida somente fixture WAV vazia desta tarefa.
+  Unexpected changes: NONE; alterações preexistentes preservadas.
+
+VALIDATION
+  Typecheck: PASS — TypeScript final; Rust compilado pelos testes, sem warnings.
+  Lint: SKIP — sem runner de lint configurado; git diff --check passou.
+  Unit tests: PASS — frontend 83 iniciais + 7 focados; Rust 35 iniciais + 9 focados.
+  Integration tests: PASS — contratos simulados, persistência e processo cancelável.
+    Não comprovam transcrição real nem integração Tauri ponta a ponta.
+  Regression tests: PASS no escopo automatizado; não declara regressão global ausente.
+  Visual tests: SKIP — PENDING HUMAN APPROVAL.
+  Runtime verification: SKIP — sem navegador/abertura do app, conforme solicitado.
+  Total passed: 123 casos únicos (84 frontend + 39 Rust); 16 novos.
+  Total failed: 0 testes.
+  Total skipped: 2 checks do harness; runtime/qualidade reservados ao mantenedor.
+
+HOOKS / HARNESS
+  Hooks active: Configuração ZCode existente; execução automática não comprovada aqui.
+  PreToolUse / PostToolUse / Stop: Não alegados como executados pelo Codex.
+  Baseline: fast 4 PASS / 0 FAIL / 2 SKIP; suítes rodadas separadamente.
+  Gate result: Código PASS; capacidade ponta a ponta ainda PARTIAL.
+  Evidence: Saídas dos runners e evidence/m3a/validation.json.
+
+MCP / SKILLS
+  Tools used: Terminal, edição de arquivos, Git e consulta a fontes oficiais.
+  Skills: incremental-implementation, spec-driven-development, frontend-ui-engineering.
+  Connection status: GitHub/Hugging Face acessíveis; nenhum MCP visual utilizado.
+  Failures: Fixture de fala bloqueada por permissões; tentativa interrompida e limpa.
+    Python do harness exigiu execução fora do sandbox; verificação rápida passou.
+  Pending activation: NONE.
+
+GIT
+  Branch: main
+  HEAD: 1a15e2ea7a76b45667f786871b7c97f2837891c4
+  Latest commit: feat(workspace): add project rename, upload flow, and editor scaffolding
+  Commits created: NONE
+  Push: NOT EXECUTED
+  Remote: origin → https://github.com/FrosttyS18/CutNicePro.git; tracking não alterado.
+  Working tree: MODIFIED + UNTRACKED, incluindo alterações anteriores.
+  Pending files: Lista integral em docs/reports/evidence/m3a/working-tree.txt;
+    inclui implementação, documentos, relatórios e arquivos preexistentes.
+
+EVIDENCE
+  Commands executed: npm run build; npm test; vitest run src/test/transcription.test.ts;
+    tsc --noEmit; cargo test --lib; cargo test --lib transcription::; baseline --fast.
+  Relevant logs: Vite avisou bundle >500 kB; nenhum warning Rust nesta execução.
+  Screenshots: 0. Navegador: 0. Aplicativo aberto automaticamente: 0.
+  Test artifacts: Contratos IPC simulados identificados; nenhum texto ASR fabricado.
+  Reproduction details: Motor/modelo em .tooling/vendor/whisper, ignorados pelo Git;
+    setup reproduzível e hashes documentados em ENGINE-DECISIONS.md §5.
+
+ISSUES
+  Bugs found: Corrigidos riscos de salvar após cancelamento e aplicar resposta obsoleta.
+  Unresolved failures: Nenhum teste falhando; fala real não validada nesta entrega.
+  Regressions: Não identificadas nos testes executados; runtime não testado.
+  Risks: Base é provisório; instalador/distribuição e fila persistente pendentes.
+  Blockers: Nenhum para o teste manual no Tauri dev.
+
+FINAL
+  Delivery status: FUNCTIONAL PARTIAL; REGRESSION PASS no escopo de código;
+    VISUAL PENDING HUMAN APPROVAL.
+  Requirements met: Implementação modular, processamento local e testes automáticos.
+  Remaining work: Seu teste de transcrição/fluxo; depois benchmark e exportação.
+  User action required: No Tauri dev, importar vídeo curto com fala pt e transcrever;
+    buscar palavra, clicar no tempo, editar/salvar e reabrir; repetir e cancelar.
+    Roteiro completo: C:\CutNicePro\docs\engineering\M3A-MANUAL-CHECK.md.
+  Restart required: Sim, reiniciar o Tauri dev para carregar o backend novo.
+  Ready for next task: Pronto para sua verificação; sem commit ou push.
+
+REPORT
+  Latest file: C:\CutNicePro\docs\reports\LATEST.txt
+  Historical file: C:\CutNicePro\docs\reports\history\2026-10-19_041208_m3a-transcricao-local.txt
+
+END OF REPORT

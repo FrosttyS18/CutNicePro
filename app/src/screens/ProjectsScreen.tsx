@@ -4,6 +4,12 @@ import { formatCompactDate } from "../lib/format";
 import { TabBar } from "../components/TabBar";
 import { ProjectThumbnail } from "../components/workspace/ProjectThumbnail";
 import { ErrorBanner } from "../components/ErrorBanner";
+import { ProjectContextCard } from "../components/workspace/ProjectContextCard";
+import { useClipLibrary } from "../hooks/useClipLibrary";
+import { ClipGallery } from "../components/clips/ClipGallery";
+import { ClipInspection } from "../components/clips/ClipInspection";
+import type { LibraryClip } from "../lib/clip-library";
+import type { Clip } from "../lib/clips";
 
 interface Props {
   projects: ProjectMeta[];
@@ -12,6 +18,9 @@ interface Props {
   onRetry: () => void;
   onCreate: () => void;
   onOpen: (id: string) => void;
+  onDelete: (id: string) => Promise<void>;
+  onCollectionsChanged?: () => Promise<void>;
+  onEditClip?: (projectId: string, clip: Clip, mediaId: string) => void;
 }
 
 type LibraryTab = "all" | "clips";
@@ -21,12 +30,14 @@ type LibraryTab = "all" | "clips";
  * Abas Todos/Clipes, card tracejado de criação e cards de projeto com
  * miniatura, badge "Novo" (nunca aberto) e data de atualização.
  */
-export function ProjectsScreen({ projects, loading, error, onRetry, onCreate, onOpen }: Props) {
+export function ProjectsScreen({ projects, loading, error, onRetry, onCreate, onOpen, onDelete, onCollectionsChanged, onEditClip }: Props) {
   const [tab, setTab] = useState<LibraryTab>("all");
+  const library = useClipLibrary(projects);
+  const [inspecting,setInspecting] = useState<LibraryClip | null>(null);
 
   const tabs = [
     { id: "all", label: `Todos (${projects.length})` },
-    { id: "clips", label: "Clipes (0)" },
+    { id: "clips", label: library.error ? "Clipes" : library.loading ? "Clipes (…)" : `Clipes (${library.entries.length})` },
   ];
 
   return (
@@ -46,12 +57,7 @@ export function ProjectsScreen({ projects, loading, error, onRetry, onCreate, on
       )}
 
       {tab === "clips" ? (
-        <div className="lib__empty">
-          <p className="lib__empty-title">Nenhum clipe ainda</p>
-          <p className="lib__empty-text">
-            Clipes são gerados a partir dos vídeos dos seus projetos.
-          </p>
-        </div>
+        <ClipGallery entries={library.entries} loading={library.loading} error={library.error} onRetry={library.reload} onInspect={setInspecting} showProject/>
       ) : (
         <div className="card-grid">
           <button type="button" className="new-card new-card--project" onClick={onCreate} data-testid="new-project-card">
@@ -63,6 +69,7 @@ export function ProjectsScreen({ projects, loading, error, onRetry, onCreate, on
             </span>
           </button>
           {projects.map((p) => (
+            <ProjectContextCard key={p.id} project={p} onDelete={onDelete} onCollectionsChanged={onCollectionsChanged}>
             <button
               type="button"
               className="pcard"
@@ -70,6 +77,7 @@ export function ProjectsScreen({ projects, loading, error, onRetry, onCreate, on
               data-testid="project-card"
               onClick={() => onOpen(p.id)}
               title={p.name}
+              aria-haspopup="menu" aria-keyshortcuts="Shift+F10 ContextMenu"
             >
               <span className="pcard__thumb">
                 <ProjectThumbnail id={p.id} />
@@ -81,9 +89,12 @@ export function ProjectsScreen({ projects, loading, error, onRetry, onCreate, on
               <span className="pcard__name">{p.name}</span>
               <span className="pcard__meta">{formatCompactDate(p.updated_at_ms)}</span>
             </button>
+            </ProjectContextCard>
           ))}
         </div>
       )}
+      {inspecting && <ClipInspection key={`${inspecting.project.id}:${inspecting.clip.id}`} entry={inspecting} onClose={() => setInspecting(null)} onChanged={library.reload}
+        onEdit={(projectId,clip) => { setInspecting(null); if (onEditClip) onEditClip(projectId,clip,inspecting.mediaId); else onOpen(projectId); }}/>}
     </div>
   );
 }

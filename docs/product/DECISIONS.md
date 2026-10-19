@@ -47,12 +47,12 @@
   Alternativas a avaliar (nenhuma escolhida unilateralmente): conta+autenticação; chave de
   licença; ativação por dispositivo; licença local com validação periódica.
   Status: PENDING USER DECISION. Nada implementado nesta tarefa.
-- **DEC-012 — Arquitetura de experiência de IA: Local ou BYOK.** Contexto: DEC-010 exige
+- **DEC-012 — Arquitetura de experiência de IA: Local ou BYOK.** Atualização 2026-10-19 (F0/F1 do motor): FFmpeg/FFprobe 9.0.2 (gyan.dev full build, winget, instalação autorizada pelo mantenedor) documentado em `docs/engineering/ENGINE-DECISIONS.md`; importação de mídia por CÓPIA persistente em app-data implementada e validada no Tauri real (`docs/engineering/M2A-IMPORT-SPEC.md`); transcrição: caminho LOCAL aprovado como primeiro (benchmark pendente na Fatia 2); BYOK permanece para etapa própria. Contexto original: DEC-010 exige
   mecanismo configurável. Decisão: etapa própria de configuração do motor (JRN-013),
   com escolha explícita local/BYOK, validação, teste e troca sem quebrar projetos
   (BR-046); matriz conceitual de capacidades por tarefa no PRD (sem fornecedores
   definitivos). Status: PROPOSED; compatibilidade de modelos PENDING TECHNICAL VALIDATION.
-- **DEC-013 — Processamento sequencial em lote no MVP (hipótese).** Contexto: reavaliação
+- **DEC-013 — Processamento sequencial em lote no MVP (hipótese).** Atualização 2026-10-19: a importação M2A executa como job único cancelável com progresso real (bytes) — compatível com a hipótese sequencial; fila formal segue pendente da Fatia 2. Contexto original: reavaliação
   do adiamento de lote (EPIC-010): o público-alvo trabalha com acervos. Decisão proposta:
   distinguir importação múltipla (MVP), fila sequencial (candidato a MVP), paralelismo
   (futuro) e exportação em lote (MVP). Status: PROPOSED — PENDING USER DECISION +
@@ -84,3 +84,13 @@
   Commercial Decision). Mudanças futuras: permitidas com registro de impacto no backlog.
 - **Marcos de entrega M1..M6** registrados no BACKLOG (M1 = aplicativo Windows + Home +
   projetos + persistência — implementado nesta fase).
+
+
+Atualização incremental M3A (2026-10-19), DEC-012/013: primeira implementação usa adaptador local whisper.cpp CPU com Base multilíngue em desenvolvimento, um job ativo e cancelamento. Modelo ainda provisório, sem benchmark aprovado; fila persistente e BYOK permanecem pendentes. Mantenedor reservou runtime/fluxo ao teste manual. Fonte: docs/engineering/ENGINE-DECISIONS.md §5.
+
+Atualização 03J (2026-10-19), DEC-012/013: Turbo preservado; alternativas apenas
+pesquisadas. Gate global serializa ASR/análise/render e mutações relacionadas.
+Progresso interpola visualmente inteiros somente até o valor recebido. FFmpeg
+portátil de desenvolvimento verificado por SHA-256; sem instalação, bundling ou
+alteração de PATH. ENGINE-DECISIONS.md §9 registra fatos e limites. Cortes com
+score heurístico seguem BR-023 e aprovação antes da exportação segue BR-021.

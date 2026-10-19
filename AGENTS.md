@@ -1,7 +1,7 @@
 # CutNicePro — Instruções do Projeto
 
 Plataforma de edição inteligente de vídeos (inspirada no OpusClip).
-**Status atual: ambiente preparado, aplicação NÃO implementada.** Detalhes de ferramentas em `docs/TOOLING.md`.
+**Status atual: interface e fluxo de projetos implementados; motor de vídeo/IA e exportação real ainda pendentes.** Ponto de continuidade: `docs/engineering/ENGINE-HANDOFF.md`. Conferir o código e as evidências atuais antes de assumir funcionalidades concluídas. Detalhes de ferramentas em `docs/TOOLING.md`.
 
 ## Escopo e comunicação
 
@@ -20,6 +20,30 @@ Plataforma de edição inteligente de vídeos (inspirada no OpusClip).
 - Criar testes relevantes e verificar os resultados. Nenhum recurso é "concluído" apenas porque o código foi gerado: exigir funcionamento real, testes e critérios de aceite demonstrados.
 - Não realizar commits, pushes, merges ou deploys sem autorização explícita.
 - Não confundir um processo iniciado com um serviço realmente funcional.
+
+## Motor de funcionamento — estrutura e prevenção de regressões
+
+- Antes de implementar, consultar `docs/engineering/ENGINE-HANDOFF.md`, o Product Brain e o backlog; definir escopo, contratos, critérios de aceite e testes da fatia. Não instalar motores ou alterar arquitetura apenas por esta seção: respeitar a tarefa autorizada.
+- Implementar em fatias pequenas de ponta a ponta, com resultado verificável. Preservar a interface aprovada e os dados existentes; não misturar integração do motor com redesenho ou refatorações não relacionadas.
+- Evitar arquivos monolíticos, componentes gigantes e módulos que concentram todo o pipeline. Cada módulo deve ter uma responsabilidade clara; dividir por capacidade e motivo de mudança, sem fragmentar artificialmente nem criar abstrações sem uso concreto.
+- Separar interface e hooks, regras de domínio, orquestração de jobs, persistência e adaptadores de vídeo/IA. Componentes React não executam processos, acessam credenciais ou concentram regras do pipeline; comandos Tauri devem ser pontos de entrada finos, delegando trabalho a módulos próprios.
+- Manter contratos tipados nas fronteiras React/IPC/Rust e entre etapas: entradas, saídas, unidades de tempo, erros, estados e eventos. Validar dados externos em runtime; não usar `any`, casts ou defaults silenciosos para esconder incompatibilidades.
+- Isolar ferramentas e provedores atrás de adaptadores específicos; manter regras de negócio independentes de SDKs e binários. Adicionar dependências somente com justificativa técnica, documentação oficial e licença verificadas; não introduzir infraestrutura distribuída sem necessidade demonstrada.
+- Processamento demorado não pode bloquear a interface. Definir limites de concorrência e recursos, cancelamento e timeout; encerrar processos próprios e liberar arquivos temporários, handles e listeners em sucesso, falha e cancelamento. Não encerrar processos alheios.
+- Jobs devem ter transições explícitas e recuperação definida: enfileirado, executando, concluído, falhou ou cancelado. Evitar duplicação em retry e eventos tardios após cancelamento; progresso e sucesso precisam refletir trabalho real, nunca timers simulados.
+- Tratar mídia original e dados salvos como ativos do usuário: alterações não destrutivas, identificação estável, gravação segura e migrações versionadas com compatibilidade ou recuperação documentada. Não persistir object URLs como caminhos de mídia; falhas não podem apagar projetos ou produzir arquivos finais incompletos como sucesso.
+- Local e BYOK devem permanecer distinguíveis. Nunca enviar mídia a provedor externo como fallback silencioso; credenciais ficam no armazenamento seguro do sistema, fora de localStorage, código, fixtures e logs. Logs devem permitir diagnóstico sem expor chaves ou conteúdo sensível.
+
+### Testes automáticos e critérios de conclusão do motor
+
+- Para cada alteração funcional do motor, definir testes de comportamento e executá-los antes da entrega. Reutilizar os runners existentes; testes devem ser determinísticos, independentes e usar fixtures pequenas, sem exigir rede, chave paga ou download de modelo nas suítes rápidas.
+- Cobrir regras e transições com unitários; contratos IPC, persistência/migrações e adaptadores com integração pertinente; manter uma fatia ponta a ponta real para importação → transcrição → salvamento/reabertura → exportação, à medida que essas capacidades forem implementadas.
+- Em correções de bugs, acrescentar teste que reproduza o comportamento defeituoso e demonstre a correção, quando automatizável. Não criar testes que apenas espelhem a implementação, dependam de detalhes internos ou passem mesmo com a regressão original.
+- Incluir cenários de erro relevantes à fatia: mídia inválida/ausente, duração e timestamps, falha de processo/provedor, timeout, cancelamento, retry, persistência e recursos liberados. Usar mocks para falhas controladas; identificar claramente os testes simulados.
+- Mocks de IPC, provedores e processos não comprovam integração real. Ao conectar uma capacidade, verificar também seu funcionamento no Tauri com mídia real e artefato de saída verificável. Um motor não é concluído apenas porque compila, inicia um processo ou passa em testes com mocks.
+- Mudanças em contratos ou armazenamento exigem testes dos consumidores e da compatibilidade afetados. Antes de implementar, selecionar a regressão pertinente; executar os testes exigidos pelo escopo e pela política de validação. Uma nova mudança que afete um caso aprovado justifica sua reexecução; não repetir suítes sem impacto ou falha que a justifique.
+- Não remover, desabilitar ou enfraquecer testes e critérios de aceite para obter PASS. Não ampliar tolerâncias sem justificativa do contrato. Registrar falhas preexistentes separadamente; falha pertinente não resolvida impede declarar PASS da capacidade afetada.
+- Na entrega, registrar comandos, resultados e limites reais. Testes reduzem o risco de regressões, mas não garantem ausência total de bugs. Respeitar `docs/engineering/VALIDATION-POLICY.md`, inclusive orçamento de execução e aprovação visual humana; esta seção não autoriza validação ilimitada.
 
 ## Design e UX
 

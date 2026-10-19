@@ -64,3 +64,16 @@ Destino com motor: importar → analisar mídia/transcrever com estado real → 
 03E: build, 30 unitários e 12 runtime únicos com IPC simulado. 03F: build e quatro casos runtime focados em modal, escolha salva, cursor/teclado, responsividade e console. Nenhuma destas evidências comprova IA ou exportação. Ver docs/reports/evidence/03e e 03f e relatórios de histórico.
 
 Próximo passo recomendado: inventário técnico e implementação da primeira fatia de mídia persistente. Não redesenhar a Home nem reabrir decisões visuais aprovadas ao integrar o motor.
+
+## Pesquisa de ferramentas de 2026-10-19
+
+Comparação de 10 candidatos e ordem proposta em ../references/OPEN-SOURCE-ENGINE-RESEARCH.md. Manter stack atual; proposta inicial FFmpeg + avaliação whisper.cpp, com yt-dlp em etapa própria para links. Nenhum motor adicional instalado nesta pesquisa. Antes de copiar código, verificar licença e versão, inclusive modelos e dependências. Correções de UI M2A em evidence/m2a-fix têm validação runtime parcial por falha do harness e orçamento esgotado; não promovê-las a integração nativa aprovada.
+
+
+## Continuidade M3A inicial (2026-10-19)
+
+Transcrição local inicial implementada em módulos próprios, com whisper.cpp CPU/Base no desenvolvimento, cancelamento e persistência por projeto. Contrato: M3A-TRANSCRIPTION-SPEC.md; roteiro humano: M3A-MANUAL-CHECK.md; decisões e hashes: ENGINE-DECISIONS.md §5. Mantenedor restringiu validação a código, sem navegador/abertura do app. Não tratar ASR, qualidade ou M3 completo como aprovados: runtime e benchmark pendentes; exportação/YouTube/BYOK continuam fora desta entrega.
+
+## Continuidade 03I (2026-10-19)
+
+Large v3 Turbo/DTW preservados após relato positivo do mantenedor. Editor possui CaptionStyle opcional validado/persistido, visual de legendas compartilhado com predefinições/fonte/efeitos e transporte com Espaço. Menu de contexto nos cards exporta cópia da origem e TXT/SRT reais com seletor nativo; não é render MP4 com cortes/efeitos. Contratos/limites: EDITOR-CONTROLS-SPEC.md; testes somente em código, runtime reservado ao mantenedor. Compartilhamento explicitamente adiado. Não reintroduzir avisos internos na interface.

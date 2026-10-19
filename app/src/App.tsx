@@ -7,8 +7,17 @@ import { loadSidebarExpanded, saveSidebarExpanded } from "./lib/prefs";
 import { ErrorBanner } from "./components/ErrorBanner";
 import { NewCollectionDialog } from "./components/NewCollectionDialog";
 import { ProjectWorkspace } from "./screens/ProjectWorkspace";
-import { attachSessionMedia, releaseSessionMedia, saveWorkspace } from "./services/workspace-store";
+import { prepareClipEditing } from "./services/clip-media";
+import {
+  attachPersistedMedia,
+  attachSessionMedia,
+  releaseSessionMedia,
+  saveWorkspace,
+  readWorkspace,
+  removeWorkspace,
+} from "./services/workspace-store";
 import { createWorkspace, sourceName } from "./lib/workspace";
+import { mediaProjectName, importedProjectDisplayName } from "./lib/media-name";
 import type { UploadSource, UploadOptions } from "./lib/workspace-types";
 import { AppShell, type ProjectsSub } from "./components/shell/AppShell";
 import type { Crumb } from "./components/shell/Breadcrumb";
@@ -64,7 +73,8 @@ export default function App() {
   const refreshProjects = useCallback(async () => {
     setLoad((s) => ({ ...s, status: "loading", error: null }));
     try {
-      const projects = await ipc.listProjects();
+      const projects = (await ipc.listProjects()).map((project) => ({ ...project,
+        name: importedProjectDisplayName(project.name, readWorkspace(project.id).media?.name) }));
       setLoad({ status: "ready", projects, error: null });
     } catch (e) {
       setLoad({
@@ -122,9 +132,78 @@ export default function App() {
     setRoute({ kind: "project", id: project.id, view: "overview" });
   }
 
+  /**
+   * M2A: importação persistente transacional. O projeto é criado antes para
+   * dar contexto ao job; em falha o projeto PERMANECE (mídia UNAVAILABLE na
+   * prática) e a causa/ação sobe para a tela de upload — retry reusa o
+   * caminho. Progresso REAL por evento (bytes) — sem percentuais inventados.
+   */
+  async function handleImportFromPath(
+    path: string,
+    name: string,
+    options: UploadOptions,
+    onProgress: (copied: number, total: number) => void,
+  ): Promise<void> {
+    const project = await ipc.createProject(mediaProjectName(name || path));
+    let mediaUrl: string | null = null;
+    try {
+      const imported = await ipc.importMedia(project.id, path, onProgress);
+      const entry = imported.entry;
+      mediaUrl = ipc.mediaUrl(entry);
+      attachPersistedMedia(project.id, entry.mediaId, mediaUrl);
+      const saved = saveWorkspace(project.id, {
+        version: 2,
+        media: {
+          kind: "local",
+          name: entry.originalName,
+          videoId: null,
+          url: null,
+          width: entry.analysis?.width ?? null,
+          height: entry.analysis?.height ?? null,
+          duration: entry.analysis ? entry.analysis.durationMs / 1000 : null,
+          mediaId: entry.mediaId,
+        },
+        transcript: [],
+        transcriptMode: "empty",
+        settings: {
+          ratio: options.ratio,
+          fit: "contain",
+          captionModel: options.model,
+          text: "",
+          volume: 1,
+          muted: false,
+          background: "#000000",
+          trimStart: 0,
+          trimEnd: null,
+        },
+        tool: options.tool,
+      });
+      if (!saved) setActionError("Projeto criado. As configurações da prévia não puderam ser salvas neste dispositivo.");
+      if (imported.analysisError) setActionError(`Projeto importado, mas a análise falhou: ${imported.analysisError}`);
+      setLoad((current) => ({ ...current, status: "ready", error: null, projects: [...current.projects, project] }));
+      setRoute({ kind: "project", id: project.id, view: "overview" });
+    } catch (error) {
+      // Projeto preservado sem mídia; sem página de projeto falso-sucesso.
+      setLoad((current) => current.status === "ready"
+        ? { ...current, projects: [...current.projects, project] }
+        : { status: "ready", projects: [project], error: null });
+      throw error instanceof Error ? error : new Error(String(error));
+    }
+  }
+
   async function handleRenameProject(id: string, name: string) {
     const renamed = await ipc.renameProject(id, name);
     setLoad((current) => ({ ...current, projects: current.projects.map((project) => project.id === id ? renamed : project) }));
+  }
+
+  async function handleDeleteProject(id: string) {
+    await ipc.deleteProject(id);
+    removeWorkspace(id);
+    setLoad(current => ({ ...current, projects: current.projects.filter(project => project.id !== id) }));
+    setCollectionsLoad(current => ({ ...current, collections: current.collections.map(collection => ({
+      ...collection, project_ids: collection.project_ids.filter(projectId => projectId !== id),
+    })) }));
+    setRoute(current => current.kind === "project" && current.id === id ? { kind: "projects" } : current);
   }
 
   async function handleCreateCollection(name: string, icon: "heart" | "archive-box") {
@@ -221,13 +300,18 @@ export default function App() {
 
         {route.kind === "upload" && (
           <UploadScreen projects={sortProjects(load.projects)} loading={load.status === "loading"}
+            onDelete={handleDeleteProject} onCollectionsChanged={refreshCollections}
             error={load.error} onRetry={() => void refreshProjects()}
             onCreate={handleCreateFromMedia}
+            onFilePath={handleImportFromPath}
             onOpen={(id) => void guard(() => handleOpenProject(id))} onViewAll={() => goProjects("all")} />
         )}
 
         {route.kind === "projects" && (
           <ProjectsScreen
+            onEditClip={(projectId,clip,mediaId) => void guard(async () => { await prepareClipEditing(projectId,mediaId,clip); await handleOpenProject(projectId); setRoute({kind: "project",id: projectId,view: "editor"}); })}
+            onCollectionsChanged={refreshCollections}
+            onDelete={handleDeleteProject}
             projects={sortProjects(load.projects)}
             loading={load.status === "loading"}
             error={load.status === "error" ? load.error : null}
@@ -256,6 +340,7 @@ export default function App() {
         {route.kind === "collection" &&
           (currentCollection ? (
             <CollectionScreen
+              onDelete={handleDeleteProject} onCollectionsChanged={refreshCollections}
               name={currentCollection.name}
               icon={currentCollection.icon}
               updatedAtMs={currentCollection.updated_at_ms}
@@ -283,6 +368,7 @@ export default function App() {
         {route.kind === "project" &&
           (currentProject ? (
             <ProjectWorkspace key={currentProject.id}
+              onDelete={() => handleDeleteProject(currentProject.id)}
               project={currentProject}
               initialView={route.view}
               onRename={(name) => handleRenameProject(currentProject.id, name)}

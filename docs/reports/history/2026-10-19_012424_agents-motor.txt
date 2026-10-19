@@ -1,0 +1,92 @@
+CUTNICEPRO — ZCODE REPORT
+
+TASK
+  Name: AGENTS.md — preparação para o motor
+  Status: PASS (documentação).
+  Scope: Regras de estrutura, implementação e testes.
+  Objective: Facilitar manutenção e reduzir regressões na integração do motor.
+  Result: AGENTS.md atualizado; status obsoleto corrigido.
+
+IMPLEMENTATION
+  Completed: Responsabilidades separadas, contratos tipados, fatias incrementais,
+    processos não bloqueantes, cancelamento, persistência segura e proteção de dados.
+    Testes unitários/integração/ponta a ponta proporcionais; reprodução de bugs;
+    integração real distinguida de mocks; proibição de enfraquecer testes para PASS.
+  Not completed: Motor não instalado nem implementado; fora desta tarefa.
+  Changes: 25 linhas adicionadas e 1 substituída no AGENTS.md.
+  Architecture impact: Apenas diretrizes; sem mudança no código ou dependências.
+
+FILES
+  Created: Este relatório histórico e inventário de pendências indicado abaixo.
+  Modified: AGENTS.md; docs/reports/LATEST.txt (protocolo obrigatório).
+  Deleted: NONE.
+  Unexpected changes: NONE identificada; arquivos anteriores preservados.
+
+VALIDATION
+  Typecheck: SKIP — documentação.
+  Lint: SKIP — documentação.
+  Unit tests: SKIP — sem alteração executável.
+  Integration tests: SKIP — sem alteração executável.
+  Regression tests: SKIP — sem alteração executável.
+  Visual tests: SKIP — sem alteração de UI.
+  Runtime verification: SKIP — sem alteração executável.
+  Total passed: git diff --check do AGENTS.md; revisão e releitura documental.
+  Total failed: 0 verificações documentais.
+  Total skipped: 7 categorias acima; 0 testes de aplicação executados.
+
+HOOKS / HARNESS
+  Hooks active: Não verificados.
+  PreToolUse: Sem evidência registrada.
+  PostToolUse: Sem evidência registrada.
+  Stop: Não executado explicitamente.
+  Baseline: SKIP — documentação.
+  Gate result: FUNCTIONAL PASS (documentação); REGRESSION NOT TESTED.
+  Evidence: Diff e conteúdo relido do AGENTS.md.
+
+MCP / SKILLS
+  Tools used: Leitura, edição pontual e Git local.
+  Connection status: Não aplicável; nenhum MCP externo necessário.
+  Failures: NONE.
+  Pending activation: NONE.
+
+GIT
+  Branch: main
+  HEAD: 1a15e2ea7a76b45667f786871b7c97f2837891c4
+  Latest commit: feat(workspace): add project rename, upload flow, and editor scaffolding
+  Commits created: NONE.
+  Push: NOT EXECUTED.
+  Remote: origin → https://github.com/FrosttyS18/CutNicePro.git; origin/main.
+  Working tree: MODIFIED / UNTRACKED; inclui arquivos anteriores.
+  Pending files: docs/reports/history/2026-10-19_012424_agents-motor-pending.txt
+    contém o inventário integral, incluindo AGENTS.md e relatórios.
+
+EVIDENCE
+  Commands executed: Leitura do AGENTS.md e padrão de entrega;
+    git diff --check -- AGENTS.md; git diff --numstat -- AGENTS.md.
+  Relevant logs: Diff sem erros; aviso Git de normalização LF/CRLF.
+  Screenshots: NONE.
+  Test artifacts: NONE — testes de aplicação não necessários nesta edição.
+  Reproduction details: Nova seção Motor de funcionamento e subseção de testes;
+    política de orçamento e aprovação visual humana preservadas.
+
+ISSUES
+  Bugs found: Cabeçalho dizia que a aplicação não estava implementada.
+  Unresolved failures: NONE documental.
+  Regressions: NOT TESTED; nenhum código alterado.
+  Risks: Diretrizes e testes reduzem risco, não garantem ausência total de bugs.
+  Blockers: NONE.
+
+FINAL
+  Delivery status: FUNCTIONAL PASS (documentação); REGRESSION NOT TESTED;
+    VISUAL PENDING HUMAN APPROVAL (sem mudança visual).
+  Requirements met: Modularidade, manutenção, escalabilidade e prevenção de regressões.
+  Remaining work: Implementar o motor em tarefa própria com ZCode.
+  User action required: NONE nesta edição.
+  Restart required: Não.
+  Ready for next task: Sim; consultar ENGINE-HANDOFF.md antes da integração.
+
+REPORT
+  Latest file: C:/CutNicePro/docs/reports/LATEST.txt
+  Historical file: C:/CutNicePro/docs/reports/history/2026-10-19_012424_agents-motor.txt
+
+END OF REPORT

@@ -1,0 +1,82 @@
+[
+ {
+  "name": "import por caminho real (IPC Tauri)",
+  "ok": true,
+  "detail": "entry ok, análise presente"
+ },
+ {
+  "name": "análise ffprobe persistida (duração/resolução/áudio)",
+  "ok": true,
+  "detail": "{\"audioCodec\":\"aac\",\"durationMs\":6000,\"fps\":24,\"hasAudio\":true,\"height\":360,\"videoCodec\":\"h264\",\"width\":640}"
+ },
+ {
+  "name": "vínculo explícito project_ids",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "name": "índice + arquivo físico consistentes",
+  "ok": true,
+  "detail": "{\"entries\":1,\"files\":[\"3a43bf3bad665ad3cb069acb8a22971cd6d68c4cbad875c670cbc9737148dda6.mp4\"]}"
+ },
+ {
+  "name": "cnplocal: 200 + video/mp4 (fetch cross-origin)",
+  "ok": true,
+  "detail": "{\"s\":200,\"t\":\"video/mp4\"}"
+ },
+ {
+  "name": "cnplocal: Range -> 206 + 100 bytes",
+  "ok": true,
+  "detail": "206/100"
+ },
+ {
+  "name": "cnplocal: ACAO eficaz (canvas NAO tainted)",
+  "ok": true,
+  "detail": "true"
+ },
+ {
+  "name": "projeto reaberto SEM reenviar; player usa cnplocal",
+  "ok": true,
+  "detail": "http://cnplocal.localhost/3a43bf3bad665ad3cb069acb8a22971cd6 ready=4"
+ },
+ {
+  "name": "canvases de prévia/filmstrip vivos com mídia do scheme",
+  "ok": true,
+  "detail": "0 canvas(es)"
+ },
+ {
+  "name": "reinício: mídia persistida (arquivo + índice intactos)",
+  "ok": true,
+  "detail": "[\"3a43bf3bad665ad3cb069acb8a22971cd6d68c4cbad875c670cbc9737148dda6.mp4\"]"
+ },
+ {
+  "name": "reinício: reconcile ok (adota 0, remove 0)",
+  "ok": true,
+  "detail": "reconcile ok: adotados=0 parts_removidos=0 indisponiveis=0"
+ },
+ {
+  "name": "reconcile real: .part morto removido",
+  "ok": true,
+  "detail": "[\"3a43bf3bad665ad3cb069acb8a22971cd6d68c4cbad875c670cbc9737148dda6.mp4\",\"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb.mp4\"]"
+ },
+ {
+  "name": "reconcile real: final órfão ADOTADO (não apagado)",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "name": "reconcile real: órfão com entrada (sem vínculos)",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "name": "índice corrompido: limpeza SUSPENSA (.part preservado)",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "name": "índice corrompido: app continua utilizável",
+  "ok": true,
+  "detail": ""
+ }
+]

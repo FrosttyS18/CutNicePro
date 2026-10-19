@@ -1,0 +1,263 @@
+{
+  "engineRelease": "b11729",
+  "engineSource": "https://github.com/ggml-org/llama.cpp/releases/tag/b11729",
+  "archive": "llama-b11729-bin-win-cpu-x64.zip",
+  "archiveBytes": 19667517,
+  "verifiedArchiveSha256": "aef737d26bffd08ceeb7be75f045bdef6d1ecc3187e0f4a1a3b0d878a03d2550",
+  "modelSource": "https://huggingface.co/Qwen/Qwen3-4B-GGUF",
+  "modelFile": "Qwen3-4B-Q4_K_M.gguf",
+  "modelBytes": 2497280256,
+  "verifiedModelSha256": "7485fe6f11af29433bc51cab58009521f205840f5b4ae3a32fa7f92e8534fdf5",
+  "runtimePath": ".tooling/vendor/analysis",
+  "distribution": "Development tools only; installer not modified",
+  "files": [
+    {
+      "path": "bin/ggml-base.dll",
+      "bytes": 803840
+    },
+    {
+      "path": "bin/ggml-cpu-alderlake.dll",
+      "bytes": 1415680
+    },
+    {
+      "path": "bin/ggml-cpu-cannonlake.dll",
+      "bytes": 1611264
+    },
+    {
+      "path": "bin/ggml-cpu-cascadelake.dll",
+      "bytes": 1584128
+    },
+    {
+      "path": "bin/ggml-cpu-cooperlake.dll",
+      "bytes": 1593856
+    },
+    {
+      "path": "bin/ggml-cpu-haswell.dll",
+      "bytes": 1420800
+    },
+    {
+      "path": "bin/ggml-cpu-icelake.dll",
+      "bytes": 1590784
+    },
+    {
+      "path": "bin/ggml-cpu-ivybridge.dll",
+      "bytes": 1302016
+    },
+    {
+      "path": "bin/ggml-cpu-piledriver.dll",
+      "bytes": 1294848
+    },
+    {
+      "path": "bin/ggml-cpu-sandybridge.dll",
+      "bytes": 1291776
+    },
+    {
+      "path": "bin/ggml-cpu-sapphirerapids.dll",
+      "bytes": 1870336
+    },
+    {
+      "path": "bin/ggml-cpu-skylakex.dll",
+      "bytes": 1604096
+    },
+    {
+      "path": "bin/ggml-cpu-sse42.dll",
+      "bytes": 917504
+    },
+    {
+      "path": "bin/ggml-cpu-x64.dll",
+      "bytes": 910336
+    },
+    {
+      "path": "bin/ggml-cpu-zen4.dll",
+      "bytes": 1600512
+    },
+    {
+      "path": "bin/ggml-rpc-server.exe",
+      "bytes": 117248
+    },
+    {
+      "path": "bin/ggml-rpc.dll",
+      "bytes": 231424
+    },
+    {
+      "path": "bin/ggml.dll",
+      "bytes": 78848
+    },
+    {
+      "path": "bin/libomp.dll",
+      "bytes": 768000
+    },
+    {
+      "path": "bin/LICENSE-LLVM-OpenMP",
+      "bytes": 19741
+    },
+    {
+      "path": "bin/llama-batched-bench-impl.dll",
+      "bytes": 61952
+    },
+    {
+      "path": "bin/llama-batched-bench.exe",
+      "bytes": 9216
+    },
+    {
+      "path": "bin/llama-bench-impl.dll",
+      "bytes": 404480
+    },
+    {
+      "path": "bin/llama-bench.exe",
+      "bytes": 9216
+    },
+    {
+      "path": "bin/llama-cli-impl.dll",
+      "bytes": 3337216
+    },
+    {
+      "path": "bin/llama-cli.exe",
+      "bytes": 9216
+    },
+    {
+      "path": "bin/llama-common.dll",
+      "bytes": 8161792
+    },
+    {
+      "path": "bin/llama-completion-impl.dll",
+      "bytes": 140800
+    },
+    {
+      "path": "bin/llama-completion.exe",
+      "bytes": 9216
+    },
+    {
+      "path": "bin/llama-fit-params-impl.dll",
+      "bytes": 43008
+    },
+    {
+      "path": "bin/llama-fit-params.exe",
+      "bytes": 9216
+    },
+    {
+      "path": "bin/llama-gemma3-cli.exe",
+      "bytes": 27136
+    },
+    {
+      "path": "bin/llama-gguf-split.exe",
+      "bytes": 60416
+    },
+    {
+      "path": "bin/llama-imatrix.exe",
+      "bytes": 252416
+    },
+    {
+      "path": "bin/llama-llava-cli.exe",
+      "bytes": 27136
+    },
+    {
+      "path": "bin/llama-minicpmv-cli.exe",
+      "bytes": 27136
+    },
+    {
+      "path": "bin/llama-mtmd-cli.exe",
+      "bytes": 96768
+    },
+    {
+      "path": "bin/llama-mtmd-debug.exe",
+      "bytes": 55808
+    },
+    {
+      "path": "bin/llama-perplexity-impl.dll",
+      "bytes": 197632
+    },
+    {
+      "path": "bin/llama-perplexity.exe",
+      "bytes": 9216
+    },
+    {
+      "path": "bin/llama-quantize-impl.dll",
+      "bytes": 137216
+    },
+    {
+      "path": "bin/llama-quantize.exe",
+      "bytes": 9216
+    },
+    {
+      "path": "bin/llama-qwen2vl-cli.exe",
+      "bytes": 27136
+    },
+    {
+      "path": "bin/llama-results.exe",
+      "bytes": 46592
+    },
+    {
+      "path": "bin/llama-server-impl.dll",
+      "bytes": 9357824
+    },
+    {
+      "path": "bin/llama-server.exe",
+      "bytes": 9216
+    },
+    {
+      "path": "bin/llama-tokenize.exe",
+      "bytes": 58880
+    },
+    {
+      "path": "bin/llama-tts.exe",
+      "bytes": 41984
+    },
+    {
+      "path": "bin/llama.dll",
+      "bytes": 3581952
+    },
+    {
+      "path": "bin/llama.exe",
+      "bytes": 104448
+    },
+    {
+      "path": "bin/mtmd.dll",
+      "bytes": 1905664
+    },
+    {
+      "path": "llama.zip",
+      "bytes": 19667517
+    },
+    {
+      "path": "Qwen3-4B-Q4_K_M.gguf",
+      "bytes": 2497280256
+    },
+    {
+      "path": "validation/analysis-prompt.txt",
+      "bytes": 3498
+    },
+    {
+      "path": "validation/analysis-result.json",
+      "bytes": 1348
+    },
+    {
+      "path": "validation/analysis.log",
+      "bytes": 2230
+    },
+    {
+      "path": "validation/analysis.schema.json",
+      "bytes": 697
+    },
+    {
+      "path": "validation/clips.json",
+      "bytes": 1173
+    },
+    {
+      "path": "validation/retry-result.json",
+      "bytes": 1360
+    },
+    {
+      "path": "validation/retry.log",
+      "bytes": 2230
+    },
+    {
+      "path": "validation/transcript.json",
+      "bytes": 114818
+    },
+    {
+      "path": "validation/validated-clip.json",
+      "bytes": 2016
+    }
+  ]
+}

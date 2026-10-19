@@ -1,3 +1,4 @@
+import { XIcon } from "@phosphor-icons/react/dist/csr/X";
 import { useEffect, useId, useRef, useState } from "react";
 import type { LocalVideo } from "../../lib/video-source";
 import { CaptionExamples } from "./CaptionExamples";
@@ -16,13 +17,14 @@ interface Props {
   onModel: (index: number) => void;
   onRatio: (ratio: AspectRatio) => void;
   onFile: (file: File) => void;
+  onFilePath?: (path: string, name: string) => void;
   onClose: () => void;
   youtube: string | null;
   onYouTube: (url: string) => void;
   onContinue: () => void;
 }
 
-export function ToolDialog({ tool, video, youtube, loading, error, model, ratio, onModel, onRatio, onFile, onClose, onYouTube, onContinue }: Props) {
+export function ToolDialog({ tool, video, youtube, loading, error, model, ratio, onModel, onRatio, onFile, onFilePath, onClose, onYouTube, onContinue }: Props) {
   const ref = useRef<HTMLDialogElement>(null);
   const id = useId();
   const [previewError, setPreviewError] = useState(false);
@@ -61,7 +63,7 @@ export function ToolDialog({ tool, video, youtube, loading, error, model, ratio,
       }}>
       <header className="tool-dialog__header">
         <h2 id={`${id}-title`}><span className="tool-icon"><ToolIcon tool={tool.id} /></span>{tool.title}</h2>
-        <button type="button" className="tool-dialog__close" aria-label="Fechar ferramenta" onClick={onClose} autoFocus>×</button>
+        <button type="button" className="tool-dialog__close" aria-label="Fechar ferramenta" onClick={onClose} autoFocus><XIcon size={18} aria-hidden="true"/></button>
       </header>
       <p id={`${id}-description`} className="tool-dialog__description">{tool.description}</p>
       {video ? <>
@@ -73,20 +75,20 @@ export function ToolDialog({ tool, video, youtube, loading, error, model, ratio,
         <p className="tool-dialog__filename">{video.file.name} <span>{video.width} × {video.height}</span></p>
         {captions && <CaptionOptions model={model} ratio={ratio} onModel={onModel} onRatio={onRatio} />}
       </> : youtube ? <div className="tool-dialog__reference"><span>Referência do YouTube</span><p>{youtube}</p>
-        <p className="flow-muted">O vídeo ainda não foi baixado ou transcrito. Você pode seguir para a demonstração das telas.</p>
+        <p className="flow-muted">Para editar este vídeo, importe o arquivo do computador.</p>
         {captions && <CaptionOptions model={model} ratio={ratio} onModel={onModel} onRatio={onRatio} />}
       </div> : captions ? <CaptionExamples /> : <div className="tool-dialog__empty"><ToolIcon tool={tool.id} /><p>Escolha um vídeo para começar</p></div>}
       {loading && <p className="upload-message" role="status">Lendo vídeo…</p>}
       {error && <p className="upload-message upload-message--error" role="alert">{error}</p>}
-      {(!hasMedia || loading) && <SourceForm compact loading={loading} onFile={onFile} onYouTube={onYouTube} />}
+      {(!hasMedia || loading) && <SourceForm compact loading={loading} onFile={onFile} onFilePath={onFilePath} onYouTube={onYouTube} />}
       {hasMedia && !loading && <>
         <button type="button" className="upload-primary tool-dialog__action" onClick={onContinue} aria-describedby={`${id}-availability`}>
           Abrir projeto
         </button>
         <p id={`${id}-availability`} className="tool-dialog__availability">
-          Seu vídeo será aberto no projeto. A transcrição por IA estará disponível em uma próxima etapa.
+          Abra o projeto para transcrever e editar seu vídeo.
         </p>
-        <SourceForm compact loading={loading} onFile={onFile} onYouTube={onYouTube} />
+        <SourceForm compact loading={loading} onFile={onFile} onFilePath={onFilePath} onYouTube={onYouTube} />
       </>}
     </dialog>
   );

@@ -13,6 +13,6 @@ export const videoTools: VideoTool[] = [
   { id: "reframe", title: "Reenquadrar IA", description: "Adapte o enquadramento do seu vídeo para cada plataforma." },
 ];
 
-export const captionModels = ["Sem legenda", ...Array.from({ length: 9 }, (_, index) => `Modelo ${index + 1}`)];
+export const captionModels = ["Sem legenda", "Essencial", "Destaque", "Karaokê", "Editorial", "Cartão", "Impacto", "Contorno", "Suave", "Cinema"];
 export const aspectRatios = ["16:9", "9:16", "1:1", "4:5"] as const;
 export type AspectRatio = typeof aspectRatios[number];

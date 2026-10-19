@@ -32,6 +32,7 @@ FR: FR-003, FR-004, FR-016, FR-017. Prioridade: Must. Dep: EPIC-001 (parcial).
   (BR-033, NFR-003). PENDING TECHNICAL: mecanismo de storage local.
 - **US-006 — Duplicar/excluir projeto** (Should, V1 — FR-017) — AC: AC-014 duplicação
   independente (BR-003); AC-015 exclusão com confirmação e preservando exports (BR-005).
+  Atualização 03H: mantenedor antecipou exclusão em 2026-10-19. Código e testes de confirmação/limpeza compartilhada/recuperação implementados; aceite Tauri/visual pendente de sua conferência. Duplicação permanece pendente. EDITOR-USABILITY-SPEC.md.
 
 ## EPIC-003 — Importação de mídia
 
@@ -53,6 +54,8 @@ Jornadas: JRN-004 (ANALYZING). FR: FR-006. BR: BR-007, BR-032. Prioridade: Must.
   por hash ao voltar (BR-032). Dep: EPIC-003.
 
 ## EPIC-005 — Núcleo de processamento + modo B (legendas automáticas)
+Avanço M3A (2026-10-19): implementação inicial local para US-012/013, sem exportação, fila persistente ou avaliação de qualidade aprovada. Testes em código; runtime/fluxo reservados ao mantenedor. Contrato em `docs/engineering/M3A-TRANSCRIPTION-SPEC.md`.
+
 Jornadas: JRN-005/006/007. BR: BR-012..BR-018, BR-024. FR: FR-007..FR-009, FR-012 (base).
 Prioridade: Must. Decisão: DEC-003 (B primeiro).
 
@@ -225,3 +228,28 @@ viabilidade técnica (BR pendentes PENDING TECHNICAL VALIDATION).
   offline detalhado (EPIC-012) — PENDING USER DECISION (DEC-010/011).
 - Fila sequencial no MVP (US-036) — hipótese DEC-013 aguardando decisão + validação técnica.
 - Nenhuma história iniciada; nenhum código existe (estado PLANNED geral).
+
+### Atualização 2026-10-19 — 03J: cortes e exportação em revisão
+
+Autorização explícita do mantenedor antecipa implementação de US-014/015 e render
+MP4 do EPIC-009: geração por heurísticas de fala/cena, sugestões com nota/razões,
+filtro/ordenação, Aprovar/Rejeitar reversíveis e exportação de corte aprovado com
+legendas. 200 testes de código PASS; fixture FFmpeg real PASS. Nenhum aceite no
+Tauri/estético presumido. Histórico navegável de versões de corte, lote,
+retomada de job, rastreamento de rosto e comparação ASR em fala real pendentes.
+Compartilhamento continua adiado. SPEC/roteiro: EDITOR-AUTOCUT-*.md.
+
+### Atualização 2026-10-19 — 03K: biblioteca e comparação ASR em revisão
+
+JRN-003/006/007/008/009/010; FR-010/011/012/013/014/016/017;
+BR-019..023/026..031; AC-040..045 parcial. A aba Clipes existente lista todos os
+projetos; Cortes lista apenas o projeto atual. Galeria/inspeção substituem a lista
+sob a transcrição. Estado salvo consultado no backend, inclusive sem preferências
+no navegador. Títulos consideram o trecho inteiro; notas continuam estimativas
+explicadas, sem tendência inventada. Dois perfis Whisper e detecção CUDA testados.
+Quatro modelos e dez casos reais avaliados; precisão humana, GPUs menores que 8 GB,
+adaptadores Qwen/Parakeet, empacotamento e aceite Tauri/visual permanecem pendentes.
+
+### Atualização 2026-10-19 — 03L: origem, formato e análise em revisão
+
+Correções solicitadas implementadas nos fluxos existentes de projeto, geração e inspeção; nenhuma galeria paralela criada. Formato por corte e isolamento das edições atendem aos aceites locais AC-03L-01..06 no nível de contratos; validação manual de interface pendente. EPIC-006/008/009 continuam IN REVIEW, sem aceite visual ou conclusão integral. Análise local de fala agora semântica com evidências, sem análise visual ou tendência. Precisão das frases ASR confirmadas ainda pendente após comparação real de Turbo/Large. Distribuição instalável dos motores e recuperação de preferências históricas já sobrescritas não são declaradas concluídas. Referências: SOURCE-CLIP-ISOLATION-SPEC/REVIEW.md.

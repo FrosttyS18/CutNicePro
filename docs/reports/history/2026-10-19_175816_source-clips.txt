@@ -1,0 +1,116 @@
+╔════════════════════════════════════════════╗
+║       CUTNICEPRO — ZCODE REPORT            ║
+╚════════════════════════════════════════════╝
+
+TASK
+  Name: 03L — Correções de origem, clipes e transcrição.
+  Status: PARTIAL
+  Scope: Seis problemas de interface/edição e comparação dos Whisper.
+  Objective: Isolar edições, corrigir prévias e tornar a análise específica.
+  Result: Ajustes implementados; 229 testes aprovados. Precisão ASR pendente.
+
+IMPLEMENTATION
+  Completed:
+    Seletor de modelo compacto; projeto mostra o vídeo original.
+    Edições isoladas por clipe; formato escolhido na geração e persistido.
+    Miniaturas sem deformação; escala das legendas verticais corrigida.
+    Transcrição em parágrafos, com espaços e navegação por palavra.
+    Análise local do texto com resumo, critérios e citações verificadas.
+    Transcrição alterada invalida análise e aprovação anteriores.
+  Not completed: Correção confiável das falas ASR; validação manual da UI.
+  Changes: 22 arquivos criados, 31 modificados, nenhum removido.
+  Architecture impact: Configurações separadas; análise usa o gate existente.
+    Sem novas dependências npm. Runtime textual instalado nas ferramentas locais.
+
+FILES
+  Created: 22, identificados no manifesto abaixo.
+  Modified: 31, identificados no mesmo manifesto.
+  Deleted: 0
+  Manifest: C:/CutNicePro/docs/reports/evidence/2026-10-19-source-clips-files.json
+  Unexpected changes: Nenhum novo caminho fora do escopo identificado.
+    As 661 pendências anteriores foram preservadas.
+
+VALIDATION
+  Typecheck: PASS
+  Lint: SKIP — não há comando configurado.
+  Unit tests: PASS — 226 casos de unidade/contrato.
+  Integration tests: PASS — FFmpeg real, análise local real e contrato ASR real.
+  Regression tests: PASS — no escopo executado; interface Tauri não exercitada.
+  Visual tests: SKIP — PENDING HUMAN APPROVAL.
+  Runtime verification: PARTIAL — motores executados; aplicativo não automatizado.
+  Total passed: 229 casos únicos: 145 frontend e 84 Rust.
+  Total failed: 0 pendentes em código; falhas iniciais registradas abaixo.
+  Total skipped: 1 benchmark antigo não repetido; 2 checks da baseline fast.
+
+HOOKS / HARNESS
+  Hooks active: Arquivos presentes; ativação automática não confirmada.
+  PreToolUse: Não verificado.
+  PostToolUse: Não verificado.
+  Stop: Não usado como prova de aprovação.
+  Baseline: PASS fast — 4 checks aprovados, 2 ignorados.
+  Gate result: PASS estrutural; entrega funcional PARTIAL.
+  Evidence: C:/CutNicePro/docs/reports/evidence/2026-10-19-source-clips-validation.json
+
+MCP / SKILLS
+  Tools used: Terminal, patches, pesquisa oficial; skills frontend-ui-engineering,
+    cutnicepro-ux-writing, incremental-implementation e web-design-guidelines.
+  Connection status: Ferramentas locais operacionais.
+  Failures: FigCraft/Graphify indisponíveis; refactor guard não encontrado.
+  Pending activation: Nenhuma.
+
+GIT
+  Branch: main
+  HEAD: 1a15e2ea7a76b45667f786871b7c97f2837891c4
+  Latest commit: feat(workspace): add project rename, upload flow, and editor scaffolding
+  Commits created: 0
+  Push: NOT EXECUTED
+  Remote: origin → https://github.com/FrosttyS18/CutNicePro.git; origin/main
+  Working tree: MODIFIED / UNTRACKED
+  Pending files: 683, listados integralmente em:
+    C:/CutNicePro/docs/reports/evidence/2026-10-19-source-clips-pending.txt
+
+EVIDENCE
+  Commands executed: npm test; npm run build; tsc --noEmit; cargo test;
+    testes explícitos semantic/refinement; baseline fast; comparação ASR.
+  Relevant logs: C:/CutNicePro/.tooling/vendor/asr-refinement/
+    C:/CutNicePro/.tooling/vendor/analysis/validation/
+  Screenshots: Nenhuma captura/automação do aplicativo nesta tarefa.
+  Test artifacts: Manifesto, validação e runtime em:
+    C:/CutNicePro/docs/reports/evidence/2026-10-19-analysis-runtime.json
+  Reproduction details:
+    Seis configurações Whisper válidas sobre os mesmos 86 segundos.
+    CUDA confirmado; somente um Whisper selecionado por execução.
+    Uma análise textual real de corte passou; execução de teste: 49,13 s.
+    Modelo textual: Qwen3-4B, separado dos modelos de transcrição.
+    Comparação detalhada:
+    C:/CutNicePro/docs/references/ASR-REFINEMENT-2026-10-19.md
+
+ISSUES
+  Bugs found: Compartilhamento de configurações, proporção das miniaturas,
+    seletor excessivo, formato ausente, análise genérica e palavras coladas.
+  Unresolved failures: A abertura ainda pode inserir “isso”; “essa desgraça”
+    não foi recuperada nos testes. Nenhum prompt experimental foi adotado.
+  Regressions: Nenhuma detectada nos testes executados.
+  Corrected failures: Saída Qwen suprimida por flag; prompt refinado após
+    confusão de assuntos. Caso Whisper com UTF-8 inválido repetido em ASCII.
+  Risks: Análise pode interpretar incorretamente outros trechos.
+    Ajustes finos dependem do armazenamento local. Distribuição dos motores
+    no instalador não concluída. Aviso preexistente de bundle acima de 500 kB.
+  Blockers: Precisão ASR sem correção comprovada; aceite manual pendente.
+
+FINAL
+  Delivery status: PARTIAL
+  FUNCTIONAL STATUS: PARTIAL
+  REGRESSION STATUS: PASS no escopo testado.
+  VISUAL STATUS: PENDING HUMAN APPROVAL
+  Requirements met: Seis ajustes implementados e compilados; análise real testada.
+  Remaining work: Precisão das falas apontadas e conferência da interface no app.
+  User action required: Avaliar a interface; nenhum comando manual solicitado.
+  Restart required: Backend precisa carregar a nova compilação; reinício não verificado.
+  Ready for next task: Entrega registrada com as pendências acima.
+
+REPORT
+  Latest file: C:/CutNicePro/docs/reports/LATEST.txt
+  Historical file: C:/CutNicePro/docs/reports/history/2026-10-19_175816_source-clips.txt
+
+END OF REPORT

@@ -5,6 +5,7 @@ import { formatCompactDate } from "../lib/format";
 import { TabBar } from "../components/TabBar";
 import { IconArchiveBox, IconHeart } from "../components/icons";
 import thumbUrl from "../assets/thumb-mock-projeto.png";
+import { ProjectContextCard } from "../components/workspace/ProjectContextCard";
 
 interface AddProjectsProps {
   projects: ProjectMeta[];
@@ -102,6 +103,8 @@ interface CollectionScreenProps {
   onAdd: (projectId: string) => void;
   onRemove: (projectId: string) => void;
   onOpen: (projectId: string) => void;
+  onDelete: (projectId: string) => Promise<void>;
+  onCollectionsChanged?: () => Promise<void>;
 }
 
 type InnerTab = "all" | "projects" | "clips";
@@ -120,6 +123,8 @@ export function CollectionScreen({
   onAdd,
   onRemove,
   onOpen,
+  onDelete,
+  onCollectionsChanged,
 }: CollectionScreenProps) {
   const [tab, setTab] = useState<InnerTab>("all");
   const [addOpen, setAddOpen] = useState(false);
@@ -179,13 +184,14 @@ export function CollectionScreen({
             </span>
           </button>
           {inside.map((p) => (
-            <div className="pcard__wrap" key={p.id}>
+            <ProjectContextCard key={p.id} project={p} onDelete={onDelete} onCollectionsChanged={onCollectionsChanged} onRemove={()=>onRemove(p.id)}>
               <button
                 type="button"
                 className="pcard"
                 data-testid="project-card"
                 onClick={() => onOpen(p.id)}
                 title={p.name}
+                aria-haspopup="menu" aria-keyshortcuts="Shift+F10 ContextMenu"
               >
                 <span className="pcard__thumb">
                   <img src={thumbUrl} alt="" aria-hidden="true" width={221} height={109} />
@@ -195,16 +201,7 @@ export function CollectionScreen({
                 <span className="pcard__name">{p.name}</span>
                 <span className="pcard__meta">{formatCompactDate(p.updated_at_ms)}</span>
               </button>
-              <button
-                type="button"
-                className="pcard__remove"
-                title={`Remover ${p.name} da coleção`}
-                aria-label={`Remover ${p.name} da coleção`}
-                onClick={() => onRemove(p.id)}
-              >
-                ×
-              </button>
-            </div>
+            </ProjectContextCard>
           ))}
         </div>
       )}

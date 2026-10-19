@@ -1,0 +1,35 @@
+{
+  "scope": "M3A local transcription - code validation only",
+  "frontend": {
+    "initialSuitePassed": 83,
+    "uniqueCasesPassed": 84,
+    "focusedFinalPassed": 7
+  },
+  "rust": {
+    "initialSuitePassed": 35,
+    "uniqueCasesPassed": 39,
+    "focusedFinalPassed": 9
+  },
+  "newCasesPassed": 16,
+  "uniqueCasesPassed": 123,
+  "testsFailed": 0,
+  "typecheck": "PASS",
+  "viteBuild": "PASS (bundle size warning)",
+  "installerSyntax": "PASS",
+  "baselineFast": {
+    "failed": 0,
+    "passed": 4,
+    "skipped": 2
+  },
+  "runtimeTauri": "NOT EXECUTED - maintainer instruction",
+  "realAsrQuality": "PENDING HUMAN TEST",
+  "browserRuns": 0,
+  "screenshots": 0,
+  "setupAttempt": "Initial speech fixture preparation failed on sandbox permissions; empty WAV removed; no ASR result claimed",
+  "engine": {
+    "modelSha256": "60ed5bc3dd14eea856493d334349b405782ddcaf0028d4b5df4088345fba2efe",
+    "assetTag": "b5454",
+    "archiveSha256": "6ba69e3482d7826214f90a6a9c84ca07782aec1e1d0c6a7c30c994fd5d816ccb",
+    "binaryVersion": "1.9.5"
+  }
+}

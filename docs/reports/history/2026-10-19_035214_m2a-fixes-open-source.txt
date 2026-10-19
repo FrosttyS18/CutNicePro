@@ -1,0 +1,113 @@
+CUTNICEPRO — ZCODE REPORT
+
+TASK
+  Name: Correções pós-M2A e pesquisa de motores open source
+  Status: PARTIAL — pesquisa concluída; runtime das correções parcial.
+  Scope: Nomes Windows, YouTube, warnings e referências para avançar o motor.
+  Objective: Corrigir a entrada e orientar funções reais sem trocar a stack.
+  Result: Código corrigido, documentação de 10 candidatos e prioridades registrada.
+
+IMPLEMENTATION
+  Completed: Nome de arquivo trata barras Windows/POSIX; novo título sem caminho
+    ou extensão. Títulos legados normalizados somente na exibição, sem regravar dados.
+    Novo link YouTube informa indisponibilidade e não cria projeto de referência.
+    Referências antigas preservadas com aviso de que a mídia não foi importada.
+    Progresso/erros repassados ao diálogo; erro permanece visível; drop respeita modal
+    ativo e evita importação concorrente. Callback de arquivo conectado às ferramentas.
+    Imports SystemTime, thread e Duration não utilizados removidos do Rust.
+    Removido aviso Vite de importação estática/dinâmica de event.js.
+  Not completed: Download YouTube, IA, render e validação Tauri integral nesta tarefa.
+  Changes: Pesquisa compara adoção, licença declarada e aderência de 10 projetos.
+  Architecture impact: Sem instalar motores, adicionar dependências ou substituir UI.
+
+FILES
+  Created: app/src/lib/media-name.ts; app/src/test/media-name.test.ts;
+    tools/e2e/m2a-import-fixes.mjs; docs/reports/evidence/m2a-fix/;
+    docs/references/OPEN-SOURCE-ENGINE-RESEARCH.md; relatório histórico abaixo.
+  Modified: app/src/App.tsx; app/src/lib/ipc.ts;
+    app/src/components/upload/{SourceForm.tsx,ToolDialog.tsx};
+    app/src/screens/{UploadScreen.tsx,ProjectWorkspace.tsx};
+    app/src-tauri/src/media_import.rs;
+    docs/engineering/{M2A-IMPORT-SPEC.md,ENGINE-HANDOFF.md};
+    docs/product/{PRODUCT-BRAIN.md,TRACEABILITY.md}; tasks/plan.md;
+    docs/reports/LATEST.txt.
+  Deleted: NONE.
+  Unexpected changes: NONE identificada; alterações anteriores do ZCode preservadas.
+
+VALIDATION
+  Typecheck: PASS — build TypeScript/Vite final.
+  Lint: SKIP — sem script no app.
+  Unit tests: PASS — 17 Vitest e 5 Rust relacionados.
+  Integration tests: PARTIAL — navegador com IPC, dialog e eventos simulados.
+  Regression tests: PASS nos unitários; fluxo completo NOT TESTED.
+  Visual tests: SKIP — aprovação humana.
+  Runtime verification: PARTIAL — 2 casos PASS; 1 FAIL do harness; 3 não executados.
+  Total passed: 24 casos (17 Vitest + 5 Rust + 2 runtime únicos).
+  Total failed: 1 caso runtime em duas tentativas; falhas de infraestrutura de teste.
+  Total skipped: 25 Rust filtrados e 3 runtime não executados; lint/estética SKIP.
+    cargo check --tests final PASS sem warnings; node --check do e2e PASS.
+
+HOOKS / HARNESS
+  Hooks active: Não verificados nesta sessão Codex.
+  PreToolUse: Sem evidência usada como aprovação.
+  PostToolUse: Sem evidência usada como aprovação.
+  Stop: Não executado explicitamente.
+  Baseline: SKIP — correção localizada e pesquisa.
+  Gate result: FUNCTIONAL PARTIAL; regressão limitada ao escopo acima.
+  Evidence: docs/reports/evidence/m2a-fix/{validation.txt,runtime.json,runtime-initial.json}.
+
+MCP / SKILLS
+  Tools used: Frontend-ui-engineering, write-page para documentação local,
+    ferramentas de arquivo/Git e pesquisa web em fontes primárias GitHub.
+  Connection status: Pesquisa respondeu; nenhuma instalação ou execução de terceiros.
+  Failures: Algumas leituras de arquivos e API de commits indisponíveis;
+    sem conclusão de frequência recente de commits nesses casos.
+  Pending activation: NONE. Sem VISION, subagentes ou acesso visual ao computador.
+
+GIT
+  Branch: main
+  HEAD: 1a15e2ea7a76b45667f786871b7c97f2837891c4
+  Latest commit: feat(workspace): add project rename, upload flow, and editor scaffolding
+  Commits created: NONE.
+  Push: NOT EXECUTED.
+  Remote: origin → https://github.com/FrosttyS18/CutNicePro.git; origin/main.
+  Working tree: MODIFIED / UNTRACKED, incluindo trabalho anterior.
+  Pending files: docs/reports/evidence/m2a-fix/pending-files.txt contém lista integral.
+
+EVIDENCE
+  Commands executed: npm test (media-name/workspace/m2a-media); npm run build;
+    cargo test --lib media_import::tests; cargo check --tests; git diff --check.
+  Relevant logs: validation.txt; runtime-initial.json; runtime.json; failure-state.txt.
+  Screenshots: NONE.
+  Test artifacts: Fixture de vídeo existente; IPC/eventos simulados, sem dados do usuário.
+  Reproduction details: Primeira rodada tinha mock incompleto de unlisten;
+    repetição corrigiu isso, mas revelou caminho Windows sem separadores na fixture.
+    Fixture corrigida por composição de caracteres; apenas sintaxe verificada depois.
+    Casos aprovados de nome legado e bloqueio YouTube foram retidos, não repetidos.
+
+ISSUES
+  Bugs found: Separador Windows ignorado; progresso descartado e erros absorvidos;
+    links criavam referência como projeto; imports Rust não utilizados.
+  Unresolved failures: E2E pendente de executar com fixture corrigida.
+  Regressions: Nenhuma identificada nos unitários; não afirmar aprovação integral.
+  Risks: AGENTS.md limita a UMA rodada inicial + no máximo UMA repetição justificada;
+    orçamento usado. Não houve terceira execução. Build mantém aviso de bundle >500kB.
+    Pesquisa é documental, sem benchmark local, auditoria ou garantia de maturidade.
+    Licenças de código, modelos e binários precisam de verificação antes da adoção.
+  Blockers: Nova rodada runtime exige exceção ao orçamento; motor não instalado aqui.
+
+FINAL
+  Delivery status: FUNCTIONAL PARTIAL; REGRESSION PASS nos unitários relacionados;
+    VISUAL PENDING HUMAN APPROVAL.
+  Requirements met: Correções de código e pesquisa comparativa documentada.
+  Remaining work: Fechar verificação runtime; integrar transcrição/export e download real.
+  User action required: Conferir no Tauri dev; definir próxima fatia com ZCode.
+  Restart required: Reiniciar Tauri dev para recompilar o Rust, se não atualizar sozinho.
+  Ready for next task: Pesquisa disponível; não confundir referências com motores integrados.
+
+REPORT
+  Research: C:/CutNicePro/docs/references/OPEN-SOURCE-ENGINE-RESEARCH.md
+  Latest file: C:/CutNicePro/docs/reports/LATEST.txt
+  Historical file: C:/CutNicePro/docs/reports/history/2026-10-19_035214_m2a-fixes-open-source.txt
+
+END OF REPORT

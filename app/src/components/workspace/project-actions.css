@@ -1,0 +1,17 @@
+.pcard__wrap { position: relative; min-width: 0; }
+.pcard__delete { position: absolute; top: 8px; right: 8px; display: grid; place-items: center; width: 30px; height: 30px; padding: 0; border: 1px solid var(--line); border-radius: 6px; background: var(--sh-panel); color: var(--ink); cursor: pointer; }
+.pcard__delete:hover:not(:disabled) { background: var(--sh-surface); color: #ffb4b4; }
+.pcard__delete:focus-visible { outline: 2px solid var(--sh-accent); outline-offset: 3px; }
+.project-delete-name { margin: 20px 0 0; color: var(--ink); font-weight: 500; overflow-wrap: anywhere; }
+.project-delete-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 24px; }
+.project-delete-confirm { color: #ffb4b4; border-color: #643536; }
+.project-delete-confirm:hover:not(:disabled) { background: #321c1d; }
+.project-actions > .flow-button { display: flex; align-items: center; gap: 8px; }
+.project-context-menu { position: fixed; z-index: 90; display: grid; min-width: 248px; max-width: calc(100vw - 16px); padding: 8px; border: 1px solid var(--line); border-radius: 10px; background: #252525; box-shadow: 0 12px 32px #0006; }
+.project-context-menu > button { display: flex; align-items: center; justify-content: space-between; gap: 24px; min-height: 40px; padding: 8px 12px; border: 0; border-radius: 6px; background: transparent; color: var(--ink); text-align: left; font: inherit; font-size: 12px; cursor: pointer; }
+.project-context-menu > button:hover, .project-context-menu > button:focus-visible { outline: 0; background: #3a3a3a; }
+.project-context-menu > button[data-danger="true"] { border-top: 1px solid var(--line); margin-top: 4px; padding-top: 12px; color: #ffb4b4; }
+.project-context-menu small { color: var(--sh-dim); font-size: 11px; }
+.project-card-notice { display: block; margin-top: 8px; color: var(--sh-dim); font-size: 11px; }
+.project-card-notice--error { color: #ffb4b4; }
+.project-collection-fields { margin-top: 20px; }

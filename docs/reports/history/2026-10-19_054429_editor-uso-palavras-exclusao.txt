@@ -1,0 +1,110 @@
+CUTNICEPRO — ZCODE REPORT
+
+TASK
+  Name: 03H — correções de uso e coerência do editor.
+  Status: PARTIAL — implementação e testes prontos; app/fala pendentes.
+  Scope: Transcrição, botão Cancelar, onda, exclusão e menu de contexto.
+  Objective: Corrigir os problemas relatados mantendo o design system.
+  Result: 164 testes únicos aprovados; compilação aprovada.
+
+IMPLEMENTATION
+  Completed: Seções recolhíveis com título e duração; palavra selecionável com
+    seek e edição em ação flutuante; correção de palavra preserva seus tempos.
+    Fronteiras de tokens instantâneos corrigidas; alinhamento parcial por palavra.
+    Cancelar reutiliza botão secundário; onda real mais densa desenhada em canvas.
+    Exclusão nos cards/projeto, confirmação e recuperação após interrupção;
+    origem, exports e mídia compartilhada preservados. Menu padrão bloqueado,
+    eventos de contexto disponíveis ao app. Nenhum aviso técnico novo na UI.
+  Not completed: Conferência de fala, sincronização e aparência no app.
+  Changes: Large v3 Turbo de 1,62 GB baixado e hash conferido; DTW nativo ativado.
+  Architecture impact: Responsabilidades separadas; sem novas dependências.
+
+FILES
+  Base: C:\CutNicePro
+  Created: project_delete.rs; TranscriptWordEditor.tsx; TranscriptWordPopover.tsx;
+    ProjectDeleteButton.tsx e project-actions.css; AudioWaveform.tsx;
+    lib/{transcript-sections,context-menu,waveform}.ts; editor-usability.test.tsx;
+    docs/engineering/EDITOR-USABILITY-{SPEC,MANUAL-CHECK}.md;
+    docs/reports/evidence/editor-usability/{validation.json,working-tree.txt}; histórico.
+  Modified: Backend lib.rs, storage.rs, media_store.rs, transcription/{words,tools,runner}.rs,
+    media_preview/{mod,ffmpeg}.rs; frontend App/main, IPC, transcript-text,
+    workspace-store, useWorkspaceData/useTimelinePreview; TranscriptPanel/Sentence,
+    TranscriptionDialog, PreparationDialog, ProjectOverview, ProjectWorkspace,
+    ProjectsScreen, VideoEditor, TimelineSurface e editor-refinement.css;
+    editor-timing.test.tsx; setup-whisper.ps1; decisões do motor, Brain,
+    rastreabilidade, backlog, plano, roteiros anteriores e LATEST.txt.
+  Deleted: NONE.
+  Unexpected changes: Trabalho anterior preservado; sem alterações fora do workspace.
+
+VALIDATION
+  Typecheck: PASS — TypeScript e compilação Rust pelos testes.
+  Lint: SKIP — sem runner; git diff --check PASS.
+  Unit tests: PASS — 58 Rust e 106 frontend únicos; 15 casos novos.
+  Integration tests: PASS no escopo de arquivos/contratos controlados.
+  Regression tests: PASS somente nos casos executados.
+  Visual tests: SKIP — PENDING HUMAN APPROVAL.
+  Runtime verification: SKIP — não abri nem controlei app/navegador.
+  Total passed: 164 únicos; reexecuções focadas não somadas.
+  Total failed: 0 nos testes.
+  Total skipped: 0 casos ignorados; ASR real/fluxo visual não executados.
+  Build: PASS; alerta preexistente de bundle Vite acima de 500 kB.
+
+HOOKS / HARNESS
+  Hooks active: Configuração existente; execução automática não comprovada.
+  PreToolUse / PostToolUse / Stop: Não alegados como executados.
+  Baseline: Suítes em código; harness completo não repetido.
+  Gate result: Código PASS; funcionamento ponta a ponta PARTIAL.
+  Evidence: docs/reports/evidence/editor-usability/validation.json.
+
+MCP / SKILLS
+  Tools used: Arquivos, terminal, Git e documentação oficial whisper.cpp/Hugging Face.
+  Skills: frontend-ui-engineering, cutnicepro-ux-writing, incremental-implementation,
+    web-design-guidelines e code-review-and-quality.
+  Connection status: Fontes acessíveis; sem ferramenta visual.
+  Failures: Consulta web de metadados falhou, resolvida pelo endpoint oficial
+    no terminal; patch inicial do painel rejeitado, aplicado por gravação única.
+  Pending activation: Graphify sem índice; nenhuma indexação alegada.
+
+GIT
+  Branch: main
+  HEAD: 1a15e2ea7a76b45667f786871b7c97f2837891c4
+  Latest commit: feat(workspace): add project rename, upload flow, and editor scaffolding
+  Commits created: NONE.
+  Push: NOT EXECUTED.
+  Remote: origin → https://github.com/FrosttyS18/CutNicePro.git; tracking não alterado.
+  Working tree: MODIFIED + UNTRACKED, incluindo trabalho anterior.
+  Pending files: Lista integral em evidence/editor-usability/working-tree.txt,
+    incluindo LATEST.txt, histórico e evidências desta tarefa.
+
+EVIDENCE
+  Commands executed: npm test; npm run build; cargo test --lib e filtros pertinentes;
+    whisper-cli --help; verificação SHA-256; git diff --check.
+  Relevant logs: validation.json resume os resultados; não é log bruto.
+  Screenshots: 0; navegação automatizada: 0; inferência de fala: 0.
+  Test artifacts: Markup Node, eventos controlados e arquivos de teste.
+  Reproduction details: docs/engineering/EDITOR-USABILITY-MANUAL-CHECK.md.
+
+ISSUES
+  Bugs found: Alinhamento integral descartado por diferenças textuais; token
+    instantâneo unia palavras; Cancelar sem estilo; onda esparsa; exclusão ausente.
+  Unresolved failures: Qualidade da nova transcrição ainda não avaliada no vídeo real.
+  Regressions: Nenhuma nos testes executados; sem garantia fora desse escopo.
+  Risks: Seções usam títulos extraídos da fala e pausas/duração; classificação
+    semântica de ganchos não está implementada. Modelo maior pode ser mais lento.
+  Blockers: Nenhum para sua conferência.
+
+FINAL
+  Delivery status: FUNCTIONAL PARTIAL; REGRESSION PASS no escopo; VISUAL PENDING HUMAN APPROVAL.
+  Requirements met: Correções implementadas, modulares e testadas em código.
+  Remaining work: Conferir fala, palavras, seções, onda e exclusão no app.
+  User action required: Reinicie o Tauri dev e use Transcrever novamente.
+    Confira destaque além do primeiro minuto; clique/edite uma palavra e salve;
+    abra/recolha seções; teste onda, botão direito e exclusão em projeto de teste.
+  Restart required: Sim — backend Rust alterado.
+  Ready for next task: Pronto para conferência; sem commit/push.
+
+REPORT
+  Latest file: C:\CutNicePro\docs\reports\LATEST.txt
+  Historical file: C:\CutNicePro\docs\reports\history\2026-10-19_054429_editor-uso-palavras-exclusao.txt
+
+END OF REPORT

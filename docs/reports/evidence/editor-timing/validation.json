@@ -1,0 +1,30 @@
+{
+  "task": "editor-transcricao-timeline",
+  "date": "2026-10-19",
+  "functionalStatus": "PARTIAL",
+  "regressionStatus": "PASS_WITHIN_EXECUTED_SCOPE",
+  "visualStatus": "PENDING_HUMAN_APPROVAL",
+  "executions": [
+    {"command": "cargo test --lib", "passed": 49, "failed": 0},
+    {"command": "cargo test --lib media_preview::ffmpeg::", "passed": 2, "failed": 0, "note": "Após corrigir literal Rust inválido na primeira compilação do módulo novo."},
+    {"command": "cargo test --lib full_json_word_times_survive_project_persistence_and_reload", "passed": 1, "failed": 0},
+    {"command": "npm test", "passed": 97, "failed": 0, "files": 14},
+    {"command": "npm run build", "status": "PASS", "warning": "Bundle Vite acima de 500 kB."},
+    {"command": "tsc --noEmit", "status": "PASS", "note": "Também executado após os últimos ajustes de código."},
+    {"command": "git diff --check", "status": "PASS", "warning": "Avisos Git de normalização LF/CRLF."}
+  ],
+  "uniquePassingCases": 149,
+  "newCases": {"rust": 6, "frontend": 8},
+  "testBoundary": "Parser, persistência em arquivo, PCM/argumentos FFmpeg, contratos, markup estático em Node e ponteiro controlado; nenhum Tauri ou navegador.",
+  "unverified": ["Geração real de miniaturas e onda", "Fluxo Tauri", "Precisão ASR e sincronização no vídeo do mantenedor", "Layout nos viewports"],
+  "smallModel": {
+    "path": ".tooling/vendor/whisper/models/ggml-small.bin",
+    "sizeBytes": 487601967,
+    "sha256": "1be3a9b2063867b937e64e2ec7483364a79917e157fa98c5d94b5c1fffea987b",
+    "hashVerified": true
+  },
+  "reportBoundary": "Resumo dos resultados observados nas ferramentas durante a tarefa; não é log bruto de execução.",
+  "browserRuns": 0,
+  "appRuns": 0,
+  "commits": 0
+}

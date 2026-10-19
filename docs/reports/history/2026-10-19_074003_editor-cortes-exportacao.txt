@@ -1,0 +1,115 @@
+CUTNICEPRO — ZCODE REPORT
+
+TASK
+  Name: 03J — editor, cortes automáticos e exportação.
+  Status: PARTIAL — implementação verificada em código; app pendente de conferência.
+  Scope: Ajustes solicitados de UI, reprodução, progresso, cortes e legendas.
+  Objective: Corrigir a edição e permitir gerar, revisar e exportar cortes reais.
+  Result: 200 testes únicos aprovados; build aprovado; MP4 sintético real validado.
+
+IMPLEMENTATION
+  Completed: Janela móvel de legendas sem selecionar os textos dos controles;
+    prévia acessível durante a edição; clique para play/pause e Espaço.
+    Proporção, enquadramento horizontal/vertical e recorte acessíveis.
+    Ferramentas reunidas, ícones Phosphor e textos sem nomes de modelos.
+    Progresso sobe de um em um até o valor medido; X/Cancelar pedem confirmação.
+    Transcrevendo… com animação pontilhada, pausa e movimento reduzido.
+    Cortes por fala/cenas, notas explicadas, filtros, revisão persistida.
+    Legendas automáticas nos cortes; exportação MP4 com áudio e legendas gravadas.
+    Aprovação conferida também no backend; arquivo final só publicado após sucesso.
+  Not completed: Conferência no Tauri, avaliação dos ganchos em vídeo real,
+    comparação de modelos, histórico de versões por corte, lote e instalador.
+  Changes: FFmpeg portátil preparado apenas dentro do projeto, com checksum conferido.
+  Architecture impact: Módulos separados de seleção, persistência, jobs, ASS e render.
+    Gate serializa processamento; cancelamento preserva arquivos anteriores.
+    Turbo preservado; pesquisa de alternativas registrada, sem promessa de melhora.
+
+FILES
+  Created: Módulos de cortes/render, painel móvel, ferramentas, contratos,
+    testes e fontes Poppins com licença. Inventário completo:
+    C:\CutNicePro\docs\reports\evidence\2026-10-19-editor-autocut-files.txt
+  Modified: Editor, prévia, ferramentas, progresso, persistência e documentação.
+    Nomes e caminhos completos constam no mesmo inventário, separados por ação.
+  Deleted: NONE nesta tarefa.
+  Unexpected changes: Não identificadas; alterações preexistentes preservadas.
+
+VALIDATION
+  FUNCTIONAL STATUS: PARTIAL — código e FFmpeg verificados; interação no app pendente.
+  REGRESSION STATUS: PASS no escopo dos testes executados.
+  VISUAL STATUS: PENDING HUMAN APPROVAL.
+  Typecheck: PASS.
+  Lint: SKIP — sem comando configurado; git diff --check PASS.
+  Unit tests: PASS — 199 casos únicos.
+  Integration tests: PASS — 1 com FFmpeg/ffprobe reais e mídia sintética.
+  Regression tests: PASS — inclui os 178 casos anteriores.
+  Visual tests: SKIP por orientação do mantenedor.
+  Runtime verification: SKIP para Tauri e seletores; render real coberto pela integração.
+  Total passed: 200 únicos — 127 frontend e 73 Rust; 22 novos.
+  Total failed: 0 pendentes; 2 falhas iniciais corrigidas, sem ignorar testes.
+  Total skipped: 0 casos automatizados; app, estética e benchmark não executados.
+
+HOOKS / HARNESS
+  Hooks active: Não comprovados nesta sessão.
+  PreToolUse: SKIP — sem evidência de execução do hook ZCode.
+  PostToolUse: SKIP — mesma limitação.
+  Stop: Não executado manualmente.
+  Baseline: Testes pertinentes executados; harness separado não executado.
+  Gate result: Código PASS; aceite no app pendente.
+  Evidence: C:\CutNicePro\docs\reports\evidence\2026-10-19-editor-autocut-validation.txt
+
+MCP / SKILLS
+  Tools used: Terminal, edição e pesquisa oficial; skills de frontend, UX Writing,
+    implementação incremental, revisão de código e web-design-guidelines.
+  Connection status: Ferramentas utilizadas disponíveis.
+  Failures: Graphify não exposto; grafo inexistente.
+  Pending activation: Indexação Graphify; impacto conferido diretamente no código.
+
+GIT
+  Branch: main.
+  HEAD: 1a15e2ea7a76b45667f786871b7c97f2837891c4
+  Latest commit: feat(workspace): add project rename, upload flow, and editor scaffolding
+  Commits created: 0.
+  Push: NOT EXECUTED.
+  Remote: origin → https://github.com/FrosttyS18/CutNicePro.git
+  Working tree: MODIFIED / UNTRACKED, já alterado antes desta tarefa.
+  Pending files: Todos preservados e listados em:
+    C:\CutNicePro\docs\reports\evidence\2026-10-19-editor-autocut-pending-files.txt
+    Inclui LATEST.txt, relatório histórico e inventário desta entrega.
+
+EVIDENCE
+  Commands executed: vitest run; cargo test; repetições focadas após correções;
+    TypeScript/Vite build; verificação de checksum; npm audit; diff --check.
+  Relevant logs: Fixture frontend corrigida para o default real de legenda.
+    Integração inicialmente sem FFmpeg; portátil preparado e teste aprovado.
+  Screenshots: Nenhuma; aplicativo e navegador não controlados.
+  Test artifacts: MP4 sintético conferido por duração, resolução, áudio e pixels
+    da legenda gravada; temporários do teste removidos.
+  Reproduction details: C:\CutNicePro\docs\engineering\EDITOR-AUTOCUT-MANUAL-CHECK.md
+
+ISSUES
+  Bugs found: Seleção no arraste, modal bloqueante, clique sem reprodução,
+    controles inertes, cancelamento sem confirmação e progresso abrupto tratados.
+  Unresolved failures: Nenhuma nos checks executados; fluxo real ainda não verificado.
+  Regressions: Nenhuma detectada nos testes; não equivale a regressão visual aprovada.
+  Risks: Seleção heurística, sem garantia de melhores ganchos ou viralização.
+    Crash pode deixar temporários próprios. Bundle grande continua com warning.
+    Audit identificou 6 alertas preexistentes em Vite/Vitest, incluindo 2 críticos;
+    Phosphor não aparece nos alertas. Atualização de majors não foi aplicada.
+  Blockers: Nenhum para conferir o ambiente de desenvolvimento.
+    FFmpeg do instalador/release continua dependente da instalação disponível.
+
+FINAL
+  Delivery status: Código entregue; validação humana pendente.
+  Requirements met: Interações, ferramentas, feedback e base funcional dos cortes.
+  Remaining work: Conferir fluxo/qualidade no vídeo real; limites descritos acima.
+  User action required: Reinicie o app; mova Legendas e teste clique/Espaço;
+    altere proporção/enquadramento; teste X/Cancelar na transcrição;
+    gere cortes, aprove um e reproduza o MP4 exportado.
+  Restart required: Sim, para carregar os novos comandos nativos.
+  Ready for next task: Após sua conferência; sem commits ou envio de mídia.
+
+REPORT
+  Latest file: C:\CutNicePro\docs\reports\LATEST.txt
+  Historical file: C:\CutNicePro\docs\reports\history\2026-10-19_074003_editor-cortes-exportacao.txt
+
+END OF REPORT

@@ -1,0 +1,36 @@
+import { afterEach,describe,expect,it,vi } from "vitest";
+import { invoke } from "@tauri-apps/api/core";
+import { loadClipLibrary } from "../services/clip-library";
+import { loadClipMedia,prepareClipEditing } from "../services/clip-media";
+import { readWorkspace } from "../services/workspace-store";
+import type { Clip } from "../lib/clips";
+
+vi.mock("@tauri-apps/api/core",()=>({invoke:vi.fn()}));
+afterEach(()=>{vi.clearAllMocks();vi.unstubAllGlobals();});
+const clip: Clip = {id:"a".repeat(64),start:2,end:8,title:"Assunto do corte",score:80,reasons:[],review:"pending"};
+const entry = {mediaId:"m",sha256:"b".repeat(64),ext:"mp4",originalName:"Vídeo.mp4",unavailable:false,projectIds:["p"],analysis:{durationMs:10000,width:640,height:360}};
+describe("biblioteca persistente e mídia do corte",()=>{
+  it("lista todos os projetos sem depender de preferência ou mídia ativa do navegador",async()=>{
+    vi.stubGlobal("localStorage",{getItem:()=>{throw new Error("must not read workspace");}});
+    vi.mocked(invoke).mockImplementation(async(_command,args)=>({version:1,mediaId:(args as {projectId:string}).projectId+"-media",transcriptHash:"hash",clips:[clip]}));
+    const projects=["p","q"].map(id=>({id,name:id,created_at_ms:0,updated_at_ms:0,last_opened_at_ms:null}));
+    const result=await loadClipLibrary(projects);
+    expect(result.map(value=>[value.project.id,value.mediaId])).toEqual([["p","p-media"],["q","q-media"]]);
+    expect(invoke).toHaveBeenNthCalledWith(1,"get_project_clips",{projectId:"p"});
+    expect(invoke).toHaveBeenNthCalledWith(2,"get_project_clips",{projectId:"q"});
+  });
+  it("recupera fonte e transcrição e abre edição sem preferências anteriores",async()=>{
+    const values=new Map<string,string>();vi.stubGlobal("localStorage",{getItem:(key:string)=>values.get(key)??null,setItem:(key:string,value:string)=>values.set(key,value)});
+    vi.mocked(invoke).mockImplementation(async command=>command==="get_media" ? entry : {version:1,mediaId:"m",language:"pt",model:"tested",segments:[{id:"s",start:2,end:4,text:"Uma fala real",words:[{text:"Uma",start:2,end:2.2},{text:"fala",start:2.2,end:3},{text:"real",start:3,end:4}]}]});
+    const source=await loadClipMedia("p","m");expect(source.url).toContain(entry.sha256);expect(source.transcript[0].words?.[2].start).toBe(3);
+    await prepareClipEditing("p","m",clip);const saved=readWorkspace("p");
+    expect(saved.media?.mediaId).toBe("m");expect(saved.activeClipId).toBe(clip.id);expect(saved.settings.trimStart).toBe(2);expect(saved.transcriptMode).toBe("real");
+  });
+  it("recusa fonte de outro projeto e propaga falha da biblioteca sem inventar vazio",async()=>{
+    vi.mocked(invoke).mockImplementation(async command=>command==="get_media" ? {...entry,projectIds:["other"]} : null);
+    await expect(loadClipMedia("p","m")).rejects.toThrow("indisponível");
+    vi.mocked(invoke).mockRejectedValue(new Error("read failure"));
+    await expect(loadClipLibrary([{id:"p",name:"p",created_at_ms:0,updated_at_ms:0,last_opened_at_ms:null}])).rejects.toThrow();
+    await expect(prepareClipEditing("p","m",clip)).rejects.toThrow("Reconecte".toLowerCase());
+  });
+});

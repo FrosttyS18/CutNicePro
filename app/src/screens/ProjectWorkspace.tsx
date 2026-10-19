@@ -1,47 +1,81 @@
 import { useState } from "react";
 import type { ProjectMeta } from "../lib/types";
 import { useWorkspaceData } from "../hooks/useWorkspaceData";
+import { useTranscription } from "../hooks/useTranscription";
+import { TranscriptionControls } from "../components/workspace/TranscriptionControls";
 import { ProjectOverview } from "../components/workspace/ProjectOverview";
 import { VideoEditor } from "../components/editor/VideoEditor";
-import { ExportDialog } from "../components/workspace/ExportDialog";
 import { SourceForm } from "../components/upload/SourceForm";
+import { ProjectDeleteButton } from "../components/workspace/ProjectDeleteButton";
 import type { ToolId } from "../components/upload/tools";
 import "./workspace.css";
+import "./editor-refinement.css";
+import { useClips } from "../hooks/useClips";
+import { ClipTools } from "../components/clips/ClipTools";
+import { type Clip } from "../lib/clips";
+import { fullVideoWorkspace, openClipWorkspace } from "../lib/clip-workspace";
+import { ClipGallery } from "../components/clips/ClipGallery";
+import { ClipInspection } from "../components/clips/ClipInspection";
+import type { LibraryClip } from "../lib/clip-library";
 
 interface Props {
   project: ProjectMeta;
   initialView?: "overview" | "editor";
   onRename: (name: string) => Promise<void>;
   onImport: () => void;
+  onDelete: () => Promise<void>;
 }
 
-export function ProjectWorkspace({ project, initialView = "overview", onRename, onImport }: Props) {
+export function ProjectWorkspace({ project, initialView = "overview", onRename, onImport, onDelete }: Props) {
   const workspace = useWorkspaceData(project.id);
-  const [view, setView] = useState(initialView);
-  const [exporting, setExporting] = useState(false);
+  const transcription = useTranscription(project.id, workspace.data.media?.mediaId, workspace.acceptTranscript);
+  const clips = useClips(project.id, workspace.data.media?.mediaId);
+  const transcriptionControls = workspace.data.media?.mediaId
+    ? <TranscriptionControls controller={transcription} generated={workspace.data.transcriptMode === "real"} dirty={workspace.dirty} onSave={workspace.save} disabled={clips.busy} /> : undefined;
+  const [view, setView] = useState<"overview" | "editor" | "clips">(initialView);
+  const [inspecting,setInspecting] = useState<LibraryClip | null>(null);
+  const activeClip = view === "editor" ? workspace.data.activeClipId : undefined;
+  function openClip(clip: Clip) {
+    workspace.change(openClipWorkspace(workspace.data,clip));
+    setView("editor");
+  }
+  const clipTools = workspace.data.media?.mediaId ? <ClipTools controller={clips} settings={view === "editor" ? workspace.data.settings : fullVideoWorkspace(workspace.data).settings} libraryView={view === "clips"}
+    ready={workspace.data.transcriptMode === "real" && workspace.data.transcript.length > 0} disabled={transcription.busy}
+    onSave={workspace.save} onShowClips={() => setView("clips")} activeClipId={activeClip} activeClip={clips.collection?.clips.find(clip => clip.id === activeClip)}
+    onFullVideo={() => workspace.change(fullVideoWorkspace(workspace.data))}/> : undefined;
   function openEditor(tool: ToolId) {
-    workspace.change({ ...workspace.data, tool });
+    workspace.change({ ...fullVideoWorkspace(workspace.data), tool });
     setView("editor");
   }
   return (
     <div className={view === "editor" ? "project-workspace project-workspace--editing" : "project-workspace"}>
       {view === "overview" ? <>
+        {workspace.data.media?.kind === "youtube" && <div className="workspace-notice" role="status">
+          Este projeto contém apenas uma referência do YouTube. O vídeo não foi importado para edição.
+          <button type="button" className="flow-button" onClick={onImport}>Importar arquivo do computador</button>
+        </div>}
         {workspace.data.media ? <ProjectOverview project={project} data={workspace.data} localUrl={workspace.localUrl} onRename={onRename}
-          onChange={workspace.change} onEditor={openEditor} onExport={() => setExporting(true)} />
-          : <section className="project-without-media"><h1>{project.name}</h1><p>Este registro antigo não tem um vídeo importado.</p>
-            <button type="button" className="upload-primary" onClick={onImport}>Importar vídeo</button></section>}
+          onChange={workspace.change} onEditor={openEditor} onDelete={onDelete} transcriptionControls={<>{transcriptionControls}{clipTools}</>}transcribing={transcription.busy || clips.busy} />
+          : <section className="project-without-media"><h1>{project.name}</h1><p>Este projeto não tem um vídeo.</p>
+            <button type="button" className="upload-primary" onClick={onImport}>Importar vídeo</button>
+            <ProjectDeleteButton name={project.name} onDelete={onDelete} disabled={transcription.busy} /></section>}
         {workspace.data.media?.kind === "local" && !workspace.localUrl && <details className="project-reconnect" open>
           <summary>Reconectar arquivo original</summary>
-          <p className="flow-muted">Arquivos ficam disponíveis nesta sessão. Após reiniciar, reconecte o vídeo para continuar a prévia.</p>
+          <p className="flow-muted">Escolha o arquivo original para abrir este vídeo.</p>
           <SourceForm compact loading={workspace.source.loading} onFile={(file) => void workspace.selectFile(file)} />
           {workspace.source.error && <p className="upload-message upload-message--error" role="alert">{workspace.source.error}</p>}
         </details>}
         {workspace.dirty && <button type="button" className="upload-primary workspace-save" onClick={workspace.save}>Salvar alterações do projeto</button>}
-      </> : <VideoEditor key={workspace.data.tool} title={project.name} data={workspace.data} localUrl={workspace.localUrl} dirty={workspace.dirty}
-        onChange={workspace.change} onSave={workspace.save} onBack={() => setView("overview")} onExport={() => setExporting(true)} />}
+      </> : view === "clips" ? <>
+        <header className="project-clips__heading"><div><button type="button" className="flow-button" onClick={() => setView("overview")}>Voltar ao projeto</button><h1>{project.name}</h1></div><div className="project-clips__tools">{clipTools}</div></header>
+        <ClipGallery entries={(clips.collection?.clips ?? []).map(clip => ({project,mediaId: clips.collection!.mediaId,clip}))} loading={clips.loading} error={clips.error}
+          onRetry={clips.reload} onInspect={setInspecting}/>
+      </> : <VideoEditor key={`${workspace.data.tool}:${activeClip ?? "video"}`} title={project.name} data={workspace.data} localUrl={workspace.localUrl} dirty={workspace.dirty}
+        onChange={workspace.change} onSave={workspace.save} onBack={() => setView("overview")} transcriptionControls={<>{transcriptionControls}{clipTools}</>}transcribing={transcription.busy || clips.busy} />}
       {workspace.notice && <p className={workspace.notice.error ? "workspace-notice workspace-notice--error" : "workspace-notice"}
         role={workspace.notice.error ? "alert" : "status"}>{workspace.notice.text}</p>}
-      <ExportDialog open={exporting} onClose={() => setExporting(false)} />
+      {inspecting && <ClipInspection entry={inspecting} onClose={() => setInspecting(null)} onChanged={clips.reload}
+        onEdit={(_,clip) => { setInspecting(null); openClip(clip); }}/>}
     </div>
   );
 }

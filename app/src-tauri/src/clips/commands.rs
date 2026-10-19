@@ -1,0 +1,280 @@
+use super::{
+    content, ranking, scenes, semantic, store,
+    types::{ClipCollection, Options, Review},
+    ClipJobs,
+};
+use crate::{
+    media_store::MediaStore,
+    processing::ProcessingGate,
+    transcription::{self, types::JobSnapshot},
+};
+use std::sync::Arc;
+use tauri::{AppHandle, Emitter, Manager};
+
+pub(crate) fn media(
+    app: &AppHandle,
+    project: &str,
+    media: &str,
+) -> Result<(crate::media_store::MediaEntry, f64), String> {
+    uuid::Uuid::parse_str(project).map_err(|_| "projeto inválido")?;
+    let entry = app
+        .state::<MediaStore>()
+        .get(media)?
+        .filter(|m| !m.unavailable && m.project_ids.iter().any(|p| p == project))
+        .ok_or("O vídeo está indisponível. Reconecte o arquivo original.")?;
+    crate::media_tools::managed_filename(&entry.sha256, &entry.ext)?;
+    let duration = entry
+        .analysis
+        .as_ref()
+        .map(|a| a.duration_ms as f64 / 1000.0)
+        .filter(|d| d.is_finite() && *d > 0.0)
+        .ok_or("Não foi possível ler a duração do vídeo. Importe o arquivo novamente.")?;
+    Ok((entry, duration))
+}
+#[tauri::command]
+pub fn get_clips(
+    app: AppHandle,
+    project_id: String,
+    media_id: String,
+) -> Result<Option<ClipCollection>, String> {
+    let (_, duration) = media(&app, &project_id, &media_id)?;
+    let mut value = store::load(
+        &crate::app_data_base(&app)?,
+        &project_id,
+        &media_id,
+        duration,
+    )?;
+    if let Some(ref mut collection) = value {
+        presentation(&app, &project_id, collection);
+    }
+    Ok(value)
+}
+fn presentation(app: &AppHandle, project: &str, collection: &mut ClipCollection) {
+    let Ok(base) = crate::app_data_base(app) else {
+        return;
+    };
+    if let Ok(Some(record)) = transcription::store::load(&base, project) {
+        if record.media_id == collection.media_id {
+            if let Ok(hash) = store::fingerprint(&record.segments) {
+                collection.invalidate_analysis(hash);
+                content::refresh_legacy_titles(&mut collection.clips, &record.segments);
+            }
+        }
+    }
+}
+#[tauri::command]
+pub fn get_project_clips(
+    app: AppHandle,
+    project_id: String,
+) -> Result<Option<ClipCollection>, String> {
+    let mut value = store::read(&crate::app_data_base(&app)?, &project_id)?;
+    if let Some(ref mut collection) = value {
+        let (_, duration) = media(&app, &project_id, &collection.media_id)?;
+        store::validate(collection, duration)?;
+        presentation(&app, &project_id, collection);
+    }
+    Ok(value)
+}
+#[tauri::command]
+pub fn clips_job(app: AppHandle) -> Option<JobSnapshot> {
+    app.state::<ClipJobs>().0.snapshot()
+}
+#[tauri::command]
+pub fn cancel_clips(app: AppHandle, job_id: String) -> bool {
+    app.state::<ClipJobs>().0.cancel(Some(&job_id))
+}
+#[tauri::command]
+pub fn review_clip(
+    app: AppHandle,
+    project_id: String,
+    media_id: String,
+    clip_id: String,
+    review: Review,
+) -> Result<ClipCollection, String> {
+    let _lease = app.state::<Arc<ProcessingGate>>().acquire()?;
+    let (_, duration) = media(&app, &project_id, &media_id)?;
+    let base = crate::app_data_base(&app)?;
+    let mut value = store::load(&base, &project_id, &media_id, duration)?
+        .ok_or("Gere os cortes antes de revisar.")?;
+    presentation(&app, &project_id, &mut value);
+    value
+        .clips
+        .iter_mut()
+        .find(|c| c.id == clip_id)
+        .ok_or("Corte não encontrado.")?
+        .review = review;
+    store::save(&base, &project_id, &value, duration)?;
+    Ok(value)
+}
+#[tauri::command]
+pub async fn generate_clips(
+    app: AppHandle,
+    project_id: String,
+    media_id: String,
+    job_id: String,
+    options: Options,
+) -> Result<ClipCollection, String> {
+    options.validate()?;
+    let lease = app.state::<Arc<ProcessingGate>>().acquire()?;
+    let (entry, duration) = media(&app, &project_id, &media_id)?;
+    let base = crate::app_data_base(&app)?;
+    semantic::discover(&base)?;
+    let transcript = transcription::store::load(&base, &project_id)?
+        .filter(|t| t.media_id == media_id)
+        .ok_or("Transcreva o vídeo antes de gerar cortes.")?;
+    transcription::parser::validate(&transcript.segments, duration)?;
+    if transcript.segments.is_empty() {
+        return Err("Não há fala suficiente para sugerir cortes. Escolha outro vídeo.".into());
+    }
+    let jobs = app.state::<ClipJobs>().0.clone();
+    let control = jobs.start(job_id.clone(), project_id.clone())?;
+    if let Some(snapshot) = jobs.stage(&job_id, "analyzing") {
+        let _ = app.emit("clips://job", snapshot);
+    }
+    let path = app
+        .state::<MediaStore>()
+        .files_dir()
+        .join(format!("{}.{}", entry.sha256, entry.ext));
+    let task_jobs = jobs.clone();
+    let task_id = job_id.clone();
+    let task_app = app.clone();
+    let task = tauri::async_runtime::spawn_blocking(move || {
+        let _lease = lease;
+        let result = (|| {
+            let scratch = crate::render::scratch::Scratch::new(&base)?;
+            let detected = scenes::analyze(&path, &scratch.path, duration, &control, |percent| {
+                if let Some(snapshot) = task_jobs.progress(&task_id, percent / 3) {
+                    let _ = task_app.emit("clips://job", snapshot);
+                }
+            })?;
+            control.check()?;
+            let clips = ranking::select(
+                &transcript.segments,
+                &media_id,
+                duration,
+                &detected,
+                &options,
+            )?;
+            let mut value = ClipCollection {
+                version: 1,
+                media_id: media_id.clone(),
+                transcript_hash: store::fingerprint(&transcript.segments)?,
+                clips,
+            };
+            if let Some(previous) = store::load(&base, &project_id, &media_id, duration)? {
+                for clip in &mut value.clips {
+                    if let Some(old) = previous.clips.iter().find(|old| {
+                        old.id == clip.id
+                            && old.format == clip.format
+                            && previous.transcript_hash == value.transcript_hash
+                    }) {
+                        clip.review = old.review.clone();
+                        clip.analysis = old.analysis.clone();
+                    }
+                }
+            }
+            let total = value.clips.len().max(1);
+            for (index, clip) in value.clips.iter_mut().enumerate() {
+                control.check()?;
+                if let Some(analysis) = &clip.analysis {
+                    clip.title = analysis.title.clone();
+                    clip.score = analysis.score();
+                    clip.reasons = analysis
+                        .criteria
+                        .iter()
+                        .map(|item| item.explanation.clone())
+                        .collect();
+                } else {
+                    semantic::run(&base, &scratch.path, clip, &transcript.segments, &control)?;
+                }
+                if let Some(snapshot) =
+                    task_jobs.progress(&task_id, (35 + 60 * (index + 1) / total) as u8)
+                {
+                    let _ = task_app.emit("clips://job", snapshot);
+                }
+            }
+            Ok(value)
+        })();
+        task_jobs.finish(&task_id, result, |value| {
+            store::save(&base, &project_id, value, duration)
+        })
+    })
+    .await;
+    let result = task.unwrap_or_else(|e| {
+        jobs.finish(
+            &job_id,
+            Err(format!("falha na análise de cortes: {e}")),
+            |_: &ClipCollection| Ok(()),
+        )
+    });
+    if let Some(snapshot) = jobs.snapshot() {
+        let _ = app.emit("clips://job", snapshot);
+    }
+    result
+}
+
+#[tauri::command]
+pub async fn analyze_clip(
+    app: AppHandle,
+    project_id: String,
+    media_id: String,
+    clip_id: String,
+    job_id: String,
+) -> Result<ClipCollection, String> {
+    let lease = app.state::<Arc<ProcessingGate>>().acquire()?;
+    let (_, duration) = media(&app, &project_id, &media_id)?;
+    let base = crate::app_data_base(&app)?;
+    semantic::discover(&base)?;
+    let mut collection =
+        store::load(&base, &project_id, &media_id, duration)?.ok_or("Corte não encontrado.")?;
+    let transcript = transcription::store::load(&base, &project_id)?
+        .filter(|t| t.media_id == media_id)
+        .ok_or("Transcreva o vídeo antes de analisar cortes.")?;
+    let hash = store::fingerprint(&transcript.segments)?;
+    collection.invalidate_analysis(hash);
+    let index = collection
+        .clips
+        .iter()
+        .position(|c| c.id == clip_id)
+        .ok_or("Corte não encontrado.")?;
+    let jobs = app.state::<ClipJobs>().0.clone();
+    let control = jobs.start(job_id.clone(), project_id.clone())?;
+    if let Some(snapshot) = jobs.stage(&job_id, "analyzing") {
+        let _ = app.emit("clips://job", snapshot);
+    }
+    let task_jobs = jobs.clone();
+    let task_id = job_id.clone();
+    let result = tauri::async_runtime::spawn_blocking(move || {
+        let _lease = lease;
+        let result = (|| {
+            let scratch = crate::render::scratch::Scratch::new(&base)?;
+            semantic::run(
+                &base,
+                &scratch.path,
+                &mut collection.clips[index],
+                &transcript.segments,
+                &control,
+            )?;
+            Ok(collection)
+        })();
+        task_jobs.finish(&task_id, result, |value| {
+            store::save(&base, &project_id, value, duration)
+        })
+    })
+    .await
+    .unwrap_or_else(|e| {
+        jobs.finish(
+            &job_id,
+            Err(format!("falha na análise: {e}")),
+            |_: &ClipCollection| Ok(()),
+        )
+    });
+    if let Some(snapshot) = jobs.snapshot() {
+        let _ = app.emit("clips://job", snapshot);
+    }
+    result
+}
+
+pub(crate) fn remove(base: &std::path::Path, project: &str) -> Result<(), String> {
+    store::remove(base, project)
+}

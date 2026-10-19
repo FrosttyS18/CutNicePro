@@ -127,6 +127,12 @@ impl Store {
         Ok(result)
     }
 
+    pub fn delete_project(&self, id: &str) -> Result<(), String> {
+        let mut projects = self.load()?;
+        projects.retain(|project| project.id != id);
+        self.save(&projects)
+    }
+
     pub fn open_project(&self, id: &str) -> Result<ProjectMeta, String> {
         let mut projects = self.load()?;
         let now = now_ms();
@@ -390,6 +396,16 @@ impl CollectionStore {
         let out = collections[idx].clone();
         self.save(&collections)?;
         Ok(out)
+    }
+
+    pub fn remove_project_everywhere(&self, project_id: &str) -> Result<(), String> {
+        let mut collections = self.load()?;
+        for collection in &mut collections {
+            let before = collection.project_ids.len();
+            collection.project_ids.retain(|id| id != project_id);
+            if before != collection.project_ids.len() { collection.updated_at_ms = now_ms(); }
+        }
+        self.save(&collections)
     }
 }
 

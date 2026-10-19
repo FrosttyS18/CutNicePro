@@ -1,28 +1,89 @@
-import { useId, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
+import { open as openFileDialog } from "@tauri-apps/plugin-dialog";
+import { listen } from "@tauri-apps/api/event";
 import { youtubeVideoId } from "../../lib/video-source";
+import { mediaFileName } from "../../lib/media-name";
 
 interface Props {
   loading: boolean;
-  onFile: (file: File) => void;
+  /** @deprecated M2A: seleção agora entrega CAMINHO via onFilePath. */
+  onFile?: (file: File) => void;
+  /** M2A: caminho REAL do arquivo (dialog nativo / drop do Tauri). */
+  onFilePath?: (path: string, name: string) => void;
   compact?: boolean;
   onYouTube?: (url: string) => void;
 }
 
-export function SourceForm({ loading, onFile, compact = false, onYouTube }: Props) {
+const VIDEO_EXTENSIONS = ["mp4", "m4v", "mov", "webm", "mkv", "avi"];
+
+export function SourceForm({ loading, onFilePath, compact = false }: Props) {
   const [link, setLink] = useState("");
   const [error, setError] = useState<string | null>(null);
-  const fileInput = useRef<HTMLInputElement>(null);
+  const [dragging, setDragging] = useState(false);
   const id = useId();
+  const form = useRef<HTMLFormElement>(null);
+
+  async function selectNative() {
+    if (!onFilePath) { setError("Volte à tela de envio para importar este arquivo."); return; }
+    const picked = await openFileDialog({
+      multiple: false,
+      directory: false,
+      filters: [{ name: "Vídeos", extensions: VIDEO_EXTENSIONS }],
+    });
+    if (typeof picked === "string" && onFilePath) {
+      setError(null);
+      onFilePath(picked, mediaFileName(picked));
+    }
+  }
+
+  function handlePaths(paths: string[] | null) {
+    if (loading) return;
+    if (document.querySelector("dialog[open]") && !form.current?.closest("dialog[open]")) return;
+    if (!paths || paths.length === 0) return;
+    setDragging(false);
+    if (paths.length > 1) { setError("Envie um vídeo por vez."); return; }
+    const path = paths[0];
+    const name = mediaFileName(path);
+    const ext = name.split(".").pop()?.toLowerCase() ?? "";
+    if (!VIDEO_EXTENSIONS.includes(ext)) {
+      setError("Formato não suportado. Use mp4, m4v, mov, webm, mkv ou avi.");
+      return;
+    }
+    if (!onFilePath) { setError("Volte à tela de envio para importar este arquivo."); return; }
+    setError(null);
+    onFilePath(path, name);
+  }
+
+  // Drop REAL com paths: eventos nativos do Tauri (dragDropEnabled), com
+  // cleanup simétrico no unmount (sem listeners duplicados).
+  const pathsRef = useRef(handlePaths);
+  pathsRef.current = handlePaths;
+  useEffect(() => {
+    let disposed = false;
+    const offs: Array<() => void> = [];
+    void (async () => {
+      const retain = (off: () => void) => { if (disposed) off(); else offs.push(off); };
+      retain(await listen<{ paths: string[] }>("tauri://drag-drop", (event) => {
+        if (!disposed) pathsRef.current(event.payload.paths);
+      }));
+      retain(await listen<void>("tauri://drag-over", () => { if (!disposed) setDragging(true); }));
+      retain(await listen<void>("tauri://drag-leave", () => { if (!disposed) setDragging(false); }));
+    })().catch(() => { if (!disposed) setError("Não foi possível ativar o envio por arrastar. Use o botão Enviar."); });
+    return () => { disposed = true; offs.forEach((off) => off()); };
+  }, []);
 
   return (
-    <form className={compact ? "source-form source-form--compact" : "source-form"}
+    <form ref={form}
+      className={dragging ? "source-form source-form--drop" : compact ? "source-form source-form--compact" : "source-form"}
       onSubmit={(event) => {
         event.preventDefault();
         if (loading) return;
-        if (!link.trim()) { fileInput.current?.click(); return; }
-        if (youtubeVideoId(link) && onYouTube) { setError(null); onYouTube(link.trim()); return; }
+        if (!link.trim()) {
+          void selectNative().catch(() => setError("Não foi possível abrir a seleção de vídeo. Tente novamente."));
+          return;
+        }
         setError(youtubeVideoId(link)
-          ? "Link reconhecido. A importação do YouTube ainda não está disponível. Envie um vídeo do computador."
+          ? "Para usar este vídeo, envie o arquivo do computador."
           : "Informe um link de vídeo válido do YouTube ou apague o campo para escolher um arquivo.");
       }}>
       <div className="source-form__row">
@@ -32,16 +93,10 @@ export function SourceForm({ loading, onFile, compact = false, onYouTube }: Prop
         <label className="upload-sr-only" htmlFor={id}>Link do YouTube ou arquivo do computador</label>
         <input id={id} type="text" inputMode="url" autoComplete="off" value={link} disabled={loading}
           aria-invalid={Boolean(error)} aria-describedby={error ? `${id}-error` : undefined}
-          placeholder="Cole um link do YouTube — ou envie do seu computador"
+          placeholder="Envie um vídeo do computador · YouTube em breve"
           onChange={(event) => { setLink(event.target.value); setError(null); }} />
         <button type="submit" className="upload-primary" disabled={loading}>{loading ? "Lendo…" : "Enviar"}</button>
       </div>
-      <input ref={fileInput} type="file" hidden accept="video/*,.mp4,.m4v,.mov,.webm,.mkv,.avi"
-        aria-label="Selecionar vídeo do computador" onChange={(event) => {
-          const file = event.target.files?.[0];
-          event.target.value = "";
-          if (file) { setError(null); onFile(file); }
-        }} />
       {error && <p id={`${id}-error`} className="upload-message" role="alert">{error}</p>}
     </form>
   );
