@@ -5,7 +5,7 @@ import avatarUrl from "../../assets/avatar-perfil.png";
 import logoSidebarUrl from "../../assets/logo-sidebar.svg";
 
 export type ShellSection = "home" | "projects";
-export type ProjectsSub = "all" | "collections";
+export type ProjectsSub = "all" | "collections" | "upload";
 
 interface Props {
   expanded: boolean;
@@ -87,6 +87,12 @@ export function AppShell({
         ) : (
           <>
             <h2 className="side-panel__title">Meus Projetos</h2>
+            <button type="button"
+              className={projectsSub === "upload" ? "side-panel__pill side-panel__pill--active" : "side-panel__pill"}
+              aria-current={projectsSub === "upload" ? "page" : undefined}
+              onClick={() => onNavigateProjects("upload")}>
+              Enviar vídeo
+            </button>
             <button
               type="button"
               className={
@@ -95,6 +101,7 @@ export function AppShell({
                   : "side-panel__pill"
               }
               onClick={() => onNavigateProjects("all")}
+              aria-current={projectsSub === "all" ? "page" : undefined}
             >
               Todos
             </button>
@@ -106,6 +113,7 @@ export function AppShell({
                   : "side-panel__pill"
               }
               onClick={() => onNavigateProjects("collections")}
+              aria-current={projectsSub === "collections" ? "page" : undefined}
             >
               Coleções
             </button>

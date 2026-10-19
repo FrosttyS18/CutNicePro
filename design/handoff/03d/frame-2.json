@@ -1,0 +1,561 @@
+{
+  "absoluteBounds": {
+    "height": 800,
+    "width": 1280,
+    "x": 1340,
+    "y": 0
+  },
+  "children": [
+    {
+      "absoluteBounds": {
+        "height": 800,
+        "width": 92,
+        "x": 1340,
+        "y": 0
+      },
+      "constraints": {
+        "horizontal": "left",
+        "vertical": "top"
+      },
+      "cornerRadius": 12,
+      "fills": [
+        {
+          "color": "#000000",
+          "type": "solid"
+        }
+      ],
+      "height": 800,
+      "id": 17,
+      "name": "Superfície",
+      "type": "RECTANGLE",
+      "width": 92,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "absoluteBounds": {
+        "height": 718,
+        "width": 1140,
+        "x": 1456,
+        "y": 58
+      },
+      "constraints": {
+        "horizontal": "left",
+        "vertical": "top"
+      },
+      "cornerRadius": 12,
+      "fills": [
+        {
+          "color": "#0A0A0A",
+          "type": "solid"
+        }
+      ],
+      "height": 718,
+      "id": 18,
+      "name": "Superfície",
+      "type": "RECTANGLE",
+      "width": 1140,
+      "x": 116,
+      "y": 58
+    },
+    {
+      "absoluteBounds": {
+        "height": 365,
+        "width": 650,
+        "x": 1650,
+        "y": 160
+      },
+      "constraints": {
+        "horizontal": "left",
+        "vertical": "top"
+      },
+      "cornerRadius": 12,
+      "fills": [
+        {
+          "color": "#151515",
+          "type": "solid"
+        }
+      ],
+      "height": 365,
+      "id": 19,
+      "name": "Superfície",
+      "type": "RECTANGLE",
+      "width": 650,
+      "x": 310,
+      "y": 160
+    },
+    {
+      "absoluteBounds": {
+        "height": 180,
+        "width": 650,
+        "x": 1650,
+        "y": 550
+      },
+      "constraints": {
+        "horizontal": "left",
+        "vertical": "top"
+      },
+      "cornerRadius": 12,
+      "fills": [
+        {
+          "color": "#111111",
+          "type": "solid"
+        }
+      ],
+      "height": 180,
+      "id": 20,
+      "name": "Superfície",
+      "type": "RECTANGLE",
+      "width": 650,
+      "x": 310,
+      "y": 550
+    },
+    {
+      "absoluteBounds": {
+        "height": 300,
+        "width": 220,
+        "x": 2324,
+        "y": 160
+      },
+      "constraints": {
+        "horizontal": "left",
+        "vertical": "top"
+      },
+      "cornerRadius": 12,
+      "fills": [
+        {
+          "color": "#151515",
+          "type": "solid"
+        }
+      ],
+      "height": 300,
+      "id": 21,
+      "name": "Superfície",
+      "type": "RECTANGLE",
+      "width": 220,
+      "x": 984,
+      "y": 160
+    },
+    {
+      "absoluteBounds": {
+        "height": 24,
+        "width": 1202,
+        "x": 1360,
+        "y": 16
+      },
+      "characters": "03D v1 · DRAFT · revisão do mantenedor",
+      "constraints": {
+        "horizontal": "left",
+        "vertical": "top"
+      },
+      "fills": [
+        {
+          "color": "#02C2BE",
+          "type": "solid"
+        }
+      ],
+      "fontFamily": "Poppins",
+      "fontSize": 16,
+      "fontStyle": "Regular",
+      "height": 24,
+      "id": 22,
+      "letterSpacing": "0%",
+      "lineHeight": "Auto",
+      "name": "03D v1 · DRAFT · revisão do mantenedor",
+      "sizing": {
+        "horizontal": "fixed",
+        "vertical": "hug"
+      },
+      "textAlign": "left",
+      "textAutoResize": "height",
+      "type": "TEXT",
+      "width": 1202,
+      "x": 20,
+      "y": 16
+    },
+    {
+      "absoluteBounds": {
+        "height": 18,
+        "width": 1080,
+        "x": 1482,
+        "y": 74
+      },
+      "characters": "Meus Projetos  /  Visão do projeto",
+      "constraints": {
+        "horizontal": "left",
+        "vertical": "top"
+      },
+      "fills": [
+        {
+          "color": "#929292",
+          "type": "solid"
+        }
+      ],
+      "fontFamily": "Poppins",
+      "fontSize": 12,
+      "fontStyle": "Regular",
+      "height": 18,
+      "id": 23,
+      "letterSpacing": "0%",
+      "lineHeight": "Auto",
+      "name": "Meus Projetos  /  Visão do projeto",
+      "sizing": {
+        "horizontal": "fixed",
+        "vertical": "hug"
+      },
+      "textAlign": "left",
+      "textAutoResize": "height",
+      "type": "TEXT",
+      "width": 1080,
+      "x": 142,
+      "y": 74
+    },
+    {
+      "absoluteBounds": {
+        "height": 36,
+        "width": 1080,
+        "x": 1482,
+        "y": 112
+      },
+      "characters": "Título do projeto",
+      "constraints": {
+        "horizontal": "left",
+        "vertical": "top"
+      },
+      "fills": [
+        {
+          "color": "#FFFFFF",
+          "type": "solid"
+        }
+      ],
+      "fontFamily": "Poppins",
+      "fontSize": 24,
+      "fontStyle": "Regular",
+      "height": 36,
+      "id": 24,
+      "letterSpacing": "0%",
+      "lineHeight": "Auto",
+      "name": "Título do projeto",
+      "sizing": {
+        "horizontal": "fixed",
+        "vertical": "hug"
+      },
+      "textAlign": "left",
+      "textAutoResize": "height",
+      "type": "TEXT",
+      "width": 1080,
+      "x": 142,
+      "y": 112
+    },
+    {
+      "absoluteBounds": {
+        "height": 18,
+        "width": 132,
+        "x": 2430,
+        "y": 120
+      },
+      "characters": "Editar título",
+      "constraints": {
+        "horizontal": "left",
+        "vertical": "top"
+      },
+      "fills": [
+        {
+          "color": "#929292",
+          "type": "solid"
+        }
+      ],
+      "fontFamily": "Poppins",
+      "fontSize": 12,
+      "fontStyle": "Regular",
+      "height": 18,
+      "id": 25,
+      "letterSpacing": "0%",
+      "lineHeight": "Auto",
+      "name": "Editar título",
+      "sizing": {
+        "horizontal": "fixed",
+        "vertical": "hug"
+      },
+      "textAlign": "left",
+      "textAutoResize": "height",
+      "type": "TEXT",
+      "width": 132,
+      "x": 1090,
+      "y": 120
+    },
+    {
+      "absoluteBounds": {
+        "height": 33,
+        "width": 702,
+        "x": 1860,
+        "y": 320
+      },
+      "characters": "Vídeo de origem",
+      "constraints": {
+        "horizontal": "left",
+        "vertical": "top"
+      },
+      "fills": [
+        {
+          "color": "#929292",
+          "type": "solid"
+        }
+      ],
+      "fontFamily": "Poppins",
+      "fontSize": 22,
+      "fontStyle": "Regular",
+      "height": 33,
+      "id": 26,
+      "letterSpacing": "0%",
+      "lineHeight": "Auto",
+      "name": "Vídeo de origem",
+      "sizing": {
+        "horizontal": "fixed",
+        "vertical": "hug"
+      },
+      "textAlign": "left",
+      "textAutoResize": "height",
+      "type": "TEXT",
+      "width": 702,
+      "x": 520,
+      "y": 320
+    },
+    {
+      "absoluteBounds": {
+        "height": 24,
+        "width": 890,
+        "x": 1672,
+        "y": 572
+      },
+      "characters": "Transcrição · DEMONSTRAÇÃO",
+      "constraints": {
+        "horizontal": "left",
+        "vertical": "top"
+      },
+      "fills": [
+        {
+          "color": "#FFFFFF",
+          "type": "solid"
+        }
+      ],
+      "fontFamily": "Poppins",
+      "fontSize": 16,
+      "fontStyle": "Regular",
+      "height": 24,
+      "id": 27,
+      "letterSpacing": "0%",
+      "lineHeight": "Auto",
+      "name": "Transcrição · DEMONSTRAÇÃO",
+      "sizing": {
+        "horizontal": "fixed",
+        "vertical": "hug"
+      },
+      "textAlign": "left",
+      "textAutoResize": "height",
+      "type": "TEXT",
+      "width": 890,
+      "x": 332,
+      "y": 572
+    },
+    {
+      "absoluteBounds": {
+        "height": 21,
+        "width": 890,
+        "x": 1672,
+        "y": 616
+      },
+      "characters": "00:00  Texto ilustrativo; não extraído do vídeo.",
+      "constraints": {
+        "horizontal": "left",
+        "vertical": "top"
+      },
+      "fills": [
+        {
+          "color": "#929292",
+          "type": "solid"
+        }
+      ],
+      "fontFamily": "Poppins",
+      "fontSize": 14,
+      "fontStyle": "Regular",
+      "height": 21,
+      "id": 28,
+      "letterSpacing": "0%",
+      "lineHeight": "Auto",
+      "name": "00:00  Texto ilustrativo; não extraído do vídeo.",
+      "sizing": {
+        "horizontal": "fixed",
+        "vertical": "hug"
+      },
+      "textAlign": "left",
+      "textAutoResize": "height",
+      "type": "TEXT",
+      "width": 890,
+      "x": 332,
+      "y": 616
+    },
+    {
+      "absoluteBounds": {
+        "height": 24,
+        "width": 216,
+        "x": 2346,
+        "y": 190
+      },
+      "characters": "Editar vídeo",
+      "constraints": {
+        "horizontal": "left",
+        "vertical": "top"
+      },
+      "fills": [
+        {
+          "color": "#FFFFFF",
+          "type": "solid"
+        }
+      ],
+      "fontFamily": "Poppins",
+      "fontSize": 16,
+      "fontStyle": "Regular",
+      "height": 24,
+      "id": 29,
+      "letterSpacing": "0%",
+      "lineHeight": "Auto",
+      "name": "Editar vídeo",
+      "sizing": {
+        "horizontal": "fixed",
+        "vertical": "hug"
+      },
+      "textAlign": "left",
+      "textAutoResize": "height",
+      "type": "TEXT",
+      "width": 216,
+      "x": 1006,
+      "y": 190
+    },
+    {
+      "absoluteBounds": {
+        "height": 21,
+        "width": 216,
+        "x": 2346,
+        "y": 244
+      },
+      "characters": "Legendas",
+      "constraints": {
+        "horizontal": "left",
+        "vertical": "top"
+      },
+      "fills": [
+        {
+          "color": "#FFFFFF",
+          "type": "solid"
+        }
+      ],
+      "fontFamily": "Poppins",
+      "fontSize": 14,
+      "fontStyle": "Regular",
+      "height": 21,
+      "id": 30,
+      "letterSpacing": "0%",
+      "lineHeight": "Auto",
+      "name": "Legendas",
+      "sizing": {
+        "horizontal": "fixed",
+        "vertical": "hug"
+      },
+      "textAlign": "left",
+      "textAutoResize": "height",
+      "type": "TEXT",
+      "width": 216,
+      "x": 1006,
+      "y": 244
+    },
+    {
+      "absoluteBounds": {
+        "height": 21,
+        "width": 216,
+        "x": 2346,
+        "y": 298
+      },
+      "characters": "Enquadramento",
+      "constraints": {
+        "horizontal": "left",
+        "vertical": "top"
+      },
+      "fills": [
+        {
+          "color": "#FFFFFF",
+          "type": "solid"
+        }
+      ],
+      "fontFamily": "Poppins",
+      "fontSize": 14,
+      "fontStyle": "Regular",
+      "height": 21,
+      "id": 31,
+      "letterSpacing": "0%",
+      "lineHeight": "Auto",
+      "name": "Enquadramento",
+      "sizing": {
+        "horizontal": "fixed",
+        "vertical": "hug"
+      },
+      "textAlign": "left",
+      "textAutoResize": "height",
+      "type": "TEXT",
+      "width": 216,
+      "x": 1006,
+      "y": 298
+    },
+    {
+      "absoluteBounds": {
+        "height": 21,
+        "width": 216,
+        "x": 2346,
+        "y": 352
+      },
+      "characters": "Exportar (prévia)",
+      "constraints": {
+        "horizontal": "left",
+        "vertical": "top"
+      },
+      "fills": [
+        {
+          "color": "#FFFFFF",
+          "type": "solid"
+        }
+      ],
+      "fontFamily": "Poppins",
+      "fontSize": 14,
+      "fontStyle": "Regular",
+      "height": 21,
+      "id": 32,
+      "letterSpacing": "0%",
+      "lineHeight": "Auto",
+      "name": "Exportar (prévia)",
+      "sizing": {
+        "horizontal": "fixed",
+        "vertical": "hug"
+      },
+      "textAlign": "left",
+      "textAutoResize": "height",
+      "type": "TEXT",
+      "width": 216,
+      "x": 1006,
+      "y": 352
+    }
+  ],
+  "clip": true,
+  "fills": [
+    {
+      "color": "#000000",
+      "type": "solid"
+    }
+  ],
+  "height": 800,
+  "id": 16,
+  "name": "03D v1 DRAFT - Visão do projeto",
+  "type": "FRAME",
+  "width": 1280,
+  "x": 1340,
+  "y": 0
+}

@@ -2,7 +2,7 @@ import { useState } from "react";
 import type { ProjectMeta } from "../lib/types";
 import { formatCompactDate } from "../lib/format";
 import { TabBar } from "../components/TabBar";
-import thumbUrl from "../assets/thumb-mock-projeto.png";
+import { ProjectThumbnail } from "../components/workspace/ProjectThumbnail";
 import { ErrorBanner } from "../components/ErrorBanner";
 
 interface Props {
@@ -72,7 +72,7 @@ export function ProjectsScreen({ projects, loading, error, onRetry, onCreate, on
               title={p.name}
             >
               <span className="pcard__thumb">
-                <img src={thumbUrl} alt="" aria-hidden="true" width={221} height={109} />
+                <ProjectThumbnail id={p.id} />
                 <span className="pcard__shade" aria-hidden="true" />
                 {p.last_opened_at_ms === null && (
                   <span className="pcard__badge">Novo</span>

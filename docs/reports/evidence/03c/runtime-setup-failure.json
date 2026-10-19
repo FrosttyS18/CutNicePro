@@ -1,0 +1,7 @@
+{
+  "results": [],
+  "errors": [],
+  "passed": 0,
+  "failed": 0,
+  "scope": "Chromium headless; IPC simulado; vídeo WebM gerado; sem screenshots ou Tauri nativo"
+}

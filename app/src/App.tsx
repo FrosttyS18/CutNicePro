@@ -5,24 +5,29 @@ import { sortProjects } from "./lib/projects";
 import { projectsOf } from "./lib/collections";
 import { loadSidebarExpanded, saveSidebarExpanded } from "./lib/prefs";
 import { ErrorBanner } from "./components/ErrorBanner";
-import { NewProjectDialog } from "./components/NewProjectDialog";
 import { NewCollectionDialog } from "./components/NewCollectionDialog";
-import { ProjectView } from "./components/ProjectView";
+import { ProjectWorkspace } from "./screens/ProjectWorkspace";
+import { attachSessionMedia, releaseSessionMedia, saveWorkspace } from "./services/workspace-store";
+import { createWorkspace, sourceName } from "./lib/workspace";
+import type { UploadSource, UploadOptions } from "./lib/workspace-types";
 import { AppShell, type ProjectsSub } from "./components/shell/AppShell";
 import type { Crumb } from "./components/shell/Breadcrumb";
 import { SplashScreen } from "./screens/SplashScreen";
 import { WindowTitlebar } from "./components/WindowTitlebar";
+import { useSplashPhase } from "./hooks/useSplashPhase";
 import { HomeScreen } from "./screens/HomeScreen";
+import { UploadScreen } from "./screens/UploadScreen";
 import { ProjectsScreen } from "./screens/ProjectsScreen";
 import { CollectionsScreen } from "./screens/CollectionsScreen";
 import { CollectionScreen } from "./screens/CollectionScreen";
 
 type Route =
   | { kind: "home" }
+  | { kind: "upload" }
   | { kind: "projects" }
   | { kind: "collections" }
   | { kind: "collection"; id: string }
-  | { kind: "project"; id: string };
+  | { kind: "project"; id: string; view?: "overview" | "editor" };
 
 interface LoadState {
   status: "loading" | "ready" | "error";
@@ -37,8 +42,8 @@ interface CollectionsState {
 }
 
 export default function App() {
-  const [phase, setPhase] = useState<"splash" | "app">("splash");
-  const [splashLeaving, setSplashLeaving] = useState(false);
+  const [bootReady, setBootReady] = useState(false);
+  const splash = useSplashPhase(bootReady);
 
   const [route, setRoute] = useState<Route>({ kind: "home" });
   const [load, setLoad] = useState<LoadState>({
@@ -51,10 +56,10 @@ export default function App() {
     collections: [],
     error: null,
   });
-  const [projectDialogOpen, setProjectDialogOpen] = useState(false);
   const [collectionDialogOpen, setCollectionDialogOpen] = useState(false);
   const [actionError, setActionError] = useState<string | null>(null);
   const [expanded, setExpanded] = useState(() => loadSidebarExpanded());
+  useEffect(() => () => releaseSessionMedia(), []);
 
   const refreshProjects = useCallback(async () => {
     setLoad((s) => ({ ...s, status: "loading", error: null }));
@@ -84,18 +89,11 @@ export default function App() {
     }
   }, []);
 
-  // Boot: splash cobre apenas a leitura inicial real (sem delay artificial).
   useEffect(() => {
     let cancelled = false;
     void Promise.all([refreshProjects(), refreshCollections()]).finally(() => {
       if (cancelled) return;
-      const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-      if (reduced) {
-        setPhase("app");
-        return;
-      }
-      setSplashLeaving(true);
-      window.setTimeout(() => setPhase("app"), 270);
+      setBootReady(true);
     });
     return () => {
       cancelled = true;
@@ -108,19 +106,25 @@ export default function App() {
     saveSidebarExpanded(next);
   }
 
-  async function handleCreateProject(name: string) {
-    const created = await ipc.createProject(name);
-    setProjectDialogOpen(false);
-    setActionError(null);
-    await refreshProjects();
-    setRoute({ kind: "project", id: created.id });
-  }
-
   async function handleOpenProject(id: string) {
     const opened = await ipc.openProject(id);
     setActionError(null);
     await refreshProjects();
     setRoute({ kind: "project", id: opened.id });
+  }
+
+  async function handleCreateFromMedia(source: UploadSource, options: UploadOptions) {
+    const project = await ipc.createProject(sourceName(source));
+    attachSessionMedia(project.id, source);
+    const saved = saveWorkspace(project.id, createWorkspace(source, options));
+    setLoad((current) => ({ ...current, status: "ready", error: null, projects: [...current.projects, project] }));
+    setActionError(saved ? null : "Projeto criado. As configurações da prévia não puderam ser salvas neste dispositivo.");
+    setRoute({ kind: "project", id: project.id, view: "overview" });
+  }
+
+  async function handleRenameProject(id: string, name: string) {
+    const renamed = await ipc.renameProject(id, name);
+    setLoad((current) => ({ ...current, projects: current.projects.map((project) => project.id === id ? renamed : project) }));
   }
 
   async function handleCreateCollection(name: string, icon: "heart" | "archive-box") {
@@ -153,17 +157,21 @@ export default function App() {
 
   const section = route.kind === "home" ? "home" : "projects";
   const projectsSub: ProjectsSub =
-    route.kind === "collections" || route.kind === "collection"
+    route.kind === "upload" ? "upload"
+    : route.kind === "collections" || route.kind === "collection"
       ? "collections"
       : "all";
 
   const goHome = () => setRoute({ kind: "home" });
+  const goUpload = () => setRoute({ kind: "upload" });
   const goProjects = (sub: ProjectsSub) =>
-    setRoute(sub === "collections" ? { kind: "collections" } : { kind: "projects" });
+    setRoute(sub === "upload" ? { kind: "upload" } : sub === "collections" ? { kind: "collections" } : { kind: "projects" });
 
   const crumbs: Crumb[] =
     route.kind === "home"
       ? [{ label: "Home", navigate: goHome }, { label: "Início" }]
+      : route.kind === "upload"
+        ? [{ label: "Meus Projetos", navigate: () => goProjects("all") }, { label: "Enviar novo projeto" }]
       : route.kind === "projects"
         ? [{ label: "Meus Projetos", navigate: () => goProjects("all") }, { label: "Todos" }]
         : route.kind === "collections"
@@ -189,7 +197,9 @@ export default function App() {
 
   return (
     <>
-      {phase === "splash" && <SplashScreen leaving={splashLeaving} />}
+      {splash.visible && (
+        <SplashScreen leaving={splash.leaving} onAnimationComplete={splash.onAnimationComplete} />
+      )}
 
       <WindowTitlebar />
       <AppShell
@@ -207,7 +217,14 @@ export default function App() {
           </div>
         )}
 
-        {route.kind === "home" && <HomeScreen onCreate={() => setProjectDialogOpen(true)} />}
+        {route.kind === "home" && <HomeScreen onCreate={goUpload} />}
+
+        {route.kind === "upload" && (
+          <UploadScreen projects={sortProjects(load.projects)} loading={load.status === "loading"}
+            error={load.error} onRetry={() => void refreshProjects()}
+            onCreate={handleCreateFromMedia}
+            onOpen={(id) => void guard(() => handleOpenProject(id))} onViewAll={() => goProjects("all")} />
+        )}
 
         {route.kind === "projects" && (
           <ProjectsScreen
@@ -215,7 +232,7 @@ export default function App() {
             loading={load.status === "loading"}
             error={load.status === "error" ? load.error : null}
             onRetry={() => void refreshProjects()}
-            onCreate={() => setProjectDialogOpen(true)}
+            onCreate={goUpload}
             onOpen={(id) => void guard(() => handleOpenProject(id))}
           />
         )}
@@ -265,9 +282,11 @@ export default function App() {
 
         {route.kind === "project" &&
           (currentProject ? (
-            <ProjectView
+            <ProjectWorkspace key={currentProject.id}
               project={currentProject}
-              onBack={() => setRoute({ kind: "projects" })}
+              initialView={route.view}
+              onRename={(name) => handleRenameProject(currentProject.id, name)}
+              onImport={goUpload}
             />
           ) : (
             <div className="lib">
@@ -281,12 +300,6 @@ export default function App() {
           ))}
       </AppShell>
 
-      {projectDialogOpen && (
-        <NewProjectDialog
-          onClose={() => setProjectDialogOpen(false)}
-          onCreate={(name) => guard(() => handleCreateProject(name))}
-        />
-      )}
       {collectionDialogOpen && (
         <NewCollectionDialog
           onClose={() => setCollectionDialogOpen(false)}

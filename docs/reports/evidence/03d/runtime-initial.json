@@ -1,0 +1,46 @@
+{
+  "results": [
+    {
+      "name": "Arquivo local real é aceito e permite continuar",
+      "status": "PASS"
+    },
+    {
+      "name": "Preparação é demonstrativa e cancelamento não cria projeto",
+      "status": "PASS"
+    },
+    {
+      "name": "Confirmar cria projeto e abre editor sem gerar transcrição real",
+      "status": "PASS"
+    },
+    {
+      "name": "Preview, timeline e controles de áudio refletem ajustes",
+      "status": "PASS"
+    },
+    {
+      "name": "Texto, enquadramento e salvamento funcionam",
+      "status": "PASS"
+    },
+    {
+      "name": "Visão do projeto mostra vídeo e título editável",
+      "status": "PASS"
+    },
+    {
+      "name": "Busca e edição da transcrição demonstrativa funcionam",
+      "status": "PASS"
+    },
+    {
+      "name": "Exportação abre configuração sem simular renderização",
+      "status": "PASS"
+    },
+    {
+      "name": "Biblioteca e recentes reabrem o projeto persistido",
+      "status": "FAIL",
+      "error": "Error: locator.click: Error: strict mode violation: getByRole('button', { name: 'Meus Projetos', exact: true }) resolved to 2 elements:\n    1) <button type=\"button\" aria-current=\"page\" title=\"Meus Projetos\" aria-label=\"Meus Projetos\" class=\"rail__btn rail__btn--active\">…</button> aka getByRole('button', { name: 'Meus Projetos', description: 'Meus Projetos' })\n    2) <button type=\"button\" class=\"breadcrumb__label breadcrumb__label--link\">Meus Projetos</button> aka getByRole('navigation', { name: 'Trilha de navegação' }).getByRole('button', { name: 'Meus Projetos' })\n\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: 'Meus Projetos', exact: true })\u001b[22m\n"
+    }
+  ],
+  "errors": [],
+  "setupFailure": null,
+  "passed": 8,
+  "failed": 1,
+  "scope": "Edge headless isolado; IPC simulado; mídia WebM real gerada; sem screenshots; motor de IA não executado"
+}

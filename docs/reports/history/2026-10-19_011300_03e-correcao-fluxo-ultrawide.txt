@@ -1,0 +1,122 @@
+╔════════════════════════════════════════════╗
+║       CUTNICEPRO — ZCODE REPORT            ║
+╚════════════════════════════════════════════╝
+
+TASK
+  Name: 03E — Correção do fluxo e editor ultrawide
+  Status: PASS no escopo de interface testado
+  Scope: Envio, projetos, título, seleção, processamento e timeline.
+  Objective: Importar vídeo → abrir projeto → editar por ação explícita.
+  Result: Fluxo corrigido; player limitado à janela; timeline visível.
+
+IMPLEMENTATION
+  Completed: Novo projeto abre envio, sem criar registro vazio.
+    Envio geral abre vídeo com painel de transcrição, sem modal de edição.
+    Caneta adjacente ao título; seleção bloqueada na estrutura da interface.
+    Campos e texto da transcrição continuam selecionáveis.
+    Preparação acompanha a operação existente, com erro/retry e sem timers.
+    Editor desktop ocupa a altura disponível; painéis têm rolagem própria.
+    Timeline tem régua, cursor, zoom e 12 miniaturas reais da mídia local.
+    Reconexão aparece somente quando falta o arquivo local da sessão.
+    Registros antigos sem vídeo são preservados e identificados.
+  Not completed: Transcrição real, download YouTube e render/export (fora do escopo).
+  Changes: Transcrição nova fica vazia enquanto não houver motor; sem texto inventado.
+  Architecture impact: Nenhuma dependência, backend ou stack alterados.
+
+FILES
+  Created: app/src/hooks/useVideoFrames.ts;
+    tools/e2e/phase03e-flow-layout.mjs; tools/figcraft-inspect-reference.mjs;
+    docs/reports/evidence/03e/ e relatório histórico indicado abaixo.
+  Modified: app/src/App.tsx; app/src/ui.css;
+    app/src/screens/{UploadScreen.tsx,ProjectWorkspace.tsx,workspace.css};
+    app/src/components/upload/{PreparationDialog.tsx,ToolDialog.tsx};
+    app/src/components/workspace/{ProjectTitle.tsx,ProjectOverview.tsx,VideoPreview.tsx};
+    app/src/components/editor/{VideoEditor.tsx,EditorTimeline.tsx};
+    app/src/lib/workspace.ts; app/src/test/workspace.test.ts;
+    docs/product/{UPLOAD-SCREEN.md,PRODUCT-BRAIN.md,TRACEABILITY.md};
+    tasks/{plan.md,todo.md}; docs/reports/LATEST.txt.
+  Deleted: NONE.
+  Unexpected changes: NONE identificada nesta tarefa; árvore já estava alterada.
+
+VALIDATION
+  Typecheck: PASS — incluído no build final.
+  Lint: SKIP — sem script configurado no app.
+  Unit tests: PASS — 30/30, em três arquivos relacionados.
+  Integration tests: PASS — fluxo UI com IPC simulado; sem integração nativa.
+  Regression tests: PASS — somente contratos e interações executados.
+  Visual tests: SKIP — aprovação estética pertence ao mantenedor.
+  Runtime verification: PASS — 12 casos únicos em Edge headless, sem screenshots.
+  Total passed: 42 casos únicos (30 unitários + 12 runtime).
+  Total failed: 0 finais; 1 falha histórica do teste, corrigida.
+  Total skipped: 5 grupos: lint, integração nativa, Rust, baseline completa e estética.
+
+HOOKS / HARNESS
+  Hooks active: Não verificados nesta execução Codex.
+  PreToolUse: Nenhum resultado usado como evidência de aprovação.
+  PostToolUse: Nenhum resultado usado como evidência de aprovação.
+  Stop: Não executado explicitamente.
+  Baseline: SKIP — correção de interface, sem mudança de arquitetura.
+  Gate result: FUNCTIONAL PASS; REGRESSION PASS no escopo testado.
+  Evidence: docs/reports/evidence/03e/validation.txt e runtime.json.
+
+MCP / SKILLS
+  Tools used: FigCraft MCP standalone; frontend-ui-engineering;
+    incremental-implementation; code-review-and-quality; web-design-guidelines;
+    referências oficiais OpusClip e documentação canônica do projeto.
+  Connection status: PASS — open_file e get_node 2262/2391/2440 responderam.
+    Documento consultado em processo isolado, sem salvar ou alterar o original.
+  Failures: Porta attached 7979 indisponível; consulta standalone funcionou.
+    Falhas preparatórias de caminhos/runtime corrigidas antes das verificações finais.
+    Typecheck intermediário detectou prop ainda não implementada; build final corrigido.
+  Pending activation: NONE necessária. Refactor guard não encontrado no catálogo;
+    realizadas correções pontuais, sem refatoração estrutural. Sem VISION/subagentes.
+
+GIT
+  Branch: main
+  HEAD: f1adfe584fe1b174f4e68f956f140f4f964cf0c1
+  Latest commit: feat(intro): restore GSAP choreography on shared intro clock for phase 03B.10
+  Commits created: NONE.
+  Push: NOT EXECUTED.
+  Remote: origin → https://github.com/FrosttyS18/CutNicePro.git; origin/main.
+  Working tree: MODIFIED / UNTRACKED, incluindo trabalho anterior preservado.
+  Pending files: Inventário integral em docs/reports/evidence/03e/pending-files.txt, incluindo relatórios.
+
+EVIDENCE
+  Commands executed: npm run build; npm test -- src/test/workspace.test.ts
+    src/test/video-source.test.ts src/test/video-inspection.test.ts;
+    node tools/e2e/phase03e-flow-layout.mjs e --resume; git diff --check.
+  Relevant logs: validation.txt; runtime-initial.json; runtime.json; review.md.
+  Screenshots: NONE — sem acesso visual ao computador do mantenedor.
+  Test artifacts: 12 quadros extraídos de fixture.webm real existente da 03D;
+    dumps FigCraft na pasta 03e. Nenhuma IA/transcrição executada.
+  Reproduction details: Editor validado em 3440×1440, 2560×1080, 1920×1080,
+    1440×900, 1280×720 e 1024×768, sem crescimento vertical da página.
+    Layout compacto sem overflow horizontal em 960×720, 768×800 e 600×700.
+    Sete casos iniciais aprovados foram retidos; somente cinco pendentes rodaram
+    na repetição. Setup recompôs o estado necessário. Console final sem erros.
+
+ISSUES
+  Bugs found: Criação vazia, envio dirigido à ferramenta e player crescendo pela largura.
+  Unresolved failures: NONE no escopo executado.
+  Regressions: Nenhuma identificada nas verificações descritas; restante NOT TESTED.
+  Risks: Mídia local ainda precisa de reconexão após reiniciar o app.
+    YouTube permanece referência incorporada; transcrição e exportação aguardam motor.
+    Timeline não oferece waveform, edição multitrack ou renderização.
+    Build mantém aviso preexistente de bundle acima de 500kB.
+  Blockers: NONE para testar estas telas; executável Tauri não validado nesta rodada.
+    Falha histórica: teste tentou salvar sem alteração; botão corretamente desabilitado.
+
+FINAL
+  Delivery status: FUNCTIONAL PASS; REGRESSION PASS (escopo);
+    VISUAL PENDING HUMAN APPROVAL.
+  Requirements met: Fluxo de vídeos, caneta, seleção controlada e limites ultrawide.
+  Remaining work: Aprovação humana das telas; motor de vídeo/IA e mídia persistente.
+  User action required: Conferir visualmente no Tauri dev.
+  Restart required: Recarregar a interface se o dev não atualizar automaticamente.
+  Ready for next task: Sim, respeitando as pendências acima.
+
+REPORT
+  Latest file: C:/CutNicePro/docs/reports/LATEST.txt
+  Historical file: C:/CutNicePro/docs/reports/history/2026-10-19_011300_03e-correcao-fluxo-ultrawide.txt
+
+END OF REPORT

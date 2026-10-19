@@ -1,127 +1,106 @@
-CUTNICEPRO — ZCODE REPORT — FASE 03B.10 (COREOGRAFIA ORIGINAL, FLIP E ACABAMENTO DA TITLEBAR)
-==============================================================================
-Tarefa:     (1) eliminar o fundo cinza do FlipButton; (2) remover a
-            divisória da titlebar; (3) restaurar a coreografia suave do
-            ArtCraft com GSAP sobre o relógio compartilhado; (4) nova
-            sequência temporal (texto → respiro → espiral inteira aos
-            2.8s, revelação completa ~6.8s); (5) consistência 1ª visita ×
-            retorno; (6) inspeção técnica das travadas.
-Baseline:   commit bd4a454 (03B.9) — correção localizada sobre ele.
-Data:       2026-10-18 (conclusão 23h04)
-Status:     FUNCTIONAL: PASS (14/14 checks). Regression: PASS (escopo
-            testado). Visual: PENDING HUMAN APPROVAL.
-Política:   VALIDATION-POLICY.md — VISION NÃO ACIONADO; 0 screenshots;
-            1 rodada + 2 correções DO INSTRUMENTO de medição (produto sem
-            defeito nelas; detalhes abaixo); GSAP analisado a partir dos
-            ARQUIVOS ORIGINAIS do ArtCraft arquivados em 03B.5
-            (design/handoff/03b5/original — intro-conductor com gsap
-            timeline/stagger sobre introClock, power*.out).
-Preservação: Halftone, vídeos/posters/CDN/proxy/decode budget, física/
-            shaders/hover/boost/zoom do galaxy (exceto os 3 defaults de
-            TEMPO citados na missão), sidebar, biblioteca, persistência,
-            splash, headline "Bem-Vindo", subtítulo #929292, faces do
-            botão. Sem commits/pushes.
+╔════════════════════════════════════════════╗
+║       CUTNICEPRO — ZCODE REPORT            ║
+╚════════════════════════════════════════════╝
 
-CAUSAS-RAIZ CONFIRMADAS
-------------------------------------------------------------------------------
-1. Fundo cinza do FlipButton: aparência NATIVA do <button> (motion.button)
-   — o projeto não usa Tailwind, então bg-primary/bg-muted do componente
-   oficial são inertes e o user-agent pintava o retângulo. Confirmado por
-   getComputedStyle antes do fix.
-2. Divisória da titlebar: border-bottom 1px #101010 no .titlebar (nosso
-   CSS da 03B.9) — removida; fundo #050505→#000000; sem shadow (verificado
-   computado: rgb(0,0,0), border 0, shadow none).
-3. Dessincronização texto×galaxy: a 03B.9 animava o texto por keyframes
-   CSS com delays PRÓPRIOS enquanto o galaxy seguia o introClock — dois
-   relógios independentes (e instrAt 0.7 divergia de cardsAt 1.9, com os
-   braços aparecendo 1.2s antes dos cartões).
+TASK
+  Name: 03F — Refinamento do editor e handoff para ZCode
+  Status: PASS no escopo funcional testado.
+  Scope: Cursor/foco da timeline, modal de legendas e documentação.
+  Objective: Refinar a interface e preparar a continuidade do motor.
+  Result: Ajustes implementados; motor permanece para a próxima tarefa.
 
-MODIFICAÇÕES EXECUTADAS
-------------------------------------------------------------------------------
-- ui.css · .home__flip: reset da superfície nativa (appearance:none,
-  background:transparent, border:0, padding:0, box-shadow:none) +
-  :focus-visible com outline aqua próprio (o ring tailwind do oficial é
-  inerte) — as cores permanecem SÓ nas faces.
-- ui.css · .titlebar: border-bottom removida; background #000000;
-  border:none; box-shadow:none. Controles/drag/duplo-clique/foco intactos.
-- ui.css: TODOS os keyframes/delays de entrada CSS removidos
-  (cnp-rise/cnp-fade-up/delays — grep = 0): GSAP é o único dono dos
-  transforms de entrada; nada anima sozinho por CSS.
-- intro.ts: cardsAt 1.9→2.8 e instrAt 0.7→2.8 — braços, ticks, círculo e
-  cartões começam JUNTOS aos 2.8s (divergência eliminada); a progressão
-  interna braços→cartões permanece via waveLag/wave originais.
-- hero-galaxy-tunables.ts: introDur 3.4→4.0 (ORIGINAL do ArtCraft) —
-  revelação 2.8→~6.8s conforme contrato. rollChunk/burstX/burstDur/
-  waveBand/waveLag/waveEase INTACTOS.
-- intro-conductor.tsx: REESCRITO na arquitetura do original — GSAP
-  timeline (gsap@3.13) com power3.out sobre o introClock compartilhado:
-  Bem-Vindo 0.25s→1.25s (y16→0, 1.0s), subtítulo 1.20s→1.85s (0.65s),
-  botão 1.80s→2.45s (0.65s — anima o SLOT externo; transforms internos do
-  FlipButton/Motion intocados), respiro 2.45→2.80s, espiral aos 2.80s.
-  Estado inicial via gsap.set ANTES do primeiro paint (sem flash);
-  clock avançado por rAF (como desde 03B.5).
-- Política de sessão (§5): apresentação integral 1× por SESSÃO
-  (sessionStorage cnp-intro-session); retorno Home→Biblioteca→Home =
-  gsap.set assentado + introClock.t=999 — nenhuma parte da Home anima
-  sozinha enquanto outra está assentada; sidebar/resize não remontam o
-  conductor; reduced-motion abre assentado sem timeline. Key legada
-  cnp-intro-seen (localStorage) preservada sem função de compressão;
-  artcraft-tuner sem overrides (validado). Nenhum dado de projeto tocado.
+IMPLEMENTATION
+  Completed: Cursor com alça maior e haste neutra; removido contorno do bloco.
+    Teclado mantém indicação de foco no cursor e navegação temporal.
+    Legendas abre modal com dez opções visuais, incluindo Sem legenda.
+    Seleção salva na configuração; Escape/Concluir fecha e retorna foco.
+    Handoff registra estado, limites, arquivos e ordem proposta de integração.
+  Not completed: Instalação do motor, transcrição e exportação reais, por escopo.
+  Changes: Presets mantêm IDs existentes; amostras são estáticas.
+  Architecture impact: Sem dependências novas, migração ou mudança de backend.
 
-INSPEÇÃO TÉCNICA DAS TRAVADAS (§6 — sem mudar estética)
-------------------------------------------------------------------------------
-- Frame gaps medidos DURANTE a apresentação integral (7.6s, rAF): média
-  6.3ms, PICO 19ms, 0 frames >50ms em 1.143 frames — nenhuma travada
-  reproduzida nesta build; a preparação do WebGL já ocorre no mount
-  (~100ms, desde 03B.5) e os decoders seguem o decode budget original
-  (≤8), agora SEM coincidir com a entrada do texto (espiral só aos 2.8s).
-- Console sem pageerrors/erros na rodada completa; proxy cnpmedia
-  funcional (CTA → diálogo → card visível na navegação).
-- Nada alterado em GPU/shaders/movimento (sem evidência de necessidade).
+FILES
+  Created: app/src/components/editor/CaptionPresetsDialog.tsx;
+    tools/e2e/phase03f-editor-refinement.mjs;
+    docs/engineering/ENGINE-HANDOFF.md; docs/reports/evidence/03f/;
+    relatório histórico indicado abaixo.
+  Modified: app/src/components/editor/{EditorInspector.tsx,VideoEditor.tsx};
+    app/src/screens/workspace.css;
+    docs/product/{UPLOAD-SCREEN.md,PRODUCT-BRAIN.md,TRACEABILITY.md};
+    tasks/{plan.md,todo.md}; docs/reports/LATEST.txt.
+  Deleted: NONE.
+  Unexpected changes: NONE identificada; trabalho anterior preservado.
 
-RESULTADOS DOS TESTES FUNCIONAIS (14/14 — phase03b10-qa.mjs, 1 perfil isolado)
-------------------------------------------------------------------------------
-- Timeline GSAP (âncora = domContentLoadedEventEnd, proxy do mount):
-  cruzamentos de 50% em H@445ms · S@1316ms · B@1916ms — ORDEM H<S<B e
-  janelas do contrato (H ~750 do mount, B ~2125; offset do proxy ~300ms
-  coerente e monotônico); registradas as duas correções do INSTRUMENTO
-  (t0 pós-mount e addInitScript cross-world) — produto intacto nelas.
-- Espiral: canvas preparado desde o mount (antes do marco); defaults
-  2.8/2.8/4.0 ativos (sem overrides de tuner); sessão registrada 1×.
-- FlipButton: button nativo resetado (rgba(0,0,0,0), border 0, appearance
-  none, shadow none) — somente as faces aparecem.
-- Titlebar: rgb(0,0,0), border-bottom 0px, shadow none, 34px.
-- Galaxy: WebGL vivo pós-apresentação; 161.4 fps sustentados.
-- CTA: clique abre diálogo de criar projeto.
-- Retorno à Home: headline/sub/botão opacidade 1 IMEDIATAMENTE (sem
-  re-apresentação do texto) e galaxy assentado (seen=1).
-- Sidebar: entrada não reinicia.
-- Console limpo. TypeScript 0 erros; Vitest 20/20; Cargo 14/14;
-  baseline full 5 PASS/1 SKIP; vite+tauri build OK.
-- Testes ignorados: estética/SCREENSHOTS/VISION (política); Alt+F4 e
-  drag por mouse (nativos, validados na 03B.9); gravação webm do EXE
-  (limitação CDP documentada).
+VALIDATION
+  Typecheck: PASS — npm --prefix app run build.
+  Lint: SKIP — app sem script de lint.
+  Unit tests: SKIP — alteração de UI; casos anteriores não repetidos.
+  Integration tests: PASS — interface com IPC simulado, sem integração nativa.
+  Regression tests: PASS — seleção salva, foco, seek e layouts testados.
+  Visual tests: SKIP — aprovação estética do mantenedor.
+  Runtime verification: PASS — 4/4 em Edge headless, primeira rodada.
+  Total passed: 4 casos runtime; build aprovado separadamente.
+  Total failed: 0.
+  Total skipped: 5 grupos: lint, unitários, Rust, baseline e estética.
 
-ARQUIVOS ALTERADOS
-------------------------------------------------------------------------------
-app/src/ui.css · app/src/components/galaxy/intro-conductor.tsx ·
-app/src/components/galaxy/intro.ts · app/src/components/galaxy/
-hero-galaxy-tunables.ts · app/package.json (+gsap@3.13) ·
-tools/e2e/phase03b10-qa.mjs (novo) · docs/reports/evidence/03b10/.
+HOOKS / HARNESS
+  Hooks active: Não verificados nesta execução Codex.
+  PreToolUse: Sem evidência usada como aprovação.
+  PostToolUse: Sem evidência usada como aprovação.
+  Stop: Não executado explicitamente.
+  Baseline: SKIP — escopo de UI/documentação.
+  Gate result: FUNCTIONAL PASS; REGRESSION PASS no escopo executado.
+  Evidence: docs/reports/evidence/03f/{runtime.json,validation.txt}.
 
-PROBLEMAS REMANESCENTES / LIMITAÇÕES
-------------------------------------------------------------------------------
-- Primeira abertura pós-update apresenta 1× (sessionStorage vazio) — por
-  design da política de sessão.
-- A âncora da medição (DCL) tem ~300ms de offset sistemático vs. mount;
-  as janelas dos checks absorvem isso; tempos EXATOS do produto são os
-  definidos na timeline GSAP (0.25/1.2/1.8) e nos tunables (2.8/2.8/4.0).
-- Contorno externo da janela (se visible nas bordas) pertence ao
-  Windows/DWM (shadow de janela sem decoração) — fora do CSS; nada alterado
-  nas configs de janela além do já vigente.
-- Estética (suavidade percebida, cores, ritmo) — julgamento exclusivo do
-  mantenedor: PENDING HUMAN APPROVAL.
+MCP / SKILLS
+  Tools used: FigCraft MCP standalone; frontend-ui-engineering e
+    incremental-implementation; padrões e referências consultados na 03E.
+  Connection status: PASS — frames2262/2391/2440 relidos sem salvar documento.
+  Failures: NONE nesta rodada de validação.
+  Pending activation: NONE; sem VISION ou subagentes.
 
-FINAL: FUNCTIONAL PASS · REGRESSION PASS (escopo) · VISUAL PENDING HUMAN
-APPROVAL · Commit: NO · Push: NO. Encerrando.
-==============================================================================
+GIT
+  Branch: main
+  HEAD: f1adfe584fe1b174f4e68f956f140f4f964cf0c1
+  Latest commit: feat(intro): restore GSAP choreography on shared intro clock for phase 03B.10
+  Commits created: NONE.
+  Push: NOT EXECUTED.
+  Remote: origin → https://github.com/FrosttyS18/CutNicePro.git; origin/main.
+  Working tree: MODIFIED / UNTRACKED, incluindo alterações anteriores.
+  Pending files: Lista integral em docs/reports/evidence/03f/pending-files.txt.
+
+EVIDENCE
+  Commands executed: npm --prefix app run build;
+    node tools/e2e/phase03f-editor-refinement.mjs; git diff --check.
+  Relevant logs: docs/reports/evidence/03f/validation.txt e runtime.json.
+  Screenshots: NONE.
+  Test artifacts: Vídeo real existente de teste; IPC simulado; dumps FigCraft.
+  Reproduction details: Modal, modelo salvo, Escape e retorno de foco;
+    cursor por mouse/teclado; layouts600×700,1440×900,3440×1440;
+    console sem erros. Nenhum caso aprovado da 03E repetido.
+
+ISSUES
+  Bugs found: Foco contornava a timeline; legendas usava seletor simples.
+  Unresolved failures: NONE no escopo executado.
+  Regressions: Nenhuma identificada nos quatro casos; restante NOT TESTED.
+  Risks: Presets são prévias estáticas; não geram texto ou animação de palavra.
+    Mídia local ainda exige reconexão após reinício; YouTube é referência.
+    Aviso preexistente de bundle acima de500kB permanece.
+  Blockers: NONE para entrega de UI; motor/modelo ainda precisam de avaliação.
+
+FINAL
+  Delivery status: FUNCTIONAL PASS; REGRESSION PASS (escopo);
+    VISUAL PENDING HUMAN APPROVAL.
+  Requirements met: Refinamento solicitado e documentação para continuidade.
+  Remaining work: Aprovação visual e integração do motor com ZCode.
+  User action required: Revisar UI e usar o handoff na próxima tarefa.
+  Restart required: Apenas recarregar a UI se necessário.
+  Ready for next task: Sim. Começar por inventário e mídia persistente;
+    depois jobs, transcrição real e render; BYOK em fatia própria.
+
+REPORT
+  Handoff: C:/CutNicePro/docs/engineering/ENGINE-HANDOFF.md
+  Latest file: C:/CutNicePro/docs/reports/LATEST.txt
+  Historical file: C:/CutNicePro/docs/reports/history/2026-10-19_011959_03f-editor-handoff.txt
+
+END OF REPORT

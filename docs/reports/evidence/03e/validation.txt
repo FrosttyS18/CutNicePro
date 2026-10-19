@@ -1,0 +1,14 @@
+03E — verificação funcional de interface
+npm test -- src/test/workspace.test.ts src/test/video-source.test.ts src/test/video-inspection.test.ts: 30/30 PASS.
+npm run build: TypeScript e Vite PASS; aviso preexistente de bundle >500kB.
+Runtime Edge headless com IPC simulado: 12 casos únicos PASS, console errors[].
+Inicial: 7 PASS e 1 FAIL por teste tentar salvar sem alterações (botão corretamente desabilitado).
+Repetição: 5 casos pendentes PASS, 7 resultados anteriores retidos; preparação recompôs estado sem reexecutar esses aceites.
+Geometria editor: 3440x1440,2560x1080,1920x1080,1440x900,1280x720,1024x768.
+Layout compacto: 960x720,768x800,600x700 sem overflow horizontal.
+Miniaturas: 12 frames reais de fixture.webm existente da 03D; seek/zoom verificados.
+Sem screenshots, VISION, runtime Tauri, motor IA ou render.
+FigCraft MCP standalone: open_file e get_node 2262/2391/2440 PASS, sem salvar ou alterar o documento do usuário.
+Falhas preparatórias: comandos com Python indisponível e caminhos de execução incorretos; corrigidos antes dos testes finais.
+Typecheck incremental inicialmente acusou nova prop localUrl antes da implementação do consumidor; resolvido, build final PASS.
+git diff --check: PASS.

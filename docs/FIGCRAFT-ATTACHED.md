@@ -60,6 +60,14 @@ startup do ZCode quebrado:
 
 ## Uso em sessões de design
 
+### Reconexão realizada em 2026-10-19
+
+O app estava aberto sem `--control`, portanto o cliente MCP não conseguia alcançar a porta 7979. Após o documento ser salvo e a instância anterior fechada, o FigCraft foi iniciado com `--control 7979` e o documento do projeto. Handshake attached e leitura dos frames 2262/2391/2440 foram efetivamente confirmados; evidências em `docs/reports/evidence/03c/`.
+
+O cliente de leitura reproduzível é `node tools/figcraft-read.mjs <IDs>`; `--export <IDs>` salva exports na pasta de evidências. Ele não altera layers. O parser usa quebras LF, evitando que separadores Unicode presentes em nomes de layer quebrem o framing JSON-RPC.
+
+Quando já existir uma instância sem controle, preservar e salvar o documento antes de fechar/reabrir. O wrapper não consegue habilitar uma porta numa instância iniciada sem a flag. Não encerrar a instância do usuário à força.
+
 Com o attached carregado (após reinício), usar `figcraft-app` para criar/editar layouts que
 o usuário acompanha ao vivo na tela, e `figcraft` (headless) para renderizações/exportações
 determinísticas. Workflow oficial do projeto: ver AGENTS.md (Briefing → FigCraft → revisão

@@ -1,0 +1,61 @@
+{
+  "results": [
+    {
+      "name": "Novo projeto abre envio sem criar registro vazio",
+      "status": "PASS",
+      "previouslyPassed": true
+    },
+    {
+      "name": "Envio geral abre projeto com vídeo e transcrição, sem ferramenta intermediária",
+      "status": "PASS",
+      "previouslyPassed": true
+    },
+    {
+      "name": "Título usa caneta adjacente e renomeação persiste",
+      "status": "PASS",
+      "previouslyPassed": true
+    },
+    {
+      "name": "Visão do projeto tem prévia limitada em ultrawide",
+      "status": "PASS",
+      "previouslyPassed": true
+    },
+    {
+      "name": "Editor mantém vídeo e timeline dentro da janela, incluindo ultrawide",
+      "status": "PASS",
+      "previouslyPassed": true
+    },
+    {
+      "name": "Timeline extrai 12 miniaturas reais e mantém seek/zoom funcionais",
+      "status": "PASS",
+      "previouslyPassed": true
+    },
+    {
+      "name": "Arrastar no cabeçalho não seleciona a interface; campos continuam editáveis",
+      "status": "PASS",
+      "previouslyPassed": true
+    },
+    {
+      "name": "Layout compacto mantém controles acessíveis sem overflow horizontal",
+      "status": "PASS"
+    },
+    {
+      "name": "Biblioteca e recentes reabrem o vídeo; não há formulário de adicionar vídeo",
+      "status": "PASS"
+    },
+    {
+      "name": "Falha real da criação permite tentar novamente sem timers de preparação",
+      "status": "PASS"
+    },
+    {
+      "name": "Reinício pede apenas reconexão do original, sem criar pasta ou projeto extra",
+      "status": "PASS"
+    },
+    {
+      "name": "Console sem erros inesperados",
+      "status": "PASS"
+    }
+  ],
+  "errors": [],
+  "setupFailure": null
+}

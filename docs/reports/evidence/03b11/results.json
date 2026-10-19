@@ -1,0 +1,74 @@
+{
+ "results": [
+  {
+   "name": "início: nada animado enquanto o splash cobria (opacidades 0)",
+   "ok": true,
+   "detail": "[{\"h\":\"0\",\"s\":\"0\"},{\"h\":\"0\",\"s\":\"0\"},{\"h\":\"0\",\"s\":\"0\"}]"
+  },
+  {
+   "name": "timeline: H ≥0.9 ~790ms (0.25+0.536·1.0; ±350)",
+   "ok": true,
+   "detail": "691"
+  },
+  {
+   "name": "timeline: S ≥0.9 ~1550ms (1.2+0.536·0.65; ±300)",
+   "ok": true,
+   "detail": "1485"
+  },
+  {
+   "name": "timeline: B ≥0.9 ~2150ms (1.8+0.536·0.65; ±300)",
+   "ok": true,
+   "detail": "2085"
+  },
+  {
+   "name": "timeline: ordem H<S<B",
+   "ok": true,
+   "detail": "{\"headline\":691,\"subtitle\":1485,\"button\":2085}"
+  },
+  {
+   "name": "sessão: apresentação integral concluída (seen=1 pós-cauda 7.2s)",
+   "ok": true,
+   "detail": "mid=1 late=1"
+  },
+  {
+   "name": "tunables: sem overrides (introDur 4.0 / instrAt=cardsAt 2.8 ativos)",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "CTA: clique abre diálogo",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "sidebar/resize: entrada não reinicia (opacidades 1 estáveis)",
+   "ok": true,
+   "detail": "{\"h\":\"1\",\"s\":\"1\"}"
+  },
+  {
+   "name": "retorno: assentado imediatamente (sem re-apresentar)",
+   "ok": true,
+   "detail": "{\"h\":\"1\",\"s\":\"1\",\"b\":\"1\"}"
+  },
+  {
+   "name": "re-apresentação (nova abertura): texto em entrada (op<1 no início)",
+   "ok": true,
+   "detail": "h=0.9911"
+  },
+  {
+   "name": "exe: console sem erros (rodada completa)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "cleanup simétrico (offReplay/offGate/stopDriver/kill/settle no return)",
+   "ok": true,
+   "detail": "estático: return do useLayoutEffect chama todos os offs"
+  }
+ ],
+ "marks": {
+  "headline": 691,
+  "subtitle": 1485,
+  "button": 2085
+ }
+}

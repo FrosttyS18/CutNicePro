@@ -1,0 +1,42 @@
+{
+  "results": [
+    {
+      "name": "Home abre envio e sidebar seleciona somente Enviar vídeo",
+      "status": "PASS",
+      "previouslyPassed": true
+    },
+    {
+      "name": "Recentes usa dados reais e abre projeto existente",
+      "status": "PASS",
+      "previouslyPassed": true
+    },
+    {
+      "name": "Sem link Enviar abre seletor de arquivo",
+      "status": "PASS",
+      "previouslyPassed": true
+    },
+    {
+      "name": "Link inválido e YouTube válido recebem diagnósticos honestos",
+      "status": "PASS",
+      "previouslyPassed": true
+    },
+    {
+      "name": "Legendas abre exemplos, contém foco e fecha com Escape",
+      "status": "PASS"
+    },
+    {
+      "name": "Arquivo inválido mostra erro recuperável",
+      "status": "PASS"
+    },
+    {
+      "name": "Vídeo local real carrega prévia e opções de legenda",
+      "status": "FAIL",
+      "error": "TimeoutError: page.waitForFunction: Timeout 30000ms exceeded."
+    }
+  ],
+  "errors": [],
+  "setupFailure": null,
+  "passed": 6,
+  "failed": 1,
+  "scope": "Edge headless; IPC simulado; vídeo WebM gerado; sem screenshots ou Tauri nativo"
+}

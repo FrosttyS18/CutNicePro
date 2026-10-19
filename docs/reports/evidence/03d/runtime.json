@@ -1,0 +1,69 @@
+{
+  "results": [
+    {
+      "name": "Arquivo local real é aceito e permite continuar",
+      "status": "PASS",
+      "previouslyPassed": true
+    },
+    {
+      "name": "Preparação é demonstrativa e cancelamento não cria projeto",
+      "status": "PASS",
+      "previouslyPassed": true
+    },
+    {
+      "name": "Confirmar cria projeto e abre editor sem gerar transcrição real",
+      "status": "PASS",
+      "previouslyPassed": true
+    },
+    {
+      "name": "Preview, timeline e controles de áudio refletem ajustes",
+      "status": "PASS",
+      "previouslyPassed": true
+    },
+    {
+      "name": "Texto, enquadramento e salvamento funcionam",
+      "status": "PASS",
+      "previouslyPassed": true
+    },
+    {
+      "name": "Visão do projeto mostra vídeo e título editável",
+      "status": "PASS",
+      "previouslyPassed": true
+    },
+    {
+      "name": "Busca e edição da transcrição demonstrativa funcionam",
+      "status": "PASS",
+      "previouslyPassed": true
+    },
+    {
+      "name": "Exportação abre configuração sem simular renderização",
+      "status": "PASS",
+      "previouslyPassed": true
+    },
+    {
+      "name": "Biblioteca e recentes reabrem o projeto persistido",
+      "status": "PASS"
+    },
+    {
+      "name": "Reabrir recupera ajustes e pede reconexão do arquivo",
+      "status": "PASS"
+    },
+    {
+      "name": "Layouts não têm overflow horizontal em 960/1280/1440",
+      "status": "PASS"
+    },
+    {
+      "name": "YouTube cria referência e navega pelo fluxo sem afirmar download",
+      "status": "PASS"
+    },
+    {
+      "name": "Console sem erros no escopo",
+      "status": "PASS"
+    }
+  ],
+  "errors": [],
+  "setupFailure": null,
+  "passed": 13,
+  "failed": 0,
+  "scope": "Edge headless isolado; IPC simulado; mídia WebM real gerada; sem screenshots; motor de IA não executado"
+}

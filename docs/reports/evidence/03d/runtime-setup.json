@@ -1,0 +1,8 @@
+{
+  "results": [],
+  "errors": [],
+  "setupFailure": "AssertionError [ERR_ASSERTION]: Cabeçalho WebM esperado",
+  "passed": 0,
+  "failed": 1,
+  "scope": "Edge headless isolado; IPC simulado; mídia WebM real gerada; sem screenshots; motor de IA não executado"
+}

@@ -19,6 +19,7 @@
   --sh-surface: #1e1e1e;
   --sh-surface-dim: #202020;
   --sh-divider-rail: #101010;
+  --sh-rail-width: 92px;
   --sh-divider: #202020;
   --sh-dim: #929292;
   --sh-accent: #02c2be;
@@ -54,7 +55,7 @@
 }
 
 .rail {
-  width: 92px;
+  width: var(--sh-rail-width);
   flex: none;
   display: flex;
   flex-direction: column;
@@ -783,6 +784,7 @@
 
 /* ---------- titlebar personalizada (03B.9) ---------- */
 .titlebar {
+  position: relative;
   display: flex;
   align-items: stretch;
   height: 34px;
@@ -792,6 +794,15 @@
   box-shadow: none;
   user-select: none;
   flex: none;
+}
+.titlebar::before {
+  content: "";
+  position: absolute;
+  inset-block: 0;
+  left: calc(var(--sh-rail-width) - 1px);
+  width: 1px;
+  background: var(--sh-divider-rail);
+  pointer-events: none;
 }
 .titlebar__drag {
   flex: 1;
@@ -823,3 +834,7 @@
   background: #e5484d;
   color: #ffffff;
 }
+
+body { user-select: none; -webkit-user-select: none; }
+input, textarea, [contenteditable="true"], .transcript-segments p { user-select: text; -webkit-user-select: text; }
+img { -webkit-user-drag: none; }

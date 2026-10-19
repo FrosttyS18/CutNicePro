@@ -1,0 +1,125 @@
+╔════════════════════════════════════════════╗
+║       CUTNICEPRO — ZCODE REPORT            ║
+╚════════════════════════════════════════════╝
+
+TASK
+  Name: 03C/03D — Entrada, projeto e editor
+  Status: PASS (escopo de telas e prévia; motor fica para depois)
+  Scope: Envio → preparação demonstrativa → editor; biblioteca/recentes → projeto.
+  Objective: Fechar o fluxo na identidade CutNicePro, antes da IA Local/BYOK.
+  Result: Telas conectadas; projeto criado e título renomeado com persistência.
+    Prévia local, transcrição demonstrativa, timeline, texto, áudio e enquadramento.
+
+IMPLEMENTATION
+  Completed: Home abre envio; sidebar marca Enviar vídeo; quatro ferramentas.
+    Modal aceita arquivo local ou referência YouTube; preparação identificada como demo.
+    Projeto aparece na biblioteca/recentes; reabertura mostra vídeo e transcrição de exemplo.
+    Editor salva configurações por projeto; busca/edição do texto e controles da prévia.
+    Criação de projeto vazio e coleções preservadas; MCP FigCraft reconectado.
+  Not completed: IA, download YouTube, importação persistente da mídia e render/export,
+    conforme escopo explícito do mantenedor para etapa posterior.
+  Changes: 32 novos arquivos no app, separados em componentes/hooks/services/types/utils/testes.
+  Architecture impact: Sem dependências novas; storage Rust existente recebe renomeação.
+    Preferências versionadas por projeto; vídeos locais referenciados somente na sessão.
+  Decisões técnicas: OpusClip orienta o fluxo, sem copiar marca/créditos ou funções extras.
+
+FILES
+  Created: app/src/components/upload/ (9 arquivos), workspace/ (7), editor/ (3);
+    app/src/hooks/{useVideoSource,useWorkspaceData}.ts;
+    app/src/lib/{video-source,workspace,workspace-types}.ts;
+    app/src/services/workspace-store.ts;
+    app/src/screens/{UploadScreen.tsx,ProjectWorkspace.tsx,upload.css,workspace.css};
+    app/src/test/{video-source,video-inspection,workspace}.test.ts;
+    tools/{figcraft-read,phase03d-wireframes}.mjs; tools/e2e/phase03d-project-flow.mjs;
+    docs/product/UPLOAD-SCREEN.md; tasks/{plan,todo}.md; rascunhos e evidências 03C/03D;
+    relatório histórico e inventário abaixo.
+  Modified: App.tsx; components/shell/AppShell.tsx; screens/ProjectsScreen.tsx; lib/ipc.ts;
+    app/src-tauri/{src/lib.rs,src/storage.rs,tauri.conf.json}; docs/FIGCRAFT-ATTACHED.md;
+    docs/product/{PRODUCT-BRAIN,BACKLOG,TRACEABILITY}.md; docs/reports/LATEST.txt.
+  Deleted: Runner transitório 03C criado nesta tarefa, substituído pelo roteiro 03D.
+    Nenhum arquivo previamente versionado foi removido.
+  Unexpected changes: Documento FigCraft original foi salvo externamente durante a sessão;
+    preservado. Alterações anteriores de Home/splash/galaxy também preservadas.
+
+VALIDATION
+  Typecheck: PASS, npm run build com Vite.
+  Lint: SKIP, sem script configurado; diff sem erros de whitespace.
+  Unit tests: PASS, 65 casos Vitest distintos em fatias (10 na fatia final, 55 anteriores);
+    Rust 15/15, incluindo teste novo de renomeação/persistência.
+  Integration tests: SKIP para ponte Tauri real; IPC simulado no navegador.
+  Regression tests: PASS no escopo unitário e dos fluxos exercitados.
+  Visual tests: SKIP na aplicação; estética reservada ao mantenedor.
+  Runtime verification: PASS, 13 casos únicos em Edge headless isolado, console sem erros.
+    Oito casos da primeira execução retidos; cinco restantes na repetição, com setup semeado.
+  Total passed: 93 casos distintos (65 Vitest + 15 Rust + 13 runtime), além do build.
+  Total failed: 0 no gate final. Histórico preservado: 5 eventos nas etapas 03C/03D
+    (2 falhas de preparação do teste e 3 asserções, incluindo seletor ambíguo).
+  Total skipped: 3 categorias: lint, integração Tauri real e aprovação visual.
+  FUNCTIONAL STATUS: PASS (telas e prévia, sem alegar IA/render funcionando).
+  REGRESSION STATUS: PASS (somente escopo executado).
+  VISUAL STATUS: PENDING HUMAN APPROVAL.
+
+HOOKS / HARNESS
+  Hooks active: Hooks ZCode não verificados nesta sessão Codex.
+  PreToolUse: Sem evidência de execução dos hooks ZCode.
+  PostToolUse: Sem evidência de execução dos hooks ZCode.
+  Stop: Não verificado.
+  Baseline: SKIP, validação proporcional desta funcionalidade.
+  Gate result: Build, testes pertinentes e runtime PASS; sem auditoria estética.
+  Evidence: Saídas reais dos comandos e docs/reports/evidence/03d/runtime.json.
+
+MCP / SKILLS
+  Tools used: FigCraft MCP via CLI stdio; terminal/apply_patch; computer-use apenas
+    para reconexão. Skills frontend, spec, planning, incremental e code-review do projeto.
+  Connection status: Attached 7979 confirmado; frames 2262/2391/2440 lidos por MCP.
+    Três rascunhos próprios v1 DRAFT em design/handoff/03d/flow-ui-v1.figcraft.
+  Failures: App aberto sem --control; reconectado. Parser de linhas Unicode corrigido.
+    Browser empacotado ausente e fixture inicial inválida: usados Edge e FFmpeg existentes.
+  Pending activation: Graphify sem índice disponível; análise feita sobre o código atual.
+    Sem subagentes/VISION, instalação de software ou serviços de IA.
+
+GIT
+  Branch: main
+  HEAD: f1adfe584fe1b174f4e68f956f140f4f964cf0c1
+  Latest commit: feat(intro): restore GSAP choreography on shared intro clock for phase 03B.10
+  Commits created: Nenhum.
+  Push: NOT EXECUTED
+  Remote: origin -> https://github.com/FrosttyS18/CutNicePro.git; origin/main.
+  Working tree: MODIFIED / UNTRACKED; já continha alterações anteriores.
+  Pending files: docs/reports/history/2026-10-19_005508_03c03d-pending.txt (inventário integral, incluindo relatórios).
+
+EVIDENCE
+  Commands executed: npm run build; Vitest por fatias; cargo test --lib;
+    node tools/e2e/phase03d-project-flow.mjs e --resume; git diff --check;
+    FigCraft inspect/get_node/export via MCP e gerador dos rascunhos.
+  Relevant logs: evidence/03d/runtime.json (13 PASS), runtime-initial.json e runtime-setup.json.
+    Histórico parcial 03C mantido e identificado por README; não é o gate final.
+  Screenshots: Nenhuma captura da aplicação; três renders documentais de rascunhos DRAFT.
+  Test artifacts: Testes versionáveis, fixture.webm gerada por FFmpeg e dumps FigCraft.
+  Reproduction details: Arquivo real de teste; IPC e embeds externos isolados/simulados.
+    Renomeação testada também no storage Rust; integração nativa não afirmada.
+
+ISSUES
+  Bugs found: Foco podia sair do modal; leitura bloqueava WebM sem duração finita.
+    Ajustados foco e metadados desconhecidos; fluxo local confirmado no runtime 03D.
+  Unresolved failures: Nenhuma no escopo final executado.
+  Regressions: Nenhuma detectada nos testes; sem alegação sobre o executável completo.
+  Risks: Vídeo local requer reconexão após reiniciar. Preferências ficam neste dispositivo.
+    Bundle Vite permanece acima de 500 kB; motores e render ainda não estão integrados.
+  Blockers: Nenhum para entrega das telas; estética depende do mantenedor.
+
+FINAL
+  Delivery status: Telas e navegação implementadas; motor deixado para a próxima etapa.
+  Requirements met: Envio, projeto em biblioteca/recentes, título, transcrição de exemplo,
+    ações laterais, preparação demonstrativa e editor com ajustes de prévia.
+  Remaining work: Aprovação visual; depois IA Local/BYOK, mídia persistente e render/export.
+  User action required: Conferir as novas telas no app; não interpretar a demo como IA real.
+  Restart required: Reabrir Tauri dev se ele não recarregar o comando Rust de renomeação
+    e a configuração de drag-and-drop automaticamente.
+  Ready for next task: Sim, sujeito à aprovação visual das telas.
+
+REPORT
+  Latest file: docs/reports/LATEST.txt
+  Historical file: docs/reports/history/2026-10-19_005508_03c03d-fluxo-projeto-editor.txt
+
+END OF REPORT

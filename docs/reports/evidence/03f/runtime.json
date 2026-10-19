@@ -1,0 +1,22 @@
+{
+  "results": [
+    {
+      "name": "Legendas abre modal com dez opções visuais e seleção funcional",
+      "status": "PASS"
+    },
+    {
+      "name": "Cursor da timeline responde ao mouse e teclado sem contorno no bloco",
+      "status": "PASS"
+    },
+    {
+      "name": "Modal e timeline cabem em janela estreita e ultrawide",
+      "status": "PASS"
+    },
+    {
+      "name": "Console sem erros",
+      "status": "PASS"
+    }
+  ],
+  "errors": [],
+  "setupFailure": null
+}

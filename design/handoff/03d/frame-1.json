@@ -1,0 +1,450 @@
+{
+  "absoluteBounds": {
+    "height": 800,
+    "width": 1280,
+    "x": 0,
+    "y": 0
+  },
+  "children": [
+    {
+      "absoluteBounds": {
+        "height": 800,
+        "width": 92,
+        "x": 0,
+        "y": 0
+      },
+      "constraints": {
+        "horizontal": "left",
+        "vertical": "top"
+      },
+      "cornerRadius": 12,
+      "fills": [
+        {
+          "color": "#000000",
+          "type": "solid"
+        }
+      ],
+      "height": 800,
+      "id": 3,
+      "name": "Superfície",
+      "type": "RECTANGLE",
+      "width": 92,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "absoluteBounds": {
+        "height": 718,
+        "width": 1140,
+        "x": 116,
+        "y": 58
+      },
+      "constraints": {
+        "horizontal": "left",
+        "vertical": "top"
+      },
+      "cornerRadius": 12,
+      "fills": [
+        {
+          "color": "#0A0A0A",
+          "type": "solid"
+        }
+      ],
+      "height": 718,
+      "id": 4,
+      "name": "Superfície",
+      "type": "RECTANGLE",
+      "width": 1140,
+      "x": 116,
+      "y": 58
+    },
+    {
+      "absoluteBounds": {
+        "height": 402,
+        "width": 504,
+        "x": 388,
+        "y": 200
+      },
+      "constraints": {
+        "horizontal": "left",
+        "vertical": "top"
+      },
+      "cornerRadius": 12,
+      "fills": [
+        {
+          "color": "#09090B",
+          "type": "solid"
+        }
+      ],
+      "height": 402,
+      "id": 5,
+      "name": "Superfície",
+      "type": "RECTANGLE",
+      "width": 504,
+      "x": 388,
+      "y": 200
+    },
+    {
+      "absoluteBounds": {
+        "height": 6,
+        "width": 456,
+        "x": 412,
+        "y": 498
+      },
+      "constraints": {
+        "horizontal": "left",
+        "vertical": "top"
+      },
+      "cornerRadius": 12,
+      "fills": [
+        {
+          "color": "#02C2BE",
+          "type": "solid"
+        }
+      ],
+      "height": 6,
+      "id": 6,
+      "name": "Superfície",
+      "type": "RECTANGLE",
+      "width": 456,
+      "x": 412,
+      "y": 498
+    },
+    {
+      "absoluteBounds": {
+        "height": 40,
+        "width": 456,
+        "x": 412,
+        "y": 536
+      },
+      "constraints": {
+        "horizontal": "left",
+        "vertical": "top"
+      },
+      "cornerRadius": 12,
+      "fills": [
+        {
+          "color": "#FFFFFF",
+          "type": "solid"
+        }
+      ],
+      "height": 40,
+      "id": 7,
+      "name": "Superfície",
+      "type": "RECTANGLE",
+      "width": 456,
+      "x": 412,
+      "y": 536
+    },
+    {
+      "absoluteBounds": {
+        "height": 24,
+        "width": 1202,
+        "x": 20,
+        "y": 16
+      },
+      "characters": "03D v1 · DRAFT · revisão do mantenedor",
+      "constraints": {
+        "horizontal": "left",
+        "vertical": "top"
+      },
+      "fills": [
+        {
+          "color": "#02C2BE",
+          "type": "solid"
+        }
+      ],
+      "fontFamily": "Poppins",
+      "fontSize": 16,
+      "fontStyle": "Regular",
+      "height": 24,
+      "id": 8,
+      "letterSpacing": "0%",
+      "lineHeight": "Auto",
+      "name": "03D v1 · DRAFT · revisão do mantenedor",
+      "sizing": {
+        "horizontal": "fixed",
+        "vertical": "hug"
+      },
+      "textAlign": "left",
+      "textAutoResize": "height",
+      "type": "TEXT",
+      "width": 1202,
+      "x": 20,
+      "y": 16
+    },
+    {
+      "absoluteBounds": {
+        "height": 18,
+        "width": 1080,
+        "x": 142,
+        "y": 74
+      },
+      "characters": "Meus Projetos  /  Preparação",
+      "constraints": {
+        "horizontal": "left",
+        "vertical": "top"
+      },
+      "fills": [
+        {
+          "color": "#929292",
+          "type": "solid"
+        }
+      ],
+      "fontFamily": "Poppins",
+      "fontSize": 12,
+      "fontStyle": "Regular",
+      "height": 18,
+      "id": 9,
+      "letterSpacing": "0%",
+      "lineHeight": "Auto",
+      "name": "Meus Projetos  /  Preparação",
+      "sizing": {
+        "horizontal": "fixed",
+        "vertical": "hug"
+      },
+      "textAlign": "left",
+      "textAutoResize": "height",
+      "type": "TEXT",
+      "width": 1080,
+      "x": 142,
+      "y": 74
+    },
+    {
+      "absoluteBounds": {
+        "height": 33,
+        "width": 810,
+        "x": 412,
+        "y": 228
+      },
+      "characters": "Preparando seu projeto",
+      "constraints": {
+        "horizontal": "left",
+        "vertical": "top"
+      },
+      "fills": [
+        {
+          "color": "#FFFFFF",
+          "type": "solid"
+        }
+      ],
+      "fontFamily": "Poppins",
+      "fontSize": 22,
+      "fontStyle": "Regular",
+      "height": 33,
+      "id": 10,
+      "letterSpacing": "0%",
+      "lineHeight": "Auto",
+      "name": "Preparando seu projeto",
+      "sizing": {
+        "horizontal": "fixed",
+        "vertical": "hug"
+      },
+      "textAlign": "left",
+      "textAutoResize": "height",
+      "type": "TEXT",
+      "width": 810,
+      "x": 412,
+      "y": 228
+    },
+    {
+      "absoluteBounds": {
+        "height": 18,
+        "width": 810,
+        "x": 412,
+        "y": 276
+      },
+      "characters": "Demonstração de interface · IA ainda não conectada",
+      "constraints": {
+        "horizontal": "left",
+        "vertical": "top"
+      },
+      "fills": [
+        {
+          "color": "#929292",
+          "type": "solid"
+        }
+      ],
+      "fontFamily": "Poppins",
+      "fontSize": 12,
+      "fontStyle": "Regular",
+      "height": 18,
+      "id": 11,
+      "letterSpacing": "0%",
+      "lineHeight": "Auto",
+      "name": "Demonstração de interface · IA ainda não conectada",
+      "sizing": {
+        "horizontal": "fixed",
+        "vertical": "hug"
+      },
+      "textAlign": "left",
+      "textAutoResize": "height",
+      "type": "TEXT",
+      "width": 810,
+      "x": 412,
+      "y": 276
+    },
+    {
+      "absoluteBounds": {
+        "height": 24,
+        "width": 810,
+        "x": 412,
+        "y": 336
+      },
+      "characters": "01  Vídeo selecionado",
+      "constraints": {
+        "horizontal": "left",
+        "vertical": "top"
+      },
+      "fills": [
+        {
+          "color": "#FFFFFF",
+          "type": "solid"
+        }
+      ],
+      "fontFamily": "Poppins",
+      "fontSize": 16,
+      "fontStyle": "Regular",
+      "height": 24,
+      "id": 12,
+      "letterSpacing": "0%",
+      "lineHeight": "Auto",
+      "name": "01  Vídeo selecionado",
+      "sizing": {
+        "horizontal": "fixed",
+        "vertical": "hug"
+      },
+      "textAlign": "left",
+      "textAutoResize": "height",
+      "type": "TEXT",
+      "width": 810,
+      "x": 412,
+      "y": 336
+    },
+    {
+      "absoluteBounds": {
+        "height": 24,
+        "width": 810,
+        "x": 412,
+        "y": 388
+      },
+      "characters": "02  Transcrição de demonstração",
+      "constraints": {
+        "horizontal": "left",
+        "vertical": "top"
+      },
+      "fills": [
+        {
+          "color": "#FFFFFF",
+          "type": "solid"
+        }
+      ],
+      "fontFamily": "Poppins",
+      "fontSize": 16,
+      "fontStyle": "Regular",
+      "height": 24,
+      "id": 13,
+      "letterSpacing": "0%",
+      "lineHeight": "Auto",
+      "name": "02  Transcrição de demonstração",
+      "sizing": {
+        "horizontal": "fixed",
+        "vertical": "hug"
+      },
+      "textAlign": "left",
+      "textAutoResize": "height",
+      "type": "TEXT",
+      "width": 810,
+      "x": 412,
+      "y": 388
+    },
+    {
+      "absoluteBounds": {
+        "height": 24,
+        "width": 810,
+        "x": 412,
+        "y": 440
+      },
+      "characters": "03  Interface preparada",
+      "constraints": {
+        "horizontal": "left",
+        "vertical": "top"
+      },
+      "fills": [
+        {
+          "color": "#FFFFFF",
+          "type": "solid"
+        }
+      ],
+      "fontFamily": "Poppins",
+      "fontSize": 16,
+      "fontStyle": "Regular",
+      "height": 24,
+      "id": 14,
+      "letterSpacing": "0%",
+      "lineHeight": "Auto",
+      "name": "03  Interface preparada",
+      "sizing": {
+        "horizontal": "fixed",
+        "vertical": "hug"
+      },
+      "textAlign": "left",
+      "textAutoResize": "height",
+      "type": "TEXT",
+      "width": 810,
+      "x": 412,
+      "y": 440
+    },
+    {
+      "absoluteBounds": {
+        "height": 21,
+        "width": 742,
+        "x": 480,
+        "y": 545
+      },
+      "characters": "Abrir editor de demonstração",
+      "constraints": {
+        "horizontal": "left",
+        "vertical": "top"
+      },
+      "fills": [
+        {
+          "color": "#000000",
+          "type": "solid"
+        }
+      ],
+      "fontFamily": "Poppins",
+      "fontSize": 14,
+      "fontStyle": "Regular",
+      "height": 21,
+      "id": 15,
+      "letterSpacing": "0%",
+      "lineHeight": "Auto",
+      "name": "Abrir editor de demonstração",
+      "sizing": {
+        "horizontal": "fixed",
+        "vertical": "hug"
+      },
+      "textAlign": "left",
+      "textAutoResize": "height",
+      "type": "TEXT",
+      "width": 742,
+      "x": 480,
+      "y": 545
+    }
+  ],
+  "clip": true,
+  "fills": [
+    {
+      "color": "#000000",
+      "type": "solid"
+    }
+  ],
+  "height": 800,
+  "id": 2,
+  "name": "03D v1 DRAFT - Preparação",
+  "type": "FRAME",
+  "width": 1280,
+  "x": 0,
+  "y": 0
+}

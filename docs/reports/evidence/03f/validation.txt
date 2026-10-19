@@ -1,0 +1,7 @@
+Build TypeScript/Vite: PASS. Aviso preexistente de chunk >500kB.
+Runtime Edge headless com IPC simulado: 4/4 PASS, console sem erros, primeira rodada, sem repetição ou screenshots.
+Escopo: modal 10 modelos, seleção persistida, Escape/retorno de foco, cursor mouse/teclado e ausência de contorno no bloco, layouts600/1440/3440px.
+Unitários/Rust/baseline não repetidos: mudança de UI e documentação.
+FigCraft standalone open_file/get_node2262/2391/2440 respondeu sem salvar documento.
+git diff --check PASS. Sem motor instalado, IA, render ou teste no executável.
+Revisão: controles com rótulo, inputs radio nativos, foco de teclado no cursor/presets, diálogo reutilizado, presets com IDs existentes; sem migração ou nova dependência.

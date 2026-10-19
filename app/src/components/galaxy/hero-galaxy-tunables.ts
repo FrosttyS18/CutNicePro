@@ -236,10 +236,7 @@ export const galaxyMotionTuner = defineTunables(
       min: 0.4,
       max: 4,
       step: 0.05,
-      // 03B.8: revelação centro→periferia RESTAURADA (03B.7 comprimiu para
-      // 1.6s e perdeu a progressão aprovada). Total ~3.95s dentro da meta
-      // 3-4s; a espera inicial é controlada por cardsAt, não por aqui.
-      default: 3.4,
+      default: 4.0,
       info: "Duration of the intro reveal wave sweeping from the logo past the outer edge. Starts at the master Intro group's Cards beat.",
     },
     rollChunk: {

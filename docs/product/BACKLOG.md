@@ -34,6 +34,8 @@ FR: FR-003, FR-004, FR-016, FR-017. Prioridade: Must. Dep: EPIC-001 (parcial).
   independente (BR-003); AC-015 exclusão com confirmação e preservando exports (BR-005).
 
 ## EPIC-003 — Importação de mídia
+
+Entrega de interface 03C/03D (2026-10-19), autorizada pelo mantenedor: entrada, preparação demonstrativa, visão do projeto e editor de prévia implementados. O fluxo cria projetos no storage existente; renomeação persiste; configurações de interface são salvas por projeto. Referência e aceites específicos: `UPLOAD-SCREEN.md`. Esta fatia não conclui US-007/008/012/013: download, importação persistente da mídia, detecção de áudio, transcrição e render continuam pendentes. Projetos vazios legados e coleções são preservados.
 Jornadas: JRN-004. BR: BR-006..BR-011. FR: FR-005. Prioridade: Must.
 
 - **US-007 — Importar arquivos/lote** (Must) — AC: AC-016 seleção e drag-and-drop;

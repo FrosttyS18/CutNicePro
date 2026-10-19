@@ -109,6 +109,24 @@ impl Store {
         Ok(project)
     }
 
+    pub fn rename_project(&self, id: &str, raw_name: &str) -> Result<ProjectMeta, String> {
+        let name = raw_name.trim();
+        if name.is_empty() || name.chars().count() > NAME_MAX {
+            return Err(format!("informe um nome entre 1 e {NAME_MAX} caracteres"));
+        }
+        let mut projects = self.load()?;
+        if projects.iter().any(|project| project.id != id && project.name == name) {
+            return Err("já existe um projeto com esse nome".into());
+        }
+        let project = projects.iter_mut().find(|project| project.id == id)
+            .ok_or_else(|| "projeto não encontrado".to_string())?;
+        project.name = name.to_string();
+        project.updated_at_ms = now_ms();
+        let result = project.clone();
+        self.save(&projects)?;
+        Ok(result)
+    }
+
     pub fn open_project(&self, id: &str) -> Result<ProjectMeta, String> {
         let mut projects = self.load()?;
         let now = now_ms();
@@ -149,6 +167,20 @@ mod tests {
         assert_eq!(list[0].id, a.id);
         assert_eq!(list[0].name, "Podcast Ep 12");
         assert!(list[0].last_opened_at_ms.is_none());
+    }
+
+    #[test]
+    fn rename_persists_and_validates_name() {
+        let store = temp_store("rename");
+        let project = store.create_project("Original").unwrap();
+        store.create_project("Reservado").unwrap();
+        assert!(store.rename_project(&project.id, "").is_err());
+        assert!(store.rename_project(&project.id, &"a".repeat(81)).is_err());
+        assert!(store.rename_project(&project.id, "Reservado").is_err());
+        assert!(store.rename_project("ausente", "Novo").is_err());
+        let renamed = store.rename_project(&project.id, "  Novo título  ").unwrap();
+        assert_eq!(renamed.name, "Novo título");
+        assert_eq!(store.load().unwrap().iter().find(|item| item.id == project.id).unwrap().name, "Novo título");
     }
 
     #[test]

@@ -1,0 +1,30 @@
+{
+  "results": [
+    {
+      "name": "Home abre envio e sidebar seleciona somente Enviar vídeo",
+      "status": "PASS"
+    },
+    {
+      "name": "Recentes usa dados reais e abre projeto existente",
+      "status": "PASS"
+    },
+    {
+      "name": "Sem link Enviar abre seletor de arquivo",
+      "status": "PASS"
+    },
+    {
+      "name": "Link inválido e YouTube válido recebem diagnósticos honestos",
+      "status": "PASS"
+    },
+    {
+      "name": "Legendas abre exemplos, contém foco e fecha com Escape",
+      "status": "FAIL",
+      "error": "AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:\n\n  assert(await page.evaluate(() => document.querySelector(\"dialog\").contains(document.activeElement)))\n"
+    }
+  ],
+  "errors": [],
+  "setupFailure": null,
+  "passed": 4,
+  "failed": 1,
+  "scope": "Edge headless; IPC simulado; vídeo WebM gerado; sem screenshots ou Tauri nativo"
+}

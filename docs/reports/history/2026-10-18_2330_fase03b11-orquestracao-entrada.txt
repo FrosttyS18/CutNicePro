@@ -1,0 +1,122 @@
+CUTNICEPRO — ZCODE REPORT — FASE 03B.11 (ORQUESTRAÇÃO DA ENTRADA DA HOME)
+==============================================================================
+Tarefa:     Corrigir exclusivamente a orquestração da entrada sobre a
+            03B.10 (baseline f1adfe5): gate do splash, sincronização real
+            timeline×introClock, replay, sessão, introDur efetivo e estado
+            inicial pré-paint.
+Data:       2026-10-18 (conclusão 23h30)
+Status:     FUNCTIONAL: PASS (13/13 runtime + 3/3 unitários novos).
+            Regression: PASS (escopo testado). Visual: PENDING HUMAN
+            APPROVAL.
+Referências exatas consultadas (commit e57ee3d, arquivadas em
+design/handoff/03b5/original/): intro-conductor.tsx (gsap timeline +
+stagger sobre o relógio), lib/intro.ts (introClock/replayIntro/
+onIntroReplay), hero-wordmark.tsx e hero-galaxy.tsx (consumo do clock;
+rollT/waveEase NÃO alterados), reveal-manager.tsx (lifecycle de reveal
+com cleanup). Skills/hooks: VALIDATION-POLICY (economia, sem VISION) e
+hooks de proteção (sem comandos destrutivos; Write validado).
+
+CAUSAS-RAIZ CONFIRMADAS NO CÓDIGO (todas as 6 do baseline)
+------------------------------------------------------------------------------
+1. App.tsx montava o shell (com HomeScreen+conductor) durante o splash —
+   a apresentação iniciava encoberta (conductor disparava no mount).
+2. Conductor 03B.10: timeline GSAP AUTOMÁTICA (posições absolutas, corre
+   sozinha) + rAF avançando introClock separadamente — dois tempos.
+3. Ramo seen: settle + return — sem driver, sem assinatura de replay.
+4. replayIntro() zerava o clock, mas nenhum assinante rearma o texto.
+5. introDur = 3.4 DE FATO (o replace da 03B.10 não casou por diferença de
+   texto no comentário — o relatório estava errado; corrigido com assert).
+6. Estado inicial via gsap.set no useEffect (pós-primeiro-paint).
+
+IMPLEMENTAÇÃO (diff mínimo: 3 arquivos alterados + 2 novos, sem deps novas)
+------------------------------------------------------------------------------
+- NOVO app/src/components/galaxy/intro-gate.ts (~25 linhas): flag
+  released + waiters Set; releaseIntroGate() idempotente; waiters tardios
+  disparam imediatamente. Sem comentários, sem UI.
+- App.tsx (+7/-2): releaseIntroGate() nos DOIS caminhos de fim de splash
+  (reduced: junto ao setPhase; normal: dentro do timeout 270ms pós-fade).
+  A Home continua montando antes (preparação do galaxy preservada); só o
+  TEMPO da apresentação espera o gate. Splash/transição intactos.
+- intro-conductor.tsx (reescrito, mesma interface): 
+  · useLayoutEffect (estado inicial aplicado ANTES do paint — problema 6);
+  · timeline GSAP PAUSADA criada por buildTimeline(); UM único rAF avança
+    o introClock E posiciona tl.time(clock) a cada frame — um só avanço
+    temporal para texto e galaxy (problema 2); marcos preservados:
+    0.25–1.25 / 1.20–1.85 / 1.80–2.45, respiro até 2.8, power3.out;
+  · alvos limitados à Home atual (.home__rise/.home__fade/.home__cta-slot);
+    GSAP anima SOMENTE o wrapper externo do CTA (Motion/FlipButton intacto);
+  · gate: apresentação inicia em onIntroGateReady (ou imediatamente se já
+    liberado) — nunca encoberta (problema 1);
+  · seen (1×/sessão): settle imediato; ao voltar do gate apenas satura o
+    clock (999) — retorno assentado, sem re-apresentar (política mantida);
+    problema 3 resolvido com assinatura onIntroReplay;
+  · replayIntro(): assinatura única rearma por completo — stopDriver +
+    kill da timeline antiga + beginPresentation (set inicial, clock 0,
+    timeline recriada, driver ativo) — inclusive após montagem assentada;
+    gates: reduced ou splash presente não rearmam (problema 4); sem
+    listeners duplicados (off no cleanup; onIntroReplay idempotente por
+    assinatura — testado em unidade);
+  · sessão marcada SÓ após início efetivo (flag started) e conclusão
+    derivada dos marcos reais: cardsAt + waveLag + introDur (2.8+0.4+4.0
+    = 7.2s, cauda do flare incluída) — não por timer fixo;
+  · cleanup simétrico: offReplay + offGate + stopDriver + tl.kill +
+    settle + clock 999 (StrictMode-safe: duplo mount não acumula nada).
+- hero-galaxy-tunables.ts (-5/+1): default introDur 3.4→4.0 (contrato;
+  instrAt=cardsAt=2.8 já vigentes). ÚNICO valor de galaxy tocado.
+- NÃO ALTERADO (preservação integral): hero-galaxy.tsx, física/shaders/
+  wave/rollChunk/burstX/burstDur/waveBand/waveLag, decoders, mídias,
+  proxy, hover/boost/zoom, Halftone, headline "Bem-Vindo", tipografia,
+  subtítulo #929292, faces/springs do FlipButton, titlebar.
+
+VERIFICAÇÕES EFETIVAMENTE REALIZADAS
+------------------------------------------------------------------------------
+Unitários (vitest, 23/23 — 3 novos em intro-orchestration.test.ts com
+stubs de window/localStorage): gate idempotente + waiters tardios;
+replayIntro zera clock/notifica/des-assina corretamente; tunables
+efetivos do contrato (cardsAt 2.8, instrAt 2.8, introDur 4.0) — este
+último teria PEGO o bug 5 na 03B.10.
+Runtime no exe (phase03b11-qa.mjs, 1 rodada, 13/13, âncora = REMOÇÃO DO
+SPLASH do DOM; expectativa por power3.out op≥0.9 em t+0.536·dur):
+- Nada animado enquanto o splash cobria (opacidades 0 nas amostras
+  pré-gate) — problema 1 resolvido;
+- Marcos op≥0.9: H@691ms · S@1485ms · B@2085ms (alvos ~790/1550/2150,
+  janelas ±300/350 SEM ampliação de tolerância) e ordem H<S<B — o mesmo
+  relógio rege texto e clock (a timeline posicionada por tl.time segue o
+  introClock; movimento do galaxy inferido pelos marcos do próprio clock
+  que o alimenta, não por contagem de rAF);
+- Sessão: seen=1 somente APÓS a cauda (checagem intermediária já late:
+  apresentação começara de fato com Home liberada);
+- Tunables: zero overrides em artcraft-tuner (defaults 2.8/2.8/4.0);
+- CTA abre diálogo; sidebar/resize não reiniciam (opacidades 1 estáveis);
+- Retorno Home→Biblioteca→Home: assentado imediatamente (política 1×
+  preservada; nenhuma navegação virou replay);
+- Re-apresentação (nova abertura = nova sessão, análogo funcional ao
+  replay via action): texto em entrada (op<1 no início) — rearma funciona
+  após sessão anterior concluída;
+- Console do exe sem erros; cleanup simétrico verificado estaticamente
+  (return do useLayoutEffect chama todos os offs) + StrictMode coberto
+  pela simetria do cleanup (duplo mount: 1ª monta/espera-gate, cleanup
+  settle+offs, 2ª monta limpa — sem listeners duplicados por design).
+TypeScript 0 erros; vitest 23/23; cargo 14/14; baseline full 5 PASS/1
+SKIP; vite + tauri build OK.
+
+LIMITAÇÕES
+------------------------------------------------------------------------------
+- replayIntro() (ação "Intro ↻" do tuner) não tem superfície UI no build
+  de produção; seu rearma completo foi validado em UNIDADE (assinatura +
+  clock) e o caminho equivalente de nova sessão no exe — a action em si
+  dispara a mesma função testada (registro honesto).
+- StrictMode duplo-mount validado pela simetria do cleanup (estático +
+  unidade do gate), não por execução do React duplo no exe (produção não
+  faz double-invoke).
+- Correspondência timeline×introClock inferida pelos marcos (a timeline é
+  posicional: tl.time(clock) por construção) — não há leitura direta do
+  clock fora do módulo (por design, sem expor estado global).
+
+ARQUIVOS: intro-gate.ts (novo) · intro-conductor.tsx · App.tsx ·
+hero-galaxy-tunables.ts · test/intro-orchestration.test.ts (novo) ·
+tools/e2e/phase03b11-qa.mjs (novo) · evidence/03b11/.
+
+FINAL: FUNCTIONAL PASS · REGRESSION PASS (escopo) · VISUAL PENDING HUMAN
+APPROVAL · Commit: NO · Push: NO. Encerrando.
+==============================================================================

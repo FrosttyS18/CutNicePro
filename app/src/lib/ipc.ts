@@ -17,6 +17,10 @@ export async function openProject(id: string): Promise<ProjectMeta> {
   return invoke<ProjectMeta>("open_project", { id });
 }
 
+export async function renameProject(id: string, name: string): Promise<ProjectMeta> {
+  return invoke<ProjectMeta>("rename_project", { id, name });
+}
+
 // ---- Coleções (Fase 03B; arquivo próprio, retrocompatível) ----
 
 export async function listCollections(): Promise<CollectionMeta[]> {

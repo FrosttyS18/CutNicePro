@@ -1,0 +1,92 @@
+╔════════════════════════════════════════════╗
+║       CUTNICEPRO — ZCODE REPORT            ║
+╚════════════════════════════════════════════╝
+
+TASK
+  Name: Reentrada da Home e divisória do sidebar
+  Status: PARTIAL (runtime manual pendente)
+  Scope: Duas correções autorizadas por /start.
+  Objective: Repetir entrada ao retornar à Home; divisória até o topo.
+  Result: Código ajustado; build e 26 testes aprovados.
+
+IMPLEMENTATION
+  Completed: Reinício a cada montagem; extensão da divisória na titlebar.
+  Not completed: Verificação no Tauri, delegada ao mantenedor a pedido.
+  Changes: Removido bloqueio por sessão; gate e reduced-motion preservados.
+  Architecture impact: Nenhum; sem dependências novas.
+
+FILES
+  Created: app/src/test/intro-conductor.test.ts; relatório histórico e inventário abaixo.
+  Modified: app/src/components/galaxy/intro-conductor.tsx; app/src/ui.css;
+    docs/product/TRACEABILITY.md; docs/reports/LATEST.txt.
+  Deleted: Nenhum arquivo.
+  Unexpected changes: Nenhuma desta tarefa; alterações anteriores preservadas.
+
+VALIDATION
+  Typecheck: PASS (npm run build).
+  Lint: SKIP (sem script configurado).
+  Unit tests: PASS, 26/26; três novos com mocks de lifecycle/GSAP.
+  Integration tests: SKIP (sem execução desktop por solicitação).
+  Regression tests: PASS, 23 testes existentes, escopo unitário.
+  Visual tests: SKIP (mantenedor fará a avaliação).
+  Runtime verification: SKIP (solicitação expressa do mantenedor).
+  Total passed: 26 testes + 1 build com typecheck.
+  Total failed: 0 testes/builds.
+  Total skipped: 4 categorias: lint, integração, visual e runtime.
+  FUNCTIONAL STATUS: PARTIAL (código e testes PASS; runtime pendente).
+  REGRESSION STATUS: PASS (somente escopo unitário executado).
+  VISUAL STATUS: PENDING HUMAN APPROVAL.
+
+HOOKS / HARNESS
+  Hooks active: Não verificados nesta sessão Codex.
+  PreToolUse: Sem evidência de execução dos hooks ZCode.
+  PostToolUse: Sem evidência de execução dos hooks ZCode.
+  Stop: Não verificado.
+  Baseline: SKIP, escopo pequeno.
+  Gate result: Build e testes PASS; sem gate desktop.
+  Evidence: Resultados reais dos comandos abaixo.
+
+MCP / SKILLS
+  Tools used: Terminal e apply_patch; skills frontend-ui-engineering e incremental-implementation.
+  Connection status: Ferramentas locais operacionais; sem acesso ao computador/UI.
+  Failures: Busca em .agents ausente; usada .zcode/skills existente.
+  Pending activation: Nenhuma; sem subagentes.
+
+GIT
+  Branch: main
+  HEAD: f1adfe584fe1b174f4e68f956f140f4f964cf0c1
+  Latest commit: feat(intro): restore GSAP choreography on shared intro clock for phase 03B.10
+  Commits created: Nenhum.
+  Push: NOT EXECUTED
+  Remote: origin -> https://github.com/FrosttyS18/CutNicePro.git; origin/main.
+  Working tree: MODIFIED / UNTRACKED, já estava alterado antes da tarefa.
+  Pending files: Inventário integral em docs/reports/history/2026-10-18_234000_home-reentrada-sidebar-pending.txt.
+
+EVIDENCE
+  Commands executed: npm run build; npm test; git diff --check; git diff; git status; git log; git rev-parse.
+  Relevant logs: Build Vite PASS; Vitest 4 arquivos, 26/26 testes PASS.
+  Screenshots: Nenhuma captura; referência enviada pelo usuário.
+  Test artifacts: app/src/test/intro-conductor.test.ts (3 casos novos).
+  Reproduction details: Testes simulam remontagem com sessão marcada, gate fechado e reduced-motion.
+
+ISSUES
+  Bugs found: Bloqueio por sessão impedia reentrada; divisória começava abaixo da titlebar.
+  Unresolved failures: Nenhuma falha nos testes/build.
+  Regressions: Nenhuma nos 23 testes existentes; runtime não testado.
+  Risks: Vite avisa sobre bundle acima de 500 kB; fora do escopo.
+    Diff inicial encontrou espaço final no LATEST anterior, substituído pelo relatório atual.
+  Blockers: Nenhum para implementar; avaliação desktop pendente.
+
+FINAL
+  Delivery status: Implementado e compilado; validação manual pendente.
+  Requirements met: Reinício por retorno e continuidade da divisória no código.
+  Remaining work: Conferir animação e divisória no Tauri dev.
+  User action required: Teste visual pelo mantenedor, conforme solicitado.
+  Restart required: Não previsto no dev; atualização pelo Vite.
+  Ready for next task: Sim, sujeito à avaliação manual.
+
+REPORT
+  Latest file: docs/reports/LATEST.txt
+  Historical file: docs/reports/history/2026-10-18_234000_home-reentrada-sidebar.txt
+
+END OF REPORT

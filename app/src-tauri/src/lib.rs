@@ -39,6 +39,11 @@ fn open_project(app: AppHandle, id: String) -> Result<ProjectMeta, String> {
 }
 
 #[tauri::command]
+fn rename_project(app: AppHandle, id: String, name: String) -> Result<ProjectMeta, String> {
+    store_of(&app)?.rename_project(&id, &name)
+}
+
+#[tauri::command]
 fn list_collections(app: AppHandle) -> Result<Vec<CollectionMeta>, String> {
     collection_store_of(&app)?.load()
 }
@@ -81,6 +86,7 @@ pub fn run() {
             list_projects,
             create_project,
             open_project,
+            rename_project,
             list_collections,
             create_collection,
             add_project_to_collection,

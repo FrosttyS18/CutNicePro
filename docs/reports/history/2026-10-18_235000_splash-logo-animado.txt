@@ -1,0 +1,102 @@
+╔════════════════════════════════════════════╗
+║       CUTNICEPRO — ZCODE REPORT            ║
+╚════════════════════════════════════════════╝
+
+TASK
+  Name: Splash com formação animada do logo
+  Status: PARTIAL (validação manual pendente)
+  Scope: Splash e liberação da Home.
+  Objective: Concluir animação do logo antes de apresentar a Home.
+  Result: Implementado; build e 34 testes PASS.
+
+IMPLEMENTATION
+  Completed: Cut surge no centro e desliza; NicePro emerge por máscara.
+    Formação 1,2 s + pausa 0,3 s; depois fade de 270 ms.
+    Saída aguarda animação E boot; reduced-motion abre sem animação.
+  Not completed: Avaliação no Tauri dev, reservada ao mantenedor.
+  Changes: Callback real de conclusão; cleanup do tween e timeout.
+  Architecture impact: Hook de coordenação e componentes pequenos; sem dependências novas.
+  Decisões técnicas: Adaptado hero-wordmark.tsx de storytold/artcraft-services,
+    revisão e57ee3d63ac478a24149384bf1473ef97aa067f8, via GitHub.
+    Paths e cores do logo local preservados; relógio da Home continua separado do splash.
+
+FILES
+  Created: app/src/components/splash/{SplashLogo.tsx,SplashLogoArtwork.tsx,splash-motion.ts};
+    app/src/hooks/useSplashPhase.ts; app/src/test/{splash-motion.test.ts,splash-phase.test.ts};
+    relatório histórico e inventário abaixo.
+  Modified: app/src/App.tsx; app/src/screens/SplashScreen.tsx;
+    docs/product/TRACEABILITY.md; docs/reports/LATEST.txt.
+  Deleted: Nenhum arquivo.
+  Unexpected changes: Nenhuma da tarefa; alterações anteriores preservadas.
+
+VALIDATION
+  Typecheck: PASS, incluído no build.
+  Lint: SKIP, sem script configurado.
+  Unit tests: PASS, 34/34 (8 novos).
+  Integration tests: SKIP, sem execução desktop.
+  Regression tests: PASS, 26 testes anteriores.
+  Visual tests: SKIP, avaliação pelo mantenedor.
+  Runtime verification: SKIP, conforme preferência do mantenedor.
+  Total passed: 34 testes; 1 build; 1 comparação de integridade (5/5 paths SVG).
+  Total failed: 0 testes/builds/verificações finais.
+  Total skipped: 4 categorias acima.
+  FUNCTIONAL STATUS: PARTIAL (compilação e testes PASS; desktop pendente).
+  REGRESSION STATUS: PASS (escopo unitário).
+  VISUAL STATUS: PENDING HUMAN APPROVAL.
+
+HOOKS / HARNESS
+  Hooks active: Não verificados no Codex.
+  PreToolUse: Sem evidência dos hooks ZCode.
+  PostToolUse: Sem evidência dos hooks ZCode.
+  Stop: Não verificado.
+  Baseline: SKIP, mudança localizada.
+  Gate result: Verificações locais PASS; sem gate desktop.
+  Evidence: Build, Vitest, comparação dos paths e git diff --check.
+
+MCP / SKILLS
+  Tools used: GitHub fetch_file, terminal, apply_patch; frontend-ui-engineering e incremental-implementation.
+  Connection status: GitHub operacional; sem controle do computador ou subagentes.
+  Failures: Fonte ausente no arquivo local e URL web indisponível; recuperada via GitHub.
+    Python ausente; geração vetorial feita com PowerShell.
+    Primeiro patch rejeitado antes de gravar; reaplicado corretamente.
+  Pending activation: Nenhuma.
+
+GIT
+  Branch: main
+  HEAD: f1adfe584fe1b174f4e68f956f140f4f964cf0c1
+  Latest commit: feat(intro): restore GSAP choreography on shared intro clock for phase 03B.10
+  Commits created: Nenhum.
+  Push: NOT EXECUTED
+  Remote: origin -> https://github.com/FrosttyS18/CutNicePro.git; origin/main.
+  Working tree: MODIFIED / UNTRACKED (já alterado antes da tarefa).
+  Pending files: Inventário integral em docs/reports/history/2026-10-18_235000_splash-logo-animado-pending.txt.
+
+EVIDENCE
+  Commands executed: npm run build; npm test; git diff --check; git diff --stat;
+    git status; git log; comparação dos paths SVG via PowerShell.
+  Relevant logs: Vitest 6 arquivos, 34 testes PASS; Vite build PASS; 5/5 paths preservados.
+  Screenshots: Nenhuma captura; referência fornecida pelo usuário.
+  Test artifacts: splash-motion.test.ts (3); splash-phase.test.ts (5).
+  Reproduction details: Testes com mocks/timers: ordem boot/animação, fade, cleanup,
+    reduced-motion e geometria temporal; não equivalem a execução real do Tauri.
+
+ISSUES
+  Bugs found: Boot rápido removia o splash antes de qualquer apresentação do logo.
+  Unresolved failures: Nenhuma nas verificações finais.
+  Regressions: Nenhuma nos testes executados; desktop não testado.
+  Risks: Aviso Vite de bundle acima de 500 kB; fora do escopo.
+  Blockers: Nenhum para implementação.
+
+FINAL
+  Delivery status: Código pronto; validação manual pendente.
+  Requirements met: Animação vetorial e espera pelo término antes da Home.
+  Remaining work: Conferir movimento e transição no Tauri dev.
+  User action required: Avaliação visual pelo mantenedor.
+  Restart required: Para rever o splash, reabrir ou recarregar o app.
+  Ready for next task: Sim, sujeito à aprovação visual.
+
+REPORT
+  Latest file: docs/reports/LATEST.txt
+  Historical file: docs/reports/history/2026-10-18_235000_splash-logo-animado.txt
+
+END OF REPORT

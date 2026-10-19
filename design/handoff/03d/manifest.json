@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "state": "DRAFT",
+  "frames": [
+    {
+      "id": 2,
+      "name": "Preparação"
+    },
+    {
+      "id": 16,
+      "name": "Visão do projeto"
+    },
+    {
+      "id": 33,
+      "name": "Editor"
+    }
+  ],
+  "aestheticApproval": "PENDING HUMAN APPROVAL"
+}

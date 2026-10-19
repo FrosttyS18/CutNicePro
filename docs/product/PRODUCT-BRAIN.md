@@ -107,6 +107,8 @@ entre decisões aprovadas → BLOCKED para resolução humana.
 | ART-005 | 01 — FIRST RUN & ACCESS USER FLOW V2 | User flow piloto | V2 (02A.3) | roadmap / frame 799 | GATE V3 PASS (02A.4) | PENDING | candidata a superseder ART-002* | JRN-001/002/014; BR-037/049; DEC-011/012 | Não (IN REVIEW) |
 | ART-006 | Proposta A — Creative Studio | Proposta de UI | Fase 01 | UI - designer / frame 2 | n/a | — | — | UX-FOUNDATION §8 | Não (REFERENCE) |
 | ART-007 | Proposta B — AI Clip Workspace | Proposta de UI | Fase 01 | UI - designer / frame 154 | n/a | — | — | UX-FOUNDATION §8 | Não (REFERENCE) |
+| ART-008 | Home Galaxy CutNicePro | UI implementada | 03B | Home atual no app; origem UI - designer | Ver relatórios 03B | APPROVED em 2026-10-19 | — | JRN-001/002; FR-001/002 | Sim, Home aprovada pelo mantenedor |
+| ART-009 | Entrada, projeto e editor | v1 REJECTED pelo mantenedor; correção v2 IN REVIEW | 03E v2 | Fonte própria: frames 2262/2440/2391; design/handoff/03d/flow-ui-v1.figcraft (rascunhos) | Build, 15 Rust e 13 runtime PASS (escopo) | PENDING HUMAN APPROVAL | — | UPLOAD-SCREEN.md; JRN-003/004/006/008/009 | Escopo de implementação autorizado; estética IN REVIEW |
 
 \* Journey Map (ART-001) e Product Flow Overview (ART-004) são artefatos
 metodologicamente DISTINTOS (jornada × fluxo): um não supersede o outro. A
@@ -121,6 +123,8 @@ do próximo ciclo de planejamento. Próxima ação comum: auditoria/aprovação 
 mantenedor; nenhum wireframe deve derivar destes artefatos antes de APPROVED.
 
 ## 11. Última revisão
+
+2026-10-19 — Home aprovada expressamente pelo mantenedor (ART-008). Autorizada a implementação das telas de envio, preparação, visão do projeto e editor antes da integração do motor (ART-009). `docs/product/UPLOAD-SCREEN.md` registra escopo, limites de demonstração e rastreabilidade. Permanecem fora desta entrega: transcrição real, download de vídeo, render/export e integração Local/BYOK. A autorização específica não aprova globalmente as demais jornadas históricas.
 
 2026-10-18 — **Decisão OPERACIONAL (não-produto): Protocolo Permanente de
 Validação e Economia de Execução** (mantenedor): aprovação estética/visual é
@@ -153,3 +157,7 @@ Graphify: INSTALLED — INITIAL INDEX PENDING (sem código-fonte; docs/TOOLING.m
 PRODUCT-BRAIN ≠ grafo de código: durante a fase de produto, a rastreabilidade é a
 documentação estruturada acima (IDs explícitos). Quando houver código, avaliar integração
 das relações de implementação ao Graphify, sem afirmar indexação automática sem evidência.
+
+2026-10-19 — Revisão 03E: mantenedor rejeitou fluxo de criação vazia, preparação simulada e proporções da 03D. UPLOAD-SCREEN.md registra correção solicitada e aceites de viewport; v1 histórico rejeitado, v2 pendente de aprovação humana. Home continua aprovada.
+
+2026-10-19 — Refinamento 03F de ART-009: modal de estilos e cursor/foco da timeline; UI ainda IN REVIEW. Estado e proposta de integração incremental do motor em docs/engineering/ENGINE-HANDOFF.md. Nenhuma IA instalada nem decisão de runtime/modelo promovida a aprovada.

@@ -1,0 +1,511 @@
+{
+  "document": {
+    "colorProfile": "srgb",
+    "currentPage": 1,
+    "dirty": false,
+    "history": {
+      "redo": 0,
+      "undo": []
+    },
+    "images": 18,
+    "name": "CutNicePro Fase 01 - Propostas UI",
+    "pages": [
+      {
+        "background": "#1E1E1E",
+        "childCount": 11,
+        "id": 286,
+        "name": "roadmap",
+        "type": "PAGE"
+      },
+      {
+        "background": "#1E1E1E",
+        "childCount": 35,
+        "id": 282,
+        "name": "Referencias",
+        "type": "PAGE"
+      },
+      {
+        "background": "#1E1E1E",
+        "children": [
+          {
+            "absoluteBounds": {
+              "height": 900,
+              "width": 1440,
+              "x": 3553,
+              "y": 0
+            },
+            "childCount": 1,
+            "clip": true,
+            "cornerRadius": 30,
+            "fills": [
+              {
+                "color": "#000000",
+                "type": "solid"
+              }
+            ],
+            "height": 900,
+            "id": 1331,
+            "name": "Ao abrir o App",
+            "type": "FRAME",
+            "width": 1440,
+            "x": 3553,
+            "y": 0
+          },
+          {
+            "absoluteBounds": {
+              "height": 900,
+              "width": 1440,
+              "x": 3553,
+              "y": 965
+            },
+            "childCount": 10,
+            "clip": true,
+            "cornerRadius": 30,
+            "fills": [
+              {
+                "color": "#000000",
+                "type": "solid"
+              }
+            ],
+            "height": 900,
+            "id": 1338,
+            "name": "Home - Expandida",
+            "type": "FRAME",
+            "width": 1440,
+            "x": 3553,
+            "y": 965
+          },
+          {
+            "absoluteBounds": {
+              "height": 900,
+              "width": 1440,
+              "x": 5021,
+              "y": 965
+            },
+            "childCount": 8,
+            "clip": true,
+            "cornerRadius": 30,
+            "fills": [
+              {
+                "color": "#000000",
+                "type": "solid"
+              }
+            ],
+            "height": 900,
+            "id": 1384,
+            "name": "Home - curta",
+            "type": "FRAME",
+            "width": 1440,
+            "x": 5021,
+            "y": 965
+          },
+          {
+            "absoluteBounds": {
+              "height": 900,
+              "width": 1440,
+              "x": 3553,
+              "y": 1963
+            },
+            "childCount": 11,
+            "clip": true,
+            "cornerRadius": 30,
+            "fills": [
+              {
+                "color": "#000000",
+                "type": "solid"
+              }
+            ],
+            "height": 900,
+            "id": 1427,
+            "name": "Meus projetos - Todos",
+            "type": "FRAME",
+            "width": 1440,
+            "x": 3553,
+            "y": 1963
+          },
+          {
+            "absoluteBounds": {
+              "height": 900,
+              "width": 1440,
+              "x": 5021,
+              "y": 1963
+            },
+            "childCount": 11,
+            "clip": true,
+            "cornerRadius": 30,
+            "fills": [
+              {
+                "color": "#000000",
+                "type": "solid"
+              }
+            ],
+            "height": 900,
+            "id": 1482,
+            "name": "Meus projetos - Coleções",
+            "type": "FRAME",
+            "width": 1440,
+            "x": 5021,
+            "y": 1963
+          },
+          {
+            "absoluteBounds": {
+              "height": 900,
+              "width": 1440,
+              "x": 6489,
+              "y": 1963
+            },
+            "childCount": 11,
+            "clip": true,
+            "cornerRadius": 30,
+            "fills": [
+              {
+                "color": "#000000",
+                "type": "solid"
+              }
+            ],
+            "height": 900,
+            "id": 1540,
+            "name": "Meus projetos - Coleções > Pasta de coleção",
+            "type": "FRAME",
+            "width": 1440,
+            "x": 6489,
+            "y": 1963
+          },
+          {
+            "absoluteBounds": {
+              "height": 900,
+              "width": 1440,
+              "x": -247,
+              "y": 3488
+            },
+            "childCount": 17,
+            "clip": true,
+            "cornerRadius": 30,
+            "fills": [
+              {
+                "color": "#000000",
+                "type": "solid"
+              }
+            ],
+            "height": 900,
+            "id": 2262,
+            "name": "Meus projetos - Clicar em Enviar Video",
+            "type": "FRAME",
+            "width": 1440,
+            "x": -247,
+            "y": 3488
+          },
+          {
+            "absoluteBounds": {
+              "height": 64.98,
+              "width": 242.5,
+              "x": 1099,
+              "y": 3672.02
+            },
+            "height": 64.98,
+            "id": 2382,
+            "name": "Vector 586",
+            "segments": 1,
+            "strokeAlign": "center",
+            "strokeWeight": 1,
+            "strokes": [
+              {
+                "color": "#FFFFFF",
+                "type": "solid"
+              }
+            ],
+            "type": "VECTOR",
+            "vertices": 2,
+            "width": 242.5,
+            "x": 1099,
+            "y": 3672.02
+          },
+          {
+            "absoluteBounds": {
+              "height": 172,
+              "width": 480,
+              "x": 686.5,
+              "y": 3879.02
+            },
+            "height": 172,
+            "id": 2383,
+            "name": "Vector 587",
+            "segments": 1,
+            "strokeAlign": "center",
+            "strokeWeight": 1,
+            "strokes": [
+              {
+                "color": "#FFFFFF",
+                "type": "solid"
+              }
+            ],
+            "type": "VECTOR",
+            "vertices": 2,
+            "width": 480,
+            "x": 686.5,
+            "y": 4051.02
+          },
+          {
+            "absoluteBounds": {
+              "height": 174,
+              "width": 210,
+              "x": 1262,
+              "y": 3599
+            },
+            "cornerRadius": 24,
+            "fills": [
+              {
+                "color": "#D9D9D9",
+                "type": "solid"
+              }
+            ],
+            "height": 174,
+            "id": 2384,
+            "name": "Rectangle 15",
+            "type": "RECTANGLE",
+            "width": 210,
+            "x": 1262,
+            "y": 3599
+          },
+          {
+            "absoluteBounds": {
+              "height": 174,
+              "width": 210,
+              "x": 1087,
+              "y": 3978
+            },
+            "cornerRadius": 24,
+            "fills": [
+              {
+                "color": "#D9D9D9",
+                "type": "solid"
+              }
+            ],
+            "height": 174,
+            "id": 2385,
+            "name": "Rectangle 16",
+            "type": "RECTANGLE",
+            "width": 210,
+            "x": 1087,
+            "y": 3978
+          },
+          {
+            "absoluteBounds": {
+              "height": 58,
+              "width": 185.28,
+              "x": 1273.86,
+              "y": 3657
+            },
+            "characters": "aqui são atalhos de ferramentas",
+            "fills": [
+              {
+                "color": "#000000",
+                "type": "solid"
+              }
+            ],
+            "fontFamily": "Poppins",
+            "fontSize": 19.33333396911621,
+            "fontStyle": "Regular",
+            "height": 58,
+            "id": 2386,
+            "letterSpacing": "0%",
+            "lineHeight": "Auto",
+            "name": "aqui são atalhos de ferramentas",
+            "sizing": {
+              "horizontal": "fixed",
+              "vertical": "hug"
+            },
+            "textAlign": "center",
+            "textAutoResize": "height",
+            "type": "TEXT",
+            "width": 185.28,
+            "x": 1273.86,
+            "y": 3657
+          },
+          {
+            "absoluteBounds": {
+              "height": 145,
+              "width": 185.28,
+              "x": 1098.86,
+              "y": 3992
+            },
+            "characters": "ao clicar na ferramenta lengendas esse é o modal que aparece.",
+            "fills": [
+              {
+                "color": "#000000",
+                "type": "solid"
+              }
+            ],
+            "fontFamily": "Poppins",
+            "fontSize": 19.33333396911621,
+            "fontStyle": "Regular",
+            "height": 145,
+            "id": 2387,
+            "letterSpacing": "0%",
+            "lineHeight": "Auto",
+            "name": "ao clicar na ferramenta lengendas esse é o modal que aparece.",
+            "sizing": {
+              "horizontal": "fixed",
+              "vertical": "hug"
+            },
+            "textAlign": "center",
+            "textAutoResize": "height",
+            "type": "TEXT",
+            "width": 185.28,
+            "x": 1098.86,
+            "y": 3992
+          },
+          {
+            "absoluteBounds": {
+              "height": 174,
+              "width": 210,
+              "x": 924,
+              "y": 3314
+            },
+            "childCount": 2,
+            "height": 174,
+            "id": 2388,
+            "name": "Group 22",
+            "type": "GROUP",
+            "width": 210,
+            "x": 924,
+            "y": 3314
+          },
+          {
+            "absoluteBounds": {
+              "height": 720,
+              "width": 504,
+              "x": 2070,
+              "y": 3710
+            },
+            "childCount": 36,
+            "clip": false,
+            "height": 720,
+            "id": 2391,
+            "name": "Card da ferramenta de legenda",
+            "type": "FRAME",
+            "width": 504,
+            "x": 2070,
+            "y": 3710
+          },
+          {
+            "absoluteBounds": {
+              "height": 402,
+              "width": 504,
+              "x": 1305,
+              "y": 4028
+            },
+            "childCount": 10,
+            "clip": false,
+            "height": 402,
+            "id": 2440,
+            "name": "Card da ferramenta de legenda",
+            "type": "FRAME",
+            "width": 504,
+            "x": 1305,
+            "y": 4028
+          },
+          {
+            "absoluteBounds": {
+              "height": 290.85,
+              "width": 288.97,
+              "x": 1679,
+              "y": 4162
+            },
+            "height": 101,
+            "id": 2463,
+            "name": "Vector 588",
+            "rotation": 45.37,
+            "segments": 1,
+            "strokeAlign": "center",
+            "strokeWeight": 1,
+            "strokes": [
+              {
+                "color": "#FFFFFF",
+                "type": "solid"
+              }
+            ],
+            "type": "VECTOR",
+            "vertices": 2,
+            "width": 309,
+            "x": 1750.87,
+            "y": 4452.85
+          },
+          {
+            "absoluteBounds": {
+              "height": 174,
+              "width": 210,
+              "x": 1846,
+              "y": 4100
+            },
+            "cornerRadius": 24,
+            "fills": [
+              {
+                "color": "#D9D9D9",
+                "type": "solid"
+              }
+            ],
+            "height": 174,
+            "id": 2464,
+            "name": "Rectangle 17",
+            "type": "RECTANGLE",
+            "width": 210,
+            "x": 1846,
+            "y": 4100
+          },
+          {
+            "absoluteBounds": {
+              "height": 116,
+              "width": 185.28,
+              "x": 1857.86,
+              "y": 4123
+            },
+            "characters": "ao carregar o video, aparece as opções de legendas",
+            "fills": [
+              {
+                "color": "#000000",
+                "type": "solid"
+              }
+            ],
+            "fontFamily": "Poppins",
+            "fontSize": 19.33333396911621,
+            "fontStyle": "Regular",
+            "height": 116,
+            "id": 2465,
+            "letterSpacing": "0%",
+            "lineHeight": "Auto",
+            "name": "ao carregar o video, aparece as opções de legendas",
+            "sizing": {
+              "horizontal": "fixed",
+              "vertical": "hug"
+            },
+            "textAlign": "center",
+            "textAutoResize": "height",
+            "type": "TEXT",
+            "width": 185.28,
+            "x": 1857.86,
+            "y": 4123
+          }
+        ],
+        "id": 1,
+        "name": "UI - designer",
+        "type": "PAGE"
+      }
+    ],
+    "path": "C:/CutNicePro/design/cutnicepro-fase01-propostas.figcraft",
+    "selection": [],
+    "styles": [],
+    "textEdit": null,
+    "variables": 0
+  },
+  "opened": {
+    "index": 1,
+    "repairs": [],
+    "summary": {
+      "images": 18,
+      "layers": 1669,
+      "name": "CutNicePro Fase 01 - Propostas UI",
+      "pages": 3
+    }
+  }
+}

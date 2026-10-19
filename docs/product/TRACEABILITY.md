@@ -87,6 +87,30 @@ afirmados. Evidências: relatório Fase 03 (testes + execução desktop + screen
   são V1/Won't-now por decisão de escopo, não lacuna).
 - Duplicações integrais de conteúdo entre documentos: nenhuma (Brain é índice).
 
+## Fluxo de mídia e editor — 2026-10-19
+
+- Home aprovada pelo mantenedor; nova entrada pelo CTA e item independente Enviar vídeo (não marca Todos).
+- Fonte própria consultada via MCP FigCraft attached: frames 2262, 2440 e 2391; dumps em `docs/reports/evidence/03c/`. Prints do OpusClip enviados depois orientam apenas fluxo e responsabilidades, preservando identidade CutNicePro.
+- Jornadas JRN-003/004/006/008/009; FR-003/004/005/006/007/008/011/012/013 e NFR-005; BR-001/006/007/012/022. Contrato detalhado em `UPLOAD-SCREEN.md`; implementação de interface não conclui os requisitos de processamento correspondentes.
+- Fluxo autorizado: referência/arquivo → preparação demonstrativa → projeto persistido → editor; reabertura pelo catálogo/recentes mostra resumo e transcrição identificada como exemplo. Renomeação persiste no storage Rust; ajustes da UI são versionados por projeto.
+- Mídia binária apenas na sessão; reconexão após reinício. YouTube apenas referência; exportação/IA Local/BYOK pendentes por escopo explícito do mantenedor.
+- Testes: `workspace.test.ts`, `video-source.test.ts`, `video-inspection.test.ts`, teste Rust de renomeação e runtime isolado 03D. Aprovação visual continua humana.
+
+## Splash animado autorizado — 2026-10-18
+
+- Solicitação do mantenedor: formar o logo do splash antes de revelar a Home, mesmo quando o boot termina rapidamente.
+- Referência técnica: `storytold/artcraft-services`, commit `e57ee3d63ac478a24149384bf1473ef97aa067f8`, `frontend/apps/artcraft-website-next/src/components/landing/hero-wordmark.tsx` (consultado via GitHub).
+- Adaptação revisada pelo mantenedor: apenas C centralizado desliza para a posição original; utNicePro surge como superfície única por trás da borda do C. Path Cut separado em C e ut sem alterar os comandos vetoriais, cores ou geometria final. Sequência ampliada de 1,5 s para 3 s: formação até 2,5 s e pausa final de 0,5 s; fade existente de 270 ms.
+- Aceite: saída exige boot concluído e callback real de conclusão da animação; gate da Home liberado após fade; reduced-motion sem animação; cleanup cancela tween e timeout.
+- Impacto: splash existente e coordenação do boot; nenhuma tela nova. Testes: `splash-motion.test.ts`, `splash-phase.test.ts`. Visual: PENDING HUMAN APPROVAL.
+
+## Ajuste autorizado da Home — 2026-10-18
+
+- Solicitação do mantenedor: repetir a entrada completa ao voltar de outra aba para a Home, substituindo a política de uma apresentação por sessão da 03B.11.
+- Impacto: navegação existente para a Home; `IntroConductor` reinicia em cada montagem. Gate do splash, relógio compartilhado e movimento reduzido preservados. Nenhuma tela ou jornada nova.
+- Aceite: retorno com sessão já marcada reinicia texto e clock; abertura aguarda o gate; movimento reduzido permanece assentado. Cobertura automatizada: `app/src/test/intro-conductor.test.ts`.
+- Sidebar: continuidade da divisória na titlebar, com a mesma largura e cor do rail; aprovação visual pelo mantenedor.
+
 ## 5. READINESS GATE — PRODUCT MODEL & UX FLOW (02A.1)
 
 **Status: PARTIAL** — estrutura válida e consistente (auditoria limpa; modelo comercial
@@ -100,3 +124,9 @@ modelos de IA + armazenamento de segredos) permanecem pendentes.
   (históricas). Reavaliada sem apagar: DEC-002 via DEC-011.
 - Pronto para wireframes: CONDICIONAL — estruturas de fluxo/jornadas suportam wireframes
   de baixo risco; UI definitiva exige aprovação das pendências (PRODUCT DESIGN GATE).
+
+### Correção 03E (2026-10-19)
+
+JRN-003/004/006/008/009; FR-003/004/005/006/007/008/011/012/013: Novo projeto direciona ao envio; importação abre visão do vídeo; coleções organizam projetos. Aceites de navegação, player limitado por viewport, timeline visível, seleção controlada e caneta em UPLOAD-SCREEN.md §Correção 03E. Preparação 03D com timers e texto demonstrativo não é mais contrato vigente. Motor continua pendente.
+
+03F — JRN-006/008/009 e FR-007/008/011/012: seleção visual de estilos em modal e navegação temporal por mouse/teclado. Contrato em UPLOAD-SCREEN.md; dependências do motor no ENGINE-HANDOFF.md, sem alegar conclusão das funcionalidades de IA/export.

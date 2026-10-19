@@ -1,0 +1,2205 @@
+{
+  "colorProfile": "srgb",
+  "currentPage": 1,
+  "dirty": false,
+  "history": {
+    "redo": 0,
+    "undo": []
+  },
+  "images": 18,
+  "name": "CutNicePro Fase 01 - Propostas UI",
+  "pages": [
+    {
+      "background": "#1E1E1E",
+      "children": [
+        {
+          "absoluteBounds": {
+            "height": 1660,
+            "width": 2330,
+            "x": 4852,
+            "y": -448
+          },
+          "childCount": 8,
+          "clip": true,
+          "cornerRadius": 12,
+          "fills": [
+            {
+              "color": "#000000",
+              "type": "solid"
+            }
+          ],
+          "height": 1660,
+          "id": 368,
+          "layout": {
+            "columnTracks": [],
+            "contentAlign": "auto",
+            "crossAlign": "min",
+            "crossGap": 10,
+            "gap": 14,
+            "gridColumns": 2,
+            "gridRows": 2,
+            "mainAlign": "min",
+            "mode": "vertical",
+            "padding": [
+              32,
+              32,
+              32,
+              32
+            ],
+            "reverseZ": false,
+            "rowTracks": [],
+            "strokesIncluded": true,
+            "wrap": false
+          },
+          "name": "MASTER USER FLOW — CUTNICEPRO (02A.1)",
+          "sizing": {
+            "horizontal": "fixed",
+            "vertical": "fixed"
+          },
+          "type": "FRAME",
+          "width": 2330,
+          "x": 4852,
+          "y": -448
+        },
+        {
+          "absoluteBounds": {
+            "height": 1010,
+            "width": 2330,
+            "x": 0,
+            "y": -123
+          },
+          "childCount": 8,
+          "clip": true,
+          "cornerRadius": 12,
+          "fills": [
+            {
+              "color": "#000000",
+              "type": "solid"
+            }
+          ],
+          "height": 1010,
+          "id": 436,
+          "layout": {
+            "columnTracks": [],
+            "contentAlign": "auto",
+            "crossAlign": "min",
+            "crossGap": 10,
+            "gap": 18,
+            "gridColumns": 2,
+            "gridRows": 2,
+            "mainAlign": "min",
+            "mode": "vertical",
+            "padding": [
+              32,
+              32,
+              32,
+              32
+            ],
+            "reverseZ": false,
+            "rowTracks": [],
+            "strokesIncluded": true,
+            "wrap": false
+          },
+          "name": "JOURNEY MAP — CUTNICEPRO END-TO-END (02A.1)",
+          "sizing": {
+            "horizontal": "fixed",
+            "vertical": "fixed"
+          },
+          "type": "FRAME",
+          "width": 2330,
+          "x": 0,
+          "y": -123
+        },
+        {
+          "absoluteBounds": {
+            "height": 1211.32,
+            "width": 2275.35,
+            "x": 0,
+            "y": 1063.19
+          },
+          "childCount": 13,
+          "clip": true,
+          "cornerRadius": 16.517970990459574,
+          "fills": [
+            {
+              "color": "#000000",
+              "type": "solid"
+            }
+          ],
+          "height": 1211.32,
+          "id": 656,
+          "layout": {
+            "columnTracks": [],
+            "contentAlign": "auto",
+            "crossAlign": "min",
+            "crossGap": 13.76497582538298,
+            "gap": 13.76497582538298,
+            "gridColumns": 2,
+            "gridRows": 2,
+            "mainAlign": "min",
+            "mode": "vertical",
+            "padding": [
+              44.04792264122553,
+              44.04792264122553,
+              44.04792264122553,
+              44.04792264122553
+            ],
+            "reverseZ": false,
+            "rowTracks": [],
+            "strokesIncluded": true,
+            "wrap": false
+          },
+          "name": "PRODUCT DELIVERY ROADMAP — CUTNICEPRO (02A.1)",
+          "sizing": {
+            "horizontal": "fixed",
+            "vertical": "fixed"
+          },
+          "type": "FRAME",
+          "width": 2275.35,
+          "x": 0,
+          "y": 1063.19
+        },
+        {
+          "absoluteBounds": {
+            "height": 1360,
+            "width": 2330,
+            "x": 2460,
+            "y": -123
+          },
+          "childCount": 49,
+          "clip": true,
+          "cornerRadius": 12,
+          "fills": [
+            {
+              "color": "#000000",
+              "type": "solid"
+            }
+          ],
+          "height": 1360,
+          "id": 728,
+          "name": "00 — PRODUCT FLOW OVERVIEW V2",
+          "strokeAlign": "inside",
+          "strokeWeight": 1,
+          "strokes": [
+            {
+              "color": "#3A3A3C",
+              "type": "solid"
+            }
+          ],
+          "type": "FRAME",
+          "width": 2330,
+          "x": 2460,
+          "y": -123
+        },
+        {
+          "absoluteBounds": {
+            "height": 1180,
+            "width": 3656,
+            "x": 2460,
+            "y": 1337
+          },
+          "childCount": 63,
+          "clip": true,
+          "cornerRadius": 12,
+          "fills": [
+            {
+              "color": "#000000",
+              "type": "solid"
+            }
+          ],
+          "height": 1180,
+          "id": 799,
+          "name": "01 — FIRST RUN & ACCESS USER FLOW V2",
+          "strokeAlign": "inside",
+          "strokeWeight": 1,
+          "strokes": [
+            {
+              "color": "#3A3A3C",
+              "type": "solid"
+            }
+          ],
+          "type": "FRAME",
+          "width": 3656,
+          "x": 2460,
+          "y": 1337
+        },
+        {
+          "absoluteBounds": {
+            "height": 310,
+            "width": 2330,
+            "x": 0,
+            "y": -538
+          },
+          "childCount": 7,
+          "clip": true,
+          "cornerRadius": 12,
+          "fills": [
+            {
+              "color": "#000000",
+              "type": "solid"
+            }
+          ],
+          "height": 310,
+          "id": 927,
+          "layout": {
+            "columnTracks": [],
+            "contentAlign": "auto",
+            "crossAlign": "min",
+            "crossGap": 10,
+            "gap": 10,
+            "gridColumns": 2,
+            "gridRows": 2,
+            "mainAlign": "min",
+            "mode": "vertical",
+            "padding": [
+              24,
+              24,
+              24,
+              24
+            ],
+            "reverseZ": false,
+            "rowTracks": [],
+            "strokesIncluded": true,
+            "wrap": false
+          },
+          "name": "GOV-INDEX",
+          "sizing": {
+            "horizontal": "fixed",
+            "vertical": "fixed"
+          },
+          "strokeAlign": "inside",
+          "strokeWeight": 1,
+          "strokes": [
+            {
+              "color": "#3A3A3C",
+              "type": "solid"
+            }
+          ],
+          "type": "FRAME",
+          "width": 2330,
+          "x": 0,
+          "y": -538
+        },
+        {
+          "absoluteBounds": {
+            "height": 30,
+            "width": 560,
+            "x": 0,
+            "y": -165
+          },
+          "childCount": 1,
+          "clip": true,
+          "cornerRadius": 6,
+          "fills": [
+            {
+              "color": "#231F20",
+              "type": "solid"
+            }
+          ],
+          "height": 30,
+          "id": 935,
+          "layout": {
+            "columnTracks": [],
+            "contentAlign": "auto",
+            "crossAlign": "center",
+            "crossGap": 10,
+            "gap": 0,
+            "gridColumns": 2,
+            "gridRows": 2,
+            "mainAlign": "center",
+            "mode": "horizontal",
+            "padding": [
+              4,
+              12,
+              4,
+              12
+            ],
+            "reverseZ": false,
+            "rowTracks": [],
+            "strokesIncluded": true,
+            "wrap": false
+          },
+          "name": "GOV-CHIP-436",
+          "sizing": {
+            "horizontal": "fixed",
+            "vertical": "fixed"
+          },
+          "strokeAlign": "inside",
+          "strokeWeight": 1.5,
+          "strokes": [
+            {
+              "color": "#B9BBBD",
+              "type": "solid"
+            }
+          ],
+          "type": "FRAME",
+          "width": 560,
+          "x": 0,
+          "y": -165
+        },
+        {
+          "absoluteBounds": {
+            "height": 30,
+            "width": 700,
+            "x": 4852,
+            "y": -553
+          },
+          "childCount": 1,
+          "clip": true,
+          "cornerRadius": 6,
+          "fills": [
+            {
+              "color": "#231F20",
+              "type": "solid"
+            }
+          ],
+          "height": 30,
+          "id": 936,
+          "layout": {
+            "columnTracks": [],
+            "contentAlign": "auto",
+            "crossAlign": "center",
+            "crossGap": 10,
+            "gap": 0,
+            "gridColumns": 2,
+            "gridRows": 2,
+            "mainAlign": "center",
+            "mode": "horizontal",
+            "padding": [
+              4,
+              12,
+              4,
+              12
+            ],
+            "reverseZ": false,
+            "rowTracks": [],
+            "strokesIncluded": true,
+            "wrap": false
+          },
+          "name": "GOV-CHIP-368",
+          "sizing": {
+            "horizontal": "fixed",
+            "vertical": "fixed"
+          },
+          "strokeAlign": "inside",
+          "strokeWeight": 1.5,
+          "strokes": [
+            {
+              "color": "#E5484D",
+              "type": "solid"
+            }
+          ],
+          "type": "FRAME",
+          "width": 700,
+          "x": 4852,
+          "y": -553
+        },
+        {
+          "absoluteBounds": {
+            "height": 41.29,
+            "width": 880.96,
+            "x": 0,
+            "y": 1004
+          },
+          "childCount": 1,
+          "clip": true,
+          "cornerRadius": 8.258985495229787,
+          "fills": [
+            {
+              "color": "#231F20",
+              "type": "solid"
+            }
+          ],
+          "height": 41.29,
+          "id": 937,
+          "layout": {
+            "columnTracks": [],
+            "contentAlign": "auto",
+            "crossAlign": "center",
+            "crossGap": 13.76497582538298,
+            "gap": 0,
+            "gridColumns": 2,
+            "gridRows": 2,
+            "mainAlign": "center",
+            "mode": "horizontal",
+            "padding": [
+              5.505990330153192,
+              16.517970990459574,
+              5.505990330153192,
+              16.517970990459574
+            ],
+            "reverseZ": false,
+            "rowTracks": [],
+            "strokesIncluded": true,
+            "wrap": false
+          },
+          "name": "GOV-CHIP-656",
+          "sizing": {
+            "horizontal": "fixed",
+            "vertical": "fixed"
+          },
+          "strokeAlign": "inside",
+          "strokeWeight": 2.0647463738074467,
+          "strokes": [
+            {
+              "color": "#B9BBBD",
+              "type": "solid"
+            }
+          ],
+          "type": "FRAME",
+          "width": 880.96,
+          "x": 0,
+          "y": 1004
+        },
+        {
+          "absoluteBounds": {
+            "height": 30,
+            "width": 620,
+            "x": 2460,
+            "y": -165
+          },
+          "childCount": 1,
+          "clip": true,
+          "cornerRadius": 6,
+          "fills": [
+            {
+              "color": "#231F20",
+              "type": "solid"
+            }
+          ],
+          "height": 30,
+          "id": 938,
+          "layout": {
+            "columnTracks": [],
+            "contentAlign": "auto",
+            "crossAlign": "center",
+            "crossGap": 10,
+            "gap": 0,
+            "gridColumns": 2,
+            "gridRows": 2,
+            "mainAlign": "center",
+            "mode": "horizontal",
+            "padding": [
+              4,
+              12,
+              4,
+              12
+            ],
+            "reverseZ": false,
+            "rowTracks": [],
+            "strokesIncluded": true,
+            "wrap": false
+          },
+          "name": "GOV-CHIP-728",
+          "sizing": {
+            "horizontal": "fixed",
+            "vertical": "fixed"
+          },
+          "strokeAlign": "inside",
+          "strokeWeight": 1.5,
+          "strokes": [
+            {
+              "color": "#02C2BE",
+              "type": "solid"
+            }
+          ],
+          "type": "FRAME",
+          "width": 620,
+          "x": 2460,
+          "y": -165
+        },
+        {
+          "absoluteBounds": {
+            "height": 30,
+            "width": 660,
+            "x": 2460,
+            "y": 1297
+          },
+          "childCount": 1,
+          "clip": true,
+          "cornerRadius": 6,
+          "fills": [
+            {
+              "color": "#231F20",
+              "type": "solid"
+            }
+          ],
+          "height": 30,
+          "id": 939,
+          "layout": {
+            "columnTracks": [],
+            "contentAlign": "auto",
+            "crossAlign": "center",
+            "crossGap": 10,
+            "gap": 0,
+            "gridColumns": 2,
+            "gridRows": 2,
+            "mainAlign": "center",
+            "mode": "horizontal",
+            "padding": [
+              4,
+              12,
+              4,
+              12
+            ],
+            "reverseZ": false,
+            "rowTracks": [],
+            "strokesIncluded": true,
+            "wrap": false
+          },
+          "name": "GOV-CHIP-799",
+          "sizing": {
+            "horizontal": "fixed",
+            "vertical": "fixed"
+          },
+          "strokeAlign": "inside",
+          "strokeWeight": 1.5,
+          "strokes": [
+            {
+              "color": "#02C2BE",
+              "type": "solid"
+            }
+          ],
+          "type": "FRAME",
+          "width": 660,
+          "x": 2460,
+          "y": 1297
+        }
+      ],
+      "id": 286,
+      "name": "roadmap",
+      "type": "PAGE"
+    },
+    {
+      "background": "#1E1E1E",
+      "children": [
+        {
+          "absoluteBounds": {
+            "height": 896.5,
+            "width": 1000,
+            "x": 724,
+            "y": 13
+          },
+          "fills": [
+            {
+              "blend": "normal",
+              "crop": null,
+              "filters": {
+                "contrast": 0,
+                "exposure": 0,
+                "highlights": 0,
+                "saturation": 0,
+                "shadows": 0,
+                "temperature": 0,
+                "tint": 0
+              },
+              "image": "05eb830323316c683bbb5ba71fc3fc3bd466641f00c54f97b874b8ee02001db2",
+              "opacity": 1,
+              "rotation": 0,
+              "scale": 1,
+              "scale_mode": "fill",
+              "type": "image",
+              "visible": true
+            }
+          ],
+          "height": 896.5,
+          "id": 284,
+          "name": "Pasted image",
+          "type": "RECTANGLE",
+          "width": 1000,
+          "x": 724,
+          "y": 13
+        },
+        {
+          "absoluteBounds": {
+            "height": 641.78,
+            "width": 1000,
+            "x": 1765,
+            "y": 13
+          },
+          "fills": [
+            {
+              "blend": "normal",
+              "crop": null,
+              "filters": {
+                "contrast": 0,
+                "exposure": 0,
+                "highlights": 0,
+                "saturation": 0,
+                "shadows": 0,
+                "temperature": 0,
+                "tint": 0
+              },
+              "image": "22507223c4c4165e79fa7d8b3c944489613da006d4e66901707bd7baca162459",
+              "opacity": 1,
+              "rotation": 0,
+              "scale": 1,
+              "scale_mode": "fill",
+              "type": "image",
+              "visible": true
+            }
+          ],
+          "height": 641.78,
+          "id": 285,
+          "name": "Pasted image",
+          "type": "RECTANGLE",
+          "width": 1000,
+          "x": 1765,
+          "y": 13
+        },
+        {
+          "absoluteBounds": {
+            "height": 751.2,
+            "width": 1000,
+            "x": 2846,
+            "y": 729
+          },
+          "fills": [
+            {
+              "blend": "normal",
+              "crop": null,
+              "filters": {
+                "contrast": 0,
+                "exposure": 0,
+                "highlights": 0,
+                "saturation": 0,
+                "shadows": 0,
+                "temperature": 0,
+                "tint": 0
+              },
+              "image": "7ea1f0363b46311a1624feb5fb805c034b4c6d67fc7638482f7c8c8f1aa62afc",
+              "opacity": 1,
+              "rotation": 0,
+              "scale": 1,
+              "scale_mode": "fill",
+              "type": "image",
+              "visible": true
+            }
+          ],
+          "height": 751.2,
+          "id": 923,
+          "name": "03",
+          "type": "RECTANGLE",
+          "width": 1000,
+          "x": 2846,
+          "y": 729
+        },
+        {
+          "absoluteBounds": {
+            "height": 674.96,
+            "width": 1000,
+            "x": 2837,
+            "y": 13
+          },
+          "fills": [
+            {
+              "blend": "normal",
+              "crop": null,
+              "filters": {
+                "contrast": 0,
+                "exposure": 0,
+                "highlights": 0,
+                "saturation": 0,
+                "shadows": 0,
+                "temperature": 0,
+                "tint": 0
+              },
+              "image": "0b8002c892827e6b0471acfec9a1c97ee28b1f638a472a15858254c562fe8e13",
+              "opacity": 1,
+              "rotation": 0,
+              "scale": 1,
+              "scale_mode": "fill",
+              "type": "image",
+              "visible": true
+            }
+          ],
+          "height": 674.96,
+          "id": 924,
+          "name": "04",
+          "type": "RECTANGLE",
+          "width": 1000,
+          "x": 2837,
+          "y": 13
+        },
+        {
+          "absoluteBounds": {
+            "height": 608,
+            "width": 1000,
+            "x": 1765,
+            "y": 709
+          },
+          "fills": [
+            {
+              "blend": "normal",
+              "crop": null,
+              "filters": {
+                "contrast": 0,
+                "exposure": 0,
+                "highlights": 0,
+                "saturation": 0,
+                "shadows": 0,
+                "temperature": 0,
+                "tint": 0
+              },
+              "image": "0171d27d6bb7c75503180165ec6ecefc869992973d4057c128bdd396d4f7d5ad",
+              "opacity": 1,
+              "rotation": 0,
+              "scale": 1,
+              "scale_mode": "fill",
+              "type": "image",
+              "visible": true
+            }
+          ],
+          "height": 608,
+          "id": 926,
+          "name": "05",
+          "type": "RECTANGLE",
+          "width": 1000,
+          "x": 1765,
+          "y": 709
+        },
+        {
+          "absoluteBounds": {
+            "height": 900,
+            "width": 1440,
+            "x": 9254,
+            "y": 53
+          },
+          "childCount": 151,
+          "clip": true,
+          "fills": [
+            {
+              "color": "#0B0D10",
+              "type": "solid"
+            }
+          ],
+          "height": 900,
+          "id": 1606,
+          "name": "Proposta A — Creative Studio",
+          "type": "FRAME",
+          "width": 1440,
+          "x": 9254,
+          "y": 53
+        },
+        {
+          "absoluteBounds": {
+            "height": 900,
+            "width": 1440,
+            "x": 10725,
+            "y": 53
+          },
+          "childCount": 127,
+          "clip": true,
+          "fills": [
+            {
+              "color": "#0B0D10",
+              "type": "solid"
+            }
+          ],
+          "height": 900,
+          "id": 1758,
+          "name": "Proposta B — AI Clip Workspace",
+          "type": "FRAME",
+          "width": 1440,
+          "x": 10725,
+          "y": 53
+        },
+        {
+          "absoluteBounds": {
+            "height": 80,
+            "width": 3000,
+            "x": 4073,
+            "y": 13
+          },
+          "childCount": 2,
+          "clip": true,
+          "fills": [
+            {
+              "color": "#FFFFFF",
+              "type": "solid"
+            }
+          ],
+          "height": 80,
+          "id": 1886,
+          "layout": {
+            "columnTracks": [],
+            "contentAlign": "auto",
+            "crossAlign": "min",
+            "crossGap": 10,
+            "gap": 6,
+            "gridColumns": 2,
+            "gridRows": 2,
+            "mainAlign": "min",
+            "mode": "vertical",
+            "padding": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "reverseZ": false,
+            "rowTracks": [],
+            "strokesIncluded": true,
+            "wrap": false
+          },
+          "name": "M1DR — Área",
+          "sizing": {
+            "horizontal": "fixed",
+            "vertical": "fixed"
+          },
+          "type": "FRAME",
+          "width": 3000,
+          "x": 4073,
+          "y": 13
+        },
+        {
+          "absoluteBounds": {
+            "height": 80,
+            "width": 440,
+            "x": 4053,
+            "y": 143
+          },
+          "childCount": 2,
+          "clip": true,
+          "cornerRadius": 5,
+          "dashes": [
+            10,
+            5
+          ],
+          "height": 80,
+          "id": 1889,
+          "name": "m-button-primary",
+          "strokeAlign": "inside",
+          "strokeWeight": 1,
+          "strokes": [
+            {
+              "color": "#9747FF",
+              "type": "solid"
+            }
+          ],
+          "type": "COMPONENT_SET",
+          "width": 440,
+          "x": 4053,
+          "y": 143
+        },
+        {
+          "absoluteBounds": {
+            "height": 40,
+            "width": 40,
+            "x": 4553,
+            "y": 163
+          },
+          "childCount": 1,
+          "clip": true,
+          "cornerRadius": 8,
+          "fills": [
+            {
+              "color": "#000000",
+              "type": "solid"
+            }
+          ],
+          "height": 40,
+          "id": 1894,
+          "layout": {
+            "columnTracks": [],
+            "contentAlign": "auto",
+            "crossAlign": "center",
+            "crossGap": 10,
+            "gap": 0,
+            "gridColumns": 2,
+            "gridRows": 2,
+            "mainAlign": "center",
+            "mode": "horizontal",
+            "padding": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "reverseZ": false,
+            "rowTracks": [],
+            "strokesIncluded": true,
+            "wrap": false
+          },
+          "name": "m-icon-button",
+          "sizing": {
+            "horizontal": "fixed",
+            "vertical": "fixed"
+          },
+          "strokeAlign": "inside",
+          "strokeWeight": 1,
+          "strokes": [
+            {
+              "color": "#3A3A3C",
+              "type": "solid"
+            }
+          ],
+          "type": "COMPONENT",
+          "width": 40,
+          "x": 4553,
+          "y": 163
+        },
+        {
+          "absoluteBounds": {
+            "height": 17,
+            "width": 160,
+            "x": 4073,
+            "y": 135
+          },
+          "characters": "Button/Primary",
+          "fills": [
+            {
+              "color": "#02C2BE",
+              "type": "solid"
+            }
+          ],
+          "fontFamily": "Poppins",
+          "fontSize": 11,
+          "fontStyle": "Bold",
+          "height": 17,
+          "id": 1896,
+          "letterSpacing": "0%",
+          "lineHeight": "Auto",
+          "name": "label",
+          "sizing": {
+            "horizontal": "fixed",
+            "vertical": "hug"
+          },
+          "textAlign": "left",
+          "textAutoResize": "height",
+          "type": "TEXT",
+          "width": 160,
+          "x": 4073,
+          "y": 135
+        },
+        {
+          "absoluteBounds": {
+            "height": 17,
+            "width": 160,
+            "x": 4313,
+            "y": 135
+          },
+          "characters": "Button/Ghost",
+          "fills": [
+            {
+              "color": "#02C2BE",
+              "type": "solid"
+            }
+          ],
+          "fontFamily": "Poppins",
+          "fontSize": 11,
+          "fontStyle": "Bold",
+          "height": 17,
+          "id": 1897,
+          "letterSpacing": "0%",
+          "lineHeight": "Auto",
+          "name": "label",
+          "sizing": {
+            "horizontal": "fixed",
+            "vertical": "hug"
+          },
+          "textAlign": "left",
+          "textAutoResize": "height",
+          "type": "TEXT",
+          "width": 160,
+          "x": 4313,
+          "y": 135
+        },
+        {
+          "absoluteBounds": {
+            "height": 17,
+            "width": 120,
+            "x": 4553,
+            "y": 135
+          },
+          "characters": "IconButton",
+          "fills": [
+            {
+              "color": "#02C2BE",
+              "type": "solid"
+            }
+          ],
+          "fontFamily": "Poppins",
+          "fontSize": 11,
+          "fontStyle": "Bold",
+          "height": 17,
+          "id": 1898,
+          "letterSpacing": "0%",
+          "lineHeight": "Auto",
+          "name": "label",
+          "sizing": {
+            "horizontal": "fixed",
+            "vertical": "hug"
+          },
+          "textAlign": "left",
+          "textAutoResize": "height",
+          "type": "TEXT",
+          "width": 120,
+          "x": 4553,
+          "y": 135
+        },
+        {
+          "absoluteBounds": {
+            "height": 158,
+            "width": 916,
+            "x": 4653,
+            "y": 143
+          },
+          "childCount": 2,
+          "clip": true,
+          "cornerRadius": 5,
+          "dashes": [
+            10,
+            5
+          ],
+          "height": 158,
+          "id": 1899,
+          "name": "m-textinput-default",
+          "strokeAlign": "inside",
+          "strokeWeight": 1,
+          "strokes": [
+            {
+              "color": "#9747FF",
+              "type": "solid"
+            }
+          ],
+          "type": "COMPONENT_SET",
+          "width": 916,
+          "x": 4653,
+          "y": 143
+        },
+        {
+          "absoluteBounds": {
+            "height": 192,
+            "width": 952,
+            "x": 4053,
+            "y": 293
+          },
+          "childCount": 2,
+          "clip": true,
+          "cornerRadius": 5,
+          "dashes": [
+            10,
+            5
+          ],
+          "height": 192,
+          "id": 1910,
+          "name": "m-projectcard-default",
+          "strokeAlign": "inside",
+          "strokeWeight": 1,
+          "strokes": [
+            {
+              "color": "#9747FF",
+              "type": "solid"
+            }
+          ],
+          "type": "COMPONENT_SET",
+          "width": 952,
+          "x": 4053,
+          "y": 293
+        },
+        {
+          "absoluteBounds": {
+            "height": 96,
+            "width": 1380,
+            "x": 4053,
+            "y": 493
+          },
+          "childCount": 2,
+          "clip": true,
+          "cornerRadius": 5,
+          "dashes": [
+            10,
+            5
+          ],
+          "height": 96,
+          "id": 1921,
+          "name": "m-status-error",
+          "strokeAlign": "inside",
+          "strokeWeight": 1,
+          "strokes": [
+            {
+              "color": "#9747FF",
+              "type": "solid"
+            }
+          ],
+          "type": "COMPONENT_SET",
+          "width": 1380,
+          "x": 4053,
+          "y": 493
+        },
+        {
+          "absoluteBounds": {
+            "height": 380,
+            "width": 560,
+            "x": 5633,
+            "y": 163
+          },
+          "childCount": 4,
+          "clip": true,
+          "cornerRadius": 16,
+          "fills": [
+            {
+              "color": "#0A0A0A",
+              "type": "solid"
+            }
+          ],
+          "height": 380,
+          "id": 1934,
+          "layout": {
+            "columnTracks": [],
+            "contentAlign": "auto",
+            "crossAlign": "center",
+            "crossGap": 10,
+            "gap": 14,
+            "gridColumns": 2,
+            "gridRows": 2,
+            "mainAlign": "center",
+            "mode": "vertical",
+            "padding": [
+              48,
+              48,
+              48,
+              48
+            ],
+            "reverseZ": false,
+            "rowTracks": [],
+            "strokesIncluded": true,
+            "wrap": false
+          },
+          "name": "m-emptystate",
+          "sizing": {
+            "horizontal": "fixed",
+            "vertical": "fixed"
+          },
+          "strokeAlign": "inside",
+          "strokeWeight": 1,
+          "strokes": [
+            {
+              "color": "#232326",
+              "type": "solid"
+            }
+          ],
+          "type": "COMPONENT",
+          "width": 560,
+          "x": 5633,
+          "y": 163
+        },
+        {
+          "absoluteBounds": {
+            "height": 152,
+            "width": 432,
+            "x": 4073,
+            "y": 623
+          },
+          "childCount": 4,
+          "clip": true,
+          "cornerRadius": 12,
+          "fills": [
+            {
+              "color": "#141416",
+              "type": "solid"
+            }
+          ],
+          "height": 152,
+          "id": 1941,
+          "layout": {
+            "columnTracks": [],
+            "contentAlign": "auto",
+            "crossAlign": "min",
+            "crossGap": 10,
+            "gap": 12,
+            "gridColumns": 2,
+            "gridRows": 2,
+            "mainAlign": "min",
+            "mode": "vertical",
+            "padding": [
+              20,
+              20,
+              20,
+              20
+            ],
+            "reverseZ": false,
+            "rowTracks": [],
+            "strokesIncluded": true,
+            "wrap": false
+          },
+          "name": "m-loading",
+          "sizing": {
+            "horizontal": "fixed",
+            "vertical": "fixed"
+          },
+          "strokeAlign": "inside",
+          "strokeWeight": 1,
+          "strokes": [
+            {
+              "color": "#232326",
+              "type": "solid"
+            }
+          ],
+          "type": "COMPONENT",
+          "width": 432,
+          "x": 4073,
+          "y": 623
+        },
+        {
+          "absoluteBounds": {
+            "height": 64,
+            "width": 1440,
+            "x": 4073,
+            "y": 763
+          },
+          "childCount": 4,
+          "clip": true,
+          "fills": [
+            {
+              "color": "#000000",
+              "type": "solid"
+            }
+          ],
+          "height": 64,
+          "id": 1946,
+          "layout": {
+            "columnTracks": [],
+            "contentAlign": "auto",
+            "crossAlign": "center",
+            "crossGap": 10,
+            "gap": 12,
+            "gridColumns": 2,
+            "gridRows": 2,
+            "mainAlign": "min",
+            "mode": "horizontal",
+            "padding": [
+              0,
+              32,
+              0,
+              32
+            ],
+            "reverseZ": false,
+            "rowTracks": [],
+            "strokesIncluded": true,
+            "wrap": false
+          },
+          "name": "m-topbar",
+          "sizing": {
+            "horizontal": "fixed",
+            "vertical": "fixed"
+          },
+          "strokeAlign": "inside",
+          "strokeSides": [
+            0,
+            0,
+            1,
+            0
+          ],
+          "strokeWeight": 1,
+          "strokes": [
+            {
+              "color": "#1F1F1F",
+              "type": "solid"
+            }
+          ],
+          "type": "COMPONENT",
+          "width": 1440,
+          "x": 4073,
+          "y": 763
+        },
+        {
+          "absoluteBounds": {
+            "height": 900,
+            "width": 1440,
+            "x": 4073,
+            "y": 963
+          },
+          "childCount": 2,
+          "clip": true,
+          "fills": [
+            {
+              "color": "#000000",
+              "type": "solid"
+            }
+          ],
+          "height": 900,
+          "id": 1956,
+          "name": "M1-A · Home — sem projetos",
+          "type": "FRAME",
+          "width": 1440,
+          "x": 4073,
+          "y": 963
+        },
+        {
+          "absoluteBounds": {
+            "height": 900,
+            "width": 1440,
+            "x": 5633,
+            "y": 963
+          },
+          "childCount": 10,
+          "clip": true,
+          "fills": [
+            {
+              "color": "#000000",
+              "type": "solid"
+            }
+          ],
+          "height": 900,
+          "id": 1974,
+          "name": "M1-B · Home — com projetos",
+          "type": "FRAME",
+          "width": 1440,
+          "x": 5633,
+          "y": 963
+        },
+        {
+          "absoluteBounds": {
+            "height": 900,
+            "width": 1440,
+            "x": 7193,
+            "y": 963
+          },
+          "childCount": 3,
+          "clip": true,
+          "fills": [
+            {
+              "color": "#000000",
+              "type": "solid"
+            }
+          ],
+          "height": 900,
+          "id": 2027,
+          "name": "M1-C · Criar projeto",
+          "type": "FRAME",
+          "width": 1440,
+          "x": 7193,
+          "y": 963
+        },
+        {
+          "absoluteBounds": {
+            "height": 900,
+            "width": 1440,
+            "x": 4073,
+            "y": 2013
+          },
+          "childCount": 5,
+          "clip": true,
+          "fills": [
+            {
+              "color": "#000000",
+              "type": "solid"
+            }
+          ],
+          "height": 900,
+          "id": 2052,
+          "name": "M1-D · Projeto aberto",
+          "type": "FRAME",
+          "width": 1440,
+          "x": 4073,
+          "y": 2013
+        },
+        {
+          "absoluteBounds": {
+            "height": 900,
+            "width": 1440,
+            "x": 5633,
+            "y": 2013
+          },
+          "childCount": 1,
+          "clip": true,
+          "fills": [
+            {
+              "color": "#000000",
+              "type": "solid"
+            }
+          ],
+          "height": 900,
+          "id": 2067,
+          "name": "M1-E · Estados auxiliares",
+          "type": "FRAME",
+          "width": 1440,
+          "x": 5633,
+          "y": 2013
+        },
+        {
+          "absoluteBounds": {
+            "height": 64,
+            "width": 1440,
+            "x": 4073,
+            "y": 4013
+          },
+          "childCount": 1,
+          "clip": true,
+          "fills": [
+            {
+              "color": "#0A0A0A",
+              "type": "solid"
+            }
+          ],
+          "height": 64,
+          "id": 2078,
+          "layout": {
+            "columnTracks": [],
+            "contentAlign": "auto",
+            "crossAlign": "center",
+            "crossGap": 10,
+            "gap": 0,
+            "gridColumns": 2,
+            "gridRows": 2,
+            "mainAlign": "min",
+            "mode": "horizontal",
+            "padding": [
+              0,
+              64,
+              0,
+              64
+            ],
+            "reverseZ": false,
+            "rowTracks": [],
+            "strokesIncluded": true,
+            "wrap": false
+          },
+          "name": "TopBar SC",
+          "sizing": {
+            "horizontal": "fixed",
+            "vertical": "fixed"
+          },
+          "type": "COMPONENT",
+          "width": 1440,
+          "x": 4073,
+          "y": 4013
+        },
+        {
+          "absoluteBounds": {
+            "height": 208,
+            "width": 941,
+            "x": 4053,
+            "y": 4113
+          },
+          "childCount": 2,
+          "clip": true,
+          "cornerRadius": 5,
+          "dashes": [
+            10,
+            5
+          ],
+          "height": 208,
+          "id": 2083,
+          "name": "ProjectCard SC — Default",
+          "strokeAlign": "inside",
+          "strokeWeight": 1,
+          "strokes": [
+            {
+              "color": "#9747FF",
+              "type": "solid"
+            }
+          ],
+          "type": "COMPONENT_SET",
+          "width": 941,
+          "x": 4053,
+          "y": 4113
+        },
+        {
+          "absoluteBounds": {
+            "height": 900,
+            "width": 1440,
+            "x": 4073,
+            "y": 3063
+          },
+          "childCount": 5,
+          "clip": true,
+          "fills": [
+            {
+              "color": "#000000",
+              "type": "solid"
+            }
+          ],
+          "height": 900,
+          "id": 2096,
+          "name": "HOME A — Studio Console (sem projetos)",
+          "type": "FRAME",
+          "width": 1440,
+          "x": 4073,
+          "y": 3063
+        },
+        {
+          "absoluteBounds": {
+            "height": 900,
+            "width": 1440,
+            "x": 5633,
+            "y": 3063
+          },
+          "childCount": 14,
+          "clip": true,
+          "fills": [
+            {
+              "color": "#000000",
+              "type": "solid"
+            }
+          ],
+          "height": 900,
+          "id": 2107,
+          "name": "HOME B — Studio Console (com projetos)",
+          "type": "FRAME",
+          "width": 1440,
+          "x": 5633,
+          "y": 3063
+        },
+        {
+          "absoluteBounds": {
+            "height": 17,
+            "width": 500,
+            "x": 4073,
+            "y": 3013
+          },
+          "characters": "STUDIO CONSOLE — RETOMADA CONTROLADA",
+          "fills": [
+            {
+              "color": "#9BA0A4",
+              "type": "solid"
+            }
+          ],
+          "fontFamily": "Poppins",
+          "fontSize": 11,
+          "fontStyle": "Bold",
+          "height": 17,
+          "id": 2177,
+          "letterSpacing": "8%",
+          "lineHeight": "Auto",
+          "name": "lbl-sc",
+          "sizing": {
+            "horizontal": "fixed",
+            "vertical": "hug"
+          },
+          "textAlign": "left",
+          "textAutoResize": "height",
+          "type": "TEXT",
+          "width": 500,
+          "x": 4073,
+          "y": 3013
+        },
+        {
+          "absoluteBounds": {
+            "height": 900,
+            "width": 1440,
+            "x": 4073,
+            "y": 4313
+          },
+          "childCount": 5,
+          "clip": true,
+          "fills": [
+            {
+              "color": "#141414",
+              "type": "solid"
+            }
+          ],
+          "height": 900,
+          "id": 2178,
+          "name": "WF-1 · Home 0 projetos (low-fi)",
+          "type": "FRAME",
+          "width": 1440,
+          "x": 4073,
+          "y": 4313
+        },
+        {
+          "absoluteBounds": {
+            "height": 900,
+            "width": 1440,
+            "x": 5633,
+            "y": 4313
+          },
+          "childCount": 12,
+          "clip": true,
+          "fills": [
+            {
+              "color": "#141414",
+              "type": "solid"
+            }
+          ],
+          "height": 900,
+          "id": 2184,
+          "name": "WF-2 · Biblioteca ~10 (low-fi)",
+          "type": "FRAME",
+          "width": 1440,
+          "x": 5633,
+          "y": 4313
+        },
+        {
+          "absoluteBounds": {
+            "height": 900,
+            "width": 1440,
+            "x": 7193,
+            "y": 4313
+          },
+          "childCount": 9,
+          "clip": true,
+          "fills": [
+            {
+              "color": "#141414",
+              "type": "solid"
+            }
+          ],
+          "height": 900,
+          "id": 2215,
+          "name": "WF-3 · Biblioteca 200+ (low-fi)",
+          "type": "FRAME",
+          "width": 1440,
+          "x": 7193,
+          "y": 4313
+        },
+        {
+          "absoluteBounds": {
+            "height": 900,
+            "width": 1440,
+            "x": 4073,
+            "y": 5313
+          },
+          "childCount": 9,
+          "clip": true,
+          "fills": [
+            {
+              "color": "#141414",
+              "type": "solid"
+            }
+          ],
+          "height": 900,
+          "id": 2243,
+          "name": "WF-4 · Modo Lista (low-fi)",
+          "type": "FRAME",
+          "width": 1440,
+          "x": 4073,
+          "y": 5313
+        },
+        {
+          "absoluteBounds": {
+            "height": 540,
+            "width": 720,
+            "x": 5633,
+            "y": 5313
+          },
+          "childCount": 4,
+          "clip": true,
+          "fills": [
+            {
+              "color": "#141414",
+              "type": "solid"
+            }
+          ],
+          "height": 540,
+          "id": 2256,
+          "name": "WF-5 · Sem resultado de busca (low-fi)",
+          "type": "FRAME",
+          "width": 720,
+          "x": 5633,
+          "y": 5313
+        },
+        {
+          "absoluteBounds": {
+            "height": 17,
+            "width": 900,
+            "x": 4073,
+            "y": 4263
+          },
+          "characters": "M1-LIB WIREFRAMES — CUT ROOM (baixa fidelidade · sem mestres · aguardando aprovação)",
+          "fills": [
+            {
+              "color": "#8A8A8A",
+              "type": "solid"
+            }
+          ],
+          "fontFamily": "Poppins",
+          "fontSize": 11,
+          "fontStyle": "Bold",
+          "height": 17,
+          "id": 2261,
+          "letterSpacing": "8%",
+          "lineHeight": "Auto",
+          "name": "LBL-WIREFRAMES",
+          "sizing": {
+            "horizontal": "fixed",
+            "vertical": "hug"
+          },
+          "textAlign": "left",
+          "textAutoResize": "height",
+          "type": "TEXT",
+          "width": 900,
+          "x": 4073,
+          "y": 4263
+        }
+      ],
+      "id": 282,
+      "name": "Referencias",
+      "type": "PAGE"
+    },
+    {
+      "background": "#1E1E1E",
+      "children": [
+        {
+          "absoluteBounds": {
+            "height": 900,
+            "width": 1440,
+            "x": 3553,
+            "y": 0
+          },
+          "childCount": 1,
+          "clip": true,
+          "cornerRadius": 30,
+          "fills": [
+            {
+              "color": "#000000",
+              "type": "solid"
+            }
+          ],
+          "height": 900,
+          "id": 1331,
+          "name": "Ao abrir o App",
+          "type": "FRAME",
+          "width": 1440,
+          "x": 3553,
+          "y": 0
+        },
+        {
+          "absoluteBounds": {
+            "height": 900,
+            "width": 1440,
+            "x": 3553,
+            "y": 965
+          },
+          "childCount": 10,
+          "clip": true,
+          "cornerRadius": 30,
+          "fills": [
+            {
+              "color": "#000000",
+              "type": "solid"
+            }
+          ],
+          "height": 900,
+          "id": 1338,
+          "name": "Home - Expandida",
+          "type": "FRAME",
+          "width": 1440,
+          "x": 3553,
+          "y": 965
+        },
+        {
+          "absoluteBounds": {
+            "height": 900,
+            "width": 1440,
+            "x": 5021,
+            "y": 965
+          },
+          "childCount": 8,
+          "clip": true,
+          "cornerRadius": 30,
+          "fills": [
+            {
+              "color": "#000000",
+              "type": "solid"
+            }
+          ],
+          "height": 900,
+          "id": 1384,
+          "name": "Home - curta",
+          "type": "FRAME",
+          "width": 1440,
+          "x": 5021,
+          "y": 965
+        },
+        {
+          "absoluteBounds": {
+            "height": 900,
+            "width": 1440,
+            "x": 3553,
+            "y": 1963
+          },
+          "childCount": 11,
+          "clip": true,
+          "cornerRadius": 30,
+          "fills": [
+            {
+              "color": "#000000",
+              "type": "solid"
+            }
+          ],
+          "height": 900,
+          "id": 1427,
+          "name": "Meus projetos - Todos",
+          "type": "FRAME",
+          "width": 1440,
+          "x": 3553,
+          "y": 1963
+        },
+        {
+          "absoluteBounds": {
+            "height": 900,
+            "width": 1440,
+            "x": 5021,
+            "y": 1963
+          },
+          "childCount": 11,
+          "clip": true,
+          "cornerRadius": 30,
+          "fills": [
+            {
+              "color": "#000000",
+              "type": "solid"
+            }
+          ],
+          "height": 900,
+          "id": 1482,
+          "name": "Meus projetos - Coleções",
+          "type": "FRAME",
+          "width": 1440,
+          "x": 5021,
+          "y": 1963
+        },
+        {
+          "absoluteBounds": {
+            "height": 900,
+            "width": 1440,
+            "x": 6489,
+            "y": 1963
+          },
+          "childCount": 11,
+          "clip": true,
+          "cornerRadius": 30,
+          "fills": [
+            {
+              "color": "#000000",
+              "type": "solid"
+            }
+          ],
+          "height": 900,
+          "id": 1540,
+          "name": "Meus projetos - Coleções > Pasta de coleção",
+          "type": "FRAME",
+          "width": 1440,
+          "x": 6489,
+          "y": 1963
+        },
+        {
+          "absoluteBounds": {
+            "height": 900,
+            "width": 1440,
+            "x": -247,
+            "y": 3488
+          },
+          "childCount": 17,
+          "clip": true,
+          "cornerRadius": 30,
+          "fills": [
+            {
+              "color": "#000000",
+              "type": "solid"
+            }
+          ],
+          "height": 900,
+          "id": 2262,
+          "name": "Meus projetos - Clicar em Enviar Video",
+          "type": "FRAME",
+          "width": 1440,
+          "x": -247,
+          "y": 3488
+        },
+        {
+          "absoluteBounds": {
+            "height": 64.98,
+            "width": 242.5,
+            "x": 1099,
+            "y": 3672.02
+          },
+          "height": 64.98,
+          "id": 2382,
+          "name": "Vector 586",
+          "segments": 1,
+          "strokeAlign": "center",
+          "strokeWeight": 1,
+          "strokes": [
+            {
+              "color": "#FFFFFF",
+              "type": "solid"
+            }
+          ],
+          "type": "VECTOR",
+          "vertices": 2,
+          "width": 242.5,
+          "x": 1099,
+          "y": 3672.02
+        },
+        {
+          "absoluteBounds": {
+            "height": 172,
+            "width": 480,
+            "x": 686.5,
+            "y": 3879.02
+          },
+          "height": 172,
+          "id": 2383,
+          "name": "Vector 587",
+          "segments": 1,
+          "strokeAlign": "center",
+          "strokeWeight": 1,
+          "strokes": [
+            {
+              "color": "#FFFFFF",
+              "type": "solid"
+            }
+          ],
+          "type": "VECTOR",
+          "vertices": 2,
+          "width": 480,
+          "x": 686.5,
+          "y": 4051.02
+        },
+        {
+          "absoluteBounds": {
+            "height": 174,
+            "width": 210,
+            "x": 1262,
+            "y": 3599
+          },
+          "cornerRadius": 24,
+          "fills": [
+            {
+              "color": "#D9D9D9",
+              "type": "solid"
+            }
+          ],
+          "height": 174,
+          "id": 2384,
+          "name": "Rectangle 15",
+          "type": "RECTANGLE",
+          "width": 210,
+          "x": 1262,
+          "y": 3599
+        },
+        {
+          "absoluteBounds": {
+            "height": 174,
+            "width": 210,
+            "x": 1087,
+            "y": 3978
+          },
+          "cornerRadius": 24,
+          "fills": [
+            {
+              "color": "#D9D9D9",
+              "type": "solid"
+            }
+          ],
+          "height": 174,
+          "id": 2385,
+          "name": "Rectangle 16",
+          "type": "RECTANGLE",
+          "width": 210,
+          "x": 1087,
+          "y": 3978
+        },
+        {
+          "absoluteBounds": {
+            "height": 58,
+            "width": 185.28,
+            "x": 1273.86,
+            "y": 3657
+          },
+          "characters": "aqui são atalhos de ferramentas",
+          "fills": [
+            {
+              "color": "#000000",
+              "type": "solid"
+            }
+          ],
+          "fontFamily": "Poppins",
+          "fontSize": 19.33333396911621,
+          "fontStyle": "Regular",
+          "height": 58,
+          "id": 2386,
+          "letterSpacing": "0%",
+          "lineHeight": "Auto",
+          "name": "aqui são atalhos de ferramentas",
+          "sizing": {
+            "horizontal": "fixed",
+            "vertical": "hug"
+          },
+          "textAlign": "center",
+          "textAutoResize": "height",
+          "type": "TEXT",
+          "width": 185.28,
+          "x": 1273.86,
+          "y": 3657
+        },
+        {
+          "absoluteBounds": {
+            "height": 145,
+            "width": 185.28,
+            "x": 1098.86,
+            "y": 3992
+          },
+          "characters": "ao clicar na ferramenta lengendas esse é o modal que aparece.",
+          "fills": [
+            {
+              "color": "#000000",
+              "type": "solid"
+            }
+          ],
+          "fontFamily": "Poppins",
+          "fontSize": 19.33333396911621,
+          "fontStyle": "Regular",
+          "height": 145,
+          "id": 2387,
+          "letterSpacing": "0%",
+          "lineHeight": "Auto",
+          "name": "ao clicar na ferramenta lengendas esse é o modal que aparece.",
+          "sizing": {
+            "horizontal": "fixed",
+            "vertical": "hug"
+          },
+          "textAlign": "center",
+          "textAutoResize": "height",
+          "type": "TEXT",
+          "width": 185.28,
+          "x": 1098.86,
+          "y": 3992
+        },
+        {
+          "absoluteBounds": {
+            "height": 174,
+            "width": 210,
+            "x": 924,
+            "y": 3314
+          },
+          "childCount": 2,
+          "height": 174,
+          "id": 2388,
+          "name": "Group 22",
+          "type": "GROUP",
+          "width": 210,
+          "x": 924,
+          "y": 3314
+        },
+        {
+          "absoluteBounds": {
+            "height": 720,
+            "width": 504,
+            "x": 2070,
+            "y": 3710
+          },
+          "childCount": 36,
+          "clip": false,
+          "height": 720,
+          "id": 2391,
+          "name": "Card da ferramenta de legenda",
+          "type": "FRAME",
+          "width": 504,
+          "x": 2070,
+          "y": 3710
+        },
+        {
+          "absoluteBounds": {
+            "height": 402,
+            "width": 504,
+            "x": 1305,
+            "y": 4028
+          },
+          "childCount": 10,
+          "clip": false,
+          "height": 402,
+          "id": 2440,
+          "name": "Card da ferramenta de legenda",
+          "type": "FRAME",
+          "width": 504,
+          "x": 1305,
+          "y": 4028
+        },
+        {
+          "absoluteBounds": {
+            "height": 290.85,
+            "width": 288.97,
+            "x": 1679,
+            "y": 4162
+          },
+          "height": 101,
+          "id": 2463,
+          "name": "Vector 588",
+          "rotation": 45.37,
+          "segments": 1,
+          "strokeAlign": "center",
+          "strokeWeight": 1,
+          "strokes": [
+            {
+              "color": "#FFFFFF",
+              "type": "solid"
+            }
+          ],
+          "type": "VECTOR",
+          "vertices": 2,
+          "width": 309,
+          "x": 1750.87,
+          "y": 4452.85
+        },
+        {
+          "absoluteBounds": {
+            "height": 174,
+            "width": 210,
+            "x": 1846,
+            "y": 4100
+          },
+          "cornerRadius": 24,
+          "fills": [
+            {
+              "color": "#D9D9D9",
+              "type": "solid"
+            }
+          ],
+          "height": 174,
+          "id": 2464,
+          "name": "Rectangle 17",
+          "type": "RECTANGLE",
+          "width": 210,
+          "x": 1846,
+          "y": 4100
+        },
+        {
+          "absoluteBounds": {
+            "height": 116,
+            "width": 185.28,
+            "x": 1857.86,
+            "y": 4123
+          },
+          "characters": "ao carregar o video, aparece as opções de legendas",
+          "fills": [
+            {
+              "color": "#000000",
+              "type": "solid"
+            }
+          ],
+          "fontFamily": "Poppins",
+          "fontSize": 19.33333396911621,
+          "fontStyle": "Regular",
+          "height": 116,
+          "id": 2465,
+          "letterSpacing": "0%",
+          "lineHeight": "Auto",
+          "name": "ao carregar o video, aparece as opções de legendas",
+          "sizing": {
+            "horizontal": "fixed",
+            "vertical": "hug"
+          },
+          "textAlign": "center",
+          "textAutoResize": "height",
+          "type": "TEXT",
+          "width": 185.28,
+          "x": 1857.86,
+          "y": 4123
+        }
+      ],
+      "id": 1,
+      "name": "UI - designer",
+      "type": "PAGE"
+    }
+  ],
+  "path": "C:/CutNicePro/design/cutnicepro-fase01-propostas.figcraft",
+  "selection": [],
+  "styles": [],
+  "textEdit": null,
+  "variables": 0
+}

@@ -1,0 +1,96 @@
+╔════════════════════════════════════════════╗
+║       CUTNICEPRO — ZCODE REPORT            ║
+╚════════════════════════════════════════════╝
+
+TASK
+  Name: Splash começando pelo C, mais lento
+  Status: PARTIAL (visual/runtime pendente)
+  Scope: Logo e duração do splash.
+  Objective: Começar só pelo C e estender a apresentação.
+  Result: Sequência ampliada de 1,5 para 3 segundos.
+
+IMPLEMENTATION
+  Completed: C separado; utNicePro emerge depois; pausa final de 0,5 s.
+  Not completed: Conferência visual no Tauri dev.
+  Changes: Geometria inicial, máscara e tempos ajustados.
+  Architecture impact: Nenhum; sem novas dependências.
+  Decisões técnicas: Separação do path Cut sem alterar comandos vetoriais.
+
+FILES
+  Created: Relatório histórico e inventário abaixo.
+  Modified: app/src/components/splash/SplashLogoArtwork.tsx;
+    app/src/components/splash/splash-motion.ts;
+    app/src/test/splash-motion.test.ts;
+    docs/product/TRACEABILITY.md; docs/reports/LATEST.txt.
+  Deleted: Nenhum.
+  Unexpected changes: Nenhuma desta tarefa; alterações anteriores preservadas.
+
+VALIDATION
+  Typecheck: PASS, via build.
+  Lint: SKIP, sem script configurado.
+  Unit tests: PASS, 35/35; quatro casos de formação do splash.
+  Integration tests: SKIP, sem execução desktop.
+  Regression tests: PASS, escopo unitário executado.
+  Visual tests: SKIP, mantenedor avalia.
+  Runtime verification: SKIP, conforme preferência do mantenedor.
+  Total passed: 35 testes + 1 build + 1 verificação de integridade vetorial.
+  Total failed: 0.
+  Total skipped: 4 categorias acima.
+  FUNCTIONAL STATUS: PARTIAL (build/testes PASS; desktop pendente).
+  REGRESSION STATUS: PASS (escopo unitário).
+  VISUAL STATUS: PENDING HUMAN APPROVAL.
+
+HOOKS / HARNESS
+  Hooks active: Não verificados nesta sessão Codex.
+  PreToolUse: Sem evidência dos hooks ZCode.
+  PostToolUse: Sem evidência dos hooks ZCode.
+  Stop: Não verificado.
+  Baseline: SKIP, ajuste localizado.
+  Gate result: Verificações locais PASS.
+  Evidence: Build, Vitest, integridade do path e diff sem erros de whitespace.
+
+MCP / SKILLS
+  Tools used: Terminal, apply_patch; frontend-ui-engineering e incremental-implementation.
+  Connection status: Ferramentas locais operacionais; sem controle de UI.
+  Failures: Nenhuma nesta tarefa.
+  Pending activation: Nenhuma; sem subagentes.
+
+GIT
+  Branch: main
+  HEAD: f1adfe584fe1b174f4e68f956f140f4f964cf0c1
+  Latest commit: feat(intro): restore GSAP choreography on shared intro clock for phase 03B.10
+  Commits created: Nenhum.
+  Push: NOT EXECUTED
+  Remote: origin -> https://github.com/FrosttyS18/CutNicePro.git; origin/main.
+  Working tree: MODIFIED / UNTRACKED, já alterado antes da tarefa.
+  Pending files: docs/reports/history/2026-10-18_235200_splash-c-ritmo-pending.txt (inventário integral).
+
+EVIDENCE
+  Commands executed: npm run build; npm test; git diff --check;
+    git log; git branch; git remote; comparação vetorial via PowerShell.
+  Relevant logs: 6 arquivos, 35 testes PASS; Vite build PASS.
+  Screenshots: Nenhuma.
+  Test artifacts: app/src/test/splash-motion.test.ts (4 casos).
+  Reproduction details: C isolado no início; revelação progressiva;
+    geometria final; pausa até 3 s. C + ut recompõem o path original.
+
+ISSUES
+  Bugs found: Cut era tratado como marca inteira na abertura.
+  Unresolved failures: Nenhuma nas verificações executadas.
+  Regressions: Nenhuma nos testes; desktop não testado.
+  Risks: Aviso de bundle Vite acima de 500 kB, fora do escopo.
+  Blockers: Nenhum.
+
+FINAL
+  Delivery status: Ajuste implementado e compilado.
+  Requirements met: Entrada pelo C; duração dobrada.
+  Remaining work: Aprovação visual no Tauri dev.
+  User action required: Reabrir/recarregar para conferir o splash.
+  Restart required: Reabrir/recarregar para repetir a abertura.
+  Ready for next task: Sim, sujeito à avaliação visual.
+
+REPORT
+  Latest file: docs/reports/LATEST.txt
+  Historical file: docs/reports/history/2026-10-18_235200_splash-c-ritmo.txt
+
+END OF REPORT

@@ -1,0 +1,106 @@
+╔════════════════════════════════════════════╗
+║       CUTNICEPRO — ZCODE REPORT            ║
+╚════════════════════════════════════════════╝
+
+TASK
+  Name: 03F — Refinamento do editor e handoff para ZCode
+  Status: PASS no escopo funcional testado.
+  Scope: Cursor/foco da timeline, modal de legendas e documentação.
+  Objective: Refinar a interface e preparar a continuidade do motor.
+  Result: Ajustes implementados; motor permanece para a próxima tarefa.
+
+IMPLEMENTATION
+  Completed: Cursor com alça maior e haste neutra; removido contorno do bloco.
+    Teclado mantém indicação de foco no cursor e navegação temporal.
+    Legendas abre modal com dez opções visuais, incluindo Sem legenda.
+    Seleção salva na configuração; Escape/Concluir fecha e retorna foco.
+    Handoff registra estado, limites, arquivos e ordem proposta de integração.
+  Not completed: Instalação do motor, transcrição e exportação reais, por escopo.
+  Changes: Presets mantêm IDs existentes; amostras são estáticas.
+  Architecture impact: Sem dependências novas, migração ou mudança de backend.
+
+FILES
+  Created: app/src/components/editor/CaptionPresetsDialog.tsx;
+    tools/e2e/phase03f-editor-refinement.mjs;
+    docs/engineering/ENGINE-HANDOFF.md; docs/reports/evidence/03f/;
+    relatório histórico indicado abaixo.
+  Modified: app/src/components/editor/{EditorInspector.tsx,VideoEditor.tsx};
+    app/src/screens/workspace.css;
+    docs/product/{UPLOAD-SCREEN.md,PRODUCT-BRAIN.md,TRACEABILITY.md};
+    tasks/{plan.md,todo.md}; docs/reports/LATEST.txt.
+  Deleted: NONE.
+  Unexpected changes: NONE identificada; trabalho anterior preservado.
+
+VALIDATION
+  Typecheck: PASS — npm --prefix app run build.
+  Lint: SKIP — app sem script de lint.
+  Unit tests: SKIP — alteração de UI; casos anteriores não repetidos.
+  Integration tests: PASS — interface com IPC simulado, sem integração nativa.
+  Regression tests: PASS — seleção salva, foco, seek e layouts testados.
+  Visual tests: SKIP — aprovação estética do mantenedor.
+  Runtime verification: PASS — 4/4 em Edge headless, primeira rodada.
+  Total passed: 4 casos runtime; build aprovado separadamente.
+  Total failed: 0.
+  Total skipped: 5 grupos: lint, unitários, Rust, baseline e estética.
+
+HOOKS / HARNESS
+  Hooks active: Não verificados nesta execução Codex.
+  PreToolUse: Sem evidência usada como aprovação.
+  PostToolUse: Sem evidência usada como aprovação.
+  Stop: Não executado explicitamente.
+  Baseline: SKIP — escopo de UI/documentação.
+  Gate result: FUNCTIONAL PASS; REGRESSION PASS no escopo executado.
+  Evidence: docs/reports/evidence/03f/{runtime.json,validation.txt}.
+
+MCP / SKILLS
+  Tools used: FigCraft MCP standalone; frontend-ui-engineering e
+    incremental-implementation; padrões e referências consultados na 03E.
+  Connection status: PASS — frames2262/2391/2440 relidos sem salvar documento.
+  Failures: NONE nesta rodada de validação.
+  Pending activation: NONE; sem VISION ou subagentes.
+
+GIT
+  Branch: main
+  HEAD: f1adfe584fe1b174f4e68f956f140f4f964cf0c1
+  Latest commit: feat(intro): restore GSAP choreography on shared intro clock for phase 03B.10
+  Commits created: NONE.
+  Push: NOT EXECUTED.
+  Remote: origin → https://github.com/FrosttyS18/CutNicePro.git; origin/main.
+  Working tree: MODIFIED / UNTRACKED, incluindo alterações anteriores.
+  Pending files: Lista integral em docs/reports/evidence/03f/pending-files.txt.
+
+EVIDENCE
+  Commands executed: npm --prefix app run build;
+    node tools/e2e/phase03f-editor-refinement.mjs; git diff --check.
+  Relevant logs: docs/reports/evidence/03f/validation.txt e runtime.json.
+  Screenshots: NONE.
+  Test artifacts: Vídeo real existente de teste; IPC simulado; dumps FigCraft.
+  Reproduction details: Modal, modelo salvo, Escape e retorno de foco;
+    cursor por mouse/teclado; layouts600×700,1440×900,3440×1440;
+    console sem erros. Nenhum caso aprovado da 03E repetido.
+
+ISSUES
+  Bugs found: Foco contornava a timeline; legendas usava seletor simples.
+  Unresolved failures: NONE no escopo executado.
+  Regressions: Nenhuma identificada nos quatro casos; restante NOT TESTED.
+  Risks: Presets são prévias estáticas; não geram texto ou animação de palavra.
+    Mídia local ainda exige reconexão após reinício; YouTube é referência.
+    Aviso preexistente de bundle acima de500kB permanece.
+  Blockers: NONE para entrega de UI; motor/modelo ainda precisam de avaliação.
+
+FINAL
+  Delivery status: FUNCTIONAL PASS; REGRESSION PASS (escopo);
+    VISUAL PENDING HUMAN APPROVAL.
+  Requirements met: Refinamento solicitado e documentação para continuidade.
+  Remaining work: Aprovação visual e integração do motor com ZCode.
+  User action required: Revisar UI e usar o handoff na próxima tarefa.
+  Restart required: Apenas recarregar a UI se necessário.
+  Ready for next task: Sim. Começar por inventário e mídia persistente;
+    depois jobs, transcrição real e render; BYOK em fatia própria.
+
+REPORT
+  Handoff: C:/CutNicePro/docs/engineering/ENGINE-HANDOFF.md
+  Latest file: C:/CutNicePro/docs/reports/LATEST.txt
+  Historical file: C:/CutNicePro/docs/reports/history/2026-10-19_011959_03f-editor-handoff.txt
+
+END OF REPORT

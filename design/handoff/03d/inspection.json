@@ -1,0 +1,27 @@
+{
+  "frames": [
+    {
+      "frame": 2,
+      "name": "03D v1 DRAFT - Preparação",
+      "shapesBeforeText": true,
+      "boundsInsideFrame": true,
+      "renderInspected": true
+    },
+    {
+      "frame": 16,
+      "name": "03D v1 DRAFT - Visão do projeto",
+      "shapesBeforeText": true,
+      "boundsInsideFrame": true,
+      "renderInspected": true
+    },
+    {
+      "frame": 33,
+      "name": "03D v1 DRAFT - Editor",
+      "shapesBeforeText": true,
+      "boundsInsideFrame": true,
+      "renderInspected": true
+    }
+  ],
+  "visualStatus": "PENDING HUMAN APPROVAL",
+  "state": "DRAFT"
+}

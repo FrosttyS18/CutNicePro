@@ -1,0 +1,43 @@
+Meus Projetos
+>
+Projeto renomeado
+Projeto renomeado
+Editar título
+Meu título no vídeo
+
+Fluxo de teste.webm
+Arquivo local
+
+Transcrição
+Demonstração
+
+Texto de exemplo. Não foi extraído do seu vídeo.
+
+Buscar na transcrição
+00:00
+Editar trecho
+
+Texto ajustado manualmente.
+
+00:00
+Editar trecho
+
+Selecione um trecho para navegar pela prévia e experimente a organização do conteúdo.
+
+00:01
+Editar trecho
+
+A transcrição real usará o motor de IA local ou a API que você configurar.
+
+Seu vídeo
+Editar vídeo
+Legendas
+Enquadramento
+Exportar
+Interface em demonstração
+
+IA local e API própria serão conectadas na próxima etapa. Nenhuma transcrição foi gerada para este vídeo.
+
+Trocar ou reconectar vídeo
+
+Configurações salvas neste dispositivo.
