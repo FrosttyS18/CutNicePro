@@ -1,158 +1,127 @@
-CUTNICEPRO — ZCODE REPORT — FASE 03B.9 (UX MOTION, FLIP BUTTON OFICIAL E TITLEBAR)
+CUTNICEPRO — ZCODE REPORT — FASE 03B.10 (COREOGRAFIA ORIGINAL, FLIP E ACABAMENTO DA TITLEBAR)
 ==============================================================================
-Tarefa:     Headline "Bem-Vindo" + subtítulo #929292 + coreografia única
-            (texto → galaxy com wave original) + FlipButton OFICIAL do
-            Animate UI + titlebar personalizada (decorations:false).
-Data:       2026-10-18 (conclusão 22h39)
-Status:     FUNCTIONAL: PASS (22/22 checks). Regression: PASS (escopo
+Tarefa:     (1) eliminar o fundo cinza do FlipButton; (2) remover a
+            divisória da titlebar; (3) restaurar a coreografia suave do
+            ArtCraft com GSAP sobre o relógio compartilhado; (4) nova
+            sequência temporal (texto → respiro → espiral inteira aos
+            2.8s, revelação completa ~6.8s); (5) consistência 1ª visita ×
+            retorno; (6) inspeção técnica das travadas.
+Baseline:   commit bd4a454 (03B.9) — correção localizada sobre ele.
+Data:       2026-10-18 (conclusão 23h04)
+Status:     FUNCTIONAL: PASS (14/14 checks). Regression: PASS (escopo
             testado). Visual: PENDING HUMAN APPROVAL.
-Política:   VALIDATION-POLICY.md — VISION NÃO ACIONADO (0 subagentes);
-            0 screenshots; 1 rodada + 2 ciclos de correção com causa
-            documentada (1 defeito real de produto; demais defeitos do
-            próprio teste); validação por estado computado e interação real.
-Preservação: motor Hero Galaxy (física/shaders/vídeos/proxy/decoders/
-            boost/hover), Halftone (física/dimensionamento), splash,
-            biblioteca, sidebar, persistência, Rust de negócio — INTACTOS.
-            Sem commits/pushes.
+Política:   VALIDATION-POLICY.md — VISION NÃO ACIONADO; 0 screenshots;
+            1 rodada + 2 correções DO INSTRUMENTO de medição (produto sem
+            defeito nelas; detalhes abaixo); GSAP analisado a partir dos
+            ARQUIVOS ORIGINAIS do ArtCraft arquivados em 03B.5
+            (design/handoff/03b5/original — intro-conductor com gsap
+            timeline/stagger sobre introClock, power*.out).
+Preservação: Halftone, vídeos/posters/CDN/proxy/decode budget, física/
+            shaders/hover/boost/zoom do galaxy (exceto os 3 defaults de
+            TEMPO citados na missão), sidebar, biblioteca, persistência,
+            splash, headline "Bem-Vindo", subtítulo #929292, faces do
+            botão. Sem commits/pushes.
+
+CAUSAS-RAIZ CONFIRMADAS
+------------------------------------------------------------------------------
+1. Fundo cinza do FlipButton: aparência NATIVA do <button> (motion.button)
+   — o projeto não usa Tailwind, então bg-primary/bg-muted do componente
+   oficial são inertes e o user-agent pintava o retângulo. Confirmado por
+   getComputedStyle antes do fix.
+2. Divisória da titlebar: border-bottom 1px #101010 no .titlebar (nosso
+   CSS da 03B.9) — removida; fundo #050505→#000000; sem shadow (verificado
+   computado: rgb(0,0,0), border 0, shadow none).
+3. Dessincronização texto×galaxy: a 03B.9 animava o texto por keyframes
+   CSS com delays PRÓPRIOS enquanto o galaxy seguia o introClock — dois
+   relógios independentes (e instrAt 0.7 divergia de cardsAt 1.9, com os
+   braços aparecendo 1.2s antes dos cartões).
+
+MODIFICAÇÕES EXECUTADAS
+------------------------------------------------------------------------------
+- ui.css · .home__flip: reset da superfície nativa (appearance:none,
+  background:transparent, border:0, padding:0, box-shadow:none) +
+  :focus-visible com outline aqua próprio (o ring tailwind do oficial é
+  inerte) — as cores permanecem SÓ nas faces.
+- ui.css · .titlebar: border-bottom removida; background #000000;
+  border:none; box-shadow:none. Controles/drag/duplo-clique/foco intactos.
+- ui.css: TODOS os keyframes/delays de entrada CSS removidos
+  (cnp-rise/cnp-fade-up/delays — grep = 0): GSAP é o único dono dos
+  transforms de entrada; nada anima sozinho por CSS.
+- intro.ts: cardsAt 1.9→2.8 e instrAt 0.7→2.8 — braços, ticks, círculo e
+  cartões começam JUNTOS aos 2.8s (divergência eliminada); a progressão
+  interna braços→cartões permanece via waveLag/wave originais.
+- hero-galaxy-tunables.ts: introDur 3.4→4.0 (ORIGINAL do ArtCraft) —
+  revelação 2.8→~6.8s conforme contrato. rollChunk/burstX/burstDur/
+  waveBand/waveLag/waveEase INTACTOS.
+- intro-conductor.tsx: REESCRITO na arquitetura do original — GSAP
+  timeline (gsap@3.13) com power3.out sobre o introClock compartilhado:
+  Bem-Vindo 0.25s→1.25s (y16→0, 1.0s), subtítulo 1.20s→1.85s (0.65s),
+  botão 1.80s→2.45s (0.65s — anima o SLOT externo; transforms internos do
+  FlipButton/Motion intocados), respiro 2.45→2.80s, espiral aos 2.80s.
+  Estado inicial via gsap.set ANTES do primeiro paint (sem flash);
+  clock avançado por rAF (como desde 03B.5).
+- Política de sessão (§5): apresentação integral 1× por SESSÃO
+  (sessionStorage cnp-intro-session); retorno Home→Biblioteca→Home =
+  gsap.set assentado + introClock.t=999 — nenhuma parte da Home anima
+  sozinha enquanto outra está assentada; sidebar/resize não remontam o
+  conductor; reduced-motion abre assentado sem timeline. Key legada
+  cnp-intro-seen (localStorage) preservada sem função de compressão;
+  artcraft-tuner sem overrides (validado). Nenhum dado de projeto tocado.
+
+INSPEÇÃO TÉCNICA DAS TRAVADAS (§6 — sem mudar estética)
+------------------------------------------------------------------------------
+- Frame gaps medidos DURANTE a apresentação integral (7.6s, rAF): média
+  6.3ms, PICO 19ms, 0 frames >50ms em 1.143 frames — nenhuma travada
+  reproduzida nesta build; a preparação do WebGL já ocorre no mount
+  (~100ms, desde 03B.5) e os decoders seguem o decode budget original
+  (≤8), agora SEM coincidir com a entrada do texto (espiral só aos 2.8s).
+- Console sem pageerrors/erros na rodada completa; proxy cnpmedia
+  funcional (CTA → diálogo → card visível na navegação).
+- Nada alterado em GPU/shaders/movimento (sem evidência de necessidade).
+
+RESULTADOS DOS TESTES FUNCIONAIS (14/14 — phase03b10-qa.mjs, 1 perfil isolado)
+------------------------------------------------------------------------------
+- Timeline GSAP (âncora = domContentLoadedEventEnd, proxy do mount):
+  cruzamentos de 50% em H@445ms · S@1316ms · B@1916ms — ORDEM H<S<B e
+  janelas do contrato (H ~750 do mount, B ~2125; offset do proxy ~300ms
+  coerente e monotônico); registradas as duas correções do INSTRUMENTO
+  (t0 pós-mount e addInitScript cross-world) — produto intacto nelas.
+- Espiral: canvas preparado desde o mount (antes do marco); defaults
+  2.8/2.8/4.0 ativos (sem overrides de tuner); sessão registrada 1×.
+- FlipButton: button nativo resetado (rgba(0,0,0,0), border 0, appearance
+  none, shadow none) — somente as faces aparecem.
+- Titlebar: rgb(0,0,0), border-bottom 0px, shadow none, 34px.
+- Galaxy: WebGL vivo pós-apresentação; 161.4 fps sustentados.
+- CTA: clique abre diálogo de criar projeto.
+- Retorno à Home: headline/sub/botão opacidade 1 IMEDIATAMENTE (sem
+  re-apresentação do texto) e galaxy assentado (seen=1).
+- Sidebar: entrada não reinicia.
+- Console limpo. TypeScript 0 erros; Vitest 20/20; Cargo 14/14;
+  baseline full 5 PASS/1 SKIP; vite+tauri build OK.
+- Testes ignorados: estética/SCREENSHOTS/VISION (política); Alt+F4 e
+  drag por mouse (nativos, validados na 03B.9); gravação webm do EXE
+  (limitação CDP documentada).
 
 ARQUIVOS ALTERADOS
 ------------------------------------------------------------------------------
-- src/screens/HomeScreen.tsx — headline "Bem-Vindo" (span home__rise);
-  CTA = FlipButton oficial (from="top", tapScale={0.97}); slot de entrada.
-- src/ui.css — headline clamp(52px,4.4vw,80px) 700; .home__subtitle cor
-  EXPLÍCITA #929292; timeline (delays 100/750/1250ms); CSS do FlipButton
-  OFICIAL (cores/tamanho via [data-slot]; nenhum transform próprio); CSS 3D
-  das 03B.7/03B.8 REMOVIDO (grep flip-btn__box|rotateX|reveal = 0);
-  .titlebar; shell height calc(100vh - 34px).
-- src/components/animate-ui/flip-button.tsx (NOVO) — código OFICIAL do
-  registry @animate-ui/buttons-flip (animate-ui.com/r/buttons-flip.json,
-  MIT) INTEGRAL; única alteração: import cn local (joiner) — Motion,
-  variants, springs (280/20 nas faces), ReducedMotionConfig e Slot
-  originais intactos.
-- src/lib/cn.ts (NOVO) — joiner simples (o oficial usa tailwind-merge;
-  projeto não usa Tailwind — classes tailwind do oficial ficam inertes,
-  estilos visuais por CSS próprio).
-- src/components/galaxy/intro.ts — cardsAt 0.55→1.9 (contrato: galaxy só
-  revela após o botão); returnScale 3→1.
-- src/components/galaxy/intro-conductor.tsx — fast-forward por eventos
-  genéricos (wheel/pointerdown/keydown/touchstart) REMOVIDO; retornos
-  (seen) abrem assentados (t=999) — retomada natural, sem re-intro.
-- src/components/WindowTitlebar.tsx (NOVO) — 34px, drag-region com
-  duplo-clique, 3 controles SVG (minimizar/toggleMaximize/fechar com hover
-  vermelho), sem marca/texto.
-- src/App.tsx — <WindowTitlebar/> global acima do AppShell.
-- src-tauri/tauri.conf.json — decorations: false (janela principal).
-- src-tauri/capabilities/default.json (NOVO) — core:default + permissões
-  core:window (minimize/maximize/unmaximize/toggle-maximize/is-maximized/
-  close/start-dragging/posições/escala/show/hide/set-focus).
-- package.json — +motion@14.3.0, +@animate-ui/react@2.0.0 (peers do
-  FlipButton oficial; Motion é a implementação exigida pela missão).
-- tools/e2e/phase03b9-qa.mjs (NOVO) + evidence 03b9/.
+app/src/ui.css · app/src/components/galaxy/intro-conductor.tsx ·
+app/src/components/galaxy/intro.ts · app/src/components/galaxy/
+hero-galaxy-tunables.ts · app/package.json (+gsap@3.13) ·
+tools/e2e/phase03b10-qa.mjs (novo) · docs/reports/evidence/03b10/.
 
-COREOGRAFIA (contrato ÚNICO)
+PROBLEMAS REMANESCENTES / LIMITAÇÕES
 ------------------------------------------------------------------------------
-- Marcos CONTRATADOS → IMPLEMENTADOS (computados do CSS + intro.ts):
-  headline 100ms/850ms · subtítulo 750ms/500ms · botão 1250ms/500ms ·
-  GALAXY 1900ms (cardsAt) com wave ORIGINAL de 3.4s (revelação
-  1.9→5.3s, centro→periferia do código original — intocada).
-- Marcos REAIS medidos (animationend): headline→subtítulo→botão concluem
-  em ordem crescente (ex. 1730→2030→2530ms), sem sobreposição de início.
-- Aceleração de retorno (3×) REMOVIDA (returnScale=1); fast-forward por
-  input genérico REMOVIDO; retorno à Home abre assentado (t=999 — o
-  galaxy retoma o movimento contínuo, sem re-intro nem compressão).
-- WebGL/posters inicializam durante a entrada do texto (gate ready em
-  ~100ms como na 03B.5), mas os CARTÕES só revelam aos 1.9s — a
-  sobreposição de custos foi separada no tempo (causa-raiz dos engasgos
-  das fases anteriores: decoders + entrada simultâneos).
-- Sidebar/resize não reiniciam a entrada (transform estável); reduced-
-  motion: tudo imediatamente visível + FlipButton em crossfade (fallback
-  da biblioteca).
+- Primeira abertura pós-update apresenta 1× (sessionStorage vazio) — por
+  design da política de sessão.
+- A âncora da medição (DCL) tem ~300ms de offset sistemático vs. mount;
+  as janelas dos checks absorvem isso; tempos EXATOS do produto são os
+  definidos na timeline GSAP (0.25/1.2/1.8) e nos tunables (2.8/2.8/4.0).
+- Contorno externo da janela (se visible nas bordas) pertence ao
+  Windows/DWM (shadow de janela sem decoração) — fora do CSS; nada alterado
+  nas configs de janela além do já vigente.
+- Estética (suavidade percebida, cores, ritmo) — julgamento exclusivo do
+  mantenedor: PENDING HUMAN APPROVAL.
 
-FLIP BUTTON OFICIAL
-------------------------------------------------------------------------------
-- Fonte: código do registry oficial @animate-ui/buttons-flip (fetch do JSON
-  público; a CLI shadcn falhou por registry env) — INTEGRAL, sem lógica
-  alterada; apenas `cn` local (joiner) no lugar do util tailwind-merge.
-  Compatibilidade: React 19 ✓, Vite ✓, TS ✓ (motion@14.3.0 +
-  @animate-ui/react@2.0.0 instalados; peer motion ^14 resolvido).
-- Config: from="top", tapScale={0.97}; FlipButtonFront/Back com springs
-  ORIGINAIS (stiffness 280, damping 20 — constantes do próprio arquivo
-  oficial); faces "Criar Projeto"; frente #FFFFFF/#000000, verso
-  #242424/#FFFFFF; 240×50 r8 (CSS próprio via data-slot, sem migrar a UI
-  para Tailwind).
-- Estados comprovados NO EXE (mouse/teclado reais): repouso frente=1/
-  verso=0; hover frente→0/verso→1 (Motion spring, rotação vertical
-  front→top/back→from-top); botão 50px íntegro durante o hover; mouse-out
-  reverte à frente; click + Enter + Space abrem o diálogo (3/3). O CSS
-  3D próprio (rotateX/prism) das 03B.7/03B.8 foi totalmente removido.
-- CORREÇÃO REAL na validação: o slot do CTA herdava pointer-events:none
-  da camada central → hover/clique/hit-test do FlipButton mortos;
-  corrigido com pointer-events:auto no slot (mesma prática do CTA
-  anterior). Re-validado: 22/22.
-
-TITLEBAR PERSONALIZADA
-------------------------------------------------------------------------------
-- decorations:false na janela principal; WindowTitlebar global (fora da
-  Home): 34px, fundo #050505, hairline #101010, SEM marca/texto/ícone;
-  3 controles SVG à direita (minimizar; maximizar/restaurar; fechar com
-  hover vermelho #e5484d); área livre arrastável (data-tauri-drag-region)
-  com duplo-clique → toggleMaximize; botões com stopPropagation natural
-  (fora da drag-region).
-- Permissões: capabilities/default.json (core:window allow-minimize/
-  allow-toggle-maximize/allow-close/allow-start-dragging/etc). IPC de
-  persistência preservado (core:default; smoke valida criação via diálogo
-  e navegação com dados).
-- Comprovado NO EXE: minimizar (app vivo ao restaurar), toggleMaximize
-  alterna 3440×1392↔1280×800 (janela default 1280×800 restaurada), X
-  encerra o processo (PID ausente no tasklist após fechar) e ZERO webview
-  órfão na porta de debug (PowerShell CIM). Shell adaptado: rail/sidebar/
-  painel vivem em calc(100vh - 34px) — titlebar não sobrepõe breadcrumb,
-  splash (z-100) cobre tudo apenas durante o boot. Alt+F4/DPI/minSize
-  intactos (SO/Tauri).
-- NOTA: o tamanho default da janela (1280×800) é o configurado desde o
-  início do projeto; maximize foi o único estado não-default testado.
-
-VALIDAÇÃO (proporcional — 0 screenshots, 0 VISION)
-------------------------------------------------------------------------------
-- TypeScript 0 erros; Vitest 20/20; Cargo 14/14; baseline full 5 PASS/
-  1 SKIP; vite + tauri build OK.
-- Smoke (phase03b9-qa.mjs) 22/22: timeline starts 100/750/1250/1900 +
-  ordem real H<S<B; headline "Bem-Vindo" 63.36px@1440 (1 linha, nowrap);
-  subtítulo rgb(146,146,146) EXATO; flip oficial (repouso/hover/out/
-  cores/textos/altura); CTA click+Enter+Space; titlebar (34px/3 botões/
-  drag-region/sem texto) com minimizar/toggleMaximize/fechar reais;
-  sidebar ±; Home→Biblioteca→Home com intro não reiniciando; maximizado
-  e ultrawide 3440×1440 (1 linha, sem scrollX, CTA clicável, titlebar);
-  console sem erros; fechamento limpo (processo + órfãos).
-- Falhas e resoluções (orçamento respeitado — 2 ciclos, cada um com causa):
-  ciclo 1: (a) pointer-events do slot = DEFEITO REAL do produto →
-  corrigido; (b) parser de animationDelay do teste → corrigido. ciclo 2
-  (após fix do produto): repouso/hover "invertidos" e fechamento flaky =
-  defeitos do TESTE (mouse CDP parado sobre o botão agora interativo;
-  wmic inexistente nesta máquina; 2ª instância conectada à porta ainda
-  ocupada) → teste corrigido; produto sem alteração. Rodada final 22/22.
-- Testes ignorados: estética/comparação visual e VISION (política);
-  gravação webm do EXE (limitação CDP documentada); Alt+F4 manual.
-- Regressões verificadas: galaxy (canvas/vídeos via proxy/navegação com
-  intro), halftone (presente nos layouts testados), sidebar, biblioteca,
-  persistência (diálogo criou projeto → card visível), titlebar não
-  quebrou DPI/minimize. NÃO testado: splash visual com titlebar (splash
-  z-100 cobre; comportamento inalterado por construção), drag da janela
-  por mouse (data-tauri-drag-region nativo; duplo-clique validado via
-  toggleMaximize programático e handler conectado).
-
-FINAL
-------------------------------------------------------------------------------
-- FUNCTIONAL STATUS: PASS.
-- REGRESSION STATUS: PASS (escopo testado).
-- VISUAL STATUS: PENDING HUMAN APPROVAL.
-- Mudanças deliberadamente NÃO realizadas: cores/velocidades/shaders do
-  galaxy (só cardsAt/returnScale/fast-forward do contrato); Halftone;
-  biblioteca; persistência; sem migrar UI para Tailwind (cn local);
-  janela default continua 1280×800.
-- Limitações: drag por mouse e Alt+F4 não automatizados (nativos do
-  Tauri/SO); primeira visita pós-update roda o contrato 1× (key
-  cnp-intro-seen já vigente); classes tailwind do FlipButton oficial
-  estão inertes por design (estilos próprios via data-slot).
-- Commit: NO. Push: NO. Encerrando.
+FINAL: FUNCTIONAL PASS · REGRESSION PASS (escopo) · VISUAL PENDING HUMAN
+APPROVAL · Commit: NO · Push: NO. Encerrando.
 ==============================================================================

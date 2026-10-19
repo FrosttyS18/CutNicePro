@@ -1,0 +1,85 @@
+{
+ "results": [
+  {
+   "name": "timeline GSAP: ordem H<S<B dentro do contrato",
+   "ok": true,
+   "detail": "{\"headline\":445,\"subtitle\":1316,\"button\":1916}"
+  },
+  {
+   "name": "timeline GSAP: headline cruza 50% ~750ms",
+   "ok": true,
+   "detail": "445"
+  },
+  {
+   "name": "timeline GSAP: botão cruza 50% ~2125ms",
+   "ok": true,
+   "detail": "1916"
+  },
+  {
+   "name": "espiral: canvas preparado antecipadamente (mount)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "espiral: sem overrides de tuner (defaults 2.8/2.8/4.0 ativos)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "sessão: apresentação integral registrada 1×",
+   "ok": true,
+   "detail": "1"
+  },
+  {
+   "name": "flip: button nativo resetado (transparente, sem borda/sombra)",
+   "ok": true,
+   "detail": "{\"bg\":\"rgba(0, 0, 0, 0)\",\"border\":\"0px\",\"appearance\":\"none\",\"shadow\":\"none\"}"
+  },
+  {
+   "name": "titlebar: fundo #000, sem borda/sombra",
+   "ok": true,
+   "detail": "{\"bg\":\"rgb(0, 0, 0)\",\"borderBottom\":\"0px\",\"shadow\":\"none\",\"height\":\"34px\"}"
+  },
+  {
+   "name": "galaxy: WebGL vivo pós-apresentação",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "galaxy: movimento sustentado (>=45fps)",
+   "ok": true,
+   "detail": "161.4"
+  },
+  {
+   "name": "CTA: clique abre diálogo",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "retorno: tudo assentado imediatamente (opacidades 1, sem re-animar)",
+   "ok": true,
+   "detail": "{\"after\":{\"h\":\"1\",\"s\":\"1\",\"b\":\"1\",\"seen\":\"1\"}}"
+  },
+  {
+   "name": "sidebar: entrada não reinicia",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "console sem erros (rodada completa)",
+   "ok": true,
+   "detail": ""
+  }
+ ],
+ "chrono": {
+  "marks": {
+   "headline": 445,
+   "subtitle": 1316,
+   "button": 1916
+  },
+  "avg": 6.264216972836673,
+  "peak": 18.700000000000728,
+  "over50": 0,
+  "frames": 1143
+ }
+}

@@ -42,7 +42,9 @@ export const introTuner = defineTunables("intro", "Intro", {
     min: 0,
     max: 3,
     step: 0.05,
-    default: 0.7,
+    // 03B.10: alinhado a cardsAt — braços/ticks/círculo desenham junto com
+    // a revelação dos cartões (progressão interna vem do waveLag original).
+    default: 2.8,
     info: "When the instrument assembles: the ruler's tick cascade begins and the navbar contents stagger in.",
   },
   copyAt: {
@@ -58,9 +60,9 @@ export const introTuner = defineTunables("intro", "Intro", {
     min: 0,
     max: 3,
     step: 0.05,
-    // 03B.9: contrato de motion — o galaxy revela aos 1.90s (após headline
-    // 0.10s → sub 0.75s → botão 1.25s+500ms). Wave original intocada.
-    default: 1.9,
+    // 03B.10: contrato — texto termina ~2.45s + respiro; a espiral INTEIRA
+    // (braços+ticks+cartões) começa aqui, sem divergência com instrAt.
+    default: 2.8,
     info: "When the galaxy cards start rolling out from the center along their arms.",
   },
   ffScale: {
