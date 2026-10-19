@@ -1,10 +1,5 @@
 import { useEffect } from "react";
-import {
-  INTRO_SEEN_KEY,
-  introClock,
-  introFastForward,
-  introTuner,
-} from "./intro";
+import { INTRO_SEEN_KEY, introClock, introTuner } from "./intro";
 
 /**
  * Condutor do relógio de introdução — adaptação do IntroConductor original
@@ -28,16 +23,21 @@ export default function IntroConductor() {
     } catch {
       // Storage indisponível — trata como primeira visita.
     }
+    // 03B.9: retornos NÃO repetem/comprimem a coreografia — o galaxy abre
+    // no estado assentado (t além de todo beat), retomada natural do
+    // movimento contínuo. Primeira visita roda o contrato integral.
+    if (returning) {
+      introClock.t = 999;
+      introClock.done = true;
+      introClock.scale = 1;
+      return;
+    }
     introClock.t = 0;
     introClock.done = false;
-    introClock.scale = returning ? introTuner.read().returnScale : 1;
+    introClock.scale = 1;
 
-    const onInput = () => introFastForward();
-    window.addEventListener("wheel", onInput, { passive: true });
-    window.addEventListener("pointerdown", onInput, { passive: true });
-    window.addEventListener("keydown", onInput);
-    window.addEventListener("touchstart", onInput, { passive: true });
-
+    // 03B.9: fast-forward por eventos genéricos de ponteiro/teclado
+    // REMOVIDO — qualquer input acelerava a apresentação sem querer.
     let raf = 0;
     let last = performance.now();
     const tick = (now: number) => {
@@ -51,10 +51,6 @@ export default function IntroConductor() {
         } catch {
           // Storage indisponível — a próxima visita repete a intro inteira.
         }
-        window.removeEventListener("wheel", onInput);
-        window.removeEventListener("pointerdown", onInput);
-        window.removeEventListener("keydown", onInput);
-        window.removeEventListener("touchstart", onInput);
       }
       raf = requestAnimationFrame(tick);
     };
@@ -62,10 +58,6 @@ export default function IntroConductor() {
 
     return () => {
       cancelAnimationFrame(raf);
-      window.removeEventListener("wheel", onInput);
-      window.removeEventListener("pointerdown", onInput);
-      window.removeEventListener("keydown", onInput);
-      window.removeEventListener("touchstart", onInput);
       introClock.t = 999;
     };
   }, []);

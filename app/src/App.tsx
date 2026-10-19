@@ -11,6 +11,7 @@ import { ProjectView } from "./components/ProjectView";
 import { AppShell, type ProjectsSub } from "./components/shell/AppShell";
 import type { Crumb } from "./components/shell/Breadcrumb";
 import { SplashScreen } from "./screens/SplashScreen";
+import { WindowTitlebar } from "./components/WindowTitlebar";
 import { HomeScreen } from "./screens/HomeScreen";
 import { ProjectsScreen } from "./screens/ProjectsScreen";
 import { CollectionsScreen } from "./screens/CollectionsScreen";
@@ -190,6 +191,7 @@ export default function App() {
     <>
       {phase === "splash" && <SplashScreen leaving={splashLeaving} />}
 
+      <WindowTitlebar />
       <AppShell
         expanded={expanded}
         onToggleExpanded={toggleExpanded}

@@ -1,0 +1,112 @@
+[
+ {
+  "name": "timeline: sequência H→S→B→Galaxy (starts 100/750/1250/1900)",
+  "ok": true,
+  "detail": "{\"headlineStart\":100,\"headlineDur\":850,\"subStart\":750,\"btnStart\":1250}"
+ },
+ {
+  "name": "timeline: ordem real de conclusão H<S<B",
+  "ok": true,
+  "detail": "{\"headline\":1730,\"subtitle\":2030,\"button\":2530}"
+ },
+ {
+  "name": "headline: texto 'Bem-Vindo'",
+  "ok": true,
+  "detail": "Bem-Vindo"
+ },
+ {
+  "name": "headline: 1 linha ~64px@1440",
+  "ok": true,
+  "detail": "63.36px"
+ },
+ {
+  "name": "subtítulo: rgb(146,146,146) exato",
+  "ok": true,
+  "detail": "rgb(146, 146, 146)"
+ },
+ {
+  "name": "flip: botão oficial (data-slot motion)",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "name": "flip: frente visível/verso oculto no repouso",
+  "ok": true,
+  "detail": "f=1 b=0"
+ },
+ {
+  "name": "flip: cores #FFF/#242424 e textos",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "name": "flip: hover — frente some, verso visível (Motion)",
+  "ok": true,
+  "detail": "{\"frontOp\":\"0\",\"backOp\":\"1\",\"backTransform\":\"none\",\"btnVisible\":50}"
+ },
+ {
+  "name": "flip: botão permanece íntegro durante hover",
+  "ok": true,
+  "detail": "50px"
+ },
+ {
+  "name": "flip: mouse-out reverte à frente",
+  "ok": true,
+  "detail": "1"
+ },
+ {
+  "name": "CTA: click/Enter/Space criam projeto",
+  "ok": true,
+  "detail": "c=true e=true s=true"
+ },
+ {
+  "name": "titlebar: 34px, 3 controles, drag-region, sem texto",
+  "ok": true,
+  "detail": "{\"exists\":true,\"height\":34,\"buttons\":[\"Minimizar\",\"Maximizar ou restaurar\",\"Fechar\"],\"drag\":true,\"noText\":true}"
+ },
+ {
+  "name": "titlebar: minimizar não encerra o app",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "name": "titlebar: toggleMaximize alterna tamanho da janela",
+  "ok": true,
+  "detail": "3440x1392 → 1280x800"
+ },
+ {
+  "name": "layout maximizado: 1 linha, sem scrollX",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "name": "sidebar + Home→Biblioteca→Home",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "name": "retorno à Home: intro não reinicia (seen, retomada natural)",
+  "ok": true,
+  "detail": "1"
+ },
+ {
+  "name": "ultrawide: 1 linha, sem scrollX, CTA ok, titlebar ok",
+  "ok": true,
+  "detail": "{\"scrollX\":0,\"oneLine\":true,\"ctaHit\":true,\"tb\":34}"
+ },
+ {
+  "name": "console sem erros (rodada completa)",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "name": "fechar (botão X): processo do app encerra",
+  "ok": true,
+  "detail": "pid 33888"
+ },
+ {
+  "name": "fechar: sem webview órfão na porta de debug",
+  "ok": true,
+  "detail": "0"
+ }
+]

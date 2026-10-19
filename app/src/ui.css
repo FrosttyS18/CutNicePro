@@ -48,7 +48,7 @@
 /* ---------- shell ---------- */
 .shell {
   display: flex;
-  height: 100vh;
+  height: calc(100vh - 34px);
   background: var(--sh-bg);
   overflow: hidden;
 }
@@ -337,35 +337,41 @@
 .home__cta {
   pointer-events: auto;
 }
-/* 03B.8 — headline em UMA linha (32-44px), somente "Nice" em Deep Aqua.
-   Entrada única suave: fade + rise (transform/opacity, 520ms). */
+/* 03B.9 — headline: SOMENTE "Bem-Vindo" (Poppins 700 branco, 1 linha).
+   Contrato único de entrada: 0.10s headline (850ms) → 0.75s sub (500ms)
+   → 1.25s botão (500ms) → 1.90s galaxy (cardsAt). Só transform/opacity. */
 .home__title {
   margin: 0 0 16px;
-  font-size: clamp(32px, 3.1vw, 44px);
+  font-size: clamp(52px, 4.4vw, 80px);
   font-weight: 700;
-  letter-spacing: -0.015em;
-  line-height: 1.15;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
   color: #ffffff;
   white-space: nowrap;
-}
-.home__nice {
-  color: var(--sh-accent);
 }
 .home__rise {
   display: inline-block;
   opacity: 0;
-  transform: translateY(14px);
-  animation: cnp-rise 520ms cubic-bezier(0.22, 0.61, 0.2, 1) forwards;
+  transform: translateY(16px);
+  animation: cnp-rise 850ms cubic-bezier(0.22, 0.61, 0.2, 1) forwards;
+  animation-delay: 100ms;
 }
 @keyframes cnp-rise {
   from {
     opacity: 0;
-    transform: translateY(14px);
+    transform: translateY(16px);
   }
   to {
     opacity: 1;
     transform: translateY(0);
   }
+}
+.home__subtitle {
+  margin: 0 0 34px;
+  font-size: clamp(16px, 1.6vw, 21px);
+  font-weight: 400;
+  /* 03B.9: cor oficial explícita — rgb(146,146,146); sem herança do body. */
+  color: #929292;
 }
 .home__fade {
   display: inline-block;
@@ -374,17 +380,10 @@
   animation: cnp-fade-up 450ms cubic-bezier(0.22, 0.61, 0.2, 1) forwards;
 }
 .home__subtitle .home__fade {
-  animation-delay: 200ms;
+  animation-delay: 750ms;
+  animation-duration: 500ms;
 }
-.home__cta .flip-btn__reveal {
-  display: block;
-  width: 100%;
-  height: 100%;
-  opacity: 0;
-  transform: translateY(10px);
-  animation: cnp-fade-up 400ms cubic-bezier(0.22, 0.61, 0.2, 1) forwards;
-  animation-delay: 360ms;
-}
+
 @keyframes cnp-fade-up {
   from {
     opacity: 0;
@@ -395,59 +394,38 @@
     transform: translateY(0);
   }
 }
-/* 03B.8 — Flip Button como CAIXA 3D vertical: a face frontal vive em
-   translateZ(h/2); a face inferior do prisma é rotateX(90°) translateZ(h/2).
-   No hover/foco o CONJUNTO gira +90° no eixo X: a frente sobe e desaparece
-   pela borda superior enquanto a face inferior sobe de baixo até a frontal. */
-.home__cta {
-  position: relative;
+/* 03B.9 — FlipButton OFICIAL do Animate UI (Motion). A entrada do CTA
+   anima o SLOT externo (1.25s/500ms); o botão em si pertence ao Motion —
+   nenhum transform CSS próprio sobre o mesmo elemento. */
+.home__cta-slot {
+  opacity: 0;
+  transform: translateY(10px);
+  animation: cnp-fade-up 500ms cubic-bezier(0.22, 0.61, 0.2, 1) forwards;
+  animation-delay: 1250ms;
+  display: inline-block;
+  /* 03B.9: a camada central é pointer-events:none (somente CTAs capturam) —
+     o slot do FlipButton precisa capturar (hover/click/teclado). */
+  pointer-events: auto;
+}
+.home__flip {
   width: 240px;
   height: 50px;
-  border: none;
-  padding: 0;
-  background: none;
-  font-family: inherit;
-  cursor: pointer;
-  perspective: 800px;
 }
-.home__cta:focus-visible {
-  outline: 2px solid var(--sh-accent);
-  outline-offset: 3px;
-}
-.flip-btn__box {
-  position: relative;
-  display: block;
-  width: 100%;
-  height: 100%;
-  transform-style: preserve-3d;
-  transition: transform 400ms cubic-bezier(0.3, 0.7, 0.25, 1);
-}
-.flip-btn__face {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.home__flip-face {
+  width: 240px;
+  height: 50px;
   border-radius: 8px;
   font-size: 15px;
   font-weight: 600;
   letter-spacing: 0.01em;
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
 }
-.flip-btn__face--front {
+.home__flip-face--front {
   background: #ffffff;
   color: #000000;
-  transform: translateZ(25px);
 }
-.flip-btn__face--bottom {
+.home__flip-face--back {
   background: #242424;
   color: #ffffff;
-  transform: rotateX(-90deg) translateZ(25px);
-}
-.home__cta:hover .flip-btn__box,
-.home__cta:focus-visible .flip-btn__box {
-  transform: rotateX(-90deg);
 }
 
 /* ---------- halftone original (região inferior da Home) ---------- */
@@ -816,17 +794,55 @@
   /* 03B.7: conteúdo central abre assentado; flip sem rotação (troca de cor). */
   .home__rise,
   .home__fade,
-  .home__cta .flip-btn__reveal {
+  .home__cta-slot {
     animation: none;
     opacity: 1;
     transform: none;
-  }
-  .home__cta .flip-btn__box {
-    transition: none;
   }
   .home__cta:hover .flip-btn__face--front,
   .home__cta:focus-visible .flip-btn__face--front {
     background: #242424;
     color: #ffffff;
   }
+}
+
+/* ---------- titlebar personalizada (03B.9) ---------- */
+.titlebar {
+  display: flex;
+  align-items: stretch;
+  height: 34px;
+  background: #050505;
+  border-bottom: 1px solid #101010;
+  user-select: none;
+  flex: none;
+}
+.titlebar__drag {
+  flex: 1;
+}
+.titlebar__controls {
+  display: flex;
+}
+.titlebar__btn {
+  width: 44px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  color: #929292;
+  cursor: pointer;
+  padding: 0;
+}
+.titlebar__btn:hover {
+  background: #1a1a1a;
+  color: #ffffff;
+}
+.titlebar__btn:focus-visible {
+  outline: 1px solid var(--sh-accent);
+  outline-offset: -1px;
+}
+.titlebar__btn--close:hover {
+  background: #e5484d;
+  color: #ffffff;
 }

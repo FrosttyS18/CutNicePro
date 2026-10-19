@@ -58,10 +58,9 @@ export const introTuner = defineTunables("intro", "Intro", {
     min: 0,
     max: 3,
     step: 0.05,
-    // 03B.8: espera inicial MODERADA (era 1.0 na 03B.6 aprovada; 0.15 na
-    // 03B.7 repassada por apressada). Primeiro movimento ~550ms, SEM
-    // comprimir a duração total da revelação (introDur).
-    default: 0.55,
+    // 03B.9: contrato de motion — o galaxy revela aos 1.90s (após headline
+    // 0.10s → sub 0.75s → botão 1.25s+500ms). Wave original intocada.
+    default: 1.9,
     info: "When the galaxy cards start rolling out from the center along their arms.",
   },
   ffScale: {
@@ -77,8 +76,8 @@ export const introTuner = defineTunables("intro", "Intro", {
     min: 1,
     max: 6,
     step: 0.5,
-    // 03B.7: visitas de retorno veem a intro comprimida (era 1×).
-    default: 3,
+    // 03B.9: retornos NÃO comprimem (retomada natural do estado assentado).
+    default: 1,
     info: "Timeline acceleration for repeat visitors (localStorage flag) — they get the whole intro, much shorter.",
   },
 });
