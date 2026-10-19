@@ -255,12 +255,10 @@ export default function HalftoneWordmarkFooter({
       const face = o.fontWeight + " 100px " + o.fontFamily
       m.font = face
       const word = o.wordmark || " "
-      // 03B.3: margem lateral de segurança proporcional (sem corte involuntário
-      // da última letra; os pontos esparsos das bordas curvas dos glifos não
-      // podem se fundir com a borda do painel) e clamp pela ALTURA disponível —
-      // o topo dos glifos precisa caber considerando o recorte intencional (crop).
-      const safeX = Math.max(24, Math.round(w * 0.035))
-      let fit = hwfFitSize(m.measureText(word).width, Math.max(1, w - safeX * 2))
+      // 03B.4 (revoga as margens da 03B.3): full-bleed com o leve overscan do
+      // original (w*1.02). O clamp pela ALTURA disponível permanece como
+      // segurança para quando o wrapper limitar a região.
+      let fit = hwfFitSize(m.measureText(word).width, Math.max(1, w * 1.02))
       m.font = o.fontWeight + " " + fit + "px " + o.fontFamily
       let box = m.measureText(word)
       let cap = box.actualBoundingBoxAscent || fit * 0.72

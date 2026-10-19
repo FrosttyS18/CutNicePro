@@ -1,7 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="480" height="600" viewBox="0 0 480 600" role="img" aria-label="Miniatura de vídeo pendente">
-  <rect width="480" height="600" fill="#191919"/>
-  <rect x="1" y="1" width="478" height="598" fill="none" stroke="#2E2E2E" stroke-width="2" rx="10"/>
-  <rect x="29" y="72" width="5" height="456" rx="2.5" fill="#2A2A2A"/>
-  <circle cx="240.0" cy="300.0" r="48" fill="none" stroke="#242424" stroke-width="3"/>
-  <path d="M 237 294 L 247 300.0 L 237 306 Z" fill="#525252"/>
+  <rect width="480" height="600" fill="#181818"/>
+  <rect x="1.5" y="1.5" width="477" height="597" fill="none" stroke="#383838" stroke-width="3" rx="10"/>
+  <rect x="34" y="84" width="6" height="432" rx="3" fill="#323232"/>
+  <rect x="422" y="84" width="6" height="432" rx="3" fill="#323232"/>
+  <circle cx="240.0" cy="300.0" r="48" fill="none" stroke="#484848" stroke-width="3"/>
+  <path d="M 236 293 L 248 300.0 L 236 307 Z" fill="#6E6E6E"/>
 </svg>

@@ -1,0 +1,338 @@
+- generic [active] [ref=f1e1]:
+  - navigation [ref=f1e2]:
+    - generic [ref=f1e3]:
+      - generic [ref=f1e307]:
+        - link [ref=f1e308] [cursor=pointer]:
+          - /url: /
+          - img "ArtCraft" [ref=f1e309]
+        - navigation "Main" [ref=f1e310]:
+          - list [ref=f1e312]:
+            - listitem [ref=f1e313]:
+              - link "Home" [ref=f1e314] [cursor=pointer]:
+                - /url: /
+            - listitem [ref=f1e316]:
+              - link "Image" [ref=f1e317] [cursor=pointer]:
+                - /url: https://app.getartcraft.com/create-image
+            - listitem [ref=f1e319]:
+              - link "Video" [ref=f1e320] [cursor=pointer]:
+                - /url: https://app.getartcraft.com/create-video
+            - listitem [ref=f1e322]:
+              - button "Resources" [ref=f1e323]
+            - listitem [ref=f1e327]:
+              - link "Download" [ref=f1e328] [cursor=pointer]:
+                - /url: /download
+            - listitem [ref=f1e330]:
+              - link "Support" [ref=f1e331] [cursor=pointer]:
+                - /url: /support
+            - listitem [ref=f1e333]:
+              - link "Craft Apps" [ref=f1e334] [cursor=pointer]:
+                - /url: /apps
+      - generic [ref=f1e337]:
+        - link "Pricing" [ref=f1e338] [cursor=pointer]:
+          - /url: /pricing
+        - link "Join the ArtCraft Discord" [ref=f1e340] [cursor=pointer]:
+          - /url: https://discord.gg/artcraft
+        - button "Switch to light theme" [ref=f1e343]
+        - link "Launch App" [ref=f1e350] [cursor=pointer]:
+          - /url: https://app.getartcraft.com/
+  - main [ref=f1e4]:
+    - generic [ref=f1e6]:
+      - generic:
+        - generic:
+          - generic:
+            - img "ARTCRAFT":
+              - generic [aria-hidden]: R
+              - generic [aria-hidden]: T
+              - generic [aria-hidden]: C
+              - generic [aria-hidden]: R
+              - generic [aria-hidden]: A
+              - generic [aria-hidden]: F
+              - generic [aria-hidden]: T
+          - heading "Capable tools for artists." [level=1]
+          - paragraph: ArtCraft builds open source tools for artists. We pride ourselves on freedom of control and expression.
+          - generic [ref=f1e351]:
+            - link "Download free" [ref=f1e352] [cursor=pointer]:
+              - /url: /download
+            - link "Use on web" [ref=f1e358] [cursor=pointer]:
+              - /url: https://app.getartcraft.com/
+          - generic [ref=f1e359]:
+            - link "Open source on GitHub" [ref=f1e360] [cursor=pointer]:
+              - /url: https://github.com/storytold/artcraft
+            - paragraph [ref=f1e363]: macOS · Windows · Web
+            - paragraph [ref=f1e364]: No subscription required
+    - generic [ref=f1e8]:
+      - list [ref=f1e9]:
+        - listitem [ref=f1e10]:
+          - generic [aria-hidden] [ref=f1e11]: ▪
+          - text: Seedance 2.5
+        - listitem [ref=f1e12]:
+          - generic [aria-hidden] [ref=f1e13]: ▪
+          - text: Nano Banana 2
+        - listitem [ref=f1e14]:
+          - generic [aria-hidden] [ref=f1e15]: ▪
+          - text: Image to Location
+        - listitem [ref=f1e16]:
+          - generic [aria-hidden] [ref=f1e17]: ▪
+          - text: 3D Compositing
+        - listitem [ref=f1e18]:
+          - generic [aria-hidden] [ref=f1e19]: ▪
+          - text: Character Posing
+        - listitem [ref=f1e20]:
+          - generic [aria-hidden] [ref=f1e21]: ▪
+          - text: Image to 3D Mesh
+        - listitem [ref=f1e22]:
+          - generic [aria-hidden] [ref=f1e23]: ▪
+          - text: Background Removal
+        - listitem [ref=f1e24]:
+          - generic [aria-hidden] [ref=f1e25]: ▪
+          - text: 2D Compositing
+        - listitem [ref=f1e26]:
+          - generic [aria-hidden] [ref=f1e27]: ▪
+          - text: Mixed Assets
+      - list [aria-hidden] [ref=f1e28]:
+        - listitem [ref=f1e29]:
+          - generic [aria-hidden] [ref=f1e30]: ▪
+          - text: Seedance 2.5
+        - listitem [ref=f1e31]:
+          - generic [aria-hidden] [ref=f1e32]: ▪
+          - text: Nano Banana 2
+        - listitem [ref=f1e33]:
+          - generic [aria-hidden] [ref=f1e34]: ▪
+          - text: Image to Location
+        - listitem [ref=f1e35]:
+          - generic [aria-hidden] [ref=f1e36]: ▪
+          - text: 3D Compositing
+        - listitem [ref=f1e37]:
+          - generic [aria-hidden] [ref=f1e38]: ▪
+          - text: Character Posing
+        - listitem [ref=f1e39]:
+          - generic [aria-hidden] [ref=f1e40]: ▪
+          - text: Image to 3D Mesh
+        - listitem [ref=f1e41]:
+          - generic [aria-hidden] [ref=f1e42]: ▪
+          - text: Background Removal
+        - listitem [ref=f1e43]:
+          - generic [aria-hidden] [ref=f1e44]: ▪
+          - text: 2D Compositing
+        - listitem [ref=f1e45]:
+          - generic [aria-hidden] [ref=f1e46]: ▪
+          - text: Mixed Assets
+    - generic [ref=f1e61]:
+      - paragraph [ref=f1e62]: Free to start · No subscription
+      - paragraph [ref=f1e63]: Download the studio, or run it in your browser. Your first renders are minutes away.
+      - generic [ref=f1e64]:
+        - link "Download for desktop" [ref=f1e65] [cursor=pointer]:
+          - /url: /download
+        - link "Launch in browser" [ref=f1e66] [cursor=pointer]:
+          - /url: https://app.getartcraft.com/
+  - contentinfo [ref=f1e67]:
+    - generic [ref=f1e68]:
+      - generic [ref=f1e69]:
+        - generic [ref=f1e70]:
+          - img "ArtCraft" [ref=f1e71]
+          - paragraph [ref=f1e72]: The open-source studio for controllable AI image and video.
+          - link "hello@storyteller.ai" [ref=f1e73] [cursor=pointer]:
+            - /url: mailto:hello@storyteller.ai
+        - navigation "Product" [ref=f1e74]:
+          - paragraph [ref=f1e75]: Product
+          - list [ref=f1e76]:
+            - listitem [ref=f1e77]:
+              - link "Download" [ref=f1e78] [cursor=pointer]:
+                - /url: /download
+            - listitem [ref=f1e79]:
+              - link "Pricing" [ref=f1e80] [cursor=pointer]:
+                - /url: /pricing
+            - listitem [ref=f1e81]:
+              - link "Launch App" [ref=f1e82] [cursor=pointer]:
+                - /url: https://app.getartcraft.com/
+        - navigation "Craft Apps" [ref=f1e83]:
+          - paragraph [ref=f1e84]: Craft Apps
+          - list [ref=f1e85]:
+            - listitem [ref=f1e86]:
+              - link "All Craft Apps" [ref=f1e87] [cursor=pointer]:
+                - /url: /apps
+            - listitem [ref=f1e88]:
+              - link "PhotoCraft" [ref=f1e89] [cursor=pointer]:
+                - /url: /apps/photocraft
+            - listitem [ref=f1e90]:
+              - link "VectorCraft" [ref=f1e91] [cursor=pointer]:
+                - /url: /apps/vectorcraft
+            - listitem [ref=f1e92]:
+              - link "FilmCraft" [ref=f1e93] [cursor=pointer]:
+                - /url: /apps/filmcraft
+            - listitem [ref=f1e94]:
+              - link "LightCraft" [ref=f1e95] [cursor=pointer]:
+                - /url: /apps/lightcraft
+            - listitem [ref=f1e96]:
+              - link "PdfCraft" [ref=f1e97] [cursor=pointer]:
+                - /url: /apps/pdfcraft
+            - listitem [ref=f1e98]:
+              - link "EffectCraft" [ref=f1e99] [cursor=pointer]:
+                - /url: /apps/effectcraft
+            - listitem [ref=f1e100]:
+              - link "DesignCraft" [ref=f1e101] [cursor=pointer]:
+                - /url: /apps/designcraft
+            - listitem [ref=f1e102]:
+              - link "FigCraft" [ref=f1e103] [cursor=pointer]:
+                - /url: /apps/figcraft
+            - listitem [ref=f1e104]:
+              - link "WordCraft" [ref=f1e105] [cursor=pointer]:
+                - /url: /apps/wordcraft
+            - listitem [ref=f1e106]:
+              - link "SoundCraft" [ref=f1e107] [cursor=pointer]:
+                - /url: /apps/soundcraft
+            - listitem [ref=f1e108]:
+              - link "DeckCraft" [ref=f1e109] [cursor=pointer]:
+                - /url: /apps/deckcraft
+            - listitem [ref=f1e110]:
+              - link "CADCraft" [ref=f1e111] [cursor=pointer]:
+                - /url: /apps/cadcraft
+            - listitem [ref=f1e112]:
+              - link "GridCraft" [ref=f1e113] [cursor=pointer]:
+                - /url: /apps/gridcraft
+        - navigation "Resources" [ref=f1e114]:
+          - paragraph [ref=f1e115]: Resources
+          - list [ref=f1e116]:
+            - listitem [ref=f1e117]:
+              - link "Tutorials" [ref=f1e118] [cursor=pointer]:
+                - /url: /tutorials
+            - listitem [ref=f1e119]:
+              - link "News" [ref=f1e120] [cursor=pointer]:
+                - /url: /news
+            - listitem [ref=f1e121]:
+              - link "FAQ" [ref=f1e122] [cursor=pointer]:
+                - /url: /faq
+            - listitem [ref=f1e123]:
+              - link "Press Kit" [ref=f1e124] [cursor=pointer]:
+                - /url: /press-kit
+            - listitem [ref=f1e125]:
+              - link "Support" [ref=f1e126] [cursor=pointer]:
+                - /url: /support
+        - navigation "Community" [ref=f1e127]:
+          - paragraph [ref=f1e128]: Community
+          - list [ref=f1e129]:
+            - listitem [ref=f1e130]:
+              - link "Discord" [ref=f1e131] [cursor=pointer]:
+                - /url: https://discord.gg/artcraft
+            - listitem [ref=f1e132]:
+              - link "GitHub" [ref=f1e133] [cursor=pointer]:
+                - /url: https://github.com/storytold/artcraft
+            - listitem [ref=f1e134]:
+              - link "YouTube" [ref=f1e135] [cursor=pointer]:
+                - /url: https://www.youtube.com/@OfficialArtCraftStudios
+            - listitem [ref=f1e136]:
+              - link "Instagram" [ref=f1e137] [cursor=pointer]:
+                - /url: https://www.instagram.com/get_artcraft
+            - listitem [ref=f1e138]:
+              - link "TikTok" [ref=f1e139] [cursor=pointer]:
+                - /url: https://www.tiktok.com/@artcraft.studios
+      - generic [ref=f1e140]:
+        - paragraph [ref=f1e141]: © 2026 ArtCraft
+        - paragraph [ref=f1e142]: Made by artists, for artists
+  - alert [ref=f1e143]
+  - scrollbar "Page position" [ref=f1e144]:
+    - generic [aria-hidden] [ref=f1e146]:
+      - generic [ref=f1e148]: "0"
+      - generic [ref=f1e154]: "5"
+      - generic [ref=f1e160]: "10"
+      - generic [ref=f1e166]: "15"
+      - generic [ref=f1e172]: "20"
+      - generic [ref=f1e178]: "25"
+      - generic [ref=f1e184]: "30"
+      - generic [ref=f1e190]: "35"
+      - generic [ref=f1e196]: "40"
+      - generic [ref=f1e202]: "45"
+      - generic [ref=f1e208]: "50"
+      - generic [ref=f1e214]: "55"
+      - generic [ref=f1e220]: "60"
+      - generic [ref=f1e226]: "65"
+      - generic [ref=f1e232]: "70"
+      - generic [ref=f1e238]: "75"
+      - generic [ref=f1e244]: "80"
+      - generic [ref=f1e250]: "85"
+      - generic [ref=f1e256]: "90"
+      - generic [ref=f1e262]: "95"
+      - generic [ref=f1e268]: "100"
+    - generic [ref=f1e272]:
+      - generic [ref=f1e273]:
+        - generic [ref=f1e274]:
+          - generic [ref=f1e275]: "0"
+          - generic [ref=f1e276]: "1"
+          - generic [ref=f1e277]: "2"
+          - generic [ref=f1e278]: "3"
+          - generic [ref=f1e279]: "4"
+          - generic [ref=f1e280]: "5"
+          - generic [ref=f1e281]: "6"
+          - generic [ref=f1e282]: "7"
+          - generic [ref=f1e283]: "8"
+          - generic [ref=f1e284]: "9"
+        - generic [ref=f1e285]:
+          - generic [ref=f1e286]: "0"
+          - generic [ref=f1e287]: "1"
+          - generic [ref=f1e288]: "2"
+          - generic [ref=f1e289]: "3"
+          - generic [ref=f1e290]: "4"
+          - generic [ref=f1e291]: "5"
+          - generic [ref=f1e292]: "6"
+          - generic [ref=f1e293]: "7"
+          - generic [ref=f1e294]: "8"
+          - generic [ref=f1e295]: "9"
+        - generic [ref=f1e296]:
+          - generic [ref=f1e297]: "0"
+          - generic [ref=f1e298]: "1"
+          - generic [ref=f1e299]: "2"
+          - generic [ref=f1e300]: "3"
+          - generic [ref=f1e301]: "4"
+          - generic [ref=f1e302]: "5"
+          - generic [ref=f1e303]: "6"
+          - generic [ref=f1e304]: "7"
+          - generic [ref=f1e305]: "8"
+          - generic [ref=f1e306]: "9"
+      - text: "%"
+  - generic:
+    - link "Jump to ARTCRAFT":
+      - /url: "#hero"
+    - link "Jump to FEATURES" [ref=f1e367] [cursor=pointer]:
+      - /url: "#features"
+    - generic [aria-hidden]: F
+    - generic [aria-hidden]: E
+    - generic [aria-hidden]: A
+    - generic [aria-hidden]: T
+    - generic [aria-hidden]: U
+    - generic [aria-hidden]: R
+    - generic [aria-hidden]: E
+    - generic [aria-hidden]: S
+    - link "Jump to OWNERSHIP" [ref=f1e368] [cursor=pointer]:
+      - /url: "#ownership"
+    - generic [aria-hidden]: O
+    - generic [aria-hidden]: W
+    - generic [aria-hidden]: "N"
+    - generic [aria-hidden]: E
+    - generic [aria-hidden]: R
+    - generic [aria-hidden]: S
+    - generic [aria-hidden]: H
+    - generic [aria-hidden]: I
+    - generic [aria-hidden]: P
+    - link "Jump to COMMUNITY" [ref=f1e369] [cursor=pointer]:
+      - /url: "#made-with"
+    - generic [aria-hidden]: C
+    - generic [aria-hidden]: O
+    - generic [aria-hidden]: M
+    - generic [aria-hidden]: M
+    - generic [aria-hidden]: U
+    - generic [aria-hidden]: "N"
+    - generic [aria-hidden]: I
+    - generic [aria-hidden]: T
+    - generic [aria-hidden]: "Y"
+    - link "Jump to GET STARTED" [ref=f1e370] [cursor=pointer]:
+      - /url: "#start"
+    - generic [aria-hidden]: G
+    - generic [aria-hidden]: E
+    - generic [aria-hidden]: T
+    - generic [aria-hidden]: S
+    - generic [aria-hidden]: T
+    - generic [aria-hidden]: A
+    - generic [aria-hidden]: R
+    - generic [aria-hidden]: T
+    - generic [aria-hidden]: E
+    - generic [aria-hidden]: D

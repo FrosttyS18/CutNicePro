@@ -1,0 +1,112 @@
+[
+ {
+  "name": "1. movimento contínuo",
+  "ok": true,
+  "detail": "26/26 deslocados"
+ },
+ {
+  "name": "2a. cartão wide encontrável",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "name": "2b. hover: cursor de clique nos cartões",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "name": "2c. hover: SEM efeito visual de escala (referência)",
+  "ok": true,
+  "detail": "Δw 1px"
+ },
+ {
+  "name": "3. clique wide: cartão expandido (~2.2×)",
+  "ok": true,
+  "detail": "scale 1.33"
+ },
+ {
+  "name": "3b. órbita dos demais continua durante expansão",
+  "ok": true,
+  "detail": "25 movendo"
+ },
+ {
+  "name": "4. retorno por clique fora",
+  "ok": true,
+  "detail": "scale 0.59"
+ },
+ {
+  "name": "vertical: clique expande",
+  "ok": true,
+  "detail": "scale 1.50"
+ },
+ {
+  "name": "vertical: retorno",
+  "ok": true,
+  "detail": "scale 0.69"
+ },
+ {
+  "name": "square: clique expande",
+  "ok": true,
+  "detail": "scale 1.95"
+ },
+ {
+  "name": "square: retorno",
+  "ok": true,
+  "detail": "scale 0.88"
+ },
+ {
+  "name": "9. clique fora da área artística fecha",
+  "ok": true,
+  "detail": "scale 0.57"
+ },
+ {
+  "name": "10a. CTA visível",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "name": "10b. clique no CTA abre o diálogo de projeto",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "name": "11. sidebar recolhe e expande",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "name": "12. resize contínuo: cartões ativos preservados",
+  "ok": true,
+  "detail": "26"
+ },
+ {
+  "name": "13. reabertura da Home",
+  "ok": true,
+  "detail": "26 cartões"
+ },
+ {
+  "name": "14. reduced-motion: órbita estática",
+  "ok": true,
+  "detail": "0 movendo"
+ },
+ {
+  "name": "15a. Enter expande via teclado",
+  "ok": true,
+  "detail": "scale 1.26"
+ },
+ {
+  "name": "15b. Escape fecha e foco retorna ao cartão",
+  "ok": true,
+  "detail": "scale 0.58, foco=true"
+ },
+ {
+  "name": "halftone full-bleed: tinta ≥ 96% da largura útil",
+  "ok": true,
+  "detail": "99.9%"
+ },
+ {
+  "name": "halftone: ponteiro/clique/retorno preservados",
+  "ok": true,
+  "detail": "aqua 0→555→1415→0"
+ }
+]

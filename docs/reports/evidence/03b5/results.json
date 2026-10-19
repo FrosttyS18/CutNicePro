@@ -1,0 +1,57 @@
+[
+ {
+  "name": "canvas WebGL presente com contexto",
+  "ok": true,
+  "detail": "{\"w\":1055,\"h\":806,\"ctx\":true}"
+ },
+ {
+  "name": "FPS do hero sustentado (>=45)",
+  "ok": true,
+  "detail": "160.9 fps"
+ },
+ {
+  "name": "console sem erros de página/WebGL",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "name": "CTA abre diálogo de projeto",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "name": "halftone intacto (tinta >=96%)",
+  "ok": true,
+  "detail": "99.9%"
+ },
+ {
+  "name": "sidebar recolhe/expande",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "name": "navegação M1 preservada (ida e volta)",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "name": "resolução 1280x720 sem erros de página",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "name": "resolução 1920x1080 sem erros de página",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "name": "resolução 2560x1080 sem erros de página",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "name": "resolução 3440x1440 sem erros de página",
+  "ok": true,
+  "detail": ""
+ }
+]

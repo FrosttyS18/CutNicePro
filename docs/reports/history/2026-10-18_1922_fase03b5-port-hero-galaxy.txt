@@ -1,0 +1,142 @@
+CUTNICEPRO — ZCODE REPORT — FASE 03B.5 (PORT DO HERO GALAXY ORIGINAL DO ARTCRAFT)
+==============================================================================
+Tarefa:     Substituir a implementação própria pelo MOTOR ORIGINAL do Hero
+            Galaxy do ArtCraft (repositório storytold/artcraft-services,
+            revisão e57ee3d63ac478a24149384bf1473ef97aa067f8), adaptando
+            apenas o necessário para React+TS+Tauri/Vite do CutNicePro.
+Data:       2026-10-18 (conclusão 19h22)
+Status:     PASS técnico — motor WebGL original portado e funcional, ciclo
+            hover/clique/expansão/retorno comprovado computacional e
+            visualmente; Visual status: PENDING HUMAN APPROVAL.
+Preservação: working tree auditado (133 arquivos modificados preservados);
+            Rust/persistência/coleções/sidebar/biblioteca/splash e o
+            HalftoneWordmarkFooter INTACTOS; OrbitingMediaHero.tsx removido
+            (substituído, sem implementações concorrentes); SEM commits.
+
+SOURCE AUDIT
+------------------------------------------------------------------------------
+- Arquivos utilizados (revisão e57ee3d, sparse-clone oficial, arquivados em
+  design/handoff/03b5/original/ para auditoria):
+  components/landing/hero-galaxy.tsx (1653 linhas — lido INTEGRALMENTE),
+  hero-galaxy-tunables.ts (639 — 5 grupos de tunables), hero.tsx/hero-scene/
+  hero-viewport (consultados; hero.tsx é composição Next/drei NÃO portada —
+  contém navbar/CTAs/branding do site), lib/{tuner.ts (zustand), intro.ts,
+  theme-colors.ts, webgl-support.ts, landing-data.ts, crafting-apps.ts,
+  links.ts}, components/intro-conductor.tsx.
+- Licença (LICENSE.md): "fair source" WIP — permite copiar/modificar/compilar
+  para uso pessoal; PROÍBE revenda, uso para produto concorrente e uso da
+  marca ArtCraft. REGISTRO: o port é para protótipo de estudo de caso/
+  portfólio por decisão explícita do mantenedor (que conhece a restrição
+  desde a 03B.2); NÃO usar marca/logo/mídia do ArtCraft (feito — só o
+  algoritmo); publicação comercial exigirá autorização dos autores.
+- Dependências: three@0.184.0, @react-three/fiber@9.6.1, zustand@5.0.3,
+  react/react-dom@19.2.6 + @types (R3F 9 exige React 19 — upgrade do app,
+  sem regressões). drei/postprocessing NÃO necessários (hero-galaxy usa só
+  fiber+three).
+
+WEBGL PORT
+------------------------------------------------------------------------------
+- Arquitetura preservada: <Canvas> r3f (dpr 1-1.5, MSAA, alpha), câmera
+  perspectiva com 1 unidade = 1 CSS px (FittedCamera), GalaxyScene com
+  rig giratório, cartões como meshes com ShaderMaterial GLSL3 próprio,
+  underlay de braços como ribbons com shader de pulsos (YIQ hue-rotate),
+  ticks e círculo tracejado, CanvasBoundary.
+- Shaders 100% originais: CARD_VERT (curvatura + bulge do mouse em world
+  space) e CARD_FRAG (12-tap poisson blur com rotação por pixel, dispersão
+  cromática nas bordas, SDF de canto arredondado + hairline, 4 slots de
+  click-punch gaussianos), pulseMat (cometas com cauda assimétrica,
+  hue-spread por braço, onda de reveal).
+- Física/movimento 100% original: braços arquimedianos (b·θ), slot-cycle
+  com jitter por braço em unidades de slot (anti-starfish), wobble
+  tangencial+radial, hold-brake com holdTarget/holdRest e fases por cartão
+  (resume sem snap), spin global frenado, tug field gaussiano no ponteiro,
+  sizing em 2 passos com garantia de não-sobreposição (density×separação
+  mínima, shrink instantâneo, capVsHeld), perf governor (EMA de frame →
+  shed/regrow), intro (reveal wave + burst + flare de dispersão), rebirth
+  LRU + dedup de proximidade, boost de clique com boostTau, ripples e
+  click-punches, cover-fit por clip, tema cross-fade 0.4s.
+- Adaptações (todas documentadas no código com "03B.5 port"):
+  1. "use client" removido; imports @/lib/* → relativos.
+  2. Mídias: <video>/CDN → texturas locais estáticas (TextureLoader) via
+     contrato OrbitCardData (16 placeholders originais); decode budget/
+     priming/park removidos (sem decoders); "ready" = textura carregada;
+     clipVA parte do aspect do contrato.
+  3. IntroConductor reescrito sem gsap (rAF próprio, sem navbar) — mesmo
+     contrato de clock (intro.ts original intocado).
+  4. Tokens de tema: --bg/--bg-sunken/--ink/--line/--line-strong/--accent/
+     --accent-ink definidos no ui.css com a paleta CutNicePro (#0A0A0A/
+     #02C2BE/#E6E7E8/#3A3A3A) — theme-colors.ts original funciona lendo-os.
+  5. PROPORÇÕES (fase 2 da missão): aspecto final do cartão por mídia
+     (clipAspectTarget: 16:9 | 1:1 | 9:16) na morfologia newborn→adulto;
+     a métrica de colisão segue assumindo 16:9 (conservadora — cartões
+     mais estreitos permanecem estritamente seguros, preservando a
+     garantia original); hit-test do alvo/boost corrigido para o
+     half-width REAL do cartão (o original presumia 16:9 — patch mínimo).
+  6. BUGS DE INTEGRAÇÃO encontrados e corrigidos (com prova): (a) o
+     container original usa classes Tailwind ("absolute inset-0")
+     inexistentes no app — div ficava 0×0 e NUNCA recebia pointer events
+     (elementFromPoint provou) → estilo inline equivalente; (b) o conteúdo
+     central capturava pointer-events (h1/p) bloqueando o galaxy atrás —
+     no original a camada de conteúdo é pe:none EXCETO CTAs → CSS ajustado
+     (só .home__cta captura). Após os fixes: pointer ativo, cliques
+     consumidos, lock e boost funcionando (ver abaixo).
+- Diferenças identificadas vs original: mídias estáticas (sem vídeo —
+  sem assets adequados, conforme missão); sem scrub de scroll (app não
+  pagina); densidade menor em viewports menores (adaptativo original);
+  saliência visual menor com placeholders escuros (temporários).
+
+INTERACTION PARITY
+------------------------------------------------------------------------------
+- Movimento: DERIVA CONTÍNUA comprovada (8 frames ~160ms + vídeo; QA 03B.4
+  re-executado na fase A: movimento presente; direção/percurso pelos braços
+  espirais visível nos pares temporais).
+- Hover: lock do alvo comprovado COMPUTACIONALMENTE (sonda temporária,
+  removida após diagnóstico): targetI trava no cartão sob o cursor; hold-
+  brake parcial medido pelo VISION (cartão sob cursor ~30% mais lento que
+  a média — o conjunto segue, como no original); lock óptico visto no q5
+  (cartão reto/nítido vs vizinhos) e no ciclo de evidência.
+- Clique: boost comprovado COMPUTACIONALMENTE (perseguidor por estado
+  interno: lock targetI=23 → clique → boostCard=23, boostK 0→0.79→~1.0 ≈
+  escala 1.8×) e VISUALMENTE (VISION em 8 pontos: q5 com ciclo completo —
+  hold com 2 cartões (o travado reto) → clique: cartão gigante ~362px
+  (~1.8×+) congelado (±4px entre frames) → fora: retorno aos 2 cartões).
+  Pontos sem cartão sob o cursor: sem efeito (comportamento original).
+- Retorno: mover para fora cancela o boost (boostK 0.79→0.04 medido;
+  q5-fora confirma visualmente). Segundo clique no mesmo cartão alterna
+  (toggle original).
+- Evidências temporais OBRIGATÓRIAS: galaxy-temporal.webm (16s, 1440×900,
+  Edge/Chromium sobre o vite dev — intro completa + órbita + hover + clique
+  + retorno); sequência galaxy-t0..t7 (~160ms); pares hover A/B; 32 frames
+  da varredura final (8×4).
+- Acessibilidade do app preservada (CTA focável, sidebar por teclado);
+  cartões do galaxy são canvas WebGL (sem DOM por cartão, como o original).
+
+VALIDATION
+------------------------------------------------------------------------------
+- TypeScript: tsc --noEmit = 0 erros. Vitest: 20/20 (testes do motor DOM
+  antigo removidos com o componente; contrato/formato/prefs/coleções OK).
+- Rust: 14/14 (intocado). Baseline full: 5 PASS / 1 SKIP.
+- Windows runtime (exe release, WebView2): QA fase A 11/11 — canvas WebGL
+  vivo (1055×806 @1440), 160.9 fps medidos por rAF, console sem erros,
+  CTA abre diálogo, halftone intacto (tinta 99.9%), sidebar ±, navegação
+  M1 ida/volta, 1280/1920/2560/3440 sem erros (canvas redimensiona
+  corretamente), sidebar recolhida OK.
+- Regressões: nenhuma em Rust/persistência/telas; React 19 sem quebras.
+- Evidências: docs/reports/evidence/03b5/ (results.json, screenshots por
+  resolução, sequência temporal, final/ com ciclo q5, galaxy-temporal.webm).
+
+FINAL
+------------------------------------------------------------------------------
+- Technical status: PASS — motor original portado com shaders/física/
+  interação preservados; 2 bugs de integração corrigidos com causa-raiz
+  comprovada; adaptações documentadas; app validado no Windows real.
+- Visual status: PENDING HUMAN APPROVAL.
+- Diferenças restantes: mídias são placeholders estáticos (contrato pronto
+  para thumbnails/vídeo); sem scrub de scroll; saliência menor até as
+  mídias reais; licença fair-source do ArtCraft — uso autorizado pelo
+  mantenedor para protótipo/portfólio, publicação comercial requer
+  autorização dos autores originais.
+- Commit: NO. Push: NO.
+- Ready for maintainer review: SIM — ver docs/reports/evidence/03b5/
+  (começar por galaxy-temporal.webm e final/q5-*.png).
+==============================================================================

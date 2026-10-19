@@ -3,6 +3,7 @@
 //! exposta por comandos IPC (`list_projects`, `create_project`, `open_project`
 //! e, desde a Fase 03B, os comandos de coleções — aditivos e retrocompatíveis).
 
+mod media_proxy;
 mod storage;
 
 use storage::{CollectionMeta, CollectionStore, ProjectMeta, Store};
@@ -73,6 +74,9 @@ fn remove_project_from_collection(
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
+        .register_asynchronous_uri_scheme_protocol("cnpmedia", |ctx, request, responder| {
+            media_proxy::handle(ctx, request, responder)
+        })
         .invoke_handler(tauri::generate_handler![
             list_projects,
             create_project,

@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="450" height="800" viewBox="0 0 450 800" role="img" aria-label="Miniatura de vídeo pendente">
-  <rect width="450" height="800" fill="#1B1B1B"/>
-  <rect x="1" y="1" width="448" height="798" fill="none" stroke="#303030" stroke-width="2" rx="10"/>
-  <circle cx="225.0" cy="400.0" r="50" fill="#262626"/>
-  <path d="M 221 392 L 234 400.0 L 221 408 Z" fill="#555555"/>
+  <rect width="450" height="800" fill="#1A1A1A"/>
+  <rect x="1.5" y="1.5" width="447" height="797" fill="none" stroke="#484848" stroke-width="3" rx="10"/>
+  <circle cx="225.0" cy="400.0" r="52" fill="#323232"/>
+  <path d="M 220 391 L 236 400.0 L 220 409 Z" fill="#6E6E6E"/>
 </svg>

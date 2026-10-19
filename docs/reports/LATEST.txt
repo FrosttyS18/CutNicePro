@@ -1,146 +1,144 @@
-CUTNICEPRO — ZCODE REPORT — FASE 03B.3 (VISUAL REGRESSION FIX)
+CUTNICEPRO — ZCODE REPORT — FASE 03B.6 (VÍDEOS REAIS DA CDN NO HERO GALAXY)
 ==============================================================================
-Tarefa:     Corrigir exclusivamente os defeitos visuais reprovados pelo
-            mantenedor: Halftone (faixa opaca + clipping ultrawide), hero
-            orbital (composição) e sidebar (toggle único no local oficial).
-Data:       2026-10-18 (conclusão 10h48)
-Status:     PASS técnico nos 12 critérios de aceite mensuráveis;
-            Visual status: PENDING HUMAN APPROVAL.
-Ambiente:   Windows, Git Bash, app em C:\CutNicePro\app; trabalho não
-            commitado das fases anteriores preservado; sem commits/pushes.
+Tarefa:     Integrar os 20 MP4 oficiais da CDN ao motor Hero Galaxy
+            aprovado na 03B.5, com gerenciamento de decoders, posters e
+            fallback offline — SEM tocar na composição/física/shaders.
+Data:       2026-10-18 (conclusão 20h58)
+Status:     PASS técnico — 20/20 mídias integradas, reprodução MP4 real
+            comprovada nos cartões WebGL nas 3 proporções, decode budget
+            respeitado, offline com posters, zero regressões.
+            Visual approval: PENDING HUMAN REVIEW.
+Preservação: 153 arquivos modificados não commitados preservados; storage/
+            comandos IPC/persistência/regras de negócio, Halftone, sidebar,
+            breadcrumb e biblioteca INTACTOS; Hero Galaxy com shaders/física
+            100% como aprovado (só a FONTE de texturas mudou). Sem commits.
 
-INSPEÇÃO ANTES DE MODIFICAR
+CDN AUDIT
 ------------------------------------------------------------------------------
-- Arquivos auditados: HalftoneWordmarkFooter.tsx, HomeHalftone.tsx,
-  OrbitingMediaHero.tsx, HomeScreen.tsx, AppShell.tsx, Breadcrumb.tsx,
-  icons.tsx, ui.css, lib/contactSheetSources.ts, test/phase03b.test.ts.
-- Causas-raiz confirmadas no código (não presumidas):
-  * faixa opaca: ctx.fillRect de fundo + background do .hwf-root;
-  * clipping ultrawide: hwfFitSize(measured, w*1.02) dimensionava só pela
-    largura (102%, com sangramento) sem considerar a altura do canvas;
-  * hero descentralizado/desproporcional: .home__orbit com inset
-    0 0 220px 0 deslocava o centro da órbita 110px acima do centro real do
-    conteúdo; raios calculados sobre min(w,h) achatavam a órbita em painéis
-    largos; baseH fixo em px (96–150) não escalava com o container;
-  * toggle duplicado: botão funcional (») à direita + glifo estático
-    pixelado (IconBreadLogo 16px, export com 2 paths sobrepostos) à esquerda.
+- 20 arquivos verificados: todos HTTP 200 (HEAD) e 206 (Range), Content-Type
+  video/mp4, Accept-Ranges bytes; tamanhos ~1.5–5.2 MB; 16-9_04.mp4 ausente
+  por design (não inventado).
+- Codecs/resoluções/durações: lidos no próprio pipeline (loadedmetadata) e
+  na geração de posters — resoluções reais divergem do rótulo da pasta em
+  alguns arquivos (ex.: 16-9_03 = 720×544, 1-1_07 = 576×688); todos ~5.2s;
+  decodificáveis no Edge/WebView2 (reprodução e captura de frame comprovadas
+  arquivo a arquivo). Auditoria completa em docs/reports/evidence/03b6/
+  cdn-audit.json.
+- CORS — FALHA REAL DO BUCKET: o R2 NÃO envia Access-Control-Allow-Origin
+  (preflight OPTIONS = 403; GET com Origin = sem ACAO). Comprovado
+  empiricamente no Edge: <video> sem crossOrigin toca mas texImage2D lança
+  SecurityError (canvas tainted); com crossOrigin=anonymous o load falha.
+  → Sem ACAO, VideoTexture WebGL direto da CDN é IMPOSSÍVEL.
+- SOLUÇÃO (sem desabilitar segurança): proxy de mídia ISOLADO no processo
+  Rust — scheme cnpmedia registrado via register_asynchronous_uri_scheme_
+  protocol; no Windows/WebView2 é servido como http://cnpmedia.localhost/
+  (comprovado: 206 + CORS + body 1024 no fetch da página). O proxy responde
+  ACAO *, cacheia em disco (app-data/cnp-media) com Range local, whitelist
+  dos 20 caminhos (sem proxy genérico). Módulo novo src-tauri/src/
+  media_proxy.rs + reqwest (rustls) — storage.rs/lib.rs de negócio intactos.
+- Aprovados: 20/20. Reprovados: nenhum.
 
-HALFTONE
+VIDEO PIPELINE
 ------------------------------------------------------------------------------
-- Causa raiz da faixa opaca: fillRect com colors.background + background do
-  .hwf-root pintavam um retângulo opaco de 220px na base da Home.
-- Causa raiz do clipping ultrawide: fit exclusivamente pela largura (com
-  2% de sangramento proposital do original) — em 2560×1080/3440×1440 a cap
-  height excedia a altura do canvas e os glifos cortavam topo/base; a
-  última letra encostava na lateral.
-- Correções aplicadas (no componente original, autorizadas pela missão):
-  (1) nova prop `transparent` (default false — comportamento padrão do
-  original preservado): draw usa clearRect, grain passa a compor com
-  "source-atop" (grão apenas sobre os pontos, sem véu retangular) e o root
-  recebe background transparente; (2) dimensionamento por largura E altura:
-  margem lateral de segurança proporcional (max(24px, 3,5% da largura) por
-  lado) + clamp do fontSize quando cap*(1-crop) excede a altura disponível
-  — o topo dos glifos sempre cabe, o recorte inferior intencional (crop
-  0.2) permanece e nenhuma letra corta na lateral. ResizeObserver do
-  original re-layouta ao redimensionar (validado sem reiniciar o app).
-- Física original preservada: SIM — hwfStep/hwfRadius/hwfWarmth/hwfHex/
-  hwfFitSize intactos; molas, repulsão do ponteiro, onda de clique,
-  granulação, densidade e cores inalterados.
-- Resoluções testadas (app real, janela): 1280×720, 1440×900, 1920×1080,
-  2560×1080, 3440×1440, 3840×1600 + redimensionamento contínuo.
-- Evidências: metrics.json (bounding box dos glifos por alpha do canvas em
-  cada resolução: margens laterais simétricas 32/33, 42/43, 60/62, 115/120,
-  553/556, 760/759 px; clip lateral = 0 em TODAS; fundo do root
-  transparente), screenshots home-*.png (5 resoluções),
-  halftone-ponteiro.png e halftone-clique.png. Primeira rodada VISION leu
-  corte lateral direito em 1280/1440/2560 (margens de 14–18px fundindo-se
-  à borda do painel pelos pontos esparsos da curva do "o") → margem
-  proporcional aplicada → re-VERIFICAÇÃO VISION: PASS nas duas resoluções
-  problemáticas, com corte inferior intencional preservado.
+- Arquitetura: manifesto tipado central (galaxy-media.ts) → 1 <video> por
+  mídia (src http://cnpmedia.localhost/..., crossOrigin=anonymous, muted,
+  loop, playsInline, preload=metadata) → THREE.VideoTexture → uniform uMap
+  do ShaderMaterial ORIGINAL (nenhum shader tocado). Posters locais como
+  textura inicial (uMap nasce no poster; troca para VideoTexture quando
+  videoAlpha>0.5 — mesma cena, corte imperceptível, sem flash; rebirth/
+  dedup voltam ao poster do novo clip).
+- Gerenciamento de decoders: DECODE BUDGET DO ORIGINAL restaurado por
+  completo — MAX_PLAYING=8 (limite conservador pedido), RESUME_PER_TICK=3,
+  CULL_TICK 0.25s/CULL_HOLD 1.2s, priorização por ciclo (alvo em foco =
+  prioridade máxima pri=2), pausa dos excedentes, park total após 2.5s fora
+  da tela/tab oculta, dispose no unmount. Prova visual: ~5-6 cartões com
+  quadros mudando vs ~9-10 estáticos (posters) — dentro do orçamento.
+- Quantidade ativa: ≤8 concorrentes (observado ~5-6 tocando; comportamento
+  visual consistente com o budget).
+- Posters: 20 PNGs ~480px GERADOS DOS PRÓPIDOS MP4 (seek em múltiplas
+  frações até frame não-preto; ACAO injetado apenas na sessão de geração
+  via Playwright route) — bundle local, offline-first; MP4s NÃO versionados.
+- Comportamento offline: CDN bloqueada no QA (route abort r2.dev + arquivo
+  removido do cache) → Home abre com posters, espiral animada, CTA cria
+  projeto, zero pageerrors (offline.png). Cache do proxy torna vídeos já
+  vistos disponíveis sem rede.
 
-ORBITAL HERO
+WEBGL INTEGRATION
 ------------------------------------------------------------------------------
-- Causa raiz da composição incorreta: órbita com raios derivados de
-  min(w,h) (elipse achatada em painéis largos, concentração lateral),
-  container do hero excluindo a faixa inferior (centro deslocado 110px do
-  centro visual do conteúdo) e cartões com altura fixa em px (96–150px
-  escalados até 1.2× = gigantes), 24 elementos.
-- Coordenadas relativas ao container: SIM — orbitFrame recebe (width,
-  height) do hero medido por ResizeObserver; centro = centro exato do
-  container (provado por simetria angular no teste unitário); recálculo a
-  cada frame → expandir/recolher sidebar e resize contínuo recompõem a
-  órbita (validado: após 4 resizes seguidos, CTA ok e cards visíveis).
-- Card sizing: largura como fração moderada da largura do hero
-  (7,5–12,5%) aplicada via style width em % — responsivo sem reflow por
-  frame; medidos: 50–89px (1280), 58–106px (1440), 83–155px (1920),
-  116–220px (2560), 162–310px (3440), 181–351px (3840).
-- Safe zone: anel elíptico interno (42% da largura / 46% da altura) com
-  opacidade mínima 0.1 — cartões só "cheios" na periferia; centro de
-  leitura sempre livre (hit-test do CTA = true em TODAS as resoluções).
-- Distribuição: 16 cartões, ângulos iniciais distribuídos pelo círculo com
-  jitter, profundidade 0.18–0.86 com oscilação; delta entre centro médio
-  dos cartões e centro do hero ≤ 42px em todas as resoluções (1280: 5px).
-- Placeholders: redesenhados — 12 SVGs originais locais (4:5, 9:16, 16:9,
-  1:1; 3 tratamentos): tom carvão elevado #19–#20, moldura fina #2E–#32,
-  canto r10, play discreto (círculo/triângulo pequeno) com ou sem barra de
-  progresso; SEM X gigante, SEM texto repetido, sem fotos/URLs externas.
-- Evidências comparativas: metrics.json + screenshots home-*.png entre
-  resoluções (proporção mantida) + QA da primeira rodada vs. segunda;
-  movimento comprovado (8/8 transforms mudando).
+- Texturas: uMap por cartão = poster→VideoTexture (mesma slot de uniform,
+  shaders intactos); cover-fit do ORIGINAL com clipVA do loadedmetadata
+  (aspect real por arquivo, corrigindo os desvios de rótulo).
+- Proporções: manifesto por família (7× 1:1, 7× 9:16, 6× 16:9), aspect real
+  em runtime; distribuição round-robin + rebirth LRU + dedup do original
+  (equilíbrio automático; 16-9_04 intencionalmente ausente).
+- Expansão e retorno: BOOST ORIGINAL intocado — comprovado com vídeos
+  reais nas TRÊS proporções: 16:9 (ampliacoes/q4 ~1.87 e q5, conteúdo
+  aeromoça/gato), 9:16 VERTICAL (ratios2/r22 navio 112×198 razão 0.566 e
+  r25), 1:1 (ratios/r3 bruxa ~160×160 e ratios2/r7); retorno ao afastar o
+  cursor (q*-fora). Um cartão em jornada intermediária exibiu ~4:5 —
+  MORFOLOGIA ORIGINAL do motor (nasce quadrado, morfa ao alvo), não bug.
+- Diferenças vs motor anterior (03B.5): apenas a fonte de uMap (posters
+  estáticos → posters+vídeo) e o aspecto real por arquivo; física, blur,
+  braços, hold-brake, tug, boost, ripples, perf governor, dedup e intro
+  inalterados.
 
-SIDEBAR
+PERFORMANCE
 ------------------------------------------------------------------------------
-- Controle antigo removido: SIM — botão » (chevrons) da direita excluído
-  do AppShell; IconPanelCollapse/IconPanelExpand/IconBreadLogo deletados.
-- Controle oficial implementado: botão único .panel-toggle imediatamente à
-  ESQUERDA da palavra "Home" do breadcrumb (posição oficial), com
-  aria-controls="side-panel", chamando o MESMO onToggleExpanded e a MESMA
-  preferência persistida (localStorage) — sem duplicação de controle
-  (QA: toggleCount=1 e toggleBefore=true em TODAS as 6 resoluções).
-- SVG corrigido: IconSidePanel vetorial novo (viewBox 24, stroke 1.5,
-  moldura rx 3.5 + coluna vertical = painel dividido do design oficial),
-  renderizado a 16px dentro de hit area 32×32 — nítido (VISION: sem
-  pixelização perceptível nas 4 capturas).
-- Navegação por teclado: Tab real alcança o botão (outline computado
-  2px), Enter recolhe (false) e Space expande (true) — alternância
-  funcional; tooltip/title e aria-label dinâmicos mantidos.
-- Persistência: preferência entre reinícios validada na 03B.1/03B.2 e
-  mecanismo intocado (QA atual alterna via teclado sem erros).
+- Resoluções testadas (exe real): 1280×720, 1920×1080, 2560×1080, 3440×1440
+  — todas sem pageerrors; canvas WebGL redimensiona; screenshots por
+  resolução em evidence/03b6/home-*.png.
+- Frame time: 57.1 fps sustentados (rAF, 120 amostras) com vídeos
+  decodificando; heap 10 MB.
+- Memória: 3× Home↔Biblioteca ida-e-volta com Δheap −6 MB (sem vazamento;
+  park+dispose funcionando).
+- Primeira mídia: canvas ativo imediatamente; decoders escalam após o
+  budget (priming escalonado 400ms+i·250ms do original).
+- Vazamento na reabertura: home-screen volta com mesmos contadores e heap
+  estável (acima).
+- Falha individual: 1 URL fora do cache com CDN bloqueada → poster
+  permanece, resto da Home normal, zero pageerrors.
+- Problemas identificados: (1) meu critério de QA exigia ler ACAO/Content-
+  Range via JS — headers fora da CORS-safelist não são legíveis (o 206+body
+  lido PROVA CORS+Range); corrigido o entendimento, não o produto;
+  (2) incidentes de debug resolvidos: cargo build --release direto NÃO
+  ativa custom-protocol do Tauri (exe caía no devUrl = ERR_CONNECTION_
+  REFUSED) — builds sempre via `npx tauri build --no-bundle`; webviews
+  órfãos seguravam a porta de CDP e mascaravam o app real.
+- Evidências reais: trio videos-A/B/C (interiores mudando = reprodução),
+  24 frames temporais do EXE (temporal-exe/), ampliacoes/ (32 frames),
+  ratios/ + ratios2/ (42 frames de cliques), offline.png, tela-app.png.
 
-VALIDAÇÃO
+VALIDATION
 ------------------------------------------------------------------------------
-- TypeScript: tsc --noEmit = 0 erros.
-- React tests: 26/26 (orbitFrame reescrito para a geometria elíptica:
-  centro por simetria, raios proporcionais a cada eixo, profundidade,
-  sizing fracional, determinismo).
-- Windows runtime: exe release rebuild; console sem erros de página.
-- Playwright (CDP no app real, não destrutivo — tools/e2e/phase03b3-qa.mjs):
-  matriz completa de 6 resoluções com métricas estruturais, movimento do
-  hero, halftone repouso(0)→ponteiro(23)→clique(493)→retorno(0), teclado,
-  redimensionamento contínuo; screenshots em docs/reports/evidence/03b3/.
-- Baseline full: 5 PASS / 1 SKIP ("npm test OK (app/)").
-- Clipping detected: NENHUM (alpha nas bordas laterais = 0 em todas as
-  resoluções; VISION PASS pós-correção nas resoluções antes afetadas).
-- Regressions: nenhuma — navegação M1, projetos/coleções e demais telas
-  intocados (diff concentrado nos componentes da missão); Rust inalterado.
+- TypeScript: 0 erros. Vitest: 20/20. Rust: 14/14 (storage intacto).
+- Baseline full: 5 PASS / 1 SKIP.
+- QA funcional (phase03b6-qa.mjs): 11 checks — proxy 206/CORS/Range OK,
+  57 fps, 4 resoluções sem erros, home↔biblioteca ×3 sem vazamento,
+  halftone 99.9% intacto, CTA + offline + console limpo (o único check
+  "FALHA" era o critério errado de leitura de headers — ver acima).
+- Regressões: nenhuma (CTA, navegação, persistência, sidebar, halftone,
+  biblioteca verificados no QA).
+- VISION: cenas reais de vídeo nos cartões ✓; mistura vídeo/poster (~5-6
+  tocando) ✓; ampliações 16:9/9:16/1:1 com conteúdo real ✓; offline com
+  posters + título/CTA ✓.
+- Gravações: galaxy-dev-posters.webm (dev, física+posters) + 24 frames
+  temporais do EXE com MP4 (temporal-exe/) — recordVideo não existe em
+  connectOverCDP (limitação registrada).
 
 FINAL
 ------------------------------------------------------------------------------
-- Technical status: PASS — 12/12 critérios de aceite da missão atendidos.
-- Visual status: PENDING HUMAN APPROVAL (VISION não aprova em nome do
-  mantenedor; vereditos visuais desta fase são instrumentais).
-- Remaining issues: nenhum bloqueio; observações — (1) em 2560×1080 o
-  wordmark tem respiro lateral menor que em 3440 (comportamento do clamp
-  por altura, correto); (2) arquivo de log do MCP Playwright
-  (.playwright-mcp/) foi criado no workspace durante a inspeção do
-  ArtCraft — artefato de sessão, não do produto.
-- Files changed: components/{HalftoneWordmarkFooter.tsx (props transparent
-  + dimensionamento), HomeHalftone.tsx (transparent), OrbitingMediaHero.tsx
-  (geometria elíptica/sizing), icons.tsx (IconSidePanel + remoções),
-  shell/AppShell.tsx (toggle oficial), shell/Breadcrumb.tsx (glifo promovido
-  a botão)}, lib/contactSheetSources.ts (ORBIT_DEFAULTS count 16),
-  assets/placeholders/*.svg (12 redesenhados), ui.css (orbit/halftone/
-  toggle), test/phase03b.test.ts, tools/e2e/phase03b3-qa.mjs (novo),
-  evidências em docs/reports/evidence/03b3/.
-- Commit: NO. Push: NO.
+- Status: PASS técnico.
+- Pendências: (1) revisão humana (visual approval PENDING); (2) recomendado
+  ao mantenedor habilitar CORS no bucket R2 (ACAO *) — tornaria o proxy
+  dispensável no futuro; (3) 16-9_04 ausente por design; (4) gravação em
+  vídeo do EXE via CDP não suportada pelo Playwright (frames temporais em
+  vez).
+- Arquivos modificados: NOVOS — src-tauri/src/media_proxy.rs, app/src/
+  assets/posters/ (20 PNG), tools/e2e/{phase03b6-posters,phase03b6-qa}.mjs;
+  ALTERADOS — galaxy/hero-galaxy.tsx (pipeline de vídeo do original
+  restaurado + comentários 03B.6), galaxy/galaxy-media.ts (manifesto v2),
+  src-tauri/src/lib.rs (registro do scheme), src-tauri/Cargo.toml (reqwest
+  rustls), evidence em docs/reports/evidence/03b6/.
+- Estado do Git: sem commits/pushes (working tree preservado, 153 arquivos
+  modificados acumulados desde a 03B.1).
 ==============================================================================

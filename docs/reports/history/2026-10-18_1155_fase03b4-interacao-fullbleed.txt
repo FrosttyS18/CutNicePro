@@ -1,0 +1,146 @@
+CUTNICEPRO — ZCODE REPORT — FASE 03B.4 (REFERENCE-DRIVEN INTERACTION + FULL-BLEED HALFTONE)
+==============================================================================
+Tarefa:     (1) Halftone full-bleed (revogação das margens da 03B.3);
+            (2) OrbitalMediaHero com fidelidade interativa à referência
+            pública do ArtCraft — hover e click-to-expand obrigatórios,
+            especificados por inspeção real, não presumidos.
+Data:       2026-10-18 (conclusão 11h55)
+Status:     PASS técnico (22/22 checks funcionais; full-bleed comprovado por
+            tinta); Visual status: PENDING HUMAN APPROVAL.
+Ambiente:   Windows, Git Bash, app em C:\CutNicePro\app; sem commits/pushes;
+            Rust/persistência/telas não relacionadas intocados.
+
+REFERENCE INSPECTION
+------------------------------------------------------------------------------
+- Browser session: SIM — getartcraft.com em Chromium real (Playwright MCP),
+  header com canvas WebGL full-header; interação por MOUSE REAL em
+  coordenadas de cartões identificados por VISION (3 séries, ~20 capturas).
+- Hover behavior observed: NENHUM efeito visual detectável — nem desaceleração
+  global da órbita (pares com 350ms: deriva com hover ≥ deriva sem hover),
+  nem destaque do cartão sob o cursor (sem contorno/escala/nitidez). Sem
+  efeito <30% de velocidade não é descartável por stills (limitação).
+- Click behavior observed: clique ACERTANDO um cartão → ele amplia ~2× NA
+  PRÓPRIA POSIÇÃO e congela (deixa de orbitar), SEM modal, SEM backdrop,
+  SEM botão de fechar, SEM setas; os DEMAIS cartões continuam orbitando.
+  Estado persistente (>5s comprovado). Cliques fora de cartão → sem efeito.
+- Expanded state: ampliação in-place ~2× persistente; mídia ampliada é a
+  mesma miniatura (continuidade), cartões vizinhos parcialmente cobertos.
+- Return behavior: CLIQUE FORA fecha (comprovado); ESC NÃO fecha na
+  referência (comprovado). Nesta implementação ESC fecha por exigência de
+  acessibilidade da missão — sem alterar a experiência de mouse.
+- Evidence paths: docs/reports/evidence/03b4/artcraft/ (repouso, hover 700/
+  1600ms, clique 250/800/2000ms, expandido-5s, pós-ESC, pós-clique-fora,
+  hover-slow A/B, séries c2/c3, 2º clique) + 4 relatórios VISION.
+- Unverified behavior: gravação em vídeo (não produzida — capturas
+  temporais usadas); efeito de hover abaixo do limiar detectável por stills;
+  cursor pointer na referência (cursor não renderizado em screenshots).
+- Adicional observado nesta rodada: leve inclinação (tilt) dos cartões
+  variando com o ponto da órbita (aspecto dos cartões muda entre frames) —
+  reproduzido como tangencial ±9°.
+
+HALFTONE
+------------------------------------------------------------------------------
+- Root cause: a 03B.3 limitava o fontSize por margens (3,5%/lado) e pela
+  faixa fixa de 220px — em telas largas a fonte reduzia e sobravam margens
+  de 553/760px, descaracterizando o full-bleed da referência.
+- Effective wordmark width: TINTA dos pontos = 99,8–99,9% da largura útil
+  (medido por varredura de alpha do canvas) em TODAS as resoluções.
+- Horizontal margins by resolution: 1280: 0/1px; 1440: 0/1px; 1920: 0/1px;
+  2560: 0/3px; 3440: 0/5px; 3840: 0/5px (leve overscan artístico w*1.02 do
+  código ORIGINAL — margens revogadas conforme a missão).
+- Canvas height strategy: derivada das MÉTRICAS reais da fonte — o wrapper
+  HomeHalftone mede o texto em canvas (Poppins 800), calcula a altura
+  visível (ascent × (1−crop)) e aplica inline, com teto de 30% da altura da
+  Home para não engolir o conteúdo central; ResizeObserver + fonts.ready
+  recalculam ao redimensionar (sem reiniciar). Alturas resultantes:
+  101px (1280) → 120px (1440) → 176px (1920) → 249px (2560) → 350px (3440)
+  → 396px (3840). O clamp interno por altura permanece como segurança.
+- Original animation preserved: SIM — molas, repulsão por ponteiro, onda de
+  clique, granulação (source-atop na variante transparente), interpolação
+  Deep Aqua, pausa fora da tela e reduced-motion intocados; mudanças
+  limitadas ao dimensionamento (w*1.02 do original restaurado) e à prop
+  transparent da 03B.3.
+- Evidence: matriz acima + aqua 0→553→1394→0 (ponteiro/clique/retorno)
+  + screenshots home-1280/1440/3440.
+
+ORBITAL HERO
+------------------------------------------------------------------------------
+- Total cards: deck fixo de 30 (18 wide 16:9, 7 vertical 9:16, 5 square 1:1
+  — proporção-alvo da missão, misturados por shuffle determinístico).
+- Visible density: adaptativa por largura do hero (1 cartão/~40px, limites
+  18–30): 22 (1280), 26 (1440), 30 (1920+). Composição medida por
+  resolução, ex. 1440: 16 wide/5 vertical/4 square (mistura perceptível).
+- Format distribution: ângulos uniformes + jitter e profundidade estratificada
+  por permutação linear — anel equilibrado pelos quadrantes, sem clusters
+  (correção pós-VISION: o shuffle dos conteúdos não embaralha mais os
+  ângulos); profundidades alternadas, cartões cortados pelas bordas
+  permitidos (overflow do painel).
+- Positioning: tudo relativo à área artística real (hero medido por
+  ResizeObserver; sidebar descontada por layout), órbita elíptica com raios
+  por eixo, centro no centro exato do container.
+- Motion architecture: preservada do motor próprio — 1 requestAnimationFrame
+  escrevendo transform/opacity/zIndex por nó (zero state por frame); NOVO:
+  cada cartão interpola exponencialmente (lerp k=0.22) ao alvo do instante,
+  unificando órbita, expansão e retorno no mesmo caminho suave (sem trocas
+  instantâneas, sem layout shift); tilt tangencial ±9°.
+- Hover: SEM efeito visual — fiel à referência (comprovado: Δw=0px sob o
+  cursor); apenas cursor de clique como affordance. Nada inventado.
+- Click-to-expand: clique no cartão → amplia 2,2× NA PRÓPRIA POSIÇÃO e
+  congela (ângulo congelado), zIndex 999, opacidade 1; transição fluida pelo
+  lerp; os demais continuam orbitando (24/26 medidos movendo durante a
+  expansão) — comportamento observado na referência; SEM modal/backdrop/X.
+- Return: clique FORA (listener em document — rail/painel/halftone também
+  fecham; corrigido na rodada) ou ESC (acessibilidade) → o cartão interpola
+  de volta e retoma a órbita; clicar no expandido alterna (fecha).
+- Evidence: docs/reports/evidence/03b4/ — expandido-wide/vertical/square/
+  teclado, retorno-wide, hover-sem-efeito, reduced-motion, home-*.png,
+  results.json (22 checks).
+
+VALIDATION
+------------------------------------------------------------------------------
+- TypeScript: tsc --noEmit = 0 erros. Build vite OK; tauri build OK.
+- React tests: 29/29 (novos: deck 18/7/5, proporção em deck menor,
+  determinismo, contagem adaptativa, expansão 2,2×/z999/opacidade, tilt ±9°).
+- Desktop runtime: exe release; console sem erros de página.
+- Functional tests: 22/22 checks do phase03b4-qa.mjs — os 15 testes da
+  missão (movimento 26/26; hover sem escala + cursor; expand wide/vertical/
+  square com retorno; clique fora da área artística; CTA abre diálogo;
+  sidebar; resize contínuo; reabertura da Home; reduced-motion estático
+  (reativo a mudança em runtime — corrigido); Escape com foco retornando ao
+  cartão; Enter via teclado) + matriz + full-bleed + interatividade do
+  halftone.
+- Visual comparisons: VISION ref×app — 0 FAIL; composição estrutural
+  (anel orbital, centro legível, cartão ~2× sem modal, wordmark full-bleed
+  com recorte inferior, sem faixa opaca) reproduzida. DIFERENÇAS REGISTRADAS
+  (não tratadas como aprovação): saliência dos placeholders (escuros por
+  serem provisórios — contraste ajustado +1 nível), trilhas de órbita
+  coloridas da ref (identidade visual do ArtCraft — deliberadamente NÃO
+  copiadas), órbita da ref sangra o viewport inteiro vs contida no painel
+  (layout do CutNicePro com rail/sidebar), hierarquia tipográfica central
+  menor (título 34px do design aprovado), posição do expandido varia com a
+  órbita (in-place por definição).
+- Baseline full: 5 PASS / 1 SKIP. Rust: 14/14 (intocado).
+- Regressions: nenhuma — CTA, navegação, persistência, sidebar 03B.3
+  (toggle único antes de "Home"), biblioteca e demais telas preservados.
+- Placeholders: 16 SVGs originais (4 tratamentos × 4 proporções: play
+  central, play+progresso, film-strip, waveform de edição) — sem X, sem
+  texto, sem fotos; contrato OrbitCardData {id, mediaType, thumbnail, ratio,
+  alt, previewSrc?} — motor independente do conteúdo; expansão funciona com
+  placeholder/imagem/vídeo futuro.
+
+FINAL
+------------------------------------------------------------------------------
+- Technical status: PASS — halftone full-bleed comprovado por tinta
+  (99,8–99,9%) nas 6 resoluções; hero com 30 cartões mistos e interação
+  conforme a referência inspecionada; 22/22 checks funcionais.
+- Visual status: PENDING HUMAN APPROVAL (VISION não aprova; diferenças
+  honestas registradas acima).
+- Outstanding issues: (1) thumbnails oficiais do mantenedor substituirão os
+  placeholders via contrato de dados; (2) hover da referência pode ter
+  efeito < limiar detectável por stills — se o mantenedor conhecer o
+  comportamento exato, ajusto; (3) gravação em vídeo da referência não
+  produzida (capturas temporais em vez).
+- Commit: NO. Push: NO.
+- Ready for maintainer review: SIM — evidências em docs/reports/evidence/
+  03b4/ (artcraft/ = referência; app = screenshots e results.json).
+==============================================================================

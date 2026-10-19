@@ -1,0 +1,57 @@
+[
+ {
+  "name": "proxy cnpmedia responde (206+ACAO+Range)",
+  "ok": false,
+  "detail": "{\"status\":206,\"type\":\"video/mp4\",\"acao\":null,\"range\":null,\"len\":1024}"
+ },
+ {
+  "name": "frame time sustentado (>=45fps)",
+  "ok": true,
+  "detail": "57.1 fps"
+ },
+ {
+  "name": "1280x720 sem pageerrors",
+  "ok": true,
+  "detail": "0"
+ },
+ {
+  "name": "1920x1080 sem pageerrors",
+  "ok": true,
+  "detail": "0"
+ },
+ {
+  "name": "2560x1080 sem pageerrors",
+  "ok": true,
+  "detail": "0"
+ },
+ {
+  "name": "3440x1440 sem pageerrors",
+  "ok": true,
+  "detail": "0"
+ },
+ {
+  "name": "3× home↔biblioteca: heap sem explosão",
+  "ok": true,
+  "detail": "Δ-6MB"
+ },
+ {
+  "name": "halftone intacto (tinta >=96%)",
+  "ok": true,
+  "detail": "99.9%"
+ },
+ {
+  "name": "CTA funciona com CDN bloqueada",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "name": "modo offline sem pageerrors",
+  "ok": true,
+  "detail": "0"
+ },
+ {
+  "name": "console sem erros (rodada completa)",
+  "ok": true,
+  "detail": ""
+ }
+]

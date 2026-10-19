@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="450" viewBox="0 0 800 450" role="img" aria-label="Miniatura de vídeo pendente">
+  <rect width="800" height="450" fill="#202020"/>
+  <rect x="1.5" y="1.5" width="797" height="447" fill="none" stroke="#404040" stroke-width="3" rx="10"/>
+  <rect x="40" y="27" width="720" height="396" fill="none" stroke="#262626" stroke-width="2" rx="7"/>
+  <rect x="362" y="256" width="4" height="45" rx="2" fill="#585858"/>
+  <rect x="371" y="243" width="4" height="72" rx="2" fill="#585858"/>
+  <rect x="380" y="225" width="4" height="108" rx="2" fill="#585858"/>
+  <rect x="389" y="248" width="4" height="63" rx="2" fill="#585858"/>
+  <rect x="398" y="216" width="4" height="126" rx="2" fill="#585858"/>
+  <rect x="407" y="238" width="4" height="81" rx="2" fill="#585858"/>
+  <rect x="416" y="225" width="4" height="108" rx="2" fill="#585858"/>
+  <rect x="425" y="252" width="4" height="54" rx="2" fill="#585858"/>
+  <rect x="434" y="261" width="4" height="36" rx="2" fill="#585858"/>
+  <circle cx="400" cy="135" r="38" fill="#323232"/>
+  <path d="M 396 128 L 407 135.0 L 396 142 Z" fill="#6E6E6E"/>
+</svg>

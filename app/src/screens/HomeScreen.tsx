@@ -1,6 +1,6 @@
-import { OrbitingMediaHero } from "../components/OrbitingMediaHero";
+import HeroGalaxy from "../components/galaxy/hero-galaxy";
+import IntroConductor from "../components/galaxy/intro-conductor";
 import { HomeHalftone } from "../components/HomeHalftone";
-import { contactSheetPlaceholders } from "../lib/contactSheetSources";
 
 interface Props {
   onCreate: () => void;
@@ -8,14 +8,20 @@ interface Props {
 
 /**
  * Tela 2/3 do design 03B — a mesma Home nos dois estados da sidebar.
- * Hierarquia (Fase 03B.2): área artística com cartões orbitando ATRÁS do
- * conteúdo central (título/subtítulo/CTA) e wordmark halftone original na
- * região inferior — dois motores independentes, sem sobreposição.
+ *
+ * Fase 03B.5: a área artística é o Hero Galaxy ORIGINAL do ArtCraft
+ * (motor WebGL portado — ver components/galaxy/), atrás do conteúdo
+ * central e com o wordmark halftone original na região inferior.
+ * O relógio da introdução (IntroConductor) rege a coreografia de entrada
+ * do galaxy, como no site de referência.
  */
 export function HomeScreen({ onCreate }: Props) {
   return (
     <div className="home" data-testid="home-screen">
-      <OrbitingMediaHero sources={contactSheetPlaceholders} className="home__orbit" />
+      <IntroConductor />
+      <div className="home__galaxy">
+        <HeroGalaxy />
+      </div>
       <div className="home__center">
         <h1 className="home__title">Bem-Vindo ao Cut Nice Pro</h1>
         <p className="home__subtitle">Crie seu novo projeto +</p>
