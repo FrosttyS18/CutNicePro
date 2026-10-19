@@ -1,4 +1,6 @@
+#[cfg(test)]
 use crate::transcription::process::ProcessControl;
+#[cfg(test)]
 use std::{path::Path, process::Command};
 
 pub fn timestamp(line: &str) -> Option<f64> {
@@ -9,6 +11,7 @@ pub fn timestamp(line: &str) -> Option<f64> {
         .ok()?;
     (value.is_finite() && value >= 0.0).then_some(value)
 }
+#[cfg(test)]
 pub fn analyze(
     input: &Path,
     scratch: &Path,

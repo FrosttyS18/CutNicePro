@@ -5,6 +5,12 @@
 > `docs/PRODUCT-BRIEF.md` (mantido como registro histórico). IDs: FR/NFR aqui; JRN em
 > USER-JOURNEYS; BR em BUSINESS-RULES; EPIC/US/AC em BACKLOG; DEC em DECISIONS.
 
+## Estado de implementação e leitura deste PRD — revisão 03N, 2026-10-19
+
+Este PRD define o produto desejado; presença de um requisito não comprova implementação ou aceite. Código atual: React/TypeScript/Vite + Tauri/Rust; cópia persistente de mídia, ASR Whisper local, seleção/análise textual Qwen e render MP4 FFmpeg. Fonte operacional e limites em ENGINE-HANDOFF.md; rastreabilidade em TRACEABILITY.md. BYOK, fila persistente/lote, histórico completo e reenquadramento por rastreamento continuam pendentes. Resultados de testes anteriores não aprovam qualidade editorial ou aparência.
+
+Solicitações vigentes do mantenedor: análise deve narrar conteúdo concreto em linguagem natural, sem avaliação técnica genérica da fala; 9:16 deve compor/preencher o quadro para publicação preservando assunto e legenda; manter Turbo e retirar Large completo (DEC-014). São requisitos registrados, ainda não corrigidos no código por esta etapa documental. Fonte de exemplos: prints do mantenedor; não há métrica comparativa de precisão contra Opus validada.
+
 ## 1. Problema central (HIPÓTESE — NEEDS VALIDATION)
 
 Criadores de conteúdo e operadores de perfis precisam transformar vídeos longos ou
@@ -149,10 +155,10 @@ processamento em nuvem obrigatório; conta/login como requisito do MVP (DEC-002)
 | FR-007 | Escolha de modo de processamento: A cortes inteligentes / B legendas automáticas / C ajuste manual | MVP (C pode ser Should — ver backlog) |
 | FR-008 | Configuração de geração com padrões sensatos: quantidade, duração-alvo, idioma, legendas, formatos; só o essencial é obrigatório | MVP |
 | FR-009 | Execução e monitoramento de jobs: estágios visíveis, progresso, cancelamento, falha parcial, repetição | MVP |
-| FR-010 | Resultados de cortes: lista com prévia, pontuação heurística (BR-023), aprovação/rejeição, seleção | MVP |
+| FR-010 | Resultados de cortes: lista com prévia, pontuação editorial estimada (BR-023), resumo concreto do conteúdo em linguagem natural, aprovação/rejeição, seleção | MVP |
 | FR-011 | Editor avançado do corte: trim in/out, legendas, reenquadramento, áudio, histórico de versões do corte | MVP |
 | FR-012 | Legendas: edição manual, estilos, sincronização, animação por palavra (animação = Could) | MVP |
-| FR-013 | Reenquadramento 9:16 / 1:1 / 16:9 com foco em rosto como sugestão aplicável | MVP (foco em rosto = Should) |
+| FR-013 | Reenquadramento 9:16 / 1:1 / 16:9, com composição/preenchimento apropriados ao formato de publicação; foco em rosto como sugestão aplicável | MVP (foco em rosto = Should; formato isolado não comprova preenchimento) |
 | FR-014 | Exportação: seleção de cortes, formato/qualidade, destino, nomenclatura, fila com progresso e lote | MVP |
 | FR-015 | Acesso pós-exportação: abrir pasta do resultado e repetir exportação | MVP |
 | FR-016 | Persistência e recuperação de estado: fechamento/crash sem perda de decisões do usuário | MVP |

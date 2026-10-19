@@ -3,114 +3,132 @@
 ╚════════════════════════════════════════════╝
 
 TASK
-  Name: 03L — Correções de origem, clipes e transcrição.
-  Status: PARTIAL
-  Scope: Seis problemas de interface/edição e comparação dos Whisper.
-  Objective: Isolar edições, corrigir prévias e tornar a análise específica.
-  Result: Ajustes implementados; 229 testes aprovados. Precisão ASR pendente.
+  Name: 03N — Documentação coerente com o código.
+  Status: PASS — escopo exclusivamente documental.
+  Scope: Atualizar documentos existentes, preservando histórico.
+  Objective: Corrigir ambiguidades e registrar pendências reais.
+  Result: 23 documentos existentes atualizados; código inalterado.
 
 IMPLEMENTATION
   Completed:
-    Seletor de modelo compacto; projeto mostra o vídeo original.
-    Edições isoladas por clipe; formato escolhido na geração e persistido.
-    Miniaturas sem deformação; escala das legendas verticais corrigida.
-    Transcrição em parágrafos, com espaços e navegação por palavra.
-    Análise local do texto com resumo, critérios e citações verificadas.
-    Transcrição alterada invalida análise e aprovação anteriores.
-  Not completed: Correção confiável das falas ASR; validação manual da UI.
-  Changes: 22 arquivos criados, 31 modificados, nenhum removido.
-  Architecture impact: Configurações separadas; análise usa o gate existente.
-    Sem novas dependências npm. Runtime textual instalado nas ferramentas locais.
+    Estado atual de importação, ASR, clipes, persistência e render.
+    Instruções antigas de CPU/Base e ausência de motores contextualizadas.
+    Formato 9:16 distinguido de preenchimento; contain documentado.
+    Análise técnica/genérica registrada como defeito aberto.
+    DEC-014: manter Turbo; retirada do Large completo ainda pendente.
+    Estudo dos módulos open-source exigido antes da próxima implementação.
+    Aprovações, referências, hashes e testes históricos preservados.
+  Not completed: Correções do aplicativo; fora desta etapa documental.
+  Changes: Documentação operacional, requisitos, decisões e continuidade.
+  Architecture impact: Nenhum; nenhuma dependência ou modelo alterado.
 
 FILES
-  Created: 22, identificados no manifesto abaixo.
-  Modified: 31, identificados no mesmo manifesto.
+  Modified: 23 documentos existentes, mais docs/reports/LATEST.txt.
+  Root: C:/CutNicePro/
+    AGENTS.md
+    docs/TOOLING.md
+    docs/product/PRODUCT-BRAIN.md
+    docs/product/BACKLOG.md
+    docs/product/BUSINESS-RULES.md
+    docs/product/PRD.md
+    docs/product/DECISIONS.md
+    docs/product/TRACEABILITY.md
+    docs/engineering/ENGINE-HANDOFF.md
+    docs/engineering/ENGINE-DECISIONS.md
+    docs/engineering/M3A-TRANSCRIPTION-SPEC.md
+    docs/engineering/M3A-MANUAL-CHECK.md
+    docs/engineering/EDITOR-AUTOCUT-SPEC.md
+    docs/engineering/EDITOR-TIMING-SPEC.md
+    docs/engineering/EDITOR-TIMING-MANUAL-CHECK.md
+    docs/engineering/CLIP-LIBRARY-ASR-SPEC.md
+    docs/engineering/CLIP-LIBRARY-ASR-REVIEW.md
+    docs/engineering/SOURCE-CLIP-ISOLATION-SPEC.md
+    docs/engineering/SOURCE-CLIP-ISOLATION-REVIEW.md
+    docs/engineering/CLIP-PIPELINE-RELIABILITY-SPEC.md
+    docs/engineering/CLIP-PIPELINE-RELIABILITY-REVIEW.md
+    docs/references/OPEN-SOURCE-ENGINE-RESEARCH.md
+    docs/references/OPUS-PIPELINE-RESEARCH-2026-10-19.md
+  Created: Apenas o TXT histórico obrigatório indicado em REPORT.
+    Nenhum novo documento de produto, especificação ou pesquisa.
   Deleted: 0
-  Manifest: C:/CutNicePro/docs/reports/evidence/2026-10-19-source-clips-files.json
-  Unexpected changes: Nenhum novo caminho fora do escopo identificado.
-    As 661 pendências anteriores foram preservadas.
+  Unexpected changes: NONE observado nesta tarefa.
 
 VALIDATION
-  Typecheck: PASS
-  Lint: SKIP — não há comando configurado.
-  Unit tests: PASS — 226 casos de unidade/contrato.
-  Integration tests: PASS — FFmpeg real, análise local real e contrato ASR real.
-  Regression tests: PASS — no escopo executado; interface Tauri não exercitada.
-  Visual tests: SKIP — PENDING HUMAN APPROVAL.
-  Runtime verification: PARTIAL — motores executados; aplicativo não automatizado.
-  Total passed: 229 casos únicos: 145 frontend e 84 Rust.
-  Total failed: 0 pendentes em código; falhas iniciais registradas abaixo.
-  Total skipped: 1 benchmark antigo não repetido; 2 checks da baseline fast.
+  FUNCTIONAL STATUS: PASS no escopo documental.
+  REGRESSION STATUS: NOT TESTED — aplicativo não modificado.
+  VISUAL STATUS: PENDING HUMAN APPROVAL
+  Typecheck / Lint: SKIP — somente documentação.
+  Unit tests / Integration tests: SKIP — sem mudança de código.
+  Regression tests / Visual tests / Runtime verification: SKIP.
+  Conferência documental: 9 verificações aprovadas.
+    273 arquivos de código/configuração com hashes inalterados.
+    52 caminhos de documentos/fontes existentes.
+    50 BRs e 29 FRs preservados; 14 DEC, incluindo DEC-014.
+  Formatação: git diff --check PASS.
+  Total passed: 9 conferências documentais; harness contado separadamente.
+  Total failed: 0 finais.
+  Total skipped: Suítes do aplicativo não reexecutadas.
 
 HOOKS / HARNESS
-  Hooks active: Arquivos presentes; ativação automática não confirmada.
-  PreToolUse: Não verificado.
-  PostToolUse: Não verificado.
-  Stop: Não usado como prova de aprovação.
-  Baseline: PASS fast — 4 checks aprovados, 2 ignorados.
-  Gate result: PASS estrutural; entrega funcional PARTIAL.
-  Evidence: C:/CutNicePro/docs/reports/evidence/2026-10-19-source-clips-validation.json
+  Hooks active: Scripts presentes; execução automática não comprovada.
+  PreToolUse / PostToolUse / Stop: Não observados nesta sessão.
+  Baseline: Fast, 4 PASS / 0 FAIL / 2 SKIP.
+  Gate result: PASS estrutural, sem aprovação do aplicativo.
+  Evidence: baseline_checks.py --fast executado diretamente.
 
 MCP / SKILLS
-  Tools used: Terminal, patches, pesquisa oficial; skills frontend-ui-engineering,
-    cutnicepro-ux-writing, incremental-implementation e web-design-guidelines.
-  Connection status: Ferramentas locais operacionais.
-  Failures: FigCraft/Graphify indisponíveis; refactor guard não encontrado.
+  Tools used: Leitura de código, edição e verificações locais.
+  Skills: documentation-and-adrs.
+  Connection status: FigCraft/Graphify não utilizados; índice ausente.
+  Failures: Nenhum bloqueio externo.
   Pending activation: Nenhuma.
 
 GIT
   Branch: main
-  HEAD: 1a15e2ea7a76b45667f786871b7c97f2837891c4
-  Latest commit: feat(workspace): add project rename, upload flow, and editor scaffolding
+  HEAD: 1b8e856ca6358ea262997999db022200535d2923
+  Latest commit: feat(app): add media import, analysis, transcription and render pipeline foundations
   Commits created: 0
   Push: NOT EXECUTED
-  Remote: origin → https://github.com/FrosttyS18/CutNicePro.git; origin/main
+  Remote: origin → https://github.com/FrosttyS18/CutNicePro.git
+    Upstream: origin/main
   Working tree: MODIFIED / UNTRACKED
-  Pending files: 683, listados integralmente em:
-    C:/CutNicePro/docs/reports/evidence/2026-10-19-source-clips-pending.txt
+  Pending files: 516; havia 500 ao iniciar.
+    As 500 anteriores constam no snapshot da 03M:
+    C:/CutNicePro/docs/reports/evidence/2026-10-19-pipeline-git-pending.txt
+    Acréscimos são documentos listados em FILES e o histórico desta tarefa.
+    Nenhuma pendência anterior foi removida.
 
 EVIDENCE
-  Commands executed: npm test; npm run build; tsc --noEmit; cargo test;
-    testes explícitos semantic/refinement; baseline fast; comparação ASR.
-  Relevant logs: C:/CutNicePro/.tooling/vendor/asr-refinement/
-    C:/CutNicePro/.tooling/vendor/analysis/validation/
-  Screenshots: Nenhuma captura/automação do aplicativo nesta tarefa.
-  Test artifacts: Manifesto, validação e runtime em:
-    C:/CutNicePro/docs/reports/evidence/2026-10-19-analysis-runtime.json
-  Reproduction details:
-    Seis configurações Whisper válidas sobre os mesmos 86 segundos.
-    CUDA confirmado; somente um Whisper selecionado por execução.
-    Uma análise textual real de corte passou; execução de teste: 49,13 s.
-    Modelo textual: Qwen3-4B, separado dos modelos de transcrição.
-    Comparação detalhada:
-    C:/CutNicePro/docs/references/ASR-REFINEMENT-2026-10-19.md
+  Commands executed: Leitura de fontes; hashes SHA-256 antes/depois;
+    conferência de contratos/IDs/caminhos; git diff --check; baseline fast.
+  Relevant logs: Resultados das verificações locais nesta sessão.
+  Screenshots: Prints do mantenedor usados como relato; nenhuma captura nova.
+  Test artifacts: Nenhum novo teste, fixture ou relatório de benchmark.
+  Reproduction details: profiles.rs ainda aceita Large; Turbo é padrão.
+    isolatedClipSettings ainda usa contain; ClipTools inicia em 9:16.
+    ClipDetails apresenta resumo e critérios; defeito de linguagem permanece.
 
 ISSUES
-  Bugs found: Compartilhamento de configurações, proporção das miniaturas,
-    seletor excessivo, formato ausente, análise genérica e palavras coladas.
-  Unresolved failures: A abertura ainda pode inserir “isso”; “essa desgraça”
-    não foi recuperada nos testes. Nenhum prompt experimental foi adotado.
-  Regressions: Nenhuma detectada nos testes executados.
-  Corrected failures: Saída Qwen suprimida por flag; prompt refinado após
-    confusão de assuntos. Caso Whisper com UTF-8 inválido repetido em ASCII.
-  Risks: Análise pode interpretar incorretamente outros trechos.
-    Ajustes finos dependem do armazenamento local. Distribuição dos motores
-    no instalador não concluída. Aviso preexistente de bundle acima de 500 kB.
-  Blockers: Precisão ASR sem correção comprovada; aceite manual pendente.
+  Bugs found: Documentação tratava capacidades existentes como ausentes.
+  Unresolved failures: Nenhuma falha documental final.
+    No app: análise inadequada, preenchimento vertical e retirada do Large
+    permanecem pendentes; esta tarefa não os implementou.
+  Regressions: Não avaliadas funcionalmente; fontes preservadas.
+  Risks: Estudo completo dos repositórios não demonstrado pela pesquisa antiga.
+  Blockers: Nenhum para atualização documental.
+  Initial findings: Espaço final corrigido; verificador de IDs ajustado
+    para reconhecer DEC-014 como título, sem alterar os IDs para fazê-lo passar.
 
 FINAL
-  Delivery status: PARTIAL
-  FUNCTIONAL STATUS: PARTIAL
-  REGRESSION STATUS: PASS no escopo testado.
-  VISUAL STATUS: PENDING HUMAN APPROVAL
-  Requirements met: Seis ajustes implementados e compilados; análise real testada.
-  Remaining work: Precisão das falas apontadas e conferência da interface no app.
-  User action required: Avaliar a interface; nenhum comando manual solicitado.
-  Restart required: Backend precisa carregar a nova compilação; reinício não verificado.
-  Ready for next task: Entrega registrada com as pendências acima.
+  Delivery status: PASS documental; aplicativo continua em revisão.
+  Requirements met: Atualização dos existentes, histórico e decisões preservados.
+  Remaining work: Implementar pendências após estudar os módulos de referência.
+  User action required: Nenhuma para esta entrega documental.
+  Restart required: Não.
+  Ready for next task: Sim, com estado e pendências registrados.
 
 REPORT
   Latest file: C:/CutNicePro/docs/reports/LATEST.txt
-  Historical file: C:/CutNicePro/docs/reports/history/2026-10-19_175816_source-clips.txt
+  Historical file: C:/CutNicePro/docs/reports/history/2026-10-19_191805_documentacao-coerente-codigo.txt
 
 END OF REPORT

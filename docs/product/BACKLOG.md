@@ -2,7 +2,20 @@
 
 > Derivado de Problema → Jornada → Requisito → Regra → Épico → História → Aceite.
 > Priorização MoSCoW justificada por valor/dependência/risco. Sem estimativas de horas
-> inventadas (dependem de avaliação técnica). Estados: PLANNED (nada iniciado — não há código).
+> inventadas (dependem de avaliação técnica). Há código implementado e itens ainda PLANNED; IN REVIEW não equivale a aceite do mantenedor. Estado operacional e histórico de entregas são distintos.
+
+## Prioridade vigente — revisão documental 03N, 2026-10-19
+
+Esta etapa atualiza documentação; não corrige o código, retira pesos nem muda a UI. As decisões abaixo foram solicitadas pelo mantenedor após testar a 03M e têm implementação pendente.
+
+| Vínculo | Constatação no código/relato | Próximo aceite de implementação |
+|---|---|---|
+| EPIC-006, US-014/015, AC-041/042, FR-010, BR-023 | Resumo/critérios de Qwen são exibidos por ClipDetails; o mantenedor rejeitou linguagem de avaliação técnica da fala | Descrição natural e específica dos acontecimentos/contexto/reação/desfecho, sem texto genérico ou fatos inventados; nota explicada pelo conteúdo, sem tendência fictícia |
+| EPIC-008/009, US-020/023, AC-053/054/057, FR-013/014 | 9:16 é formato inicial, mas isolatedClipSettings usa contain; formato correto ainda pode ter grandes faixas | Quadro vertical preenchido para publicação, sujeito/legenda preservados e coerência entre miniatura, inspeção, editor e render; prévia do original intacta |
+| EPIC-011, FR-022, DEC-014 | Turbo é padrão; Large completo ainda existe em profiles.rs e TranscriptionSetup | Manter Turbo; remover opção/caminho Large do produto com compatibilidade para registros antigos; não apagar arquivos do usuário ou histórico de testes |
+| Engenharia transversal, NFR-004/006 | A pesquisa de referência não comprova estudo integral dos módulos nem adoção de código | Estudar os fluxos pertinentes dos repositórios indicados e registrar revisão, arquivos/funções, contratos, licença, adaptação e testes antes de implementar |
+
+247 testes da 03M são evidência histórica de contratos/processamento, não aceite de qualidade ou dos defeitos acima. Referência de continuidade: docs/engineering/ENGINE-HANDOFF.md; inventário: docs/references/OPEN-SOURCE-ENGINE-RESEARCH.md. Sem nova tela, integração remota ou aprovação visual nesta revisão.
 
 ## EPIC-001 — Inicialização e Home
 Objetivo: abrir o app e aterrissar com clareza. Valor: primeira impressão e retomada.
@@ -29,14 +42,14 @@ FR: FR-003, FR-004, FR-016, FR-017. Prioridade: Must. Dep: EPIC-001 (parcial).
   AC-010 local padrão alterável; AC-011 workspace vazio em seguida. BR-001.
 - **US-005 — Persistência automática** (Must) — AC: AC-012 nenhuma ação do usuário exige
   "salvar projeto" (BR-002); AC-013 crash/reinício restaura último estado consistente
-  (BR-033, NFR-003). PENDING TECHNICAL: mecanismo de storage local.
+  (BR-033, NFR-003). JSON nativo para projetos/mídia/transcrição/clipes e localStorage para ajustes já implementados; recuperação integral/autosalvamento de todas as decisões ainda pendentes.
 - **US-006 — Duplicar/excluir projeto** (Should, V1 — FR-017) — AC: AC-014 duplicação
   independente (BR-003); AC-015 exclusão com confirmação e preservando exports (BR-005).
   Atualização 03H: mantenedor antecipou exclusão em 2026-10-19. Código e testes de confirmação/limpeza compartilhada/recuperação implementados; aceite Tauri/visual pendente de sua conferência. Duplicação permanece pendente. EDITOR-USABILITY-SPEC.md.
 
 ## EPIC-003 — Importação de mídia
 
-Entrega de interface 03C/03D (2026-10-19), autorizada pelo mantenedor: entrada, preparação demonstrativa, visão do projeto e editor de prévia implementados. O fluxo cria projetos no storage existente; renomeação persiste; configurações de interface são salvas por projeto. Referência e aceites específicos: `UPLOAD-SCREEN.md`. Esta fatia não conclui US-007/008/012/013: download, importação persistente da mídia, detecção de áudio, transcrição e render continuam pendentes. Projetos vazios legados e coleções são preservados.
+Estado atual: arquivo local é copiado para armazenamento gerenciado, identificado por hash e analisado por ffprobe; há reabertura persistente e tratamento de mídia ausente. Referências: M2A-IMPORT-SPEC e ENGINE-HANDOFF. Lote e download de links continuam pendentes. Histórico 03C/03D: entregou apenas interface e preparação demonstrativa, sem concluir então US-007/008/012/013; limitações daquela fatia não descrevem os motores adicionados depois. Projetos vazios legados e coleções são preservados.
 Jornadas: JRN-004. BR: BR-006..BR-011. FR: FR-005. Prioridade: Must.
 
 - **US-007 — Importar arquivos/lote** (Must) — AC: AC-016 seleção e drag-and-drop;
@@ -54,7 +67,7 @@ Jornadas: JRN-004 (ANALYZING). FR: FR-006. BR: BR-007, BR-032. Prioridade: Must.
   por hash ao voltar (BR-032). Dep: EPIC-003.
 
 ## EPIC-005 — Núcleo de processamento + modo B (legendas automáticas)
-Avanço M3A (2026-10-19): implementação inicial local para US-012/013, sem exportação, fila persistente ou avaliação de qualidade aprovada. Testes em código; runtime/fluxo reservados ao mantenedor. Contrato em `docs/engineering/M3A-TRANSCRIPTION-SPEC.md`.
+Estado atual: ASR Whisper local/DTW, edição e TXT/SRT; blocos com checkpoints e retomada ASR, CPU/CUDA por descoberta. Render MP4 com legenda existe no EPIC-009. Sem fila persistente geral ou avaliação de precisão aprovada. M3A-TRANSCRIPTION-SPEC registra a primeira fatia e sua evolução; CPU/Base e ausência de exportação eram limitações históricas, não o estado vigente. Retirada do Large completo em favor do Turbo está decidida, ainda pendente no código.
 
 Jornadas: JRN-005/006/007. BR: BR-012..BR-018, BR-024. FR: FR-007..FR-009, FR-012 (base).
 Prioridade: Must. Decisão: DEC-003 (B primeiro).
@@ -253,3 +266,7 @@ adaptadores Qwen/Parakeet, empacotamento e aceite Tauri/visual permanecem penden
 ### Atualização 2026-10-19 — 03L: origem, formato e análise em revisão
 
 Correções solicitadas implementadas nos fluxos existentes de projeto, geração e inspeção; nenhuma galeria paralela criada. Formato por corte e isolamento das edições atendem aos aceites locais AC-03L-01..06 no nível de contratos; validação manual de interface pendente. EPIC-006/008/009 continuam IN REVIEW, sem aceite visual ou conclusão integral. Análise local de fala agora semântica com evidências, sem análise visual ou tendência. Precisão das frases ASR confirmadas ainda pendente após comparação real de Turbo/Large. Distribuição instalável dos motores e recuperação de preferências históricas já sobrescritas não são declaradas concluídas. Referências: SOURCE-CLIP-ISOLATION-SPEC/REVIEW.md.
+
+### Atualização 2026-10-19 — 03M: confiabilidade do pipeline em revisão
+
+Correção autorizada do fluxo existente: consulta não gera/analisa automaticamente; revisão persiste antes de fechar, com filtro ativo e consulta a rejeitados. Seleção semântica deixa de receber só candidatos pré-filtrados por heurística; todo texto é lido em janelas. Checkpoints de transcrição e sondagem de GPU/encoder implementados e exercitados localmente. EPIC-006/008/009 continuam IN REVIEW. Não concluir qualidade editorial, visão multimodal, precisão ASR ou distribuição dos runtimes por existirem testes aprovados. AC-03M-01..08 e evidências no SPEC/REVIEW de confiabilidade; funcionalidades multimodais/API comercial não acrescentadas ao escopo desta entrega.

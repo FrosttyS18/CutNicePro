@@ -5,6 +5,8 @@ Jornadas: JRN-003/006/007/008/009/010; FR-008/009/010/011/012/013/014/016/017/02
 
 ## SPEC
 
+Atualização documental 03N: isolamento/formato implementados não comprovam preenchimento adequado. `isolatedClipSettings` aplica contain aos clipes novos sem edição salva, mesmo em 9:16. O mantenedor rejeitou esse resultado com faixas e a linguagem técnica da análise; ambos são defeitos abertos, não aceites concluídos por persistir o ratio ou validar citações. Critérios complementares no BACKLOG/PRD. BR-03L-03 continua descrevendo o legado; não autoriza aplicar crop indiscriminado à origem ou a ajustes salvos. DEC-014 registra Turbo como escolha e retirada do Large completo ainda pendente.
+
 - BR-03L-01: a visão do projeto reproduz a mídia original, sem proporção, texto, legenda, volume ou enquadramento do editor.
 - BR-03L-02: cada corte conserva seu formato de geração e suas próprias edições; abrir um corte não altera o vídeo completo ou outro corte.
 - BR-03L-03: cortes antigos sem formato explícito usam a proporção suportada mais próxima da origem, com ajuste sem recorte, nunca a última proporção editada. A prévia original conserva as dimensões exatas da origem.

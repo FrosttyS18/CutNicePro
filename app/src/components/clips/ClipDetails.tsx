@@ -25,7 +25,7 @@ export function ClipDetails({clip,transcript,time,loading,analyzing,error,onSeek
           <h4>{item.label}<span>{item.score}<small>/100</small></span></h4><p>{item.explanation}</p><blockquote>{item.evidence}</blockquote>
         </section>)}
       </> : <div aria-busy={analyzing}>
-        {analyzing ? <p role="status">Analisando o trecho…</p> : <><p role={error ? "alert" : undefined}>{error ?? "Analise este clipe para ver o resumo e os critérios da nota."}</p>
+        {analyzing ? <p role="status">Analisando o trecho…</p> : <><p role={error || clip.analysisError ? "alert" : undefined}>{error ?? clip.analysisError ?? "Analise este clipe para ver o resumo e os critérios da nota."}</p>
           <button type="button" className="flow-button" disabled={loading} onClick={onAnalyze}>{error ? "Tentar novamente" : "Analisar trecho"}</button></>}
       </div> : <>
         <ClipTranscript segments={transcript} start={clip.start} end={clip.end} time={time} onSeek={onSeek}/>

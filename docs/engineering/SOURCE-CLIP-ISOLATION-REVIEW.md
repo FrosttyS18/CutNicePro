@@ -2,6 +2,8 @@
 
 FUNCTIONAL STATUS: PARTIAL. REGRESSION STATUS: PASS no escopo dos testes. VISUAL STATUS: PENDING HUMAN APPROVAL.
 
+Nota 03N: resultados abaixo pertencem à 03L e ficam preservados. Persistência do formato/isolamento não aprovou o preenchimento do quadro; contain gera faixas no 9:16 conforme relato posterior do mantenedor. Citações conferidas e uma amostra analisada não aprovaram a linguagem/interpretação em todos os clipes; o resumo técnico atual foi rejeitado e precisa correção. Retirada de Large completo em favor do Turbo está decidida, ainda pendente no código. Referência vigente: ENGINE-HANDOFF.md e prioridades do BACKLOG.
+
 ## Implementação
 
 - `VideoPreview original` usa dimensões da mídia, contain, áudio original e não mostra texto/legendas editadas. ProjectOverview usa esse modo.

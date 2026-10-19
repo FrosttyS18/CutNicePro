@@ -60,6 +60,8 @@
 
 ## Reavaliações da Fase 03 (2026-10-18 — aprovadas pelo mantenedor)
 
+Atualização operacional 03N: propostas DEC-004/005 não descrevem sozinhas o código atual. Mídia é copiada/deduplicada (M2A); pontuação atual deriva de seleção/análise textual, não só densidade/cadência. O princípio de estimativa sem promessa permanece. DEC-013 continua hipótese de lote: gate exclusivo já existe, mas não é fila persistente. Registros iniciais acima são preservados como contexto histórico.
+
 - **D1 — Ordem da configuração de IA: RESOLVIDA.** Decisão: o usuário chega à HOME sem
   ser obrigado a configurar motor de IA; a configuração é solicitada contextualmente ao
   iniciar funcionalidade que a exija. Fluxos de convite/ativação do beta podem preceder a
@@ -93,4 +95,10 @@ pesquisadas. Gate global serializa ASR/análise/render e mutações relacionadas
 Progresso interpola visualmente inteiros somente até o valor recebido. FFmpeg
 portátil de desenvolvimento verificado por SHA-256; sem instalação, bundling ou
 alteração de PATH. ENGINE-DECISIONS.md §9 registra fatos e limites. Cortes com
-score heurístico seguem BR-023 e aprovação antes da exportação segue BR-021.
+score heurístico seguiam a implementação daquela entrega; seleção textual posterior consta em ENGINE-HANDOFF. Aprovação antes da exportação segue BR-021.
+
+## DEC-014 — Turbo como modelo ASR do produto
+
+Contexto: após experimentar os dois Whisper no vídeo de referência, o mantenedor considerou Turbo mais próximo da transcrição desejada e solicitou retirar Large v3 completo. Decisão: manter Whisper Large v3 Turbo; remover Large completo da escolha e do caminho de novas execuções do produto, preservando leitura de transcrições antigas, projetos e evidências dos testes. Não inferir superioridade universal/percentual de acurácia a partir desse relato, nem apagar pesos automaticamente.
+
+Estado da decisão: APPROVED pelo pedido explícito do mantenedor em 2026-10-19. Estado de implementação: PENDING — profiles.rs, tools.rs, tipos TypeScript e TranscriptionSetup ainda suportam Large completo. Esta revisão 03N é somente documental; não altera código ou instalação. Impacto: FR-022, JRN-006/007/013, backlog EPIC-011 e contratos de perfil/transcrição. Critérios de implementação e compatibilidade no BACKLOG; estética do seletor não é aprovada por esta decisão.

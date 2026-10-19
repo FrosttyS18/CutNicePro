@@ -46,6 +46,28 @@ fn pipeline_contract_persists_edits_and_failure_never_replaces_previous() {
 }
 
 #[test]
+fn job_snapshot_identifies_operation_before_first_event() {
+    let jobs = TranscriptionJobs::default();
+    let id = uuid::Uuid::new_v4().to_string();
+    jobs.start_operation(id.clone(), "project".into(), Some("analyze"))
+        .unwrap();
+    let snapshot = jobs.snapshot().unwrap();
+    assert_eq!(snapshot.operation.as_deref(), Some("analyze"));
+    assert_eq!(
+        serde_json::to_value(snapshot).unwrap()["operation"],
+        "analyze"
+    );
+    assert!(jobs
+        .start_operation(
+            uuid::Uuid::new_v4().to_string(),
+            "project".into(),
+            Some("generate")
+        )
+        .is_err());
+    jobs.cancel(Some(&id));
+}
+
+#[test]
 fn corrupt_transcript_is_reported_and_preserved() {
     let base = std::env::temp_dir().join(format!("cnp-m3a-{}", uuid::Uuid::new_v4()));
     let project = uuid::Uuid::new_v4().to_string();

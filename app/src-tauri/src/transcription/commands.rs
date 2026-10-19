@@ -138,9 +138,15 @@ pub async fn transcribe_project(
                 }
             },
         );
-        task_jobs.finish(&task_id, result, |record| {
-            store::save(&base, &project_id, record, duration)
-        })
+        task_jobs
+            .finish(&task_id, result, |output| {
+                store::save(&base, &project_id, &output.transcript, duration)?;
+                if let Err(error) = output.cache.complete() {
+                    eprintln!("[transcription] checkpoint cleanup: {error}");
+                }
+                Ok(())
+            })
+            .map(|output| output.transcript)
     })
     .await;
     let outcome = match result {

@@ -6,10 +6,10 @@ import { defaultEditorSettings } from "./workspace";
 
 export type ClipReview = "pending" | "approved" | "rejected";
 export interface ClipAnalysis { title: string; summary: string; criteria: {label: string; score: number; explanation: string; evidence: string}[] }
-export interface Clip { id: string; start: number; end: number; title: string; score: number; reasons: string[]; review: ClipReview; format?: AspectRatio; analysis?: ClipAnalysis }
+export interface Clip { id: string; start: number; end: number; title: string; score: number; reasons: string[]; review: ClipReview; format?: AspectRatio; analysis?: ClipAnalysis; analysisError?: string }
 export interface ClipCollection { version: 1; mediaId: string; transcriptHash: string; clips: Clip[] }
 export interface ClipOptions { minSeconds: number; maxSeconds: number; count: number; format?: AspectRatio }
-export interface ClipJob { jobId: string; projectId: string; state: "running" | "completed" | "failed" | "cancelled"; stage: "analyzing" | "rendering"; progress: number; error: string | null }
+export interface ClipJob { jobId: string; projectId: string; state: "running" | "completed" | "failed" | "cancelled"; stage: "analyzing" | "rendering"; progress: number; error: string | null; operation?: "generate" | "analyze" | "export" }
 
 export function parseClips(value: unknown): ClipCollection {
   if (!value || typeof value !== "object") throw new Error("Cortes inválidos.");
@@ -21,6 +21,7 @@ export function parseClips(value: unknown): ClipCollection {
       && Number.isInteger(c.score) && c.score >= 0 && c.score <= 100 && Array.isArray(c.reasons) && c.reasons.every(r => typeof r === "string")
       && (c.format === undefined || ["16:9","9:16","1:1","4:5"].includes(c.format))
       && (c.analysis === undefined || validAnalysis(c.analysis))
+      && (c.analysisError === undefined || typeof c.analysisError === "string")
       && ["pending", "approved", "rejected"].includes(c.review))) throw new Error("Cortes inválidos.");
   return v as ClipCollection;
 }
@@ -34,6 +35,7 @@ export function isClipJob(value: unknown): value is ClipJob {
   const v = value as Partial<ClipJob>;
   return typeof v.jobId === "string" && typeof v.projectId === "string" && ["analyzing", "rendering"].includes(v.stage ?? "")
     && ["running", "completed", "failed", "cancelled"].includes(v.state ?? "") && Number.isInteger(v.progress) && Number(v.progress) >= 0 && Number(v.progress) <= 100
+    && (v.operation === undefined || ["generate","analyze","export"].includes(v.operation))
     && (v.error === null || typeof v.error === "string");
 }
 export function clipSettings(settings: EditorSettings, clip: Clip): EditorSettings {
@@ -53,6 +55,7 @@ export function renderSettings(settings: EditorSettings): EditorSettings {
 }
 export function clipMessage(error: unknown): string {
   const text = String(error);
+  if (/trechos completos|selecionar os momentos/i.test(text)) return "Não encontramos trechos completos nesta duração. Aumente a duração dos cortes e tente novamente.";
   if (/transcrição mudou/i.test(text)) return "A transcrição mudou. Atualize os cortes do projeto para analisar novamente.";
   if (/evidências válidas/i.test(text)) return "Não foi possível confirmar a análise deste trecho. Tente analisar novamente.";
   if (/análise.*indisponível/i.test(text)) return "A análise está indisponível. Repare a instalação do aplicativo e tente novamente.";

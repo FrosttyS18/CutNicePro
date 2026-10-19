@@ -6,6 +6,17 @@
 
 ## 1. Matriz por jornada
 
+Leitura da revisão 03N: PROPOSED nas matrizes descreve estado de aprovação do produto/jornada, não ausência de código. Estado operacional em ENGINE-HANDOFF.md; evidências por entrega abaixo permanecem históricas. Relato atual do mantenedor reabre análise e preenchimento como defeitos, apesar dos testes da 03M.
+
+| Mudança documentada na 03N | Jornada/requisito/regra | Fonte e critério pendente |
+|---|---|---|
+| Resumo natural e concreto, sem metalinguagem técnica | JRN-008, FR-010, BR-023, US-014/015 | ClipDetails.tsx, semantic.rs e analysis-prompt.txt; avaliar acontecimentos/contexto/reação/desfecho sem inventar conteúdo |
+| Quadro 9:16 preenchido, sujeito/legenda preservados | JRN-008/009/010, FR-013/014, US-020/023 | ClipTools inicializa 9:16; isolatedClipSettings define contain; formato, composição e render devem ser validados separadamente |
+| Retirada de Large completo; manter Turbo | JRN-006/007/013, FR-022, DEC-014 | profiles.rs/tools.rs, lib/transcription.ts e TranscriptionSetup; decisão aprovada, implementação/compatibilidade pendentes |
+| Estudo verificável de referências antes de implementar | NFR-004/006, ENGINE-HANDOFF, AGENTS.md | OPEN-SOURCE-ENGINE-RESEARCH: revisão/arquivos/funções/contratos/licenças/testes; sem afirmar adaptação ainda não demonstrada |
+
+Escopo executado na 03N: somente documentação existente e relatório obrigatório; nenhum destes defeitos foi corrigido no código por esta revisão.
+
 | Jornada | FR cobertos | BR aplicados | Histórias (US) | ACs (amostra) | Validação planejada | Status |
 |---|---|---|---|---|---|---|
 | JRN-001 Primeira execução | FR-001, FR-002 | BR-001, BR-002 | US-001, US-002 | AC-001..005 | H1 (teste de usabilidade) | PROPOSED |
@@ -185,3 +196,5 @@ Sem aprovação estética, WER ou teste completo da UI. Referências CLIP-LIBRAR
 e ASR-BENCHMARK-2026-10-19.md. Compartilhamento continua adiado.
 
 03L (2026-10-19): JRN-003/006/007/008/009/010; FR-008/009/010/011/012/013/014/016/017/022; BR-019..023/026..031, refinadas por BR-03L-01..05 e AC-03L-01..06 em SOURCE-CLIP-ISOLATION-SPEC.md. VideoPreview original → ProjectOverview; clip-workspace/workspace-store → isolamento por corte; Options.format → Clip.format/ID → ClipFormatPicker/ClipPoster/inspeção/editor/render. clip-transcript/ClipTranscript → parágrafos com seek por tempos existentes. semantic/analysis_types → geração/analyze_clip → ClipDetails; gate, esquema JSON, validação de citações e invalidação de aprovação/análise após mudança do texto. Testes novos source-clip-isolation (9), semantic_tests (3 contratos + 1 motor real), ranking (1), refinement_contract (1 sobre seis saídas ASR reais). Total único da entrega: 229 aprovados (145 frontend/84 Rust); sem execução da UI Tauri ou aprovação estética. ASR permanece PARTIAL, sem alegar WER contra referência humana ou qualidade de 98%.
+
+03M (2026-10-19): JRN-003/006/007/008/009/010; FR-008..014/016/022; BR-019..023/026..031, com regras locais BR-03M-01..05 e AC-03M-01..08 em CLIP-PIPELINE-RELIABILITY-SPEC.md. ClipInspection/useClips/ClipTools → abertura/revisão e posse do job → sete casos clip-flow; JobSnapshot.operation → restauração explícita da operação; selection → cobertura semântica; evidence → citações e IDs; generation → tolerância a falha individual; text_engine → Vulkan/CPU sequenciais; scene_regions → decodificação delimitada; checkpoints/chunk_text/runner → retomada e tempos absolutos; encoder/pipeline → NVENC/libx264. 152 casos frontend e 95 nativos únicos aprovados; dois testes históricos ignorados não reexecutados. Relatório de limites/aceites: CLIP-PIPELINE-RELIABILITY-REVIEW.md; estética PENDING HUMAN APPROVAL.

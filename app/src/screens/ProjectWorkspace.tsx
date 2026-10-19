@@ -34,6 +34,7 @@ export function ProjectWorkspace({ project, initialView = "overview", onRename, 
     ? <TranscriptionControls controller={transcription} generated={workspace.data.transcriptMode === "real"} dirty={workspace.dirty} onSave={workspace.save} disabled={clips.busy} /> : undefined;
   const [view, setView] = useState<"overview" | "editor" | "clips">(initialView);
   const [inspecting,setInspecting] = useState<LibraryClip | null>(null);
+  const [clipNotice,setClipNotice] = useState<string | null>(null);
   const activeClip = view === "editor" ? workspace.data.activeClipId : undefined;
   function openClip(clip: Clip) {
     workspace.change(openClipWorkspace(workspace.data,clip));
@@ -68,13 +69,13 @@ export function ProjectWorkspace({ project, initialView = "overview", onRename, 
         {workspace.dirty && <button type="button" className="upload-primary workspace-save" onClick={workspace.save}>Salvar alterações do projeto</button>}
       </> : view === "clips" ? <>
         <header className="project-clips__heading"><div><button type="button" className="flow-button" onClick={() => setView("overview")}>Voltar ao projeto</button><h1>{project.name}</h1></div><div className="project-clips__tools">{clipTools}</div></header>
-        <ClipGallery entries={(clips.collection?.clips ?? []).map(clip => ({project,mediaId: clips.collection!.mediaId,clip}))} loading={clips.loading} error={clips.error}
+        <ClipGallery entries={(clips.collection?.clips ?? []).map(clip => ({project,mediaId: clips.collection!.mediaId,clip}))} loading={clips.loading} error={clips.error} notice={clipNotice}
           onRetry={clips.reload} onInspect={setInspecting}/>
       </> : <VideoEditor key={`${workspace.data.tool}:${activeClip ?? "video"}`} title={project.name} data={workspace.data} localUrl={workspace.localUrl} dirty={workspace.dirty}
         onChange={workspace.change} onSave={workspace.save} onBack={() => setView("overview")} transcriptionControls={<>{transcriptionControls}{clipTools}</>}transcribing={transcription.busy || clips.busy} />}
       {workspace.notice && <p className={workspace.notice.error ? "workspace-notice workspace-notice--error" : "workspace-notice"}
         role={workspace.notice.error ? "alert" : "status"}>{workspace.notice.text}</p>}
-      {inspecting && <ClipInspection entry={inspecting} onClose={() => setInspecting(null)} onChanged={clips.reload}
+      {inspecting && <ClipInspection entry={inspecting} onClose={() => setInspecting(null)} onChanged={notice=>{setClipNotice(notice ?? null);clips.reload();}}
         onEdit={(_,clip) => { setInspecting(null); openClip(clip); }}/>}
     </div>
   );

@@ -1,54 +1,44 @@
 # CutNicePro — handoff para o motor
 
-Estado: 03F, 2026-10-19. Documento de continuidade técnica; escolhas de runtime/modelo são pendentes. Não autoriza instalar componentes ou enviar vídeos a provedores. Mantenedor realizará a próxima etapa com ZCode. Home aprovada; demais telas PENDING HUMAN APPROVAL.
+Estado: 03N, revisão documental de 2026-10-19 sobre o código após 03M. Interface, importação, ASR, clipes e render possuem implementação; qualidade de conteúdo e parte do fluxo continuam em revisão. Os defeitos relatados pelo mantenedor não foram corrigidos por esta atualização de documentação. Home aprovada; demais telas PENDING HUMAN APPROVAL. Nenhuma instalação, alteração de modelo ou envio a provedor é autorizado por este documento.
 
 ## Fluxo vigente
 
-1. Home → Criar projeto, ou Meus Projetos → Novo projeto, abre Enviar vídeo.
-2. Envio geral aceita um arquivo e abre a visão daquele vídeo: player, título com caneta, transcrição e ações. Não abre seletor de ferramentas nem cria pasta vazia.
-3. Ferramentas na tela de envio são atalhos explícitos; Coleções organiza projetos importados.
-4. Editar vídeo abre editor; Legendas abre modal de estilos. Selecionar um estilo atualiza configuração; Concluir ou Escape fecha e devolve foco.
-5. Salvar guarda configurações da prévia; Exportar abre configuração, mas render ainda está indisponível.
+1. Home/Meus Projetos → Novo projeto → arquivo local → importação gerenciada e visão do projeto. YouTube continua apenas referência/iframe.
+2. A visão do projeto reproduz o vídeo de entrada, sem aplicar as edições. Ferramentas abrem editor, legenda/enquadramento, transcrição e geração/exportação.
+3. Transcrever abre escolha contextual de modelo/processamento e job real. Turbo é padrão; Large completo ainda consta na UI/backend, com retirada decidida e implementação pendente.
+4. Gerar cortes pede quantidade, duração máxima e formato (9:16 inicial). A coleção salva aparece em Clipes de todos os projetos ou Cortes do projeto individual.
+5. Abrir um clipe salvo não inicia processamento. A inspeção reproduz seu intervalo, transcrição e análise salva; Analisar trecho é explícito. Rejeitar persiste e sai dos ativos; consultar Rejeitados permite reavaliar.
+6. Editor separa configurações do vídeo completo e de cada clipe. Salvar mantém ajustes; exportação do clipe exige aprovação. Exportar vídeo renderiza MP4 real, diferente de copiar o original ou baixar TXT/SRT.
 
-Destino com motor: importar → analisar mídia/transcrever com estado real → abrir visão do projeto com transcrição real → editar → exportar. Em falha, projeto e mídia permanecem acessíveis com causa e ação. Definir a política de jobs antes de inserir espera automática na navegação; não voltar aos timers artificiais da 03D.
+Falhas/cancelamento preservam o resultado publicado anterior. Há gate global exclusivo, não fila persistente completa. Retomada implementada especificamente para blocos ASR; não prometer retomada de qualquer estágio ou execução concorrente de modelos.
 
-## Implementado e comprovado no escopo registrado
+## Implementado e limites atuais
 
-- Metadados de projeto e coleções no Rust; criar, abrir e renomear via IPC existente.
-- Arquivo local: inspeção de metadados, player, seek, áudio e 12 miniaturas extraídas do vídeo.
-- Editor: limites de viewport, texto/proporção/layout de prévia, intervalo de reprodução, zoom e cursor da timeline.
-- Legendas: modal com modelos0–9, opção sem legenda e escolha persistida. São prévias estáticas de estilo, não animações de palavra/karaokê nem render final.
-- Configurações salvas em localStorage por ID. Objetos File e URLs ficam apenas na sessão. Reiniciar exige reconectar o arquivo.
-- YouTube: link validado e iframe de referência; não baixa mídia, não alimenta timeline local nem gera transcrição.
-- Transcrição nova vazia. Dados demonstrativos antigos podem existir no armazenamento v1, identificados como demo.
-- Nenhum motor de IA, fila real, extração de áudio, waveform, corte multitrack ou exportação final conectado.
+| Capacidade | Fonte do código | Funcionamento e limite |
+|---|---|---|
+| Importação/projetos | `App.tsx`, `media_import.rs`, `media_store.rs`, `storage.rs` | Cópia, SHA-256, deduplicação/referências, metadados ffprobe, cancelamento/reconciliação; não é só arquivo da sessão |
+| Workspace/edição | `workspace-types.ts`, `workspace-store.ts`, `useWorkspaceData.ts`, `clip-workspace.ts` | Workspace v2/localStorage; mídia gerenciada reconecta por mediaId; settings/videoSettings/clipEdits separados; histórico completo de versões não existe |
+| Transcrição | `transcription/runner.rs`, `profiles.rs`, `checkpoints.rs`, `chunk_text.rs` | whisper.cpp pt/DTW, CPU ou CUDA descoberto; 180 s centrais + 2 s de contexto, checkpoints validados e tempos absolutos |
+| Busca/legenda | `TranscriptPanel.tsx`, `captions.ts`, `CaptionPresetsDialog.tsx` | Texto real, busca/seek/edição, estilos e efeitos; não são apenas amostras estáticas. Precisão e sincronia dependem do resultado e da avaliação humana |
+| Timeline | `media_preview/`, `VideoEditor.tsx` | Miniaturas e waveform extraídas da mídia; transporte, limites e zoom; sem editor multitrack completo |
+| Seleção/nota | `clips/selection.rs`, `generation.rs`, `analysis_types.rs` | Qwen3-4B textual lê janelas sobrepostas e escolhe intervalos sem sobreposição; nota Gancho/Desenvolvimento/Fechamento 40/30/30; não previsão de viralização |
+| Análise | `clips/semantic.rs`, `evidence.rs`, `ClipDetails.tsx` | Resumo e três critérios com citações montadas da fala; validação de citações não garante interpretação natural/correta. Relato do mantenedor confirma linguagem técnica/metalinguística inadequada |
+| Enquadramento | `clips.ts:isolatedClipSettings`, `ClipFormatPicker.tsx`, `VideoPreview.tsx` | Formato persistido não implica preenchimento: padrão de novos clipes é contain. Cover e ponto focal manuais existem; rastreamento/reenquadramento automático não |
+| Inferência textual | `clips/text_engine.rs` | llama.cpp/Qwen3-4B Q4_K_M, GPU Vulkan detectada e ajuste de memória; uma tentativa CPU após falha/cancel check; diferente de Qwen3-ASR |
+| Cenas | `clips/scene_regions.rs` | FFmpeg detecta transições perto dos limites dos candidatos, com cache; não interpreta imagens/ações/emoções |
+| Render/export | `render/pipeline.rs`, `encoder.rs`, `ass.rs` | Trim, proporção/fit/foco, áudio/texto e legendas ASS; NVENC sondado ou libx264; ffprobe valida duração/dimensões/áudio antes de publicar |
+| Persistência nativa | `transcription/store.rs`, `clips/store.rs` | Transcrição, formato/intervalos/análise/revisão dos clipes em app-data; ajustes finos do editor continuam no localStorage |
 
-## Pontos de integração existentes
+Stack concreta: React/TypeScript/Vite, Tauri/Rust, CSS/tokens e Phosphor; dependências em package.json/Cargo.toml. Supabase, BYOK, colaboração, credenciais, download YouTube, exportação em lote e distribuição instalável dos motores não estão implementados.
 
-| Arquivo | Papel / cuidado |
-| --- | --- |
-| app/src/App.tsx | handleCreateFromMedia cria metadados, associa mídia da sessão e abre overview. Tornar importação transacional ao adicionar armazenamento real. |
-| app/src/lib/video-source.ts | Validação e inspeção browser; não substitui análise no backend. |
-| app/src/services/workspace-store.ts | Cache v1 localStorage e mídia por sessão; não é repositório de arquivos persistentes. |
-| app/src/hooks/useWorkspaceData.ts | Carregar, editar, salvar e reconectar mídia; preservar títulos/configurações na migração. |
-| app/src/lib/workspace-types.ts | TranscriptSegment usa segundos; transcriptMode aceita somente demo/empty. Adicionar estado real com migração e validação. |
-| app/src/components/workspace/TranscriptPanel.tsx | Busca/edição de trechos e navegação temporal. Não altera áudio/vídeo atualmente. |
-| app/src/components/editor/VideoEditor.tsx | Playback e ajustes visuais; intervalo limita reprodução, não exporta. |
-| app/src/components/editor/CaptionPresetsDialog.tsx | Presets mantêm IDs0–9; amostra estática independente da geração de transcrição. |
-| app/src/components/upload/PreparationDialog.tsx | Busy/erro/retry da criação atual; conectar a eventos reais, sem percentuais inventados. |
-| app/src-tauri/src/storage.rs e lib.rs | Persistência e comandos existentes; ampliar de modo aditivo. |
+## Prioridades confirmadas pelo mantenedor — implementação ainda pendente
 
-## Ordem proposta para o ZCode
-
-1. Inventariar hardware, ferramentas locais, licenças, armazenamento e decisões canônicas. Consultar Graphify se disponível; índice ausente não é evidência arquitetural. Rever EPIC-001/002/005/011, DEC-012/013 e respectivas BR/AC no backlog antes de escolher runtime/modelo.
-2. Importação persistente: estratégia de cópia ou referência autorizada, integridade, arquivo movido/ausente, paths seguros e leitura da mídia via Tauri. Migrar v1 sem perder configurações; não persistir object URLs.
-3. Análise de mídia e áudio: duração/streams reais, formatos suportados, cancelamento, arquivos inválidos e limites de recurso. Definir distribuição/atualização de binários com documentação oficial e licenças verificadas.
-4. Jobs: estados enfileirado/em execução/concluído/falhou/cancelado, estágio real, logs sem dados sensíveis, cancelamento e recuperação após reinício. Percentual só quando mensurável. Execução sequencial é proposta canônica, não motor já implementado.
-5. Primeira fatia real: arquivo local → áudio → transcrição local → segmentos com timestamps → salvar → reabrir. Escolher modelo após teste de capacidade e qualidade; não baixar múltiplos modelos sem necessidade.
-6. Integrar transcrição à busca, seek e legenda. Preservar diferença entre correção textual, alteração de tempo e corte de mídia. Timestamps de palavra só se o motor fornecer esse contrato.
-7. Render mínimo: um vídeo, intervalo válido, proporção, legendas e áudio. Exportar arquivo reproduzível; só então habilitar confirmação de exportação. Depois ampliar para clipes e demais ferramentas do backlog.
-8. BYOK em fatia própria: provedor suportado, consentimento claro sobre envio externo, chave no armazenamento seguro do sistema, validação, erro/quota/custo. Nunca guardar chave em localStorage ou logs. Falha local não autoriza upload externo automático.
-9. Importação YouTube em fatia específica: obtenção de mídia, erros e condições de uso; iframe atual não equivale a importação concluída.
+1. Estudar o funcionamento dos projetos open-source indicados antes de adaptar capacidades. Usar a lista existente em OPEN-SOURCE-ENGINE-RESEARCH.md; registrar arquivos/funções/revisão, contratos, dependências/licença, escolhas de adaptação e testes. Pesquisa de README não substitui esse estudo.
+2. Análise voltada ao conteúdo: descrever acontecimentos concretos, contexto, reação e desfecho em português natural. Evitar explicações como “a fala inicial introduz o tema central” no resumo destinado ao usuário. O print do Opus orienta a experiência desejada; não comprova nossa equivalência ou autoriza inventar fatos.
+3. Clipes 9:16 devem preencher o quadro conforme o objetivo de publicação, com sujeito e legenda preservados. Resolver a composição/preenchimento e testar prévia, miniatura, editor e render; só persistir aspect ratio não atende ao aceite. Não aplicar o crop à visão original do projeto.
+4. Manter Whisper Large v3 Turbo e retirar Large v3 completo da escolha/execução do produto. Preferência qualitativa do mantenedor no vídeo testado, não benchmark universal de precisão. Preservar transcrições/projetos e histórico das comparações; não apagar pesos por consequência desta atualização documental.
+5. Validar novamente os defeitos quando forem implementados; testes anteriores permanecem evidência histórica de contratos, não aprovação destes resultados. Demais itens de lote/YouTube/BYOK seguem o backlog e exigem escopo próprio.
 
 ## Critérios para considerar a primeira fatia funcional
 
@@ -59,21 +49,23 @@ Destino com motor: importar → analisar mídia/transcrever com estado real → 
 - Validar no Tauri real as permissões, IPC, arquivos e processos. Testes de navegador com IPC simulado não substituem esse aceite.
 - Testes proporcionais: uma rodada inicial e uma repetição justificada; preservar aprovados e respeitar VALIDATION-POLICY.md. Estética aprovada exclusivamente pelo mantenedor.
 
-## Evidências e limites
+## Evidências e limites — separar estado atual de histórico
+
+03M registrou 247 casos únicos aprovados, incluindo processamento nativo delimitado de geração, retomada ASR e NVENC; aplicativo completo não foi automatizado. Isso comprova os contratos exercitados, não qualidade editorial, preenchimento 9:16 ou precisão ASR. O relato seguinte do mantenedor reabre os dois primeiros como defeitos e define retirada do Large completo. REVIEW/SPEC existentes de confiabilidade e isolamento detalham limites; a 03N altera somente documentação.
 
 03E: build, 30 unitários e 12 runtime únicos com IPC simulado. 03F: build e quatro casos runtime focados em modal, escolha salva, cursor/teclado, responsividade e console. Nenhuma destas evidências comprova IA ou exportação. Ver docs/reports/evidence/03e e 03f e relatórios de histórico.
 
-Próximo passo recomendado: inventário técnico e implementação da primeira fatia de mídia persistente. Não redesenhar a Home nem reabrir decisões visuais aprovadas ao integrar o motor.
+O plano antigo de começar pela mídia persistente já foi executado; próximas tarefas são as prioridades acima. Não redesenhar a Home nem reabrir decisões visuais aprovadas por consequência desta revisão.
 
-## Pesquisa de ferramentas de 2026-10-19
+## Histórico — pesquisa de ferramentas de 2026-10-19
 
 Comparação de 10 candidatos e ordem proposta em ../references/OPEN-SOURCE-ENGINE-RESEARCH.md. Manter stack atual; proposta inicial FFmpeg + avaliação whisper.cpp, com yt-dlp em etapa própria para links. Nenhum motor adicional instalado nesta pesquisa. Antes de copiar código, verificar licença e versão, inclusive modelos e dependências. Correções de UI M2A em evidence/m2a-fix têm validação runtime parcial por falha do harness e orçamento esgotado; não promovê-las a integração nativa aprovada.
 
 
-## Continuidade M3A inicial (2026-10-19)
+## Histórico — continuidade M3A inicial (2026-10-19)
 
 Transcrição local inicial implementada em módulos próprios, com whisper.cpp CPU/Base no desenvolvimento, cancelamento e persistência por projeto. Contrato: M3A-TRANSCRIPTION-SPEC.md; roteiro humano: M3A-MANUAL-CHECK.md; decisões e hashes: ENGINE-DECISIONS.md §5. Mantenedor restringiu validação a código, sem navegador/abertura do app. Não tratar ASR, qualidade ou M3 completo como aprovados: runtime e benchmark pendentes; exportação/YouTube/BYOK continuam fora desta entrega.
 
-## Continuidade 03I (2026-10-19)
+## Histórico — continuidade 03I (2026-10-19)
 
 Large v3 Turbo/DTW preservados após relato positivo do mantenedor. Editor possui CaptionStyle opcional validado/persistido, visual de legendas compartilhado com predefinições/fonte/efeitos e transporte com Espaço. Menu de contexto nos cards exporta cópia da origem e TXT/SRT reais com seletor nativo; não é render MP4 com cortes/efeitos. Contratos/limites: EDITOR-CONTROLS-SPEC.md; testes somente em código, runtime reservado ao mantenedor. Compartilhamento explicitamente adiado. Não reintroduzir avisos internos na interface.

@@ -1,4 +1,14 @@
 use serde::{Deserialize, Serialize};
+use sha2::{Digest, Sha256};
+
+pub fn identity(media: &str, start: f64, end: f64, format: Option<&str>) -> String {
+    let mut value = format!("{media}:{start:.3}:{end:.3}");
+    if let Some(format) = format {
+        value.push(':');
+        value.push_str(format);
+    }
+    format!("{:x}", Sha256::digest(value))
+}
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase", deny_unknown_fields)]
@@ -14,6 +24,8 @@ pub struct Clip {
     pub format: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub analysis: Option<super::analysis_types::Analysis>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub analysis_error: Option<String>,
 }
 
 #[derive(Clone, Debug, Deserialize, Serialize, PartialEq)]
@@ -37,6 +49,7 @@ impl ClipCollection {
         if self.transcript_hash != hash {
             for clip in &mut self.clips {
                 clip.analysis = None;
+                clip.analysis_error = None;
                 clip.review = Review::Pending;
             }
             self.transcript_hash = hash;

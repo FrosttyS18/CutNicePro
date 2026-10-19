@@ -8,7 +8,7 @@ Contrato: transcrição em texto contínuo, altura limitada com scroll interno; 
 
 Timeline: régua + miniaturas e picos de áudio reais cacheados pelo hash da mídia; erros e carregamento explícitos. Cursor é um slider acessível cobrindo régua e faixas, com pointer capture para arraste fora dos limites; teclado, Home/End e clamp. O editor preserva prévia e timeline visíveis por altura; painel do texto tem scroll próprio.
 
-ASR: Small multilíngue como novo padrão, modelo maior autorizado nesta tarefa; JSON completo do whisper.cpp para tempos de tokens agrupados em palavras. Preservar Base instalado e transcrições existentes. Não prometer precisão equivalente ao Opus sem benchmark humano. Testes em código para contratos, normalização, alinhamento, picos/args FFmpeg, ponteiro e markup/CSS; nenhum navegador/app será aberto.
+ASR nesta entrega histórica: Small multilíngue substituiu Base; JSON completo do whisper.cpp forneceu tokens agrupados em palavras. Revisão documental 03N: o padrão atual é Turbo com DTW; Small/Base não são escolhas vigentes do produto. Large completo ainda é suportado no código, com retirada decidida em DEC-014. Preservar transcrições e evidências históricas; nenhuma promessa de equivalência ao Opus. O escopo de testes em código desta fase não comprova qualidade linguística ou aprovação visual; ver M3A-TRANSCRIPTION-SPEC e ENGINE-HANDOFF para a execução atual.
 
 Direcionamento adicional: mantenedor rejeitou qualquer aviso na UI sobre modelo, migração ou necessidade de gerar tempos novos. Esses detalhes ficam apenas nesta documentação e no roteiro de teste. Nenhum aviso desse tipo foi mantido na transcrição.
 

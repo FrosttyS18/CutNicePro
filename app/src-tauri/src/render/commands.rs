@@ -80,7 +80,7 @@ pub async fn export_video(
     };
     destination.set_extension("mp4");
     crate::project_files::destination_allowed(&base, &destination)?;
-    let control = jobs.start(job_id.clone(), project_id)?;
+    let control = jobs.start_operation(job_id.clone(), project_id, Some("export"))?;
     if let Some(snapshot) = jobs.stage(&job_id, "rendering") {
         let _ = app.emit("clips://job", snapshot);
     }

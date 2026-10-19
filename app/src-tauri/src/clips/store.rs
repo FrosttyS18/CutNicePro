@@ -31,6 +31,9 @@ pub fn validate(value: &ClipCollection, duration: f64) -> Result<(), String> {
                 || c.title.is_empty()
                 || c.title.len() > 1000
                 || c.reasons.len() > 8
+                || c.analysis_error
+                    .as_ref()
+                    .is_some_and(|message| message.is_empty() || message.len() > 500)
                 || c.format
                     .as_ref()
                     .is_some_and(|v| !["16:9", "9:16", "1:1", "4:5"].contains(&v.as_str()))
@@ -144,6 +147,7 @@ mod tests {
                 review: super::super::types::Review::Approved,
                 format: Some("9:16".into()),
                 analysis: None,
+                analysis_error: None,
             }],
         };
         save(&base, &project, &value, 10.0).unwrap();

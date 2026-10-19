@@ -1,12 +1,20 @@
-pub mod commands;
-mod ranking;
-mod content;
 mod analysis_types;
+pub mod commands;
+mod content;
+mod evidence;
+mod generation;
+#[cfg(test)]
+mod pipeline_tests;
+#[cfg(test)]
+mod ranking;
+mod scene_regions;
+pub(crate) mod scenes;
+mod selection;
 mod semantic;
 #[cfg(test)]
 mod semantic_tests;
-pub(crate) mod scenes;
 mod store;
+mod text_engine;
 pub(crate) mod types;
 
 pub struct ClipJobs(pub std::sync::Arc<crate::transcription::TranscriptionJobs>);

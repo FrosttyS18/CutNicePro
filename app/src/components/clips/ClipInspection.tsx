@@ -12,7 +12,7 @@ import type { LibraryClip } from "../../lib/clip-library";
 import "./clip-library.css";
 import { ClipDetails } from "./ClipDetails";
 
-interface Props { entry: LibraryClip; onClose: () => void; onEdit: (projectId: string, clip: Clip) => void; onChanged?: () => void }
+interface Props { entry: LibraryClip; onClose: () => void; onEdit: (projectId: string, clip: Clip) => void; onChanged?: (notice?: string) => void }
 export function ClipInspection({ entry,onClose,onEdit,onChanged }: Props) {
   const media = useClipMedia(entry.project.id,entry.mediaId);
   const preferences = readWorkspace(entry.project.id).clipEdits?.[entry.clip.id];
@@ -23,16 +23,11 @@ export function ClipInspection({ entry,onClose,onEdit,onChanged }: Props) {
   const [playing,setPlaying] = useState(false);
   const [error,setError] = useState<string | null>(null);
   const [dismissed,setDismissed] = useState<string | null>(null);
-  const attempted = useRef(false);
   const settings = isolatedClipSettings(clip,preferences,media.source?.media);
   const allTranscript = media.source?.transcript ?? [];
   const transcript = allTranscript.filter(segment => segment.start < clip.end && segment.end > clip.start);
-  useEffect(() => {
-    if (attempted.current || controller.loading || !controller.collection || clip.analysis || controller.busy) return;
-    attempted.current = true;
-    void controller.analyze(clip.id).then(() => onChanged?.());
-  },[controller.loading,controller.collection,clip.analysis,controller.busy,clip.id]);
-  function seek(value: number) { if (video.current) video.current.currentTime = Math.max(clip.start, Math.min(value,clip.end)); setTime(value); }
+  const ownAnalysis = controller.ownedJob && controller.operation === "analyze";
+  function seek(value: number) { const bounded=Math.max(clip.start,Math.min(value,clip.end)); if (video.current) video.current.currentTime=bounded; setTime(bounded); }
   function toggle() {
     const player = video.current;
     if (!player) return;
@@ -51,13 +46,16 @@ export function ClipInspection({ entry,onClose,onEdit,onChanged }: Props) {
     return () => document.removeEventListener("keydown",key);
   });
   async function review(value: "approved" | "rejected") {
-    await controller.review(clip.id,value); onChanged?.();
+    if (await controller.review(clip.id,value)) {
+      onChanged?.(value === "rejected" ? "Clipe rejeitado." : "Clipe aprovado.");
+      if (value === "rejected") onClose();
+    }
   }
   return <>
     <FlowDialog open title={entry.project.name} className="clip-inspection" onClose={() => {
-      if (controller.busy && controller.job?.stage === "analyzing") void controller.cancel();
+      if (controller.busy && ownAnalysis) void controller.cancel();
       onClose();
-    }} busy={controller.busy} allowCloseWhileBusy={controller.job?.stage === "analyzing"}>
+    }} busy={controller.busy && controller.ownedJob} allowCloseWhileBusy={ownAnalysis}>
       <div className="clip-inspection__body">
         <div className="clip-inspection__player"><VideoPreview media={media.source?.media ?? null} localUrl={media.source?.url ?? null} settings={settings} videoRef={video}
           nativeControls={false} onTogglePlay={toggle} cue={captionCue(allTranscript,time)} onDuration={() => seek(clip.start)}
@@ -70,8 +68,8 @@ export function ClipInspection({ entry,onClose,onEdit,onChanged }: Props) {
           <label className="sr-only" htmlFor="clip-inspection-seek">Posição no clipe</label>
           <input id="clip-inspection-seek" type="range" min={clip.start} max={clip.end} step={.05} value={time} onChange={event => seek(Number(event.target.value))}/>
         </div>
-        <ClipDetails clip={clip} transcript={transcript} time={time} loading={media.loading || controller.loading} analyzing={controller.busy && controller.job?.stage === "analyzing"}
-          error={controller.job?.stage === "analyzing" && controller.job.state === "failed" ? clipMessage(controller.job.error) : null} onSeek={seek}
+        <ClipDetails clip={clip} transcript={transcript} time={time} loading={media.loading || controller.loading} analyzing={controller.busy && ownAnalysis}
+          error={ownAnalysis && controller.job?.state === "failed" ? clipMessage(controller.job.error) : null} onSeek={seek}
           onAnalyze={() => void controller.analyze(clip.id).then(() => onChanged?.())}/>
         <div className="clip-inspection__actions"><button type="button" className="upload-primary" disabled={controller.busy} onClick={() => onEdit(entry.project.id,clip)}>Editar clipe</button>
           <button type="button" className="flow-button" disabled={controller.busy || controller.loading} aria-pressed={clip.review === "approved"} onClick={() => void review("approved")}>Aprovar</button>
@@ -82,7 +80,7 @@ export function ClipInspection({ entry,onClose,onEdit,onChanged }: Props) {
         </div>
       </div>
     </FlowDialog>
-    {controller.job?.stage === "rendering" && <ProcessingDialog key={controller.job.jobId} id={controller.job.jobId} open={controller.busy || (controller.job.state === "failed" && dismissed !== controller.job.jobId)} busy={controller.busy}
+    {controller.ownedJob && controller.operation === "export" && controller.job && <ProcessingDialog key={controller.job.jobId} id={controller.job.jobId} open={controller.busy || (controller.job.state === "failed" && dismissed !== controller.job.jobId)} busy={controller.busy}
       title="Exportando…" status="Preparando seu vídeo" progress={controller.job.progress} error={clipMessage(controller.job.error)} cancelAction="Cancelar exportação"
       cancelDescription="A exportação será interrompida. Seu clipe salvo será mantido." onCancel={controller.cancel} onClose={() => setDismissed(controller.job!.jobId)} onRetry={() => void controller.exportVideo(settings,clip.id)}/>}
   </>;

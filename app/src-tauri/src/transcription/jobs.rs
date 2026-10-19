@@ -13,6 +13,14 @@ pub struct TranscriptionJobs {
 
 impl TranscriptionJobs {
     pub fn start(&self, job_id: String, project_id: String) -> Result<Arc<ProcessControl>, String> {
+        self.start_operation(job_id, project_id, None)
+    }
+    pub fn start_operation(
+        &self,
+        job_id: String,
+        project_id: String,
+        operation: Option<&str>,
+    ) -> Result<Arc<ProcessControl>, String> {
         uuid::Uuid::parse_str(&job_id).map_err(|_| "identificador de job inválido")?;
         let mut active = self.active.lock().map_err(|_| "fila indisponível")?;
         if active
@@ -31,6 +39,7 @@ impl TranscriptionJobs {
                 stage: "extracting".into(),
                 error: None,
                 progress: 0,
+                operation: operation.map(str::to_string),
             },
         });
         Ok(control)

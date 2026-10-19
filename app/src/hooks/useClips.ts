@@ -10,6 +10,9 @@ export function useClips(projectId: string, mediaId?: string) {
   const [notice, setNotice] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [revision, setRevision] = useState(0);
+  const [reviewing,setReviewing] = useState(false);
+  const owned = useRef<{id: string; kind: "generate" | "analyze" | "export"} | null>(null);
+  const pending = useRef(false);
   const epoch = useRef(0);
   useEffect(() => {
     epoch.current += 1;
@@ -34,46 +37,60 @@ export function useClips(projectId: string, mediaId?: string) {
     return () => { disposed = true; epoch.current += 1; off?.(); };
   }, [projectId, mediaId, revision]);
 
-  async function execute(stage: api.ClipJob["stage"], action: (jobId: string) => Promise<api.ClipCollection | boolean>) {
-    if (!mediaId || job?.state === "running") return;
+  async function execute(kind: "generate" | "analyze" | "export", action: (jobId: string) => Promise<api.ClipCollection | boolean>) {
+    if (!mediaId || job?.state === "running" || pending.current) return;
+    pending.current = true;
+    const stage = kind === "export" ? "rendering" : "analyzing";
     const version = epoch.current;
     const jobId = crypto.randomUUID();
+    owned.current = {id:jobId,kind};
     setError(null); setNotice(null);
-    setJob({ jobId, projectId, stage, state: "running", progress: 0, error: null });
+    setJob({ jobId, projectId, stage, operation:kind, state: "running", progress: 0, error: null });
     try {
       const result = await action(jobId);
       if (version !== epoch.current) return;
-      if (typeof result !== "boolean") setCollection(result);
+      if (typeof result !== "boolean") {
+        setCollection(result);
+        const failed=result.clips.filter(clip=>clip.analysisError).length;
+        if(failed) setNotice(`${result.clips.length} clipes salvos. ${failed} ${failed === 1 ? "precisa" : "precisam"} de nova análise.`);
+      }
       if (result === true) setNotice("Vídeo exportado.");
-      setJob({ jobId, projectId, stage, state: "completed", progress: result === false ? 0 : 100, error: null });
+      setJob({ jobId, projectId, stage, operation:kind, state: "completed", progress: result === false ? 0 : 100, error: null });
     } catch (e) {
       if (version !== epoch.current) return;
       const latest = await api.getClipJob().catch(() => null);
       if (version !== epoch.current) return;
       if (api.isClipJob(latest) && latest.jobId === jobId) setJob(latest);
-      else setJob({ jobId, projectId, stage, state: "failed", progress: 0, error: String(e) });
-    }
+      else setJob({ jobId, projectId, stage, operation:kind, state: "failed", progress: 0, error: String(e) });
+    } finally { pending.current = false; }
   }
   function generate(options: api.ClipOptions) {
-    return execute("analyzing", id => api.generateClips(projectId, mediaId!, id, options));
+    return execute("generate", id => api.generateClips(projectId, mediaId!, id, options));
   }
   function analyze(clipId: string) {
-    return execute("analyzing",id => api.analyzeClip(projectId,mediaId!,clipId,id));
+    return execute("analyze",id => api.analyzeClip(projectId,mediaId!,clipId,id));
   }
   function exportVideo(settings: EditorSettings, clipId?: string) {
-    return execute("rendering", id => api.exportVideo(projectId, mediaId!, id, settings, clipId));
+    return execute("export", id => api.exportVideo(projectId, mediaId!, id, settings, clipId));
   }
   async function review(clipId: string, review: api.ClipReview) {
-    if (!mediaId) return;
+    if (!mediaId || pending.current || job?.state === "running") return false;
+    pending.current = true; setReviewing(true); setError(null);
     const version = epoch.current;
-    try { const value = await api.reviewClip(projectId, mediaId, clipId, review); if (version === epoch.current) setCollection(value); }
-    catch (e) { if (version === epoch.current) setError(api.clipMessage(e)); }
+    try {
+      const value = await api.reviewClip(projectId, mediaId, clipId, review);
+      if (version !== epoch.current) return false;
+      setCollection(value); return true;
+    } catch { if (version === epoch.current) setError("Não foi possível salvar a revisão do clipe. Tente novamente."); return false; }
+    finally { pending.current = false; if (version === epoch.current) setReviewing(false); }
   }
   async function cancel() {
     if (!job) return false;
     try { return await api.cancelClips(job.jobId); }
     catch (e) { setError(api.clipMessage(e)); return false; }
   }
-  return { collection, job, busy: job?.state === "running", loading, error, notice, generate, analyze, exportVideo, review, cancel,
+  return { collection, job, ownedJob:owned.current?.id === job?.jobId && owned.current !== null,
+    operation: job?.operation ?? (owned.current && owned.current.id === job?.jobId ? owned.current.kind : null),
+    busy: job?.state === "running" || reviewing, loading, error, notice, generate, analyze, exportVideo, review, cancel,
     reload: () => setRevision(value => value + 1) };
 }

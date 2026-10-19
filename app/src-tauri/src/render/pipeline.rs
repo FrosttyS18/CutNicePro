@@ -1,16 +1,39 @@
-use super::{ass, scratch::Scratch, settings::RenderSettings};
+use super::{
+    ass,
+    encoder::{self, Encoder},
+    scratch::Scratch,
+    settings::RenderSettings,
+};
 use crate::transcription::{process::ProcessControl, types::Segment};
 use std::{
     path::{Path, PathBuf},
     process::Command,
 };
 
+#[cfg(test)]
 pub fn arguments(
     source: &Path,
     destination: &Path,
     settings: &RenderSettings,
     duration: f64,
     has_audio: bool,
+) -> Result<Vec<std::ffi::OsString>, String> {
+    arguments_for(
+        source,
+        destination,
+        settings,
+        duration,
+        has_audio,
+        Encoder::Cpu,
+    )
+}
+fn arguments_for(
+    source: &Path,
+    destination: &Path,
+    settings: &RenderSettings,
+    duration: f64,
+    has_audio: bool,
+    encoder: Encoder,
 ) -> Result<Vec<std::ffi::OsString>, String> {
     let (start, end) = settings.validate(duration)?;
     let mut args: Vec<std::ffi::OsString> = [
@@ -41,12 +64,6 @@ pub fn arguments(
             "0:v:0",
             "-vf",
             &filter,
-            "-c:v",
-            "libx264",
-            "-preset",
-            "veryfast",
-            "-crf",
-            "20",
             "-pix_fmt",
             "yuv420p",
             "-threads",
@@ -55,6 +72,7 @@ pub fn arguments(
         .iter()
         .map(std::ffi::OsString::from),
     );
+    args.extend(encoder.arguments().iter().map(std::ffi::OsString::from));
     if has_audio {
         args.extend(
             [
@@ -144,24 +162,54 @@ pub fn run(
     let output = scratch.path.join("output.part.mp4");
     let tools = crate::media_analyze::detect_fftools()
         .ok_or("FFmpeg não encontrado. Repare a instalação e tente novamente.")?;
-    let mut command = Command::new(tools.ffprobe.with_file_name(if cfg!(windows) {
+    let ffmpeg = tools.ffprobe.with_file_name(if cfg!(windows) {
         "ffmpeg.exe"
     } else {
         "ffmpeg"
-    }));
-    command
-        .current_dir(&scratch.path)
-        .args(arguments(source, &output, settings, duration, has_audio)?);
-    control.run_with_output(&mut command, &scratch.path.join("render.log"), |line| {
-        if let Some(us) = line
-            .strip_prefix("out_time_us=")
-            .and_then(|v| v.parse::<f64>().ok())
-        {
-            if us.is_finite() {
-                progress((us / 1_000_000.0 / (end - start) * 95.0).clamp(0.0, 95.0) as u8);
-            }
+    });
+    let selected = encoder::detect(&ffmpeg, &scratch.path, control)?;
+    let mut render = |selected: Encoder| -> Result<(), String> {
+        let mut command = Command::new(&ffmpeg);
+        command.current_dir(&scratch.path).args(arguments_for(
+            source, &output, settings, duration, has_audio, selected,
+        )?);
+        control.run_with_output(
+            &mut command,
+            &scratch.path.join(if selected == Encoder::Nvenc {
+                "render-nvenc.log"
+            } else {
+                "render-cpu.log"
+            }),
+            |line| {
+                if let Some(us) = line
+                    .strip_prefix("out_time_us=")
+                    .and_then(|v| v.parse::<f64>().ok())
+                {
+                    if us.is_finite() {
+                        progress((us / 1_000_000.0 / (end - start) * 95.0).clamp(0.0, 95.0) as u8);
+                    }
+                }
+            },
+        )
+    };
+    let mut actual = selected;
+    if let Err(error) = render(selected) {
+        control.check()?;
+        if selected == Encoder::Cpu {
+            return Err(error);
         }
-    })?;
+        actual = Encoder::Cpu;
+        render(Encoder::Cpu)?;
+    }
+    std::fs::write(
+        scratch.path.join("encoder.txt"),
+        if actual == Encoder::Nvenc {
+            "h264_nvenc"
+        } else {
+            "libx264"
+        },
+    )
+    .map_err(|e| e.to_string())?;
     control.check()?;
     let analysis = crate::media_analyze::analyze(&tools, &output)?;
     let (width, height) = settings.dimensions()?;

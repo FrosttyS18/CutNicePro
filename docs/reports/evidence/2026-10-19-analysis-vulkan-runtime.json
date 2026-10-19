@@ -1,0 +1,19 @@
+{
+  "task": "03M",
+  "engineRelease": "b11729",
+  "engineSource": "https://github.com/ggml-org/llama.cpp/releases/tag/b11729",
+  "archiveSource": "https://github.com/ggml-org/llama.cpp/releases/download/b11729/llama-b11729-bin-win-vulkan-x64.zip",
+  "archiveBytes": 32316693,
+  "verifiedArchiveSha256": "dd9b1aef10a45c25c5170d2b78b861dd43e27db63a8c56e310ac261268c3af5c",
+  "model": "Qwen3-4B-Q4_K_M.gguf",
+  "modelManifest": "2026-10-19-analysis-runtime.json",
+  "runtimePath": ".tooling/vendor/analysis/gpu",
+  "deviceProbe": "Vulkan0: NVIDIA GeForce RTX 5070 (11943 MiB, 11175 MiB free)",
+  "policy": "GPU auto layers, fit on, 1024 MiB margin; one sequential CPU fallback after checking cancellation",
+  "observedProcess": "C:/CutNicePro/.tooling/vendor/analysis/gpu/llama-completion.exe",
+  "observedWholeDeviceMemoryMiB": 7716,
+  "memoryMeasurementLimit": "Single whole-device observation; not exclusive model peak",
+  "realGeneration": "3 grounded clips persisted; native test 228.62 seconds; no CPU fallback logs present",
+  "distribution": "Development tools only; installer not changed",
+  "smallerGpus": "Not tested"
+}

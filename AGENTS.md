@@ -1,7 +1,7 @@
 # CutNicePro — Instruções do Projeto
 
 Plataforma de edição inteligente de vídeos (inspirada no OpusClip).
-**Status atual: interface e fluxo de projetos implementados; motor de vídeo/IA e exportação real ainda pendentes.** Ponto de continuidade: `docs/engineering/ENGINE-HANDOFF.md`. Conferir o código e as evidências atuais antes de assumir funcionalidades concluídas. Detalhes de ferramentas em `docs/TOOLING.md`.
+**Status atual (revisão documental 03N, 2026-10-19): aplicativo React/TypeScript/Vite + Tauri/Rust com importação persistente, transcrição Whisper local, seleção/análise textual de clipes e exportação FFmpeg implementadas.** Funcionamento parcial e qualidade editorial/ASR em revisão; não confundir testes de contratos ou processamento nativo com aprovação do fluxo completo no aplicativo. Fonte de continuidade: `docs/engineering/ENGINE-HANDOFF.md`; limitações e prioridades no Product Brain e backlog. Detalhes do ambiente em `docs/TOOLING.md`.
 
 ## Escopo e comunicação
 
@@ -17,6 +17,7 @@ Plataforma de edição inteligente de vídeos (inspirada no OpusClip).
 - Fundamentar decisões técnicas em documentação confiável.
 - Preferir soluções simples, modulares e testáveis; separar processamento de vídeo, regras de negócio e interface.
 - Preferir open-source e processamento local quando tecnicamente adequado; evitar serviços comerciais desnecessários.
+- Antes de implementar capacidades já presentes nos projetos open-source indicados pelo mantenedor, estudar os fluxos e módulos pertinentes desses repositórios: origem/revisão consultada, arquivos/funções, entradas/saídas, dependências, licença e testes. Registrar o que será adaptado e por quê nos documentos existentes. Catálogo de README, estrelas ou pesquisa documental não comprova estudo do funcionamento; não presumir que a integração ocorreu. Se o código não puder ser consultado, declarar a lacuna, sem inventar comportamento. Referências em `docs/references/OPEN-SOURCE-ENGINE-RESEARCH.md`.
 - Criar testes relevantes e verificar os resultados. Nenhum recurso é "concluído" apenas porque o código foi gerado: exigir funcionamento real, testes e critérios de aceite demonstrados.
 - Não realizar commits, pushes, merges ou deploys sem autorização explícita.
 - Não confundir um processo iniciado com um serviço realmente funcional.

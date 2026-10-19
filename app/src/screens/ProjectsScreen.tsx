@@ -34,10 +34,11 @@ export function ProjectsScreen({ projects, loading, error, onRetry, onCreate, on
   const [tab, setTab] = useState<LibraryTab>("all");
   const library = useClipLibrary(projects);
   const [inspecting,setInspecting] = useState<LibraryClip | null>(null);
+  const [clipNotice,setClipNotice] = useState<string | null>(null);
 
   const tabs = [
     { id: "all", label: `Todos (${projects.length})` },
-    { id: "clips", label: library.error ? "Clipes" : library.loading ? "Clipes (…)" : `Clipes (${library.entries.length})` },
+    { id: "clips", label: library.error ? "Clipes" : library.loading ? "Clipes (…)" : `Clipes (${library.entries.filter(entry=>entry.clip.review !== "rejected").length})` },
   ];
 
   return (
@@ -57,7 +58,7 @@ export function ProjectsScreen({ projects, loading, error, onRetry, onCreate, on
       )}
 
       {tab === "clips" ? (
-        <ClipGallery entries={library.entries} loading={library.loading} error={library.error} onRetry={library.reload} onInspect={setInspecting} showProject/>
+        <ClipGallery entries={library.entries} loading={library.loading} error={library.error} notice={clipNotice} onRetry={library.reload} onInspect={setInspecting} showProject/>
       ) : (
         <div className="card-grid">
           <button type="button" className="new-card new-card--project" onClick={onCreate} data-testid="new-project-card">
@@ -93,7 +94,7 @@ export function ProjectsScreen({ projects, loading, error, onRetry, onCreate, on
           ))}
         </div>
       )}
-      {inspecting && <ClipInspection key={`${inspecting.project.id}:${inspecting.clip.id}`} entry={inspecting} onClose={() => setInspecting(null)} onChanged={library.reload}
+      {inspecting && <ClipInspection key={`${inspecting.project.id}:${inspecting.clip.id}`} entry={inspecting} onClose={() => setInspecting(null)} onChanged={notice=>{setClipNotice(notice ?? null);library.reload();}}
         onEdit={(projectId,clip) => { setInspecting(null); if (onEditClip) onEditClip(projectId,clip,inspecting.mediaId); else onOpen(projectId); }}/>}
     </div>
   );

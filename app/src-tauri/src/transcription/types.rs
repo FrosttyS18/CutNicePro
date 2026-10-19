@@ -38,6 +38,8 @@ pub struct JobSnapshot {
     pub stage: String,
     pub error: Option<String>,
     pub progress: u8,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub operation: Option<String>,
 }
 
 #[derive(Serialize)]

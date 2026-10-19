@@ -1,6 +1,6 @@
 # Conferência do mantenedor
 
-Roteiro anterior. Para a entrega 03H (seções recolhíveis, edição por palavra, nova onda e exclusão), usar `EDITOR-USABILITY-MANUAL-CHECK.md`.
+Roteiro histórico da fase de tempos. Para seções recolhíveis, edição por palavra, onda e exclusão, usar EDITOR-USABILITY-MANUAL-CHECK.md; para execução atual/modelo/checkpoints, ENGINE-HANDOFF.md e M3A-MANUAL-CHECK.md. Revisão 03N não executou este roteiro nem alterou código.
 
 Reinicie o Tauri dev para carregar o backend novo.
 
@@ -11,4 +11,4 @@ Reinicie o Tauri dev para carregar o backend novo.
 5. Corrija um trecho e salve. Reabra e confira o texto. O trecho corrigido não deve usar a marcação de palavras do texto anterior.
 6. Confira janela mínima, normal e ultrawide: preview e timeline visíveis; texto com scroll próprio; ferramentas acessíveis.
 
-As marcações novas requerem retranscrição porque os registros antigos não contêm tempos de palavra. Essa explicação fica somente neste roteiro, sem aviso na UI. Small é mais pesado que Base; a melhora efetiva e precisão do alinhamento no vídeo do usuário ainda precisam de avaliação humana. Nenhuma promessa de equivalência ao Opus.
+Registros antigos sem tempos de palavra não recebem alinhamento inventado; nova transcrição é uma operação explícita. O comparativo Small/Base pertencia à fase original: Turbo é padrão atual e a retirada de Large completo está pendente. Precisão/alinhamento no vídeo do mantenedor continuam sujeitos à avaliação humana, sem promessa de equivalência ao Opus.

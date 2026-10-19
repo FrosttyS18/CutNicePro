@@ -109,6 +109,7 @@ pub fn select(
                 review: Review::Pending,
                 format: options.format.clone(),
                 analysis: None,
+                analysis_error: None,
             };
             if best.as_ref().is_none_or(|old| {
                 clip.score > old.score || (clip.score == old.score && length < old.end - old.start)

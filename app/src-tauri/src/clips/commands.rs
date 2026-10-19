@@ -1,5 +1,5 @@
 use super::{
-    content, ranking, scenes, semantic, store,
+    content, generation, semantic, store,
     types::{ClipCollection, Options, Review},
     ClipJobs,
 };
@@ -127,7 +127,7 @@ pub async fn generate_clips(
         return Err("Não há fala suficiente para sugerir cortes. Escolha outro vídeo.".into());
     }
     let jobs = app.state::<ClipJobs>().0.clone();
-    let control = jobs.start(job_id.clone(), project_id.clone())?;
+    let control = jobs.start_operation(job_id.clone(), project_id.clone(), Some("generate"))?;
     if let Some(snapshot) = jobs.stage(&job_id, "analyzing") {
         let _ = app.emit("clips://job", snapshot);
     }
@@ -142,58 +142,24 @@ pub async fn generate_clips(
         let _lease = lease;
         let result = (|| {
             let scratch = crate::render::scratch::Scratch::new(&base)?;
-            let detected = scenes::analyze(&path, &scratch.path, duration, &control, |percent| {
-                if let Some(snapshot) = task_jobs.progress(&task_id, percent / 3) {
-                    let _ = task_app.emit("clips://job", snapshot);
-                }
-            })?;
-            control.check()?;
-            let clips = ranking::select(
-                &transcript.segments,
-                &media_id,
-                duration,
-                &detected,
-                &options,
-            )?;
-            let mut value = ClipCollection {
-                version: 1,
-                media_id: media_id.clone(),
-                transcript_hash: store::fingerprint(&transcript.segments)?,
-                clips,
-            };
-            if let Some(previous) = store::load(&base, &project_id, &media_id, duration)? {
-                for clip in &mut value.clips {
-                    if let Some(old) = previous.clips.iter().find(|old| {
-                        old.id == clip.id
-                            && old.format == clip.format
-                            && previous.transcript_hash == value.transcript_hash
-                    }) {
-                        clip.review = old.review.clone();
-                        clip.analysis = old.analysis.clone();
+            generation::run(
+                &base,
+                &scratch.path,
+                generation::Request {
+                    project: &project_id,
+                    media: &media_id,
+                    source: &path,
+                    duration,
+                    speech: &transcript.segments,
+                    options: &options,
+                },
+                &control,
+                |percent| {
+                    if let Some(snapshot) = task_jobs.progress(&task_id, percent) {
+                        let _ = task_app.emit("clips://job", snapshot);
                     }
-                }
-            }
-            let total = value.clips.len().max(1);
-            for (index, clip) in value.clips.iter_mut().enumerate() {
-                control.check()?;
-                if let Some(analysis) = &clip.analysis {
-                    clip.title = analysis.title.clone();
-                    clip.score = analysis.score();
-                    clip.reasons = analysis
-                        .criteria
-                        .iter()
-                        .map(|item| item.explanation.clone())
-                        .collect();
-                } else {
-                    semantic::run(&base, &scratch.path, clip, &transcript.segments, &control)?;
-                }
-                if let Some(snapshot) =
-                    task_jobs.progress(&task_id, (35 + 60 * (index + 1) / total) as u8)
-                {
-                    let _ = task_app.emit("clips://job", snapshot);
-                }
-            }
-            Ok(value)
+                },
+            )
         })();
         task_jobs.finish(&task_id, result, |value| {
             store::save(&base, &project_id, value, duration)
@@ -238,7 +204,7 @@ pub async fn analyze_clip(
         .position(|c| c.id == clip_id)
         .ok_or("Corte não encontrado.")?;
     let jobs = app.state::<ClipJobs>().0.clone();
-    let control = jobs.start(job_id.clone(), project_id.clone())?;
+    let control = jobs.start_operation(job_id.clone(), project_id.clone(), Some("analyze"))?;
     if let Some(snapshot) = jobs.stage(&job_id, "analyzing") {
         let _ = app.emit("clips://job", snapshot);
     }

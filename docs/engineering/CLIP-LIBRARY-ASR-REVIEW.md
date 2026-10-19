@@ -2,6 +2,8 @@
 
 Estado: IN REVIEW. FUNCTIONAL STATUS: PARTIAL. REGRESSION STATUS: PASS no escopo de código testado. VISUAL STATUS: PENDING HUMAN APPROVAL.
 
+Nota 03N: revisão e testes abaixo são históricos da 03K. A escolha atual do mantenedor é Turbo; suporte a Large completo ainda existe no código e sua retirada está pendente em DEC-014. Não promover comparações anteriores a precisão universal nem apresentar alternativas avaliadas como integradas. Estado operacional e defeitos de análise/composição no ENGINE-HANDOFF e BACKLOG.
+
 ## Implementação
 
 Biblioteca: aba Clipes já existente → leitura dos cortes persistidos de todos os projetos → galeria compartilhada → inspeção. Projeto → Cortes → galeria filtrada pelo projeto. A lista adicionada abaixo da transcrição foi removida. A consulta global não depende do workspace em localStorage. A inspeção lê mídia e transcrição persistidas; abrir edição recompõe a fonte se as preferências locais estiverem ausentes.

@@ -1,0 +1,132 @@
+╔════════════════════════════════════════════╗
+║       CUTNICEPRO — ZCODE REPORT            ║
+╚════════════════════════════════════════════╝
+
+TASK
+  Name: 03M — Confiabilidade dos cortes e aceleração.
+  Status: PARTIAL
+  Scope: Fluxo de clipes, geração, GPU, retomada e exportação.
+  Objective: Corrigir falhas e validar o processamento local.
+  Result: Implementado; 247 casos únicos aprovados.
+    Avaliação manual do aplicativo e qualidade editorial pendentes.
+
+IMPLEMENTATION
+  Completed:
+    Abrir corte salvo não inicia análise nem geração.
+    Rejeitar salva, fecha a inspeção e retira da lista ativa.
+    Rejeitados continuam consultáveis; mídia original preservada.
+    Jobs distinguem geração, análise e exportação.
+    Seleção semântica lê toda a transcrição em janelas sobrepostas.
+    Citações montadas da fonte; falha individual preserva outros cortes.
+    Inferência textual usa Vulkan, com fallback sequencial em CPU.
+    Transcrição por blocos com checkpoints e retomada validada.
+    Cenas pesquisadas nas extremidades dos candidatos.
+    Exportação NVENC sondada, com fallback e saída verificada.
+  Not completed: Análise visual semântica, precisão ASR definitiva,
+    instalador dos motores e avaliação manual no Tauri.
+  Changes: Interface, processamento, testes e documentação rastreada.
+  Architecture impact: Módulos separados; gate exclusivo preservado.
+
+FILES
+  Created: 21; Modified: 38; Deleted: 1.
+    Incluem testes, documentação, evidências e relatórios.
+    Lista integral:
+    C:/CutNicePro/docs/reports/evidence/2026-10-19-pipeline-files.json
+  Deleted: app/src-tauri/src/clips/analysis.schema.json,
+    substituído por esquema dinâmico de referências.
+  Unexpected changes: NONE observado; 440 pendências anteriores preservadas.
+  Binário de desenvolvimento compilado, não iniciado:
+    C:/CutNicePro/app/src-tauri/target/debug/cutnicepro-updated.exe
+
+VALIDATION
+  FUNCTIONAL STATUS: PARTIAL — falta avaliação manual do aplicativo.
+  REGRESSION STATUS: PASS no escopo dos testes.
+  VISUAL STATUS: PENDING HUMAN APPROVAL
+  Typecheck: PASS
+  Lint: SKIP — sem script dedicado.
+  Unit tests: PASS — 152 frontend; 90 na suíte nativa;
+    1 contrato adicional de tolerância a falha.
+  Integration tests: PASS — 4 casos nativos reais explícitos.
+  Regression tests: PASS — suítes e legenda no caminho NVENC.
+  Visual tests: SKIP — responsabilidade do mantenedor.
+  Runtime verification: PASS para processamento nativo delimitado;
+    UI testada em memória com IPC simulado.
+  Total passed: 247 únicos; repetições não somadas.
+  Total failed: 0 finais; 1 teste inicial corrigido.
+  Total skipped: 2 testes históricos ASR não reexecutados.
+
+HOOKS / HARNESS
+  Hooks active: Scripts presentes; execução automática não comprovada.
+  PreToolUse / PostToolUse / Stop: Não observados nesta sessão.
+  Baseline: Completa, 5 checks PASS, 0 FAIL, 1 SKIP.
+  Gate result: PASS estrutural; não representa aprovação estética.
+  Evidence: Harness executado diretamente; sem testes Python no projeto.
+
+MCP / SKILLS
+  Tools used: Edição local, compilação, processos e pesquisa oficial.
+  Skills: frontend-ui-engineering, cutnicepro-ux-writing,
+    incremental-implementation e web-design-guidelines.
+  Connection status: FigCraft/Graphify não expostos; índice ausente.
+  Failures: Refactor guard não encontrado.
+  Pending activation: Nenhuma ativação realizada.
+
+GIT
+  Branch: main
+  HEAD: 1b8e856ca6358ea262997999db022200535d2923
+  Latest commit: feat(app): add media import, analysis, transcription and render pipeline foundations
+  Commits created: 0
+  Push: NOT EXECUTED
+  Remote: origin → https://github.com/FrosttyS18/CutNicePro.git
+    Upstream: origin/main
+  Working tree: MODIFIED / UNTRACKED
+  Pending files: 500; inclui relatórios. Relação integral:
+    C:/CutNicePro/docs/reports/evidence/2026-10-19-pipeline-git-pending.txt
+
+EVIDENCE
+  Commands executed: npm test; npm run build; cargo test;
+    testes reais explícitos; cargo check --lib; cargo rustc; harness.
+  Relevant logs: C:/CutNicePro/.tooling/vendor/pipeline-validation/
+  Screenshots: Nenhuma; aplicativo/navegador não automatizados.
+  Test artifacts:
+    C:/CutNicePro/docs/reports/evidence/2026-10-19-pipeline-validation.json
+    C:/CutNicePro/docs/reports/evidence/2026-10-19-analysis-vulkan-runtime.json
+  Reproduction details:
+    Geração real: 3 cortes com análise validada, 228,62 s.
+    Retomada real: 260 s de vídeo; primeiro checkpoint reaproveitado
+    sem alteração de bytes/mtime; 136 segmentos válidos, 96,72 s.
+    NVENC real: H.264 1080×1920, AAC, 2 s; teste em 1,03 s.
+    Binário atualizado compilado separadamente: 22.696.448 bytes.
+  Pesquisa e limites do pipeline:
+    C:/CutNicePro/docs/references/OPUS-PIPELINE-RESEARCH-2026-10-19.md
+
+ISSUES
+  Bugs found: Análise automática, modal de outro job, rejeição sem retorno,
+    evidências alteradas pelo modelo e sondagem NVENC inválida.
+  Initial failures:
+    Link bloqueado por teste ainda em execução; recompilação posterior OK.
+    Sondagem NVENC 128×128 falhou por dimensão mínima.
+    Corrigida para 640×360; única repetição do teste passou.
+  Unresolved failures: Nenhuma falha final nos casos executados.
+    Precisão ASR anterior e qualidade editorial continuam pendentes.
+  Regressions: Nenhuma detectada no escopo testado.
+  Risks: Sem teste em GPU abaixo de 8 GB; memória observada é da placa
+    inteira. Fallback textual após falha GPU não foi provocado.
+    Aviso de bundle Vite acima de 500 kB permanece.
+  Blockers: Validação manual e distribuição instalável pendentes.
+
+FINAL
+  Delivery status: PARTIAL — código e processamento validados.
+  Requirements met: Correções e contratos AC-03M-01..08 implementados;
+    evidências e limites no REVIEW de confiabilidade.
+  Remaining work: Avaliar fluxo real, cortes e transcrição; modelo
+    atual seleciona pelo texto, sem equivalência multimodal comprovada.
+  User action required: Avaliação manual do fluxo e da qualidade.
+  Restart required: Sim, carregar o binário nativo atualizado;
+    instância aberta preservada. Não é instalador/release.
+  Ready for next task: Após avaliação do mantenedor.
+
+REPORT
+  Latest file: C:/CutNicePro/docs/reports/LATEST.txt
+  Historical file: C:/CutNicePro/docs/reports/history/2026-10-19_185546_confiabilidade-pipeline-clipes.txt
+
+END OF REPORT

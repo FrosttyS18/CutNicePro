@@ -99,3 +99,33 @@ fn cancellation_removes_owned_scratch_without_touching_source() {
     );
     std::fs::remove_dir_all(base).unwrap();
 }
+
+#[test]
+#[ignore = "Exporta trecho real e confirma NVENC em hardware compatível"]
+fn real_video_export_uses_nvenc_and_preserves_source() {
+    let base = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+        .join("../../.tooling/vendor/pipeline-validation");
+    let source = base.join("source.mp4");
+    let before = std::fs::metadata(&source).unwrap().len();
+    let (scratch, output) = pipeline::run(
+        &base,
+        &source,
+        &[],
+        &settings(),
+        599.098,
+        true,
+        &ProcessControl::default(),
+        |_| {},
+    )
+    .unwrap();
+    let encoder = std::fs::read_to_string(scratch.path.join("encoder.txt")).unwrap();
+    assert_eq!(std::fs::metadata(&source).unwrap().len(), before);
+    std::fs::copy(output, base.join("nvenc-export.mp4")).unwrap();
+    std::fs::copy(scratch.path.join("encoder.txt"), base.join("encoder.txt")).unwrap();
+    std::fs::copy(
+        scratch.path.join("render-nvenc.log"),
+        base.join("render-nvenc.log"),
+    )
+    .unwrap();
+    assert_eq!(encoder, "h264_nvenc");
+}

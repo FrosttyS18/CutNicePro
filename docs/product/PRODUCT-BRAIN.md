@@ -26,7 +26,7 @@ processamento local verificável. Também um case profissional de Product Design
 | Jornadas | docs/product/USER-JOURNEYS.md | JRN-001..014 |
 | Regras de negócio + estados | docs/product/BUSINESS-RULES.md | BR-001..050 |
 | Arquitetura da informação | docs/product/INFORMATION-ARCHITECTURE.md | — |
-| Decisões | docs/product/DECISIONS.md | DEC-001..013 |
+| Decisões | docs/product/DECISIONS.md | DEC-001..014 |
 | Backlog | docs/product/BACKLOG.md | EPIC-001..012, US-001..037, AC-001..093 |
 | Rastreabilidade | docs/product/TRACEABILITY.md | — |
 | UX fundação (Fase 01) | docs/product/UX-FOUNDATION.md | §8 direção proposta |
@@ -57,21 +57,23 @@ DEC-013) · Comercial 1 (FR-025) · V1 3 (FR-017, FR-020, FR-021). NFR: 7. Detal
 
 ## 7. Decisões arquiteturais de produto
 
-DEC-001..DEC-013 (docs/product/DECISIONS.md). Destaques: local-first (DEC-001, PROPOSED),
+DEC-001..DEC-014 (docs/product/DECISIONS.md). Destaques: local-first (DEC-001, PROPOSED),
 sem login no MVP (DEC-002, em reavaliação por DEC-011), modo B primeiro (DEC-003),
 A/B exploração (DEC-006), **assinatura mensal sem créditos (DEC-010, APPROVED)**,
-motores Local/BYOK (DEC-012, PROPOSED), fila sequencial MVP (DEC-013, hipótese).
+motores Local/BYOK (DEC-012, PROPOSED), fila sequencial MVP (DEC-013, hipótese) e preferência por Turbo com retirada do Large completo (DEC-014, APPROVED como decisão; implementação PENDING).
 
 ## 8. Dependências e pendências
 
+**Prioridades vigentes do mantenedor — revisão documental 03N (2026-10-19):** o relato após 03M reabre qualidade da análise e enquadramento como defeitos. O resumo exibido continua metalinguístico/técnico; deve descrever a história e os acontecimentos concretos do trecho em linguagem natural. Escolher 9:16 não garante imagem preenchida: `isolatedClipSettings` usa `contain`; preencher/recompor sem faixas indevidas permanece pendente. Turbo é a escolha do mantenedor para ASR; retirar Large completo é decisão tomada, mas UI/backend ainda o suportam e não foram alterados nesta tarefa documental. Antes de futuras implementações, estudar os módulos dos projetos open-source indicados, conforme OPEN-SOURCE-ENGINE-RESEARCH.md. Não tratar as 247 aprovações de testes da 03M como aceite destes problemas.
+
 - PENDING TECHNICAL VALIDATION: BR-006/007/014/018/028/034/044; mecanismo de storage
-  (US-005); alvos de performance (NFR-002); retomada de jobs; catálogo/compatibilidade de
+  (US-005: mecanismo já existe, mas recuperação integral ainda precisa validação); alvos de performance (NFR-002); fila/retomada integral de jobs (ASR já tem checkpoints locais); catálogo/compatibilidade de
   modelos locais (US-029/US-031, DEC-012).
 - PENDING USER APPROVAL/DECISION: hipóteses do PRD, jornadas, regras PROPOSED,
   backlog/prioridades, direção UX (DEC-006); DEC-011 (mecanismo de acesso), preço/trial/
   dispositivos (DEC-010), política pós-expiração (BR-048), offline (BR-049), fila
   sequencial MVP (DEC-013).
-- Pendências de ambiente: Poppins Medium/SemiBold (docs/design/NEXT-REVISION-GUIDELINES.md).
+- Poppins 500/600 já consta em `app/package.json` e fontes do render; a pendência antiga de instalação Medium/SemiBold não descreve o código atual. Eventual revisão visual segue docs/design/NEXT-REVISION-GUIDELINES.md.
 
 ## 9. Backlog (índice)
 
@@ -82,8 +84,19 @@ motores Local/BYOK (DEC-012, PROPOSED), fila sequencial MVP (DEC-013, hipótese)
 
 
 
-12 épicos, 37 histórias, 93 ACs — priorização MoSCoW e ordem de entrega em
-docs/product/BACKLOG.md. Estado geral: PLANNED.
+12 épicos, 37 histórias e 93 ACs de produto, com extensões técnicas rastreadas por entrega. Priorização e ordem em docs/product/BACKLOG.md. Estado de implementação misto: há código e execuções nativas reais; pendências/relatos mantêm editor e pipeline IN REVIEW. PLANNED descreve apenas itens ainda não implementados, não o aplicativo inteiro.
+
+### Estado operacional atual, conferido no código (03N)
+
+- React/TypeScript/Vite + Tauri/Rust; ver `app/package.json` e `app/src-tauri/Cargo.toml`. Não há integração Supabase ou stack remota implementada.
+- Projetos/coleções e índice de mídia persistem no Rust; importação copia e deduplica por hash. Workspace v2 mantém `settings`, `videoSettings` e `clipEdits` em localStorage. Isso não equivale a backup ou versionamento completo.
+- Transcrição local pt: whisper.cpp/DTW, Turbo padrão; escolha Large ainda existe no código. CPU/CUDA por descoberta; blocos centrais de 180 s com contexto de 2 s e cache validado. Não há retomada automática de qualquer estágio nem fila persistente geral.
+- Clipes globais e por projeto; abrir é leitura, analisar é explícito; rejeição reversível sai dos ativos. Qwen3-4B textual escolhe candidatos em janelas e produz resumo/critérios; detecção FFmpeg refina transições locais. Nenhuma compreensão visual, diarização ou tendência externa implementada.
+- Prévia de projeto usa origem; editor e cortes têm ajustes separados. Formato e preenchimento são controles distintos; `contain` atual explica faixas no 9:16. Crop/cover e ponto focal manuais existem; rastreamento de rosto/reenquadramento automático não.
+- Render MP4 real com trim, legenda ASS e áudio; NVENC sondado e fallback libx264; TXT/SRT e cópia da origem são operações diferentes. Lote e histórico completo de exportação não concluídos.
+- YouTube permanece referência/iframe, sem download local; BYOK, credenciais, colaboração e distribuição dos motores continuam pendentes.
+
+Continuidade vigente: `docs/engineering/ENGINE-HANDOFF.md`. As entradas datadas da seção 11 e das fases abaixo são histórico, não configuração atual dos motores nem aprovação da qualidade.
 
 ## 10. Governança de artefatos visuais (Fase 02A.5)
 
@@ -122,7 +135,7 @@ detalhes PENDING USER DECISION). ART-003 → revisão contra BACKLOG.md quando
 do próximo ciclo de planejamento. Próxima ação comum: auditoria/aprovação do
 mantenedor; nenhum wireframe deve derivar destes artefatos antes de APPROVED.
 
-## 11. Última revisão
+## 11. Histórico de revisões — estado vigente nas seções 8 e 9
 
 2026-10-19 — **M2A (Fatia 0+1 do motor) IMPLEMENTADA e validada no Tauri real
 (16/16)**: importação persistente por cópia (hash SHA-256, integridade
@@ -166,10 +179,10 @@ docs/reports/evidence/. Auditoria de consistência documental: TRACEABILITY.md �
 
 ## 13. Relação com o Graphify
 
-Graphify: INSTALLED — INITIAL INDEX PENDING (sem código-fonte; docs/TOOLING.md).
+Graphify: INSTALLED — INITIAL INDEX PENDING (código já existe; índice ausente na revisão 03N; docs/TOOLING.md).
 PRODUCT-BRAIN ≠ grafo de código: durante a fase de produto, a rastreabilidade é a
-documentação estruturada acima (IDs explícitos). Quando houver código, avaliar integração
-das relações de implementação ao Graphify, sem afirmar indexação automática sem evidência.
+documentação estruturada acima (IDs explícitos). A indexação da base existente e a integração
+das relações de implementação ao Graphify permanecem pendentes, sem afirmar indexação automática sem evidência.
 
 2026-10-19 — Revisão 03E: mantenedor rejeitou fluxo de criação vazia, preparação simulada e proporções da 03D. UPLOAD-SCREEN.md registra correção solicitada e aceites de viewport; v1 histórico rejeitado, v2 pendente de aprovação humana. Home continua aprovada.
 
@@ -210,3 +223,5 @@ docs/engineering/CLIP-LIBRARY-ASR-REVIEW.md; resultados:
 docs/references/ASR-BENCHMARK-2026-10-19.md. Aprovação visual pendente.
 
 2026-10-19 — 03L IN REVIEW, correção autorizada por /start: prévia do projeto conserva a origem; editor do vídeo e edições de cada corte isolados; formato explícito na geração e na identidade/persistência do corte; seletor de modelo compacto; inspeção em parágrafos e análise semântica local do texto, com evidências e invalidação após alteração da transcrição. Qwen3-4B textual é separado de Whisper ASR, sem processamento concorrente pelo gate. 229 casos únicos de código aprovados e seis configurações Whisper válidas sobre 86 s reais. Abertura e palavrão confirmados pelo mantenedor ainda erram; prompts experimentais não adotados. Status funcional PARTIAL, regressão PASS no escopo e visual PENDING HUMAN APPROVAL. Referências: SOURCE-CLIP-ISOLATION-SPEC/REVIEW.md e ASR-REFINEMENT-2026-10-19.md. Nenhum épico promovido a aceito.
+
+2026-10-19 — 03M IN REVIEW: abertura de clipes sem processamento automático; rejeição reversível retira da lista ativa; job identifica geração/análise/exportação. Seleção textual cobre a transcrição antes da decisão final; evidências por referência, falha isolada por clipe, aceleração Vulkan local, cenas regionais, checkpoints ASR e NVENC sondado. 247 casos únicos de código aprovados, com geração, retomada e exportação nativas reais. Tauri completo, precisão linguística, qualidade editorial e estética permanecem pendentes; nenhum épico promovido a aprovado. Referências: CLIP-PIPELINE-RELIABILITY-SPEC/REVIEW.md, OPUS-PIPELINE-RESEARCH-2026-10-19.md e evidência 2026-10-19-pipeline-validation.json.

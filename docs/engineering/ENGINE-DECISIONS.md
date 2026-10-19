@@ -1,7 +1,15 @@
 # CutNicePro — Decisões Técnicas do Motor (ENGINE-DECISIONS)
 
-**Estado:** F0 — inventário inicial (2026-10-19). Documento vivo; cada fatia atualiza.
-**Escopo atual:** M2a (importação persistente + análise) → M3 (transcrição local → legendas/export). M4+ fora do escopo.
+**Estado:** revisão documental 03N (2026-10-19), implementação até 03M. Documento vivo; seções numeradas preservam fatos/decisões das entregas, não uma configuração única vigente desde F0.
+**Escopo atual:** importação gerenciada, ASR local, clipes/análise textual e render reais, com qualidade/fluxo em revisão. Lote completo, BYOK, download de links e distribuição continuam pendentes.
+
+## Estado vigente e decisões ainda não implementadas
+
+- Fontes de verdade: código atual e ENGINE-HANDOFF.md. JSON nativo + workspace localStorage; não banco remoto. ffprobe/FFmpeg são descobertos em CNP_FFMPEG_HOME, PATH (exclui cache Playwright), WinGet, app-data e fallback portátil de desenvolvimento, conforme media_tools.rs; não presumir que o binário histórico instalado no sistema é sempre o selecionado.
+- Whisper Turbo padrão; código ainda oferece Large completo. DEC-014 registra retirada solicitada e preferência qualitativa por Turbo, com implementação pendente. Base/Small e comparações anteriores abaixo são históricos, não escolhas atuais ou processos paralelos ativos.
+- ASR em blocos centrais de 180 s + 2 s de contexto e checkpoints; fala pt/DTW. Qwen3-4B textual para seleção/análise, com Vulkan/CPU sequenciais. FFmpeg ajusta transições regionais; não analisa semanticamente imagens. Render sonda NVENC e usa libx264 se necessário. Detalhes técnicos da evolução em §12.
+- Defeitos abertos do mantenedor: resumo/critérios metalinguísticos inadequados; geração 9:16 usa contain e pode deixar faixas. Nota/citação válida e dimensões de saída não são testes de interpretação ou composição. Novo estudo dos repositórios indicados deve preceder a implementação, com rastreabilidade por função no documento de pesquisa existente.
+- Nesta 03N não foram alterados runtime, pesos, código, UI, configuração ou dados do usuário. Histórico de hashes/licenças/testes abaixo preservado; testes históricos não foram reexecutados para atualizar documentação.
 
 ## 1. FFmpeg / FFprobe (fatos do binário concreto — F0)
 
@@ -173,3 +181,11 @@ Análise de texto por llama.cpp b11729 e Qwen3-4B Q4_K_M, local/CPU, até oito t
 Binários/pesos verificados e instalados em .tooling/vendor/analysis, ignorados pelo Git; distribuição instalável pendente. Modelo ocupa 2.497.280.256 bytes. Fontes: https://huggingface.co/Qwen/Qwen3-4B-GGUF e https://github.com/ggml-org/llama.cpp/releases/tag/b11729. Hashes/evidências no manifesto de runtime da entrega.
 
 Seis configurações Whisper de 86 s foram comparadas à referência automática imperfeita e às âncoras humanas. Não recuperaram todas as correções, e contexto pode piorar siglas; sem mudanças no padrão ASR. GPU CUDA comprovada nos logs, apenas um Whisper por execução. Não adotar substituições globais nem transformar distância contra texto Opus em alegação de precisão. ASR-REFINEMENT-2026-10-19.md registra a falha de prompt Unicode no Windows e a única repetição do caso afetado.
+
+## 12. Confiabilidade e aceleração do pipeline — 2026-10-19, IN REVIEW
+
+03M separa consulta de execução e identifica operação no snapshot nativo. Seleção por Qwen3-4B lê todas as janelas de fala antes da decisão final; evidências são IDs válidos do trecho, com citações montadas pelo backend. Falha individual mantém o clipe com análise pendente e nota ocultada. Binário Vulkan b11729 verificado, com dispositivo/memória sondados e fallback CPU sequencial após cancel check; CPU deixa de ser forçada. Modelos armazenados continuam inativos até sua etapa explícita e gate exclusivo.
+
+Whisper usa blocos centrais de 180 s e contexto de 2 s; checkpoints dependem de mídia, duração, modelo/executável e configuração. Registros inválidos são refeitos; falha/cancelamento conserva válidos. Tempos de palavras são deslocados da origem real, sem distribuir tempos artificialmente. Cache concluído só é marcado após publicação. Cenas são procuradas junto às extremidades dos candidatos; não varrem mais o vídeo completo em produção. Render sonda NVENC com um frame 640×360, usa h264_nvenc p5/cq20 quando disponível, tenta libx264 uma vez após erro e valida saída com ffprobe. Filtros/decodificação não são declarados acelerados por essa mudança.
+
+Happy DOM 21.0.3, apenas desenvolvimento, justifica-se porque os testes estáticos anteriores não executavam o efeito que disparava análise ao abrir inspeção. Não muda arquitetura de produção. Fontes oficiais, hashes, resultados e limites: OPUS-PIPELINE-RESEARCH-2026-10-19.md, CLIP-PIPELINE-RELIABILITY-REVIEW.md e manifesto analysis-vulkan-runtime. 247 casos únicos aprovados; GPUs abaixo de 8 GB, qualidade editorial, precisão ASR, Tauri completo e instalador permanecem pendentes.

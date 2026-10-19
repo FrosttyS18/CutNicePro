@@ -1,6 +1,6 @@
 # CutNicePro — Business Rules + Estados e Transições
 
-> BR-001..BR-036. Estado de cada regra: APPROVED (decisão do mantenedor registrada) /
+> BR-001..BR-050 e extensões de implementação identificadas ao final. Estado de cada regra: APPROVED (decisão do mantenedor registrada) /
 > PROPOSED (proposta desta fase) / PENDING VALIDATION / PENDING TECHNICAL VALIDATION
 > (depende de engenharia). Sem limites numéricos inventados.
 
@@ -18,8 +18,7 @@
   são restaurados conforme JRN-002. Estado: PROPOSED.
 - **BR-005 Exclusão exige confirmação explícita e não apaga arquivos exportados** — o
   projeto some da biblioteca; exports em disco permanecem. Estado: PROPOSED.
-- **BR-006 Mídia é referenciada, não copiada por padrão** — o projeto guarda o caminho
-  (e hash para BR-008). PENDING TECHNICAL VALIDATION (trade-off de robustez vs. disco).
+- **BR-006 Armazenamento da origem** — implementação atual M2A: cópia gerenciada em app-data, hash SHA-256 e referências explícitas por projeto, com deduplicação. A proposta inicial de guardar somente caminho/hash não foi o caminho implementado; é registro histórico de trade-off, não instrução vigente. Distribuição, espaço e recuperação seguem validação por capacidade; não altera/apaga a origem do usuário. Implementação em revisão, sem aprovação global de todas as regras.
 
 ## Importação
 
@@ -43,6 +42,7 @@
   (ex.: modo B pula DETECTING/ASSEMBLING). Estado: PROPOSED.
 - **BR-014 Fila por projeto: um job ativo por vez** — evita contenção de recursos locais;
   próximos jobs ficam QUEUED. PENDING TECHNICAL VALIDATION (paralelização futura).
+  Código atual: gate global exclusivo rejeita concorrência; não mantém fila persistente QUEUED por projeto. Requisito de fila permanece pendente.
 - **BR-015 Cancelamento** — marca CANCELED; resultados parciais válidos são preservados e
   sinalizados; repetir um processamento é ação do usuário sem qualquer cobrança ou consumo
   de créditos pelo CutNicePro (BR-038). Estado: PROPOSED.
@@ -52,6 +52,7 @@
   sem jargão. Estado: PROPOSED.
 - **BR-018 Retomada** — retomar job interrompido quando tecnicamente viável; caso
   contrário, reprocessamento com uma ação. PENDING TECHNICAL VALIDATION.
+  ASR já reaproveita checkpoints validados por mídia/modelo/configuração; não equivale a retomar automaticamente geração, render ou qualquer job após reinício.
 
 ## Cortes
 
@@ -63,8 +64,8 @@
   aprovados) entram na exportação padrão. Estado: PROPOSED.
 - **BR-022 Versionamento por edição** — cada sessão de edição avançada gera versão do
   corte com histórico navegável e reversível. Estado: PROPOSED.
-- **BR-023 Pontuação = heurística** — o score de potencial é estimativa interna exibida
-  como "potencial estimado", sem promessa de desempenho/viralização. Estado: PROPOSED.
+  Ajustes isolados por clipe já persistem no workspace, mas histórico navegável completo não foi implementado.
+- **BR-023 Pontuação editorial estimada** — estimativa interna sem promessa de desempenho/viralização. Código atual: Qwen textual propõe/analisa trechos; análise agrega Gancho/Desenvolvimento/Fechamento em 40/30/30. A seleção inicial exclusivamente por densidade/cadência é histórica. Citação validada não comprova qualidade editorial. A UI usa nota /100; linguagem técnica/genericidade foram rejeitadas pelo mantenedor e precisam correção. Princípio sem promessa preservado; implementação e linguagem em revisão.
 
 ## Legendas
 
@@ -243,3 +244,7 @@ stateDiagram-v2
   pós-expiração PENDING USER DECISION; `FalhaValidacao` — erro com causa e retry;
   `SemInternet` — comportamento offline PROPOSTO (BR-049).
 - Em NENHUM estado os projetos do usuário são apagados ou bloqueados silenciosamente (BR-048).
+
+## Extensão de implementação 03M — IN REVIEW, 2026-10-19
+
+BR-03M-01..05 refinam BR-019..023/026..031 sem renumerar as 50 regras canônicas: abertura somente de leitura; revisão confirmada e reversível sem excluir mídia compartilhada; falha de análise individual identificada sem nota falsa; retomada por blocos validados sem substituir resultado publicado após falha; processamento exclusivo com fallback sequencial e saída verificada. Texto completo e AC-03M-01..08: docs/engineering/CLIP-PIPELINE-RELIABILITY-SPEC.md. Evidências funcionais no REVIEW correspondente não substituem aprovação do mantenedor.

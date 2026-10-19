@@ -124,6 +124,7 @@ mod tests {
             review: super::super::types::Review::Pending,
             format: None,
             analysis: None,
+            analysis_error: None,
         };
         let mut clips = vec![
             clip.clone(),

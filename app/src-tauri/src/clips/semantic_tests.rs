@@ -56,6 +56,7 @@ fn changed_transcript_invalidates_analysis_and_review_without_changing_clip_form
             review: super::types::Review::Approved,
             format: Some("9:16".into()),
             analysis: Some(analysis()),
+            analysis_error: None,
         }],
     };
     collection.invalidate_analysis("old".into());

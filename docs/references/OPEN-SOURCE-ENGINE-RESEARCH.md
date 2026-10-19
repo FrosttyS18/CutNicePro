@@ -2,7 +2,26 @@
 
 Pesquisa em 2026-10-19 para continuidade com ZCode. Recomendação: manter React/Tauri/Rust e integrar capacidades pequenas por adaptadores. Preservar a UI do CutNicePro. Esta pesquisa não instala motores nem aprova incorporar código de terceiros.
 
-## Decisão proposta
+## Situação atual e limite deste estudo — revisão 03N
+
+A comparação original abaixo é pesquisa documental datada, não prova de que os fluxos dos aplicativos foram estudados de ponta a ponta ou adaptados. Houve leituras parciais e falhas de consulta já descritas em Fontes e limites. Não existe neste registro um mapeamento completo por revisão/arquivo/função que demonstre adoção de SupoClip, ViralMint, OpenClipper ou OpenCut. Não declarar essa adoção nem deduzir funcionamento apenas de README/estrelas.
+
+Estado do nosso código após 03M: FFmpeg/ffprobe, whisper.cpp e Qwen3-4B textual já estão integrados por subprocessos; importação é persistente e render real existe. faster-whisper/Qwen3-ASR/Parakeet tiveram avaliações registradas, sem serem opções completas do pipeline do produto. As recomendações de “primeiro implementar transcrição/exportação” abaixo são históricas. A preferência atual por Turbo e retirada de Large completo consta na DEC-014; qualidade editorial e preenchimento 9:16 seguem defeitos abertos.
+
+### Estudo obrigatório antes da próxima implementação
+
+Usar os repositórios já listados, sem substituir a stack do CutNicePro. Para cada capacidade, registrar neste documento existente: URL e revisão efetivamente lida, caminhos/funções, contrato de entrada/saída, etapas/modelos, estados de erro/cancelamento/retomada, dependências/licenças, testes observados e adaptação escolhida. Explicar diferenças relevantes; não transpor uma infraestrutura de servidor/Docker para desktop por semelhança de tela. Falha de acesso é PENDING/BLOCKED, não evidência de comportamento. Esta tarefa documental não executa nem simula esse estudo técnico.
+
+| Referência já indicada | Fluxos a estudar no código | Evidência de adaptação completa hoje |
+|---|---|---|
+| SupoClip | Seleção/contexto dos trechos, composição vertical e legendas | Não documentada; pendente |
+| ViralMint | Encadeamento de etapas, jobs/falhas, timeline e render | Não documentada; pendente |
+| OpenClipper | Contratos Tauri/Rust/React, ASR, enquadramento e exportação | Leitura anterior de Cargo.toml não comprova estudo desses fluxos |
+| OpenCut / opencut-classic | Organização do editor, mídia e histórico | Não documentada; verificar a revisão adequada antes de adotar |
+
+Esses focos são tarefas de investigação, não funcionalidades confirmadas por novo teste desses projetos. Manter as ressalvas de licença e as fontes históricas abaixo. Não atualizar estrelas/versões sem nova consulta, nem remover referências porque não foram usadas.
+
+## Decisão proposta na pesquisa original — histórico
 
 FFmpeg continua responsável por análise/transformação/render. Avaliar whisper.cpp como primeiro transcritor local e faster-whisper como alternativa medida, sem instalar ambos de início. Quando autorizada a importação real de links, integrar yt-dlp como etapa anterior ao mesmo armazenamento de mídia local. Aplicações completas servem para estudar contratos, jobs e experiência; não substituem automaticamente o projeto existente.
 
@@ -32,7 +51,7 @@ Minha avaliação: OpenClipper é o mais parecido com a arquitetura atual, enqua
 
 Sinais concretos de manutenção consultados: whisper.cpp releases com v1.9.5 marcada Latest, publicada em 6 de outubro; faster-whisper lista 1.2.1 como Latest; yt-dlp lista 2026.08.19; PySceneDetect documenta 0.7.2 em 11 de outubro de 2026. Não foi obtido histórico de crescimento de estrelas. API de commits do OpenClipper não respondeu nesta consulta, portanto não há conclusão sobre frequência recente de commits dele.
 
-## Como avançar sem reiniciar o projeto
+## Como avançar sem reiniciar o projeto — sequência histórica da pesquisa
 
 1. Fechar a validação pendente das correções da entrada M2A, conforme orçamento autorizado. Diferenciar o erro do harness dos defeitos do produto.
 2. Implementar uma transcrição local real de vídeo persistido, com adaptador isolado, idioma/timestamps, cancelamento, persistência e recuperação. Confirmar flags no executável selecionado, sem copiar exemplos incompatíveis de outros planos.

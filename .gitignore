@@ -4,6 +4,7 @@
 .tooling/playwright/node_modules/
 .tooling/playwright/package-lock.json
 .tooling/docs-refs/
+.tooling/npm-cache/
 
 # Node
 node_modules/
