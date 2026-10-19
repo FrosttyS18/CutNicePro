@@ -58,7 +58,8 @@ export const introTuner = defineTunables("intro", "Intro", {
     min: 0,
     max: 3,
     step: 0.05,
-    default: 1,
+    // 03B.7: o galaxy começa quase junto com a Home (meta ~500ms).
+    default: 0.15,
     info: "When the galaxy cards start rolling out from the center along their arms.",
   },
   ffScale: {
@@ -74,7 +75,8 @@ export const introTuner = defineTunables("intro", "Intro", {
     min: 1,
     max: 6,
     step: 0.5,
-    default: 1,
+    // 03B.7: visitas de retorno veem a intro comprimida (era 1×).
+    default: 3,
     info: "Timeline acceleration for repeat visitors (localStorage flag) — they get the whole intro, much shorter.",
   },
 });
@@ -89,7 +91,7 @@ export const introClock = {
   done: false,
 };
 
-export const INTRO_SEEN_KEY = "artcraft-intro-seen";
+export const INTRO_SEEN_KEY = "cnp-intro-seen";
 
 const fastCbs = new Set<() => void>();
 

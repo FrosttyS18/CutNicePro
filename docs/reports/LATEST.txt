@@ -1,144 +1,139 @@
-CUTNICEPRO — ZCODE REPORT — FASE 03B.6 (VÍDEOS REAIS DA CDN NO HERO GALAXY)
+CUTNICEPRO — ZCODE REPORT — FASE 03B.7 (HOME CINEMATIC POLISH)
 ==============================================================================
-Tarefa:     Integrar os 20 MP4 oficiais da CDN ao motor Hero Galaxy
-            aprovado na 03B.5, com gerenciamento de decoders, posters e
-            fallback offline — SEM tocar na composição/física/shaders.
-Data:       2026-10-18 (conclusão 20h58)
-Status:     PASS técnico — 20/20 mídias integradas, reprodução MP4 real
-            comprovada nos cartões WebGL nas 3 proporções, decode budget
-            respeitado, offline com posters, zero regressões.
-            Visual approval: PENDING HUMAN REVIEW.
-Preservação: 153 arquivos modificados não commitados preservados; storage/
-            comandos IPC/persistência/regras de negócio, Halftone, sidebar,
-            breadcrumb e biblioteca INTACTOS; Hero Galaxy com shaders/física
-            100% como aprovado (só a FONTE de texturas mudou). Sem commits.
+Tarefa:     Quatro refinamentos pontuais da Home: (1) paleta Deep Aqua +
+            cinza nos braços do Galaxy; (2) reduzir o atraso inicial;
+            (3) entrada cinematográfica do conteúdo central; (4) Flip
+            Button 3D no CTA. Sem redesenho, sem tocar nos motores.
+Data:       2026-10-18 (conclusão 21h31)
+Status:     FUNCTIONAL: PASS (17/17 checks). Regression: PASS (escopo
+            testado). Visual: PENDING HUMAN APPROVAL.
+Política:   VALIDATION-POLICY.md aplicada — VISION não acionado; zero
+            screenshots estéticos; verificação direta de estado; 1 rodada
+            + 1 repetição justificada (critérios de teste) + 1 fix real
+            re-validado; instrumentação temporária REMOVIDA do build final.
+Preservação: Galaxy (física/shaders/vídeos/proxy/decode budget), Halftone,
+            splash, biblioteca, sidebar, navegação, Rust de negócio e todo
+            o working tree anteriores intactos. Sem commits/pushes.
 
-CDN AUDIT
+ARQUIVOS MODIFICADOS
 ------------------------------------------------------------------------------
-- 20 arquivos verificados: todos HTTP 200 (HEAD) e 206 (Range), Content-Type
-  video/mp4, Accept-Ranges bytes; tamanhos ~1.5–5.2 MB; 16-9_04.mp4 ausente
-  por design (não inventado).
-- Codecs/resoluções/durações: lidos no próprio pipeline (loadedmetadata) e
-  na geração de posters — resoluções reais divergem do rótulo da pasta em
-  alguns arquivos (ex.: 16-9_03 = 720×544, 1-1_07 = 576×688); todos ~5.2s;
-  decodificáveis no Edge/WebView2 (reprodução e captura de frame comprovadas
-  arquivo a arquivo). Auditoria completa em docs/reports/evidence/03b6/
-  cdn-audit.json.
-- CORS — FALHA REAL DO BUCKET: o R2 NÃO envia Access-Control-Allow-Origin
-  (preflight OPTIONS = 403; GET com Origin = sem ACAO). Comprovado
-  empiricamente no Edge: <video> sem crossOrigin toca mas texImage2D lança
-  SecurityError (canvas tainted); com crossOrigin=anonymous o load falha.
-  → Sem ACAO, VideoTexture WebGL direto da CDN é IMPOSSÍVEL.
-- SOLUÇÃO (sem desabilitar segurança): proxy de mídia ISOLADO no processo
-  Rust — scheme cnpmedia registrado via register_asynchronous_uri_scheme_
-  protocol; no Windows/WebView2 é servido como http://cnpmedia.localhost/
-  (comprovado: 206 + CORS + body 1024 no fetch da página). O proxy responde
-  ACAO *, cacheia em disco (app-data/cnp-media) com Range local, whitelist
-  dos 20 caminhos (sem proxy genérico). Módulo novo src-tauri/src/
-  media_proxy.rs + reqwest (rustls) — storage.rs/lib.rs de negócio intactos.
-- Aprovados: 20/20. Reprovados: nenhum.
+- app/src/components/galaxy/hero-galaxy-tunables.ts — defaults cromáticos/
+  de intro (pulseHue, introDur) com comentários 03B.7.
+- app/src/components/galaxy/intro.ts — cardsAt, returnScale, key
+  cnp-intro-seen.
+- app/src/ui.css — tokens --line/--line-strong; headline cinematográfica;
+  flip button; reduced-motion.
+- app/src/screens/HomeScreen.tsx — headline em 2 linhas com máscara, stagger,
+  estrutura do flip (button semântico + reveal + inner + faces).
+- tools/e2e/phase03b7-qa.mjs (novo) — QA funcional objetivo.
+- docs/reports/evidence/03b7/ (results.json + console.log).
 
-VIDEO PIPELINE
+1. PALETA DOS BRAÇOS
 ------------------------------------------------------------------------------
-- Arquitetura: manifesto tipado central (galaxy-media.ts) → 1 <video> por
-  mídia (src http://cnpmedia.localhost/..., crossOrigin=anonymous, muted,
-  loop, playsInline, preload=metadata) → THREE.VideoTexture → uniform uMap
-  do ShaderMaterial ORIGINAL (nenhum shader tocado). Posters locais como
-  textura inicial (uMap nasce no poster; troca para VideoTexture quando
-  videoAlpha>0.5 — mesma cena, corte imperceptível, sem flash; rebirth/
-  dedup voltam ao poster do novo clip).
-- Gerenciamento de decoders: DECODE BUDGET DO ORIGINAL restaurado por
-  completo — MAX_PLAYING=8 (limite conservador pedido), RESUME_PER_TICK=3,
-  CULL_TICK 0.25s/CULL_HOLD 1.2s, priorização por ciclo (alvo em foco =
-  prioridade máxima pri=2), pausa dos excedentes, park total após 2.5s fora
-  da tela/tab oculta, dispose no unmount. Prova visual: ~5-6 cartões com
-  quadros mudando vs ~9-10 estáticos (posters) — dentro do orçamento.
-- Quantidade ativa: ≤8 concorrentes (observado ~5-6 tocando; comportamento
-  visual consistente com o budget).
-- Posters: 20 PNGs ~480px GERADOS DOS PRÓPIDOS MP4 (seek em múltiplas
-  frações até frame não-preto; ACAO injetado apenas na sessão de geração
-  via Playwright route) — bundle local, offline-first; MP4s NÃO versionados.
-- Comportamento offline: CDN bloqueada no QA (route abort r2.dev + arquivo
-  removido do cache) → Home abre com posters, espiral animada, CTA cria
-  projeto, zero pageerrors (offline.png). Cache do proxy torna vídeos já
-  vistos disponíveis sem rede.
+- Configurações ANTERIORES: pulseHue=0.4 (hue-rotate por braço → matizes
+  laranja/roxo/verde/magenta a partir do accent); hairlines #262626/
+  #3A3A3A.
+- Configurações NOVAS: pulseHue=0 (TODO braço usa o accent puro =
+  --accent #02C2BE — o shader de pulsos mantém intensidade/cauda, agora
+  monocromático aqua); --line #3A3A3A e --line-strong #51565A (cinza neutro
+  pedido) — line-strong alimenta linhas dos braços, ticks, círculo e o
+  hairline dos cartões. Variações tonais/brilho dos pulsos preservadas
+  (uPulseAlpha/uWidth inalterados). Física, shaders, vídeos, blur, hover,
+  boost, decode budget: INTACTOS (nenhum filtro aplicado sobre vídeos —
+  comprovado: pipeline de texturas intocado; proxy 206 + sem erros de
+  mídia no QA).
 
-WEBGL INTEGRATION
+2. ATRASO INICIAL DO GALAXY
 ------------------------------------------------------------------------------
-- Texturas: uMap por cartão = poster→VideoTexture (mesma slot de uniform,
-  shaders intactos); cover-fit do ORIGINAL com clipVA do loadedmetadata
-  (aspect real por arquivo, corrigindo os desvios de rótulo).
-- Proporções: manifesto por família (7× 1:1, 7× 9:16, 6× 16:9), aspect real
-  em runtime; distribuição round-robin + rebirth LRU + dedup do original
-  (equilíbrio automático; 16-9_04 intencionalmente ausente).
-- Expansão e retorno: BOOST ORIGINAL intocado — comprovado com vídeos
-  reais nas TRÊS proporções: 16:9 (ampliacoes/q4 ~1.87 e q5, conteúdo
-  aeromoça/gato), 9:16 VERTICAL (ratios2/r22 navio 112×198 razão 0.566 e
-  r25), 1:1 (ratios/r3 bruxa ~160×160 e ratios2/r7); retorno ao afastar o
-  cursor (q*-fora). Um cartão em jornada intermediária exibiu ~4:5 —
-  MORFOLOGIA ORIGINAL do motor (nasce quadrado, morfa ao alvo), não bug.
-- Diferenças vs motor anterior (03B.5): apenas a fonte de uMap (posters
-  estáticos → posters+vídeo) e o aspecto real por arquivo; física, blur,
-  braços, hold-brake, tug, boost, ripples, perf governor, dedup e intro
-  inalterados.
+- Causa real (medida + código): a INICIALIZAÇÃO é rápida — home-mount →
+  primeiro frame WebGL = 102-107ms (medição por performance.marks
+  temporários). O atraso percebido era a COREOGRAFIA: cardsAt=1.0s (os
+  cartões só começam a rolar 1s após o mount) + wave de revelação
+  introDur=4s (composição completa em ~5s) + returnScale=1 (retornos sem
+  compressão). Sem timers artificiais escondendo nada.
+- Correções (defaults, não física): cardsAt 1.0→0.15s; introDur 4→1.6s;
+  returnScale 1→3 (visitas/retornos comprimidos ~3×); key renomeada para
+  cnp-intro-seen (identidade própria; primeira visita pós-update roda a
+  intro nova uma vez).
+- Medição ANTES→DEPOIS: primeiro frame 102→102ms (inalterado, já rápido);
+  INÍCIO DO MOVIMENTO DOS CARTÕES: 1.000ms→150ms após o mount (−85%); wave
+  completa 4s→1.6s; retorno à Home (vista repetida): intro a 3×. Meta
+  (~500ms para primeiro movimento): ATINGIDA com folga (150ms de defasagem
+  + render ~100ms ≈ 250ms totais). Ao voltar da biblioteca o relógio NÃO
+  reinicia (introClock persiste no módulo) — retorno imediato ao movimento.
+- Instrumentação removida do build final (verificado por grep "TEMP 03B.7"
+  = 0 ocorrências).
 
-PERFORMANCE
+3. ENTRADA CINEMATOGRÁFICA DO CONTEÚDO
 ------------------------------------------------------------------------------
-- Resoluções testadas (exe real): 1280×720, 1920×1080, 2560×1080, 3440×1440
-  — todas sem pageerrors; canvas WebGL redimensiona; screenshots por
-  resolução em evidence/03b6/home-*.png.
-- Frame time: 57.1 fps sustentados (rAF, 120 amostras) com vídeos
-  decodificando; heap 10 MB.
-- Memória: 3× Home↔Biblioteca ida-e-volta com Δheap −6 MB (sem vazamento;
-  park+dispose funcionando).
-- Primeira mídia: canvas ativo imediatamente; decoders escalam após o
-  budget (priming escalonado 400ms+i·250ms do original).
-- Vazamento na reabertura: home-screen volta com mesmos contadores e heap
-  estável (acima).
-- Falha individual: 1 URL fora do cache com CDN bloqueada → poster
-  permanece, resto da Home normal, zero pageerrors.
-- Problemas identificados: (1) meu critério de QA exigia ler ACAO/Content-
-  Range via JS — headers fora da CORS-safelist não são legíveis (o 206+body
-  lido PROVA CORS+Range); corrigido o entendimento, não o produto;
-  (2) incidentes de debug resolvidos: cargo build --release direto NÃO
-  ativa custom-protocol do Tauri (exe caía no devUrl = ERR_CONNECTION_
-  REFUSED) — builds sempre via `npx tauri build --no-bundle`; webviews
-  órfãos seguravam a porta de CDP e mascaravam o app real.
-- Evidências reais: trio videos-A/B/C (interiores mudando = reprodução),
-  24 frames temporais do EXE (temporal-exe/), ampliacoes/ (32 frames),
-  ratios/ + ratios2/ (42 frames de cliques), offline.png, tela-app.png.
+- Headline: Poppins 700, clamp(40px, 5.2vw, 68px) — 68px @1440 verificado;
+  tracking −0.02em; line-height 1.06; text-wrap balance; SEM caixas/sombras/
+  glow. Duas linhas ("Bem-Vindo ao" / "Cut Nice Pro") reveladas por MÁSCARA
+  (overflow hidden + translateY(112%)→0, 720ms, cubic-bezier(0.22,0.61,
+  0.2,1)), opacidade crescendo na revelação; stagger 120ms entre linhas.
+- Subtítulo (copy preservada): fade-up 450ms com delay 380ms; escala
+  clamp(16px,1.6vw,21px).
+- Botão: fade-up 450ms delay 560ms (via wrapper .flip-btn__reveal — não no
+  inner, para não congelar o flip). Timeline total ~1010ms (dentro da meta
+  900–1100ms); paralela ao galaxy; interação nunca bloqueada.
+- Não reinicia em resize/sidebar (comprovado: transform estável após toggle
+  da sidebar); reduced-motion abre assentado (animation:none, transform:none).
 
-VALIDATION
+4. FLIP BUTTON 3D
 ------------------------------------------------------------------------------
-- TypeScript: 0 erros. Vitest: 20/20. Rust: 14/14 (storage intacto).
-- Baseline full: 5 PASS / 1 SKIP.
-- QA funcional (phase03b6-qa.mjs): 11 checks — proxy 206/CORS/Range OK,
-  57 fps, 4 resoluções sem erros, home↔biblioteca ×3 sem vazamento,
-  halftone 99.9% intacto, CTA + offline + console limpo (o único check
-  "FALHA" era o critério errado de leitura de headers — ver acima).
-- Regressões: nenhuma (CTA, navegação, persistência, sidebar, halftone,
-  biblioteca verificados no QA).
-- VISION: cenas reais de vídeo nos cartões ✓; mistura vídeo/poster (~5-6
-  tocando) ✓; ampliações 16:9/9:16/1:1 com conteúdo real ✓; offline com
-  posters + título/CTA ✓.
-- Gravações: galaxy-dev-posters.webm (dev, física+posters) + 24 frames
-  temporais do EXE com MP4 (temporal-exe/) — recordVideo não existe em
-  connectOverCDP (limitação registrada).
+- Implementação CSS 3D pura + React (nenhuma lib instalada — não havia
+  Motion/registry disponível e a interação é independente): 1 único
+  <button> semântico (data-testid preservado, aria-label), faces
+  decorativas aria-hidden; .flip-btn__inner com preserve-3d + transition
+  420ms cubic-bezier(0.3,0.7,0.25,1.04) (mola controlada, sem elástico);
+  faces com backface-visibility:hidden; FRENTE #FFFFFF/#000000, VERSO
+  #242424/#FFFFFF (verso pré-rotacionado 180°); perspectiva 900px; botão
+  240×50px r8; Poppins 600 15px.
+- Gira em :hover E :focus-visible — verificado com Tab REAL do teclado
+  (matrix3d após foco; o foco programático não ativa :focus-visible,
+  comportamento do Chromium). Click/Enter/Space nativos; CTA abre o
+  diálogo de projeto (sem duplicar ação); layout estável; reduced-motion
+  sem rotação (troca de cor direta).
+- CORREÇÃO REAL durante a validação: a animação de entrada com
+  animation-fill-mode:forwards no inner CONGELAVA o transform e anulava o
+  flip (animation vence transition na cascata) — separada para o wrapper
+  .flip-btn__reveal; re-validado 17/17.
+
+VALIDAÇÃO (conforme política — econômica, 0 screenshots estéticos)
+------------------------------------------------------------------------------
+- TypeScript: 0 erros. Vitest: 20/20. Rust: 14/14. Baseline full: 5 PASS/
+  1 SKIP. Builds: vite + tauri (--no-bundle) OK.
+- QA funcional (phase03b7-qa.mjs): 17/17 — canvas WebGL vivo; loop 160.7
+  fps; proxy cnpmedia 206 video/mp4 + ZERO erros de mídia (vídeos reais
+  ativos); tokens aqua/cinza computados no runtime + sem overrides de
+  tuner; headline 68px com animação assentada; flip 1 botão/2 faces/
+  backface hidden + giro por Tab real + verso rgb(36,36,36); CTA abre
+  diálogo; layout desktop E ultrawide sem scrollX, título contido, CTA
+  clicável (elementFromPoint dentro do botão); entrada não reinicia com
+  sidebar; halftone tinta 99.9% intacto; console limpo.
+- Testes IGNORADOS e por quê: screenshots estéticos/comparação visual e
+  VISION (política permanente — aprovação do mantenedor); gravação webm do
+  EXE (CDP sem recordVideo — já documentado na 03B.6); medição de "cores
+  percebidas" por análise de pixels (verificação por configuração
+  computada suficiente: defaults ativos + tokens computados).
+- Regressões verificadas (escopo): galaxy motor/vídeos/proxy, halftone,
+  CTA funcional, sidebar, layout 2 resoluções, console. NÃO testado
+  (fora do escopo tocado): splash, biblioteca/coleções, persistência
+  (intactos por construção — nenhum arquivo desses módulos alterado).
+
+LIMITAÇÕES RESTANTES
+------------------------------------------------------------------------------
+- Primeira visita após este update roda a intro nova UMA vez (key
+  renomeada); visitas seguintes usam returnScale=3.
+- A paleta aqua/cinza foi aplicada por CONFIGURAÇÃO (defaults+tokens);
+  o mantenedor verá o resultado ao abrir o app.
+- Expansão do galaxy por clique não re-verificada nesta fase (motor
+  intocado — apenas defaults de cor/intro; cobertura da 03B.6 vigente).
 
 FINAL
 ------------------------------------------------------------------------------
-- Status: PASS técnico.
-- Pendências: (1) revisão humana (visual approval PENDING); (2) recomendado
-  ao mantenedor habilitar CORS no bucket R2 (ACAO *) — tornaria o proxy
-  dispensável no futuro; (3) 16-9_04 ausente por design; (4) gravação em
-  vídeo do EXE via CDP não suportada pelo Playwright (frames temporais em
-  vez).
-- Arquivos modificados: NOVOS — src-tauri/src/media_proxy.rs, app/src/
-  assets/posters/ (20 PNG), tools/e2e/{phase03b6-posters,phase03b6-qa}.mjs;
-  ALTERADOS — galaxy/hero-galaxy.tsx (pipeline de vídeo do original
-  restaurado + comentários 03B.6), galaxy/galaxy-media.ts (manifesto v2),
-  src-tauri/src/lib.rs (registro do scheme), src-tauri/Cargo.toml (reqwest
-  rustls), evidence em docs/reports/evidence/03b6/.
-- Estado do Git: sem commits/pushes (working tree preservado, 153 arquivos
-  modificados acumulados desde a 03B.1).
+- FUNCTIONAL STATUS: PASS — 4/4 refinamentos implementados e validados.
+- REGRESSION STATUS: PASS (escopo testado acima).
+- VISUAL STATUS: PENDING HUMAN APPROVAL (estética pertence ao mantenedor).
+- Commit: NO. Push: NO. Encerrando sem novas tarefas.
 ==============================================================================

@@ -122,6 +122,15 @@ mantenedor; nenhum wireframe deve derivar destes artefatos antes de APPROVED.
 
 ## 11. Última revisão
 
+2026-10-18 — **Decisão OPERACIONAL (não-produto): Protocolo Permanente de
+Validação e Economia de Execução** (mantenedor): aprovação estética/visual é
+exclusiva do mantenedor; subagente VISION proibido por padrão; validação
+proporcional ao escopo com orçamento de execução (1 rodada + no máximo 1
+repetição justificada); relatórios distinguem FUNCTIONAL/REGRESSION/VISUAL
+status. Referência: `docs/engineering/VALIDATION-POLICY.md` + seção
+`VALIDATION OWNERSHIP & EXECUTION BUDGET` no AGENTS.md. Nenhuma decisão de
+produto/UX/comercial foi alterada por esta entrada.
+
 2026-10-18 — Fase 03 (MVP freeze: D1 APPROVED, DEC-010 preço hipótese R$ 29,90,
 DEC-011 convite beta, BR-049 offline técnico; baseline MVP v0.1 no PRD; marcos M1..M6;
 M1 implementado) por ZCode. 2026-10-18 — Fase 02A.5 (governança de artefatos). 2026-10-17

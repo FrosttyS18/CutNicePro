@@ -39,6 +39,35 @@ Plataforma de edição inteligente de vídeos (inspirada no OpusClip).
 - Arquivos gravados por Write/Edit são validados (JSON/Python/JS/SKILL.md); falhas chegam como feedback e ficam no log de auditoria (`.zcode/hooks/audit/audit-log.jsonl`).
 - A cada Stop, a baseline `.zcode/hooks/harness/baseline_checks.py` roda e é registrada no log (nunca bloqueia). Detalhes: `docs/HOOKS.md`.
 
+## CUTNICEPRO — VALIDATION OWNERSHIP & EXECUTION BUDGET (regra permanente)
+
+- **A aprovação estética/visual é responsabilidade EXCLUSIVA do mantenedor.**
+  O ZCode responde pela implementação correta e pela verificação funcional
+  (compilação, testes pertinentes, runtime, regressões, erros de console,
+  recursos). O ZCode NÃO inicia auditorias estéticas autônomas.
+- **Subagente VISION desativado por padrão**: uso PROIBIDO salvo solicitação
+  explícita do mantenedor ou autorização específica na tarefa; mesmo
+  autorizado, exige objetivo delimitado e condição de parada objetiva.
+- Validação proporcional ao escopo (pequena → testes relacionados;
+  funcional → unitários/integração/runtime; arquitetura → baseline completa;
+  exclusivamente visual → compilação + runtime sem erros + integridade
+  funcional; estética fica para o mantenedor).
+- Orçamento de execução: planejar testes antes; critério PASS/FAIL objetivo;
+  UMA rodada inicial + no máximo UMA repetição justificada; não repetir
+  aprovados; não investigar para "melhorar evidência"; bloqueio externo →
+  BLOCKED; limite sem conclusão → PARTIAL. Exceções exigem autorização.
+- Critérios obrigatórios nos relatórios: FUNCTIONAL STATUS (PASS/FAIL/
+  PARTIAL/BLOCKED), REGRESSION STATUS (PASS/FAIL/NOT TESTED), VISUAL STATUS
+  (PENDING HUMAN APPROVAL). PASS funcional ≠ aprovação estética; não declarar
+  regressões/vazamentos além do escopo efetivamente testado.
+- Eficiência: priorizar verificação direta de estado/contratos e testes
+  determinísticos; screenshots NÃO são evidência principal quando o estado é
+  verificável diretamente; limpar WebView2 órfãos de portas de debug;
+  instrumentação temporária é removida ao final; funcionalidade comprovada →
+  ENCERRAR validação.
+- Regras completas (responsabilidades, tabela de escopos, limites, relatos):
+  **docs/engineering/VALIDATION-POLICY.md** (APROVADO 2026-10-18).
+
 ## PROTOCOLO OBRIGATÓRIO DE ENTREGA E AUDITORIA
 
 - Toda tarefa termina com um relatório final no formato `CUTNICEPRO — ZCODE REPORT`, sem exceção — inclusive em PASS, PARTIAL, FAIL ou BLOCKED, e mesmo sem solicitação explícita do usuário.
@@ -72,8 +101,15 @@ Plataforma de edição inteligente de vídeos (inspirada no OpusClip).
 
 ## Validação visual
 
-- Em tarefas de interface: executar a aplicação, capturar evidências com o Playwright CLI (`.tooling/playwright/node_modules/.bin/playwright-cli`) quando aplicável, e comparar o resultado com a referência aprovada.
-- Não encerrar tarefas visuais afirmando fidelidade sem realmente inspecionar o resultado.
+- A aprovação estética/visual pertence ao mantenedor (ver
+  `CUTNICEPRO — VALIDATION OWNERSHIP & EXECUTION BUDGET` e
+  `docs/engineering/VALIDATION-POLICY.md`).
+- Em tarefas de interface, o ZCode valida o FUNCIONAMENTO (runtime sem erros,
+  interações solicitadas, integridade dos componentes); capturas com o
+  Playwright CLI (`.tooling/playwright/node_modules/.bin/playwright-cli`)
+  apenas quando a verificação direta de estado não for possível.
+- Não afirmar fidelidade visual além do escopo testado; o status visual é
+  sempre `PENDING HUMAN APPROVAL`.
 
 ## Regra permanente de governança de artefatos (Fase 02A.5)
 

@@ -1,0 +1,87 @@
+[
+ {
+  "name": "galaxy canvas WebGL vivo",
+  "ok": true,
+  "detail": "{\"w\":1055,\"h\":806,\"live\":true}"
+ },
+ {
+  "name": "loop de animação ativo (>=45fps)",
+  "ok": true,
+  "detail": "161.2 fps"
+ },
+ {
+  "name": "vídeos: proxy cnpmedia 206 video/mp4",
+  "ok": true,
+  "detail": "{\"status\":206,\"type\":\"video/mp4\"}"
+ },
+ {
+  "name": "vídeos: sem erros de mídia/decodificação no console",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "name": "paleta: tokens aqua + cinza #51565a aplicados",
+  "ok": true,
+  "detail": "{\"line\":\"#3a3a3a\",\"strong\":\"#51565a\",\"accent\":\"#02c2be\",\"tunerOverrides\":null}"
+ },
+ {
+  "name": "paleta: sem overrides de tuner salvos (defaults ativos)",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "name": "headline: clamp aplicado (>=40px @1440)",
+  "ok": true,
+  "detail": "68px"
+ },
+ {
+  "name": "headline: animação de linha aplicada e assentada (transform none)",
+  "ok": true,
+  "detail": "cnp-line-rise/matrix(1, 0, 0, 1, 0, 0)"
+ },
+ {
+  "name": "flip: 1 botão, 2 faces, backface-visibility",
+  "ok": true,
+  "detail": "{\"tabbed\":true,\"buttons\":1,\"faces\":2,\"before\":\"none\",\"after\":\"matrix3d(-1, 0, 0,"
+ },
+ {
+  "name": "flip: focus-visible gira (rotateY)",
+  "ok": true,
+  "detail": "antes=none depois=matrix3d(-1, 0, 0, 0, 0, 1, 0,"
+ },
+ {
+  "name": "flip: verso #242424",
+  "ok": true,
+  "detail": "rgb(36, 36, 36)"
+ },
+ {
+  "name": "CTA: clique abre diálogo de projeto",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "name": "layout desktop: sem scrollX, título contido, CTA clicável",
+  "ok": true,
+  "detail": "{\"scrollX\":0,\"homeW\":1055,\"titleFits\":true,\"ctaVisible\":true,\"ctaClickable\":true}"
+ },
+ {
+  "name": "layout ultrawide: sem scrollX, título contido, CTA clicável",
+  "ok": true,
+  "detail": "{\"scrollX\":0,\"homeW\":3055,\"titleFits\":true,\"ctaVisible\":true,\"ctaClickable\":true}"
+ },
+ {
+  "name": "sidebar: entrada do título NÃO reinicia (transform estável)",
+  "ok": true,
+  "detail": "matrix(1, 0, 0, 1, 0=matrix(1, 0, 0, 1, 0"
+ },
+ {
+  "name": "halftone intacto (tinta >=96%)",
+  "ok": true,
+  "detail": "99.9%"
+ },
+ {
+  "name": "runtime: console sem erros (rodada completa)",
+  "ok": true,
+  "detail": ""
+ }
+]

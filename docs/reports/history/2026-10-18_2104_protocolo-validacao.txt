@@ -1,0 +1,83 @@
+CUTNICEPRO — ZCODE REPORT — PROTOCOLO PERMANENTE DE VALIDAÇÃO E ECONOMIA DE EXECUÇÃO
+==============================================================================
+Tarefa:     Governança — estabelecer política permanente de validação:
+            aprovação visual EXCLUSIVA do mantenedor; VISION desativado por
+            padrão; validação proporcional ao escopo; orçamento de execução.
+Data:       2026-10-18 (conclusão 21h04)
+Status:     FUNCTIONAL: PASS (protocolo persistido e verificado).
+            Regression: NOT TESTED (nenhum código de aplicação tocado —
+            verificação abaixo). Visual: N/A (tarefa de governança; sem UI).
+Preservação: NENHUMA modificação em código da aplicação, animações,
+            shaders, componentes, Rust, hooks ou harness. Sem commits/pushes.
+
+IMPLEMENTADO
+------------------------------------------------------------------------------
+1. AGENTS.md — nova seção permanente
+   `CUTNICEPRO — VALIDATION OWNERSHIP & EXECUTION BUDGET` (linha 42),
+   sintetizando: responsabilidades ZCode×mantenedor; VISION proibido por
+   padrão (exceção: solicitação explícita/autorização na tarefa, com
+   objetivo delimitado e condição de parada); validação proporcional;
+   orçamento (1 rodada + no máx. 1 repetição justificada; BLOCKED/PARTIAL
+   nos limites); critérios FUNCTIONAL/REGRESSION/VISUAL; eficiência; e
+   referência ao documento completo.
+2. docs/engineering/VALIDATION-POLICY.md — CRIADO (não havia documento
+   equivalente; docs/engineering/ também não existia) com o protocolo
+   integral: 7 seções (responsabilidades; VISION; tabela de validação
+   proporcional; 10 limites obrigatórios; critérios de aceite; eficiência
+   priorizar/evitar; harness/hooks/relatórios). Estado: APROVADO pelo
+   mantenedor em 2026-10-18.
+3. AGENTS.md — seção "Validação visual" ANTERADA para coerência com a nova
+   política (ZCode valida FUNCIONAMENTO; capturas apenas quando a
+   verificação direta de estado não for possível; status visual sempre
+   PENDING HUMAN APPROVAL). A regra antiga ("comparar com a referência
+   aprovada" em toda tarefa de interface) conflitava com o protocolo novo.
+4. docs/product/PRODUCT-BRAIN.md §11 — entrada de "Decisão OPERACIONAL
+   (não-produto)" registrando a política com referências; decisão
+   incremental no topo da seção; nenhuma decisão de produto/UX/comercial
+   alterada.
+5. Graphify: NÃO operacional no workspace (Brain §13: "INSTALLED — INITIAL
+   INDEX PENDING"; não existe graphify-out/) → indexação dos documentos
+   fica REGISTRADA COMO PENDENTE para quando o grafo for gerado; nada
+   instalado (proibido nesta tarefa).
+
+TESTADO (validação proporcional — tarefa documental)
+------------------------------------------------------------------------------
+- Check 1 — regra permanente no AGENTS.md: OK (grep: seção na linha 42;
+  segunda menão na linha 105 da seção "Validação visual" atualizada).
+- Check 2 — política referenciada no AGENTS.md: OK (2 referências a
+  docs/engineering/VALIDATION-POLICY.md).
+- Check 3 — documento existe e íntegro: OK (docs/engineering/
+  VALIDATION-POLICY.md, 6.087 bytes, 7 seções).
+- Check 4 — Product Brain íntegro: OK (13 seções ## preservadas; nova
+  entrada operacional na §11; seções de produto intocadas).
+- Check 5 — nenhum código modificado: OK — `git status` em app/src e
+  src-tauri/src mostra apenas arquivos NÃO-rastreados de fases anteriores
+  (assets/posters/ da 03B.6, avatar-perfil.png, thumb-mock-projeto.png);
+  nenhum arquivo-fonte novo/alterado por esta tarefa.
+- Baseline/hooks: NÃO executados deliberadamente — nenhum código tocado
+  (política de proporcionalidade aplicada a si mesma). Hooks permanecem
+  ativos e inalterados.
+- Subagentes: NENHUM acionado (VISION permanece desativado — a política
+  foi cumprida já nesta tarefa).
+
+RELATÓRIOS FUTUROS (conforme §9 da missão)
+------------------------------------------------------------------------------
+Os próximos CUTNICEPRO — ZCODE REPORT indicarão: implementado; testado
+(passou/falhou/ignorados e por quê); regressões verificadas; problemas
+remanescentes; acionamento de subagentes (e autorização); necessidade de
+aprovação visual humana. Evidências suficientes para comprovar
+funcionamento; sem dezenas de screenshots; LATEST.txt + history/
+mantidos conforme REPORTING-STANDARD.md.
+
+FINAL
+------------------------------------------------------------------------------
+- FUNCTIONAL STATUS: PASS — protocolo persistido, referenciado e verificado.
+- REGRESSION STATUS: NOT TESTED — nenhum código de aplicação envolvido
+  (verificado por git status; não há regressão possível no escopo tocado).
+- VISUAL STATUS: N/A (governança sem UI).
+- Pendências: indexação Graphify dos novos documentos quando o grafo for
+  operacionalizado (sem ação agora); nenhum código/hook/harness alterado;
+  nenhuma proposta de melhoria de hook identificada nesta tarefa.
+- Commit: NO. Push: NO.
+- Encerrando sem desenvolvimento, sem auditoria visual e sem VISION.
+==============================================================================

@@ -236,7 +236,8 @@ export const galaxyMotionTuner = defineTunables(
       min: 0.4,
       max: 4,
       step: 0.05,
-      default: 4,
+      // 03B.7: revelação mais rápida (era 4s) — primeira composição cedo.
+      default: 1.6,
       info: "Duration of the intro reveal wave sweeping from the logo past the outer edge. Starts at the master Intro group's Cards beat.",
     },
     rollChunk: {
@@ -625,7 +626,9 @@ export const galaxyLookTuner = defineTunables("galaxyLook", "Galaxy look", {
     min: 0,
     max: 1,
     step: 0.02,
-    default: 0.4,
+    // 03B.7: 0 — todos os braços usam o Deep Aqua do CutNicePro (o spread
+    // de matizes da referência foi desativado pela direção visual).
+    default: 0,
     info: "Dark theme only: per-arm hue rotation of the pulse color away from the accent — 0 keeps every arm brand blue, 1 spreads across the wheel. Light theme is always colorless.",
   },
   pulseDark: {

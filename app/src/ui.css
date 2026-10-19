@@ -8,8 +8,10 @@
   --bg: #0a0a0a;
   --bg-sunken: #000000;
   --ink: #e6e7e8;
-  --line: #262626;
-  --line-strong: #3a3a3a;
+  /* 03B.7: braços/efeitos do galaxy — Deep Aqua como acento (accent) e
+     cinza neutro #51565A como complemento discreto (hairlines/ticks). */
+  --line: #3a3a3a;
+  --line-strong: #51565a;
   --accent: #02c2be;
   --accent-ink: #0a0a0a;
   --sh-bg: #000000;
@@ -335,40 +337,129 @@
 .home__cta {
   pointer-events: auto;
 }
+/* 03B.7 — headline cinematográfica: duas linhas reveladas por máscara.
+   Só transform/opacity; curva de desaceleração; stagger discreto. */
 .home__title {
-  margin: 0;
-  font-size: 34px;
+  margin: 0 0 18px;
+  font-size: clamp(40px, 5.2vw, 68px);
   font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.06;
   color: #ffffff;
-  max-width: 763px;
-  overflow-wrap: anywhere;
+  text-wrap: balance;
+}
+.home__line {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 0.06em; /* respiro dos descendentes sem vazar a máscara */
+}
+.home__line-inner {
+  display: inline-block;
+  transform: translateY(112%);
+  opacity: 0.001;
+  animation: cnp-line-rise 720ms cubic-bezier(0.22, 0.61, 0.2, 1) forwards;
+}
+.home__line--2 .home__line-inner {
+  animation-delay: 120ms;
+}
+@keyframes cnp-line-rise {
+  from {
+    transform: translateY(112%);
+    opacity: 0.001;
+  }
+  30% {
+    opacity: 1;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
 .home__subtitle {
-  margin: 13px 0 30px;
-  font-size: 20px;
+  margin: 0 0 34px;
+  font-size: clamp(16px, 1.6vw, 21px);
   font-weight: 400;
   color: var(--sh-dim);
 }
+.home__fade {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(12px);
+  animation: cnp-fade-up 450ms cubic-bezier(0.22, 0.61, 0.2, 1) forwards;
+}
+.home__subtitle .home__fade {
+  animation-delay: 380ms;
+}
+.home__cta .flip-btn__reveal {
+  display: block;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transform: translateY(12px);
+  animation: cnp-fade-up 450ms cubic-bezier(0.22, 0.61, 0.2, 1) forwards;
+  animation-delay: 560ms;
+}
+@keyframes cnp-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+/* 03B.7 — Flip Button 3D: um único <button> semântico; as duas faces são
+   decorativas (aria-hidden). Hover E focus-visible giram; reduced-motion
+   troca as cores sem rotação. */
 .home__cta {
-  width: 221px;
-  height: 34px;
+  position: relative;
+  width: 240px;
+  height: 50px;
   border: none;
-  border-radius: 8px;
-  background: var(--sh-surface);
-  color: #ffffff;
+  padding: 0;
+  background: none;
   font-family: inherit;
-  font-size: 12px;
   cursor: pointer;
-}
-.home__cta:hover {
-  background: #262626;
-}
-.home__cta:active {
-  background: #2b2b2b;
+  perspective: 900px;
 }
 .home__cta:focus-visible {
   outline: 2px solid var(--sh-accent);
-  outline-offset: 2px;
+  outline-offset: 3px;
+}
+.flip-btn__inner {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform 420ms cubic-bezier(0.3, 0.7, 0.25, 1.04);
+}
+.home__cta:hover .flip-btn__inner,
+.home__cta:focus-visible .flip-btn__inner {
+  transform: rotateY(180deg);
+}
+.flip-btn__face {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+.flip-btn__face--front {
+  background: #ffffff;
+  color: #000000;
+}
+.flip-btn__face--back {
+  background: #242424;
+  color: #ffffff;
+  transform: rotateY(180deg);
 }
 
 /* ---------- hero galaxy (motor WebGL original portado — 03B.5) ---------- */
@@ -741,5 +832,21 @@
   .shell-main,
   .pcard__remove {
     transition: none;
+  }
+  /* 03B.7: conteúdo central abre assentado; flip sem rotação (troca de cor). */
+  .home__line-inner,
+  .home__fade,
+  .home__cta .flip-btn__reveal {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+  .home__cta .flip-btn__inner {
+    transition: none;
+  }
+  .home__cta:hover .flip-btn__face--front,
+  .home__cta:focus-visible .flip-btn__face--front {
+    background: #242424;
+    color: #ffffff;
   }
 }
