@@ -243,8 +243,15 @@ export default function HalftoneWordmarkFooter({
       w = Math.max(1, Math.round(rect.width))
       h = Math.max(1, Math.round(rect.height))
       dpr = Math.min(window.devicePixelRatio || 1, 2)
-      canvas.width = Math.round(w * dpr)
-      canvas.height = Math.round(h * dpr)
+      // 03B.8: redefinir width/height LIMPA o bitmap (frame preto). Só
+      // redefinir quando o alvo realmente mudou — resize repetido com o
+      // mesmo tamanho preserva o desenho anterior.
+      const bw = Math.round(w * dpr)
+      const bh = Math.round(h * dpr)
+      if (canvas.width !== bw || canvas.height !== bh) {
+        canvas.width = bw
+        canvas.height = bh
+      }
 
       // Set the word once, at a size that fills the width, on a 1x mask.
       const mask = document.createElement("canvas")
@@ -437,9 +444,21 @@ export default function HalftoneWordmarkFooter({
     root.addEventListener("pointermove", onMove)
     root.addEventListener("pointerleave", onLeave)
     root.addEventListener("pointerdown", onDown)
+    // 03B.8: coalescer a rajada de ResizeObserver da transição da sidebar
+    // (era 1 layout por evento = recálculo de todos os pontos + reset do
+    // bitmap a cada passo = flicker). Debounce + rAF: um único relayout ao
+    // assentar; até lá o bitmap anterior permanece visível.
+    let resizeTimer: ReturnType<typeof setTimeout> | undefined
+    let resizeRaf = 0
     const ro = new ResizeObserver(() => {
-      layout()
-      wake()
+      clearTimeout(resizeTimer)
+      cancelAnimationFrame(resizeRaf)
+      resizeTimer = setTimeout(() => {
+        resizeRaf = requestAnimationFrame(() => {
+          layout()
+          wake()
+        })
+      }, 120)
     })
     ro.observe(root)
     const io = new IntersectionObserver((entries) => {
@@ -460,6 +479,8 @@ export default function HalftoneWordmarkFooter({
     return () => {
       alive = false
       cancelAnimationFrame(raf)
+      clearTimeout(resizeTimer)
+      cancelAnimationFrame(resizeRaf)
       ro.disconnect()
       io.disconnect()
       root.removeEventListener("pointermove", onMove)

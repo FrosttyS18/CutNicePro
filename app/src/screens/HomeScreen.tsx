@@ -9,17 +9,14 @@ interface Props {
 /**
  * Tela 2/3 do design 03B — a mesma Home nos dois estados da sidebar.
  *
- * Fase 03B.5: área artística = Hero Galaxy ORIGINAL do ArtCraft (motor
- * WebGL portado) atrás do conteúdo central; wordmark halftone original na
- * região inferior; IntroConductor rege a coreografia de entrada.
- *
- * Fase 03B.7 (polish cinematográfico do conteúdo central):
- *  - headline em duas linhas com revelação por máscara (motion typography
- *    só com transform/opacity; stagger título → subtítulo → botão;
- *    reduced-motion abre assentado; resize/sidebar não reiniciam);
- *  - CTA "Criar Projeto" com Flip Button 3D em CSS puro (frente branca,
- *    verso #242424; hover E focus-visible giram; reduced-motion sem giro).
- * O Hero Galaxy (03B.5/03B.6) e o Halftone permanecem intactos.
+ * Fase 03B.8 (correções sobre a 03B.7):
+ *  - headline em UMA linha ("Bem-vindo ao Cut Nice Pro", 32–44px, somente
+ *    "Nice" em Deep Aqua) com entrada única suave (fade + rise, sem
+ *    stagger de palavras); subtítulo/botão em sequência discreta;
+ *  - Flip Button como CAIXA 3D vertical: face frontal translateZ, face
+ *    inferior rotateX(90°) translateZ; o conjunto gira no EIXO X — a frente
+ *    sobe e some por cima, o verso surge de baixo (hover e foco).
+ * Galaxy (03B.5/03B.6 + paleta 03B.7) e Halftone intactos.
  */
 export function HomeScreen({ onCreate }: Props) {
   return (
@@ -30,11 +27,8 @@ export function HomeScreen({ onCreate }: Props) {
       </div>
       <div className="home__center">
         <h1 className="home__title" data-testid="home-title">
-          <span className="home__line">
-            <span className="home__line-inner">Bem-Vindo ao</span>
-          </span>
-          <span className="home__line home__line--2">
-            <span className="home__line-inner">Cut Nice Pro</span>
+          <span className="home__rise">
+            Bem-vindo ao Cut <span className="home__nice">Nice</span> Pro
           </span>
         </h1>
         <p className="home__subtitle">
@@ -48,9 +42,9 @@ export function HomeScreen({ onCreate }: Props) {
           aria-label="Criar Projeto"
         >
           <span className="flip-btn__reveal" aria-hidden="true">
-            <span className="flip-btn__inner">
+            <span className="flip-btn__box">
               <span className="flip-btn__face flip-btn__face--front">Criar Projeto</span>
-              <span className="flip-btn__face flip-btn__face--back">Criar Projeto</span>
+              <span className="flip-btn__face flip-btn__face--bottom">Criar Projeto</span>
             </span>
           </span>
         </button>

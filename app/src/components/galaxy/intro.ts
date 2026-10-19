@@ -58,8 +58,10 @@ export const introTuner = defineTunables("intro", "Intro", {
     min: 0,
     max: 3,
     step: 0.05,
-    // 03B.7: o galaxy começa quase junto com a Home (meta ~500ms).
-    default: 0.15,
+    // 03B.8: espera inicial MODERADA (era 1.0 na 03B.6 aprovada; 0.15 na
+    // 03B.7 repassada por apressada). Primeiro movimento ~550ms, SEM
+    // comprimir a duração total da revelação (introDur).
+    default: 0.55,
     info: "When the galaxy cards start rolling out from the center along their arms.",
   },
   ffScale: {

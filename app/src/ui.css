@@ -337,49 +337,35 @@
 .home__cta {
   pointer-events: auto;
 }
-/* 03B.7 — headline cinematográfica: duas linhas reveladas por máscara.
-   Só transform/opacity; curva de desaceleração; stagger discreto. */
+/* 03B.8 — headline em UMA linha (32-44px), somente "Nice" em Deep Aqua.
+   Entrada única suave: fade + rise (transform/opacity, 520ms). */
 .home__title {
-  margin: 0 0 18px;
-  font-size: clamp(40px, 5.2vw, 68px);
+  margin: 0 0 16px;
+  font-size: clamp(32px, 3.1vw, 44px);
   font-weight: 700;
-  letter-spacing: -0.02em;
-  line-height: 1.06;
+  letter-spacing: -0.015em;
+  line-height: 1.15;
   color: #ffffff;
-  text-wrap: balance;
+  white-space: nowrap;
 }
-.home__line {
-  display: block;
-  overflow: hidden;
-  padding-bottom: 0.06em; /* respiro dos descendentes sem vazar a máscara */
+.home__nice {
+  color: var(--sh-accent);
 }
-.home__line-inner {
+.home__rise {
   display: inline-block;
-  transform: translateY(112%);
-  opacity: 0.001;
-  animation: cnp-line-rise 720ms cubic-bezier(0.22, 0.61, 0.2, 1) forwards;
+  opacity: 0;
+  transform: translateY(14px);
+  animation: cnp-rise 520ms cubic-bezier(0.22, 0.61, 0.2, 1) forwards;
 }
-.home__line--2 .home__line-inner {
-  animation-delay: 120ms;
-}
-@keyframes cnp-line-rise {
+@keyframes cnp-rise {
   from {
-    transform: translateY(112%);
-    opacity: 0.001;
-  }
-  30% {
-    opacity: 1;
+    opacity: 0;
+    transform: translateY(14px);
   }
   to {
-    transform: translateY(0);
     opacity: 1;
+    transform: translateY(0);
   }
-}
-.home__subtitle {
-  margin: 0 0 34px;
-  font-size: clamp(16px, 1.6vw, 21px);
-  font-weight: 400;
-  color: var(--sh-dim);
 }
 .home__fade {
   display: inline-block;
@@ -388,16 +374,16 @@
   animation: cnp-fade-up 450ms cubic-bezier(0.22, 0.61, 0.2, 1) forwards;
 }
 .home__subtitle .home__fade {
-  animation-delay: 380ms;
+  animation-delay: 200ms;
 }
 .home__cta .flip-btn__reveal {
   display: block;
   width: 100%;
   height: 100%;
   opacity: 0;
-  transform: translateY(12px);
-  animation: cnp-fade-up 450ms cubic-bezier(0.22, 0.61, 0.2, 1) forwards;
-  animation-delay: 560ms;
+  transform: translateY(10px);
+  animation: cnp-fade-up 400ms cubic-bezier(0.22, 0.61, 0.2, 1) forwards;
+  animation-delay: 360ms;
 }
 @keyframes cnp-fade-up {
   from {
@@ -409,9 +395,10 @@
     transform: translateY(0);
   }
 }
-/* 03B.7 — Flip Button 3D: um único <button> semântico; as duas faces são
-   decorativas (aria-hidden). Hover E focus-visible giram; reduced-motion
-   troca as cores sem rotação. */
+/* 03B.8 — Flip Button como CAIXA 3D vertical: a face frontal vive em
+   translateZ(h/2); a face inferior do prisma é rotateX(90°) translateZ(h/2).
+   No hover/foco o CONJUNTO gira +90° no eixo X: a frente sobe e desaparece
+   pela borda superior enquanto a face inferior sobe de baixo até a frontal. */
 .home__cta {
   position: relative;
   width: 240px;
@@ -421,23 +408,19 @@
   background: none;
   font-family: inherit;
   cursor: pointer;
-  perspective: 900px;
+  perspective: 800px;
 }
 .home__cta:focus-visible {
   outline: 2px solid var(--sh-accent);
   outline-offset: 3px;
 }
-.flip-btn__inner {
+.flip-btn__box {
   position: relative;
   display: block;
   width: 100%;
   height: 100%;
   transform-style: preserve-3d;
-  transition: transform 420ms cubic-bezier(0.3, 0.7, 0.25, 1.04);
-}
-.home__cta:hover .flip-btn__inner,
-.home__cta:focus-visible .flip-btn__inner {
-  transform: rotateY(180deg);
+  transition: transform 400ms cubic-bezier(0.3, 0.7, 0.25, 1);
 }
 .flip-btn__face {
   position: absolute;
@@ -455,19 +438,16 @@
 .flip-btn__face--front {
   background: #ffffff;
   color: #000000;
+  transform: translateZ(25px);
 }
-.flip-btn__face--back {
+.flip-btn__face--bottom {
   background: #242424;
   color: #ffffff;
-  transform: rotateY(180deg);
+  transform: rotateX(-90deg) translateZ(25px);
 }
-
-/* ---------- hero galaxy (motor WebGL original portado — 03B.5) ---------- */
-.home__galaxy {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  overflow: hidden;
+.home__cta:hover .flip-btn__box,
+.home__cta:focus-visible .flip-btn__box {
+  transform: rotateX(-90deg);
 }
 
 /* ---------- halftone original (região inferior da Home) ---------- */
@@ -834,14 +814,14 @@
     transition: none;
   }
   /* 03B.7: conteúdo central abre assentado; flip sem rotação (troca de cor). */
-  .home__line-inner,
+  .home__rise,
   .home__fade,
   .home__cta .flip-btn__reveal {
     animation: none;
     opacity: 1;
     transform: none;
   }
-  .home__cta .flip-btn__inner {
+  .home__cta .flip-btn__box {
     transition: none;
   }
   .home__cta:hover .flip-btn__face--front,

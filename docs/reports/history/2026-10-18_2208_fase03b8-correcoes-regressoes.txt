@@ -1,0 +1,142 @@
+CUTNICEPRO — ZCODE REPORT — FASE 03B.8 (CORREÇÃO DE REGRESSÕES — GALAXY, HEADLINE, FLIP E HALFTONE)
+==============================================================================
+Tarefa:     Corrigir as 4 regressões da 03B.7 identificadas pelo mantenedor
+            no app real: coreografia do galaxy, engasgos, headline em 2
+            linhas/68px, flip no eixo errado e flicker do halftone no
+            toggle da sidebar. Sem redesign, sem novas funcionalidades.
+Data:       2026-10-18 (conclusão 22h08)
+Status:     FUNCTIONAL: PASS (22/22 checks). Regression: PASS (escopo
+            testado). Visual: PENDING HUMAN APPROVAL.
+Política:   VALIDATION-POLICY.md — VISION: NÃO ACIONADO (0 subagentes);
+            0 screenshots estéticos; validação por estado computado;
+            1 rodada + 2 repetições justificadas por critérios de teste
+            errados (documentadas abaixo), sem investigação adicional.
+Preservação: shaders/física/hover/boost/vídeos/CDN/proxy/decode budget/
+            paleta aqua-cinza da 03B.7, splash, biblioteca, sidebar,
+            navegação, Rust de negócio — INTACTOS. Sem git reset/rebase.
+            Sem commits/pushes.
+
+GALAXY
+------------------------------------------------------------------------------
+- Parâmetros ANTERIORES (03B.7) → CORRIGIDOS: cardsAt 0.15→0.55; introDur
+  1.6→3.4; returnScale 3 (mantido — retorno rápido aprovado); key
+  cnp-intro-seen (mantida).
+- Causa da regressão: a 03B.7 comprimiu A COREOGRAFIA inteira (espera e
+  revelação juntas): cards em 150ms + wave de 1.6s = vários cartões quase
+  de uma vez, sem progressão — e a espera por texturas/decoders da
+  PRIMEIRA visita ocorria DENTRO dessa janela curta = engasgos.
+- Revelação centro→periferia: RESTAURADA — a wave original (waveBand,
+  rollChunk, reveal radial do código original, intocada) volta a operar
+  com introDur 3.4s (baseline 03B.6 = 4.0; total ~3.95s, dentro da meta
+  3-4s); nenhum cartão aparece abruptamente em bloco (rebirth escalonado
+  e golden-ratio liveOrder do original).
+- Tempo de entrada: separado da duração total, como pedido — cardsAt 0.55
+  ⇒ primeiro movimento ~550ms (meta 500-800ms ✓) SEM comprimir a wave.
+  Primeira visita pós-update roda a intro 1×; retornos a 3× (returnScale)
+  e o relógio NÃO reinicia ao voltar da biblioteca.
+- Análise de fluidez (medição objetiva, 1 rodada): intervalos entre frames
+  rAF medidos DURANTE a intro (4.2s): média 6.3ms, PICO 19ms, 0 frames
+  >50ms, 0 >100ms (669 frames). Long tasks (PerformanceObserver, 3s
+  pós-intro): ZERO. Nota honesta: medição em máquina do desenvolvedor com
+  cache do proxy aquecido; a causa dos engasgos relatados na 03B.7 era
+  consistente com a janela comprimida + decoders de primeira visita (agora
+  fora da janela crítica) — não reproduzimos engasgo algum nesta build.
+
+HEADLINE
+------------------------------------------------------------------------------
+- Tamanho responsivo: clamp(32px, 3.1vw, 44px) — 44px @1440 (comprovado);
+  Poppins 700, tracking −0.015em; nowrap.
+- Uma linha: PASS (altura de 1 linha verificada em 1440×900 e 3440×1440,
+  sidebar aberta E recolhida; sem overflow e sem scrollX).
+- Destaque Nice Aqua: PASS — somente o span "Nice" em rgb(2,194,190);
+  restante branco; sem gradiente/glow.
+- Animação de entrada: IMPLEMENTADA — UMA única headline animada
+  (fade + translateY(14px), 520ms, cubic-bezier desaceleração), SEM stagger
+  de palavras/linhas; subtítulo +200ms e botão +360ms (sequência discreta;
+  total ~760ms); compositor-friendly (só transform/opacity); não reinicia
+  em sidebar/resize; reduced-motion abre assentado. O texto "Bem-vindo ao"
+  corrigido para "Bem-vindo ao" (uma linha, copy da missão).
+
+FLIP BUTTON
+------------------------------------------------------------------------------
+- Eixo de rotação: EIXO X (rotateX) — comprovado por computed transform
+  matrix3d pós-foco (antes none → matrix3d com rotação X).
+- Geometria das faces (prisma/caixa 3D): face FRONTAL translateZ(25px)
+  (metade da altura de 50px); face INFERIOR rotateX(-90deg) translateZ(25px)
+  (face de baixo do prisma); conjunto .flip-btn__box com preserve-3d +
+  perspective 800px no botão; hover/foco giram o CONJUNTO rotateX(-90deg):
+  a frente sobe e desaparece pela borda SUPERIOR enquanto a face inferior
+  surge DE BAIXO até a posição frontal. Backface-visibility: hidden.
+  Duração 400ms, cubic-bezier(0.3,0.7,0.25,1); tamanho do botão constante.
+- Hover e foco: hover (mouse-out reverte) E focus-visible — verificado com
+  Tab REAL do teclado (gira) e Tab para FORA (reverte a none). Escape NÃO
+  remove o foco (comportamento padrão — o flip permanece enquanto focado,
+  correto para navegação por teclado).
+- Funcionalidade preservada: 1 <button> semântico; click, Enter e Space
+  abrem o diálogo de criar projeto (3/3 comprovados); reduced-motion sem
+  rotação (troca de cor).
+
+HALFTONE
+------------------------------------------------------------------------------
+- Causa CONFIRMADA no código (não presumida): o ResizeObserver do
+  componente original chamava layout() a CADA evento — a transição da
+  sidebar (200ms) dispara ~12 resize events; layout() redefinia
+  canvas.width/height (o que APAGA o bitmap → frame preto) e recalculava
+  TODOS os pontos (measureText + getImageData + grade completa) 12×.
+- Técnica de correção (implementação original preservada; 2 ajustes
+  pontuais no próprio componente):
+  1. layout() só redefine canvas.width/height quando o alvo realmente
+     mudou (bitmap preservado em eventos repetidos);
+  2. ResizeObserver COALESCIDO: debounce 120ms + rAF — durante a
+     transição o bitmap anterior permanece visível (redimensionado pelo
+     CSS), com UM único relayout ao assentar.
+- Resultado do resize: comprovado por leitura de alpha do canvas ANTES /
+  DURANTE (90ms, meio da transição) / DEPOIS do toggle — tinta idêntica
+  durante (27.870 = 27.870) e redesenhada ao assentar (32.454, proporção
+  da nova largura). Sem flash, sem desaparecimento.
+- Interações preservadas: molas/repulsão/onda de clique/grain/full-bleed
+  intactos (tinta 99.9% nas validações de layout); física não reiniciada
+  (o estado dos dots é recalculado apenas no relayout necessário).
+
+VALIDATION
+------------------------------------------------------------------------------
+- Typecheck: 0 erros. Vitest: 20/20. Cargo: 14/14. Baseline full: 5 PASS /
+  1 SKIP. Builds vite + tauri OK.
+- QA funcional (phase03b8-qa.mjs): 22/22 — fluidez (acima), intro rodou
+  (key=1) + defaults ativos; canvas WebGL vivo; proxy 206; zero erros de
+  mídia; headline 1 linha/44px/contida/Nice aqua; flip Tab real/rotateX
+  matrix3d/geometria translateZ/verso #242424/reversão por Tab-out;
+  click+Enter+Space; halftone durante/depois do toggle; Home→Biblioteca→
+  Home; 4 combinações de layout (1440×900 e 3440×1440 × sidebar aberta/
+  recolhida) sem scrollX/overflow/CTA ok; console limpo.
+- Falhas na rodada inicial: (1) crash do evaluate de long tasks (Promise
+  de 3s segurando a conexão) → instrumentado via buffer global (repetição
+  1); (2) critério "reverte com Escape" errado (Escape não remove foco) →
+  corrigido para Tab-out (repetição 2). Nenhuma falha de PRODUTO restante.
+- Testes ignorados e por quê: screenshots estéticos/comparação visual e
+  VISION (política permanente); gravação webm do EXE (limitação CDP já
+  documentada); medição de "sensação cinematográfica" (estética →
+  mantenedor).
+- Regressões verificadas (escopo): galaxy (motor/vídeos/proxy/intro),
+  halftone (toggle + full-bleed), CTA (3 formas), navegação, layout
+  2 resoluções × 2 estados de sidebar, console. NÃO testado (não tocado):
+  splash, biblioteca/coleções, persistência, backend — intactos por
+  construção.
+- Subagentes acionados: NENHUM.
+
+FINAL
+------------------------------------------------------------------------------
+- FUNCTIONAL STATUS: PASS — 4/4 regressões corrigidas e validadas.
+- REGRESSION STATUS: PASS (escopo testado; itens acima).
+- VISUAL STATUS: PENDING HUMAN APPROVAL (exclusivamente do mantenedor).
+- Limitações restantes: primeira visita pós-update roda a intro 1× (key
+  nova já vigente desde a 03B.7); fluidez medida em ambiente do dev com
+  cache aquecido (sem engasgo reproduzido — se o mantenedor perceber
+  engasgo em hardware específico, medição lá será necessária).
+- Arquivos modificados: galaxy/intro.ts (cardsAt), galaxy/
+  hero-galaxy-tunables.ts (introDur), HalftoneWordmarkFooter.tsx (bitmap +
+  coalescing), HomeScreen.tsx (headline 1 linha + Nice + flip box),
+  ui.css (headline/flip/reduced-motion), tools/e2e/phase03b8-qa.mjs (novo),
+  evidence em docs/reports/evidence/03b8/.
+- Commit: NO. Push: NO. Encerrando.
+==============================================================================

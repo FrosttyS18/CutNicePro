@@ -1,0 +1,122 @@
+{
+ "results": [
+  {
+   "name": "galaxy: intro rodou (key cnp-intro-seen=1)",
+   "ok": true,
+   "detail": "{\"seen\":\"1\",\"reduced\":false}"
+  },
+  {
+   "name": "galaxy: sem overrides de tuner (defaults ativos)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "galaxy: canvas WebGL vivo",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "galaxy: vídeos (proxy 206)",
+   "ok": true,
+   "detail": "206"
+  },
+  {
+   "name": "galaxy: sem erros de mídia",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "headline: 1 linha (nowrap + altura de 1 linha)",
+   "ok": true,
+   "detail": "{\"fs\":\"44px\",\"h\":1}"
+  },
+  {
+   "name": "headline: contida no painel (sem overflow)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "headline: Nice em Deep Aqua",
+   "ok": true,
+   "detail": "rgb(2, 194, 190)"
+  },
+  {
+   "name": "flip: foco por Tab real",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "flip: rotação EIXO X (matrix3d com termo m23≠0... rotateX)",
+   "ok": true,
+   "detail": "antes=none depois=matrix3d(1, 0, 0, 0, 0, 0, -1, 0, "
+  },
+  {
+   "name": "flip: geometria frente translateZ / base rotateX",
+   "ok": true,
+   "detail": "front=matrix3d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1"
+  },
+  {
+   "name": "flip: base #242424",
+   "ok": true,
+   "detail": "rgb(36, 36, 36)"
+  },
+  {
+   "name": "flip: reverte ao sair do foco",
+   "ok": true,
+   "detail": "none"
+  },
+  {
+   "name": "CTA: click/Enter/Space abrem o diálogo",
+   "ok": true,
+   "detail": "click=true enter=true space=true"
+  },
+  {
+   "name": "halftone: conteúdo presente DURANTE o toggle (sem apagar)",
+   "ok": true,
+   "detail": "antes=3536 durante=3536"
+  },
+  {
+   "name": "halftone: redesenhado após assentar (tinta comparável)",
+   "ok": true,
+   "detail": "depois=5293"
+  },
+  {
+   "name": "navegação Home→Biblioteca→Home",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "layout 1440x900 sidebar aberta: 1 linha, sem overflow/scrollX, CTA ok",
+   "ok": true,
+   "detail": "{\"scrollX\":0,\"oneLine\":true,\"fits\":true,\"ctaHit\":true}"
+  },
+  {
+   "name": "layout 1440x900 sidebar recolhida: 1 linha, sem overflow/scrollX, CTA ok",
+   "ok": true,
+   "detail": "{\"scrollX\":0,\"oneLine\":true,\"fits\":true,\"ctaHit\":true}"
+  },
+  {
+   "name": "layout 3440x1440 sidebar aberta: 1 linha, sem overflow/scrollX, CTA ok",
+   "ok": true,
+   "detail": "{\"scrollX\":0,\"oneLine\":true,\"fits\":true,\"ctaHit\":true}"
+  },
+  {
+   "name": "layout 3440x1440 sidebar recolhida: 1 linha, sem overflow/scrollX, CTA ok",
+   "ok": true,
+   "detail": "{\"scrollX\":0,\"oneLine\":true,\"fits\":true,\"ctaHit\":true}"
+  },
+  {
+   "name": "console sem erros (rodada completa)",
+   "ok": true,
+   "detail": ""
+  }
+ ],
+ "fluid": {
+  "avg": 6.281763826571239,
+  "max": 18.700000000000273,
+  "over50": 0,
+  "over100": 0,
+  "frames": 669
+ },
+ "longTasks": []
+}
