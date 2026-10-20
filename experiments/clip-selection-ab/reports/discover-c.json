@@ -1,0 +1,17 @@
+{
+ "perfil": "c",
+ "modelo": "Qwen3-4B-Instruct-2507",
+ "config": "template 2507 Instruct (sem think), grammar",
+ "propostas": 0,
+ "fora_faixa": 0,
+ "construidos": 0,
+ "avaliados": 0,
+ "descoberta_s": 3.5,
+ "avaliacao_s": 0.0,
+ "total_s": 3.5,
+ "descoberta_tokens": {
+  "prompt": null,
+  "geracao": null
+ },
+ "clips": []
+}

@@ -1,0 +1,17 @@
+{
+ "perfil": "d",
+ "modelo": "Gemma-3-12B-IT Q4_K_M",
+ "config": "template Gemma 3 IT, grammar",
+ "propostas": 0,
+ "fora_faixa": 0,
+ "construidos": 0,
+ "avaliados": 0,
+ "descoberta_s": 34.3,
+ "avaliacao_s": 0.0,
+ "total_s": 34.3,
+ "descoberta_tokens": {
+  "prompt": null,
+  "geracao": null
+ },
+ "clips": []
+}

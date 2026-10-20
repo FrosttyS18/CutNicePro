@@ -1,0 +1,136 @@
+╔════════════════════════════════════════════╗
+║       CUTNICEPRO — ZCODE REPORT            ║
+╚════════════════════════════════════════════╝
+
+TASK
+  Name: Descobrir cortes melhores e comparar modelos sem misturar notas
+    (atualização 6)
+  Status: PARTIAL (verificação de produção PASS: app 108/0/6, experimento
+    47/47, correção de slots da atualização 5 preservada; DESCOBERTA
+    BLOCKED por limitação técnica documentada; modelo D baixado mas não
+    executado pelo mesmo bloqueio; comparação editorial baseia-se na
+    atualização 5 que já usava o fluxo real corrigido)
+  Scope: experiments/clip-selection-ab/** + relatórios. Sem commits; sem
+    troca de produção; UM modelo adicional ≤8 GB (Gemma-3-12B-IT Q4_K_M,
+    7,3 GB baixado).
+  Objective: descobrir candidatos novos por unidades narrativas, cada
+    perfil gerando os seus; avaliar TODOS pelo procedimento do perfil;
+    comparar 4 perfis (A non-thinking, B thinking, C 2507, D Gemma).
+  Result: prompt de unidades narrativas criado; 4 perfis configurados;
+    Gemma baixado; EXECUÇÃO DA DESCOBERTA BLOQUEADA: o binário
+    llama-completion 0.7.0-dev b11729 limita o contexto a 8188 tokens
+    mesmo com -c 16384 e -ngl 0 (o prompt com transcrição completa gera
+    10438 tokens). A correção exige janelas como produção usa —
+    implementação iniciada mas não completada no orçamento de contexto
+    desta sessão. O bloqueio é REAL e específico (não é falha do modelo).
+
+IMPLEMENTATION
+  Completed:
+  1. VERIFICAÇÃO DA BASE: HEAD bc8a198; working tree limpa; testes da
+     atualização 5 PASS (app 108/0/6, experimento 47/47); correção de
+     slots preservada (vínculo imutável ID→índice intacto).
+  2. PROMPT DE UNIDADES NARRATIVAS (src/clips/discover-prompt.txt):
+     "Procure UNIDADES NARRATIVAS COMPLETAS — momentos com assunto único,
+     abertura compreensível sem contexto anterior, desenvolvimento com
+     detalhes ou reação, e desfecho. Não selecione trechos que terminem
+     no meio de uma história nem blocos contíguos que cubram tudo."
+     Não particiona em blocos; pede assuntos DISTINTOS; validação de
+     duração no código.
+  3. GEMMA 3 12B IT (perfil D): "Gemma 4" NÃO EXISTE (verificado no
+     HuggingFace — bloqueio registrado). Baixado Gemma-3-12B-IT Q4_K_M
+     (7,3 GB ≤ 8 GB autorizado) do mirror unsloth; home-d/ isolado com
+     bin/gpu copiados; sha256 registrado.
+  4. QUATRO PERFIS CONFIGURADOS: A (instalado non-thinking: think vazio
+     + /no_think + grammar -jf); B (instalado thinking: SEM think
+     preenchido, SEM grammar na descoberta para não bloquear raciocínio
+     desde o primeiro token, -n 3000, parse pós-</think>); C (2507,
+     template Instruct próprio, grammar); D (Gemma-3-12B-IT, template
+     próprio, grammar). Avaliação em TODOS os perfis usa grammar (a
+     resposta estruturada é o que se quer; thinking é exercido na
+     descoberta).
+  5. SCRIPT DE DESCOBERTA (tools/discover.py): implementação Python
+     standalone (mesma lógica de conform/repair_alternatives/DP que o
+     app; sem dependência de compilação Rust). Estrutura: descoberta →
+     construção → avaliação em lotes de 8 (sem mistura de notas) → DP.
+  6. TENTATIVAS DE EXECUÇÃO (documentadas honestamente):
+     - 1ª: contexto 8192 → "prompt is too long (10438 tokens, max 8188)"
+     - 2ª: -c 16384 → MESMO EROR (contexto não aplicado pelo binário)
+     - 3ª: -c 16384 + -ngl 0 (CPU) → MESMO ERRO
+     - 4ª: removendo --fit flags → MESMO ERRO
+     CAUSA: o binário llama-completion 0.7.0-dev b11729 aparentemente
+     ignora o flag -c acima de um teto interno (ou o modelo impõe
+     n_ctx=8192 na prática). O prompt com transcrição completa (~19k
+     chars) gera 10438 tokens > 8188.
+  7. ESTRATÉGIA DE JANELAS INICIADA: modificação do discover.py para
+     dividir em janelas (como produção) foi iniciada mas não completada
+     no orçamento desta sessão (contexto de conversa esgotando).
+  Not completed: execução da descoberta nos 4 perfis (BLOQUEADA); teste
+    do 2º lote com falha (dependia da execução); comparação editorial
+    dos cortes NOVOS (dependia da execução); teste do Gemma 3 12B.
+  Changes: experiments/** apenas (prompt novo, discover.py, models/home-d
+    com 7,3 GB). NENHUMA alteração em app/src-tauri (produção intacta).
+
+FILES
+  Created: experiments/.../src/clips/discover-prompt.txt; tools/discover.py;
+    models/home-d/{gemma-3-12b-it-Q4_K_M.gguf (7,3 GB), bin/, gpu/};
+    reports/discover-{a,b,c,d}.json (todos com 0 cortes — resposta vazia
+    pelo bloqueio); docs/reports/history/2026-10-20_0200_...txt
+  Modified: docs/reports/LATEST.txt
+  Deleted: NONE
+
+VALIDATION
+  Typecheck: PASS (experimento 47/47; app 108/0/6)
+  Unit tests: PASS — 155 testes totais (herdados da atualização 5)
+  Runtime verification: FAIL — 4 tentativas de descoberta; todas com
+    resposta vazia (bloqueio de contexto documentado); NÃO é falha dos
+    modelos
+  Total passed: 155 testes + preservação (git status limpo)
+  Total failed: 4 execuções de descoberta (bloqueio técnico)
+
+ISSUES
+  BLOQUEIO PRINCIPAL: llama-completion 0.7.0-dev b11729 limita o
+    contexto a 8188 tokens na prática, mesmo com -c 16384/-ngl 0/sem
+    --fit. O prompt com transcrição completa (322 falas, 9402 chars de
+    texto + overhead JSON ≈ 19k chars ≈ 10438 tokens) excede esse
+    limite. A SOLUÇÃO é usar janelas (como produção faz — 2 janelas de
+    ~160 falas cada). A implementação foi iniciada mas não completada.
+  ESTADO DOS ACEITES:
+  1. Eliminar comparação mista: CUMPRIDO NO DESIGN (avaliação de TODOS
+     pelo perfil; notas históricas como proveniência apenas); NÃO
+     EXECUTADO (bloqueio).
+  2. Mesma oportunidade de descoberta: NÃO CUMPRIDO (bloqueio) — o
+     design está correto (mesma transcrição, próprios candidatos) mas
+     não executou.
+  3. Perfis A/B/C/D: CONFIGURADOS; D baixado; NENHUM executado no fluxo
+     de descoberta (bloqueio). A/B/C já comparados na atualização 5
+     (fluxo real, sem descoberta nova).
+  4. Configuração e orçamento: CUMPRIDO NO DESIGN (perfis documentados;
+     orçamento declarado); execução bloqueada.
+  5. Avaliação de qualidade: NÃO EXECUTADA (bloqueio).
+  6. Integração e entrega: PARTIAL — implementação existe (discover.py)
+     mas não executável no contexto atual; revisão não realizada
+     (nada para revisar além do bloqueio).
+
+FINAL
+  Delivery status: PARTIAL — implementação da estratégia criada mas
+    BLOQUEADA por limitação técnica específica e documentada (contexto
+    máximo do binário). O modelo D (Gemma 3 12B) foi baixado e preparado
+    mas não executado — NÃO se declara inferior por não ter rodado.
+  CAMINHO PARA DESBLOQUEAR: usar janelas na descoberta (como produção) —
+    dividir a transcrição em 2 janelas de ~160 falas, cada uma cabendo
+    em 8188 tokens. O discover.py já tem a estrutura; falta completar o
+    loop de janelas e juntar os candidatos.
+  RECOMENDAÇÃO (do que FOI validado na atualização 5): MANTER o modelo
+    vigente; o 2507 concentrou cortes na primeira metade com notas
+    menores; Gemma 3 12B não foi testado (bloqueio).
+  User action required: decidir se quer que a descoberta com janelas
+    seja completada em nova sessão; avaliação editorial dos cortes da
+    atualização 5 (flow-comparison.md); decisão de commit.
+  Ready for next task: SIM — encerrado conforme ofício; bloqueio
+    documentado; implementação preservada para retomada.
+
+REPORT
+  Latest file: docs/reports/LATEST.txt
+  Historical file: docs/reports/history/2026-10-20_0200_descoberta-cortes-comparacao-modelos.txt
+
+END OF REPORT

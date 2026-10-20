@@ -1,0 +1,17 @@
+{
+ "perfil": "b",
+ "modelo": "Qwen3 4B Instruct Awq (vendor)",
+ "config": "thinking NATURAL: sem think preenchido, SEM grammar na descoberta (-n 3000), parse pós-</think>",
+ "propostas": 0,
+ "fora_faixa": 0,
+ "construidos": 0,
+ "avaliados": 0,
+ "descoberta_s": 2.4,
+ "avaliacao_s": 0.0,
+ "total_s": 2.4,
+ "descoberta_tokens": {
+  "prompt": null,
+  "geracao": null
+ },
+ "clips": []
+}

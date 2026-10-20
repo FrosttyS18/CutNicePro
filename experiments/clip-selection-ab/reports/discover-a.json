@@ -1,0 +1,17 @@
+{
+ "perfil": "a",
+ "modelo": "Qwen3 4B Instruct Awq (vendor)",
+ "config": "non-thinking: think vazio + /no_think + grammar",
+ "propostas": 0,
+ "fora_faixa": 0,
+ "construidos": 0,
+ "avaliados": 0,
+ "descoberta_s": 3.2,
+ "avaliacao_s": 0.0,
+ "total_s": 3.2,
+ "descoberta_tokens": {
+  "prompt": null,
+  "geracao": null
+ },
+ "clips": []
+}

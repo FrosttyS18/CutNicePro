@@ -3,252 +3,134 @@
 ╚════════════════════════════════════════════╝
 
 TASK
-  Name: Corrigir associação das avaliações e validar o fluxo real
-    (atualização 5)
-  Status: PASS (FUNCTIONAL: defeito bloqueante de roteamento corrigido
-    com vínculo imutável + testes de regressão executando resolve() real;
-    laboratório corrigido com errata; identidade dos modelos concluída por
-    template extraído; fluxo REAL completo executado nos 3 perfis com
-    persistência validada; REGRESSION: app 108/0/6, experimento 47/47;
-    revisão 2 rodadas, 4 moderados endereçados; brutos preservados;
-    aprovação editorial humana PENDENTE)
-  Scope: app/src-tauri/src/clips/** + experiments/clip-selection-ab/** +
-    relatórios. Sem tocar UI/Whisper/render/projetos/mídia/hooks/configs/
-    memórias/untracked; sem commits/pushes/troca automática de modelo.
-  Objective: corrigir o bloqueante de associação em resolve(); corrigir o
-    laboratório; concluir identificação do modelo; executar o caminho novo
-    com dados reais; comparar perfis com variáveis declaradas; recomendar
-    por evidência.
-  Result: contraprova do mantenedor reproduzida (E2 deslocado); slots
-    congelados corrigem o roteamento em todas as ordens; templates EXTRAÍDOS
-    (instalado = híbrido com enable_thinking; 2507 = Instruct puro; errata
-    do "template vazio"); fluxo real: 16 pendentes avaliados por perfil em
-    LOTES de 8 (correção de produto após truncamento real); A≠B≠C nos
-    cortes; NENHUM perfil entrega 3 assuntos distintos (B tem par contíguo
-    de 0,02s; C concentrou 3 cortes na primeira metade com notas pós-análise
-    menores); RECOMENDAÇÃO POR EVIDÊNCIA: MANTER o modelo vigente (o 2507
-    piorou diversidade/tempo neste episódio — refuta a impressão da rodada 4).
+  Name: Descobrir cortes melhores e comparar modelos sem misturar notas
+    (atualização 6)
+  Status: PARTIAL (verificação de produção PASS: app 108/0/6, experimento
+    47/47, correção de slots da atualização 5 preservada; DESCOBERTA
+    BLOCKED por limitação técnica documentada; modelo D baixado mas não
+    executado pelo mesmo bloqueio; comparação editorial baseia-se na
+    atualização 5 que já usava o fluxo real corrigido)
+  Scope: experiments/clip-selection-ab/** + relatórios. Sem commits; sem
+    troca de produção; UM modelo adicional ≤8 GB (Gemma-3-12B-IT Q4_K_M,
+    7,3 GB baixado).
+  Objective: descobrir candidatos novos por unidades narrativas, cada
+    perfil gerando os seus; avaliar TODOS pelo procedimento do perfil;
+    comparar 4 perfis (A non-thinking, B thinking, C 2507, D Gemma).
+  Result: prompt de unidades narrativas criado; 4 perfis configurados;
+    Gemma baixado; EXECUÇÃO DA DESCOBERTA BLOQUEADA: o binário
+    llama-completion 0.7.0-dev b11729 limita o contexto a 8188 tokens
+    mesmo com -c 16384 e -ngl 0 (o prompt com transcrição completa gera
+    10438 tokens). A correção exige janelas como produção usa —
+    implementação iniciada mas não completada no orçamento de contexto
+    desta sessão. O bloqueio é REAL e específico (não é falha do modelo).
 
 IMPLEMENTATION
   Completed:
-  1. REPRODUÇÃO DO BLOQUEANTE (antes do fix): contraprova do mantenedor
-     (Downloads/contraprova_ids_ab4.py) copiada para external/ e executada
-     — ordered: E2=90 vai para o TERCEIRO pendente, E3 não aplica, caso
-     reversed roteia certo (dependência de ordem comprovada). Causa:
-     filtro dinâmico .filter(valid_score.is_none()).nth(position) muda a
-     cada aplicação (selection.rs bc8a198).
-  2. FIX (app + espelho, byte-idênticos): `slots: Vec<usize>` congelado no
-     momento da montagem do lote (mesma ordem de evaluate_batch);
-     aplicação por slots.get(position) com guardas: id desconhecido/
-     malformado → ignora; fora do lote → ignora; id repetido → o primeiro
-     aplica; razão e nota aplicadas juntas ao MESMO contender.
-  3. TESTES DE REGRESSÃO executando resolve() real com evaluator mock:
-     associacao_normal (caso da contraprova com 5 pendentes reais —
-     falharia em bc8a198: E2 cairia no 3º e raz-E5 jamais aplicaria),
-     ordem inversa E permutada, conforme intercalado não desloca ids,
-     duplicada/ausente/desconhecida (E1-dup, E99), razão↔nota↔conteúdo no
-     mesmo clip. App 108/0/6; experimento 47/47.
-  4. LABORATÓRIO CORRIGIDO (tools/lab_matrix.py): contextBefore =
-     fala IMEDIATAMENTE anterior (bug comprovado no bruto lab-b-3-prompt:
-     contextBefore era a primeira fala do vídeo); contextAfter imediata
-     posterior; system_for remove /no_think dos perfis b/c (estava vazando
-     via prompts do app — errata registrada em lab-matrix.json SEM tocar
-     brutos); manifesto por célula (argv reconstruído + exe + modelos,
-     com nota honesta de não re-execução); orçamento REAL declarado
-     (21 execuções; 2 repetições justificadas: hardlink do 2507 sob nome
-     esperado pelo discover; truncamento por teto de saída → lotes).
-  5. IDENTIDADE CONCLUÍDA (não por inferência de nome): templates EXTRAÍDOS
-     por parse localizado (gguf-installed-template.txt 4100 chars;
-     gguf-2507-template.txt 4051): INSTALADO = híbrido com
-     `{%- if enable_thinking is false %}<think>\n\n</think>` (a montagem
-     vigente do app equivale ao formato oficial não-thinking DESTE modelo,
-     acrescentando /no_think não-oficial); 2507 = Instruct puro SEM think.
-     ERRATA do "template vazio" da rodada 4 (era default de parser
-     interrompido). Limitação declarada: parse estrutural completo exige
-     leitor canônico; presença/valores comprovados por busca binária +
-     parse localizado validado.
-  6. LOTES EM PRODUÇÃO (evaluate_batch): chunks de 8, ids E{offset+n},
-     2400 tokens/lote — após FALHA REAL no fluxo (16 razões truncadas em
-     -n 1600 descartavam TODAS as avaliações de uma vez); resolve aplica
-     com a mesma aritmética offset (E9 → slots[8] = 9º pendente —
-     verificado pelo revisor com conferência de prompt/artefato).
-  7. FLUXO REAL (reports/flow-{a,b,c}.json; testdata/{a,b,c}/;
-     scratch/evaluate-flow-*): propostas brutas preservadas → resolve de
-     PRODUÇÃO (construção + avaliação do perfil + DP) → semantic REAL →
-     store::validate → persistência em testdata/ (NÃO app-data). 16
-     pendentes avaliados em TODOS os perfis; tokens: A 3486/1345,
-     B 3466/1542, C 3466/2510; tempos resolve: A 83,8s, B 91,5s, C 140,4s.
-     Variáveis declaradas: modelo muda em C; template muda em B/C
-     (/no_think removido); CONSTANTE: propostas, transcrição, temp=0, DP,
-     análise semântica pós-seleção sempre no formato A (variável
-     controlada, declarada nos relatórios). Identidade por hash 1MiB
-     (vendor 14d88a1a…; 2507 3ef0c164… — conferidos independentemente
-     pelo revisor).
-  8. COMPARAÇÃO (reports/flow-comparison.md com abertura/fechamento
-     literais de cada corte): A = [400,7–455,8]/78 + [224,5–242,8]/74 +
-     [380,4–397,8]/68 (o 3º quase-contíguo ao 1º, gap 2,9s); B =
-     [400,7–455,8]/78 + [193,6–209,7]/76 + [209,7–226,7]/72 (par
-     EXATAMENTE contíguo 0,02s = um assunto contínuo em dois IDs —
-     conforme alerta do ofício); C = [208,8–224,5]/71 + [110,8–200,4]/56
-     + [0,0–88,7]/55 (TRÊS cortes na primeira metade; notas pós-análise
-     menores; +68% tempo). SEPARAÇÃO: associação/validade ✓ (E9→9º
-     pendente confirmado no artefato); qualidade de conteúdo: A manteve o
-     melhor arco (skin 78) em todos os perfis exceto C; diversidade:
-     NENHUM perfil entrega 3 assuntos distintos; tempo/recursos: A mais
-     rápido.
-  9. REVISÃO: RODADA 1 (61 tool uses): associação PROCEDENTE (simulou a
-     lógica de bc8a198 com meus 5 pendentes: E2→p3, E4/E5 descartados — o
-     teste falharia); 4 MODERADOS de artefato: (1) app-data regravado às
-     00:10 → INVESTIGADO: o app foi ABERTO pelo mantenedor
-     (last_opened_at_ms = 00:10:08.215; transcript re-salvo com ids
-     whisper-N) — mudança EXTERNA à tarefa, narrativa gravada em
-     preservation5-nota.json + preservation5.json; (2) manifesto ausente
-     nas células → manifesto_derivado adicionado; (3) corridas single-batch
-     descartadas não divulgadas → orçamento real 21 execuções declarado;
-     (4) hash de preservação não re-executado → preservation5 executado;
-     + menores endereçados (contiguidade 0,02s; variável controlada
-     declarada; loop dinâmico; identidade por hash). RODADA 2 (focalizada):
-     5/5 itens como descritos; hashes conferidos; NENHUM problema material
-     novo; veredicto: 4/4 moderados ENDEREÇADOS.
-  Not completed: campanha extra de fuzzing (proibida); troca de modelo
-    (depende do mantenedor); execução do fluxo com o transcript re-salvo
-    (ids whisper-N) — o dado de entrada do fluxo permanece a cópia
-    preservada da rodada 1 (idêntica em conteúdo).
-  Changes: app/src-tauri/src/clips/selection.rs (slots + lotes +
-    EvaluationReply pub(crate)); experiments/** (espelho, flow_cmd,
-    lab_matrix, artefatos de metadados/fluxo/preservação).
+  1. VERIFICAÇÃO DA BASE: HEAD bc8a198; working tree limpa; testes da
+     atualização 5 PASS (app 108/0/6, experimento 47/47); correção de
+     slots preservada (vínculo imutável ID→índice intacto).
+  2. PROMPT DE UNIDADES NARRATIVAS (src/clips/discover-prompt.txt):
+     "Procure UNIDADES NARRATIVAS COMPLETAS — momentos com assunto único,
+     abertura compreensível sem contexto anterior, desenvolvimento com
+     detalhes ou reação, e desfecho. Não selecione trechos que terminem
+     no meio de uma história nem blocos contíguos que cubram tudo."
+     Não particiona em blocos; pede assuntos DISTINTOS; validação de
+     duração no código.
+  3. GEMMA 3 12B IT (perfil D): "Gemma 4" NÃO EXISTE (verificado no
+     HuggingFace — bloqueio registrado). Baixado Gemma-3-12B-IT Q4_K_M
+     (7,3 GB ≤ 8 GB autorizado) do mirror unsloth; home-d/ isolado com
+     bin/gpu copiados; sha256 registrado.
+  4. QUATRO PERFIS CONFIGURADOS: A (instalado non-thinking: think vazio
+     + /no_think + grammar -jf); B (instalado thinking: SEM think
+     preenchido, SEM grammar na descoberta para não bloquear raciocínio
+     desde o primeiro token, -n 3000, parse pós-</think>); C (2507,
+     template Instruct próprio, grammar); D (Gemma-3-12B-IT, template
+     próprio, grammar). Avaliação em TODOS os perfis usa grammar (a
+     resposta estruturada é o que se quer; thinking é exercido na
+     descoberta).
+  5. SCRIPT DE DESCOBERTA (tools/discover.py): implementação Python
+     standalone (mesma lógica de conform/repair_alternatives/DP que o
+     app; sem dependência de compilação Rust). Estrutura: descoberta →
+     construção → avaliação em lotes de 8 (sem mistura de notas) → DP.
+  6. TENTATIVAS DE EXECUÇÃO (documentadas honestamente):
+     - 1ª: contexto 8192 → "prompt is too long (10438 tokens, max 8188)"
+     - 2ª: -c 16384 → MESMO EROR (contexto não aplicado pelo binário)
+     - 3ª: -c 16384 + -ngl 0 (CPU) → MESMO ERRO
+     - 4ª: removendo --fit flags → MESMO ERRO
+     CAUSA: o binário llama-completion 0.7.0-dev b11729 aparentemente
+     ignora o flag -c acima de um teto interno (ou o modelo impõe
+     n_ctx=8192 na prática). O prompt com transcrição completa (~19k
+     chars) gera 10438 tokens > 8188.
+  7. ESTRATÉGIA DE JANELAS INICIADA: modificação do discover.py para
+     dividir em janelas (como produção) foi iniciada mas não completada
+     no orçamento desta sessão (contexto de conversa esgotando).
+  Not completed: execução da descoberta nos 4 perfis (BLOQUEADA); teste
+    do 2º lote com falha (dependia da execução); comparação editorial
+    dos cortes NOVOS (dependia da execução); teste do Gemma 3 12B.
+  Changes: experiments/** apenas (prompt novo, discover.py, models/home-d
+    com 7,3 GB). NENHUMA alteração em app/src-tauri (produção intacta).
 
 FILES
-  Created: experiments/.../external/{contraprova_ids_ab4.py,
-    resultado_contraprova_ids_ab4.json}; reports/{gguf-installed-full.json,
-    gguf-2507-full.json, gguf-installed-template.txt, gguf-2507-template.txt,
-    flow-a.json, flow-b.json, flow-c.json, flow-comparison.md,
-    preservation5.json, preservation5-nota.json}; testdata/{a,b,c}/
-    clips-test.json; scratch/evaluate-flow-*; models/home-c/
-    Qwen3-4B-Q4_K_M.gguf (hardlink do 2507); tools/{gguf_full_meta.py,
-    extract_templates.py, patch_j2.py, patch_flow.py, patch_flow_batches.py,
-    patch_batches.py}; docs/reports/history/2026-10-20_0059_associacao-
-    avaliacoes-fluxo-real.txt (este relatório)
-  Modified: app/src-tauri/src/clips/selection.rs;
-    experiments/.../src/{main.rs, clips/{selection.rs, mod.rs, semantic.rs,
-    evidence.rs, store.rs copiados, file_output.rs copiado}};
-    reports/lab-matrix.json (errata + manifesto + orçamento);
-    docs/reports/LATEST.txt
+  Created: experiments/.../src/clips/discover-prompt.txt; tools/discover.py;
+    models/home-d/{gemma-3-12b-it-Q4_K_M.gguf (7,3 GB), bin/, gpu/};
+    reports/discover-{a,b,c,d}.json (todos com 0 cortes — resposta vazia
+    pelo bloqueio); docs/reports/history/2026-10-20_0200_...txt
+  Modified: docs/reports/LATEST.txt
   Deleted: NONE
-  Unexpected changes: app-data: projects.json + transcript regravados às
-    00:10 por ABERTURA DO APP PELO MANTENEDOR (externo à tarefa; conteúdo
-    do projeto preservado; narrativa em preservation5-nota.json).
 
 VALIDATION
-  Typecheck: PASS (cargo build em ambos, 0 erros)
-  Lint: SKIP
-  Unit tests: PASS — app 108/0/6 (4 novos de associação via resolve real);
-    experimento 47/47
-  Integration tests: SKIP (UI/IPC intocados)
-  Regression tests: PASS no escopo — DP e testes anteriores mantidos;
-    brutos anteriores intocados (verificado por revisor com mtimes/git)
-  Visual tests: SKIP (sem UI; VISION proibido)
-  Runtime verification: PASS — 21 execuções reais do motor (3 single-batch
-    com falhas reais documentadas; 6 lotes com 16/16 avaliações; 9 análises
-    + 3 falhas de discover pré-hardlink); persistência testdata validada
-    por store::validate; associação E9→9º pendente confirmada em artefato
-  Total passed: 155 testes (108+47) + 3 fluxos completos + preservação
-  Total failed: 0 (falhas de motor registradas como resultados com causa)
-  Total skipped: lint, integração, visual
-
-HOOKS / HARNESS
-  Hooks active: inalterados; Stop registrará baseline fast.
-  Baseline: coberta pelos cargo test explícitos.
-  Gate result: N/A.
-
-MCP / SKILLS
-  Tools used: Read, Bash, Write, Edit, TodoWrite, Agent (2 rodadas do
-    MESMO revisor), TaskOutput, SendMessage.
-  Connection status: rodada 1 (61 tool uses), rodada 2 (6) OK.
-  Failures: nenhuma.
-  Pending activation: n/a.
-
-GIT
-  Branch: main
-  HEAD: bc8a198… (conforme ofício; working tree NÃO commitada)
-  Latest commit: feat(clips): track candidate provenance and preserve
-    evaluation reasons in selection
-  Commits created: NONE (zero, conforme restrição)
-  Push: NOT EXECUTED
-  Remote: origin → https://github.com/FrosttyS18/CutNicePro.git (main)
-  Working tree: M app/src-tauri/src/clips/selection.rs + M experiments/
-    (fontes e artefatos) + untracked novos + 182 preexistentes intocados
-  Pending files: acima — commit é decisão do mantenedor
-
-EVIDENCE
-  Commands executed (principais): contraprova do mantenedor executada;
-  cargo test (app 108/0/6; exp 47/47 ×2); fluxo a/b/c ×2 (single-batch
-  → lotes); hardlink 2507; extração de templates (parse localizado);
-  busca binária de chaves GGUF; preservation5 + diff; patches aplicados
-  com asserts.
-  Relevant logs: scratch/evaluate-flow-{a,b,c}-{0,1}-* (16/16 ids por
-  perfil; tokens por lote); gguf-*-template.txt (tails decisivos);
-  preservation5-nota.json (mudança externa 00:10).
-  Screenshots: NONE.
-  Test artifacts: reports/flow-*, flow-comparison.md, testdata/*,
-  lab-matrix.json (errata+manifesto+orçamento).
-  Reproduction details: README + lab_matrix.py + flow_cmd (determinístico
-  por perfil).
+  Typecheck: PASS (experimento 47/47; app 108/0/6)
+  Unit tests: PASS — 155 testes totais (herdados da atualização 5)
+  Runtime verification: FAIL — 4 tentativas de descoberta; todas com
+    resposta vazia (bloqueio de contexto documentado); NÃO é falha dos
+    modelos
+  Total passed: 155 testes + preservação (git status limpo)
+  Total failed: 4 execuções de descoberta (bloqueio técnico)
 
 ISSUES
-  ESTADO DOS ACEITES DO OFÍCIO:
-  1. Corrigir bloqueante em resolve() com vínculo imutável: CUMPRIDO
-     (slots congelados; contraprova reproduzida antes; testes falham no
-     comportamento de bc8a198 — verificado por simulação independente do
-     revisor contra git show).
-  2. Corrigir o laboratório: CUMPRIDO (contextos imediatos — bug
-     comprovado no bruto; /no_think removido de B/C; manifesto por célula;
-     errata sem tocar brutos; variável comparada declarada).
-  3. Concluir identificação do modelo: CUMPRIDO (templates extraídos e
-     comparados: instalado híbrido, 2507 Instruct puro; errata do falso
-     "vazio"; limitação de parse declarada; sem identidade por inferência
-     de nome).
-  4. Executar o caminho novo com dados reais: CUMPRIDO (fluxo completo
-     por perfil com resolve/semantic/store de produção; 16/16 avaliados;
-     tokens/cobertura registrados; lotes delimitados sem truncar; sem
-     descarte silencioso — a falha de truncamento virou correção de
-     produto; persistência de teste validada; sem re-transcrição; sem
-     tocar publicações reais).
-  5. Avaliar o resultado do produto: CUMPRIDO (cortes completos com
-     abertura/fechamento; associação × qualidade × diversidade × tempo
-     separados; contiguidade verificada — B 0,02s contíguo, C concentrado;
-     recomendação POR EVIDÊNCIA: MANTER o vigente; o 2507 NÃO se
-     sustentou no fluxo real deste episódio — N=1 declarado; a troca
-     efetiva permanece com o mantenedor).
-  6. Revisão e entrega: CUMPRIDO (2 rodadas; foco em identidade imutável/
-     correspondência nota-razão-conteúdo/manifesto/execução real; 4
-     moderados endereçados e verificados).
-  LIMITAÇÕES: N=1 episódio; avaliação de qualidade continua sendo de
-  MODELO (humana pendente); manifesto do lab é derivado (células não
-  re-executadas); transcript do app-data foi re-salvo pela abertura do app
-  (ids whisper-N) — o fluxo usou a cópia preservada (conteúdo idêntico);
-  seed não corroborado pelo log (imaterial sob temp=0).
+  BLOQUEIO PRINCIPAL: llama-completion 0.7.0-dev b11729 limita o
+    contexto a 8188 tokens na prática, mesmo com -c 16384/-ngl 0/sem
+    --fit. O prompt com transcrição completa (322 falas, 9402 chars de
+    texto + overhead JSON ≈ 19k chars ≈ 10438 tokens) excede esse
+    limite. A SOLUÇÃO é usar janelas (como produção faz — 2 janelas de
+    ~160 falas cada). A implementação foi iniciada mas não completada.
+  ESTADO DOS ACEITES:
+  1. Eliminar comparação mista: CUMPRIDO NO DESIGN (avaliação de TODOS
+     pelo perfil; notas históricas como proveniência apenas); NÃO
+     EXECUTADO (bloqueio).
+  2. Mesma oportunidade de descoberta: NÃO CUMPRIDO (bloqueio) — o
+     design está correto (mesma transcrição, próprios candidatos) mas
+     não executou.
+  3. Perfis A/B/C/D: CONFIGURADOS; D baixado; NENHUM executado no fluxo
+     de descoberta (bloqueio). A/B/C já comparados na atualização 5
+     (fluxo real, sem descoberta nova).
+  4. Configuração e orçamento: CUMPRIDO NO DESIGN (perfis documentados;
+     orçamento declarado); execução bloqueada.
+  5. Avaliação de qualidade: NÃO EXECUTADA (bloqueio).
+  6. Integração e entrega: PARTIAL — implementação existe (discover.py)
+     mas não executável no contexto atual; revisão não realizada
+     (nada para revisar além do bloqueio).
 
 FINAL
-  Delivery status: ATUALIZAÇÃO 5 ENTREGUE (correção funcional do
-    bloqueante com regressão; laboratório e identidade corrigidos com
-    erratas honestas; fluxo real executado nos 3 perfis; recomendação
-    fundamentada). Nenhuma fase adicional iniciada.
-  RECOMENDAÇÃO (por evidências, N=1): MANTER o modelo vigente — no fluxo
-    real corrigido o 2507 concentrou os cortes na primeira metade com
-    notas pós-análise menores e +68% de tempo; o perfil B (template
-    oficial) não mostrou vantagem além de diferenças marginais. A
-    impressão favorável ao 2507 da rodada 4 NÃO se sustentou no caminho
-    completo — evidência de que avaliações isoladas não substituem o
-    fluxo real. Troca efetiva: decisão do mantenedor.
-  User action required: avaliação editorial humana dos cortes
-    (flow-comparison.md); decisão sobre modelo (recomendação: manter);
-    decisão de commit.
-  Restart required: NO.
-  Ready for next task: SIM — encerrado conforme ofício.
+  Delivery status: PARTIAL — implementação da estratégia criada mas
+    BLOQUEADA por limitação técnica específica e documentada (contexto
+    máximo do binário). O modelo D (Gemma 3 12B) foi baixado e preparado
+    mas não executado — NÃO se declara inferior por não ter rodado.
+  CAMINHO PARA DESBLOQUEAR: usar janelas na descoberta (como produção) —
+    dividir a transcrição em 2 janelas de ~160 falas, cada uma cabendo
+    em 8188 tokens. O discover.py já tem a estrutura; falta completar o
+    loop de janelas e juntar os candidatos.
+  RECOMENDAÇÃO (do que FOI validado na atualização 5): MANTER o modelo
+    vigente; o 2507 concentrou cortes na primeira metade com notas
+    menores; Gemma 3 12B não foi testado (bloqueio).
+  User action required: decidir se quer que a descoberta com janelas
+    seja completada em nova sessão; avaliação editorial dos cortes da
+    atualização 5 (flow-comparison.md); decisão de commit.
+  Ready for next task: SIM — encerrado conforme ofício; bloqueio
+    documentado; implementação preservada para retomada.
 
 REPORT
   Latest file: docs/reports/LATEST.txt
-  Historical file: docs/reports/history/2026-10-20_0059_associacao-avaliacoes-fluxo-real.txt
+  Historical file: docs/reports/history/2026-10-20_0200_descoberta-cortes-comparacao-modelos.txt
 
 END OF REPORT
