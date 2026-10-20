@@ -1,0 +1,19 @@
+{
+"items": [
+    {
+        "id": "E1",
+        "score": 75,
+        "reason": "O trecho aborda o tema de jogos e problemas com o IA, mas a narrativa é fragmentada e não apresenta uma história clara. Há referências a problemas técnicos e críticas a jogos, mas não há uma conclusão ou gancho que conecte os elementos. O início e o fim não são frases completas, e o trecho parece mais como uma sequência de comentários do que uma história coesa."
+    },
+    {
+        "id": "E2",
+        "score": 85,
+        "reason": "O trecho é mais coeso e aborda o tema de skins e jogos de forma mais clara. Há uma crítica direta a uma prática comercial (vender skins bugadas) e uma referência a uma empresa (Valve) que resolveu o problema. A narrativa tem um gancho claro (a crítica a uma prática comercial) e termina com uma observação final que conecta os elementos. O início e o fim são frases completas, e o trecho não termina em publicidade."
+    },
+    {
+        "id": "E3",
+        "score": 65,
+        "reason": "O trecho é fragmentário e não apresenta uma história clara. Há referências a problemas técnicos e a uma situação de jogo, mas não há uma narrativa coesa. O início e o fim não são frases completas, e o trecho parece mais como uma sequência de observações do que uma história com gancho. A crítica é mais direta, mas não há uma conclusão ou desenvolvimento claro."
+    }
+]
+} [end of text]

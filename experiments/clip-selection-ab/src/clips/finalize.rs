@@ -493,6 +493,55 @@ struct JointReply {
 /// Rerank editorial com conteúdo INTEGRAL (atualização 3): sem nota inicial
 /// na entrada, sem dedupe (refutada), sem truncamento de texto, com
 /// contexto externo identificado separadamente e IDs estáveis.
+/// Aplicação PURA de escolhas (testável sem LLM): valida ids, limite,
+/// sobreposição (registro explícito) e devolve clipes + detalhes. Usada
+/// por rerank_full e pelo teste de replay da resposta salva.
+pub fn apply_picks(
+    all: &[Clip],
+    picks: Vec<(String, u8, String)>,
+    count: usize,
+) -> (Vec<Clip>, serde_json::Value) {
+    let mut chosen: Vec<Clip> = Vec::new();
+    let mut picks_raw: Vec<serde_json::Value> = Vec::new();
+    let mut beyond: Vec<String> = Vec::new();
+    let mut invalid: Vec<String> = Vec::new();
+    let mut overlap_discarded: Vec<serde_json::Value> = Vec::new();
+    for (id, score, reason) in picks {
+        picks_raw.push(serde_json::json!({"id": id, "score": score, "reason": reason}));
+        if chosen.len() == count {
+            beyond.push(id);
+            continue;
+        }
+        let index = match id.strip_prefix('C').and_then(|n| n.parse::<usize>().ok()) {
+            Some(number) if number >= 1 && number <= all.len() => number - 1,
+            _ => {
+                invalid.push(id);
+                continue;
+            }
+        };
+        let clip = &all[index];
+        if chosen.iter().any(|other| overlaps(clip, other)) {
+            overlap_discarded.push(serde_json::json!({
+                "id": id, "score": score, "intervalo": [clip.start, clip.end],
+                "motivo": "sobrepõe escolha anterior do próprio rerank",
+            }));
+            continue;
+        }
+        let mut clip = clip.clone();
+        clip.score = score;
+        clip.reasons.push(format!("Rerank integral: {reason}"));
+        chosen.push(clip);
+    }
+    let details = serde_json::json!({
+        "picks_total": picks_raw.len(),
+        "picks": picks_raw,
+        "picks_beyond_limit": beyond,
+        "invalid_picks": invalid,
+        "overlap_discarded": overlap_discarded,
+    });
+    (chosen, details)
+}
+
 pub fn rerank_full(
     base: &Path,
     scratch: &Path,
@@ -564,37 +613,20 @@ pub fn rerank_full(
             return joint_fallback(all.to_vec(), options, started, format!("resposta inválida: {error}"))
         }
     };
-    let mut chosen: Vec<Clip> = Vec::new();
-    let mut picks_raw: Vec<serde_json::Value> = Vec::new();
-    let mut beyond: Vec<String> = Vec::new();
-    let mut invalid: Vec<String> = Vec::new();
-    let mut overlap_discarded: Vec<serde_json::Value> = Vec::new();
-    for pick in picks {
-        picks_raw.push(serde_json::json!({"id": pick.id, "score": pick.score, "reason": pick.reason}));
-        if chosen.len() == options.count {
-            beyond.push(pick.id);
-            continue;
-        }
-        let index = match pick.id.strip_prefix('C').and_then(|n| n.parse::<usize>().ok()) {
-            Some(number) if number >= 1 && number <= all.len() => number - 1,
-            _ => {
-                invalid.push(pick.id);
-                continue;
-            }
-        };
-        let mut clip = all[index].clone();
-        if chosen.iter().any(|other| overlaps(&clip, other)) {
-            overlap_discarded.push(serde_json::json!({
-                "id": pick.id, "score": pick.score,
-                "intervalo": [clip.start, clip.end],
-                "motivo": "sobrepõe escolha anterior do próprio rerank",
-            }));
-            continue;
-        }
-        clip.score = pick.score;
-        clip.reasons.push(format!("Rerank integral: {}", pick.reason));
-        chosen.push(clip);
-    }
+    let flat: Vec<(String, u8, String)> = picks
+        .into_iter()
+        .map(|pick| (pick.id, pick.score, pick.reason))
+        .collect();
+    let (chosen, applied) = apply_picks(all, flat, options.count);
+    let details = serde_json::json!({
+        "presented": all.len(),
+        "prompt_chars": prompt.chars().count(),
+    });
+    let details = serde_json::Value::Object(
+        details.as_object().unwrap().clone().into_iter()
+            .chain(applied.as_object().unwrap().clone().into_iter())
+            .collect(),
+    );
     if chosen.is_empty() {
         return joint_fallback(all.to_vec(), options, started, "nenhuma escolha validou".into());
     }
@@ -604,15 +636,7 @@ pub fn rerank_full(
         clips: chosen,
         discards: Vec::new(),
         fallback: None,
-        details: Some(serde_json::json!({
-            "presented": all.len(),
-            "prompt_chars": prompt.chars().count(),
-            "picks_total": picks_raw.len() + beyond.len() + invalid.len() + overlap_discarded.len(),
-            "picks": picks_raw,
-            "picks_beyond_limit": beyond,
-            "invalid_picks": invalid,
-            "overlap_discarded": overlap_discarded,
-        })),
+        details: Some(details),
     }
 }
 
@@ -966,6 +990,31 @@ mod tests {
             apos_poda.clips.iter().map(|c| i64::from(c.score)).sum::<i64>(),
             95
         );
+    }
+
+    #[test]
+    fn replay_da_resposta_salva_3_recebidas_1_descartada_2_entregues() {
+        // fixture fiel aos picks de scratch/rerank-full-result.json:
+        // C1=85 [110,8–200,4]; C3=80 [209,7–226,7]; C5=75 [224,5–242,8]
+        let all = vec![
+            clip("c1", 110.8, 200.4, 85),
+            clip("c2", 400.7, 455.8, 85),
+            clip("c3", 209.7, 226.7, 80),
+            clip("c4", 483.3, 505.7, 80),
+            clip("c5", 224.5, 242.8, 75),
+        ];
+        let picks = vec![
+            ("C1".into(), 85u8, "escolha 1".into()),
+            ("C3".into(), 80u8, "escolha 2".into()),
+            ("C5".into(), 75u8, "escolha 3".into()),
+        ];
+        let (chosen, details) = apply_picks(&all, picks, 3);
+        assert_eq!(details["picks_total"], 3, "3 escolhas recebidas");
+        assert_eq!(chosen.len(), 2, "2 clipes entregues");
+        assert_eq!(details["overlap_discarded"].as_array().unwrap().len(), 1);
+        assert_eq!(details["overlap_discarded"][0]["id"], "C5");
+        assert_eq!(chosen[0].id, "c1");
+        assert_eq!(chosen[1].id, "c3");
     }
 
     #[test]

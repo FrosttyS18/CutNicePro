@@ -263,8 +263,8 @@ fn build_v2_cmd() {
                 duration,
                 &options,
             ) {
-                Ok(clip) => {
-                    all.push(clip);
+                Ok(contender) => {
+                    all.push(contender.clip);
                     conformes += 1;
                 }
                 Err(rejected) => invalid.push(rejected),
@@ -274,18 +274,19 @@ fn build_v2_cmd() {
         let mut reparadas = 0usize;
         let mut descartadas = 0usize;
         for rejected in invalid {
-            match clips::selection::repair(
+            for mut contender in clips::selection::repair_alternatives(
                 rejected,
                 &transcript.segments,
                 &transcript.media_id,
                 duration,
                 &options,
             ) {
-                Some(clip) => {
-                    all.push(clip);
-                    reparadas += 1;
-                }
-                None => descartadas += 1,
+                // alternativa sem avaliação: score 0 no artefato (a nota
+                // herdada é proveniência, não avaliação — evita viés nas
+                // comparações; reasons registram a origem)
+                contender.clip.score = 0;
+                all.push(contender.clip);
+                reparadas += 1;
             }
         }
         eprintln!(

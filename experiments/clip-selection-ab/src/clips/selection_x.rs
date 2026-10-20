@@ -80,10 +80,10 @@ pub fn collect(
         // as rodadas novas usam build-v2.
         for candidate in reply.candidates.into_iter().take(limit) {
             if range.contains(&candidate.first_id) && range.contains(&candidate.last_id) {
-                if let Ok(clip) =
+                if let Ok(contender) =
                     selection::conform(candidate, segments, media, duration, options)
                 {
-                    all.push(clip);
+                    all.push(contender.clip);
                 }
             }
         }

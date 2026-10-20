@@ -1,0 +1,9 @@
+<|im_start|>system
+Você é um assistente que responde exclusivamente em JSON. /no_think<|im_end|>
+<|im_start|>user
+{"pergunta": "Some 17 e 25.", "instrucao": "Responda o valor da soma."}<|im_end|>
+<|im_start|>assistant
+<think>
+
+</think>
+

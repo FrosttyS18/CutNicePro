@@ -1,0 +1,104 @@
+{
+ "declarado_antes": "matriz 3 perfis x 3 casos; temp=0; 1 execucao por celula; falhas contam como resultado",
+ "perfis": {
+  "a": "vigente: /no_think + bloco think vazio preenchido; modelo instalado (metadados em reports/gguf-installed-metadata.json)",
+  "b": "template oficial Instruct (sem /no_think, sem bloco think); mesmo modelo instalado",
+  "c": "mesmo formato de B; Qwen3-4B-Instruct-2507-Q4_K_M em models/home-c (origem: mirror NAO-gated huggingface.co/unsloth/Qwen3-4B-Instruct-2507-GGUF — o repo oficial Qwen e gated e recusou download anonimo; mesmo modelo, licenca Apache-2.0; sha256 em models/*.sha256)"
+ },
+ "modelo_instalado_nome": "Qwen3 4B Instruct Awq",
+ "modelo_2507_nome": "Qwen3-4B-Instruct-2507",
+ "celulas": [
+  {
+   "perfil": "a",
+   "caso": "1",
+   "exit": 0,
+   "elapsed_s": 3.0,
+   "prompt_tokens": 63,
+   "gen_tokens": 8,
+   "raw": "{\"soma\": 42} [end of text]",
+   "erro": null
+  },
+  {
+   "perfil": "a",
+   "caso": "2",
+   "exit": 0,
+   "elapsed_s": 21.9,
+   "prompt_tokens": 1270,
+   "gen_tokens": 330,
+   "raw": "{\n  \"items\": [\n    {\n      \"id\": \"E1\",\n      \"score\": 65,\n      \"reason\": \"O trecho apresenta uma narrativa com elementos de crítica e humor, mas a história não é claramente desenvolvida. Há referências a jogos e problemas técnicos, mas não há uma conclusão forte ou um gancho que conecte os elementos. O trecho termina em meio a uma frase incompleta, o que limita sua impacto.\"\n    },\n    {\n      \"id\": \"E2\",\n      \"score\": 85,\n      \"reason\": \"O trecho é dinâmico, com uma narrativa clara e uma crítica direta a uma prática comum no gaming. O humor é apropriado e o trecho termina com uma frase forte que ressalta a crítica. Há uma estrutura que sugere uma história com início, desenvolvimento e conclusão, embora o final seja mais focado na crítica do que em uma conclusão final.\"\n    },\n    {\n      \"id\": \"E3\",\n      \"score\": 60,\n      \"reason\": \"O trecho é mais fragmentário e não apresenta uma narrativa coerente. Há referências a jogos e uma crítica, mas a história não é claramente desenvolvida. O trecho termina com uma frase incompleta, o que limita sua impacto. A falta de uma conclusão forte e uma narrativa coesa reduz a eficácia do trecho.\"\n    }\n  ]\n} [end of text]",
+   "erro": null
+  },
+  {
+   "perfil": "a",
+   "caso": "3",
+   "exit": 0,
+   "elapsed_s": 25.6,
+   "prompt_tokens": 2939,
+   "gen_tokens": 193,
+   "raw": "{\n  \"picks\": [\n    {\n      \"id\": \"C1\",\n      \"score\": 85,\n      \"reason\": \"O trecho aborda uma crítica direta ao jogo e apresenta uma narrativa clara com elementos de humor e crítica social, mantendo a coesão com o contexto anterior e posterior.\"\n    },\n    {\n      \"id\": \"C2\",\n      \"score\": 80,\n      \"reason\": \"O trecho é direto e contido, com uma crítica clara e uma conclusão forte, mas com menos desenvolvimento narrativo em comparação ao C1.\"\n    },\n    {\n      \"id\": \"C3\",\n      \"score\": 78,\n      \"reason\": \"O trecho é coerente e contido, mas apresenta uma narrativa mais fragmentada e menos impactante em comparação aos outros candidatos.\"\n    }\n  ]\n} [end of text]",
+   "erro": null
+  },
+  {
+   "perfil": "b",
+   "caso": "1",
+   "exit": 0,
+   "elapsed_s": 3.1,
+   "prompt_tokens": 58,
+   "gen_tokens": 8,
+   "raw": "{\"soma\": 42} [end of text]",
+   "erro": null
+  },
+  {
+   "perfil": "b",
+   "caso": "2",
+   "exit": 0,
+   "elapsed_s": 23.6,
+   "prompt_tokens": 1265,
+   "gen_tokens": 373,
+   "raw": "{\n\"items\": [\n    {\n        \"id\": \"E1\",\n        \"score\": 75,\n        \"reason\": \"O trecho aborda o tema de jogos e problemas com o IA, mas a narrativa é fragmentada e não apresenta uma história clara. Há referências a problemas técnicos e críticas a jogos, mas não há uma conclusão ou gancho que conecte os elementos. O início e o fim não são frases completas, e o trecho parece mais como uma sequência de comentários do que uma história coesa.\"\n    },\n    {\n        \"id\": \"E2\",\n        \"score\": 85,\n        \"reason\": \"O trecho é mais coeso e aborda o tema de skins e jogos de forma mais clara. Há uma crítica direta a uma prática comercial (vender skins bugadas) e uma referência a uma empresa (Valve) que resolveu o problema. A narrativa tem um gancho claro (a crítica a uma prática comercial) e termina com uma observação final que conecta os elementos. O início e o fim são frases completas, e o trecho não termina em publicidade.\"\n    },\n    {\n        \"id\": \"E3\",\n        \"score\": 65,\n        \"reason\": \"O trecho é fragmentário e não apresenta uma história clara. Há referências a problemas técnicos e a uma situação de jogo, mas não há uma narrativa coesa. O início e o fim não são frases completas, e o trecho parece mais como uma sequência de observações do que uma história com gancho. A crítica é mais direta, mas não há uma conclusão ou desenvolvimento claro.\"\n    }\n]\n} [end of text]",
+   "erro": null
+  },
+  {
+   "perfil": "b",
+   "caso": "3",
+   "exit": 0,
+   "elapsed_s": 24.2,
+   "prompt_tokens": 2934,
+   "gen_tokens": 159,
+   "raw": "{\n\"picks\": [\n    {\"id\": \"C1\", \"score\": 85, \"reason\": \"Conteúdo mais coeso e com uma narrativa mais clara, com elementos que se conectam melhor com o contexto anterior e posterior.\"},\n    {\"id\": \"C2\", \"score\": 75, \"reason\": \"Texto direto e com clareza, mas com uma estrutura que pode parecer mais abrupta em comparação com os outros candidatos.\"},\n    {\"id\": \"C3\", \"score\": 70, \"reason\": \"Mantém a continuidade do tema, mas com uma abordagem mais analítica e menos dinâmica em comparação aos outros candidatos.\"}\n]\n} [end of text]",
+   "erro": null
+  },
+  {
+   "perfil": "c",
+   "caso": "1",
+   "exit": 0,
+   "elapsed_s": 3.0,
+   "prompt_tokens": 58,
+   "gen_tokens": 8,
+   "raw": "{\"soma\": 42} [end of text]",
+   "erro": null
+  },
+  {
+   "perfil": "c",
+   "caso": "2",
+   "exit": 0,
+   "elapsed_s": 32.9,
+   "prompt_tokens": 1265,
+   "gen_tokens": 603,
+   "raw": "{\n  \"items\": [\n    {\n      \"id\": \"E1\",\n      \"score\": 85,\n      \"reason\": \"O trecho apresenta um gancho claro com uma situação engraçada e problemática (falta de thumb na barba, crachá, apagamento do save), desenvolve com um fluxo natural de observação e crítica sobre o uso de IA em jogos, especialmente no Battlefield 6. O tom é coloquial, com humor e ironia, e o foco está na descoberta de um problema real (skins geradas por IA que não são boas). A conclusão é direta e não termina em publicidade. O contexto antes e depois é coerente com o tema. A estrutura é clara: problema → observação → crítica → conclusão. O único ponto fraco é a repetição de frases como 'é, é' e a falta de um ponto final mais impactante, mas o conteúdo é compreensível e envolvente.\"\n    },\n    {\n      \"id\": \"E2\",\n      \"score\": 92,\n      \"reason\": \"O trecho tem um início forte com a frase 'Que porra é essa?', que cria imediata tensão e envolvimento. A crítica sobre skins bugadas e a história da skin da Valve é clara, bem desenvolvida e com um gancho emocional (o jogador que esperou por uma skin e acabou com uma merda). O exemplo da Valve é relevante e bem aplicado, mostrando uma solução inteligente que valoriza o mercado. A estrutura é perfeita: problema → exemplo real → crítica → conclusão com impacto (a skin antiga valendo 3 mil reais). O tom é direto, com humor e ironia, e o final é forte e não termina em publicidade. É um dos melhores trechos por sua clareza, impacto e relevância.\"\n    },\n    {\n      \"id\": \"E3\",\n      \"score\": 58,\n      \"reason\": \"O trecho é muito curto e fragmentado, com frases incompletas e sem clareza de contexto. A ideia de 'o PC vai voar igual o carro dela' é confusa e não está bem conectada ao que foi dito antes. A menção ao 'Sobretudão' e 'Makita' parece ser um erro de transcrição ou entendimento. O desenvolvimento é fraco, sem gancho claro, e a conclusão é abrupta. O texto parece ter sido mal interpretado ou mal editado. Falta uma narrativa coerente, desenvolvimento e uma conclusão bem definida. É um trecho fraco em termos de estrutura e compreensão do público.\"\n    }\n  ]\n} [end of text]",
+   "erro": null
+  },
+  {
+   "perfil": "c",
+   "caso": "3",
+   "exit": 0,
+   "elapsed_s": 32.2,
+   "prompt_tokens": 2934,
+   "gen_tokens": 329,
+   "raw": "{\"picks\": [{\"id\": \"C1\", \"score\": 98, \"reason\": \"Contém uma narrativa clara e envolvente com gancho (o que aconteceu com a barba), desenvolvimento (descrição do problema e do erro no jogo), e uma conclusão com impacto (acusações contra a EA com base em evidências visuais). O texto é completo, autônomo e tem um fluxo natural de pensamento que conecta o início ao fim com uma crítica bem fundamentada.\"}, {\"id\": \"C7\", \"score\": 92, \"reason\": \"Apresenta uma análise profunda e bem estruturada sobre o problema de skins bugadas no jogo, com exemplo concreto (a skin da estátua que virou merda), referência a uma prática bem-sucedida (Valve), e uma conclusão com impacto econômico (a skin antiga vale 3 mil reais). É um argumento claro, com base em fatos e uma crítica direta ao modelo de negócio.\"}, {\"id\": \"C11\", \"score\": 85, \"reason\": \"Tem um gancho interessante (o PC está ruim) e uma crítica direta à EA sobre a falta de atenção aos detalhes. Apesar de ser mais curto e menos desenvolvido, traz uma observação específica e relevante que conecta com o contexto anterior. É um bom ponto de entrada, mas menos completo do que C1 e C7.\"}]} [end of text]",
+   "erro": null
+  }
+ ],
+ "nota_tentativas": "2a tentativa (coleta corrigida: stdout gravado; tokens re-parseados dos logs). 1a tentativa descartada por falha de INSTRUMENTACAO (stdout descartado; sem impacto nas execucoes — respostas identicas eram invisiveis); declarado aqui conforme oficio.",
+ "tokens_nota": "prompt_tokens = tokens de prompt eval; gen_tokens = tokens de geração; linhas 'tokens per second' ignoradas."
+}

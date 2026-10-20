@@ -1,0 +1,1 @@
+{"type": "object", "additionalProperties": false, "required": ["items"], "properties": {"items": {"type": "array", "maxItems": 3, "items": {"type": "object", "additionalProperties": false, "required": ["id", "score", "reason"], "properties": {"id": {"type": "string"}, "score": {"type": "integer", "minimum": 0, "maximum": 100}, "reason": {"type": "string"}}}}}}

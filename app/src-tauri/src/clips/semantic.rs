@@ -62,11 +62,24 @@ pub fn run(
     control.check()?;
     clip.score = analysis.score();
     clip.title = analysis.title.clone();
-    clip.reasons = analysis
+    // preserva a proveniência (alternativa/avaliação do intervalo) e
+    // acrescenta os critérios — não substitui.
+    let provenance: Vec<String> = clip
+        .reasons
+        .iter()
+        .filter(|reason| {
+            reason.contains("proveniência") || reason.contains("Avaliação do intervalo")
+        })
+        .cloned()
+        .collect();
+    let criteria: Vec<String> = analysis
         .criteria
         .iter()
         .map(|item| item.explanation.clone())
         .collect();
+    let mut merged = provenance;
+    merged.extend(criteria);
+    clip.reasons = merged;
     clip.analysis = Some(analysis);
     clip.analysis_error = None;
     Ok(())

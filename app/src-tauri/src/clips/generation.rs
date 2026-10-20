@@ -26,11 +26,24 @@ fn analyze(
         if let Some(analysis) = &clip.analysis {
             clip.title = analysis.title.clone();
             clip.score = analysis.score();
-            clip.reasons = analysis
+            // preserva a proveniência (marcações de alternativa/avaliação
+            // do intervalo) e acrescenta os critérios — não substitui.
+            let provenance: Vec<String> = clip
+                .reasons
+                .iter()
+                .filter(|reason| {
+                    reason.contains("proveniência") || reason.contains("Avaliação do intervalo")
+                })
+                .cloned()
+                .collect();
+            let criteria: Vec<String> = analysis
                 .criteria
                 .iter()
                 .map(|item| item.explanation.clone())
                 .collect();
+            let mut merged = provenance;
+            merged.extend(criteria);
+            clip.reasons = merged;
         } else if let Err(error) = action(clip) {
             control.check()?;
             eprintln!("[clips] analysis {}: {error}", clip.id);
@@ -53,6 +66,11 @@ pub fn run(
     control: &ProcessControl,
     mut progress: impl FnMut(u8),
 ) -> Result<ClipCollection, String> {
+    let evaluator = |pending: &[Clip],
+                     segments: &[crate::transcription::types::Segment]|
+     -> Result<Vec<(String, u8, String)>, String> {
+        selection::evaluate_batch(base, scratch, pending, segments, control)
+    };
     let mut clips = selection::select(
         base,
         scratch,
@@ -61,6 +79,7 @@ pub fn run(
         request.duration,
         request.options,
         control,
+        &evaluator,
         |percent| progress(percent / 2),
     )?;
     scene_regions::refine(
