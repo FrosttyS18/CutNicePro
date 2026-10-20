@@ -1,0 +1,59 @@
+- generic [active] [ref=f4e1]:
+  - generic [ref=f4e2]:
+    - complementary [ref=f4e11]:
+      - link "SupoClip" [ref=f4e12] [cursor=pointer]:
+        - /url: /
+      - link "New generation N" [ref=f4e13] [cursor=pointer]:
+        - /url: /
+        - generic [ref=f4e15]: New generation
+        - generic [ref=f4e16]: "N"
+      - navigation "Main navigation" [ref=f4e17]:
+        - link "Create" [ref=f4e18] [cursor=pointer]:
+          - /url: /
+        - link "Library" [ref=f4e23] [cursor=pointer]:
+          - /url: /list
+        - link "Social" [ref=f4e27] [cursor=pointer]:
+          - /url: /settings/social
+        - link "Analytics" [ref=f4e35] [cursor=pointer]:
+          - /url: /analytics
+        - link "Agents & API" [ref=f4e39] [cursor=pointer]:
+          - /url: /settings/api-keys
+        - link "Settings" [ref=f4e44] [cursor=pointer]:
+          - /url: /settings
+      - button "Search generations" [ref=f4e49]:
+        - generic [ref=f4e53]: Search
+        - generic: ⌘K
+      - generic [ref=f4e54]:
+        - button "What's new, 1 unread announcement" [ref=f4e55]:
+          - generic [ref=f4e59]: What's new
+          - generic [aria-hidden] [ref=f4e60]: "1"
+        - generic [ref=f4e61]:
+          - generic [ref=f4e62]: LT
+          - generic [ref=f4e63]:
+            - paragraph [ref=f4e64]: Lab Tester
+            - paragraph [ref=f4e65]: lab@supoclip.local
+          - button "Sign out" [ref=f4e66]
+    - main [ref=f4e70]:
+      - link "Library" [ref=f4e71] [cursor=pointer]:
+        - /url: /list
+      - generic [ref=f4e74]:
+        - generic [ref=f4e75]:
+          - generic [ref=f4e76]:
+            - heading "proof-25s.mp4" [level=1] [ref=f4e77]
+            - button "Edit title" [ref=f4e78]
+          - generic [ref=f4e79]:
+            - generic [ref=f4e80]: Failed
+            - generic [ref=f4e82]: video_url
+            - generic [ref=f4e86]: há 4 minutos
+        - generic [ref=f4e90]:
+          - button "Resume" [ref=f4e152]
+          - button "Delete generation" [ref=f4e92]
+      - generic [ref=f4e153]:
+        - heading "Processing Failed" [level=2] [ref=f4e157]
+        - paragraph [ref=f4e158]: There was an error processing your video. Resume to retry from where it stopped, or try another video.
+        - link "Back to Home" [ref=f4e160] [cursor=pointer]:
+          - /url: /
+  - button [ref=f4e102]
+  - region "Notifications alt+T"
+  - button "Open Next.js Dev Tools" [ref=f4e108] [cursor=pointer]
+  - alert [ref=f4e10]

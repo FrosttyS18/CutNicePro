@@ -1,0 +1,40 @@
+[     117ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3107/_next/static/chunks/37bc0_next_dist_client_b3908241._.js:5693
+[     704ms] [LOG] [Fast Refresh] done in 690ms @ http://localhost:3107/_next/static/chunks/37bc0_next_dist_client_b3908241._.js:5557
+[     874ms] [VERBOSE] [DOM] Input elements should have autocomplete attributes (suggested: "current-password"): (More info: https://goo.gl/9p2vKq) %o @ http://localhost:3107/sign-up:0
+[     902ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:3107/_next/static/chunks/37bc0_next_dist_compiled_react-dom_f0248920._.js:14475
+[     972ms] [LOG] [Fast Refresh] done in NaNms @ http://localhost:3107/_next/static/chunks/37bc0_next_dist_client_b3908241._.js:5557
+[    1073ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3107/_next/static/chunks/37bc0_next_dist_client_b3908241._.js:5693
+[    1090ms] [LOG] [Fast Refresh] done in 117ms @ http://localhost:3107/_next/static/chunks/37bc0_next_dist_client_b3908241._.js:5557
+[   35377ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3107/_next/static/chunks/37bc0_next_dist_client_b3908241._.js:5693
+[   35714ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3107/api/auth/sign-up/email:0
+[   35715ms] [LOG] [Fast Refresh] done in 442ms @ http://localhost:3107/_next/static/chunks/37bc0_next_dist_client_b3908241._.js:5557
+[  273251ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:3107/_next/static/chunks/37bc0_next_dist_compiled_react-dom_f0248920._.js:14475
+[  273330ms] [LOG] [Fast Refresh] done in NaNms @ http://localhost:3107/_next/static/chunks/37bc0_next_dist_client_b3908241._.js:5557
+[  273689ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3107/_next/static/chunks/37bc0_next_dist_client_b3908241._.js:5693
+[  273746ms] [LOG] [Fast Refresh] done in 163ms @ http://localhost:3107/_next/static/chunks/37bc0_next_dist_client_b3908241._.js:5557
+[  274046ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3107/_next/static/chunks/37bc0_next_dist_client_b3908241._.js:5693
+[  274390ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3107/api/caption-templates:0
+[  274834ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3107/api/fonts:0
+[  274834ms] [ERROR] Failed to load fonts: Error: Failed to load fonts (500)
+    at HomeApp.useCallback[refreshFonts] (http://localhost:3107/_next/static/chunks/src_d0e01dac._.js:5040:41) @ http://localhost:3107/_next/static/chunks/37bc0_next_dist_dc08f4b9._.js:2248
+[  274862ms] [LOG] [Fast Refresh] done in 919ms @ http://localhost:3107/_next/static/chunks/37bc0_next_dist_client_b3908241._.js:5557
+[  274896ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3107/api/fonts:0
+[  274896ms] [ERROR] Failed to load fonts: Error: Failed to load fonts (500)
+    at HomeApp.useCallback[refreshFonts] (http://localhost:3107/_next/static/chunks/src_d0e01dac._.js:5040:41) @ http://localhost:3107/_next/static/chunks/37bc0_next_dist_dc08f4b9._.js:2248
+[  275002ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3107/_next/static/chunks/37bc0_next_dist_client_b3908241._.js:5693
+[  275060ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3107/api/tasks/billing-summary:0
+[  275060ms] [LOG] [Fast Refresh] done in 162ms @ http://localhost:3107/_next/static/chunks/37bc0_next_dist_client_b3908241._.js:5557
+[  275123ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3107/api/caption-templates:0
+[  275344ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3107/api/tasks:0
+[  275344ms] [ERROR] Failed to load recent generations: Error: Failed to fetch tasks: 500
+    at fetchGenerations (http://localhost:3107/_next/static/chunks/src_d0e01dac._.js:2349:29) @ http://localhost:3107/_next/static/chunks/37bc0_next_dist_dc08f4b9._.js:2248
+[  275409ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3107/api/tasks:0
+[  275410ms] [ERROR] Failed to load recent generations: Error: Failed to fetch tasks: 500
+    at fetchGenerations (http://localhost:3107/_next/static/chunks/src_d0e01dac._.js:2349:29) @ http://localhost:3107/_next/static/chunks/37bc0_next_dist_dc08f4b9._.js:2248
+[  275587ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3107/api/social/providers:0
+[  336164ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3107/api/announcements:0
+[  336251ms] [ERROR] Failed to load resource: the server responded with a status of 503 (Service Unavailable) @ http://localhost:3107/api/service-status/video-downloads:0
+[  343386ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3107/_next/static/chunks/37bc0_next_dist_client_b3908241._.js:5693
+[  343441ms] [LOG] [Fast Refresh] done in 160ms @ http://localhost:3107/_next/static/chunks/37bc0_next_dist_client_b3908241._.js:5557
+[  873916ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:3107/api/announcements:0
+[  873916ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:3107/api/service-status/video-downloads:0

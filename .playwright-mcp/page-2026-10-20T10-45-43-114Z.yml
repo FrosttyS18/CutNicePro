@@ -1,0 +1,212 @@
+- generic [ref=f13e1]:
+  - generic [ref=f13e2]:
+    - complementary [ref=f13e20]:
+      - link [ref=f13e21] [cursor=pointer]:
+        - /url: /
+      - link "New generation" [ref=f13e22] [cursor=pointer]:
+        - /url: /
+      - navigation "Main navigation" [ref=f13e24]:
+        - link "Create" [ref=f13e25] [cursor=pointer]:
+          - /url: /
+        - link "Library" [ref=f13e29] [cursor=pointer]:
+          - /url: /list
+        - link "Social" [ref=f13e32] [cursor=pointer]:
+          - /url: /settings/social
+        - link "Analytics" [ref=f13e39] [cursor=pointer]:
+          - /url: /analytics
+        - link "Agents & API" [ref=f13e42] [cursor=pointer]:
+          - /url: /settings/api-keys
+        - link "Settings" [ref=f13e46] [cursor=pointer]:
+          - /url: /settings
+      - button "Search generations" [ref=f13e50]
+      - generic [ref=f13e54]:
+        - button "What's new, 1 unread announcement" [ref=f13e55]
+        - generic [ref=f13e60]:
+          - generic [ref=f13e61]: LT
+          - button "Sign out" [ref=f13e62]
+    - generic [ref=f13e66]:
+      - generic [ref=f13e68]:
+        - generic [ref=f13e69]:
+          - link "Back to generation" [ref=f13e70] [cursor=pointer]:
+            - /url: /tasks/826d0443-7624-41bf-b006-73c4f1e30be5
+          - generic [ref=f13e71]:
+            - paragraph [ref=f13e72]:
+              - link "Generation" [ref=f13e73] [cursor=pointer]:
+                - /url: /tasks/826d0443-7624-41bf-b006-73c4f1e30be5
+              - generic [aria-hidden] [ref=f13e74]: /
+              - generic [ref=f13e75]: Clip 3
+            - heading "test-video.mp4" [level=1] [ref=f13e76]
+        - generic [ref=f13e77]:
+          - status [ref=f13e78]: All changes saved
+          - generic [ref=f13e81]:
+            - button "Undo" [ref=f13e82]
+            - button "Redo" [disabled]
+          - button "Keyboard shortcuts" [ref=f13e83]
+          - button "Export" [ref=f13e84]
+      - generic [ref=f13e85]:
+        - region "Your clips" [ref=f13e86]:
+          - generic [ref=f13e87]:
+            - heading "Clips" [level=2] [ref=f13e89]
+            - generic [ref=f13e90]: "3"
+          - list [ref=f13e92]:
+            - listitem [ref=f13e93]:
+              - button "Edit clip 1" [ref=f13e97]:
+                - generic [ref=f13e98]:
+                  - generic [ref=f13e99]: Clip 1
+                  - generic [ref=f13e100]: 0:40.73
+                - generic [ref=f13e101]: É a quantidade de pistolas que esse boneco tem. Pã, que tem cinco pistolas. A verdade, né, bairro. Eu estou bem preparado para guerra, gaga. O que você não vai saber melhor, pô. É muito bom, né. Olha, porque é vou ver uma pistola. Ele sacia outra. E isso? Saica outra aqui. cara preparado para a guerra, Pô. Então, né? Tá aí e aí assim? Carocera. Não, são cinco pentes. Ah não, tem uma do lado mesmo, a história é... Não é tudo arma. Não é o pente, não tá enfiado. É é assim, é Esquezito, não é? São duas aqui. Beleza? Tô vendo? Dá pra ver as duas aqui no peito. Aí, duas na lateral. É isso, bem. E uma não colada. E lá atrás são os estendidos pentes. E ele ainda tem uma R4 na mão. Galera,
+              - checkbox "Select clip 1 for combine" [ref=f13e103]
+            - listitem [ref=f13e104]:
+              - button "Edit clip 2" [ref=f13e108]:
+                - generic [ref=f13e109]:
+                  - generic [ref=f13e110]: Clip 2
+                  - generic [ref=f13e111]: 0:45.42
+                - generic [ref=f13e112]: Você quer fazer de propósito pra virar meme? Não, não, Cústica. muito na cara. Não, me calta. É muito na cara, cara. Não, não, não. Não é possível. Não tem que. fariam isso? Por que parece a? Aí, eles fizeram Eu entendi, é, é, é, é, é, Fazer isso, fosse um logo de algo famoso. Eles precisassem remodelar. Ou uma escrita que tem, sabe, um negócio muito carácterístico. Mas a palavra em si não tem que mudar. Não faz nada. É. E aí, é, é, aí vai, a, a, a, passa nás, é, a gente vai. aí, vai escrita, certa. E aí, é, é, que? O que é o vídeo? Nada, o que que está aí? Não, é, não é... é... eu não sei o que que está errado nás, mas não, não é? Dê umitar um outro de nela. É, ó. Um, meu galera. São... Brava. Esses números. Esses números. É a quantidade de pistolas que esse boneco tem. Pã, que tem cinco pistolas. A verdade,
+              - checkbox "Select clip 2 for combine" [ref=f13e114]
+            - listitem [ref=f13e115]:
+              - button "Edit clip 3" [pressed] [ref=f13e120]:
+                - generic [ref=f13e121]:
+                  - generic [ref=f13e122]: Clip 3
+                  - generic [ref=f13e123]: 0:57.62
+                - generic [ref=f13e124]: Olha só essa sequência, primeiro que o jogo tem loads infinitos entre qualquer coisa Seu mu do menu, cacarrão A absurda, absurda A gente trouviu a saia, a começou a fazer o personagem Que... Tchau, lá, faço esse personagem A gente mexendo isso aqui, chegou numa parte que era botar barba Ele foi descendo seus opções de barba, aparece na tela 2 quadradins que eram botar barba escrito, tambinei o missing Não, por cima Caramba, você colando isso, cara sério? No jogo... 4 -100 reais, comprou essa merda Eu para quem tá, eu comprei esse jogo, cara Não, não, É... É... Aí o caiu, beleza? Aí a gente escolheu outra barba no seu quê? Vamos passar pra... Boa ta roupa, sei lá O jogo crachou Não prestei, chão Aí a gente voltou pro jogo Matou, save, gente começou tudo de novo Não é possível O que ele delitou, se pogou, save Fora que pra tudo que você vai fazer no modo dele no de morar Tem um load, né? É, não é qualquer load É, toda hora um load é absurdo, cara Absurdo Não, não, é um load de de load load de de demorado
+              - checkbox "Select clip 3 for combine" [ref=f13e126]
+          - generic [ref=f13e127]:
+            - paragraph [ref=f13e128]: Tick two or more clips to combine them into one draft.
+            - button "Restore original" [ref=f13e129]
+            - paragraph [ref=f13e130]: Generated clips are never overwritten. Every change here is an editable draft.
+        - main [ref=f13e131]:
+          - region "Video preview" [ref=f13e132]:
+            - generic [ref=f13e133]:
+              - generic [ref=f13e134]:
+                - text: Preview
+                - generic [ref=f13e135]: 1080 × 1080 · 30 fps
+              - button "Safe area" [ref=f13e136]
+            - generic [ref=f13e138]:
+              - generic "Edited video preview" [ref=f13e140]
+              - paragraph [ref=f13e141]: Drag the video to reframe · captions stay in place
+            - generic [ref=f13e142]:
+              - generic [ref=f13e143]:
+                - button "Loop selected edit" [pressed] [ref=f13e144]
+                - combobox "Preview playback speed" [ref=f13e145]:
+                  - generic: 1×
+              - generic [ref=f13e146]:
+                - button "Previous frame" [ref=f13e147]
+                - button "Play" [ref=f13e148]
+                - button "Next frame" [ref=f13e149]
+              - generic [ref=f13e151]:
+                - text: 0:00.00
+                - generic [ref=f13e152]: / 0:57.32
+          - region "Clip timeline" [ref=f13e153]:
+            - generic [ref=f13e154]:
+              - generic [ref=f13e155]:
+                - heading "Timeline" [level=2] [ref=f13e156]
+                - generic [ref=f13e157]: 1 segment · 0:57.32
+              - generic [ref=f13e158]:
+                - group "Timeline zoom" [ref=f13e163]:
+                  - radio "100%" [checked] [ref=f13e164]
+                  - radio "200%" [ref=f13e165]
+                  - radio "400%" [ref=f13e166]
+                - button "Split at playhead" [disabled]
+            - generic [ref=f13e168]:
+              - generic [ref=f13e169]:
+                - generic [ref=f13e170]: 0:00.00
+                - generic [ref=f13e171]: 0:09.55
+                - generic [ref=f13e172]: 0:19.11
+                - generic [ref=f13e173]: 0:28.66
+                - generic [ref=f13e174]: 0:38.21
+                - generic [ref=f13e175]: 0:47.77
+                - generic [ref=f13e176]: 0:57.32
+              - generic [ref=f13e177] [cursor=pointer]
+              - generic [ref=f13e342]:
+                - slider "Trim range start" [ref=f13e346]
+                - slider "Trim range end" [ref=f13e348]
+              - generic [ref=f13e349]: Playhead
+              - slider "Playhead" [ref=f13e350]: "0"
+            - generic [ref=f13e351]:
+              - generic [ref=f13e352]:
+                - generic [ref=f13e353]: In
+                - spinbutton "In point seconds" [ref=f13e354]: "0"
+              - generic [ref=f13e355]:
+                - generic [ref=f13e356]: Out
+                - spinbutton "Out point seconds" [ref=f13e357]: "57.32"
+              - button [ref=f13e358]:
+                - text: Set In
+                - generic [ref=f13e359]: I
+              - button [ref=f13e360]:
+                - text: Set Out
+                - generic [ref=f13e361]: O
+              - generic [ref=f13e362]: Cuts stay reversible
+            - generic [ref=f13e363]:
+              - group "Segments" [ref=f13e364]:
+                - button "Segment 1 0:00.00 – 0:57.32" [pressed] [ref=f13e365]:
+                  - generic [ref=f13e366]: Segment 1
+                  - generic [ref=f13e367]: 0:00.00 – 0:57.32
+              - generic [ref=f13e368]:
+                - button "Move segment earlier" [disabled]
+                - button "Move segment later" [disabled]
+                - button "Duplicate selected segment" [ref=f13e369]
+                - button "Remove selected segment" [disabled]
+        - region "Editor tools" [ref=f13e370]:
+          - generic [ref=f13e371]:
+            - tablist [ref=f13e373]:
+              - tab "Captions" [ref=f13e374]
+              - tab "Framing" [active] [selected] [ref=f13e375]
+              - tab "Audio" [ref=f13e376]
+              - tab "Effects" [ref=f13e377]
+            - tabpanel "Framing" [ref=f13e2418]:
+              - generic [ref=f13e2419]:
+                - generic [ref=f13e2421]:
+                  - heading "Framing" [level=3] [ref=f13e2422]
+                  - paragraph [ref=f13e2423]: Drag the video in the preview to keep your subject in focus.
+                - generic [ref=f13e2424]:
+                  - generic [ref=f13e2425]: Aspect ratio
+                  - group "Aspect ratio" [ref=f13e2426]:
+                    - radio "Vertical" [ref=f13e2427]:
+                      - generic [ref=f13e2428]: 9:16
+                    - radio "Square" [checked] [ref=f13e2430]:
+                      - generic [ref=f13e2431]: 1:1
+                    - radio "Original" [ref=f13e2433]:
+                      - generic [ref=f13e2434]: Src
+                - generic [ref=f13e2436]:
+                  - generic [ref=f13e2437]: Fit
+                  - group "Fit" [ref=f13e2438]:
+                    - radio "Fill frame" [checked] [ref=f13e2439]
+                    - radio "Fit full video" [ref=f13e2440]
+              - generic [ref=f13e2441]:
+                - heading "Position" [level=3] [ref=f13e2444]
+                - generic [ref=f13e2445]:
+                  - generic [ref=f13e2446]:
+                    - generic [ref=f13e2447]: Zoom
+                    - generic [ref=f13e2448]: 1×
+                  - slider "Zoom" [ref=f13e2452]
+                - generic [ref=f13e2453]:
+                  - generic [ref=f13e2454]:
+                    - generic [ref=f13e2455]: Horizontal position
+                    - generic [ref=f13e2456]: 50%
+                  - slider "Horizontal position" [ref=f13e2461]
+                - generic [ref=f13e2462]:
+                  - generic [ref=f13e2463]:
+                    - generic [ref=f13e2464]: Vertical position
+                    - generic [ref=f13e2465]: 50%
+                  - slider "Vertical position" [ref=f13e2470]
+                - button "Center subject" [ref=f13e2471]
+      - contentinfo [ref=f13e2406]:
+        - generic [ref=f13e2407]:
+          - generic [ref=f13e2408]: Space
+          - text: Play
+        - generic [ref=f13e2409]:
+          - generic [ref=f13e2410]: I
+          - text: In
+        - generic [ref=f13e2411]:
+          - generic [ref=f13e2412]: O
+          - text: Out
+        - generic [ref=f13e2413]:
+          - generic [ref=f13e2414]: S
+          - text: Split
+        - generic [ref=f13e2415]:
+          - generic [ref=f13e2416]: "?"
+          - text: All shortcuts
+  - button [ref=f13e2417]
+  - region "Notifications alt+T"
+  - button "Open Next.js Dev Tools" [ref=f13e15] [cursor=pointer]
+  - alert [ref=f13e19]

@@ -1,0 +1,77 @@
+[     115ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3107/_next/static/chunks/37bc0_next_dist_client_b3908241._.js:5693
+[     136ms] [LOG] [Fast Refresh] done in 123ms @ http://localhost:3107/_next/static/chunks/37bc0_next_dist_client_b3908241._.js:5557
+[     208ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:3107/_next/static/chunks/37bc0_next_dist_compiled_react-dom_f0248920._.js:14475
+[     390ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3107/_next/static/chunks/37bc0_next_dist_client_b3908241._.js:5693
+[     409ms] [WARNING] Image with src "/logo.png" was detected as the Largest Contentful Paint (LCP). Please add the "priority" property if this image is above the fold.
+Read more: https://nextjs.org/docs/api-reference/next/image#priority @ http://localhost:3107/_next/static/chunks/37bc0_next_dist_dc08f4b9._.js:874
+[     511ms] [LOG] [Fast Refresh] done in 249ms @ http://localhost:3107/_next/static/chunks/37bc0_next_dist_client_b3908241._.js:5557
+[     777ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3107/_next/static/chunks/37bc0_next_dist_client_b3908241._.js:5693
+[     803ms] [LOG] [Fast Refresh] done in 130ms @ http://localhost:3107/_next/static/chunks/37bc0_next_dist_client_b3908241._.js:5557
+[    1151ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3107/api/tasks/826d0443-7624-41bf-b006-73c4f1e30be5/clips/6ce564db-7b2d-4e5f-8665-9b1d8cc9703d/editor/media/thumbnails.jpg:0
+[    1151ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3107/api/tasks/826d0443-7624-41bf-b006-73c4f1e30be5/clips/b152c26f-a61f-4f40-ae15-1243aa9802a7/editor/media/thumbnails.jpg:0
+[    1391ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3107/_next/static/chunks/37bc0_next_dist_client_b3908241._.js:5693
+[    1413ms] [LOG] [Fast Refresh] done in 123ms @ http://localhost:3107/_next/static/chunks/37bc0_next_dist_client_b3908241._.js:5557
+[  120486ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3107/_next/static/chunks/37bc0_next_dist_client_b3908241._.js:5693
+[  120495ms] [LOG] [Fast Refresh] done in 111ms @ http://localhost:3107/_next/static/chunks/37bc0_next_dist_client_b3908241._.js:5557
+[  133865ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3107/_next/static/chunks/37bc0_next_dist_client_b3908241._.js:5693
+[  133880ms] [LOG] [Fast Refresh] done in 120ms @ http://localhost:3107/_next/static/chunks/37bc0_next_dist_client_b3908241._.js:5557
+[  135653ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3107/_next/static/chunks/37bc0_next_dist_client_b3908241._.js:5693
+[  135731ms] [LOG] [Fast Refresh] done in 181ms @ http://localhost:3107/_next/static/chunks/37bc0_next_dist_client_b3908241._.js:5557
+[  138654ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3107/_next/static/chunks/37bc0_next_dist_client_b3908241._.js:5693
+[  138732ms] [LOG] [Fast Refresh] done in 179ms @ http://localhost:3107/_next/static/chunks/37bc0_next_dist_client_b3908241._.js:5557
+[  171560ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3107/_next/static/chunks/37bc0_next_dist_client_b3908241._.js:5693
+[  171638ms] [LOG] [Fast Refresh] done in 181ms @ http://localhost:3107/_next/static/chunks/37bc0_next_dist_client_b3908241._.js:5557
+[  180488ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3107/_next/static/chunks/37bc0_next_dist_client_b3908241._.js:5693
+[  180543ms] [LOG] [Fast Refresh] done in 157ms @ http://localhost:3107/_next/static/chunks/37bc0_next_dist_client_b3908241._.js:5557
+[  195557ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3107/_next/static/chunks/37bc0_next_dist_client_b3908241._.js:5693
+[  195619ms] [LOG] [Fast Refresh] done in 164ms @ http://localhost:3107/_next/static/chunks/37bc0_next_dist_client_b3908241._.js:5557
+[  204556ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3107/_next/static/chunks/37bc0_next_dist_client_b3908241._.js:5693
+[  204595ms] [LOG] [Fast Refresh] done in 138ms @ http://localhost:3107/_next/static/chunks/37bc0_next_dist_client_b3908241._.js:5557
+[  240539ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3107/_next/static/chunks/37bc0_next_dist_client_b3908241._.js:5693
+[  240588ms] [LOG] [Fast Refresh] done in 150ms @ http://localhost:3107/_next/static/chunks/37bc0_next_dist_client_b3908241._.js:5557
+[  243559ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3107/_next/static/chunks/37bc0_next_dist_client_b3908241._.js:5693
+[  243589ms] [LOG] [Fast Refresh] done in 136ms @ http://localhost:3107/_next/static/chunks/37bc0_next_dist_client_b3908241._.js:5557
+[  252597ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3107/_next/static/chunks/37bc0_next_dist_client_b3908241._.js:5693
+[  252597ms] [LOG] [Fast Refresh] done in 103ms @ http://localhost:3107/_next/static/chunks/37bc0_next_dist_client_b3908241._.js:5557
+[  261559ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3107/_next/static/chunks/37bc0_next_dist_client_b3908241._.js:5693
+[  261609ms] [LOG] [Fast Refresh] done in 151ms @ http://localhost:3107/_next/static/chunks/37bc0_next_dist_client_b3908241._.js:5557
+[  267558ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3107/_next/static/chunks/37bc0_next_dist_client_b3908241._.js:5693
+[  267592ms] [LOG] [Fast Refresh] done in 134ms @ http://localhost:3107/_next/static/chunks/37bc0_next_dist_client_b3908241._.js:5557
+[  279599ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3107/_next/static/chunks/37bc0_next_dist_client_b3908241._.js:5693
+[  279618ms] [LOG] [Fast Refresh] done in 121ms @ http://localhost:3107/_next/static/chunks/37bc0_next_dist_client_b3908241._.js:5557
+[  300544ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3107/_next/static/chunks/37bc0_next_dist_client_b3908241._.js:5693
+[  300606ms] [LOG] [Fast Refresh] done in 164ms @ http://localhost:3107/_next/static/chunks/37bc0_next_dist_client_b3908241._.js:5557
+[  318556ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3107/_next/static/chunks/37bc0_next_dist_client_b3908241._.js:5693
+[  318577ms] [LOG] [Fast Refresh] done in 122ms @ http://localhost:3107/_next/static/chunks/37bc0_next_dist_client_b3908241._.js:5557
+[  342494ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3107/_next/static/chunks/37bc0_next_dist_client_b3908241._.js:5693
+[  342592ms] [LOG] [Fast Refresh] done in 199ms @ http://localhost:3107/_next/static/chunks/37bc0_next_dist_client_b3908241._.js:5557
+[  351556ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3107/_next/static/chunks/37bc0_next_dist_client_b3908241._.js:5693
+[  351587ms] [LOG] [Fast Refresh] done in 134ms @ http://localhost:3107/_next/static/chunks/37bc0_next_dist_client_b3908241._.js:5557
+[  360484ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3107/_next/static/chunks/37bc0_next_dist_client_b3908241._.js:5693
+[  360535ms] [LOG] [Fast Refresh] done in 155ms @ http://localhost:3107/_next/static/chunks/37bc0_next_dist_client_b3908241._.js:5557
+[  387555ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3107/_next/static/chunks/37bc0_next_dist_client_b3908241._.js:5693
+[  387582ms] [LOG] [Fast Refresh] done in 128ms @ http://localhost:3107/_next/static/chunks/37bc0_next_dist_client_b3908241._.js:5557
+[  390562ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3107/_next/static/chunks/37bc0_next_dist_client_b3908241._.js:5693
+[  390656ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3107/api/tasks/826d0443-7624-41bf-b006-73c4f1e30be5/clips/6ce564db-7b2d-4e5f-8665-9b1d8cc9703d/editor:0
+[  390657ms] [LOG] [Fast Refresh] done in 200ms @ http://localhost:3107/_next/static/chunks/37bc0_next_dist_client_b3908241._.js:5557
+[  390734ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3107/api/tasks/826d0443-7624-41bf-b006-73c4f1e30be5/clips/b152c26f-a61f-4f40-ae15-1243aa9802a7/editor:0
+[  390797ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3107/api/tasks/826d0443-7624-41bf-b006-73c4f1e30be5/clips/63f8e5c5-93d3-418f-ab79-cad7a73b277a/editor:0
+[  393584ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3107/api/tasks/826d0443-7624-41bf-b006-73c4f1e30be5/clips/6ce564db-7b2d-4e5f-8665-9b1d8cc9703d/editor:0
+[  393636ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3107/api/tasks/826d0443-7624-41bf-b006-73c4f1e30be5/clips/b152c26f-a61f-4f40-ae15-1243aa9802a7/editor:0
+[  393636ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3107/_next/static/chunks/37bc0_next_dist_client_b3908241._.js:5693
+[  393638ms] [LOG] [Fast Refresh] done in 103ms @ http://localhost:3107/_next/static/chunks/37bc0_next_dist_client_b3908241._.js:5557
+[  393688ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3107/api/tasks/826d0443-7624-41bf-b006-73c4f1e30be5/clips/63f8e5c5-93d3-418f-ab79-cad7a73b277a/editor:0
+[  393938ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3107/_next/static/chunks/37bc0_next_dist_client_b3908241._.js:5693
+[  394042ms] [LOG] [Fast Refresh] done in 210ms @ http://localhost:3107/_next/static/chunks/37bc0_next_dist_client_b3908241._.js:5557
+[  396570ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3107/_next/static/chunks/37bc0_next_dist_client_b3908241._.js:5693
+[  396610ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3107/api/tasks/826d0443-7624-41bf-b006-73c4f1e30be5/clips/6ce564db-7b2d-4e5f-8665-9b1d8cc9703d/editor:0
+[  396613ms] [LOG] [Fast Refresh] done in 148ms @ http://localhost:3107/_next/static/chunks/37bc0_next_dist_client_b3908241._.js:5557
+[  396664ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3107/api/tasks/826d0443-7624-41bf-b006-73c4f1e30be5/clips/63f8e5c5-93d3-418f-ab79-cad7a73b277a/editor:0
+[  396708ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3107/api/tasks/826d0443-7624-41bf-b006-73c4f1e30be5/clips/b152c26f-a61f-4f40-ae15-1243aa9802a7/editor:0
+[  396719ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3107/_next/static/chunks/37bc0_next_dist_client_b3908241._.js:5693
+[  396740ms] [LOG] [Fast Refresh] done in 126ms @ http://localhost:3107/_next/static/chunks/37bc0_next_dist_client_b3908241._.js:5557
+[  399584ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3107/api/tasks/826d0443-7624-41bf-b006-73c4f1e30be5/clips/6ce564db-7b2d-4e5f-8665-9b1d8cc9703d/editor:0
+[  399628ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3107/api/tasks/826d0443-7624-41bf-b006-73c4f1e30be5/clips/63f8e5c5-93d3-418f-ab79-cad7a73b277a/editor:0
+[  399687ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3107/api/tasks/826d0443-7624-41bf-b006-73c4f1e30be5/clips/b152c26f-a61f-4f40-ae15-1243aa9802a7/editor:0
+[  408554ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3107/_next/static/chunks/37bc0_next_dist_client_b3908241._.js:5693
+[  408582ms] [LOG] [Fast Refresh] done in 129ms @ http://localhost:3107/_next/static/chunks/37bc0_next_dist_client_b3908241._.js:5557

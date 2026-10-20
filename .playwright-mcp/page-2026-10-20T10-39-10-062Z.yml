@@ -1,0 +1,175 @@
+- generic:
+  - generic:
+    - complementary [aria-hidden]:
+      - link:
+        - /url: /
+        - text: SupoClip
+      - link:
+        - /url: /
+        - generic: New generation
+        - generic: "N"
+      - navigation:
+        - link:
+          - /url: /
+          - generic: Create
+        - link:
+          - /url: /list
+          - generic: Library
+        - link:
+          - /url: /settings/social
+          - generic: Social
+        - link:
+          - /url: /analytics
+          - generic: Analytics
+        - link:
+          - /url: /settings/api-keys
+          - generic: Agents & API
+        - link:
+          - /url: /settings
+          - generic: Settings
+      - button:
+        - generic: Search
+        - generic: ⌘K
+      - generic:
+        - button:
+          - generic: What's new
+          - generic [aria-hidden]: "1"
+        - generic:
+          - generic: LT
+          - generic:
+            - paragraph: Lab Tester
+            - paragraph: lab@supoclip.local
+          - button
+    - generic:
+      - main:
+        - link [aria-hidden]:
+          - /url: /list
+          - text: Library
+        - generic:
+          - generic [aria-hidden]:
+            - generic:
+              - heading [level=1]: test-video.mp4
+              - button
+            - generic:
+              - generic: Completed
+              - generic: video_url
+              - generic: há 9 minutos
+              - generic: 3 clips · 2:23 total
+          - generic:
+            - button [aria-hidden]:
+              - generic: Restyle
+            - generic:
+              - button "Copy share link"
+            - link [aria-hidden]:
+              - /url: /tasks/826d0443-7624-41bf-b006-73c4f1e30be5/edit
+              - text: Open Editor
+            - button [aria-hidden]
+        - generic [aria-hidden]:
+          - generic:
+            - tablist:
+              - tab [selected]: Best first
+              - tab: Timeline
+            - generic:
+              - generic: Download as
+              - combobox:
+                - generic: Original
+          - generic:
+            - article:
+              - button:
+                - generic:
+                  - generic: Top pick
+                  - generic:
+                    - img:
+                      - generic: "78"
+                  - generic: 0:40
+              - generic:
+                - heading [level=3]: O cara mais preparado para a guerra
+                - paragraph: 05:17 – 05:59
+                - generic:
+                  - button:
+                    - generic: Download
+                  - link:
+                    - /url: /tasks/826d0443-7624-41bf-b006-73c4f1e30be5/edit?clip=6ce564db-7b2d-4e5f-8665-9b1d8cc9703d
+                    - text: Edit
+                  - button
+            - article:
+              - button:
+                - generic:
+                  - generic:
+                    - img:
+                      - generic: "76"
+                  - generic: 0:45
+              - generic:
+                - heading [level=3]: Design de jogo ou meme de propósito?
+                - paragraph: 04:36 – 05:21
+                - generic:
+                  - button:
+                    - generic: Download
+                  - link:
+                    - /url: /tasks/826d0443-7624-41bf-b006-73c4f1e30be5/edit?clip=b152c26f-a61f-4f40-ae15-1243aa9802a7
+                    - text: Edit
+                  - button
+            - article:
+              - button:
+                - generic:
+                  - generic:
+                    - img:
+                      - generic: "72"
+                  - generic: 0:57
+              - generic:
+                - heading [level=3]: O jogo que faz o SSD torar
+                - paragraph: 00:48 – 01:44
+                - generic:
+                  - button:
+                    - generic: Download
+                  - link:
+                    - /url: /tasks/826d0443-7624-41bf-b006-73c4f1e30be5/edit?clip=63f8e5c5-93d3-418f-ab79-cad7a73b277a
+                    - text: Edit
+                  - button
+  - button [aria-hidden]
+  - region "Notifications alt+T"
+  - button "Open Next.js Dev Tools" [ref=f10e186] [cursor=pointer]
+  - alert
+  - dialog [ref=f10e191]:
+    - generic "Video player" [active] [ref=f10e194]: Your browser does not support the video tag.
+    - generic [ref=f10e195]:
+      - generic [ref=f10e196]:
+        - generic [ref=f10e197]: Clip 3 of 3
+        - generic [ref=f10e198]:
+          - button "Previous clip" [ref=f10e199]
+          - button "Next clip" [ref=f10e200]
+      - generic [ref=f10e201]:
+        - generic [ref=f10e202]:
+          - heading "O jogo que faz o SSD torar" [level=2] [ref=f10e203]
+          - paragraph [ref=f10e204]: 00:48 – 01:44 · 0:57
+        - generic [ref=f10e205]:
+          - generic [ref=f10e206]:
+            - img "Virality score 72 out of 100" [ref=f10e207]:
+              - generic [ref=f10e211]: "72"
+            - generic [ref=f10e212]:
+              - paragraph [ref=f10e213]: Virality score
+              - paragraph [ref=f10e214]: Bold Statement · 88% relevance
+          - generic [ref=f10e215]:
+            - generic [ref=f10e217]:
+              - generic [ref=f10e218]: Hook
+              - generic [ref=f10e221]: 20/25
+            - generic [ref=f10e225]:
+              - generic [ref=f10e226]: Engagement
+              - generic [ref=f10e230]: 19/25
+            - generic [ref=f10e234]:
+              - generic [ref=f10e235]: Value
+              - generic [ref=f10e238]: 18/25
+            - generic [ref=f10e242]:
+              - generic [ref=f10e243]: Shareability
+              - generic [ref=f10e250]: 15/25
+        - generic [ref=f10e253]:
+          - heading "Transcript" [level=4] [ref=f10e254]
+          - generic [ref=f10e255]:
+            - paragraph [ref=f10e256]: Olha só essa sequência, primeiro que o jogo tem loads infinitos entre qualquer coisa Seu mu do menu, cacarrão A absurda, absurda A gente trouviu a saia, a começou a fazer o personagem Que... Tchau, lá, faço esse personagem A gente mexendo isso aqui, chegou numa parte que era botar barba Ele foi descendo seus opções de barba, aparece na tela 2 quadradins que eram botar barba escrito, tambinei o missing Não, por cima Caramba, você colando isso, cara sério? No jogo... 4 -100 reais, comprou essa merda Eu para quem tá, eu comprei esse jogo, cara Não, não, É... É... Aí o caiu, beleza? Aí a gente escolheu outra barba no seu quê? Vamos passar pra... Boa ta roupa, sei lá O jogo crachou Não prestei, chão Aí a gente voltou pro jogo Matou, save, gente começou tudo de novo Não é possível O que ele delitou, se pogou, save Fora que pra tudo que você vai fazer no modo dele no de morar Tem um load, né? É, não é qualquer load É, toda hora um load é absurdo, cara Absurdo Não, não, é um load de de load load de de demorado
+            - button "See more" [ref=f10e257]
+      - generic [ref=f10e258]:
+        - button "Download" [ref=f10e259]
+        - link "Open in editor" [ref=f10e260] [cursor=pointer]:
+          - /url: /tasks/826d0443-7624-41bf-b006-73c4f1e30be5/edit?clip=63f8e5c5-93d3-418f-ab79-cad7a73b277a
+        - button "Delete" [ref=f10e261]
+    - button "Close" [ref=f10e262]

@@ -1,0 +1,72 @@
+- generic [active] [ref=f6e1]:
+  - generic [ref=f6e2]:
+    - complementary [ref=f6e20]:
+      - link "SupoClip" [ref=f6e21] [cursor=pointer]:
+        - /url: /
+      - link "New generation N" [ref=f6e22] [cursor=pointer]:
+        - /url: /
+        - generic [ref=f6e24]: New generation
+        - generic [ref=f6e25]: "N"
+      - navigation "Main navigation" [ref=f6e26]:
+        - link "Create" [ref=f6e27] [cursor=pointer]:
+          - /url: /
+        - link "Library" [ref=f6e32] [cursor=pointer]:
+          - /url: /list
+        - link "Social" [ref=f6e36] [cursor=pointer]:
+          - /url: /settings/social
+        - link "Analytics" [ref=f6e44] [cursor=pointer]:
+          - /url: /analytics
+        - link "Agents & API" [ref=f6e48] [cursor=pointer]:
+          - /url: /settings/api-keys
+        - link "Settings" [ref=f6e53] [cursor=pointer]:
+          - /url: /settings
+      - button "Search generations" [ref=f6e58]:
+        - generic [ref=f6e62]: Search
+        - generic: ⌘K
+      - generic [ref=f6e63]:
+        - button "What's new, 1 unread announcement" [ref=f6e64]:
+          - generic [ref=f6e68]: What's new
+          - generic [aria-hidden] [ref=f6e69]: "1"
+        - generic [ref=f6e70]:
+          - generic [ref=f6e71]: LT
+          - generic [ref=f6e72]:
+            - paragraph [ref=f6e73]: Lab Tester
+            - paragraph [ref=f6e74]: lab@supoclip.local
+          - button "Sign out" [ref=f6e75]
+    - main [ref=f6e79]:
+      - link "Library" [ref=f6e80] [cursor=pointer]:
+        - /url: /list
+      - generic [ref=f6e83]:
+        - generic [ref=f6e84]:
+          - generic [ref=f6e85]:
+            - heading "proof-25s.mp4" [level=1] [ref=f6e86]
+            - button "Edit title" [ref=f6e87]
+          - generic [ref=f6e88]:
+            - generic [ref=f6e89]: Queued
+            - generic [ref=f6e91]: video_url
+            - generic [ref=f6e95]: há 10 minutos
+        - generic [ref=f6e99]:
+          - button "Cancel" [ref=f6e112]
+          - button "Delete generation" [ref=f6e101]
+      - generic [ref=f6e114]:
+        - generic [ref=f6e117]:
+          - generic [ref=f6e118]:
+            - paragraph [ref=f6e119]: Generating transcript...
+            - paragraph [ref=f6e120]: Grab a coffee — clips appear here the moment they render.
+          - list [ref=f6e121]:
+            - listitem [ref=f6e122]:
+              - generic [ref=f6e127]: Fetching video
+            - listitem [ref=f6e128]:
+              - generic [ref=f6e131]: Transcribing
+            - listitem [ref=f6e132]:
+              - generic [ref=f6e137]: Finding moments
+            - listitem [ref=f6e138]:
+              - generic [ref=f6e145]: Rendering clips
+        - paragraph [ref=f6e146]: 30% complete
+  - button [ref=f6e111]
+  - region "Notifications alt+T":
+    - list:
+      - listitem [ref=f6e147]:
+        - generic [ref=f6e151]: Generation resumed
+  - button "Open Next.js Dev Tools" [ref=f6e15] [cursor=pointer]
+  - alert [ref=f6e19]

@@ -1,0 +1,288 @@
+- generic:
+  - generic:
+    - complementary [aria-hidden]:
+      - link:
+        - /url: /
+      - link:
+        - /url: /
+      - navigation:
+        - link:
+          - /url: /
+        - link:
+          - /url: /list
+        - link:
+          - /url: /settings/social
+        - link:
+          - /url: /analytics
+        - link:
+          - /url: /settings/api-keys
+        - link:
+          - /url: /settings
+      - button
+      - generic:
+        - button
+        - generic:
+          - generic: LT
+          - button
+    - generic:
+      - generic:
+        - generic:
+          - generic:
+            - generic [aria-hidden]:
+              - link:
+                - /url: /tasks/826d0443-7624-41bf-b006-73c4f1e30be5
+              - generic:
+                - paragraph:
+                  - link:
+                    - /url: /tasks/826d0443-7624-41bf-b006-73c4f1e30be5
+                    - text: Generation
+                  - generic [aria-hidden]: /
+                  - generic: Clip 3
+                - heading [level=1]: test-video.mp4
+            - generic:
+              - status: All changes saved
+              - generic [aria-hidden]:
+                - button
+                - button [disabled]
+              - button [aria-hidden]
+              - button [aria-hidden]: Export
+        - generic [aria-hidden]:
+          - region:
+            - generic:
+              - generic:
+                - heading [level=2]: Clips
+              - generic: "3"
+            - list:
+              - listitem:
+                - button:
+                  - generic:
+                    - generic: Clip 1
+                    - generic: 0:40.73
+                  - generic: É a quantidade de pistolas que esse boneco tem. Pã, que tem cinco pistolas. A verdade, né, bairro. Eu estou bem preparado para guerra, gaga. O que você não vai saber melhor, pô. É muito bom, né. Olha, porque é vou ver uma pistola. Ele sacia outra. E isso? Saica outra aqui. cara preparado para a guerra, Pô. Então, né? Tá aí e aí assim? Carocera. Não, são cinco pentes. Ah não, tem uma do lado mesmo, a história é... Não é tudo arma. Não é o pente, não tá enfiado. É é assim, é Esquezito, não é? São duas aqui. Beleza? Tô vendo? Dá pra ver as duas aqui no peito. Aí, duas na lateral. É isso, bem. E uma não colada. E lá atrás são os estendidos pentes. E ele ainda tem uma R4 na mão. Galera,
+                - generic:
+                  - checkbox
+              - listitem:
+                - button:
+                  - generic:
+                    - generic: Clip 2
+                    - generic: 0:45.42
+                  - generic: Você quer fazer de propósito pra virar meme? Não, não, Cústica. muito na cara. Não, me calta. É muito na cara, cara. Não, não, não. Não é possível. Não tem que. fariam isso? Por que parece a? Aí, eles fizeram Eu entendi, é, é, é, é, é, Fazer isso, fosse um logo de algo famoso. Eles precisassem remodelar. Ou uma escrita que tem, sabe, um negócio muito carácterístico. Mas a palavra em si não tem que mudar. Não faz nada. É. E aí, é, é, aí vai, a, a, a, passa nás, é, a gente vai. aí, vai escrita, certa. E aí, é, é, que? O que é o vídeo? Nada, o que que está aí? Não, é, não é... é... eu não sei o que que está errado nás, mas não, não é? Dê umitar um outro de nela. É, ó. Um, meu galera. São... Brava. Esses números. Esses números. É a quantidade de pistolas que esse boneco tem. Pã, que tem cinco pistolas. A verdade,
+                - generic:
+                  - checkbox
+              - listitem:
+                - button [pressed]:
+                  - generic:
+                    - generic: Clip 3
+                    - generic: 0:57.62
+                  - generic: Olha só essa sequência, primeiro que o jogo tem loads infinitos entre qualquer coisa Seu mu do menu, cacarrão A absurda, absurda A gente trouviu a saia, a começou a fazer o personagem Que... Tchau, lá, faço esse personagem A gente mexendo isso aqui, chegou numa parte que era botar barba Ele foi descendo seus opções de barba, aparece na tela 2 quadradins que eram botar barba escrito, tambinei o missing Não, por cima Caramba, você colando isso, cara sério? No jogo... 4 -100 reais, comprou essa merda Eu para quem tá, eu comprei esse jogo, cara Não, não, É... É... Aí o caiu, beleza? Aí a gente escolheu outra barba no seu quê? Vamos passar pra... Boa ta roupa, sei lá O jogo crachou Não prestei, chão Aí a gente voltou pro jogo Matou, save, gente começou tudo de novo Não é possível O que ele delitou, se pogou, save Fora que pra tudo que você vai fazer no modo dele no de morar Tem um load, né? É, não é qualquer load É, toda hora um load é absurdo, cara Absurdo Não, não, é um load de de load load de de demorado
+                - generic:
+                  - checkbox
+            - generic:
+              - paragraph: Tick two or more clips to combine them into one draft.
+              - button: Restore original
+              - paragraph: Generated clips are never overwritten. Every change here is an editable draft.
+          - main:
+            - region:
+              - generic:
+                - generic:
+                  - text: Preview
+                  - generic: 1080 × 1080 · 30 fps
+                - button:
+                  - generic: Safe area
+              - generic:
+                - paragraph: Drag the video to reframe · captions stay in place
+              - generic:
+                - generic:
+                  - button [pressed]
+                  - combobox:
+                    - generic: 1×
+                - generic:
+                  - button
+                  - button
+                  - button
+                - generic:
+                  - generic:
+                    - text: 0:00.00
+                    - generic: / 0:57.32
+            - region:
+              - generic:
+                - generic:
+                  - heading [level=2]: Timeline
+                  - generic: 1 segment · 0:57.32
+                - generic:
+                  - generic:
+                    - group:
+                      - radio [checked]: 100%
+                      - radio: 200%
+                      - radio: 400%
+                  - button [disabled]: Split at playhead
+              - generic:
+                - generic:
+                  - generic:
+                    - generic: 0:00.00
+                    - generic: 0:09.55
+                    - generic: 0:19.11
+                    - generic: 0:28.66
+                    - generic: 0:38.21
+                    - generic: 0:47.77
+                    - generic: 0:57.32
+                  - generic:
+                    - generic:
+                      - generic:
+                        - slider
+                      - generic:
+                        - slider
+                  - generic: Playhead
+                  - slider: "0"
+              - generic:
+                - generic:
+                  - generic: In
+                  - spinbutton: "0"
+                - generic:
+                  - generic: Out
+                  - spinbutton: "57.32"
+                - button:
+                  - text: Set In
+                  - generic: I
+                - button:
+                  - text: Set Out
+                  - generic: O
+                - generic: Cuts stay reversible
+              - generic:
+                - group:
+                  - button [pressed]:
+                    - generic: Segment 1
+                    - generic: 0:00.00 – 0:57.32
+                - generic:
+                  - button [disabled]
+                  - button [disabled]
+                  - button
+                  - button [disabled]
+          - region:
+            - generic:
+              - generic:
+                - tablist:
+                  - tab: Captions
+                  - tab [selected]: Framing
+                  - tab: Audio
+                  - tab: Effects
+              - generic:
+                - tabpanel:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - heading [level=3]: Framing
+                        - paragraph: Drag the video in the preview to keep your subject in focus.
+                    - generic:
+                      - generic: Aspect ratio
+                      - group:
+                        - radio:
+                          - generic: 9:16
+                          - generic: Vertical
+                        - radio [checked]:
+                          - generic: 1:1
+                          - generic: Square
+                        - radio:
+                          - generic: Src
+                          - generic: Original
+                    - generic:
+                      - generic: Fit
+                      - group:
+                        - radio [checked]: Fill frame
+                        - radio: Fit full video
+                  - generic:
+                    - generic:
+                      - generic:
+                        - heading [level=3]: Position
+                    - generic:
+                      - generic:
+                        - generic: Zoom
+                        - generic: 1×
+                      - generic:
+                        - generic:
+                          - slider
+                    - generic:
+                      - generic:
+                        - generic: Horizontal position
+                        - generic: 50%
+                      - generic:
+                        - generic:
+                          - slider
+                    - generic:
+                      - generic:
+                        - generic: Vertical position
+                        - generic: 50%
+                      - generic:
+                        - generic:
+                          - slider
+                    - button: Center subject
+        - contentinfo [aria-hidden]:
+          - generic:
+            - generic: Space
+            - text: Play
+          - generic:
+            - generic: I
+            - text: In
+          - generic:
+            - generic: O
+            - text: Out
+          - generic:
+            - generic: S
+            - text: Split
+          - generic:
+            - generic: "?"
+            - text: All shortcuts
+  - button [aria-hidden]
+  - region "Notifications alt+T":
+    - list:
+      - listitem:
+        - generic: Background export started
+  - button "Open Next.js Dev Tools" [ref=f13e15] [cursor=pointer]
+  - alert
+  - dialog [active] [ref=f13e2473]:
+    - generic [ref=f13e2474]:
+      - heading "Ready for the feed" [level=2] [ref=f13e2475]
+      - paragraph [ref=f13e2476]: Export your current edit. Background exports keep running when you leave.
+    - generic [ref=f13e2477]:
+      - paragraph [ref=f13e2478]: Platform
+      - group "Export preset" [ref=f13e2479]:
+        - radio "TikTok" [checked] [ref=f13e2480]
+        - radio "Reels" [ref=f13e2481]
+        - radio "Shorts" [ref=f13e2482]
+    - generic [ref=f13e2483]:
+      - generic [ref=f13e2484]:
+        - term [ref=f13e2485]: Resolution
+        - definition [ref=f13e2486]: 1080 × 1080
+      - generic [ref=f13e2487]:
+        - term [ref=f13e2488]: Duration
+        - definition [ref=f13e2489]: 0:57.32
+      - generic [ref=f13e2490]:
+        - term [ref=f13e2491]: Audio
+        - definition [ref=f13e2492]: 100% volume
+      - generic [ref=f13e2493]:
+        - term [ref=f13e2494]: Estimated size
+        - definition [ref=f13e2495]: ~71.7 MB
+    - generic [ref=f13e2496]:
+      - paragraph [ref=f13e2497]: Render on
+      - generic [ref=f13e2498]:
+        - button "Background export Works across browsers" [pressed] [ref=f13e2499]:
+          - generic [ref=f13e2502]: Background export
+          - generic [ref=f13e2503]: Works across browsers
+        - button "On this device MP4 · keep this editor open" [ref=f13e2504]:
+          - generic [ref=f13e2507]: On this device
+          - generic [ref=f13e2508]: MP4 · keep this editor open
+    - generic [ref=f13e2509]:
+      - button "Export all 3 clips" [ref=f13e2517]
+      - button "Export clip" [ref=f13e2518]
+    - generic [ref=f13e2519]:
+      - heading "Export queue" [level=3] [ref=f13e2520]
+      - list [ref=f13e2521]:
+        - listitem [ref=f13e2522]:
+          - generic [ref=f13e2523]:
+            - paragraph [ref=f13e2524]:
+              - text: Clip 3
+              - generic [ref=f13e2525]: 0a009f
+              - generic [ref=f13e2526]: 0%
+            - progressbar "Clip 3 export progress" [ref=f13e2527]
+          - button "Cancel Clip 3 export" [ref=f13e2529]
+    - button "Close" [ref=f13e2512]

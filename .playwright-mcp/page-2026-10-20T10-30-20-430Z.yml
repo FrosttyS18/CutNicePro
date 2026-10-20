@@ -1,0 +1,69 @@
+- generic [active] [ref=f9e1]:
+  - generic [ref=f9e2]:
+    - complementary [ref=f9e3]:
+      - link "SupoClip" [ref=f9e4] [cursor=pointer]:
+        - /url: /
+      - link "New generation N" [ref=f9e5] [cursor=pointer]:
+        - /url: /
+        - generic [ref=f9e7]: New generation
+        - generic [ref=f9e8]: "N"
+      - navigation "Main navigation" [ref=f9e9]:
+        - link "Create" [ref=f9e10] [cursor=pointer]:
+          - /url: /
+        - link "Library" [ref=f9e15] [cursor=pointer]:
+          - /url: /list
+        - link "Social" [ref=f9e19] [cursor=pointer]:
+          - /url: /settings/social
+        - link "Analytics" [ref=f9e27] [cursor=pointer]:
+          - /url: /analytics
+        - link "Agents & API" [ref=f9e31] [cursor=pointer]:
+          - /url: /settings/api-keys
+        - link "Settings" [ref=f9e36] [cursor=pointer]:
+          - /url: /settings
+      - button "Search generations" [ref=f9e41]:
+        - generic [ref=f9e45]: Search
+        - generic: ⌘K
+      - generic [ref=f9e46]:
+        - button "What's new, 1 unread announcement" [ref=f9e47]:
+          - generic [ref=f9e51]: What's new
+          - generic [aria-hidden] [ref=f9e52]: "1"
+        - generic [ref=f9e53]:
+          - generic [ref=f9e54]: LT
+          - generic [ref=f9e55]:
+            - paragraph [ref=f9e56]: Lab Tester
+            - paragraph [ref=f9e57]: lab@supoclip.local
+          - button "Sign out" [ref=f9e58]
+    - main [ref=f9e63]:
+      - link "Library" [ref=f9e64] [cursor=pointer]:
+        - /url: /list
+      - generic [ref=f9e67]:
+        - generic [ref=f9e68]:
+          - generic [ref=f9e69]:
+            - heading "test-video.mp4" [level=1] [ref=f9e70]
+            - button "Edit title" [ref=f9e71]
+          - generic [ref=f9e72]:
+            - generic [ref=f9e73]: Processing
+            - generic [ref=f9e75]: video_url
+            - generic [ref=f9e79]: just now
+        - generic [ref=f9e83]:
+          - button "Cancel" [ref=f9e84]
+          - button "Delete generation" [ref=f9e85]
+      - generic [ref=f9e88]:
+        - generic [ref=f9e91]:
+          - generic [ref=f9e92]:
+            - paragraph [ref=f9e93]: Generating transcript...
+            - paragraph [ref=f9e94]: Grab a coffee — clips appear here the moment they render.
+          - list [ref=f9e95]:
+            - listitem [ref=f9e96]:
+              - generic [ref=f9e100]: Fetching video
+            - listitem [ref=f9e101]:
+              - generic [ref=f9e104]: Transcribing
+            - listitem [ref=f9e105]:
+              - generic [ref=f9e110]: Finding moments
+            - listitem [ref=f9e111]:
+              - generic [ref=f9e118]: Rendering clips
+        - paragraph [ref=f9e119]: 30% complete
+  - button [ref=f9e120]
+  - region "Notifications alt+T"
+  - button "Open Next.js Dev Tools" [ref=f9e126] [cursor=pointer]
+  - alert [ref=f9e130]
