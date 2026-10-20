@@ -1,6 +1,6 @@
 use super::{
-    content, generation, semantic, store,
-    types::{ClipCollection, Options, Review},
+    content, generation, semantic, store, text_engine,
+    types::{ClipCollection, Options, Quality, Review},
     ClipJobs,
 };
 use crate::{
@@ -118,7 +118,8 @@ pub async fn generate_clips(
     let lease = app.state::<Arc<ProcessingGate>>().acquire()?;
     let (entry, duration) = media(&app, &project_id, &media_id)?;
     let base = crate::app_data_base(&app)?;
-    semantic::discover(&base)?;
+    // Falta de recurso do motor selecionado deve abortar ANTES de abrir job.
+    text_engine::Engine::discover(&base, options.quality())?;
     let transcript = transcription::store::load(&base, &project_id)?
         .filter(|t| t.media_id == media_id)
         .ok_or("Transcreva o vídeo antes de gerar cortes.")?;
@@ -190,7 +191,6 @@ pub async fn analyze_clip(
     let lease = app.state::<Arc<ProcessingGate>>().acquire()?;
     let (_, duration) = media(&app, &project_id, &media_id)?;
     let base = crate::app_data_base(&app)?;
-    semantic::discover(&base)?;
     let mut collection =
         store::load(&base, &project_id, &media_id, duration)?.ok_or("Corte não encontrado.")?;
     let transcript = transcription::store::load(&base, &project_id)?
@@ -198,6 +198,17 @@ pub async fn analyze_clip(
         .ok_or("Transcreva o vídeo antes de analisar cortes.")?;
     let hash = store::fingerprint(&transcript.segments)?;
     collection.invalidate_analysis(hash);
+    // Reanálise usa o MESMO motor que gerou a coleção (metadado técnico);
+    // coleções antigas sem metadado são do motor padrão.
+    let quality = match collection
+        .engine
+        .as_ref()
+        .map(|record| record.backend.as_str())
+    {
+        Some("experimentalGemma") => Quality::ExperimentalGemma,
+        _ => Quality::Standard,
+    };
+    let engine = text_engine::Engine::discover(&base, quality)?;
     let index = collection
         .clips
         .iter()
@@ -215,7 +226,7 @@ pub async fn analyze_clip(
         let result = (|| {
             let scratch = crate::render::scratch::Scratch::new(&base)?;
             semantic::run(
-                &base,
+                &engine,
                 &scratch.path,
                 &mut collection.clips[index],
                 &transcript.segments,

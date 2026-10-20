@@ -109,6 +109,7 @@ mod tests {
                     version: 1,
                     media_id: media.into(),
                     transcript_hash: "hash".into(),
+                    engine: None,
                     clips: vec![],
                 },
                 30.0,
@@ -137,6 +138,7 @@ mod tests {
             version: 1,
             media_id: "m".into(),
             transcript_hash: "hash".into(),
+            engine: None,
             clips: vec![super::super::types::Clip {
                 id: "a".repeat(64),
                 start: 1.0,

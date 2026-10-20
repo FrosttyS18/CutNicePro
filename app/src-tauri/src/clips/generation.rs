@@ -1,5 +1,5 @@
 use super::{
-    scene_regions, selection, semantic, store,
+    scene_regions, selection, semantic, store, text_engine,
     types::{Clip, ClipCollection, Options},
 };
 use crate::transcription::{process::ProcessControl, types::Segment};
@@ -59,6 +59,29 @@ fn analyze(
     Ok(())
 }
 
+/// Revisões humanas valem para qualquer motor; ANÁLISE (título/nota/
+/// critérios) só é reaproveitada quando produzida pelo MESMO backend — o
+/// experimental não pode publicar avaliações de outro modelo, nem o padrão
+/// as do experimental.
+pub(crate) fn merge_previous(value: &mut ClipCollection, previous: &ClipCollection) {
+    let same_engine = previous
+        .engine
+        .as_ref()
+        .is_some_and(|record| value.engine.as_ref().is_some_and(|new| new.backend == record.backend));
+    for clip in &mut value.clips {
+        if let Some(old) = previous.clips.iter().find(|old| {
+            old.id == clip.id
+                && old.format == clip.format
+                && previous.transcript_hash == value.transcript_hash
+        }) {
+            clip.review = old.review.clone();
+            if same_engine {
+                clip.analysis = old.analysis.clone();
+            }
+        }
+    }
+}
+
 pub fn run(
     base: &Path,
     scratch: &Path,
@@ -66,13 +89,14 @@ pub fn run(
     control: &ProcessControl,
     mut progress: impl FnMut(u8),
 ) -> Result<ClipCollection, String> {
+    let engine = text_engine::Engine::discover(base, request.options.quality())?;
     let evaluator = |pending: &[Clip],
                      segments: &[crate::transcription::types::Segment]|
      -> Result<Vec<(String, u8, String)>, String> {
-        selection::evaluate_batch(base, scratch, pending, segments, control)
+        selection::evaluate_batch_with(&engine, scratch, pending, segments, control)
     };
     let mut clips = selection::select(
-        base,
+        &engine,
         scratch,
         request.speech,
         request.media,
@@ -96,28 +120,21 @@ pub fn run(
         clip.id =
             super::types::identity(request.media, clip.start, clip.end, clip.format.as_deref());
     }
+    let engine_record = engine.record();
     let mut value = ClipCollection {
         version: 1,
         media_id: request.media.into(),
         transcript_hash: store::fingerprint(request.speech)?,
         clips,
+        engine: Some(engine_record.clone()),
     };
     if let Some(previous) = store::load(base, request.project, request.media, request.duration)? {
-        for clip in &mut value.clips {
-            if let Some(old) = previous.clips.iter().find(|old| {
-                old.id == clip.id
-                    && old.format == clip.format
-                    && previous.transcript_hash == value.transcript_hash
-            }) {
-                clip.review = old.review.clone();
-                clip.analysis = old.analysis.clone();
-            }
-        }
+        merge_previous(&mut value, &previous);
     }
     analyze(
         &mut value.clips,
         control,
-        |clip| semantic::run(base, scratch, clip, request.speech, control),
+        |clip| semantic::run(&engine, scratch, clip, request.speech, control),
         progress,
     )?;
     value
@@ -170,6 +187,7 @@ mod tests {
                 version: 1,
                 media_id: "m".into(),
                 transcript_hash: "h".into(),
+                engine: None,
                 clips: clips.clone(),
             },
             60.0,
@@ -184,5 +202,87 @@ mod tests {
             |_| {}
         )
         .is_err());
+    }
+}
+
+#[cfg(test)]
+mod merge_tests {
+    use super::merge_previous;
+    use super::super::types::{Clip, ClipCollection, EngineRecord, Review};
+
+    fn record(backend: &str) -> Option<EngineRecord> {
+        Some(EngineRecord {
+            backend: backend.into(),
+            model: "modelo.gguf".into(),
+            template: "t".into(),
+            sampling: "s".into(),
+            seed: 42,
+        })
+    }
+    fn clip(id: &str, analysis: bool) -> Clip {
+        Clip {
+            id: id.into(),
+            start: 1.0,
+            end: 30.0,
+            title: "T".into(),
+            score: 10,
+            reasons: vec![],
+            review: Review::Pending,
+            format: None,
+            analysis: if analysis {
+                Some(serde_json::from_value(serde_json::json!({
+                    "title":"T","summary":"S",
+                    "criteria":[
+                        {"label":"Gancho","score":1,"explanation":"a","evidence":"e"},
+                        {"label":"Desenvolvimento","score":1,"explanation":"a","evidence":"e"},
+                        {"label":"Fechamento","score":1,"explanation":"a","evidence":"e"}]})).unwrap())
+            } else {
+                None
+            },
+            analysis_error: None,
+        }
+    }
+    fn collection(engine: Option<EngineRecord>, clips: Vec<Clip>) -> ClipCollection {
+        ClipCollection {
+            version: 1,
+            media_id: "m".into(),
+            transcript_hash: "h".into(),
+            clips,
+            engine,
+        }
+    }
+
+    #[test]
+    fn review_merges_across_engines_but_analysis_only_within_same_backend() {
+        let old_clip = clip("a", true);
+        let mut previous = collection(record("standard"), vec![Clip {
+            review: Review::Approved,
+            ..old_clip.clone()
+        }]);
+        previous.transcript_hash = "h".into();
+        let mut experimental = collection(record("experimentalGemma"), vec![clip("a", false)]);
+        merge_previous(&mut experimental, &previous);
+        // revisão humana vale para qualquer motor
+        assert_eq!(experimental.clips[0].review, Review::Approved);
+        // análise de OUTRO motor não é reutilizada
+        assert!(experimental.clips[0].analysis.is_none());
+
+        let mut same = collection(record("standard"), vec![clip("a", false)]);
+        merge_previous(&mut same, &previous);
+        assert!(same.clips[0].analysis.is_some(), "mesmo backend deve reaproveitar");
+    }
+
+    #[test]
+    fn legacy_collection_without_engine_keeps_review_and_never_reuses_analysis() {
+        let mut previous = collection(None, vec![Clip {
+            review: Review::Approved,
+            ..clip("a", true)
+        }]);
+        previous.transcript_hash = "h".into();
+        let mut standard = collection(record("standard"), vec![clip("a", false)]);
+        merge_previous(&mut standard, &previous);
+        assert_eq!(standard.clips[0].review, Review::Approved);
+        // sem metadado não há garantia de origem: só reanálise publica nota
+        assert!(standard.clips[0].analysis.is_none());
     }
 }

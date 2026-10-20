@@ -5,7 +5,7 @@ import { DownloadSimpleIcon } from "@phosphor-icons/react/dist/csr/DownloadSimpl
 import { FilmStripIcon } from "@phosphor-icons/react/dist/csr/FilmStrip";
 import type { useClips } from "../../hooks/useClips";
 import type { EditorSettings } from "../../lib/workspace-types";
-import type { Clip } from "../../lib/clips";
+import type { Clip, ClipQuality } from "../../lib/clips";
 import { clipMessage } from "../../lib/clips";
 import { FlowDialog } from "../workspace/FlowDialog";
 import { ProcessingDialog } from "../workspace/ProcessingDialog";
@@ -26,6 +26,7 @@ export function ClipTools({ controller: c, settings, ready, disabled, onSave, on
   const [dismissed, setDismissed] = useState<string | null>(null);
   const [count, setCount] = useState(3);
   const [duration, setDuration] = useState(60);
+  const [quality, setQuality] = useState<ClipQuality>("standard");
   const [format,setFormat] = useState<AspectRatio>("9:16");
   const [preparing, setPreparing] = useState(false);
   const requestedGeneration = useRef(false);
@@ -38,7 +39,7 @@ export function ClipTools({ controller: c, settings, ready, disabled, onSave, on
   }, [c.job,onShowClips]);
   async function generate() {
     setPreparing(true);
-    try { if (await onSave()) { setDialog(null); requestedGeneration.current = true; await c.generate({ minSeconds: Math.max(10,duration/2), maxSeconds: duration, count,format }); } }
+    try { if (await onSave()) { setDialog(null); requestedGeneration.current = true; await c.generate({ minSeconds: Math.max(10,duration/2), maxSeconds: duration, count,format, ...(quality !== "standard" ? { quality } : {}) }); } }
     finally { setPreparing(false); }
   }
   async function exportVideo(value: EditorSettings, clip?: Clip) {
@@ -48,7 +49,7 @@ export function ClipTools({ controller: c, settings, ready, disabled, onSave, on
   const busy = c.busy || disabled || preparing;
   return <div className="clip-tools">
     <button type="button" className="flow-button" disabled={busy || !ready} onClick={() => setDialog("generate")}><ScissorsIcon size={18} aria-hidden="true"/>{c.collection ? "Atualizar cortes" : "Gerar cortes"}</button>
-    {!libraryView && c.collection && <button type="button" className="flow-button" disabled={busy} onClick={() => void (async () => { if (await onSave()) onShowClips(); })()}><FilmStripIcon size={18} aria-hidden="true"/>Cortes ({c.collection.clips.filter(clip=>clip.review !== "rejected").length})</button>}
+    {!libraryView && c.collection && <button type="button" className="flow-button" disabled={busy} onClick={() => void (async () => { if (await onSave()) onShowClips(); })()}><FilmStripIcon size={18} aria-hidden="true"/>Cortes ({c.collection.clips.filter(clip=>clip.review !== "rejected").length}){c.collection.engine?.backend === "experimentalGemma" ? " · experimental" : ""}</button>}
     {!libraryView && activeClipId && <button type="button" className="flow-button" disabled={busy} onClick={onFullVideo}><FilmStripIcon size={18} aria-hidden="true"/>Voltar ao vídeo completo</button>}
     {!libraryView && <button type="button" className="flow-button" disabled={busy || Boolean(activeClipId && activeClip?.review !== "approved")} onClick={() => void exportVideo(ready ? settings : { ...settings, captionModel: 0 },activeClip)}><DownloadSimpleIcon size={18} aria-hidden="true"/>Exportar vídeo</button>}
     {!libraryView && activeClip && activeClip.review !== "approved" && <button type="button" className="flow-button" disabled={busy} onClick={() => void c.review(activeClip.id,"approved")}>Aprovar corte</button>}
@@ -60,7 +61,9 @@ export function ClipTools({ controller: c, settings, ready, disabled, onSave, on
       <ClipFormatPicker value={format} onChange={setFormat}/>
       {c.collection && <p>As novas sugestões substituirão a lista atual.</p>}
       <div className="clip-options"><label>Duração máxima<AppSelect name="clipDuration" value={duration} onChange={event => setDuration(Number(event.target.value))}><option value={30}>30 segundos</option><option value={60}>1 minuto</option><option value={90}>1 minuto e 30 segundos</option><option value={180}>3 minutos</option></AppSelect></label>
-        <label>Quantidade<input name="clipCount" autoComplete="off" type="number" min={1} max={12} value={count} onChange={event => setCount(Number(event.target.value))}/></label></div>
+        <label>Quantidade<input name="clipCount" autoComplete="off" type="number" min={1} max={12} value={count} onChange={event => setCount(Number(event.target.value))}/></label>
+        <label>Análise<AppSelect aria-label="Análise" name="clipQuality" value={quality} onChange={event => setQuality(event.target.value as ClipQuality)}><option value="standard">Padrão</option><option value="experimentalGemma">Experimental (Gemma 4)</option></AppSelect></label></div>
+      {quality === "experimentalGemma" && <p className="flow-muted">O modo experimental usa um modelo local maior: a geração fica mais lenta e os resultados substituem a lista atual ao final.</p>}
       <button type="button" className="upload-primary flow-wide" disabled={busy || !Number.isInteger(count) || count<1 || count>12} onClick={() => void generate()}>Gerar cortes</button>
     </FlowDialog>
     {c.job && (c.operation === "generate" || c.operation === "export") && <ProcessingDialog key={c.job.jobId} open={c.busy || (c.ownedJob && c.job.state === "failed" && dismissed !== c.job.jobId)} id={c.job.jobId} busy={c.busy}

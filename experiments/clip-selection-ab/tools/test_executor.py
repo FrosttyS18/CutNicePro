@@ -380,6 +380,66 @@ class TestExecutorFluxo(ScratchDir):
         self.assertEqual(rep["janelas"]["cobertura"]["gaps"], [])
         self.assertGreaterEqual(len(rep["janelas"]["cobertura"]["overlaps"]), 1)
 
+    def test_candidato_da_ultima_janela_avalia_e_vence_com_mais_de_12_unicos(self):
+        """Exigência da retomada (item 1): nenhum candidato desaparece por
+        ordem de chegada — a última janela precisa chegar à avaliação e poder
+        ser escolhida mesmo com >12 únicos vindos das janelas anteriores."""
+        segs, dur = discover.load_context()
+        n = len(segs)
+        # janela 0: 7 propostas DISTINTAS; janela 1 (a ÚLTIMA do mapa real
+        # com o tokenizador falso): 7 próprias + 1 na cauda EXCLUSIVA dela
+        early = [{"firstId": 10 + k * 8, "lastId": 14 + k * 8, "score": 70}
+                 for k in range(7)]
+        late_first = n - 9  # cauda exclusiva da última janela (~583s)
+        early2 = [{"firstId": 140 + k * 8, "lastId": 144 + k * 8, "score": 70}
+                  for k in range(7)]
+        late = [{"firstId": late_first, "lastId": n - 3, "score": 70}]
+        disc = {"window-0": {"candidates": early},
+                "window-1": {"candidates": early2 + late}}
+        late_threshold = segs[late_first]["start"] - 1e-6
+
+        class DynEval(FakeEngine):
+            def __call__(self, argv):
+                base = os.path.basename(argv[argv.index("-f") + 1])
+                if "eval" in base:
+                    raw = open(os.path.join(discover.SCRATCH, base), encoding="utf-8").read()
+                    import re as _re
+                    starts = [float(m) for m in _re.findall(r'"start":\s*([\d.]+)', raw)]
+                    items = []
+                    for i, s in enumerate(starts):
+                        is_late = s >= late_threshold
+                        items.append({"id": f"E{i+1}", "score": 99 if is_late else 60,
+                                      "reason": "última janela" if is_late else "início"})
+                    return {"ok": True, "returncode": 0,
+                            "stdout": json.dumps({"items": items}),
+                            "stderr": "generate: n_ctx = 8192\n", "elapsed_s": 0.1}
+                return super().__call__(argv)
+        eng = DynEval(discovery=disc)
+        rep = discover.run_profile("a", engine_fn=eng,
+                                   tokenizer_fn=fake_tokenizer, emit=False)
+        self.assertGreater(rep["descoberta"]["propostas_unicas"], 12)
+        self.assertEqual(rep["descoberta"]["reduzidos_por_politica"], 0)
+        # todos os únicos avaliados (nenhum descartado por ordem de chegada)
+        self.assertEqual(rep["avaliacao"]["avaliados"],
+                         rep["descoberta"]["construidos"])
+        # o corte da última janela está entre os escolhidos
+        self.assertTrue(any(c["start"] >= late_threshold
+                            for c in rep["resultado"]["clips"]),
+                        "candidato da última janela não foi escolhido")
+
+    def test_fair_cap_preserva_todas_as_janelas(self):
+        cands = ([{"firstId": i, "lastId": i + 5, "score": 50, "_w": 0} for i in range(0, 60, 2)]
+                 + [{"firstId": i, "lastId": i + 5, "score": 50, "_w": 1} for i in range(100, 160, 2)]
+                 + [{"firstId": i, "lastId": i + 5, "score": 50, "_w": 2} for i in range(200, 260, 2)])
+        self.assertEqual(len(cands), 90)
+        kept, removed = discover.fair_cap(cands, 30)
+        self.assertEqual(len(kept), 30)
+        self.assertEqual(removed, 60)
+        windows = {c["_w"] for c in kept}
+        self.assertEqual(windows, {0, 1, 2})  # oportunidade em TODA a mídia
+        counts = [sum(1 for c in kept if c["_w"] == w) for w in (0, 1, 2)]
+        self.assertEqual(counts, [10, 10, 10])  # round-robin equilibrado
+
 
 class TestProvaCurta(ScratchDir):
     def test_prova_detecta_nctx_errado(self):

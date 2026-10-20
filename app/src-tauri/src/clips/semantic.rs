@@ -1,12 +1,10 @@
 use super::{
     evidence::{self, DraftAnalysis},
-    text_engine,
+    text_engine::Engine,
     types::Clip,
 };
 use crate::transcription::{process::ProcessControl, types::Segment};
 use std::path::Path;
-
-pub use text_engine::discover;
 
 pub fn source(clip: &Clip, segments: &[Segment]) -> String {
     segments
@@ -29,7 +27,7 @@ pub fn source(clip: &Clip, segments: &[Segment]) -> String {
 }
 
 pub fn run(
-    base: &Path,
+    engine: &Engine,
     scratch: &Path,
     clip: &mut Clip,
     segments: &[Segment],
@@ -43,9 +41,8 @@ pub fn run(
     }
     let quotes = evidence::quotes(&text);
     let data = serde_json::json!({"quotes":quotes.iter().enumerate().map(|(id,text)|serde_json::json!({"id":id,"text":text})).collect::<Vec<_>>()});
-    let prompt = text_engine::prompt(include_str!("analysis-prompt.txt"), &data)?;
-    let output = text_engine::generate(
-        base,
+    let prompt = engine.prompt(include_str!("analysis-prompt.txt"), &data)?;
+    let output = engine.generate(
         scratch,
         "analysis",
         &prompt,

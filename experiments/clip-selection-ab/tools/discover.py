@@ -32,9 +32,12 @@ REPORTS = os.path.join(HERE, "reports")
 DATA = os.path.join(HERE, "data")
 
 MIN_S, MAX_S, COUNT = 15.0, 90.0, 3
-PER_WINDOW_LIMIT = 6          # propostas máx. por janela (mesma regra da atualização 6)
-MAX_TOTAL = 12                # teto global após dedupe
+PER_WINDOW_LIMIT = 6          # propostas máx. por janela (contrato do schema por chamada)
 EVAL_BATCH = 8
+# Redução SOMENTE acima deste total de candidatos ÚNICOS (política explícita
+# de vídeo longo: round-robin entre janelas, preservando oportunidade ao
+# longo de toda a mídia; nunca "primeiros N por ordem de chegada").
+FAIR_CAP = 60
 CTX_MARGIN = 120              # folga além de n_predict e dos 4 tokens reservados
 
 
@@ -72,7 +75,7 @@ def speech_data(segs, ws, we):
 def discover_schema(seg_max):
     return json.dumps({
         "type": "object", "additionalProperties": False, "required": ["candidates"],
-        "properties": {"candidates": {"type": "array", "maxItems": MAX_TOTAL, "items": {
+        "properties": {"candidates": {"type": "array", "maxItems": PER_WINDOW_LIMIT * 2, "items": {
             "type": "object", "additionalProperties": False,
             "required": ["firstId", "lastId", "score"],
             "properties": {
@@ -237,6 +240,11 @@ def discovery_stage(profile, segs, windows, engine_fn, calls_log):
                      and isinstance(c.get("firstId"), int)
                      and isinstance(c.get("lastId"), int)
                      and isinstance(c.get("score"), int)]
+            # proveniência de janela: permite deduplicar pares IGUAIS entre
+            # janelas (overlap) sem descartar candidatos DISTINTOS, e sustenta
+            # a política de redução estratificada para vídeos longos.
+            for c in valid:
+                c["_w"] = k
             entry_window["status"] = "ok"
             entry_window["propostas"] = len(cands)
             entry_window["invalidos_no_parse"] = len(cands) - len(valid)
@@ -252,35 +260,64 @@ def discovery_stage(profile, segs, windows, engine_fn, calls_log):
     return all_candidates, results
 
 
+def fair_cap(uniq, cap):
+    """Redução explícita para vídeo longo: round-robin entre JANELAS (mantém
+    uma cota por janela antes de repetir), preservando oportunidade ao longo
+    de toda a mídia. Nunca "primeiros N por ordem de chegada". Devolve a
+    lista reduzida e a contagem removida; cap=None avalia todos."""
+    if cap is None or len(uniq) <= cap:
+        return uniq, 0
+    by_window = {}
+    for c in uniq:
+        by_window.setdefault(c.get("_w", 0), []).append(c)
+    kept = []
+    queues = [list(v) for _, v in sorted(by_window.items())]
+    while len(kept) < cap and any(queues):
+        for q in queues:
+            if q and len(kept) < cap:
+                kept.append(q.pop(0))
+    removed = len(uniq) - len(kept)
+    order = {id(c): i for i, c in enumerate(uniq)}
+    kept.sort(key=lambda c: (c.get("_w", 0), order.get(id(c), 0)))
+    return kept, removed
+
+
 def build_clicks(candidates, segs, duration):
-    """Dedupe por (firstId,lastId), aplica conform/repair com IDs globais."""
+    """Dedupe por (firstId,lastId) — pares IGUAIS entre janelas (overlap)
+    contam como duplicata; pares DISTINTOS NUNCA são descartados por ordem
+    de chegada. Redução somente pela política fair_cap, registrada."""
     seen = set()
     uniq = []
+    duplicates = 0
     for c in candidates:
         key = (c["firstId"], c["lastId"])
         if key in seen:
+            duplicates += 1
             continue
         seen.add(key)
         uniq.append(c)
-    uniq = uniq[:MAX_TOTAL]
+    kept, capped = fair_cap(uniq, FAIR_CAP)
     built = []
     invalid = 0
     alternatives = 0
-    for c in uniq:
+    for c in kept:
         ok = conform(c["firstId"], c["lastId"], c["score"], segs, duration)
         if ok:
             built.append({"start": ok[0], "end": ok[1], "score": ok[2],
-                          "razao": "", "origem": f"proposta [{c['firstId']},{c['lastId']}]"})
+                          "razao": "", "origem": f"proposta [{c['firstId']},{c['lastId']}] (janela {c.get('_w', 0)})"})
         else:
             invalid += 1
             for alt in repair(c["firstId"], c["lastId"], c["score"], segs, duration):
                 built.append({"start": alt[0], "end": alt[1], "score": alt[2],
                               "razao": f"alternativa '{alt[3]}' de [{c['firstId']},{c['lastId']}]: "
                                        f"nota original é proveniência, não avaliação",
-                              "origem": f"alternativa '{alt[3]}'"})
+                              "origem": f"alternativa '{alt[3]}' (janela {c.get('_w', 0)})"})
                 alternatives += 1
-    stats = {"propostas_unicas": len(uniq), "dedupe_removidos": len(candidates) - len(uniq),
-             "fora_faixa": invalid, "alternativas": alternatives, "construidos": len(built)}
+    stats = {"propostas_unicas": len(uniq),
+             "dedupe_removidos": duplicates,
+             "reduzidos_por_politica": capped,
+             "fora_faixa": invalid, "alternativas": alternatives,
+             "construidos": len(built)}
     return built, stats
 
 
@@ -440,9 +477,10 @@ def run_profile(profile, engine_fn=None, tokenizer_fn=None, emit=True):
     if cov["gaps"]:
         raise RuntimeError(f"lacuna de cobertura: segmentos {cov['gaps'][:10]}")
 
-    # --- orçamento declarado ANTES da execução. A avaliação considera o pior
-    # caso com alternativas de repair (proposta fora da faixa pode gerar até 2):
-    max_built = MAX_TOTAL + 2 * MAX_TOTAL
+    # --- orçamento declarado ANTES da execução. Sem teto de dedupe: todas as
+    # únicas são avaliadas; o máximo de construídos por janela é o limite do
+    # schema + 2 alternativas por proposta fora da faixa.
+    max_built = len(windows) * PER_WINDOW_LIMIT * 2 * 3
     planned_eval = -(-max_built // EVAL_BATCH)
     budget_decl = {
         "prova_curta": 1, "descoberta": len(windows),

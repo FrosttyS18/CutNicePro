@@ -5,10 +5,12 @@ import type { AspectRatio } from "../components/upload/tools";
 import { defaultEditorSettings } from "./workspace";
 
 export type ClipReview = "pending" | "approved" | "rejected";
+export type ClipQuality = "standard" | "experimentalGemma";
+export interface ClipEngine { backend: string; model: string; template: string; sampling: string; seed: number }
 export interface ClipAnalysis { title: string; summary: string; criteria: {label: string; score: number; explanation: string; evidence: string}[] }
 export interface Clip { id: string; start: number; end: number; title: string; score: number; reasons: string[]; review: ClipReview; format?: AspectRatio; analysis?: ClipAnalysis; analysisError?: string }
-export interface ClipCollection { version: 1; mediaId: string; transcriptHash: string; clips: Clip[] }
-export interface ClipOptions { minSeconds: number; maxSeconds: number; count: number; format?: AspectRatio }
+export interface ClipCollection { version: 1; mediaId: string; transcriptHash: string; clips: Clip[]; engine?: ClipEngine }
+export interface ClipOptions { minSeconds: number; maxSeconds: number; count: number; format?: AspectRatio; quality?: ClipQuality }
 export interface ClipJob { jobId: string; projectId: string; state: "running" | "completed" | "failed" | "cancelled"; stage: "analyzing" | "rendering"; progress: number; error: string | null; operation?: "generate" | "analyze" | "export" }
 
 export function parseClips(value: unknown): ClipCollection {
@@ -55,6 +57,7 @@ export function renderSettings(settings: EditorSettings): EditorSettings {
 }
 export function clipMessage(error: unknown): string {
   const text = String(error);
+  if (/motor experimental/i.test(text)) return "O modo experimental está indisponível neste dispositivo. Gere novamente com a análise padrão.";
   if (/trechos completos|selecionar os momentos/i.test(text)) return "Não encontramos trechos completos nesta duração. Aumente a duração dos cortes e tente novamente.";
   if (/transcrição mudou/i.test(text)) return "A transcrição mudou. Atualize os cortes do projeto para analisar novamente.";
   if (/evidências válidas/i.test(text)) return "Não foi possível confirmar a análise deste trecho. Tente analisar novamente.";

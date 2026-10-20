@@ -46,6 +46,7 @@ fn changed_transcript_invalidates_analysis_and_review_without_changing_clip_form
         version: 1,
         media_id: "m".into(),
         transcript_hash: "old".into(),
+        engine: None,
         clips: vec![super::types::Clip {
             id: "a".repeat(64),
             start: 0.0,
@@ -78,8 +79,9 @@ fn real_local_analysis_has_grounded_content() {
     let mut collection: super::types::ClipCollection =
         serde_json::from_slice(&std::fs::read(base.join("clips.json")).unwrap()).unwrap();
     let clip = &mut collection.clips[0];
+    let engine = super::text_engine::Engine::Standard(super::text_engine::discover(&base).unwrap());
     semantic::run(
-        &base,
+        &engine,
         &base,
         clip,
         &transcript.segments,

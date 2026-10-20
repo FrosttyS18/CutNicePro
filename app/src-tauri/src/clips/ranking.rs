@@ -175,6 +175,7 @@ mod tests {
                 max_seconds: 40.0,
                 count: 4,
                 format: Some("9:16".into()),
+                quality: None,
             },
         )
         .unwrap();
@@ -200,7 +201,8 @@ mod tests {
                     min_seconds: 20.0,
                     max_seconds: 40.0,
                     count: 4,
-                    format: Some("9:16".into())
+                    format: Some("9:16".into()),
+                    quality: None,
                 }
             )
             .unwrap()[0]
@@ -219,7 +221,8 @@ mod tests {
                 min_seconds: 20.0,
                 max_seconds: 40.0,
                 count: 3,
-                format: None
+                format: None,
+                quality: None,
             }
         )
         .unwrap()
@@ -228,7 +231,8 @@ mod tests {
             min_seconds: f64::NAN,
             max_seconds: 40.0,
             count: 3,
-            format: None
+            format: None,
+            quality: None,
         }
         .validate()
         .is_err());
@@ -236,7 +240,8 @@ mod tests {
             min_seconds: 10.0,
             max_seconds: 200.0,
             count: 3,
-            format: None
+            format: None,
+            quality: None,
         }
         .validate()
         .is_err());
@@ -248,6 +253,7 @@ mod tests {
             max_seconds: 40.0,
             count: 1,
             format: Some("9:16".into()),
+            quality: None,
         };
         let vertical = select(&speech(), "m", 150.0, &[], &options).unwrap();
         options.format = Some("1:1".into());

@@ -52,3 +52,32 @@ describe("fluxo de clipes com efeitos e cliques do React",()=>{
     expect(Boolean(mounted.host.querySelector("dialog[open]"))).toBe(visible);
   });
 });
+
+describe("modo experimental de qualidade (Gemma 4)",()=>{
+  function controller(collection:import("../lib/clips").ClipCollection|null){
+    return {collection,job:null,operation:undefined as never,ownedJob:false,busy:false,loading:false,error:null,notice:null,
+      generate:vi.fn(async()=>{}),analyze:vi.fn(async()=>{}),exportVideo:vi.fn(async()=>{}),review:vi.fn(async()=>true),cancel:vi.fn(async()=>true),reload:vi.fn()};
+  }
+  async function openDialog(controller2:ReturnType<typeof controller>){
+    mounted=await reactHost(<ClipTools controller={controller2} settings={defaultEditorSettings()} ready disabled={false} onSave={async()=>true} onShowClips={()=>undefined} onFullVideo={()=>undefined}/>);
+    await mounted.click(controller2.collection ? "Atualizar cortes" : "Gerar cortes");
+    return mounted;
+  }
+  it("padrão não envia quality e o experimental envia experimentalGemma",async()=>{
+    const existing:import("../lib/clips").ClipCollection={version:1,mediaId:"m",transcriptHash:"h",clips:[entry.clip]};
+    const c=controller(existing);  // barra vira "Atualizar cortes": só o diálogo tem "Gerar cortes"
+    await openDialog(c);
+    await mounted!.click("Gerar cortes");
+    expect(c.generate).toHaveBeenCalledWith({minSeconds:30,maxSeconds:60,count:3,format:"9:16"});
+    const c2=controller(existing);
+    await openDialog(c2);
+    await mounted!.chooseOption("Análise","Experimental (Gemma 4)");
+    await mounted!.click("Gerar cortes");
+    expect(c2.generate).toHaveBeenCalledWith({minSeconds:30,maxSeconds:60,count:3,format:"9:16",quality:"experimentalGemma"});
+  });
+  it("coleção experimental é identificada na lista de cortes",async()=>{
+    const c=controller({version:1,mediaId:"m",transcriptHash:"h",clips:[entry.clip],engine:{backend:"experimentalGemma",model:"gemma-4-12b-it-qat-q4_0.gguf",template:"gemma4-canonical-nothink",sampling:"temp 1.0, top_k 64, top_p 0.95, min_p 0, seed 42",seed:42}});
+    mounted=await reactHost(<ClipTools controller={c} settings={defaultEditorSettings()} ready disabled={false} onSave={async()=>true} onShowClips={()=>undefined} onFullVideo={()=>undefined}/>);
+    expect(mounted.host.textContent).toContain("experimental");
+  });
+});

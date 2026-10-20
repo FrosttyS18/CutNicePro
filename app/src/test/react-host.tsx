@@ -16,5 +16,15 @@ export async function reactHost(node: ReactNode) {
     const button=Array.from(host.querySelectorAll<HTMLButtonElement>("button")).find(item=>item.textContent?.trim()===text);
     if(!button) throw new Error(`Button not found: ${text}`);
     await act(async()=>{button.click();});
+  },async select(name:string,value:string){
+    const target=host.querySelector<HTMLSelectElement>(`select[name="${name}"]`);
+    if(!target) throw new Error(`Select not found: ${name}`);
+    await act(async()=>{target.value=value;target.dispatchEvent(new Event("change",{bubbles:true}));});
+  },async chooseOption(listLabel:string,optionText:string){
+    const list=Array.from(host.querySelectorAll<HTMLElement>('[role="listbox"]')).find(item=>item.getAttribute("aria-label")===listLabel);
+    if(!list) throw new Error(`Listbox not found: ${listLabel}`);
+    const option=Array.from(list.querySelectorAll<HTMLElement>('[role="option"]')).find(item=>item.textContent===optionText);
+    if(!option) throw new Error(`Option not found: ${optionText}`);
+    await act(async()=>{option.click();});
   },async close(){await act(async()=>root.unmount());host.remove();await environment.happyDOM.cancelAsync();vi.unstubAllGlobals();}};
 }

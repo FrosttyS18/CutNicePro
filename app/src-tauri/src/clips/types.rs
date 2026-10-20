@@ -43,6 +43,12 @@ pub struct ClipCollection {
     pub media_id: String,
     pub transcript_hash: String,
     pub clips: Vec<Clip>,
+    /// Metadados técnicos do motor que produziu a coleção (backend, modelo,
+    /// template, amostragem). Não é conteúdo editorial — a UI não despeja
+    /// textos internos; serve para reanálise pelo motor correto e para
+    /// decidir quando uma análise antiga pode ser reaproveitada.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub engine: Option<EngineRecord>,
 }
 impl ClipCollection {
     pub fn invalidate_analysis(&mut self, hash: String) {
@@ -57,6 +63,30 @@ impl ClipCollection {
     }
 }
 
+/// Registro técnico do motor usado na geração (atualização 8: modo
+/// experimental Gemma 4). `backend` distingue coleções e veda reuso de
+/// análise entre motores diferentes.
+#[derive(Clone, Debug, Deserialize, Serialize, PartialEq)]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
+pub struct EngineRecord {
+    pub backend: String,
+    pub model: String,
+    pub template: String,
+    pub sampling: String,
+    pub seed: u32,
+}
+
+#[derive(Clone, Copy, Debug, Default, Deserialize, PartialEq)]
+#[serde(rename_all = "camelCase")]
+pub enum Quality {
+    /// Motor padrão de produção (Qwen3-4B local, ChatML + think vazio).
+    #[default]
+    Standard,
+    /// Modo experimental de qualidade (Gemma-4-12B-IT QAT Q4_0 local) —
+    /// fluxo validado na atualização 7 do experimento.
+    ExperimentalGemma,
+}
+
 #[derive(Deserialize)]
 #[serde(rename_all = "camelCase", deny_unknown_fields)]
 pub struct Options {
@@ -65,8 +95,16 @@ pub struct Options {
     pub count: usize,
     #[serde(default)]
     pub format: Option<String>,
+    /// Escolha explícita de motor; ausente = padrão de produção. Nunca há
+    /// troca silenciosa: o experimental falha com erro próprio se o modelo
+    /// não estiver disponível.
+    #[serde(default)]
+    pub quality: Option<Quality>,
 }
 impl Options {
+    pub fn quality(&self) -> Quality {
+        self.quality.unwrap_or_default()
+    }
     pub fn validate(&self) -> Result<(), String> {
         if !self.min_seconds.is_finite()
             || !self.max_seconds.is_finite()

@@ -1,0 +1,193 @@
+╔════════════════════════════════════════════╗
+║       CUTNICEPRO — ZCODE REPORT            ║
+╚════════════════════════════════════════════╝
+
+TASK
+  Name: Integrar o fluxo Gemma como opção experimental de qualidade
+    (atualização 8)
+  Status: PASS FUNCIONAL — modo experimental testável no app com duas
+    execuções reais de ponta a ponta, medições, comparação com o experimento
+    e procedimento de reversão preparado. Achado material registrado com
+    evidência: com a amostragem documentada (temp 1,0), o corte ESPECÍFICO
+    da atualização 7 não se reproduz em toda amostra — o arco chegou à
+    disputa (proposto e reparado para 32,2–120,9 s) mas a avaliação desta
+    amostra deu 60 (vs 85 na atualização 7) e a DP escolheu outras unidades.
+    Estabilidade entre amostras é decisão do mantenedor, não fechada aqui.
+    Aprovação editorial: PENDING HUMAN APPROVAL.
+  Scope: app/src-tauri/src/clips/** + app/src (clips.ts, ClipTools.tsx,
+    testes) + experiments/clip-selection-ab (tools + relatórios) +
+    .tooling/vendor/analysis/engine-gemma.json (config preparada) +
+    docs/engineering/ENGINE-HANDOFF.md + docs/reports. Sem commits/pushes;
+    sem mudanças em Whisper, renderização, hooks, permissões globais,
+    memórias; projetos/mídia/clipes antigos e untracked preexistentes
+    preservados (verificado: app-data do usuário sem alterações da tarefa).
+  Base: HEAD ac9a3b3 conferida; working tree limpa no início.
+
+IMPLEMENTATION
+  1. DESCARTE ANTES DA AVALIAÇÃO CORRIGIDO (item 1):
+     - discover.py do experimento não aplica mais uniq[:12]: dedupe por
+       (firstId,lastId) contabilizado separado de limitação; NENHUM
+       candidato distinto some por ordem de chegada.
+     - Política explícita para vídeo longo: fair_cap round-robin ENTRE
+       JANELAS (oportunidade ao longo de toda a mídia), aplicada somente
+       acima de 60 únicos e registrada no relatório (reduzidos_por_politica).
+     - Teste determinístico OBRIGATÓRIO aprovado: candidato da ÚLTIMA
+       janela (cauda exclusiva ~583 s) alcança a avaliação e é ESCOLHIDO
+       com >12 únicos vindos das janelas anteriores (27/27 no executor).
+  2. INTEGRAÇÃO DO FLUXO, NÃO TROCA DE ARQUIVO (item 2):
+     - Options.quality (ausente = padrão; "experimentalGemma") via UI
+       existente (seletor "Análise" no diálogo de geração — sem redesign);
+       coleções carregam metadado técnico `engine` (backend/modelo/template/
+       amostragem/seed); a UI só exibe selo "· experimental" no botão Cortes
+       (nenhum texto interno despejado).
+     - text_engine::Engine{Standard,Gemma}: Standard mantém EXATAMENTE o
+       argv/`--fit` de produção; Gemma usa template canônico do GGUF
+       (`<|turn>`/`<|channel>`, thinking off), amostragem recomendada do
+       modelo (temp 1,0/top_k 64/top_p 0,95/min_p 0/seed 42), SEM `--fit`,
+       SEM fallback de modelo (ausência → erro explícito com orientação na
+       clipMessage dedicada).
+     - Janelas com ORÇAMENTO REAL DE TOKENS no experimental: windows_budgeted
+       (orçamento 6068 = 8192−4−2000−120; medição com o tokenizador do próprio
+       modelo via llama-tokenize; estimativa O(1) só para planejar; verificação
+       exata por janela; subdivisão registrada COM RECUO de sobreposição na
+       costura — defeito de adjacência foi pego por teste e corrigido; sem
+       truncagem; falha insolúvel → erro orientando usar o padrão).
+     - Prompt de descoberta do experimental = discover-prompt.txt (unidades
+       narrativas COMPLETAS validado na atualização 7), agora no app; o padrão
+       continua com selection-prompt.txt de produção.
+     - Etapas preservadas: candidatos novos + avaliação própria de TODOS em
+       lotes de 8 (sem nota antiga), associação estável ID↔intervalo↔texto↔
+       nota (inalterada e testada), falha/cancelamento (control.check por
+       janela, por lote e entre medições de tokens), escolha final por DP no
+       código, análise do conteúdo publicado com evidência citada
+       (analysis.validate verde nos 3 cortes de cada execução real).
+     - merge_previous: revisão humana reaproveitada sempre; ANÁLISE
+       (título/nota/critérios) somente entre coleções do MESMO backend — o
+       experimental nunca publica avaliações de outro modelo (testado, incl.
+       coleções legadas sem metadado).
+     - analyze_clip reusa o motor que gerou a coleção (metadado), garantindo
+       reanálise consistente; generate_clips falha ANTES de abrir job se o
+       motor selecionado estiver indisponível.
+     - Config preparada para o mantenedor (nenhum comando manual):
+       .tooling/vendor/analysis/engine-gemma.json aponta para o artefato
+       verificado da atualização 7 (home-e, sha256 conferido); fallback de
+       desenvolvimento para o mesmo arquivo; o modo padrão NÃO lê esse
+       arquivo e nenhum projeto foi reconfigurado.
+  3. RESULTADO NA INTERFACE (item 3): títulos/descrições das duas execuções
+     foram gerados pelo CAMINHO REAL (semantic::run com o motor Gemma — ex.:
+     "Análise das armas e equipamentos do personagem John Leach", "Histórico
+     e valorização de skins da Valve no mercado"), com critérios e evidências
+     validados contra o texto do corte; nenhum nome/palavra/timestamp do
+     podcast fixado em lógica; notas exibidas como potencial estimado
+     (texto existente), sem alegação de viralização. 9:16 intocado.
+  4. MEDIÇÃO E VALIDAÇÃO SEM LOOP (item 4):
+     - Execuções REAIS pelo caminho integrado (teste ignorado dedicado, base
+       isolada .tooling/vendor/pipeline-validation-gemma*): run1 743,8 s
+       (prompt de produção — variante, artefatos preservados) e run2 690,2 s
+       (prompt validado; 3 janelas, 4 medições do tokenizador, 2 propostas
+       fora da faixa → 4 alternativas em cada uma das duas primeiras
+       janelas, 3 cortes finais, persistência E reabertura verificadas).
+     - Etapas: descoberta do motor 0,2 s; por chamada (logs): load 3,5–5,8 s
+       (23,2 s somados — cada chamada recarrega o modelo), prompt eval
+       101,9–108,1 tok/s, geração 3,4–4,0 tok/s. OFFLOAD CONFIRMADO POR
+       PARIDADE com o experimento validado (~102 tok/s prompt, ordem de
+       grandeza acima do perfil CPU para 12B) — não por nome de pasta.
+       PICO DE MEMÓRIA: indisponível nos logs do runtime (declarado);
+       --list-devices antes/depois: 11175 MiB livres (modelo não residente
+       entre chamadas).
+     - Nenhuma otimização promovida (nenhum gargalo novo além do perfil
+       conhecido do 12B; campanha de otimização vedada pela tarefa).
+     - Contratos verificados: cancelamento (check por etapa + novo check
+       entre tokenizações), persistência/reabertura (assert no teste real),
+       preservação de resultados antigos (dir do pipeline padrão intocado;
+       app-data do usuário sem modificações da tarefa; coleções legadas
+       continuam válidas — teste dedicado).
+  5. ENTREGA (item 5): modo experimental testável; cortes prontos nas duas
+     bases isoladas (generated-clips-gemma.json de cada execução); títulos
+     pelo caminho real; comparação experimento × integração com tracing do
+     arco (reports/integration-comparison.md + integration-report.md);
+     tempos/memória/falhas/limitações; distinção explícita entre PASS técnico
+     e aprovação editorial; procedimento de reversão em 4 passos. Outro
+     material local autorizado: não existe além do conjunto de validação já
+     usado (registro da ausência).
+
+FILES
+  Created: app/src-tauri/src/clips/discover-prompt.txt (cópia byte a byte do
+    validado na atualização 7); .tooling/vendor/analysis/engine-gemma.json;
+    .tooling/vendor/pipeline-validation-gemma{,-run1-productionprompt}/
+    (coleções, medições, logs, scene-cache); experiments/.../tools/
+    integration_report.py; experiments/.../reports/{integration-report.md,
+    integration-comparison.md}; docs/reports/history/2026-10-20_0510_*.txt
+  Modified (rastreados): app/src-tauri/src/clips/{types,text_engine,
+    selection,semantic,generation,commands,ranking,store,pipeline_tests,
+    semantic_tests}.rs; app/src/{lib/clips.ts,components/clips/ClipTools.tsx,
+    test/clip-flow.test.tsx,test/react-host.tsx}; docs/engineering/
+    ENGINE-HANDOFF.md; experiments/.../tools/{discover.py,test_executor.py}
+  Deleted: NONE. Nota de higiene: `cargo fmt` reformatou 8 arquivos fora do
+    escopo (lib.rs, media_*.rs, storage.rs etc.); diffs eram apenas
+    formatação e foram REVERTIDOS ao HEAD (verificado; suítes verdes após).
+
+VALIDATION
+  FUNCTIONAL STATUS: PASS
+    - Rust app: 119/119 (11 novos: paridade de template padrão; template
+      canônico Gemma + escape de tags; registros por backend; serde de
+      quality; round-trip de engine + coleção legada; janelas orçadas com
+      cobertura/overlap/orçamento; subdivisão com registro; orçamento
+      insolúvel = erro; merge por backend ×2)
+    - TypeScript: 154/154 + tsc OK (2 novos: quality enviada somente no
+      experimental; selo "experimental" na UI) — AppSelect é dropdown
+      custom; helper chooseOption adicionado ao react-host
+    - Executor Python do experimento: 27/27 (2 novos: último-vence-com->12;
+      fair_cap estratificado)
+    - Execuções reais integradas: 2/2 PASS (690,2 s e 743,8 s), com
+      persistência e reabertura
+  REGRESSION STATUS: PASS (caminho padrão com argv idêntico ao anterior —
+    teste de paridade de string do prompt e trait de argv por motor;
+    suítes completas verdes; dados do usuário e artefatos do pipeline
+    padrão intocados; fmt fora de escopo revertido)
+  VISUAL STATUS: PENDING HUMAN APPROVAL (sem mudanças visuais além de um
+    seletor/selo em componentes existentes; validação visual do mantenedor)
+  Total LLM calls da tarefa: 12 (2×[3 seleções + 2 avaliações + 3 análises
+    reais] + tokenizações sem geração) — dentro do orçamento: 1 repetição da
+    execução real, justificada por correção material (prompt errado na run1)
+    e registrada; NENHUMA repetição em busca de resultado favorável.
+
+ISSUES
+  - ACHADO MATERIAL (variabilidade): temp 1,0 documentada do Gemma 4 torna
+    o resultado de UMA amostra instável. Na run2 o arco foi PROPOSTO
+    (janela 0, candidato 15..64 ≈ 28–120 s, nota 88) e reparado para
+    E1=32,2–120,9 s (espelho do D1 33,5–120,9 da atualização 7), mas a
+    avaliação desta amostra deu 60 ("muito longo e narrativa confusa") e
+    E2=45; a DP escolheu 420,9–461,8/315,1–367,3/488,4–533,4 s. Na
+    atualização 7 a mesma região recebera 85. Fluxo estrutural fiel e
+    testado; ESTABILIDADE EDITORIAL ENTRE AMOSTRAS fica para decisão do
+    mantenedor (mais amostras/votação/temperatura menor seriam mudança de
+    escopo).
+  - Janelas do integrado: 3 (planejador estimativo mais conservador que o
+    do experimento, que gerou 2); verificação exata garante o orçamento em
+    ambas; partição distinta muda a amostra (registrado na comparação).
+  - Pico de VRAM durante chamadas: indisponível nos logs do runtime
+    (declarado); evidência de offload por paridade de tok/s.
+  - Gargalo dominante: 3,4 tok/s de geração (perfil Vulkan do 12B nesta
+    GPU) + recarga de modelo por chamada (23,2 s somados) — conhecido,
+    sem ação nesta tarefa.
+  - Primeira execução real falhou por parsing do tokenizador ("Total
+    number of tokens: N"); corrigido e registrado (evidência de por que a
+    prova de execução real importa).
+
+FINAL
+  Delivery status: PASS FUNCIONAL — integração experimental entregue,
+    testável pelo mantenedor sem comandos, reversível, com medições e
+    comparação honestas. Adoção como padrão e decisão sobre estabilidade
+    de amostras pertencem ao mantenedor.
+  User action required: no app, abrir o projeto de teste, "Gerar cortes" →
+    Análise "Experimental (Gemma 4)" e assistir aos cortes (ou abrir os
+    JSONs das duas execuções); decidir sobre a variabilidade relatada;
+    decisão de commit.
+  Ready for next task: SIM — encerrado após a entrega, sem outra fase.
+
+REPORT
+  Latest file: docs/reports/LATEST.txt
+  Historical file: docs/reports/history/2026-10-20_0510_integracao-experimental-gemma.txt
+
+END OF REPORT

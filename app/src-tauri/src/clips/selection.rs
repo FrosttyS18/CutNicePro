@@ -1,6 +1,6 @@
 use super::{
-    text_engine,
-    types::{Clip, Options, Review},
+    text_engine::{self, Engine},
+    types::{Clip, Options, Quality, Review},
 };
 use crate::transcription::{process::ProcessControl, types::Segment};
 use serde::Deserialize;
@@ -31,6 +31,144 @@ pub fn windows(segments: &[Segment], overlap: f64) -> Vec<Range<usize>> {
             .unwrap_or(end);
     }
     result
+}
+
+/// Orçamento de contexto do modo experimental (atualização 7): 4 tokens
+/// reservados pelo runtime + reserva de resposta + folga — o prompt final
+/// (template incluído) de cada janela tem que caber nesse resto.
+const GEMMA_CTX: usize = 8192;
+const GEMMA_RESERVED: usize = 4 + 2000 + 120;
+const GEMMA_WINDOW_SPAN: f64 = 600.0;
+
+/// Dados enviados ao modelo para uma janela — usados TANTO para medir tokens
+/// (orçamento) quanto para a chamada real: o que foi medido é o que foi
+/// enviado. IDs GLOBAIS (o modelo referencia a transcrição inteira).
+fn window_data(
+    segments: &[Segment],
+    range: &Range<usize>,
+    options: &Options,
+    limit: usize,
+) -> serde_json::Value {
+    serde_json::json!({
+        "minSeconds": options.min_seconds,
+        "maxSeconds": options.max_seconds,
+        "limit": limit,
+        "speech": range.clone().map(|id| serde_json::json!([
+            id, segments[id].start, segments[id].end, segments[id].text
+        ])).collect::<Vec<_>>(),
+    })
+}
+
+/// Janelas com ORÇAMENTO REAL DE TOKENS (modo experimental): calibra a razão
+/// caracteres/token com uma medição integral, planeja por estimativa e
+/// VERIFICA cada janela com o tokenizador exato; janela que não cabe é
+/// subdividida no meio (registrado); nunca há truncagem silenciosa e lacunas
+/// de cobertura são impossíveis por construção (próxima janela começa antes
+/// do fim da anterior). `tokenize` injetável para testes sem inferência.
+pub(crate) fn windows_budgeted(
+    segments: &[Segment],
+    options: &Options,
+    limit: usize,
+    engine: &Engine,
+    system: &str,
+    tokenize: &mut dyn FnMut(&str) -> Result<usize, String>,
+) -> Result<Vec<Range<usize>>, String> {
+    use std::collections::hash_map::DefaultHasher;
+    use std::hash::{Hash, Hasher};
+    let mut cache: std::collections::HashMap<u64, usize> = std::collections::HashMap::new();
+    let mut exact = |text: &str| -> Result<usize, String> {
+        let mut hasher = DefaultHasher::new();
+        text.hash(&mut hasher);
+        let key = hasher.finish();
+        if let Some(known) = cache.get(&key) {
+            return Ok(*known);
+        }
+        let count = tokenize(text)?;
+        cache.insert(key, count);
+        Ok(count)
+    };
+    let budget = GEMMA_CTX.saturating_sub(GEMMA_RESERVED);
+    let prompt_of = |range: &Range<usize>| -> Result<String, String> {
+        engine.prompt(system, &window_data(segments, range, options, limit))
+    };
+    let full = prompt_of(&(0..segments.len()))?;
+    let full_tokens = exact(&full)?;
+    if full_tokens <= budget {
+        return Ok(vec![0..segments.len()]);
+    }
+    // Estimativa O(1) por janela: peso proporcional de caracteres + overhead
+    // fixo do template/JSON medido no prompt completo. Serve só para PLANEJAR;
+    // cada janela é verificada com o tokenizador exato antes de usar.
+    let seg_chars: Vec<usize> = segments
+        .iter()
+        .map(|s| s.text.chars().count() + 40)
+        .collect();
+    let total_chars: usize = seg_chars.iter().sum();
+    let overhead = full.chars().count().saturating_sub(total_chars);
+    let chars_per_token = full_tokens as f64 / full.chars().count().max(1) as f64;
+    let mut prefix = vec![0usize; seg_chars.len() + 1];
+    for (i, chars) in seg_chars.iter().enumerate() {
+        prefix[i + 1] = prefix[i] + chars;
+    }
+    let estimate = |range: &Range<usize>| -> usize {
+        ((prefix[range.end] - prefix[range.start] + overhead) as f64 * chars_per_token) as usize
+    };
+    let mut planned: Vec<Range<usize>> = Vec::new();
+    let mut start = 0;
+    while start < segments.len() {
+        let mut end = start;
+        while end < segments.len()
+            && (end == start
+                || (estimate(&(start..end + 1)) <= budget
+                    && segments[end].end - segments[start].start <= GEMMA_WINDOW_SPAN))
+        {
+            end += 1;
+        }
+        planned.push(start..end);
+        if end >= segments.len() {
+            break;
+        }
+        let span = segments[end - 1].end - segments[start].start;
+        let boundary = segments[end - 1].end - options.max_seconds.min(span / 2.0);
+        start = (start + 1..end)
+            .find(|&i| segments[i].start >= boundary)
+            .unwrap_or(end);
+    }
+    // verificação exata + subdivisão registrada (sem truncagem)
+    let mut verified: Vec<Range<usize>> = Vec::new();
+    let mut queue: Vec<(Range<usize>, usize)> = planned.into_iter().map(|r| (r, 0)).collect();
+    while let Some((range, depth)) = queue.pop() {
+        let prompt = prompt_of(&range)?;
+        let tokens = exact(&prompt)?;
+        if tokens <= budget {
+            verified.push(range);
+            continue;
+        }
+        if depth >= 4 || range.len() <= 1 {
+            return Err(
+                "Não foi possível dividir a transcrição em janelas que caibam no motor experimental. Gere com a análise padrão.".into(),
+            );
+        }
+        let mid = range.start + range.len() / 2;
+        eprintln!(
+            "[clips] janela {}..{} com {tokens} tokens excede o orçamento {budget}; subdividindo",
+            range.start, range.end
+        );
+        // A metade de trás RECUA para manter sobreposição na costura: uma
+        // história que atravessa o ponto de corte continua cabendo inteira
+        // em pelo menos uma das metades (mesma garantia das fronteiras
+        // entre janelas planejadas).
+        let span = segments[range.end - 1].end - segments[range.start].start;
+        let overlap = options.max_seconds.min(span / 4.0);
+        let seam = segments[mid].start - overlap;
+        let back_start = (range.start..=mid)
+            .find(|&i| segments[i].start >= seam)
+            .unwrap_or(mid);
+        queue.push((back_start..range.end, depth + 1));
+        queue.push((range.start..mid, depth + 1));
+    }
+    verified.sort_by_key(|r| r.start);
+    Ok(verified)
 }
 
 #[derive(Clone, Debug, Deserialize)]
@@ -68,7 +206,11 @@ fn clip_for(media: &str, start: f64, end: f64, score: u8, format: Option<&str>) 
         id: super::types::identity(media, start, end, format),
         start,
         end,
-        title: format!("Trecho {:02}:{:02}", (start / 60.0) as u64, (start as u64) % 60),
+        title: format!(
+            "Trecho {:02}:{:02}",
+            (start / 60.0) as u64,
+            (start as u64) % 60
+        ),
         score,
         reasons: Vec::new(),
         review: Review::Pending,
@@ -137,19 +279,29 @@ pub(crate) fn repair_alternatives(
     if candidate.first_id > candidate.last_id || candidate.score > 100 {
         return result;
     }
-    let (Some(first), Some(last)) =
-        (segments.get(candidate.first_id), segments.get(candidate.last_id))
-    else {
+    let (Some(first), Some(last)) = (
+        segments.get(candidate.first_id),
+        segments.get(candidate.last_id),
+    ) else {
         return result;
     };
     let natural_end = last.end.min(duration);
     let span = natural_end - first.start;
-    let mut alternative = |start: f64, end: f64, policy: &'static str, result: &mut Vec<Contender>| {
+    let mut alternative = |start: f64,
+                           end: f64,
+                           policy: &'static str,
+                           result: &mut Vec<Contender>| {
         let final_span = end - start;
         if final_span < options.min_seconds || final_span > options.max_seconds {
             return;
         }
-        let mut clip = clip_for(media, start, end, candidate.score, options.format.as_deref());
+        let mut clip = clip_for(
+            media,
+            start,
+            end,
+            candidate.score,
+            options.format.as_deref(),
+        );
         clip.reasons.push(format!(
             "alternativa '{policy}' de [{:.1}s, {:.1}s]: proposta original fora da faixa; a nota {} é proveniência, não avaliação deste intervalo",
             first.start, natural_end, candidate.score
@@ -221,8 +373,8 @@ pub(crate) struct EvaluationReply {
 /// antiga na entrada, IDs estáveis E1.., contexto externo separado. Uma
 /// tentativa; falha deixa os pendentes fora da disputa com registro —
 /// nunca nota zero, nunca nota antiga restaurada silenciosamente.
-pub(crate) fn evaluate_batch(
-    base: &Path,
+pub(crate) fn evaluate_batch_with(
+    engine: &Engine,
     scratch: &Path,
     pending: &[Clip],
     segments: &[Segment],
@@ -272,9 +424,8 @@ pub(crate) fn evaluate_batch(
         let schema = serde_json::json!({"type":"object","additionalProperties":false,"required":["items"],"properties":{"items":{"type":"array","maxItems":chunk.len(),"items":{
             "type":"object","additionalProperties":false,"required":["id","score","reason"],"properties":{
                 "id":{"type":"string","enum":labels},"score":{"type":"integer","minimum":0,"maximum":100},"reason":{"type":"string"}}}}}});
-        let prompt = text_engine::prompt(include_str!("evaluate-prompt.txt"), &data)?;
-        let output = text_engine::generate(
-            base,
+        let prompt = engine.prompt(include_str!("evaluate-prompt.txt"), &data)?;
+        let output = engine.generate(
             scratch,
             &format!("evaluate-{chunk_index}"),
             &prompt,
@@ -287,7 +438,12 @@ pub(crate) fn evaluate_batch(
             .next()
             .ok_or("Não foi possível avaliar os trechos ajustados. Tente novamente.")?
             .map_err(|_| "Não foi possível avaliar os trechos ajustados. Tente novamente.")?;
-        merged.extend(reply.items.into_iter().map(|item| (item.id, item.score, item.reason)));
+        merged.extend(
+            reply
+                .items
+                .into_iter()
+                .map(|item| (item.id, item.score, item.reason)),
+        );
     }
     Ok(merged)
 }
@@ -438,9 +594,10 @@ pub(crate) fn resolve(
                         continue; // id repetido: o primeiro aplica
                     }
                     let contender = &mut contenders[slot];
-                    contender.clip.reasons.push(format!(
-                        "Avaliação do intervalo efetivo: {reason}"
-                    ));
+                    contender
+                        .clip
+                        .reasons
+                        .push(format!("Avaliação do intervalo efetivo: {reason}"));
                     contender.clip.score = score;
                     contender.valid_score = Some(score);
                     evaluated += 1;
@@ -468,8 +625,7 @@ pub(crate) fn resolve(
     }
     if dispute.is_empty() {
         return Err(
-            "Não foi possível avaliar os trechos propostos nesta duração. Tente novamente."
-                .into(),
+            "Não foi possível avaliar os trechos propostos nesta duração. Tente novamente.".into(),
         );
     }
     dispute.sort_by(|a, b| b.score.cmp(&a.score).then(a.start.total_cmp(&b.start)));
@@ -502,6 +658,7 @@ mod tests {
             max_seconds: max,
             count,
             format: Some("9:16".into()),
+            quality: None,
         }
     }
 
@@ -722,11 +879,13 @@ mod tests {
             .map(|(i, _)| (format!("E{}", i + 1), 30u8, "avaliação baixa".into()))
             .collect();
         for (id, score, reason) in evaluations {
-            if let Some(contender) = contenders
-                .iter_mut()
-                .find(|c| c.valid_score.is_none() && label_of(&c.clip).as_deref() == Some(id.as_str()))
-            {
-                contender.clip.reasons.push(format!("Avaliação do intervalo efetivo: {reason}"));
+            if let Some(contender) = contenders.iter_mut().find(|c| {
+                c.valid_score.is_none() && label_of(&c.clip).as_deref() == Some(id.as_str())
+            }) {
+                contender
+                    .clip
+                    .reasons
+                    .push(format!("Avaliação do intervalo efetivo: {reason}"));
                 contender.clip.score = score;
                 contender.valid_score = Some(score);
             }
@@ -739,7 +898,10 @@ mod tests {
                 dispute.push(clip);
             }
         }
-        assert!(dispute.iter().all(|c| c.score != 90), "nota herdada não pode disputar");
+        assert!(
+            dispute.iter().all(|c| c.score != 90),
+            "nota herdada não pode disputar"
+        );
         dispute.sort_by(|a, b| b.score.cmp(&a.score).then(a.start.total_cmp(&b.start)));
         let chosen = finalize_weighted(&dispute, options.count);
         assert_eq!(chosen.len(), 1);
@@ -750,10 +912,7 @@ mod tests {
     fn fluxo_completo_via_resolve_avalia_antes_de_selecionar() {
         let segments = speech_from(60);
         let options = options(1, 15.0, 90.0);
-        let proposals = vec![(
-            0..40,
-            vec![candidate(0, 29, 90), candidate(2, 6, 80)],
-        )];
+        let proposals = vec![(0..40, vec![candidate(0, 29, 90), candidate(2, 6, 80)])];
         // avaliador mock: 1a pendente (alternativa de A) -> 30
         let evaluate = |pending: &[Clip], _segs: &[Segment]| {
             Ok(pending
@@ -762,10 +921,13 @@ mod tests {
                 .map(|(i, _)| (format!("E{}", i + 1), 30u8, "avaliação baixa".to_string()))
                 .collect())
         };
-        let chosen = resolve(&proposals, &segments, "media", 240.0, &options, &evaluate)
-            .expect("seleção");
+        let chosen =
+            resolve(&proposals, &segments, "media", 240.0, &options, &evaluate).expect("seleção");
         assert_eq!(chosen.len(), 1);
-        assert_eq!(chosen[0].score, 80, "B (proposta válida 80) vence; alternativas de A disputam com 30");
+        assert_eq!(
+            chosen[0].score, 80,
+            "B (proposta válida 80) vence; alternativas de A disputam com 30"
+        );
     }
 
     #[test]
@@ -794,13 +956,14 @@ mod tests {
         // [first, ~min] = pendentes E1..E3 na ordem
         let proposals = vec![(
             0..30,
-            vec![candidate(1, 2, 70), candidate(10, 11, 71), candidate(20, 21, 72)],
+            vec![
+                candidate(1, 2, 70),
+                candidate(10, 11, 71),
+                candidate(20, 21, 72),
+            ],
         )];
-        let evaluate = move |_pending: &[Clip], _segs: &[Segment]| {
-            Ok(respostas.clone())
-        };
-        resolve(&proposals, &segments, "media", 240.0, &options, &evaluate)
-            .expect("seleção")
+        let evaluate = move |_pending: &[Clip], _segs: &[Segment]| Ok(respostas.clone());
+        resolve(&proposals, &segments, "media", 240.0, &options, &evaluate).expect("seleção")
     }
 
     fn assert_associacao(chosen: &[Clip], esperado: &[(&str, u8)]) {
@@ -814,7 +977,8 @@ mod tests {
             assert!(
                 razao.contains(rotulo),
                 "razão {razao} deveria citar {rotulo} (clip {}/{})",
-                clip.start, clip.end
+                clip.start,
+                clip.end
             );
             assert_eq!(
                 clip.score, *nota,
@@ -839,10 +1003,7 @@ mod tests {
             ("E4".into(), 50, "raz-E4".into()),
             ("E5".into(), 60, "raz-E5".into()),
         ]);
-        assert_associacao(
-            &chosen,
-            &[("raz-E2", 90), ("raz-E5", 60), ("raz-E1", 10)],
-        );
+        assert_associacao(&chosen, &[("raz-E2", 90), ("raz-E5", 60), ("raz-E1", 10)]);
     }
 
     #[test]
@@ -857,7 +1018,13 @@ mod tests {
         let esperado = [("raz-E2", 90), ("raz-E5", 60), ("raz-E1", 10)];
         let inversa: Vec<_> = base.iter().rev().cloned().collect();
         assert_associacao(&run_associacao(inversa), &esperado);
-        let permutada = vec![base[2].clone(), base[4].clone(), base[0].clone(), base[3].clone(), base[1].clone()];
+        let permutada = vec![
+            base[2].clone(),
+            base[4].clone(),
+            base[0].clone(),
+            base[3].clone(),
+            base[1].clone(),
+        ];
         assert_associacao(&run_associacao(permutada), &esperado);
     }
 
@@ -868,7 +1035,11 @@ mod tests {
         // conforme ENTRE as curtas: nota própria, NÃO ocupa E-id
         let proposals = vec![(
             0..30,
-            vec![candidate(1, 2, 70), candidate(4, 8, 81), candidate(10, 11, 71)],
+            vec![
+                candidate(1, 2, 70),
+                candidate(4, 8, 81),
+                candidate(10, 11, 71),
+            ],
         )];
         let evaluate = |_pending: &[Clip], _segs: &[Segment]| {
             Ok(vec![
@@ -876,15 +1047,12 @@ mod tests {
                 ("E2".into(), 90, "raz-E2".into()),
             ])
         };
-        let chosen =
-            resolve(&proposals, &segments, "media", 240.0, &options, &evaluate).unwrap();
+        let chosen = resolve(&proposals, &segments, "media", 240.0, &options, &evaluate).unwrap();
         // disputa: conforme 81, E2=90, E1=10 -> top3 = E2, conforme, E1
         assert_associacao(&chosen[..1], &[("raz-E2", 90)]);
-        assert!(
-            chosen
-                .iter()
-                .any(|c| c.score == 81 && c.reasons.iter().all(|r| !r.contains("raz-")))
-        );
+        assert!(chosen
+            .iter()
+            .any(|c| c.score == 81 && c.reasons.iter().all(|r| !r.contains("raz-"))));
     }
 
     #[test]
@@ -909,13 +1077,8 @@ mod tests {
     fn falha_da_avaliacao_exclui_pendentes_sem_falso_sucesso() {
         let segments = speech_from(60);
         let options = options(1, 15.0, 90.0);
-        let alternatives = repair_alternatives(
-            candidate(0, 29, 90),
-            &segments,
-            "media",
-            240.0,
-            &options,
-        );
+        let alternatives =
+            repair_alternatives(candidate(0, 29, 90), &segments, "media", 240.0, &options);
         // avaliação FALHOU (Err no select): alternativas ficam fora da disputa
         for contender in &alternatives {
             assert!(contender.valid_score.is_none());
@@ -929,7 +1092,7 @@ mod tests {
 }
 
 pub fn select(
-    base: &Path,
+    engine: &Engine,
     scratch: &Path,
     segments: &[Segment],
     media: &str,
@@ -941,25 +1104,55 @@ pub fn select(
 ) -> Result<Vec<Clip>, String> {
     options.validate()?;
     crate::transcription::parser::validate(segments, duration)?;
-    let ranges = windows(segments, options.max_seconds);
+    let limit = (options.count * 2).min(12);
+    // O experimental usa o prompt de UNIDADES NARRATIVAS validado na
+    // atualização 7 (produziu o caso de aceite); o padrão mantém o prompt
+    // de seleção de produção.
+    let selection_system: &str = match options.quality() {
+        Quality::Standard => include_str!("selection-prompt.txt"),
+        Quality::ExperimentalGemma => include_str!("discover-prompt.txt"),
+    };
+    let ranges = match options.quality() {
+        Quality::Standard => windows(segments, options.max_seconds),
+        Quality::ExperimentalGemma => {
+            let counting_engine = engine;
+            let mut calls = 0usize;
+            let scratch_ref = scratch;
+            let mut tokenize = |text: &str| -> Result<usize, String> {
+                control.check()?; // cancelamento respeitado entre medições
+                calls += 1;
+                counting_engine.count_tokens(scratch_ref, text)
+            };
+            let ranges =
+                windows_budgeted(segments, options, limit, engine, selection_system, &mut tokenize)?;
+            eprintln!(
+                "[clips] orçamento de janelas: {} medições do tokenizador",
+                calls
+            );
+            ranges
+        }
+    };
+    // Reserva de resposta por chamada: padrão histórico da produção (1800);
+    // experimental 2000 (validado na atualização 7 — schema de até 12 itens).
+    let generation_tokens = match options.quality() {
+        Quality::Standard => 1800,
+        Quality::ExperimentalGemma => 2000,
+    };
     let mut proposals: Vec<(std::ops::Range<usize>, Vec<Candidate>)> = Vec::new();
     for (index, range) in ranges.iter().enumerate() {
         control.check()?;
         let ids = range.clone().collect::<Vec<_>>();
-        let limit = (options.count * 2).min(12);
-        let data = serde_json::json!({"minSeconds":options.min_seconds,"maxSeconds":options.max_seconds,"limit":limit,
-            "speech":range.clone().map(|id|serde_json::json!([id,segments[id].start,segments[id].end,segments[id].text])).collect::<Vec<_>>()});
+        let data = window_data(segments, range, options, limit);
         let schema = serde_json::json!({"type":"object","additionalProperties":false,"required":["candidates"],"properties":{"candidates":{"type":"array","maxItems":limit,"items":{
             "type":"object","additionalProperties":false,"required":["firstId","lastId","score"],"properties":{
                 "firstId":{"type":"integer","enum":ids},"lastId":{"type":"integer","enum":ids},"score":{"type":"integer","minimum":0,"maximum":100}}}}}});
-        let prompt = text_engine::prompt(include_str!("selection-prompt.txt"), &data)?;
-        let output = text_engine::generate(
-            base,
+        let prompt = engine.prompt(selection_system, &data)?;
+        let output = engine.generate(
             scratch,
             &format!("selection-{index}"),
             &prompt,
             &schema,
-            1800,
+            generation_tokens,
             control,
         )?;
         let reply = serde_json::Deserializer::from_str(output.trim())
@@ -967,8 +1160,114 @@ pub fn select(
             .next()
             .ok_or("Não foi possível selecionar os momentos. Tente novamente.")?
             .map_err(|_| "Não foi possível selecionar os momentos. Tente novamente.")?;
-        proposals.push((range.clone(), reply.candidates.into_iter().take(limit).collect()));
+        proposals.push((
+            range.clone(),
+            reply.candidates.into_iter().take(limit).collect(),
+        ));
         progress(((index + 1) * 50 / ranges.len().max(1)) as u8);
     }
     resolve(&proposals, segments, media, duration, options, evaluate)
+}
+
+#[cfg(test)]
+mod budgeted_window_tests {
+    use super::*;
+    use crate::transcription::types::Segment;
+
+    fn speech(count: usize) -> Vec<Segment> {
+        (0..count)
+            .map(|id| Segment {
+                id: format!("s{id}"),
+                start: id as f64 * 10.0,
+                end: id as f64 * 10.0 + 9.0,
+                text: format!(
+                "fala numero {id}: {}",
+                "conteudo do teste com palavras variadas e longas para ocupar tokens. ".repeat(3)
+            ),
+                words: vec![],
+            })
+            .collect()
+    }
+    fn gemma_engine() -> Engine {
+        text_engine::Engine::Gemma(text_engine::GemmaTools {
+            cpu: std::path::PathBuf::from("llama"),
+            gpu: None,
+            model: std::path::PathBuf::from("gemma.gguf"),
+            tokenizer: std::path::PathBuf::from("llama-tokenize"),
+        })
+    }
+    fn options() -> Options {
+        Options {
+            min_seconds: 15.0,
+            max_seconds: 90.0,
+            count: 3,
+            format: None,
+            quality: None,
+        }
+    }
+
+    #[test]
+    fn budgeted_windows_cover_all_speech_with_overlap_and_respect_budget() {
+        let segments = speech(60);
+        let engine = gemma_engine();
+        // tokenizador falso: 1 token a cada 2 chars do prompt final
+        let mut calls = 0usize;
+        let mut tokenize = |text: &str| -> Result<usize, String> {
+            calls += 1;
+            Ok(text.len() / 2)
+        };
+        let ranges = windows_budgeted(&segments, &options(), 6, &engine, "sistema", &mut tokenize).unwrap();
+        assert!(ranges.len() >= 2, "esperava mais de uma janela");
+        // cobertura sem lacunas
+        let mut covered = vec![false; segments.len()];
+        for range in &ranges {
+            for i in range.clone() {
+                covered[i] = true;
+            }
+        }
+        assert!(covered.iter().all(|c| *c));
+        // sobreposição de fronteira entre janelas consecutivas
+        for pair in ranges.windows(2) {
+            assert!(pair[1].start < pair[0].end, "janelas sem overlap");
+        }
+        // o tokenizador realmente rodou (medição, não estimativa)
+        assert!(calls >= ranges.len());
+    }
+
+    #[test]
+    fn oversize_window_is_subdivided_and_registered() {
+        let segments = speech(80);
+        let engine = gemma_engine();
+        // estimativa otimista (medição integral moderada) + verificação
+        // exata estourando para janelas grandes: força o caminho de SUBDIVISÃO
+        let mut tokenize = |text: &str| -> Result<usize, String> {
+            let segments_in = text.matches("fala numero").count();
+            if segments_in >= 79 {
+                Ok(7000)
+            } else if segments_in > 20 {
+                Ok(9000)
+            } else {
+                Ok(100)
+            }
+        };
+        let ranges = windows_budgeted(&segments, &options(), 6, &engine, "sistema", &mut tokenize).unwrap();
+        assert!(ranges.iter().all(|r| r.len() <= 20 + 20), "subdivisão não limitou o tamanho");
+        let mut covered = vec![false; segments.len()];
+        for range in &ranges {
+            assert!(range.len() <= 20, "janela {}..{} não foi subdividida", range.start, range.end);
+            for i in range.clone() {
+                covered[i] = true;
+            }
+        }
+        assert!(covered.iter().all(|c| *c));
+    }
+
+    #[test]
+    fn unresolvable_budget_is_an_error_never_a_truncation() {
+        let segments = speech(10);
+        let engine = gemma_engine();
+        let mut tokenize = |_text: &str| -> Result<usize, String> { Ok(usize::MAX / 4) };
+        let result = windows_budgeted(&segments, &options(), 6, &engine, "sistema", &mut tokenize);
+        assert!(result.is_err());
+    }
 }
