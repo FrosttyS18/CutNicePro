@@ -1,6 +1,6 @@
 use super::{
     content, generation, semantic, store, text_engine,
-    types::{ClipCollection, Options, Quality, Review},
+    types::{ClipCollection, GenerateOptions, Quality, Review},
     ClipJobs,
 };
 use crate::{
@@ -112,9 +112,11 @@ pub async fn generate_clips(
     project_id: String,
     media_id: String,
     job_id: String,
-    options: Options,
+    options: GenerateOptions,
 ) -> Result<ClipCollection, String> {
-    options.validate()?;
+    // Resolve o pedido da UI ANTES de abrir job: automático vira limites
+    // técnicos; personalizado valida duração/quantidade informadas.
+    let options = options.resolve()?;
     let lease = app.state::<Arc<ProcessingGate>>().acquire()?;
     let (entry, duration) = media(&app, &project_id, &media_id)?;
     let base = crate::app_data_base(&app)?;

@@ -100,25 +100,112 @@ pub struct Options {
     /// não estiver disponível.
     #[serde(default)]
     pub quality: Option<Quality>,
+    /// Modo automático: quantidade e duração resultam dos momentos
+    /// encontrados dentro de LIMITES TÉCNICOS fixos (10–180 s, até 12
+    /// cortes) — nunca de valores de episódio. Resolvido a partir de
+    /// `GenerateOptions` antes de entrar no pipeline.
+    #[serde(default)]
+    pub automatic: bool,
 }
 impl Options {
     pub fn quality(&self) -> Quality {
         self.quality.unwrap_or_default()
     }
     pub fn validate(&self) -> Result<(), String> {
-        if !self.min_seconds.is_finite()
-            || !self.max_seconds.is_finite()
-            || self.min_seconds < 10.0
-            || self.max_seconds > 180.0
-            || self.max_seconds < self.min_seconds
-            || !(1..=12).contains(&self.count)
-            || self
-                .format
+        if !self.automatic
+            && (!self.min_seconds.is_finite()
+                || !self.max_seconds.is_finite()
+                || self.min_seconds < 10.0
+                || self.max_seconds > 180.0
+                || self.max_seconds < self.min_seconds
+                || !(1..=12).contains(&self.count)
+                || self
+                    .format
+                    .as_ref()
+                    .is_some_and(|v| !["16:9", "9:16", "1:1", "4:5"].contains(&v.as_str())))
+        {
+            return Err("Escolha de 1 a 12 cortes, com duração entre 10 e 180 segundos.".into());
+        }
+        if self.automatic
+            && self.format
                 .as_ref()
                 .is_some_and(|v| !["16:9", "9:16", "1:1", "4:5"].contains(&v.as_str()))
         {
             return Err("Escolha de 1 a 12 cortes, com duração entre 10 e 180 segundos.".into());
         }
         Ok(())
+    }
+}
+
+/// Limites técnicos do modo automático — documentados e fixos (os mesmos
+/// limites absolutos que o modo personalizado aceita). Nenhum valor de
+/// episódio, nenhuma quantidade arbitrária: o conteúdo decide quantos
+/// momentos existem; o piso editorial e o teto aplicam-se com registro.
+pub const AUTOMATIC_MIN_SECONDS: f64 = 10.0;
+pub const AUTOMATIC_MAX_SECONDS: f64 = 180.0;
+pub const AUTOMATIC_MAX_CLIPS: usize = 12;
+/// Piso editorial do automático: candidato cuja PRÓPRIA avaliação fique
+/// abaixo disso não vira sugestão (registro no log; nunca some em silêncio).
+pub const AUTOMATIC_RELEVANCE_FLOOR: u8 = 50;
+
+/// Contrato da UI para gerar cortes. `automatic` não envia duração nem
+/// quantidade; o personalizado envia os três valores explicitamente (a
+/// duração mínima é técnica, 10 s — "até 3 minutos" NÃO implica mínimos).
+#[derive(Deserialize)]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
+pub struct GenerateOptions {
+    #[serde(default)]
+    pub automatic: bool,
+    #[serde(default)]
+    pub min_seconds: Option<f64>,
+    #[serde(default)]
+    pub max_seconds: Option<f64>,
+    #[serde(default)]
+    pub count: Option<usize>,
+    #[serde(default)]
+    pub format: Option<String>,
+    #[serde(default)]
+    pub quality: Option<Quality>,
+}
+impl GenerateOptions {
+    /// Resolve o pedido da UI em limites concretos para o pipeline. O
+    /// automático recebe os LIMITES TÉCNICOS (não valores de episódio e não
+    /// os antigos valores fixos da UI); o personalizado valida o que veio.
+    pub fn resolve(self) -> Result<Options, String> {
+        let format_valid = self
+            .format
+            .as_ref()
+            .is_none_or(|v| ["16:9", "9:16", "1:1", "4:5"].contains(&v.as_str()));
+        if !format_valid {
+            return Err("Proporção de corte inválida.".into());
+        }
+        if self.automatic {
+            if self.min_seconds.is_some() || self.max_seconds.is_some() || self.count.is_some() {
+                return Err("No modo automático, quantidade e duração não são informados.".into());
+            }
+            return Ok(Options {
+                min_seconds: AUTOMATIC_MIN_SECONDS,
+                max_seconds: AUTOMATIC_MAX_SECONDS,
+                count: AUTOMATIC_MAX_CLIPS,
+                format: self.format,
+                quality: self.quality,
+                automatic: true,
+            });
+        }
+        let (min_seconds, max_seconds, count) = (
+            self.min_seconds.ok_or("Informe a duração dos cortes.")?,
+            self.max_seconds.ok_or("Informe a duração dos cortes.")?,
+            self.count.ok_or("Informe a quantidade de cortes.")?,
+        );
+        let options = Options {
+            min_seconds,
+            max_seconds,
+            count,
+            format: self.format,
+            quality: self.quality,
+            automatic: false,
+        };
+        options.validate()?;
+        Ok(options)
     }
 }

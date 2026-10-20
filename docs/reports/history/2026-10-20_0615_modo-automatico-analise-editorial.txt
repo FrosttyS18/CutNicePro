@@ -1,0 +1,151 @@
+╔════════════════════════════════════════════╗
+║       CUTNICEPRO — ZCODE REPORT            ║
+╚════════════════════════════════════════════╝
+
+TASK
+  Name: Modo automático por conteúdo e análise editorial (atualização 9)
+  Status: PASS FUNCIONAL — modo automático utilizável no aplicativo
+    (recomendado no diálogo), personalizado preservado com mínima
+    desassociada, avaliação por natureza do conteúdo com publicidade
+    identificada, títulos/resumos naturais pelo caminho real, comparação
+    delimitada personalizado × automático executada com corte completo da
+    história do save no automático. Aprovação editorial: PENDING HUMAN
+    APPROVAL; dois trade-offs registrados para decisão do mantenedor (nota
+    publicada × piso de seleção; unidades adjacentes do mesmo assunto).
+  Base: HEAD b6f146e conferida (atualização 8 commitada pelo mantenedor);
+    working tree limpa no início.
+  Scope: app/src-tauri/src/clips/** (types/text_engine não tocado em
+    comportamento/selection/commands/pipeline_tests + prompts),
+    app/src (clips.ts, ClipTools.tsx, testes), experiments (relatório de
+    comparação), docs (AUTOMATIC-MODE.md, ENGINE-HANDOFF.md, reports).
+    Sem mudanças em Whisper, 9:16, renderização, hooks, configurações
+    globais, modelos, memórias, commits/pushes. Sem montagem fora da ordem
+    original; sem votação de amostras; sem atribuir diferenças à
+    temperatura (variável única por execução: o modo).
+
+IMPLEMENTATION
+  1. GERAÇÃO AUTOMÁTICA (item 1):
+     - Novo contrato GenerateOptions (o que a UI envia): automático NÃO
+       envia duração nem quantidade; o backend resolve LIMITES TÉCNICOS
+       documentados (10–180 s, teto 12 — os mesmos limites absolutos do
+       personalizado; nenhum valor de episódio, nenhum count arbitrário).
+       Misturar automático com valores explícitos é erro de validação.
+     - Prompt próprio discover-auto-prompt.txt: unidades narrativas
+       completas em TODA a extensão, duração decidida pelo conteúdo dentro
+       dos limites técnicos, quantidade livre ("de nenhum a limit"),
+       assuntos distintos, sem força de quantidade.
+     - Cobertura de todo o vídeo (mesmas janelas do motor), redundância
+       controlada por DP sem sobreposição + instrução de assuntos
+       distintos; nenhuma redução silenciosa: exclusões do automático
+       (piso editorial 50, publicidade) são registradas em log — na
+       execução real: "[clips] automático: 2 abaixo do piso editorial (50)
+       e 0 de publicidade ficaram fora das sugestões". Nenhuma redução por
+       ordem de chegada (a fiação do app não possui teto de dedupe; o
+       princípio é testado no executor do experimento).
+  2. MODO PERSONALIZADO (item 2): duração máxima e quantidade seguem nas
+     mãos do usuário; a duração MÍNIMA enviada passou a ser técnica (10 s)
+     — a associação implícita mín = máx/2 foi REMOVIDA ("até 3 minutos"
+     não implica 90 s mínimos). Momentos que não caibam nos limites pedidos
+     não são truncados para preencher quantidade: alternativas de reparo
+     preservam abertura/desfecho e a DP devolve menos cortes quando não há
+     mais momentos válidos (comportamento existente, preservado).
+  3. AVALIAÇÃO PELA NATUREZA (item 3): evaluate-prompt.txt reescrito e o
+     schema -jf passa a EXIGIR nature (relato/humor/explicação/opinião/
+     demonstração, identificada ANTES do fechamento) e advertising. Humor
+     fecha por punchline/reação; demonstração fecha ao apontar os objetos
+     contados; contexto ausente × dependência da imagem DISTINGUIDOS
+     ("depende de contexto anterior" vs "depende da imagem do clipe"), com
+     vedação explícita de alegar análise visual só da transcrição. Nota =
+     julgamento editorial (não validade técnica, não viralização).
+     Publicidade reconhecida: no automático fica FORA das sugestões
+     (política explícita e registrada); no personalizado permanece com o
+     motivo marcado "publicidade". Defeito capturado antes da execução
+     real: a gramática sem os campos novos teria devolvido defaults
+     silenciosos — schema corrigido e suíte reexecutada.
+  4. TÍTULOS E RESUMOS (item 4): analysis-prompt.txt reescrito — título
+     específico do acontecimento (8–80 chars), resumo natural de 2–3
+     frases com PROIBIÇÃO de linguagem de relatório ("o falante analisa",
+     "o texto descreve", "o trecho mostra"), justificativa da avaliação
+     separada (critérios com evidência citada, validados por
+     analysis.validate), sem inventar nomes/imagens/consequências.
+     Skill cutnicepro-ux-writing verificada e carregada (conteúdo real
+     lido); textos de interface seguem o glossário (sentence case, helper
+     explica consequência, sem tom de anúncio).
+  5. INTERFACE (item 5): diálogo "Gerar cortes" com seletor Geração
+     (Automática/Personalizada — Automática recomendada e padrão); em
+     automático duração/quantidade NÃO aparecem e NÃO são enviados; helper
+     "A quantidade e a duração saem dos momentos encontrados no vídeo.";
+    personalizado mantém Duração máxima + Quantidade. Análise (motor
+     padrão/experimental) preservada em ambos os modos.
+
+VALIDATION
+  FUNCTIONAL STATUS: PASS
+    - Rust: 124/124 (novos: resolução automática×personalizada e mistos;
+      piso/publicidade no automático × manutenção marcada no personalizado;
+      erro orientado quando nada passa do piso; prompts por modo SEM valores
+      de episódio; parse de nature/advertising incl. saída legada).
+    - TypeScript: 154/154 + tsc OK (payload automático sem duração/
+      quantidade; personalizado com mínima técnica 10; quality em ambos).
+    - EXECUÇÃO REAL delimitada (teste ignorado, motor padrão, transcrição
+      reutilizada): personalizado 33 s → 3 cortes (16/19/89 s — cortes
+      curtos agora possíveis pela mínima desassociada); automático 100 s →
+      12 sugestões com a história do save COMPLETA num corte de 180 s
+      (53,1–232,8 s, alternativa início-avançado) e a contagem de pistolas
+      em três unidades adjacentes; análise validada em todos os cortes de
+      ambos os modos; naturezas (relato/humor/explicação/demonstração)
+      presentes nos motivos; piso registrado em log.
+  REGRESSION STATUS: PASS (personalizado validado pelas regras antigas;
+    payloads legados continuam aceitos; revisão humana/IDs/mesclagem por
+    backend/motores intactos; suítes completas verdes; nada fora do escopo
+    — git status confere somente módulos autorizados)
+  VISUAL STATUS: PENDING HUMAN APPROVAL (um seletor e um helper no diálogo
+    existente; sem redesign)
+  Execuções LLM: 2 pipelines completos pela fiação real (14 chamadas de
+    geração no total) + suítes sem inferência; NENHUMA repetição.
+
+ISSUES
+  - Para decisão do mantenedor (registrados em mode-comparison.md): (a) a
+    nota PUBLICADA vem da análise final — o piso editorial atua na seleção;
+    um corte entrou com seleção ≥50 e análise publicou 33 (visível com
+    franqueza na lista); (b) com teto 12, a DP por soma aprovou unidades
+    adjacentes do mesmo assunto (armas ×3, itens ×3) — teto menor/piso
+    maior/dedupe por assunto são opções editoriais, nenhuma aplicada.
+  - Personalizado com máxima 90 s ainda entrega a história do save parcial
+    (0–88,7 s termina no crash) — limite do teto pedido; com o automático o
+    corte completo apareceu (180 s).
+  - A execução real quase rodou com schema sem os campos novos (defaults
+    silenciosos); capturado na revisão antes do resultado final e
+    reexecutado — registrado como lição de contrato de gramática.
+  - Ferramenta: cinco lançamentos de comando em segundo plano perderam o
+    prefixo de diretório (precedência de pipe + serialização); contornado
+    com --manifest-path absoluto; sem impacto nos artefatos.
+
+FILES
+  Created: app/src-tauri/src/clips/discover-auto-prompt.txt;
+    docs/engineering/AUTOMATIC-MODE.md (critérios e limites);
+    experiments/clip-selection-ab/reports/mode-comparison.md;
+    .tooling/vendor/{mode-comparison.json,pipeline-validation-mode-custom,
+    pipeline-validation-mode-automatic}/; docs/reports/history/
+    2026-10-20_0615_modo-automatico-analise-editorial.txt
+  Modified: app/src-tauri/src/clips/{types,selection,generation,commands,
+    pipeline_tests}.rs; app/src-tauri/src/clips/{evaluate,analysis}-prompt.txt
+    (reescritos); app/src/{lib/clips.ts,components/clips/ClipTools.tsx,
+    test/clip-flow.test.tsx}; docs/engineering/ENGINE-HANDOFF.md
+  Deleted: NONE
+
+FINAL
+  Delivery status: PASS FUNCIONAL — modo automático utilizável, critérios e
+    limites documentados, resultados reais antes/depois prontos para
+    avaliação, testes pertinentes verdes. Aprovação editorial e decisão
+    sobre os trade-offs registrados pertencem ao mantenedor.
+  User action required: no app, gerar nos dois modos e assistir aos cortes
+    (JSONs + resumo em .tooling/vendor/mode-comparison.json; análise em
+    experiments/.../reports/mode-comparison.md); decidir sobre piso
+    duplo/teto/dedupe por assunto; decisão de commit.
+  Ready for next task: SIM — encerrado sem iniciar outra fase.
+
+REPORT
+  Latest file: docs/reports/LATEST.txt
+  Historical file: docs/reports/history/2026-10-20_0615_modo-automatico-analise-editorial.txt
+
+END OF REPORT

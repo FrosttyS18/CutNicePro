@@ -92,7 +92,7 @@ pub fn run(
     let engine = text_engine::Engine::discover(base, request.options.quality())?;
     let evaluator = |pending: &[Clip],
                      segments: &[crate::transcription::types::Segment]|
-     -> Result<Vec<(String, u8, String)>, String> {
+     -> Result<Vec<selection::Evaluation>, String> {
         selection::evaluate_batch_with(&engine, scratch, pending, segments, control)
     };
     let mut clips = selection::select(

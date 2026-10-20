@@ -176,6 +176,7 @@ mod tests {
                 count: 4,
                 format: Some("9:16".into()),
                 quality: None,
+                automatic: false,
             },
         )
         .unwrap();
@@ -203,6 +204,7 @@ mod tests {
                     count: 4,
                     format: Some("9:16".into()),
                     quality: None,
+                    automatic: false,
                 }
             )
             .unwrap()[0]
@@ -223,6 +225,7 @@ mod tests {
                 count: 3,
                 format: None,
                 quality: None,
+                automatic: false,
             }
         )
         .unwrap()
@@ -233,6 +236,7 @@ mod tests {
             count: 3,
             format: None,
             quality: None,
+            automatic: false,
         }
         .validate()
         .is_err());
@@ -242,6 +246,7 @@ mod tests {
             count: 3,
             format: None,
             quality: None,
+            automatic: false,
         }
         .validate()
         .is_err());
@@ -254,6 +259,7 @@ mod tests {
             count: 1,
             format: Some("9:16".into()),
             quality: None,
+            automatic: false,
         };
         let vertical = select(&speech(), "m", 150.0, &[], &options).unwrap();
         options.format = Some("1:1".into());

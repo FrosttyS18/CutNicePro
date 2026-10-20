@@ -1,5 +1,5 @@
 use super::{
-    text_engine::{self, Engine},
+    text_engine::Engine,
     types::{Clip, Options, Quality, Review},
 };
 use crate::transcription::{process::ProcessControl, types::Segment};
@@ -199,6 +199,8 @@ pub(crate) struct Contender {
     pub clip: Clip,
     pub valid_score: Option<u8>,
     pub provenance: Provenance,
+    pub nature: Option<Nature>,
+    pub advertising: bool,
 }
 
 fn clip_for(media: &str, start: f64, end: f64, score: u8, format: Option<&str>) -> Clip {
@@ -258,6 +260,8 @@ pub(crate) fn conform(
         clip,
         valid_score: Some(candidate.score),
         provenance: Provenance::Proposal,
+        nature: None,
+        advertising: false,
     })
 }
 
@@ -313,6 +317,8 @@ pub(crate) fn repair_alternatives(
                 original: (first.start, natural_end),
                 policy,
             },
+            nature: None,
+            advertising: false,
         });
     };
     if span > options.max_seconds {
@@ -356,12 +362,41 @@ pub(crate) fn repair_alternatives(
     result
 }
 
-#[derive(Deserialize)]
+#[derive(Clone, Deserialize)]
 #[serde(rename_all = "camelCase", deny_unknown_fields)]
 pub(crate) struct Evaluation {
     pub(crate) id: String,
     pub(crate) score: u8,
     pub(crate) reason: String,
+    /// Natureza do conteúdo — identificada ANTES de julgar o fechamento
+    /// (humor não exige resolução de problema; demonstração é julgada pelo
+    /// que a fala referencia da imagem presente no próprio clipe).
+    #[serde(default)]
+    pub(crate) nature: Nature,
+    /// Publicidade reconhecida (leitura de patrocínio, cupom, CTA de marca).
+    #[serde(default)]
+    pub(crate) advertising: bool,
+}
+#[derive(Clone, Copy, Debug, Default, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "lowercase")]
+pub(crate) enum Nature {
+    #[default]
+    Relato,
+    Humor,
+    Explicacao,
+    Opiniao,
+    Demonstracao,
+}
+impl Nature {
+    pub(crate) fn label(self) -> &'static str {
+        match self {
+            Nature::Relato => "relato",
+            Nature::Humor => "humor/reação",
+            Nature::Explicacao => "explicação",
+            Nature::Opiniao => "opinião",
+            Nature::Demonstracao => "demonstração",
+        }
+    }
 }
 #[derive(Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -379,12 +414,12 @@ pub(crate) fn evaluate_batch_with(
     pending: &[Clip],
     segments: &[Segment],
     control: &ProcessControl,
-) -> Result<Vec<(String, u8, String)>, String> {
+) -> Result<Vec<Evaluation>, String> {
     // LOTES delimitados (até 8 por chamada): evita perder TODAS as
     // avaliações quando o teto de saída trunca uma resposta única com
     // muitos candidatos; ids com offset (E{base+n}) preservam o vínculo
     // posicional com o `pending` completo usado por resolve().
-    let mut merged: Vec<(String, u8, String)> = Vec::new();
+    let mut merged: Vec<Evaluation> = Vec::new();
     for (chunk_index, chunk) in pending.chunks(8).enumerate() {
         let offset = chunk_index * 8;
         let labels: Vec<String> = (1..=chunk.len())
@@ -422,8 +457,10 @@ pub(crate) fn evaluate_batch_with(
             .collect();
         let data = serde_json::json!({"candidates": items});
         let schema = serde_json::json!({"type":"object","additionalProperties":false,"required":["items"],"properties":{"items":{"type":"array","maxItems":chunk.len(),"items":{
-            "type":"object","additionalProperties":false,"required":["id","score","reason"],"properties":{
-                "id":{"type":"string","enum":labels},"score":{"type":"integer","minimum":0,"maximum":100},"reason":{"type":"string"}}}}}});
+            "type":"object","additionalProperties":false,"required":["id","score","reason","nature","advertising"],"properties":{
+                "id":{"type":"string","enum":labels},"score":{"type":"integer","minimum":0,"maximum":100},"reason":{"type":"string"},
+                "nature":{"type":"string","enum":["relato","humor","explicacao","opiniao","demonstracao"]},
+                "advertising":{"type":"boolean"}}}}}});
         let prompt = engine.prompt(include_str!("evaluate-prompt.txt"), &data)?;
         let output = engine.generate(
             scratch,
@@ -438,12 +475,7 @@ pub(crate) fn evaluate_batch_with(
             .next()
             .ok_or("Não foi possível avaliar os trechos ajustados. Tente novamente.")?
             .map_err(|_| "Não foi possível avaliar os trechos ajustados. Tente novamente.")?;
-        merged.extend(
-            reply
-                .items
-                .into_iter()
-                .map(|item| (item.id, item.score, item.reason)),
-        );
+        merged.extend(reply.items);
     }
     Ok(merged)
 }
@@ -536,7 +568,7 @@ pub(crate) fn resolve(
     media: &str,
     duration: f64,
     options: &Options,
-    evaluate: &dyn Fn(&[Clip], &[Segment]) -> Result<Vec<(String, u8, String)>, String>,
+    evaluate: &dyn Fn(&[Clip], &[Segment]) -> Result<Vec<Evaluation>, String>,
 ) -> Result<Vec<Clip>, String> {
     let mut contenders: Vec<Contender> = Vec::new();
     for (range, candidates) in proposals {
@@ -582,8 +614,11 @@ pub(crate) fn resolve(
     if !pending.is_empty() {
         match evaluate(&pending, segments) {
             Ok(scores) => {
-                for (id, score, reason) in scores {
-                    let parsed = id.strip_prefix('E').and_then(|n| n.parse::<usize>().ok());
+                for judgment in scores {
+                    let parsed = judgment
+                        .id
+                        .strip_prefix('E')
+                        .and_then(|n| n.parse::<usize>().ok());
                     let Some(position) = parsed.and_then(|n| n.checked_sub(1)) else {
                         continue; // id desconhecido/malformado
                     };
@@ -594,12 +629,16 @@ pub(crate) fn resolve(
                         continue; // id repetido: o primeiro aplica
                     }
                     let contender = &mut contenders[slot];
-                    contender
-                        .clip
-                        .reasons
-                        .push(format!("Avaliação do intervalo efetivo: {reason}"));
-                    contender.clip.score = score;
-                    contender.valid_score = Some(score);
+                    let ad = if judgment.advertising { "publicidade, " } else { "" };
+                    contender.clip.reasons.push(format!(
+                        "Avaliação do intervalo efetivo ({ad}{}): {}",
+                        judgment.nature.label(),
+                        judgment.reason
+                    ));
+                    contender.clip.score = judgment.score;
+                    contender.valid_score = Some(judgment.score);
+                    contender.nature = Some(judgment.nature);
+                    contender.advertising = judgment.advertising;
                     evaluated += 1;
                 }
                 unevaluated = pending.len() - evaluated;
@@ -616,12 +655,35 @@ pub(crate) fn resolve(
         );
     }
     let mut dispute: Vec<Clip> = Vec::new();
+    let mut below_floor = 0usize;
+    let mut excluded_ads = 0usize;
     for contender in contenders {
-        if let Some(score) = contender.valid_score {
-            let mut clip = contender.clip;
-            clip.score = score;
-            dispute.push(clip);
+        let Some(score) = contender.valid_score else {
+            continue;
+        };
+        if options.automatic {
+            // Política EXPLÍCITA do automático (documentada): publicidade não
+            // é sugestão editorial — avaliada e registrada, mas fora da
+            // lista; abaixo do piso editorial também fica fora. Personalizado
+            // mantém tudo o que o usuário pediu, com a marcação no motivo.
+            if contender.advertising {
+                excluded_ads += 1;
+                continue;
+            }
+            if score < super::types::AUTOMATIC_RELEVANCE_FLOOR {
+                below_floor += 1;
+                continue;
+            }
         }
+        let mut clip = contender.clip;
+        clip.score = score;
+        dispute.push(clip);
+    }
+    if options.automatic && (below_floor > 0 || excluded_ads > 0) {
+        eprintln!(
+            "[clips] automático: {below_floor} abaixo do piso editorial ({}) e {excluded_ads} de publicidade ficaram fora das sugestões",
+            super::types::AUTOMATIC_RELEVANCE_FLOOR
+        );
     }
     if dispute.is_empty() {
         return Err(
@@ -652,6 +714,16 @@ mod tests {
             .collect()
     }
 
+    fn judgment(id: &str, score: u8, reason: &str) -> Evaluation {
+        Evaluation {
+            id: id.into(),
+            score,
+            reason: reason.into(),
+            nature: Nature::Relato,
+            advertising: false,
+        }
+    }
+
     fn options(count: usize, min: f64, max: f64) -> Options {
         Options {
             min_seconds: min,
@@ -659,6 +731,7 @@ mod tests {
             count,
             format: Some("9:16".into()),
             quality: None,
+            automatic: false,
         }
     }
 
@@ -873,21 +946,22 @@ mod tests {
                 .position(|c| c.id == clip.id)
                 .map(|position| format!("E{}", position + 1))
         };
-        let evaluations: Vec<(String, u8, String)> = pending
+        let evaluations: Vec<Evaluation> = pending
             .iter()
             .enumerate()
-            .map(|(i, _)| (format!("E{}", i + 1), 30u8, "avaliação baixa".into()))
+            .map(|(i, _)| judgment(&format!("E{}", i + 1), 30, "avaliação baixa"))
             .collect();
-        for (id, score, reason) in evaluations {
+        for judgment in evaluations {
             if let Some(contender) = contenders.iter_mut().find(|c| {
-                c.valid_score.is_none() && label_of(&c.clip).as_deref() == Some(id.as_str())
+                c.valid_score.is_none() && label_of(&c.clip).as_deref() == Some(judgment.id.as_str())
             }) {
-                contender
-                    .clip
-                    .reasons
-                    .push(format!("Avaliação do intervalo efetivo: {reason}"));
-                contender.clip.score = score;
-                contender.valid_score = Some(score);
+                contender.clip.reasons.push(format!(
+                    "Avaliação do intervalo efetivo ({}): {}",
+                    judgment.nature.label(),
+                    judgment.reason
+                ));
+                contender.clip.score = judgment.score;
+                contender.valid_score = Some(judgment.score);
             }
         }
         let mut dispute: Vec<Clip> = Vec::new();
@@ -918,7 +992,7 @@ mod tests {
             Ok(pending
                 .iter()
                 .enumerate()
-                .map(|(i, _)| (format!("E{}", i + 1), 30u8, "avaliação baixa".to_string()))
+                .map(|(i, _)| judgment(&format!("E{}", i + 1), 30, "avaliação baixa"))
                 .collect())
         };
         let chosen =
@@ -936,7 +1010,7 @@ mod tests {
         let options = options(1, 15.0, 90.0);
         let proposals = vec![(0..40, vec![candidate(0, 29, 90), candidate(2, 6, 80)])];
         let failing = |_pending: &[Clip], _segs: &[Segment]| {
-            Err::<Vec<(String, u8, String)>, String>("motor indisponível".into())
+            Err::<Vec<Evaluation>, String>("motor indisponível".into())
         };
         let chosen = resolve(&proposals, &segments, "media", 240.0, &options, &failing)
             .expect("conforme segue sem avaliação de alternativas");
@@ -962,6 +1036,10 @@ mod tests {
                 candidate(20, 21, 72),
             ],
         )];
+        let respostas: Vec<Evaluation> = respostas
+            .into_iter()
+            .map(|(id, score, reason)| judgment(&id, score, &reason))
+            .collect();
         let evaluate = move |_pending: &[Clip], _segs: &[Segment]| Ok(respostas.clone());
         resolve(&proposals, &segments, "media", 240.0, &options, &evaluate).expect("seleção")
     }
@@ -1043,8 +1121,8 @@ mod tests {
         )];
         let evaluate = |_pending: &[Clip], _segs: &[Segment]| {
             Ok(vec![
-                ("E1".into(), 10, "raz-E1".into()),
-                ("E2".into(), 90, "raz-E2".into()),
+                judgment("E1", 10, "raz-E1"),
+                judgment("E2", 90, "raz-E2"),
             ])
         };
         let chosen = resolve(&proposals, &segments, "media", 240.0, &options, &evaluate).unwrap();
@@ -1091,6 +1169,19 @@ mod tests {
     }
 }
 
+/// Prompt de descoberta conforme o modo: automático = unidades completas
+/// com duração decidida pelo conteúdo; personalizado padrão = seleção de
+/// produção; personalizado experimental = unidades narrativas validadas.
+pub(crate) fn selection_system(options: &Options) -> &'static str {
+    if options.automatic {
+        return include_str!("discover-auto-prompt.txt");
+    }
+    match options.quality() {
+        Quality::Standard => include_str!("selection-prompt.txt"),
+        Quality::ExperimentalGemma => include_str!("discover-prompt.txt"),
+    }
+}
+
 pub fn select(
     engine: &Engine,
     scratch: &Path,
@@ -1099,19 +1190,19 @@ pub fn select(
     duration: f64,
     options: &Options,
     control: &ProcessControl,
-    evaluate: &dyn Fn(&[Clip], &[Segment]) -> Result<Vec<(String, u8, String)>, String>,
+    evaluate: &dyn Fn(&[Clip], &[Segment]) -> Result<Vec<Evaluation>, String>,
     mut progress: impl FnMut(u8),
 ) -> Result<Vec<Clip>, String> {
     options.validate()?;
     crate::transcription::parser::validate(segments, duration)?;
-    let limit = (options.count * 2).min(12);
-    // O experimental usa o prompt de UNIDADES NARRATIVAS validado na
-    // atualização 7 (produziu o caso de aceite); o padrão mantém o prompt
-    // de seleção de produção.
-    let selection_system: &str = match options.quality() {
-        Quality::Standard => include_str!("selection-prompt.txt"),
-        Quality::ExperimentalGemma => include_str!("discover-prompt.txt"),
+    // Limite por janela: personalizado usa a regra histórica; automático usa
+    // o teto técnico (o conteúdo decide quantos momentos existem).
+    let limit = if options.automatic {
+        super::types::AUTOMATIC_MAX_CLIPS
+    } else {
+        (options.count * 2).min(12)
     };
+    let selection_system = selection_system(options);
     let ranges = match options.quality() {
         Quality::Standard => windows(segments, options.max_seconds),
         Quality::ExperimentalGemma => {
@@ -1172,6 +1263,7 @@ pub fn select(
 #[cfg(test)]
 mod budgeted_window_tests {
     use super::*;
+    use crate::clips::text_engine;
     use crate::transcription::types::Segment;
 
     fn speech(count: usize) -> Vec<Segment> {
@@ -1203,6 +1295,7 @@ mod budgeted_window_tests {
             count: 3,
             format: None,
             quality: None,
+            automatic: false,
         }
     }
 
@@ -1269,5 +1362,201 @@ mod budgeted_window_tests {
         let mut tokenize = |_text: &str| -> Result<usize, String> { Ok(usize::MAX / 4) };
         let result = windows_budgeted(&segments, &options(), 6, &engine, "sistema", &mut tokenize);
         assert!(result.is_err());
+    }
+}
+
+#[cfg(test)]
+mod automatic_tests {
+    use super::*;
+
+    fn speech(count: usize) -> Vec<Segment> {
+        (0..count)
+            .map(|id| Segment {
+                id: id.to_string(),
+                start: id as f64 * 4.0,
+                end: id as f64 * 4.0 + 3.9,
+                text: "Uma conversa com conteúdo durante todo o vídeo.".into(),
+                words: vec![],
+            })
+            .collect()
+    }
+    fn auto_options() -> Options {
+        Options {
+            min_seconds: super::super::types::AUTOMATIC_MIN_SECONDS,
+            max_seconds: super::super::types::AUTOMATIC_MAX_SECONDS,
+            count: super::super::types::AUTOMATIC_MAX_CLIPS,
+            format: None,
+            quality: None,
+            automatic: true,
+        }
+    }
+    fn custom_options() -> Options {
+        Options {
+            min_seconds: 15.0,
+            max_seconds: 90.0,
+            count: 3,
+            format: None,
+            quality: None,
+            automatic: false,
+        }
+    }
+    fn judgment(id: &str, score: u8, reason: &str, nature: Nature, advertising: bool) -> Evaluation {
+        Evaluation {
+            id: id.into(),
+            score,
+            reason: reason.into(),
+            nature,
+            advertising,
+        }
+    }
+    fn candidate(first: usize, last: usize, score: u8) -> Candidate {
+        Candidate {
+            first_id: first,
+            last_id: last,
+            score,
+        }
+    }
+
+    #[test]
+    fn resolve_options_automatico_usa_limites_tecnicos_e_valida_mix() {
+        let automatic = serde_json::from_str::<super::super::types::GenerateOptions>(
+            "{\"automatic\":true,\"format\":\"9:16\"}",
+        )
+        .unwrap()
+        .resolve()
+        .unwrap();
+        assert!(automatic.automatic);
+        assert_eq!(automatic.min_seconds, super::super::types::AUTOMATIC_MIN_SECONDS);
+        assert_eq!(automatic.max_seconds, super::super::types::AUTOMATIC_MAX_SECONDS);
+        assert_eq!(automatic.count, super::super::types::AUTOMATIC_MAX_CLIPS);
+        // automático não aceita duração/quantidade junto
+        let mixed: Result<_, _> = serde_json::from_str::<super::super::types::GenerateOptions>(
+            "{\"automatic\":true,\"count\":3}",
+        )
+        .unwrap()
+        .resolve();
+        assert!(mixed.is_err());
+        // personalizado exige os três valores e aceita mínima técnica
+        let custom = serde_json::from_str::<super::super::types::GenerateOptions>(
+            "{\"minSeconds\":10,\"maxSeconds\":180,\"count\":4}",
+        )
+        .unwrap()
+        .resolve()
+        .unwrap();
+        assert!(!custom.automatic);
+        assert_eq!((custom.min_seconds, custom.max_seconds, custom.count), (10.0, 180.0, 4));
+        let incomplete = serde_json::from_str::<super::super::types::GenerateOptions>(
+            "{\"maxSeconds\":60,\"count\":3}",
+        )
+        .unwrap()
+        .resolve();
+        assert!(incomplete.is_err());
+    }
+
+    #[test]
+    fn automatico_exclui_piso_e_publicidade_personalizado_mantem_marca() {
+        let segments = speech(60);
+        // 3 propostas curtas disjuntas -> 3 pendentes E1..E3
+        let proposals = vec![(
+            0..40,
+            vec![
+                candidate(1, 2, 70),
+                candidate(10, 11, 71),
+                candidate(20, 21, 72),
+            ],
+        )];
+        let evaluations = vec![
+            judgment("E1", 80, "história forte", Nature::Relato, false),
+            judgment("E2", 40, "fraco", Nature::Opiniao, false), // abaixo do piso
+            judgment("E3", 70, "patrocínio", Nature::Explicacao, true), // publicidade
+        ];
+        let evaluate = {
+            let evaluations = evaluations.clone();
+            move |_pending: &[Clip], _segs: &[Segment]| Ok(evaluations.clone())
+        };
+        // AUTOMÁTICO: só E1 sobrevive (piso 50 + publicidade fora)
+        let chosen = resolve(&proposals, &segments, "media", 240.0, &auto_options(), &evaluate)
+            .expect("seleção automática");
+        assert_eq!(chosen.len(), 1);
+        assert_eq!(chosen[0].score, 80);
+        assert!(chosen[0].reasons.iter().any(|r| r.contains("relato")));
+        // PERSONALIZADO: as propostas seguem na disputa; publicidade marcada
+
+        let evaluate2 = {
+            let evaluations = evaluations.clone();
+            move |_pending: &[Clip], _segs: &[Segment]| Ok(evaluations.clone())
+        };
+        let custom = resolve(&proposals, &segments, "media", 240.0, &custom_options(), &evaluate2)
+            .expect("seleção personalizada");
+        // propostas curtas geram até 2 alternativas; a DP escolhe sem
+        // sobreposição — o que importa: a publicidade AVALIADA permanece
+        // disponível ao usuário com a marcação explícita no motivo.
+        assert!(
+            custom.len() >= 2,
+            "personalizado entrega os momentos pedidos (recebeu {})",
+            custom.len()
+        );
+        assert!(
+            custom.iter().any(|c| c.reasons.iter().any(|r| r.contains("publicidade"))),
+            "personalizado mantém publicidade com marcação explícita"
+        );
+        // no automático nada abaixo do piso e nenhuma publicidade aparecem
+        for clip in &chosen {
+            assert!(clip.score >= super::super::types::AUTOMATIC_RELEVANCE_FLOOR);
+            assert!(!clip.reasons.iter().any(|r| r.contains("publicidade")));
+        }
+    }
+
+    #[test]
+    fn automatico_sem_nada_acima_do_piso_e_erro_orientado() {
+        let segments = speech(40);
+        let proposals = vec![(0..30, vec![candidate(1, 2, 70), candidate(10, 11, 71)])];
+        let evaluate = |_pending: &[Clip], _segs: &[Segment]| {
+            Ok(vec![
+                judgment("E1", 20, "fraco", Nature::Opiniao, false),
+                judgment("E2", 30, "fraco", Nature::Opiniao, false),
+            ])
+        };
+        let result = resolve(&proposals, &segments, "media", 160.0, &auto_options(), &evaluate);
+        assert!(result.is_err(), "sem candidato acima do piso não há sugestão automática");
+    }
+
+    #[test]
+    fn prompt_por_modo_sem_valores_de_episodio() {
+        let automatic = selection_system(&auto_options());
+        assert!(automatic.contains("limites técnicos"));
+        assert!(automatic.contains("Não há quantidade fixa"));
+        let standard = selection_system(&custom_options());
+        assert!(standard.contains("momentos completos"));
+        let experimental = selection_system(&Options {
+            quality: Some(Quality::ExperimentalGemma),
+            ..custom_options()
+        });
+        assert!(experimental.contains("UNIDADES NARRATIVAS COMPLETAS"));
+        // nenhum prompt fixa duração ou quantidade deste episódio
+        for system in [automatic, standard, experimental] {
+            assert!(!system.contains("90 segundos"));
+            assert!(!system.contains("3 cortes"));
+        }
+    }
+
+    #[test]
+    fn avaliacao_parseia_natureza_e_publicidade() {
+        let reply = serde_json::from_str::<EvaluationReply>(
+            r#"{"items":[{"id":"E1","score":70,"reason":"punchline fecha","nature":"humor","advertising":false},
+                {"id":"E2","score":55,"reason":"cupom","nature":"explicacao","advertising":true}]}"#,
+        )
+        .unwrap();
+        assert_eq!(reply.items[0].nature, Nature::Humor);
+        assert!(!reply.items[0].advertising);
+        assert_eq!(reply.items[1].nature, Nature::Explicacao);
+        assert!(reply.items[1].advertising);
+        // saída antiga sem os campos ainda parseia (defaults seguros)
+        let legacy = serde_json::from_str::<EvaluationReply>(
+            r#"{"items":[{"id":"E3","score":60,"reason":"ok"}]}"#,
+        )
+        .unwrap();
+        assert_eq!(legacy.items[0].nature, Nature::Relato);
+        assert!(!legacy.items[0].advertising);
     }
 }

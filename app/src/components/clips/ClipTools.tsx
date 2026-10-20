@@ -24,6 +24,7 @@ interface Props {
 export function ClipTools({ controller: c, settings, ready, disabled, onSave, onShowClips, activeClip, activeClipId, onFullVideo, libraryView=false }: Props) {
   const [dialog, setDialog] = useState<"generate" | null>(null);
   const [dismissed, setDismissed] = useState<string | null>(null);
+  const [automatic, setAutomatic] = useState(true);
   const [count, setCount] = useState(3);
   const [duration, setDuration] = useState(60);
   const [quality, setQuality] = useState<ClipQuality>("standard");
@@ -39,7 +40,17 @@ export function ClipTools({ controller: c, settings, ready, disabled, onSave, on
   }, [c.job,onShowClips]);
   async function generate() {
     setPreparing(true);
-    try { if (await onSave()) { setDialog(null); requestedGeneration.current = true; await c.generate({ minSeconds: Math.max(10,duration/2), maxSeconds: duration, count,format, ...(quality !== "standard" ? { quality } : {}) }); } }
+    try {
+      if (await onSave()) {
+        setDialog(null); requestedGeneration.current = true;
+        // Automático não envia duração nem quantidade — os limites técnicos
+        // são resolvidos pelo app. Personalizado envia os três valores; a
+        // duração mínima é técnica (10 s), sem vínculo com a máxima.
+        await c.generate(automatic
+          ? { automatic: true, format, ...(quality !== "standard" ? { quality } : {}) }
+          : { minSeconds: 10, maxSeconds: duration, count, format, ...(quality !== "standard" ? { quality } : {}) });
+      }
+    }
     finally { setPreparing(false); }
   }
   async function exportVideo(value: EditorSettings, clip?: Clip) {
@@ -60,11 +71,15 @@ export function ClipTools({ controller: c, settings, ready, disabled, onSave, on
       <p className="flow-muted">Escolha como quer receber seus clipes.</p>
       <ClipFormatPicker value={format} onChange={setFormat}/>
       {c.collection && <p>As novas sugestões substituirão a lista atual.</p>}
-      <div className="clip-options"><label>Duração máxima<AppSelect name="clipDuration" value={duration} onChange={event => setDuration(Number(event.target.value))}><option value={30}>30 segundos</option><option value={60}>1 minuto</option><option value={90}>1 minuto e 30 segundos</option><option value={180}>3 minutos</option></AppSelect></label>
-        <label>Quantidade<input name="clipCount" autoComplete="off" type="number" min={1} max={12} value={count} onChange={event => setCount(Number(event.target.value))}/></label>
-        <label>Análise<AppSelect aria-label="Análise" name="clipQuality" value={quality} onChange={event => setQuality(event.target.value as ClipQuality)}><option value="standard">Padrão</option><option value="experimentalGemma">Experimental (Gemma 4)</option></AppSelect></label></div>
+      <div className="clip-options"><label>Geração<AppSelect aria-label="Geração" name="clipMode" value={automatic ? "automatic" : "custom"} onChange={event => setAutomatic(event.target.value === "automatic")}><option value="automatic">Automática</option><option value="custom">Personalizada</option></AppSelect></label>
+        <label>Análise<AppSelect aria-label="Análise" name="clipQuality" value={quality} onChange={event => setQuality(event.target.value as ClipQuality)}><option value="standard">Padrão</option><option value="experimentalGemma">Experimental (Gemma 4)</option></AppSelect></label>
+        {!automatic && <label>Duração máxima<AppSelect name="clipDuration" value={duration} onChange={event => setDuration(Number(event.target.value))}><option value={30}>30 segundos</option><option value={60}>1 minuto</option><option value={90}>1 minuto e 30 segundos</option><option value={180}>3 minutos</option></AppSelect></label>}
+        {!automatic && <label>Quantidade<input name="clipCount" autoComplete="off" type="number" min={1} max={12} value={count} onChange={event => setCount(Number(event.target.value))}/></label>}</div>
+      <p className="flow-muted">{automatic
+        ? "A quantidade e a duração saem dos momentos encontrados no vídeo."
+        : "Você escolhe a duração máxima e a quantidade de cortes."}</p>
       {quality === "experimentalGemma" && <p className="flow-muted">O modo experimental usa um modelo local maior: a geração fica mais lenta e os resultados substituem a lista atual ao final.</p>}
-      <button type="button" className="upload-primary flow-wide" disabled={busy || !Number.isInteger(count) || count<1 || count>12} onClick={() => void generate()}>Gerar cortes</button>
+      <button type="button" className="upload-primary flow-wide" disabled={busy || (!automatic && (!Number.isInteger(count) || count<1 || count>12))} onClick={() => void generate()}>Gerar cortes</button>
     </FlowDialog>
     {c.job && (c.operation === "generate" || c.operation === "export") && <ProcessingDialog key={c.job.jobId} open={c.busy || (c.ownedJob && c.job.state === "failed" && dismissed !== c.job.jobId)} id={c.job.jobId} busy={c.busy}
       title={c.job.stage === "analyzing" ? "Encontrando cortes…" : "Exportando…"} status={c.job.stage === "analyzing" ? "Analisando cenas e falas" : "Preparando seu vídeo"}

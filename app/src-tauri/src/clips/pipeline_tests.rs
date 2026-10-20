@@ -22,6 +22,7 @@ fn real_generation_selects_and_persists_grounded_clips() {
         count: 3,
         format: Some("9:16".into()),
         quality: None,
+        automatic: false,
     };
     let project = "9ad76c20-1af3-401b-81db-386b84d454ca";
     let collection = generation::run(
@@ -80,6 +81,7 @@ fn real_experimental_gemma_generation_end_to_end() {
         count: 3,
         format: Some("9:16".into()),
         quality: Some(Quality::ExperimentalGemma),
+        automatic: false,
     };
     // etapa 1: descoberta do motor (modelo/config preparada + prova de GPU)
     let t0 = std::time::Instant::now();
@@ -141,6 +143,108 @@ fn real_experimental_gemma_generation_end_to_end() {
         serde_json::to_vec_pretty(&serde_json::json!({
             "engine_discovery_s": engine_discovery_s,
             "pipeline_total_s": pipeline_s,
+        }))
+        .unwrap(),
+    )
+    .unwrap();
+}
+
+/// Comparação delimitada (atualização 9): personalizado com mínima técnica
+/// (10 s — sem vínculo com a máxima) × AUTOMÁTICO (limites técnicos
+/// resolvidos pelo app; quantidade e duração vindos do conteúdo). Mesma
+/// transcrição, mesmo motor padrão — a variável é o modo.
+#[test]
+#[ignore = "Executa a comparação real entre modos no vídeo local delimitado"]
+fn real_comparison_custom_floor_vs_automatic() {
+    let root = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../.tooling/vendor");
+    let transcript: Transcript = serde_json::from_slice(
+        &std::fs::read(root.join("analysis/validation/transcript.json")).unwrap(),
+    )
+    .unwrap();
+    let source = root.join("pipeline-validation/source.mp4");
+
+    // 1) PERSONALIZADO: mínima técnica, máxima 90, três cortes
+    let custom_base = root.join("pipeline-validation-mode-custom");
+    std::fs::create_dir_all(custom_base.join("generation")).unwrap();
+    let custom_options = Options {
+        min_seconds: 10.0,
+        max_seconds: 90.0,
+        count: 3,
+        format: Some("9:16".into()),
+        quality: None,
+        automatic: false,
+    };
+    let t0 = std::time::Instant::now();
+    let custom = generation::run(
+        &custom_base,
+        &custom_base.join("generation"),
+        generation::Request {
+            project: "b1c2d3e4-0001-4000-8000-000000000001",
+            media: &transcript.media_id,
+            source: &source,
+            duration: 599.098,
+            speech: &transcript.segments,
+            options: &custom_options,
+        },
+        &ProcessControl::default(),
+        |_| {},
+    )
+    .unwrap();
+    let custom_s = t0.elapsed().as_secs_f64();
+    for clip in &custom.clips {
+        assert!(clip.analysis_error.is_none(), "{:?}", clip.analysis_error);
+        clip.analysis
+            .as_ref()
+            .unwrap()
+            .validate(&super::semantic::source(clip, &transcript.segments))
+            .unwrap();
+    }
+
+    // 2) AUTOMÁTICO pelo contrato da UI (sem duração/quantidade)
+    let auto_base = root.join("pipeline-validation-mode-automatic");
+    std::fs::create_dir_all(auto_base.join("generation")).unwrap();
+    let auto_options: Options = serde_json::from_str::<super::types::GenerateOptions>(
+        "{\"automatic\":true,\"format\":\"9:16\"}",
+    )
+    .unwrap()
+    .resolve()
+    .unwrap();
+    assert!(auto_options.automatic);
+    let t1 = std::time::Instant::now();
+    let automatic = generation::run(
+        &auto_base,
+        &auto_base.join("generation"),
+        generation::Request {
+            project: "b1c2d3e4-0002-4000-8000-000000000002",
+            media: &transcript.media_id,
+            source: &source,
+            duration: 599.098,
+            speech: &transcript.segments,
+            options: &auto_options,
+        },
+        &ProcessControl::default(),
+        |_| {},
+    )
+    .unwrap();
+    let auto_s = t1.elapsed().as_secs_f64();
+    assert!(!automatic.clips.is_empty(), "automático sem sugestões");
+    for clip in &automatic.clips {
+        assert!(clip.analysis_error.is_none(), "{:?}", clip.analysis_error);
+        clip.analysis
+            .as_ref()
+            .unwrap()
+            .validate(&super::semantic::source(clip, &transcript.segments))
+            .unwrap();
+    }
+    std::fs::write(
+        root.join("mode-comparison.json"),
+        serde_json::to_vec_pretty(&serde_json::json!({
+            "custom": {"seconds": custom_s, "clips": custom.clips, "options": {
+                "minSeconds": custom_options.min_seconds, "maxSeconds": custom_options.max_seconds,
+                "count": custom_options.count}},
+            "automatic": {"seconds": auto_s, "clips": automatic.clips, "resolved": {
+                "minSeconds": auto_options.min_seconds, "maxSeconds": auto_options.max_seconds,
+                "count": auto_options.count}},
         }))
         .unwrap(),
     )

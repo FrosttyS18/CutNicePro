@@ -63,17 +63,25 @@ describe("modo experimental de qualidade (Gemma 4)",()=>{
     await mounted.click(controller2.collection ? "Atualizar cortes" : "Gerar cortes");
     return mounted;
   }
-  it("padrão não envia quality e o experimental envia experimentalGemma",async()=>{
+  it("automática (padrão) não envia duração nem quantidade; personalizada envia com mínima técnica",async()=>{
     const existing:import("../lib/clips").ClipCollection={version:1,mediaId:"m",transcriptHash:"h",clips:[entry.clip]};
-    const c=controller(existing);  // barra vira "Atualizar cortes": só o diálogo tem "Gerar cortes"
+    // padrão do diálogo = AUTOMÁTICA: nenhum valor fixo escondido
+    const c=controller(existing);
     await openDialog(c);
     await mounted!.click("Gerar cortes");
-    expect(c.generate).toHaveBeenCalledWith({minSeconds:30,maxSeconds:60,count:3,format:"9:16"});
+    expect(c.generate).toHaveBeenCalledWith({automatic:true,format:"9:16"});
+    // personalizada: duração/quantidade explícitas; mínima técnica (10), sem vínculo com a máxima
     const c2=controller(existing);
     await openDialog(c2);
+    await mounted!.chooseOption("Geração","Personalizada");
+    await mounted!.click("Gerar cortes");
+    expect(c2.generate).toHaveBeenCalledWith({minSeconds:10,maxSeconds:60,count:3,format:"9:16"});
+    // experimental soma quality em qualquer modo
+    const c3=controller(existing);
+    await openDialog(c3);
     await mounted!.chooseOption("Análise","Experimental (Gemma 4)");
     await mounted!.click("Gerar cortes");
-    expect(c2.generate).toHaveBeenCalledWith({minSeconds:30,maxSeconds:60,count:3,format:"9:16",quality:"experimentalGemma"});
+    expect(c3.generate).toHaveBeenCalledWith({automatic:true,format:"9:16",quality:"experimentalGemma"});
   });
   it("coleção experimental é identificada na lista de cortes",async()=>{
     const c=controller({version:1,mediaId:"m",transcriptHash:"h",clips:[entry.clip],engine:{backend:"experimentalGemma",model:"gemma-4-12b-it-qat-q4_0.gguf",template:"gemma4-canonical-nothink",sampling:"temp 1.0, top_k 64, top_p 0.95, min_p 0, seed 42",seed:42}});

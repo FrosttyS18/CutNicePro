@@ -10,7 +10,7 @@ export interface ClipEngine { backend: string; model: string; template: string; 
 export interface ClipAnalysis { title: string; summary: string; criteria: {label: string; score: number; explanation: string; evidence: string}[] }
 export interface Clip { id: string; start: number; end: number; title: string; score: number; reasons: string[]; review: ClipReview; format?: AspectRatio; analysis?: ClipAnalysis; analysisError?: string }
 export interface ClipCollection { version: 1; mediaId: string; transcriptHash: string; clips: Clip[]; engine?: ClipEngine }
-export interface ClipOptions { minSeconds: number; maxSeconds: number; count: number; format?: AspectRatio; quality?: ClipQuality }
+export interface ClipOptions { format?: AspectRatio; quality?: ClipQuality; automatic?: boolean; minSeconds?: number; maxSeconds?: number; count?: number }
 export interface ClipJob { jobId: string; projectId: string; state: "running" | "completed" | "failed" | "cancelled"; stage: "analyzing" | "rendering"; progress: number; error: string | null; operation?: "generate" | "analyze" | "export" }
 
 export function parseClips(value: unknown): ClipCollection {
