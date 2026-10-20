@@ -1,0 +1,74 @@
+{
+  "items": [
+    {
+      "id": "E1",
+      "reason": "O trecho apresenta uma narrativa clara sobre um problema encontrado em um jogo (Battlefield 6), com um começo que introduz a situação (falta de thumbnail na barba), um desenvolvimento que detalha o erro e a reação dos jogadores, e uma conclusão que aponta para a acusação de uso de IA pela EA. O texto é compreensível, tem um gancho (o erro visual), desenvolvimento lógico e encerra com uma frase completa. A estrutura é coerente e envolvente, com um tom crítico e direto. A avaliação é de 95/100.",
+      "score": 95
+    },
+    {
+      "id": "E2",
+      "reason": "O trecho começa com uma introdução direta ao tema (Battlefield 6 e o novo passo de batalha), apresenta uma crítica ao funcionamento da EA, descreve um erro específico (thumbnail faltando na barba), e termina com uma sequência de observações sobre o jogo. O desenvolvimento é claro, mas o foco é mais narrativo do que crítico. A estrutura é funcional, mas falta um gancho forte e uma conclusão impactante. A avaliação é de 78/100.",
+      "score": 78
+    },
+    {
+      "id": "E3",
+      "reason": "O trecho começa com uma frase de transição (‘Das duas, uma’) e se desenvolve com uma crítica direta ao erro de desenvolvimento do jogo. A estrutura é fragmentada, com repetições e falta de desenvolvimento claro. A frase ‘está tudo errado’ é repetida sem evolução. O texto é confuso e parece cortado, sem uma narrativa coerente. A avaliação é de 50/100.",
+      "score": 50
+    },
+    {
+      "id": "E4",
+      "reason": "O trecho começa com uma frase de transição e se desenvolve com uma crítica ao erro de desenvolvimento. Contém uma sequência de frases que repetem o mesmo ponto (erro no jogo). A estrutura é repetitiva e sem desenvolvimento lógico. A falta de progressão e de uma conclusão clara torna o trecho fraco. A avaliação é de 45/100.",
+      "score": 45
+    },
+    {
+      "id": "E5",
+      "reason": "O trecho começa com uma crítica ao erro e se desenvolve com uma observação sobre a falta de revisão. A frase ‘você automaticamente bota a perna do R ali’ é central, mas o desenvolvimento é fraco e a conclusão é abrupta. A estrutura é confusa e há repetições sem sentido. A avaliação é de 55/100.",
+      "score": 55
+    },
+    {
+      "id": "E6",
+      "reason": "O trecho é repetitivo e sem desenvolvimento claro. A estrutura é fragmentada, com repetições de frases sem evolução. A crítica ao erro é apresentada, mas não é desenvolvida. A falta de progressão e de uma conclusão impactante torna o trecho fraco. A avaliação é de 50/100.",
+      "score": 50
+    },
+    {
+      "id": "E7",
+      "reason": "O trecho começa com uma observação sobre o erro e se desenvolve com uma crítica ao desenvolvimento do jogo. A frase ‘você automaticamente bota a perna do R ali’ é central, mas o desenvolvimento é fraco e a conclusão é abrupta. Há repetições e falta de progressão. A avaliação é de 55/100.",
+      "score": 55
+    },
+    {
+      "id": "E8",
+      "reason": "O trecho começa com uma crítica ao erro e se desenvolve com uma observação sobre a falta de revisão. A estrutura é confusa e há repetições sem sentido. A falta de progressão e de uma conclusão clara torna o trecho fraco. A avaliação é de 50/100.",
+      "score": 50
+    },
+    {
+      "id": "E9",
+      "reason": "O trecho começa com uma observação sobre o erro e se desenvolve com uma crítica ao desenvolvimento do jogo. A frase ‘você automaticamente bota a perna do R ali’ é central, mas o desenvolvimento é fraco e a conclusão é abrupta. Há repetições e falta de progressão. A avaliação é de 55/100.",
+      "score": 55
+    },
+    {
+      "id": "E10",
+      "reason": "O trecho é repetitivo e sem desenvolvimento claro. A estrutura é fragmentada, com repetições de frases sem evolução. A crítica ao erro é apresentada, mas não é desenvolvida. A falta de progressão e de uma conclusão impactante torna o trecho fraco. A avaliação é de 50/100.",
+      "score": 50
+    },
+    {
+      "id": "E11",
+      "reason": "O trecho começa com uma observação sobre o erro e se desenvolve com uma crítica ao desenvolvimento do jogo. A frase ‘você automaticamente bota a perna do R ali’ é central, mas o desenvolvimento é fraco e a conclusão é abrupta. Há repetições e falta de progressão. A avaliação é de 55/100.",
+      "score": 55
+    },
+    {
+      "id": "E12",
+      "reason": "O trecho começa com uma crítica ao erro e se desenvolve com uma observação sobre a falta de revisão. A estrutura é confusa e há repetições sem sentido. A falta de progressão e de uma conclusão clara torna o trecho fraco. A avaliação é de 50/100.",
+      "score": 50
+    },
+    {
+      "id": "E13",
+      "reason": "O trecho apresenta uma crítica ao design da EA, com foco em armas juntadas e um erro de desenvolvimento. O começo é claro, mas o desenvolvimento é fraco e a conclusão é abrupta. A crítica é direta, mas falta profundidade e desenvolvimento. A avaliação é de 65/100.",
+      "score": 65
+    },
+    {
+      "id": "E14",
+      "reason": "O trecho começa com uma observação sobre o erro e se desenvolve com uma crítica ao design da EA. A estrutura é clara, mas a conclusão é fraca e há repetições. A crítica é direta, mas falta desenvolvimento e profundidade. A avaliação é de 60/100.",
+      "score": 60
+    },
+
+

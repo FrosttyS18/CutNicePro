@@ -1,0 +1,125 @@
+{
+  "version": 1,
+  "mediaId": "72f04616-1b5b-4635-a1f5-de83a260c798",
+  "transcriptHash": "ecb6873bb7a6e8b9f6b80b0e4f2fbb0b13df882477d034487f76f62eef32e8ed",
+  "clips": [
+    {
+      "id": "b4e9a906747af6605f1c8f6334fb6bb67109b4e2f6877de9dd3624a635b89ea6",
+      "start": 400.7,
+      "end": 455.76,
+      "title": "Crítica a práticas de venda de skins em jogos",
+      "score": 78,
+      "reasons": [
+        "A fala inicial expressa frustração com a prática de vendas de skins, criando um tom de crítica imediata.",
+        "A fala menciona a ideia de manter a skin no jogo, que é central para o debate sobre a estratégia da Valve.",
+        "A fala final destaca o valor atual da skin antiga, mostrando o impacto da decisão da Valve."
+      ],
+      "review": "pending",
+      "format": "9:16",
+      "analysis": {
+        "title": "Crítica a práticas de venda de skins em jogos",
+        "summary": "O trecho discute críticas a uma prática de venda de skins em jogos, destacando a frustração com a entrega lenta e a qualidade inferior das skins. Os participantes mencionam exemplos de skins que geraram reações negativas e a possível solução de manter a skin antiga. A situação não tem uma resolução definitiva, mas há indícios de que a Valve ajustou sua abordagem com base nas críticas.",
+        "criteria": [
+          {
+            "label": "Gancho",
+            "score": 80,
+            "explanation": "A fala inicial expressa frustração com a prática de vendas de skins, criando um tom de crítica imediata.",
+            "evidence": "Que porra é essa? Nem revisar o bagulho. Secute, tepap. Esse é o tipo de AKP mal utilizada que ninguém gosta."
+          },
+          {
+            "label": "Desenvolvimento",
+            "score": 70,
+            "explanation": "A fala menciona a ideia de manter a skin no jogo, que é central para o debate sobre a estratégia da Valve.",
+            "evidence": "Essas skins aí, eles podiam manter no jogo. A Valve já fez isso, cara, que é bem interessante."
+          },
+          {
+            "label": "Fechamento",
+            "score": 85,
+            "explanation": "A fala final destaca o valor atual da skin antiga, mostrando o impacto da decisão da Valve.",
+            "evidence": "Mas manteve a skin antiga e aí a skin antiga hoje vale 3 mil reais. Caralho."
+          }
+        ]
+      }
+    },
+    {
+      "id": "049546bdcc64c8b15352c3014be8bd2bfc0b2895ab8fbb3f4fbf2da66e2dc1c5",
+      "start": 193.6,
+      "end": 209.68,
+      "title": "Crítica a um processo mal resolvido",
+      "score": 76,
+      "reasons": [
+        "alternativa 'início recuado' de [200.4s, 209.7s]: proposta original fora da faixa; a nota 75 é proveniência, não avaliação deste intervalo",
+        "Avaliação do intervalo efetivo: O trecho é coerente e direto, com uma crítica clara e uma conclusão forte. Contém elementos de humor e uma narrativa mais dinâmica, mas pode ser mais conciso.",
+        "A fala inicial mostra uma reação de surpresa e frustração, indicando que o assunto principal é a crítica a um processo que foi mal executado.",
+        "A fala apresenta uma crítica direta ao grupo, indicando que houve um problema com a revisão de um processo, o que é central para o desenvolvimento do tema.",
+        "A fala expressa claramente a insatisfação com o resultado geral, indicando que o assunto principal é a crítica a um processo ou situação que não foi resolvida."
+      ],
+      "review": "pending",
+      "format": "9:16",
+      "analysis": {
+        "title": "Crítica a um processo mal resolvido",
+        "summary": "O trecho discute uma crítica a um processo que não foi resolvido, com reclamações sobre erros e falta de revisão. Há insatisfação generalizada com o resultado final, mas não há indicação de como o problema pode ser resolvido. A situação parece estar em um estado de conflito ou descontentamento.",
+        "criteria": [
+          {
+            "label": "Gancho",
+            "score": 70,
+            "explanation": "A fala inicial mostra uma reação de surpresa e frustração, indicando que o assunto principal é a crítica a um processo que foi mal executado.",
+            "evidence": "Era pra ser group therapy E tá te pap Ah, mas não é possível que vocês deixaram passar isso."
+          },
+          {
+            "label": "Desenvolvimento",
+            "score": 75,
+            "explanation": "A fala apresenta uma crítica direta ao grupo, indicando que houve um problema com a revisão de um processo, o que é central para o desenvolvimento do tema.",
+            "evidence": "É o grupo do papi. Das duas, uma. Ou uma, fizeram com o Iá e não revisaram, ou fizeram errado e não revisaram."
+          },
+          {
+            "label": "Fechamento",
+            "score": 85,
+            "explanation": "A fala expressa claramente a insatisfação com o resultado geral, indicando que o assunto principal é a crítica a um processo ou situação que não foi resolvida.",
+            "evidence": "Está tudo errado. Independente da situação."
+          }
+        ]
+      }
+    },
+    {
+      "id": "598c561fbe13dd711a3cde931491a6e901719268710b2064afcfd8b03d73a950",
+      "start": 209.7,
+      "end": 226.72,
+      "title": "Crítica a detalhes visuais em cenas cinematográficas",
+      "score": 72,
+      "reasons": [
+        "alternativa 'fim estendido' de [209.7s, 216.6s]: proposta original fora da faixa; a nota 70 é proveniência, não avaliação deste intervalo",
+        "Avaliação do intervalo efetivo: O trecho é coerente, direto e dinâmico, com uma crítica clara e uma conclusão forte. Contém elementos de humor e uma narrativa mais engajante, mas pode ser mais conciso.",
+        "A fala inicial expressa uma crítica direta à percepção visual e à exigência de detalhes em cenas cinematográficas, criando um impacto imediato e provocando reflexão.",
+        "A fala explica a percepção inicial do espectador sobre a representação visual de personagens, indicando que a primeira impressão pode ser influenciada por elementos visuais subliminares.",
+        "A fala destaca a ambiguidade da percepção visual em cenas cinematográficas, sugerindo que a falta de atenção a detalhes específicos pode ser um problema crítico."
+      ],
+      "review": "pending",
+      "format": "9:16",
+      "analysis": {
+        "title": "Crítica a detalhes visuais em cenas cinematográficas",
+        "summary": "A discussão gira em torno da percepção visual em cenas cinematográficas, com críticas a detalhes que podem ser subestimados. Os participantes destacam a ambiguidade na interpretação de elementos visuais e a possibilidade de falhas na representação. A situação não apresenta uma resolução clara, dependendo de contexto adicional para entender a natureza exata da crítica.",
+        "criteria": [
+          {
+            "label": "Gancho",
+            "score": 80,
+            "explanation": "A fala inicial expressa uma crítica direta à percepção visual e à exigência de detalhes em cenas cinematográficas, criando um impacto imediato e provocando reflexão.",
+            "evidence": "É um erro, é. Está tudo errado. Eu acho que vocês estão muito exigentes, cara."
+          },
+          {
+            "label": "Desenvolvimento",
+            "score": 65,
+            "explanation": "A fala explica a percepção inicial do espectador sobre a representação visual de personagens, indicando que a primeira impressão pode ser influenciada por elementos visuais subliminares.",
+            "evidence": "Realmente é um negócio que passa batido, né? Se você olha assim, a primeira vez que eu vi, você automaticamente bota a perna do R ali."
+          },
+          {
+            "label": "Fechamento",
+            "score": 70,
+            "explanation": "A fala destaca a ambiguidade da percepção visual em cenas cinematográficas, sugerindo que a falta de atenção a detalhes específicos pode ser um problema crítico.",
+            "evidence": "Exato. Mas não tem mesmo. Mas é que os caras realmente... Ninguém vai parar para ficar olhando na nuca, na cabeça, na parte de trás do personagem, né?"
+          }
+        ]
+      }
+    }
+  ]
+}

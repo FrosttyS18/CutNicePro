@@ -206,15 +206,15 @@ pub(crate) fn repair_alternatives(
 
 #[derive(Deserialize)]
 #[serde(rename_all = "camelCase", deny_unknown_fields)]
-struct Evaluation {
-    id: String,
-    score: u8,
-    reason: String,
+pub(crate) struct Evaluation {
+    pub(crate) id: String,
+    pub(crate) score: u8,
+    pub(crate) reason: String,
 }
 #[derive(Deserialize)]
 #[serde(deny_unknown_fields)]
-struct EvaluationReply {
-    items: Vec<Evaluation>,
+pub(crate) struct EvaluationReply {
+    pub(crate) items: Vec<Evaluation>,
 }
 
 /// Avaliação em LOTE dos candidatos pendentes: conteúdo integral, sem nota
@@ -228,54 +228,68 @@ pub(crate) fn evaluate_batch(
     segments: &[Segment],
     control: &ProcessControl,
 ) -> Result<Vec<(String, u8, String)>, String> {
-    let labels: Vec<String> = (1..=pending.len()).map(|i| format!("E{i}")).collect();
-    let items: Vec<serde_json::Value> = pending
-        .iter()
-        .enumerate()
-        .map(|(i, clip)| {
-            let text = segments
-                .iter()
-                .filter(|s| s.start < clip.end && s.end > clip.start)
-                .map(|s| s.text.as_str())
-                .collect::<Vec<_>>()
-                .join(" ");
-            let before = segments
-                .iter()
-                .filter(|s| s.end <= clip.start + 1e-9)
-                .map(|s| s.text.clone())
-                .next_back();
-            let after = segments
-                .iter()
-                .filter(|s| s.start >= clip.end - 1e-9)
-                .map(|s| s.text.clone())
-                .next();
-            serde_json::json!({
-                "id": labels[i],
-                "start": (clip.start * 1000.0).round() / 1000.0,
-                "end": (clip.end * 1000.0).round() / 1000.0,
-                "text": text,
-                "contextBefore": before,
-                "contextAfter": after,
+    // LOTES delimitados (até 8 por chamada): evita perder TODAS as
+    // avaliações quando o teto de saída trunca uma resposta única com
+    // muitos candidatos; ids com offset (E{base+n}) preservam o vínculo
+    // posicional com o `pending` completo usado por resolve().
+    let mut merged: Vec<(String, u8, String)> = Vec::new();
+    for (chunk_index, chunk) in pending.chunks(8).enumerate() {
+        let offset = chunk_index * 8;
+        let labels: Vec<String> = (1..=chunk.len())
+            .map(|i| format!("E{}", offset + i))
+            .collect();
+        let items: Vec<serde_json::Value> = chunk
+            .iter()
+            .enumerate()
+            .map(|(i, clip)| {
+                let text = segments
+                    .iter()
+                    .filter(|s| s.start < clip.end && s.end > clip.start)
+                    .map(|s| s.text.as_str())
+                    .collect::<Vec<_>>()
+                    .join(" ");
+                let before = segments
+                    .iter()
+                    .filter(|s| s.end <= clip.start + 1e-9)
+                    .next_back()
+                    .map(|s| s.text.clone());
+                let after = segments
+                    .iter()
+                    .filter(|s| s.start >= clip.end - 1e-9)
+                    .next()
+                    .map(|s| s.text.clone());
+                serde_json::json!({
+                    "id": labels[i],
+                    "start": (clip.start * 1000.0).round() / 1000.0,
+                    "end": (clip.end * 1000.0).round() / 1000.0,
+                    "text": text,
+                    "contextBefore": before,
+                    "contextAfter": after,
+                })
             })
-        })
-        .collect();
-    let data = serde_json::json!({"candidates": items});
-    let schema = serde_json::json!({"type":"object","additionalProperties":false,"required":["items"],"properties":{"items":{"type":"array","maxItems":pending.len(),"items":{
-        "type":"object","additionalProperties":false,"required":["id","score","reason"],"properties":{
-            "id":{"type":"string","enum":labels},"score":{"type":"integer","minimum":0,"maximum":100},"reason":{"type":"string"}}}}}});
-    let prompt = text_engine::prompt(include_str!("evaluate-prompt.txt"), &data)?;
-    let output =
-        text_engine::generate(base, scratch, "evaluate", &prompt, &schema, 1600, control)?;
-    let reply = serde_json::Deserializer::from_str(output.trim())
-        .into_iter::<EvaluationReply>()
-        .next()
-        .ok_or("Não foi possível avaliar os trechos ajustados. Tente novamente.")?
-        .map_err(|_| "Não foi possível avaliar os trechos ajustados. Tente novamente.")?;
-    Ok(reply
-        .items
-        .into_iter()
-        .map(|item| (item.id, item.score, item.reason))
-        .collect())
+            .collect();
+        let data = serde_json::json!({"candidates": items});
+        let schema = serde_json::json!({"type":"object","additionalProperties":false,"required":["items"],"properties":{"items":{"type":"array","maxItems":chunk.len(),"items":{
+            "type":"object","additionalProperties":false,"required":["id","score","reason"],"properties":{
+                "id":{"type":"string","enum":labels},"score":{"type":"integer","minimum":0,"maximum":100},"reason":{"type":"string"}}}}}});
+        let prompt = text_engine::prompt(include_str!("evaluate-prompt.txt"), &data)?;
+        let output = text_engine::generate(
+            base,
+            scratch,
+            &format!("evaluate-{chunk_index}"),
+            &prompt,
+            &schema,
+            2400,
+            control,
+        )?;
+        let reply = serde_json::Deserializer::from_str(output.trim())
+            .into_iter::<EvaluationReply>()
+            .next()
+            .ok_or("Não foi possível avaliar os trechos ajustados. Tente novamente.")?
+            .map_err(|_| "Não foi possível avaliar os trechos ajustados. Tente novamente.")?;
+        merged.extend(reply.items.into_iter().map(|item| (item.id, item.score, item.reason)));
+    }
+    Ok(merged)
 }
 
 /// Finalização da seleção — weighted interval scheduling. OBJETIVO
@@ -396,34 +410,40 @@ pub(crate) fn resolve(
         .filter(|c| c.valid_score.is_none())
         .map(|c| c.clip.clone())
         .collect();
+    // VÍNCULO IMUTÁVEL: E{n} aponta para o n-ésimo PENDENTE na ordem em
+    // que o lote foi montado (numeração de evaluate_batch). O índice
+    // original em `contenders` é congelado ANTES de qualquer aplicação —
+    // notas aplicadas não podem deslocar os alvos (defeito bc8a198: o
+    // filtro dinâmico por valid_score levava E2+ ao candidato errado).
+    let slots: Vec<usize> = contenders
+        .iter()
+        .enumerate()
+        .filter(|(_, c)| c.valid_score.is_none())
+        .map(|(index, _)| index)
+        .collect();
     let mut evaluated = 0usize;
     let mut unevaluated = 0usize;
     if !pending.is_empty() {
         match evaluate(&pending, segments) {
             Ok(scores) => {
-                let mut applied: std::collections::HashSet<usize> = std::collections::HashSet::new();
                 for (id, score, reason) in scores {
                     let parsed = id.strip_prefix('E').and_then(|n| n.parse::<usize>().ok());
                     let Some(position) = parsed.and_then(|n| n.checked_sub(1)) else {
-                        continue;
+                        continue; // id desconhecido/malformado
                     };
-                    if !applied.insert(position) {
-                        continue; // id repetido na resposta: não re-rotear
+                    let Some(&slot) = slots.get(position) else {
+                        continue; // fora do lote enviado
+                    };
+                    if contenders[slot].valid_score.is_some() {
+                        continue; // id repetido: o primeiro aplica
                     }
-                    // E{n} referencia o n-ésimo pendente — a mesma numeração
-                    // usada por evaluate_batch ao montar o lote.
-                    if let Some(contender) = contenders
-                        .iter_mut()
-                        .filter(|c| c.valid_score.is_none())
-                        .nth(position)
-                    {
-                        contender.clip.reasons.push(format!(
-                            "Avaliação do intervalo efetivo: {reason}"
-                        ));
-                        contender.clip.score = score;
-                        contender.valid_score = Some(score);
-                        evaluated += 1;
-                    }
+                    let contender = &mut contenders[slot];
+                    contender.clip.reasons.push(format!(
+                        "Avaliação do intervalo efetivo: {reason}"
+                    ));
+                    contender.clip.score = score;
+                    contender.valid_score = Some(score);
+                    evaluated += 1;
                 }
                 unevaluated = pending.len() - evaluated;
             }
@@ -760,6 +780,129 @@ mod tests {
             .expect("conforme segue sem avaliação de alternativas");
         assert_eq!(chosen.len(), 1);
         assert_eq!(chosen[0].score, 80);
+    }
+
+    /// Regressão do defeito de associação (contraprova do mantenedor,
+    /// commit bc8a198): E{n} deve permanecer vinculado ao n-ésimo pendente
+    /// ORIGINAL mesmo após notas serem aplicadas. No código antigo, o
+    /// filtro dinâmico por valid_score deslocava os alvos (E2=90 caía no
+    /// terceiro pendente e o terceiro ficava sem avaliação).
+    fn run_associacao(respostas: Vec<(String, u8, String)>) -> Vec<Clip> {
+        let segments = speech_from(60);
+        let options = options(3, 15.0, 90.0);
+        // três propostas CURTAS e disjuntas -> três alternativas disjuntas
+        // [first, ~min] = pendentes E1..E3 na ordem
+        let proposals = vec![(
+            0..30,
+            vec![candidate(1, 2, 70), candidate(10, 11, 71), candidate(20, 21, 72)],
+        )];
+        let evaluate = move |_pending: &[Clip], _segs: &[Segment]| {
+            Ok(respostas.clone())
+        };
+        resolve(&proposals, &segments, "media", 240.0, &options, &evaluate)
+            .expect("seleção")
+    }
+
+    fn assert_associacao(chosen: &[Clip], esperado: &[(&str, u8)]) {
+        assert_eq!(chosen.len(), esperado.len(), "quantidade de escolhidos");
+        for (clip, (rotulo, nota)) in chosen.iter().zip(esperado) {
+            let razao = clip
+                .reasons
+                .iter()
+                .find(|r| r.contains("Avaliação do intervalo efetivo"))
+                .expect("razão da avaliação presente");
+            assert!(
+                razao.contains(rotulo),
+                "razão {razao} deveria citar {rotulo} (clip {}/{})",
+                clip.start, clip.end
+            );
+            assert_eq!(
+                clip.score, *nota,
+                "nota do clip com razão {rotulo} deve ser {nota} (conteúdo [{}, {}])",
+                clip.start, clip.end
+            );
+        }
+    }
+
+    #[test]
+    fn associacao_normal_e1_10_e2_90_e3_20() {
+        // ordem NORMAL — caso da contraprova. As três propostas curtas
+        // geram 5 alternativas (E1..E5: p1-fim, p2-fim, p2-início,
+        // p3-fim, p3-início); respondemos E1..E5 e a DP escolhe
+        // E2(90)+E1(10)+E5(60) — E3 sobrepõe E2. No código de bc8a198,
+        // E2=90 caía na TERCEIRA alternativa (deslocamento): este teste
+        // falharia (raz-E2 num clipe errado com nota errada).
+        let chosen = run_associacao(vec![
+            ("E1".into(), 10, "raz-E1".into()),
+            ("E2".into(), 90, "raz-E2".into()),
+            ("E3".into(), 20, "raz-E3".into()),
+            ("E4".into(), 50, "raz-E4".into()),
+            ("E5".into(), 60, "raz-E5".into()),
+        ]);
+        assert_associacao(
+            &chosen,
+            &[("raz-E2", 90), ("raz-E5", 60), ("raz-E1", 10)],
+        );
+    }
+
+    #[test]
+    fn associacao_ordem_inversa_e_permutada() {
+        let base = vec![
+            ("E1".into(), 10, "raz-E1".into()),
+            ("E2".into(), 90, "raz-E2".into()),
+            ("E3".into(), 20, "raz-E3".into()),
+            ("E4".into(), 50, "raz-E4".into()),
+            ("E5".into(), 60, "raz-E5".into()),
+        ];
+        let esperado = [("raz-E2", 90), ("raz-E5", 60), ("raz-E1", 10)];
+        let inversa: Vec<_> = base.iter().rev().cloned().collect();
+        assert_associacao(&run_associacao(inversa), &esperado);
+        let permutada = vec![base[2].clone(), base[4].clone(), base[0].clone(), base[3].clone(), base[1].clone()];
+        assert_associacao(&run_associacao(permutada), &esperado);
+    }
+
+    #[test]
+    fn associacao_com_conforme_intercalado_nao_desloca_ids() {
+        let segments = speech_from(60);
+        let options = options(4, 15.0, 90.0);
+        // conforme ENTRE as curtas: nota própria, NÃO ocupa E-id
+        let proposals = vec![(
+            0..30,
+            vec![candidate(1, 2, 70), candidate(4, 8, 81), candidate(10, 11, 71)],
+        )];
+        let evaluate = |_pending: &[Clip], _segs: &[Segment]| {
+            Ok(vec![
+                ("E1".into(), 10, "raz-E1".into()),
+                ("E2".into(), 90, "raz-E2".into()),
+            ])
+        };
+        let chosen =
+            resolve(&proposals, &segments, "media", 240.0, &options, &evaluate).unwrap();
+        // disputa: conforme 81, E2=90, E1=10 -> top3 = E2, conforme, E1
+        assert_associacao(&chosen[..1], &[("raz-E2", 90)]);
+        assert!(
+            chosen
+                .iter()
+                .any(|c| c.score == 81 && c.reasons.iter().all(|r| !r.contains("raz-")))
+        );
+    }
+
+    #[test]
+    fn respostas_duplicada_ausente_e_desconhecida() {
+        // duplicada: a PRIMEIRA aplica (10); ausente: E3 fora da disputa;
+        // desconhecida (E99): ignorada sem pânico
+        let chosen = run_associacao(vec![
+            ("E1".into(), 10, "raz-E1".into()),
+            ("E1".into(), 99, "raz-E1-dup".into()),
+            ("E99".into(), 50, "raz-E99".into()),
+            ("E2".into(), 90, "raz-E2".into()),
+        ]);
+        // disputam E1=10 e E2=90 (E3 sem avaliação fica fora)
+        assert_eq!(chosen.len(), 2);
+        assert_associacao(&chosen, &[("raz-E2", 90), ("raz-E1", 10)]);
+        assert!(!chosen
+            .iter()
+            .any(|c| c.reasons.iter().any(|r| r.contains("dup"))));
     }
 
     #[test]

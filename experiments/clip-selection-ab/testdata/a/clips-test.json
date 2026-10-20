@@ -1,0 +1,125 @@
+{
+  "version": 1,
+  "mediaId": "72f04616-1b5b-4635-a1f5-de83a260c798",
+  "transcriptHash": "ecb6873bb7a6e8b9f6b80b0e4f2fbb0b13df882477d034487f76f62eef32e8ed",
+  "clips": [
+    {
+      "id": "b4e9a906747af6605f1c8f6334fb6bb67109b4e2f6877de9dd3624a635b89ea6",
+      "start": 400.7,
+      "end": 455.76,
+      "title": "Crítica a práticas de venda de skins em jogos",
+      "score": 78,
+      "reasons": [
+        "A fala inicial expressa frustração com a prática de vendas de skins, criando um tom de crítica imediata.",
+        "A fala menciona a ideia de manter a skin no jogo, que é central para o debate sobre a estratégia da Valve.",
+        "A fala final destaca o valor atual da skin antiga, mostrando o impacto da decisão da Valve."
+      ],
+      "review": "pending",
+      "format": "9:16",
+      "analysis": {
+        "title": "Crítica a práticas de venda de skins em jogos",
+        "summary": "O trecho discute críticas a uma prática de venda de skins em jogos, destacando a frustração com a entrega lenta e a qualidade inferior das skins. Os participantes mencionam exemplos de skins que geraram reações negativas e a possível solução de manter a skin antiga. A situação não tem uma resolução definitiva, mas há indícios de que a Valve ajustou sua abordagem com base nas críticas.",
+        "criteria": [
+          {
+            "label": "Gancho",
+            "score": 80,
+            "explanation": "A fala inicial expressa frustração com a prática de vendas de skins, criando um tom de crítica imediata.",
+            "evidence": "Que porra é essa? Nem revisar o bagulho. Secute, tepap. Esse é o tipo de AKP mal utilizada que ninguém gosta."
+          },
+          {
+            "label": "Desenvolvimento",
+            "score": 70,
+            "explanation": "A fala menciona a ideia de manter a skin no jogo, que é central para o debate sobre a estratégia da Valve.",
+            "evidence": "Essas skins aí, eles podiam manter no jogo. A Valve já fez isso, cara, que é bem interessante."
+          },
+          {
+            "label": "Fechamento",
+            "score": 85,
+            "explanation": "A fala final destaca o valor atual da skin antiga, mostrando o impacto da decisão da Valve.",
+            "evidence": "Mas manteve a skin antiga e aí a skin antiga hoje vale 3 mil reais. Caralho."
+          }
+        ]
+      }
+    },
+    {
+      "id": "2745177a418dd81f991108c4041586ff030e48bd7dabed78fba8561b4dd1759f",
+      "start": 224.48,
+      "end": 242.76,
+      "title": "Reação a invasão e crítica a comportamento",
+      "score": 74,
+      "reasons": [
+        "alternativa 'fim estendido' de [224.5s, 232.2s]: proposta original fora da faixa; a nota 60 é proveniência, não avaliação deste intervalo",
+        "Avaliação do intervalo efetivo: O trecho apresenta uma conversa informal e dinâmica, com elementos de humor e interação entre os personagens. Contém uma narrativa clara e uma conclusão natural, com uma frase completa no final que não termina em publicidade.",
+        "A fala inicial apresenta uma afirmação direta e assertiva sobre a 'verdade' do personagem, criando um ponto de partida interessante e informativo.",
+        "A fala 1 introduz uma crítica sobre a situação, questionando se piora e referindo-se a um possível diagnóstico, mostrando o desenvolvimento do tema.",
+        "A fala final mostra uma reação de frustração com a invasão de dois indivíduos, indicando um clímax emocional no trecho."
+      ],
+      "review": "pending",
+      "format": "9:16",
+      "analysis": {
+        "title": "Reação a invasão e crítica a comportamento",
+        "summary": "O trecho discute uma situação envolvendo um personagem com possíveis problemas de comportamento, com críticas a indivíduos que invadem o espaço. Há reações de frustração e descontentamento com a invasão. A situação não apresenta uma resolução clara no final.",
+        "criteria": [
+          {
+            "label": "Gancho",
+            "score": 80,
+            "explanation": "A fala inicial apresenta uma afirmação direta e assertiva sobre a 'verdade' do personagem, criando um ponto de partida interessante e informativo.",
+            "evidence": "na cabeça, na parte de trás do personagem, né? Essa é que é a verdade."
+          },
+          {
+            "label": "Desenvolvimento",
+            "score": 65,
+            "explanation": "A fala 1 introduz uma crítica sobre a situação, questionando se piora e referindo-se a um possível diagnóstico, mostrando o desenvolvimento do tema.",
+            "evidence": "Eu acho que piora, hein? Valeu, meu corigão. É o Tourette? É nóis."
+          },
+          {
+            "label": "Fechamento",
+            "score": 75,
+            "explanation": "A fala final mostra uma reação de frustração com a invasão de dois indivíduos, indicando um clímax emocional no trecho.",
+            "evidence": "Vai melhorar para trás, hein? Ih, cara! Vai, Corinthians. Esses caras ficam invadindo aqui toda hora, mano, esses dois."
+          }
+        ]
+      }
+    },
+    {
+      "id": "90879385b76fe36c78ccbfccf470fb540f2c71d53193e257c77461b0fc7d7da4",
+      "start": 380.36,
+      "end": 397.84,
+      "title": "Crítica a conteúdo com armas juntas",
+      "score": 68,
+      "reasons": [
+        "alternativa 'início recuado' de [384.8s, 397.8s]: proposta original fora da faixa; a nota 75 é proveniência, não avaliação deste intervalo",
+        "Avaliação do intervalo efetivo: O trecho é coerente e contém uma narrativa clara, mas começa com uma frase incompleta e termina com uma frase que pode ser considerada como uma transição para o próximo trecho. A falta de uma frase completa no final reduz a pontuação.",
+        "A fala inicial expressa surpresa e frustração com o conteúdo, criando um impacto imediato.",
+        "A fala mostra uma hesitação e uma tentativa de continuar a discussão, indicando que o tema ainda não foi resolvido.",
+        "A fala destaca a crítica à EA por usar armas juntas, sugerindo uma crítica direta ao conteúdo."
+      ],
+      "review": "pending",
+      "format": "9:16",
+      "analysis": {
+        "title": "Crítica a conteúdo com armas juntas",
+        "summary": "A discussão envolve críticas a um conteúdo que usa armas juntas, com hesitação sobre sua duração e uma reação inicial de frustração. O tema ainda não foi resolvido.",
+        "criteria": [
+          {
+            "label": "Gancho",
+            "score": 80,
+            "explanation": "A fala inicial expressa surpresa e frustração com o conteúdo, criando um impacto imediato.",
+            "evidence": "É micro imagem também, né? Rapaz, o PC, ele tá... Meu Deus!"
+          },
+          {
+            "label": "Desenvolvimento",
+            "score": 50,
+            "explanation": "A fala mostra uma hesitação e uma tentativa de continuar a discussão, indicando que o tema ainda não foi resolvido.",
+            "evidence": "Vai dar, vai dar. Mas é isso aí. Ah, e aí, né, galera?"
+          },
+          {
+            "label": "Fechamento",
+            "score": 70,
+            "explanation": "A fala destaca a crítica à EA por usar armas juntas, sugerindo uma crítica direta ao conteúdo.",
+            "evidence": "Você vê que a EA, olha as armas juntadinhas ali, ó."
+          }
+        ]
+      }
+    }
+  ]
+}

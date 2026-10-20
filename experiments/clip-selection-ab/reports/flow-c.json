@@ -1,0 +1,65 @@
+{
+ "amostragem": "temp 0, seed 42 (flags do text_engine)",
+ "analise_elapsed_s": 64.6292314,
+ "avaliacao_tokens": {
+  "geracao": 2510,
+  "prompt": 3466
+ },
+ "clips": [
+  {
+   "abertura": "Independente da situação.",
+   "end": 224.48,
+   "fechamento": "Ninguém vai parar para ficar olhando na nuca,",
+   "razoes": [
+    "alternativa 'início recuado' de [217.1s, 224.5s]: proposta original fora da faixa; a nota 65 é proveniência, não avaliação deste intervalo",
+    "Avaliação do intervalo efetivo: O trecho começa com uma crítica ao erro de thumbnail e se desenvolve com uma observação sobre a falta de revisão. A frase 'você automaticamente bota a perna do R ali' é clara e tem um gancho forte. A crítica é bem fundamentada e o tom é autêntico. A conclusão é forte com a frase 'Essa é que é a verdade'. O trecho é completo, com início e fim em frases completas, sem publicidade. O assunto é compreensível e tem um gancho claro. A estrutura é sólida e o tom é autêntico. A avaliação é de 88/100.",
+    "A afirmação inicial expressa uma crítica direta ao padrão de exigência, estabelecendo uma posição de desacordo com o comportamento dos outros, o que gera interesse imediato.",
+    "A discussão começa com a observação de um comportamento que passa despercebido, mencionando a reação automática ao ver algo, o que introduz o tema da impercepção em situações cotidianas.",
+    "A frase indica uma avaliação sobre a falta de atenção ao detalhe, sugerindo que ninguém para observar o que está atrás, o que reflete uma crítica ao comportamento geral em situações específicas."
+   ],
+   "score": 71,
+   "start": 208.84,
+   "title": "Crítica à exigência e impercepção de detalhes"
+  },
+  {
+   "abertura": "O que eu achei engraçado é que, assim,",
+   "end": 200.4,
+   "fechamento": "É o grupo do papi.",
+   "razoes": [
+    "alternativa 'início avançado' de [0.0s, 200.4s]: proposta original fora da faixa; a nota 85 é proveniência, não avaliação deste intervalo",
+    "Avaliação do intervalo efetivo: O trecho apresenta uma narrativa clara sobre um problema encontrado em um jogo de passo de batalha, com foco em skins geradas por IA que estão incorretas. O início é claro, com uma observação sobre a ausência de thumbnail na barba, que é desenvolvida com detalhes específicos (como o erro de 'group therapy' em vez de 'group therapy'). O desenvolvimento é coerente, mostrando a reação do público e a acusação contra a EA. A conclusão é direta e impactante, com a frase 'É o grupo do papi' que dá um toque de humor e crítica. O trecho é completo, com início e fim em frases completas, sem publicidade. O assunto é compreensível e tem um gancho claro: um erro aparentemente simples que gera uma crise de confiança no jogo. A estrutura é sólida, com desenvolvimento lógico e uma conclusão forte. A avaliação é de 95/100.",
+    "A frase inicial menciona um detalhe visual (falta de thumb na barba) como ponto de curiosidade, gerando um gancho com base em uma observação cotidiana que leva ao tema principal (problemas nos passos de batalha).",
+    "A fala sobre 'coisas estranhas em skins' no passo de batalha mostra a descoberta central do problema, com os jogadores acusando a EA Battlefield Studios de ter feito algo incorreto, indicando um ponto de desenvolvimento claro do assunto.",
+    "A frase 'É o grupo do papi' indica uma conclusão informal e com humor, sugerindo que o problema identificado (skins estranhas no passo de batalha) está ligado a um grupo de pessoas, talvez com um tom de crítica leve ou de desconfiança."
+   ],
+   "score": 56,
+   "start": 110.82,
+   "title": "Skins estranhas no Battlefield 6 geram críticas"
+  },
+  {
+   "abertura": "Bom, galera, antes da gente entrar no GTA, eu queria só trazer uma observação aqui, porque assim...",
+   "end": 88.66,
+   "fechamento": "no Playstation.",
+   "razoes": [
+    "alternativa 'fim recuado' de [0.0s, 200.4s]: proposta original fora da faixa; a nota 85 é proveniência, não avaliação deste intervalo",
+    "Avaliação do intervalo efetivo: O trecho começa com uma introdução direta ao tema (Battlefield 6 e o novo passo de batalha), apresenta uma crítica ao funcionamento da EA e descreve um erro específico: a ausência de thumbnail na barba. O desenvolvimento é claro e envolvente, com detalhes de uma live e a experiência de um jogador. A crítica é bem fundamentada e o tom é autêntico, com humor e frustração. A conclusão é natural, com a referência ao erro de thumbnail e ao crash do jogo. O trecho é completo, com início e fim em frases completas, sem publicidade. O assunto é compreensível e tem um gancho forte: o erro técnico que gera frustração. A estrutura é sólida e o tom é autêntico. A avaliação é de 90/100.",
+    "O gancho inicia com uma observação geral sobre o tema do GTA, mas a fala é incompleta e não apresenta um ponto claro ou provocativo, apenas uma transição genérica para o assunto principal.",
+    "O desenvolvimento descreve detalhadamente um problema técnico no jogo: a ausência de thumbnails de barba, o que é apresentado como um erro grave em um jogo de alto custo, mostrando a experiência de uso problemática.",
+    "O final do trecho menciona que o jogo crashou no PlayStation durante a tentativa de mudar a roupa do personagem, indicando um problema técnico grave que encerra a narrativa com um ponto de falha no jogo."
+   ],
+   "score": 55,
+   "start": 0.0,
+   "title": "Problemas técnicos em jogo da EA"
+  }
+ ],
+ "modelo": "Qwen3-4B-Instruct-2507 (models/home-c)",
+ "pendentes_previstos": 16,
+ "perfil": "c",
+ "propostas_brutas": 12,
+ "resolve_elapsed_s": 140.4028458,
+ "template": "oficial sem think e sem /no_think",
+ "modelo_sha256_1mib": "3ef0c164d6cc9d0d",
+ "modelo_arquivo": "models\\home-c\\Qwen3-4B-Instruct-2507-Q4_K_M.gguf",
+ "analise_formato": "A (vigente) para todos os perfis — variável controlada",
+ "orcamento_nota": "ver orçamento real em reports/lab-matrix.json (orcamento_real_2026_10_20)"
+}

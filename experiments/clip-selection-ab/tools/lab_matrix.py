@@ -55,7 +55,16 @@ def build_prompt(profile, system, data_str):
             f"<|im_start|>user\n{data_str}<|im_end|>\n"
             f"<|im_start|>assistant\n")
 
+def system_for(profile, system):
+    # A vigente mantém /no_think; B/C (template oficial Instruct) não
+    # devem carregar o marcador híbrido.
+    if profile in "bc":
+        return system.replace(" /no_think", "").replace("/no_think", "").strip()
+    return system
+
+
 def run(profile, case, system, data, schema, tokens):
+    system = system_for(profile, system)
     home = VENDOR if profile in "ab" else HOME_C
     model = os.path.join(home, "Qwen3-4B" + ("-Instruct-2507-" if profile == "c" else "-") + "Q4_K_M.gguf")
     if profile == "c":
@@ -73,6 +82,15 @@ def run(profile, case, system, data, schema, tokens):
            "-ngl", "auto", "-t", "8", "-c", "8192", "-n", str(tokens), "--temp", "0",
            "--no-conversation", "--no-display-prompt", "--no-escape", "--simple-io",
            "--verbosity", "3", "--fit", "on", "--fit-target", "1024"]
+    manifest = {
+        "argv": cmd,
+        "cwd": os.getcwd(),
+        "exe_version": subprocess.run([exe, "--version"], capture_output=True, text=True).stdout.strip().splitlines()[0] if os.path.isfile(exe) else None,
+        "model_sha256_head": __import__("hashlib").sha256(open(model, "rb").read(1 << 20)).hexdigest()[:16] + "…(primeiros 1MiB)",
+        "env_CNP": None,
+        "prompt_sem_no_think": profile in "bc",
+        "template": "im_start manual (A: think vazio; B/C: sem think)",
+    }
     t0 = time.time()
     proc = subprocess.run(cmd, capture_output=True, text=True, timeout=420)
     elapsed = round(time.time() - t0, 1)
@@ -93,6 +111,7 @@ def run(profile, case, system, data, schema, tokens):
         else:
             mtok = int(digits[-1])
     return {"perfil": profile, "caso": case, "exit": proc.returncode,
+            "manifesto": manifest,
             "elapsed_s": elapsed, "prompt_tokens": ptok, "gen_tokens": mtok,
             "raw": raw[:1600], "erro": log[-400:] if proc.returncode else None}
 
@@ -102,8 +121,11 @@ def main():
     def text_of(a, b):
         return " ".join(s["text"] for s in segs if s["start"] < b and s["end"] > a)
     def ctx(a, b, before):
-        rel = [s for s in segs if (s["end"] <= a + 1e-9) if before] or [s for s in segs if (s["start"] >= b - 1e-9) if not before]
-        return rel[0]["text"] if rel else None
+        if before:
+            cand = [s for s in segs if s["end"] <= a + 1e-9]
+            return cand[-1]["text"] if cand else None
+        cand = [s for s in segs if s["start"] >= b - 1e-9]
+        return cand[0]["text"] if cand else None
     sys_control = "Você é um assistente que responde exclusivamente em JSON. /no_think"
     data_control = json.dumps({"pergunta": "Some 17 e 25.", "instrucao": "Responda o valor da soma."}, ensure_ascii=False)
     schema_control = {"type": "object", "additionalProperties": False, "required": ["soma"],

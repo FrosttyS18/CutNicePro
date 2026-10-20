@@ -1,0 +1,1 @@
+{"additionalProperties":false,"properties":{"items":{"items":{"additionalProperties":false,"properties":{"id":{"enum":["E1","E2","E3","E4","E5","E6","E7","E8"],"type":"string"},"reason":{"type":"string"},"score":{"maximum":100,"minimum":0,"type":"integer"}},"required":["id","score","reason"],"type":"object"},"maxItems":8,"type":"array"}},"required":["items"],"type":"object"}

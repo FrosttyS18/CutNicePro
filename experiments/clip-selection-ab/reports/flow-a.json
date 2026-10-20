@@ -1,0 +1,63 @@
+{
+ "amostragem": "temp 0, seed 42 (flags do text_engine)",
+ "analise_elapsed_s": 52.5604996,
+ "avaliacao_tokens": {
+  "geracao": 1345,
+  "prompt": 3486
+ },
+ "clips": [
+  {
+   "abertura": "Que porra é essa?",
+   "end": 455.76,
+   "fechamento": "Caralho.",
+   "razoes": [
+    "A fala inicial expressa frustração com a prática de vendas de skins, criando um tom de crítica imediata.",
+    "A fala menciona a ideia de manter a skin no jogo, que é central para o debate sobre a estratégia da Valve.",
+    "A fala final destaca o valor atual da skin antiga, mostrando o impacto da decisão da Valve."
+   ],
+   "score": 78,
+   "start": 400.7,
+   "title": "Crítica a práticas de venda de skins em jogos"
+  },
+  {
+   "abertura": "na cabeça, na parte de trás do personagem, né?",
+   "end": 242.76,
+   "fechamento": "Esses caras ficam invadindo aqui toda hora, mano, esses dois.",
+   "razoes": [
+    "alternativa 'fim estendido' de [224.5s, 232.2s]: proposta original fora da faixa; a nota 60 é proveniência, não avaliação deste intervalo",
+    "Avaliação do intervalo efetivo: O trecho apresenta uma conversa informal e dinâmica, com elementos de humor e interação entre os personagens. Contém uma narrativa clara e uma conclusão natural, com uma frase completa no final que não termina em publicidade.",
+    "A fala inicial apresenta uma afirmação direta e assertiva sobre a 'verdade' do personagem, criando um ponto de partida interessante e informativo.",
+    "A fala 1 introduz uma crítica sobre a situação, questionando se piora e referindo-se a um possível diagnóstico, mostrando o desenvolvimento do tema.",
+    "A fala final mostra uma reação de frustração com a invasão de dois indivíduos, indicando um clímax emocional no trecho."
+   ],
+   "score": 74,
+   "start": 224.48,
+   "title": "Reação a invasão e crítica a comportamento"
+  },
+  {
+   "abertura": "É micro imagem também, né?",
+   "end": 397.84,
+   "fechamento": "Você vê que a EA, olha as armas juntadinhas ali, ó.",
+   "razoes": [
+    "alternativa 'início recuado' de [384.8s, 397.8s]: proposta original fora da faixa; a nota 75 é proveniência, não avaliação deste intervalo",
+    "Avaliação do intervalo efetivo: O trecho é coerente e contém uma narrativa clara, mas começa com uma frase incompleta e termina com uma frase que pode ser considerada como uma transição para o próximo trecho. A falta de uma frase completa no final reduz a pontuação.",
+    "A fala inicial expressa surpresa e frustração com o conteúdo, criando um impacto imediato.",
+    "A fala mostra uma hesitação e uma tentativa de continuar a discussão, indicando que o tema ainda não foi resolvido.",
+    "A fala destaca a crítica à EA por usar armas juntas, sugerindo uma crítica direta ao conteúdo."
+   ],
+   "score": 68,
+   "start": 380.36,
+   "title": "Crítica a conteúdo com armas juntas"
+  }
+ ],
+ "modelo": "instalado vendor (Qwen3 4B Instruct Awq)",
+ "pendentes_previstos": 16,
+ "perfil": "a",
+ "propostas_brutas": 12,
+ "resolve_elapsed_s": 83.7624919,
+ "template": "vigente: think vazio + /no_think",
+ "modelo_sha256_1mib": "14d88a1a833f356d",
+ "modelo_arquivo": "C:\\CutNicePro\\.tooling\\vendor\\analysis\\Qwen3-4B-Q4_K_M.gguf",
+ "analise_formato": "A (vigente) para todos os perfis — variável controlada",
+ "orcamento_nota": "ver orçamento real em reports/lab-matrix.json (orcamento_real_2026_10_20)"
+}

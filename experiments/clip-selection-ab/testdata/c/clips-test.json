@@ -1,0 +1,127 @@
+{
+  "version": 1,
+  "mediaId": "72f04616-1b5b-4635-a1f5-de83a260c798",
+  "transcriptHash": "ecb6873bb7a6e8b9f6b80b0e4f2fbb0b13df882477d034487f76f62eef32e8ed",
+  "clips": [
+    {
+      "id": "b090119e6a73896b3cc8e02edc44cbf8316cc340d030a567e28d01b6ed266992",
+      "start": 208.84,
+      "end": 224.48,
+      "title": "Crítica à exigência e impercepção de detalhes",
+      "score": 71,
+      "reasons": [
+        "alternativa 'início recuado' de [217.1s, 224.5s]: proposta original fora da faixa; a nota 65 é proveniência, não avaliação deste intervalo",
+        "Avaliação do intervalo efetivo: O trecho começa com uma crítica ao erro de thumbnail e se desenvolve com uma observação sobre a falta de revisão. A frase 'você automaticamente bota a perna do R ali' é clara e tem um gancho forte. A crítica é bem fundamentada e o tom é autêntico. A conclusão é forte com a frase 'Essa é que é a verdade'. O trecho é completo, com início e fim em frases completas, sem publicidade. O assunto é compreensível e tem um gancho claro. A estrutura é sólida e o tom é autêntico. A avaliação é de 88/100.",
+        "A afirmação inicial expressa uma crítica direta ao padrão de exigência, estabelecendo uma posição de desacordo com o comportamento dos outros, o que gera interesse imediato.",
+        "A discussão começa com a observação de um comportamento que passa despercebido, mencionando a reação automática ao ver algo, o que introduz o tema da impercepção em situações cotidianas.",
+        "A frase indica uma avaliação sobre a falta de atenção ao detalhe, sugerindo que ninguém para observar o que está atrás, o que reflete uma crítica ao comportamento geral em situações específicas."
+      ],
+      "review": "pending",
+      "format": "9:16",
+      "analysis": {
+        "title": "Crítica à exigência e impercepção de detalhes",
+        "summary": "A conversa critica a exigência excessiva e a impercepção de detalhes em situações cotidianas. Os participantes destacam que certos comportamentos passam despercebidos e que há uma falta de atenção ao que está ao redor. O assunto não apresenta solução clara.",
+        "criteria": [
+          {
+            "label": "Gancho",
+            "score": 80,
+            "explanation": "A afirmação inicial expressa uma crítica direta ao padrão de exigência, estabelecendo uma posição de desacordo com o comportamento dos outros, o que gera interesse imediato.",
+            "evidence": "Independente da situação. É um erro, é. Está tudo errado. Eu acho que vocês estão muito exigentes, cara."
+          },
+          {
+            "label": "Desenvolvimento",
+            "score": 70,
+            "explanation": "A discussão começa com a observação de um comportamento que passa despercebido, mencionando a reação automática ao ver algo, o que introduz o tema da impercepção em situações cotidianas.",
+            "evidence": "Realmente é um negócio que passa batido, né? Se você olha assim, a primeira vez que eu vi, você automaticamente bota a perna do R ali."
+          },
+          {
+            "label": "Fechamento",
+            "score": 60,
+            "explanation": "A frase indica uma avaliação sobre a falta de atenção ao detalhe, sugerindo que ninguém para observar o que está atrás, o que reflete uma crítica ao comportamento geral em situações específicas.",
+            "evidence": "Exato. Mas não tem mesmo. Mas é que os caras realmente... Ninguém vai parar para ficar olhando na nuca,"
+          }
+        ]
+      }
+    },
+    {
+      "id": "ad8beac13deffefacdb4c4e92463401544c3dd63928de4c9d67cd1ddec3ab621",
+      "start": 110.82,
+      "end": 200.4,
+      "title": "Skins estranhas no Battlefield 6 geram críticas",
+      "score": 56,
+      "reasons": [
+        "alternativa 'início avançado' de [0.0s, 200.4s]: proposta original fora da faixa; a nota 85 é proveniência, não avaliação deste intervalo",
+        "Avaliação do intervalo efetivo: O trecho apresenta uma narrativa clara sobre um problema encontrado em um jogo de passo de batalha, com foco em skins geradas por IA que estão incorretas. O início é claro, com uma observação sobre a ausência de thumbnail na barba, que é desenvolvida com detalhes específicos (como o erro de 'group therapy' em vez de 'group therapy'). O desenvolvimento é coerente, mostrando a reação do público e a acusação contra a EA. A conclusão é direta e impactante, com a frase 'É o grupo do papi' que dá um toque de humor e crítica. O trecho é completo, com início e fim em frases completas, sem publicidade. O assunto é compreensível e tem um gancho claro: um erro aparentemente simples que gera uma crise de confiança no jogo. A estrutura é sólida, com desenvolvimento lógico e uma conclusão forte. A avaliação é de 95/100.",
+        "A frase inicial menciona um detalhe visual (falta de thumb na barba) como ponto de curiosidade, gerando um gancho com base em uma observação cotidiana que leva ao tema principal (problemas nos passos de batalha).",
+        "A fala sobre 'coisas estranhas em skins' no passo de batalha mostra a descoberta central do problema, com os jogadores acusando a EA Battlefield Studios de ter feito algo incorreto, indicando um ponto de desenvolvimento claro do assunto.",
+        "A frase 'É o grupo do papi' indica uma conclusão informal e com humor, sugerindo que o problema identificado (skins estranhas no passo de batalha) está ligado a um grupo de pessoas, talvez com um tom de crítica leve ou de desconfiança."
+      ],
+      "review": "pending",
+      "format": "9:16",
+      "analysis": {
+        "title": "Skins estranhas no Battlefield 6 geram críticas",
+        "summary": "Jogadores percebem skins estranhas no novo passo de batalha do Battlefield 6 e acusam a EA de erro. O problema é descrito como inesperado e com impacto negativo na experiência de jogo. A situação não tem resolução clara no trecho apresentado.",
+        "criteria": [
+          {
+            "label": "Gancho",
+            "score": 55,
+            "explanation": "A frase inicial menciona um detalhe visual (falta de thumb na barba) como ponto de curiosidade, gerando um gancho com base em uma observação cotidiana que leva ao tema principal (problemas nos passos de batalha).",
+            "evidence": "O que eu achei engraçado é que, assim, Quando faltou a thumb na barba, já estava ruim."
+          },
+          {
+            "label": "Desenvolvimento",
+            "score": 75,
+            "explanation": "A fala sobre 'coisas estranhas em skins' no passo de batalha mostra a descoberta central do problema, com os jogadores acusando a EA Battlefield Studios de ter feito algo incorreto, indicando um ponto de desenvolvimento claro do assunto.",
+            "evidence": "Os jogadores avistaram Umas coisas estranhas No passo de batalha De umas skins Que está sendo Eles estão acusando a EA Battlefield Studios agora De ter feito tudo"
+          },
+          {
+            "label": "Fechamento",
+            "score": 40,
+            "explanation": "A frase 'É o grupo do papi' indica uma conclusão informal e com humor, sugerindo que o problema identificado (skins estranhas no passo de batalha) está ligado a um grupo de pessoas, talvez com um tom de crítica leve ou de desconfiança.",
+            "evidence": "É o grupo do papi."
+          }
+        ]
+      }
+    },
+    {
+      "id": "5c76593d7792a1bf8e42ed9ceeaf3c71b4f202634b87becf3c7014fb39d1c9b3",
+      "start": 0.0,
+      "end": 88.66,
+      "title": "Problemas técnicos em jogo da EA",
+      "score": 55,
+      "reasons": [
+        "alternativa 'fim recuado' de [0.0s, 200.4s]: proposta original fora da faixa; a nota 85 é proveniência, não avaliação deste intervalo",
+        "Avaliação do intervalo efetivo: O trecho começa com uma introdução direta ao tema (Battlefield 6 e o novo passo de batalha), apresenta uma crítica ao funcionamento da EA e descreve um erro específico: a ausência de thumbnail na barba. O desenvolvimento é claro e envolvente, com detalhes de uma live e a experiência de um jogador. A crítica é bem fundamentada e o tom é autêntico, com humor e frustração. A conclusão é natural, com a referência ao erro de thumbnail e ao crash do jogo. O trecho é completo, com início e fim em frases completas, sem publicidade. O assunto é compreensível e tem um gancho forte: o erro técnico que gera frustração. A estrutura é sólida e o tom é autêntico. A avaliação é de 90/100.",
+        "O gancho inicia com uma observação geral sobre o tema do GTA, mas a fala é incompleta e não apresenta um ponto claro ou provocativo, apenas uma transição genérica para o assunto principal.",
+        "O desenvolvimento descreve detalhadamente um problema técnico no jogo: a ausência de thumbnails de barba, o que é apresentado como um erro grave em um jogo de alto custo, mostrando a experiência de uso problemática.",
+        "O final do trecho menciona que o jogo crashou no PlayStation durante a tentativa de mudar a roupa do personagem, indicando um problema técnico grave que encerra a narrativa com um ponto de falha no jogo."
+      ],
+      "review": "pending",
+      "format": "9:16",
+      "analysis": {
+        "title": "Problemas técnicos em jogo da EA",
+        "summary": "O narrador relata problemas técnicos encontrados em um jogo lançado pela EA, como falhas de carregamento e ausência de imagens de personagens. A experiência é descrita como frustrante, especialmente por um custo elevado do jogo. O trecho termina com um crash no PlayStation durante a customização do personagem.",
+        "criteria": [
+          {
+            "label": "Gancho",
+            "score": 30,
+            "explanation": "O gancho inicia com uma observação geral sobre o tema do GTA, mas a fala é incompleta e não apresenta um ponto claro ou provocativo, apenas uma transição genérica para o assunto principal.",
+            "evidence": "Bom, galera, antes da gente entrar no GTA, eu queria só trazer uma observação aqui, porque assim..."
+          },
+          {
+            "label": "Desenvolvimento",
+            "score": 85,
+            "explanation": "O desenvolvimento descreve detalhadamente um problema técnico no jogo: a ausência de thumbnails de barba, o que é apresentado como um erro grave em um jogo de alto custo, mostrando a experiência de uso problemática.",
+            "evidence": "Aparece na tela dois quadradinhos que eram botar barba escrito Thumbnail Missing."
+          },
+          {
+            "label": "Fechamento",
+            "score": 60,
+            "explanation": "O final do trecho menciona que o jogo crashou no PlayStation durante a tentativa de mudar a roupa do personagem, indicando um problema técnico grave que encerra a narrativa com um ponto de falha no jogo.",
+            "evidence": "fomos passar pra botar roupa, sei lá. O jogo crashou no Playstation."
+          }
+        ]
+      }
+    }
+  ]
+}

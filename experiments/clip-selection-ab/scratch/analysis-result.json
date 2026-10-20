@@ -1,0 +1,21 @@
+{
+  "closing": {
+    "evidenceId": 2,
+    "explanation": "A frase indica uma avaliação sobre a falta de atenção ao detalhe, sugerindo que ninguém para observar o que está atrás, o que reflete uma crítica ao comportamento geral em situações específicas.",
+    "score": 60
+  },
+  "development": {
+    "evidenceId": 1,
+    "explanation": "A discussão começa com a observação de um comportamento que passa despercebido, mencionando a reação automática ao ver algo, o que introduz o tema da impercepção em situações cotidianas.",
+    "score": 70
+  },
+  "hook": {
+    "evidenceId": 0,
+    "explanation": "A afirmação inicial expressa uma crítica direta ao padrão de exigência, estabelecendo uma posição de desacordo com o comportamento dos outros, o que gera interesse imediato.",
+    "score": 80
+  },
+  "summary": "A conversa critica a exigência excessiva e a impercepção de detalhes em situações cotidianas. Os participantes destacam que certos comportamentos passam despercebidos e que há uma falta de atenção ao que está ao redor. O assunto não apresenta solução clara.",
+  "title": "Crítica à exigência e impercepção de detalhes"
+} [end of text]
+
+

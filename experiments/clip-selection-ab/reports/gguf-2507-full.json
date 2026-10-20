@@ -1,0 +1,38 @@
+{
+ "arquivo": "models/home-c/Qwen3-4B-Instruct-2507-Q4_K_M.gguf",
+ "parse": "KVs escalares/string até o primeiro array (metadados gerais precedem os arrays); presença de chaves verificada POR BUSCA BINÁRIA no arquivo inteiro",
+ "kv_lidos": {
+  "general.architecture": "qwen3",
+  "general.type": "model",
+  "general.name": "Qwen3-4B-Instruct-2507",
+  "general.version": "2507",
+  "general.finetune": "Instruct",
+  "general.basename": "Qwen3-4B-Instruct-2507",
+  "general.quantized_by": "Unsloth",
+  "general.size_label": "4B",
+  "general.license": "apache-2.0",
+  "general.license.link": "https://huggingface.co/Qwen/Qwen3-4B-Instruct-2507/blob/main…",
+  "general.repo_url": "https://huggingface.co/unsloth",
+  "general.base_model.count": 1,
+  "general.base_model.0.name": "Qwen3 4B Instruct 2507",
+  "general.base_model.0.version": "2507",
+  "general.base_model.0.organization": "Qwen",
+  "general.base_model.0.repo_url": "https://huggingface.co/Qwen/Qwen3-4B-Instruct-2507",
+  "general.tags": "<tipo 9 — parse interrompido aqui>"
+ },
+ "busca_binaria": {
+  "tokenizer.chat_template": true,
+  "chat_template": true,
+  "general.source": false,
+  "general.url": false,
+  "general.repo": true,
+  "general.conversion": false,
+  "convert": true,
+  "llama.cpp": false,
+  "unsloth": true,
+  "Qwen": true
+ },
+ "limitacao": "parse estrutural completo exige leitor GGUF canônico (gguf-py); a presença/ausência de chaves foi comprovada por busca de bytes, não por parse",
+ "tokenizer_chat_template_extraido": "{%- if tools %}\n    {{- '<|im_start|>system\\n' }}\n    {%- if messages[0].role == 'system' %}\n        {{- messages[0].content + '\\n\\n' }}\n    {%- endif %}\n    {{- \"# Tools\\n\\nYou may call one or more functions to assist with the user query.\\n\\nYou are provided with function signatures within <tools></tools> XML tags:\\n<tools>\" }}\n    {%- for tool in tools %}\n        {{- \"\\n\" }}\n        {{- tool | tojson }}\n    {%- endfor %}\n    {{- \"\\n</tools>\\n\\nFor each function call, return a json object with function name and arguments within <tool_call></tool_call> XML tags:\\n<tool_call>\\n{\\\"name\\\": <function-name>, \\\"arguments\\\": <args-json-object>}\\n</tool_call><|im_end|>\\n\" }}\n{%- else %}\n    {%- if messages[0].role == 'system' %}\n        {{- '<|im_start|>system\\n' + messages[0].content + '<|im_end|…",
+ "errata": "a rodada 4 declarou template VAZIO por DEFAULT de parser interrompido — FALSO; o template existe e foi extraído por parse localizado (bytefind + validacao de header)"
+}

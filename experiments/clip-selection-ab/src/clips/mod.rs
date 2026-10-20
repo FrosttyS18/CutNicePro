@@ -4,3 +4,6 @@ pub mod selection;
 pub mod selection_x;
 pub mod text_engine;
 pub mod types;
+pub mod evidence;
+pub mod semantic;
+pub mod store;

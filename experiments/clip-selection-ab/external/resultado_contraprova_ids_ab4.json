@@ -1,0 +1,221 @@
+{
+  "source_commit": "bc8a198f6ea1bd5fe68f9a462b67be290b48a177",
+  "scope": "Python reproduction of the inspected score-routing loop only",
+  "rust_application_executed": false,
+  "model_inference_executed": false,
+  "rust_excerpt": "if let Some(contender) = contenders\n    .iter_mut()\n    .filter(|c| c.valid_score.is_none())\n    .nth(position)\n{\n    contender.clip.score = score;\n    contender.valid_score = Some(score);\n}",
+  "cases": {
+    "ordered": {
+      "trace": [
+        {
+          "response_id": "E1",
+          "score": 10,
+          "pending_before": [
+            "Alternative A",
+            "Alternative B",
+            "Alternative C"
+          ],
+          "assigned_to": "Alternative A"
+        },
+        {
+          "response_id": "E2",
+          "score": 90,
+          "pending_before": [
+            "Alternative B",
+            "Alternative C"
+          ],
+          "assigned_to": "Alternative C"
+        },
+        {
+          "response_id": "E3",
+          "score": 20,
+          "pending_before": [
+            "Alternative B"
+          ],
+          "assigned_to": null
+        }
+      ],
+      "final": [
+        {
+          "name": "Alternative A",
+          "valid_score": 10
+        },
+        {
+          "name": "Alternative B",
+          "valid_score": null
+        },
+        {
+          "name": "Alternative C",
+          "valid_score": 90
+        }
+      ],
+      "expected": [
+        {
+          "name": "Alternative A",
+          "valid_score": 10
+        },
+        {
+          "name": "Alternative B",
+          "valid_score": 90
+        },
+        {
+          "name": "Alternative C",
+          "valid_score": 20
+        }
+      ],
+      "routing_correct": false
+    },
+    "reversed": {
+      "trace": [
+        {
+          "response_id": "E3",
+          "score": 20,
+          "pending_before": [
+            "Alternative A",
+            "Alternative B",
+            "Alternative C"
+          ],
+          "assigned_to": "Alternative C"
+        },
+        {
+          "response_id": "E2",
+          "score": 90,
+          "pending_before": [
+            "Alternative A",
+            "Alternative B"
+          ],
+          "assigned_to": "Alternative B"
+        },
+        {
+          "response_id": "E1",
+          "score": 10,
+          "pending_before": [
+            "Alternative A"
+          ],
+          "assigned_to": "Alternative A"
+        }
+      ],
+      "final": [
+        {
+          "name": "Alternative A",
+          "valid_score": 10
+        },
+        {
+          "name": "Alternative B",
+          "valid_score": 90
+        },
+        {
+          "name": "Alternative C",
+          "valid_score": 20
+        }
+      ],
+      "expected": [
+        {
+          "name": "Alternative A",
+          "valid_score": 10
+        },
+        {
+          "name": "Alternative B",
+          "valid_score": 90
+        },
+        {
+          "name": "Alternative C",
+          "valid_score": 20
+        }
+      ],
+      "routing_correct": true
+    },
+    "mixed": {
+      "trace": [
+        {
+          "response_id": "E2",
+          "score": 90,
+          "pending_before": [
+            "Alternative A",
+            "Alternative B",
+            "Alternative C"
+          ],
+          "assigned_to": "Alternative B"
+        },
+        {
+          "response_id": "E1",
+          "score": 10,
+          "pending_before": [
+            "Alternative A",
+            "Alternative C"
+          ],
+          "assigned_to": "Alternative A"
+        },
+        {
+          "response_id": "E3",
+          "score": 20,
+          "pending_before": [
+            "Alternative C"
+          ],
+          "assigned_to": null
+        }
+      ],
+      "final": [
+        {
+          "name": "Alternative A",
+          "valid_score": 10
+        },
+        {
+          "name": "Alternative B",
+          "valid_score": 90
+        },
+        {
+          "name": "Alternative C",
+          "valid_score": null
+        }
+      ],
+      "expected": [
+        {
+          "name": "Alternative A",
+          "valid_score": 10
+        },
+        {
+          "name": "Alternative B",
+          "valid_score": 90
+        },
+        {
+          "name": "Alternative C",
+          "valid_score": 20
+        }
+      ],
+      "routing_correct": false
+    }
+  },
+  "two_pending": {
+    "trace": [
+      {
+        "response_id": "E1",
+        "score": 10,
+        "pending_before": [
+          "Alternative A",
+          "Alternative B"
+        ],
+        "assigned_to": "Alternative A"
+      },
+      {
+        "response_id": "E2",
+        "score": 90,
+        "pending_before": [
+          "Alternative B"
+        ],
+        "assigned_to": null
+      }
+    ],
+    "final": [
+      {
+        "name": "Alternative A",
+        "valid_score": 10
+      },
+      {
+        "name": "Alternative B",
+        "valid_score": null
+      }
+    ]
+  },
+  "conclusion": "The pending filter changes after assignment: IDs can lose or switch their targets."
+}

@@ -1,0 +1,63 @@
+{
+ "amostragem": "temp 0, seed 42 (flags do text_engine)",
+ "analise_elapsed_s": 56.3500573,
+ "avaliacao_tokens": {
+  "geracao": 1542,
+  "prompt": 3466
+ },
+ "clips": [
+  {
+   "abertura": "Que porra é essa?",
+   "end": 455.76,
+   "fechamento": "Caralho.",
+   "razoes": [
+    "A fala inicial expressa frustração com a prática de vendas de skins, criando um tom de crítica imediata.",
+    "A fala menciona a ideia de manter a skin no jogo, que é central para o debate sobre a estratégia da Valve.",
+    "A fala final destaca o valor atual da skin antiga, mostrando o impacto da decisão da Valve."
+   ],
+   "score": 78,
+   "start": 400.7,
+   "title": "Crítica a práticas de venda de skins em jogos"
+  },
+  {
+   "abertura": "Era pra ser group therapy",
+   "end": 209.68,
+   "fechamento": "Independente da situação.",
+   "razoes": [
+    "alternativa 'início recuado' de [200.4s, 209.7s]: proposta original fora da faixa; a nota 75 é proveniência, não avaliação deste intervalo",
+    "Avaliação do intervalo efetivo: O trecho é coerente e direto, com uma crítica clara e uma conclusão forte. Contém elementos de humor e uma narrativa mais dinâmica, mas pode ser mais conciso.",
+    "A fala inicial mostra uma reação de surpresa e frustração, indicando que o assunto principal é a crítica a um processo que foi mal executado.",
+    "A fala apresenta uma crítica direta ao grupo, indicando que houve um problema com a revisão de um processo, o que é central para o desenvolvimento do tema.",
+    "A fala expressa claramente a insatisfação com o resultado geral, indicando que o assunto principal é a crítica a um processo ou situação que não foi resolvida."
+   ],
+   "score": 76,
+   "start": 193.6,
+   "title": "Crítica a um processo mal resolvido"
+  },
+  {
+   "abertura": "É um erro, é.",
+   "end": 226.72,
+   "fechamento": "na cabeça, na parte de trás do personagem, né?",
+   "razoes": [
+    "alternativa 'fim estendido' de [209.7s, 216.6s]: proposta original fora da faixa; a nota 70 é proveniência, não avaliação deste intervalo",
+    "Avaliação do intervalo efetivo: O trecho é coerente, direto e dinâmico, com uma crítica clara e uma conclusão forte. Contém elementos de humor e uma narrativa mais engajante, mas pode ser mais conciso.",
+    "A fala inicial expressa uma crítica direta à percepção visual e à exigência de detalhes em cenas cinematográficas, criando um impacto imediato e provocando reflexão.",
+    "A fala explica a percepção inicial do espectador sobre a representação visual de personagens, indicando que a primeira impressão pode ser influenciada por elementos visuais subliminares.",
+    "A fala destaca a ambiguidade da percepção visual em cenas cinematográficas, sugerindo que a falta de atenção a detalhes específicos pode ser um problema crítico."
+   ],
+   "score": 72,
+   "start": 209.7,
+   "title": "Crítica a detalhes visuais em cenas cinematográficas"
+  }
+ ],
+ "modelo": "instalado vendor (Qwen3 4B Instruct Awq)",
+ "pendentes_previstos": 16,
+ "perfil": "b",
+ "propostas_brutas": 12,
+ "resolve_elapsed_s": 91.5331313,
+ "template": "oficial sem think e sem /no_think",
+ "modelo_sha256_1mib": "14d88a1a833f356d",
+ "modelo_arquivo": "C:\\CutNicePro\\.tooling\\vendor\\analysis\\Qwen3-4B-Q4_K_M.gguf",
+ "analise_formato": "A (vigente) para todos os perfis — variável controlada",
+ "orcamento_nota": "ver orçamento real em reports/lab-matrix.json (orcamento_real_2026_10_20)"
+}
