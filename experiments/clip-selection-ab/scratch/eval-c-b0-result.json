@@ -1,0 +1,46 @@
+{
+  "items": [
+    {
+      "id": "E1",
+      "score": 95,
+      "reason": "O trecho apresenta uma narrativa clara e envolvente sobre uma experiência negativa com um jogo (IFC), com início e fim em frases completas. O conteúdo é compreensível, tem gancho (o personagem levantando a taça), desenvolvimento com detalhes específicos (loads infinitos, thumbnail missing) e uma conclusão direta e emocional ('sério?'). O tom é autêntico, crítico e bem construído, sem publicidade. O contexto antes e depois apoia a continuidade da narrativa."
+    },
+    {
+      "id": "E2",
+      "score": 70,
+      "reason": "O trecho é curto e conecta-se diretamente ao contexto anterior, mas a narrativa é fragmentada e não tem desenvolvimento claro. Fala sobre um crash no jogo e uma mudança de barba, mas não há gancho, história ou conclusão bem definida. A ideia de que a EA não tem thumbnail é fraca e não é desenvolvida. O trecho termina abruptamente sem uma conclusão impactante ou reflexão. Falta estrutura narrativa completa."
+    },
+    {
+      "id": "E3",
+      "score": 90,
+      "reason": "O trecho tem um gancho forte (erro de tradução de 'group therapy' para 'therapy') e desenvolve uma crítica bem-estruturada sobre um passe de batalha com skins geradas por IA. Há um desenvolvimento lógico: observação do erro, identificação do problema, crítica à EA. O tom é claro, crítico e envolvente. O início e o fim são completos e o conteúdo é compreensível e relevante para o público de jogos."
+    },
+    {
+      "id": "E4",
+      "score": 65,
+      "reason": "O trecho começa com uma observação e termina com um grito de surpresa ('Secute'), mas não tem uma narrativa clara ou desenvolvimento. O conteúdo é fragmentado e o foco em 'Secute' parece ser um meme sem contexto. A crítica não é bem estruturada e não há uma história com início, desenvolvimento e conclusão. O tom é mais emocional do que racional e perde o foco narrativo."
+    },
+    {
+      "id": "E5",
+      "score": 85,
+      "reason": "O trecho é bem construído: começa com uma observação (a palavra 'Secute' na boca do personagem), desenvolve uma análise (por que isso é estranho), e questiona se foi feito intencionalmente. O tom é crítico, inteligente e bem fundamentado. O desenvolvimento é lógico e o final é reflexivo. O conteúdo é claro, com um gancho forte e uma conclusão que desperta pensamento."
+    },
+    {
+      "id": "E6",
+      "score": 50,
+      "reason": "O trecho é confuso e fragmentado. Fala de '5 pistolas' e 'pentes', mas não há clareza sobre o que está sendo criticado ou como o problema se desenvolve. A ideia de 'mais armas é melhor' é repetida de forma vaga e não há desenvolvimento narrativo. O trecho termina sem conclusão clara e parece mais um erro de transcrição do que uma crítica construída."
+    },
+    {
+      "id": "E7",
+      "score": 75,
+      "reason": "O trecho é uma repetição parcial de E5, com o mesmo gancho ('Secute') e a mesma crítica. Contém desenvolvimento, mas é muito curto e não apresenta uma história completa. A estrutura é frágil, com início e fim em frases incompletas. O conteúdo é relevante, mas a falta de profundidade e desenvolvimento faz com que fique superficial."
+    },
+    {
+      "id": "E8",
+      "score": 70,
+      "reason": "O trecho é uma continuação direta do E5, com o mesmo tema e argumento. É bem construído em termos de análise, mas é uma repetição sem novidade. Faz uma reflexão profunda sobre por que a EA faria isso, mas não tem desenvolvimento narrativo claro. O trecho é inteligente, mas carece de estrutura de história com início, meio e fim definidos."
+    }
+  ]
+} [end of text]
+
+

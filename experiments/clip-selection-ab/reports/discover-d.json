@@ -1,17 +1,519 @@
 {
  "perfil": "d",
- "modelo": "Gemma-3-12B-IT Q4_K_M",
- "config": "template Gemma 3 IT, grammar",
- "propostas": 0,
- "fora_faixa": 0,
- "construidos": 0,
- "avaliados": 0,
- "descoberta_s": 34.3,
- "avaliacao_s": 0.0,
- "total_s": 34.3,
- "descoberta_tokens": {
-  "prompt": null,
-  "geracao": null
+ "modelo": "Gemma-4-12B-IT QAT Q4_0 (home-e) — template canônico do GGUF, thinking desativado",
+ "config": {
+  "template": "gemma4_notthink",
+  "ctx_solicitado": 8192,
+  "seed": 42,
+  "thinking": "disabled-empty-block",
+  "sampling": {
+   "temp": 1.0,
+   "top_k": 64,
+   "top_p": 0.95,
+   "min_p": 0.0
+  },
+  "sampling_source": "GGUF general.sampling.* (temp 1.0, top_p 0.95, top_k 64) + model card",
+  "grammar_discovery": true,
+  "grammar_eval": true,
+  "n_discovery": 2000,
+  "n_eval": 2400,
+  "ngl": "auto do runtime (sem --fit)"
  },
- "clips": []
+ "janelas": {
+  "budget_prompt_tokens": 6068,
+  "calibracao": {
+   "prompt_completo_chars": 18889,
+   "prompt_completo_tokens": 9864,
+   "chars_por_token": 0.5222
+  },
+  "planejadas": [
+   [
+    0,
+    196
+   ],
+   [
+    144,
+    322
+   ]
+  ],
+  "verificadas": [
+   [
+    0,
+    196
+   ],
+   [
+    144,
+    322
+   ]
+  ],
+  "subdivisoes": [
+   {
+    "window": [
+     0,
+     196
+    ],
+    "depth": 0,
+    "action": "verify"
+   },
+   {
+    "window": [
+     0,
+     196
+    ],
+    "tokens": 5982,
+    "depth": 0,
+    "action": "ok"
+   },
+   {
+    "window": [
+     144,
+     322
+    ],
+    "depth": 0,
+    "action": "verify"
+   },
+   {
+    "window": [
+     144,
+     322
+    ],
+    "tokens": 5663,
+    "depth": 0,
+    "action": "ok"
+   }
+  ],
+  "cobertura": {
+   "gaps": [],
+   "min_cover": 1,
+   "max_cover": 2,
+   "overlaps": [
+    {
+     "from_seg": 144,
+     "to_seg": 195,
+     "from_s": 270.94,
+     "to_s": 359.66
+    }
+   ]
+  },
+  "por_janela_tokens": [
+   5982,
+   5663
+  ]
+ },
+ "orcamento": {
+  "declarado": {
+   "prova_curta": 1,
+   "descoberta": 2,
+   "avaliacao_max": 5,
+   "total_max": 8,
+   "nota": "uma passada; repetição só por falha técnica nova, registrada"
+  },
+  "executado": {
+   "descoberta": 2,
+   "avaliacao": 2
+  },
+  "total_llm": 4
+ },
+ "chamadas": [
+  {
+   "stage": "discovery",
+   "ref": "window-0",
+   "argv": [
+    "C:\\CutNicePro\\experiments\\clip-selection-ab\\models\\home-c\\gpu\\llama-completion.exe",
+    "-m",
+    "C:\\CutNicePro\\experiments\\clip-selection-ab\\models\\home-e\\gemma-4-12b-it-qat-q4_0.gguf",
+    "-f",
+    "C:\\CutNicePro\\experiments\\clip-selection-ab\\scratch\\discover-d-w0-prompt.txt",
+    "-t",
+    "8",
+    "-c",
+    "8192",
+    "-n",
+    "2000",
+    "--seed",
+    "42",
+    "--no-conversation",
+    "--no-display-prompt",
+    "--no-escape",
+    "--simple-io",
+    "--verbosity",
+    "3",
+    "--temp",
+    "1.0",
+    "--top-k",
+    "64",
+    "--top-p",
+    "0.95",
+    "--min-p",
+    "0.0",
+    "-jf",
+    "C:\\CutNicePro\\experiments\\clip-selection-ab\\scratch\\discover-d-w0.schema.json"
+   ],
+   "log": "scratch\\discover-d-w0.log",
+   "returncode": 0,
+   "elapsed_s": 109.9,
+   "facts": {
+    "n_ctx": 8192,
+    "sampler": {
+     "repeat_last_n": 64.0,
+     "repeat_penalty": 1.0,
+     "frequency_penalty": 0.0,
+     "presence_penalty": 0.0,
+     "dry_multiplier": 0.0,
+     "dry_base": 1.75,
+     "dry_allowed_length": 2.0,
+     "dry_penalty_last_n": 64.0,
+     "top_k": 64.0,
+     "top_p": 0.95,
+     "min_p": 0.0,
+     "xtc_probability": 0.0,
+     "xtc_threshold": 0.1,
+     "typical_p": 1.0,
+     "top_n_sigma": -1.0,
+     "temp": 1.0,
+     "mirostat": 0.0,
+     "mirostat_lr": 0.1,
+     "mirostat_ent": 5.0,
+     "adaptive_target": -1.0,
+     "adaptive_decay": 0.9,
+     "n_ctx": 8192.0,
+     "n_batch": 2048.0,
+     "n_predict": 2000.0,
+     "n_keep": 1.0,
+     "time": 12.3,
+     "reused": 124.0,
+     "reallocs": 0.0
+    },
+    "prompt_tokens": 5982,
+    "gen_tokens": 125,
+    "error": null,
+    "_sampler_block": true
+   },
+   "ok": true
+  },
+  {
+   "stage": "discovery",
+   "ref": "window-1",
+   "argv": [
+    "C:\\CutNicePro\\experiments\\clip-selection-ab\\models\\home-c\\gpu\\llama-completion.exe",
+    "-m",
+    "C:\\CutNicePro\\experiments\\clip-selection-ab\\models\\home-e\\gemma-4-12b-it-qat-q4_0.gguf",
+    "-f",
+    "C:\\CutNicePro\\experiments\\clip-selection-ab\\scratch\\discover-d-w1-prompt.txt",
+    "-t",
+    "8",
+    "-c",
+    "8192",
+    "-n",
+    "2000",
+    "--seed",
+    "42",
+    "--no-conversation",
+    "--no-display-prompt",
+    "--no-escape",
+    "--simple-io",
+    "--verbosity",
+    "3",
+    "--temp",
+    "1.0",
+    "--top-k",
+    "64",
+    "--top-p",
+    "0.95",
+    "--min-p",
+    "0.0",
+    "-jf",
+    "C:\\CutNicePro\\experiments\\clip-selection-ab\\scratch\\discover-d-w1.schema.json"
+   ],
+   "log": "scratch\\discover-d-w1.log",
+   "returncode": 0,
+   "elapsed_s": 92.5,
+   "facts": {
+    "n_ctx": 8192,
+    "sampler": {
+     "repeat_last_n": 64.0,
+     "repeat_penalty": 1.0,
+     "frequency_penalty": 0.0,
+     "presence_penalty": 0.0,
+     "dry_multiplier": 0.0,
+     "dry_base": 1.75,
+     "dry_allowed_length": 2.0,
+     "dry_penalty_last_n": 64.0,
+     "top_k": 64.0,
+     "top_p": 0.95,
+     "min_p": 0.0,
+     "xtc_probability": 0.0,
+     "xtc_threshold": 0.1,
+     "typical_p": 1.0,
+     "top_n_sigma": -1.0,
+     "temp": 1.0,
+     "mirostat": 0.0,
+     "mirostat_lr": 0.1,
+     "mirostat_ent": 5.0,
+     "adaptive_target": -1.0,
+     "adaptive_decay": 0.9,
+     "n_ctx": 8192.0,
+     "n_batch": 2048.0,
+     "n_predict": 2000.0,
+     "n_keep": 1.0,
+     "time": 8.35,
+     "reused": 102.0,
+     "reallocs": 0.0
+    },
+    "prompt_tokens": 5663,
+    "gen_tokens": 103,
+    "error": null,
+    "_sampler_block": true
+   },
+   "ok": true
+  },
+  {
+   "stage": "evaluation",
+   "ref": "batch-0",
+   "argv": [
+    "C:\\CutNicePro\\experiments\\clip-selection-ab\\models\\home-c\\gpu\\llama-completion.exe",
+    "-m",
+    "C:\\CutNicePro\\experiments\\clip-selection-ab\\models\\home-e\\gemma-4-12b-it-qat-q4_0.gguf",
+    "-f",
+    "C:\\CutNicePro\\experiments\\clip-selection-ab\\scratch\\eval-d-b0-prompt.txt",
+    "-t",
+    "8",
+    "-c",
+    "8192",
+    "-n",
+    "2400",
+    "--seed",
+    "42",
+    "--no-conversation",
+    "--no-display-prompt",
+    "--no-escape",
+    "--simple-io",
+    "--verbosity",
+    "3",
+    "--temp",
+    "1.0",
+    "--top-k",
+    "64",
+    "--top-p",
+    "0.95",
+    "--min-p",
+    "0.0",
+    "-jf",
+    "C:\\CutNicePro\\experiments\\clip-selection-ab\\scratch\\eval-d-b0.schema.json"
+   ],
+   "log": "scratch\\eval-d-b0.log",
+   "returncode": 0,
+   "elapsed_s": 175.2,
+   "facts": {
+    "n_ctx": 8192,
+    "sampler": {
+     "repeat_last_n": 64.0,
+     "repeat_penalty": 1.0,
+     "frequency_penalty": 0.0,
+     "presence_penalty": 0.0,
+     "dry_multiplier": 0.0,
+     "dry_base": 1.75,
+     "dry_allowed_length": 2.0,
+     "dry_penalty_last_n": 64.0,
+     "top_k": 64.0,
+     "top_p": 0.95,
+     "min_p": 0.0,
+     "xtc_probability": 0.0,
+     "xtc_threshold": 0.1,
+     "typical_p": 1.0,
+     "top_n_sigma": -1.0,
+     "temp": 1.0,
+     "mirostat": 0.0,
+     "mirostat_lr": 0.1,
+     "mirostat_ent": 5.0,
+     "adaptive_target": -1.0,
+     "adaptive_decay": 0.9,
+     "n_ctx": 8192.0,
+     "n_batch": 2048.0,
+     "n_predict": 2400.0,
+     "n_keep": 1.0,
+     "time": 22.74,
+     "reused": 475.0,
+     "reallocs": 0.0
+    },
+    "prompt_tokens": 2983,
+    "gen_tokens": 478,
+    "error": null,
+    "_sampler_block": true
+   },
+   "ok": true
+  },
+  {
+   "stage": "evaluation",
+   "ref": "batch-1",
+   "argv": [
+    "C:\\CutNicePro\\experiments\\clip-selection-ab\\models\\home-c\\gpu\\llama-completion.exe",
+    "-m",
+    "C:\\CutNicePro\\experiments\\clip-selection-ab\\models\\home-e\\gemma-4-12b-it-qat-q4_0.gguf",
+    "-f",
+    "C:\\CutNicePro\\experiments\\clip-selection-ab\\scratch\\eval-d-b1-prompt.txt",
+    "-t",
+    "8",
+    "-c",
+    "8192",
+    "-n",
+    "2400",
+    "--seed",
+    "42",
+    "--no-conversation",
+    "--no-display-prompt",
+    "--no-escape",
+    "--simple-io",
+    "--verbosity",
+    "3",
+    "--temp",
+    "1.0",
+    "--top-k",
+    "64",
+    "--top-p",
+    "0.95",
+    "--min-p",
+    "0.0",
+    "-jf",
+    "C:\\CutNicePro\\experiments\\clip-selection-ab\\scratch\\eval-d-b1.schema.json"
+   ],
+   "log": "scratch\\eval-d-b1.log",
+   "returncode": 0,
+   "elapsed_s": 93.0,
+   "facts": {
+    "n_ctx": 8192,
+    "sampler": {
+     "repeat_last_n": 64.0,
+     "repeat_penalty": 1.0,
+     "frequency_penalty": 0.0,
+     "presence_penalty": 0.0,
+     "dry_multiplier": 0.0,
+     "dry_base": 1.75,
+     "dry_allowed_length": 2.0,
+     "dry_penalty_last_n": 64.0,
+     "top_k": 64.0,
+     "top_p": 0.95,
+     "min_p": 0.0,
+     "xtc_probability": 0.0,
+     "xtc_threshold": 0.1,
+     "typical_p": 1.0,
+     "top_n_sigma": -1.0,
+     "temp": 1.0,
+     "mirostat": 0.0,
+     "mirostat_lr": 0.1,
+     "mirostat_ent": 5.0,
+     "adaptive_target": -1.0,
+     "adaptive_decay": 0.9,
+     "n_ctx": 8192.0,
+     "n_batch": 2048.0,
+     "n_predict": 2400.0,
+     "n_keep": 1.0,
+     "time": 11.64,
+     "reused": 263.0,
+     "reallocs": 0.0
+    },
+    "prompt_tokens": 974,
+    "gen_tokens": 265,
+    "error": null,
+    "_sampler_block": true
+   },
+   "ok": true
+  }
+ ],
+ "descoberta": {
+  "por_janela": [
+   {
+    "window": [
+     0,
+     196
+    ],
+    "window_k": 0,
+    "facts": {
+     "n_ctx": 8192,
+     "prompt_tokens": 5982,
+     "gen_tokens": 125
+    },
+    "status": "ok",
+    "propostas": 5,
+    "invalidos_no_parse": 0
+   },
+   {
+    "window": [
+     144,
+     322
+    ],
+    "window_k": 1,
+    "facts": {
+     "n_ctx": 8192,
+     "prompt_tokens": 5663,
+     "gen_tokens": 103
+    },
+    "status": "ok",
+    "propostas": 4,
+    "invalidos_no_parse": 0
+   }
+  ],
+  "propostas_unicas": 9,
+  "dedupe_removidos": 0,
+  "fora_faixa": 2,
+  "alternativas": 4,
+  "construidos": 11
+ },
+ "avaliacao": {
+  "lotes": [
+   {
+    "batch": 0,
+    "n": 8,
+    "status": "ok",
+    "avaliados": 8
+   },
+   {
+    "batch": 1,
+    "n": 3,
+    "status": "ok",
+    "avaliados": 3
+   }
+  ],
+  "subdivisoes": [],
+  "avaliados": 11,
+  "construidos": 11
+ },
+ "tempos": {
+  "descoberta_s": 202.4,
+  "avaliacao_s": 268.2,
+  "total_s": 470.6
+ },
+ "resultado": {
+  "status": "RESULTADO_COMPLETO",
+  "motivo": "3 cortes selecionados por DP",
+  "clips": [
+   {
+    "start": 33.46,
+    "end": 120.88,
+    "score": 85,
+    "razao": "O trecho tem um excelente desenvolvimento sobre bugs e problemas técnicos de um jogo, com um bom gancho inicial sobre a live e frustração real. O fim é um pouco brusco, mas mantém a fluidez da narrativa.",
+    "origem": "alternativa 'início avançado'",
+    "abertura": "A gente fez uma live aqui, foi um transtorno, terrível.",
+    "fechamento": "Aí apagou o save."
+   },
+   {
+    "start": 129.72,
+    "end": 219.6,
+    "score": 88,
+    "razao": "Excelente construção. Começa com uma pergunta direta que gera curiosidade (gancho), desenvolve bem o problema da IA e termina em uma frase completa com boa retenção.",
+    "origem": "alternativa 'fim recuado'",
+    "abertura": "Aí o que eu avistei hoje?",
+    "fechamento": "você automaticamente bota a perna do R ali."
+   },
+   {
+    "start": 313.34,
+    "end": 367.26,
+    "score": 92,
+    "razao": "Este é o melhor corte. Ele tem um começo claro, um desenvolvimento engraçado e detalhado sobre a quantidade de armas e termina com uma conclusão de efeito ('Que loucura').",
+    "origem": "proposta [167,200]",
+    "abertura": "Esses números",
+    "fechamento": "Que loucura."
+   }
+  ]
+ }
 }

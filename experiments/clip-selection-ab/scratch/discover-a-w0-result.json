@@ -1,0 +1,36 @@
+{
+  "candidates": [
+    {
+      "firstId": 0,
+      "lastId": 12,
+      "score": 85
+    },
+    {
+      "firstId": 13,
+      "lastId": 17,
+      "score": 90
+    },
+    {
+      "firstId": 29,
+      "lastId": 34,
+      "score": 80
+    },
+    {
+      "firstId": 53,
+      "lastId": 57,
+      "score": 85
+    },
+    {
+      "firstId": 63,
+      "lastId": 71,
+      "score": 88
+    },
+    {
+      "firstId": 99,
+      "lastId": 107,
+      "score": 92
+    }
+  ]
+} [end of text]
+
+

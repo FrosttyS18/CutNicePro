@@ -1,0 +1,21 @@
+{
+  "items": [
+    {
+      "id": "E1",
+      "score": 65,
+      "reason": "O trecho é longo e confuso, com muitas interrupções, hesitações e mudança de assunto. Embora fale sobre skins de jogos e valor de mercado, a narrativa fica dispersa e não possui um desenvolvimento claro ou uma conclusão definida para um clipe curto."
+    },
+    {
+      "id": "E2",
+      "score": 70,
+      "reason": "O trecho tem um assunto claro (problema técnico com barulho de PC/periférico) e um tom casual, mas termina de forma abrupta e com uma conversa muito informal sobre máquinas de barbear, perdendo o foco do desenvolvimento inicial."
+    },
+    {
+      "id": "E3",
+      "score": 55,
+      "reason": "O trecho é uma finalização de vídeo (call to action/agradecimento). Por ser o encerramento de uma live ou vídeo longo, não possui uma história com início, meio e fim para um clipe independente, funcionando apenas como um fechamento."
+    }
+  ]
+} [end of text]
+
+

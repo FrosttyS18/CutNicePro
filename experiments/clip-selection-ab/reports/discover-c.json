@@ -1,17 +1,642 @@
 {
  "perfil": "c",
- "modelo": "Qwen3-4B-Instruct-2507",
- "config": "template 2507 Instruct (sem think), grammar",
- "propostas": 0,
- "fora_faixa": 0,
- "construidos": 0,
- "avaliados": 0,
- "descoberta_s": 3.5,
- "avaliacao_s": 0.0,
- "total_s": 3.5,
- "descoberta_tokens": {
-  "prompt": null,
-  "geracao": null
+ "modelo": "Qwen3-4B-Instruct-2507 (home-c) — template próprio do GGUF (ChatML sem think)",
+ "config": {
+  "template": "chatml_open",
+  "ctx_solicitado": 8192,
+  "seed": 42,
+  "thinking": "none",
+  "sampling": {
+   "temp": 0.7,
+   "top_k": 20,
+   "top_p": 0.8,
+   "min_p": 0.0
+  },
+  "sampling_source": "Qwen3-2507-Instruct card: temp 0.7, top_p 0.8, top_k 20, min_p 0",
+  "grammar_discovery": true,
+  "grammar_eval": true,
+  "n_discovery": 2000,
+  "n_eval": 2400,
+  "ngl": "auto do runtime (sem --fit)"
  },
- "clips": []
+ "janelas": {
+  "budget_prompt_tokens": 6068,
+  "calibracao": {
+   "prompt_completo_chars": 18888,
+   "prompt_completo_tokens": 10429,
+   "chars_por_token": 0.5521
+  },
+  "planejadas": [
+   [
+    0,
+    183
+   ],
+   [
+    133,
+    313
+   ],
+   [
+    273,
+    322
+   ]
+  ],
+  "verificadas": [
+   [
+    0,
+    183
+   ],
+   [
+    133,
+    313
+   ],
+   [
+    273,
+    322
+   ]
+  ],
+  "subdivisoes": [
+   {
+    "window": [
+     0,
+     183
+    ],
+    "depth": 0,
+    "action": "verify"
+   },
+   {
+    "window": [
+     0,
+     183
+    ],
+    "tokens": 5918,
+    "depth": 0,
+    "action": "ok"
+   },
+   {
+    "window": [
+     133,
+     313
+    ],
+    "depth": 0,
+    "action": "verify"
+   },
+   {
+    "window": [
+     133,
+     313
+    ],
+    "tokens": 5997,
+    "depth": 0,
+    "action": "ok"
+   },
+   {
+    "window": [
+     273,
+     322
+    ],
+    "depth": 0,
+    "action": "verify"
+   },
+   {
+    "window": [
+     273,
+     322
+    ],
+    "tokens": 1945,
+    "depth": 0,
+    "action": "ok"
+   }
+  ],
+  "cobertura": {
+   "gaps": [],
+   "min_cover": 1,
+   "max_cover": 2,
+   "overlaps": [
+    {
+     "from_seg": 133,
+     "to_seg": 182,
+     "from_s": 253.0,
+     "to_s": 342.74
+    },
+    {
+     "from_seg": 273,
+     "to_seg": 312,
+     "from_s": 493.88,
+     "to_s": 582.76
+    }
+   ]
+  },
+  "por_janela_tokens": [
+   5918,
+   5997,
+   1945
+  ]
+ },
+ "orcamento": {
+  "declarado": {
+   "prova_curta": 1,
+   "descoberta": 3,
+   "avaliacao_max": 5,
+   "total_max": 9,
+   "nota": "uma passada; repetição só por falha técnica nova, registrada"
+  },
+  "executado": {
+   "descoberta": 3,
+   "avaliacao": 2
+  },
+  "total_llm": 5
+ },
+ "chamadas": [
+  {
+   "stage": "discovery",
+   "ref": "window-0",
+   "argv": [
+    "C:\\CutNicePro\\experiments\\clip-selection-ab\\models\\home-c\\gpu\\llama-completion.exe",
+    "-m",
+    "C:\\CutNicePro\\experiments\\clip-selection-ab\\models\\home-c\\Qwen3-4B-Instruct-2507-Q4_K_M.gguf",
+    "-f",
+    "C:\\CutNicePro\\experiments\\clip-selection-ab\\scratch\\discover-c-w0-prompt.txt",
+    "-t",
+    "8",
+    "-c",
+    "8192",
+    "-n",
+    "2000",
+    "--seed",
+    "42",
+    "--no-conversation",
+    "--no-display-prompt",
+    "--no-escape",
+    "--simple-io",
+    "--verbosity",
+    "3",
+    "--temp",
+    "0.7",
+    "--top-k",
+    "20",
+    "--top-p",
+    "0.8",
+    "--min-p",
+    "0.0",
+    "-jf",
+    "C:\\CutNicePro\\experiments\\clip-selection-ab\\scratch\\discover-c-w0.schema.json"
+   ],
+   "log": "scratch\\discover-c-w0.log",
+   "returncode": 0,
+   "elapsed_s": 43.9,
+   "facts": {
+    "n_ctx": 8192,
+    "sampler": {
+     "repeat_last_n": 64.0,
+     "repeat_penalty": 1.0,
+     "frequency_penalty": 0.0,
+     "presence_penalty": 0.0,
+     "dry_multiplier": 0.0,
+     "dry_base": 1.75,
+     "dry_allowed_length": 2.0,
+     "dry_penalty_last_n": 64.0,
+     "top_k": 20.0,
+     "top_p": 0.8,
+     "min_p": 0.0,
+     "xtc_probability": 0.0,
+     "xtc_threshold": 0.1,
+     "typical_p": 1.0,
+     "top_n_sigma": -1.0,
+     "temp": 0.7,
+     "mirostat": 0.0,
+     "mirostat_lr": 0.1,
+     "mirostat_ent": 5.0,
+     "adaptive_target": -1.0,
+     "adaptive_decay": 0.9,
+     "n_ctx": 8192.0,
+     "n_batch": 2048.0,
+     "n_predict": 2000.0,
+     "n_keep": 0.0,
+     "time": 10.7,
+     "reused": 193.0,
+     "reallocs": 0.0
+    },
+    "prompt_tokens": 5917,
+    "gen_tokens": 194,
+    "error": null,
+    "_sampler_block": true
+   },
+   "ok": true
+  },
+  {
+   "stage": "discovery",
+   "ref": "window-1",
+   "argv": [
+    "C:\\CutNicePro\\experiments\\clip-selection-ab\\models\\home-c\\gpu\\llama-completion.exe",
+    "-m",
+    "C:\\CutNicePro\\experiments\\clip-selection-ab\\models\\home-c\\Qwen3-4B-Instruct-2507-Q4_K_M.gguf",
+    "-f",
+    "C:\\CutNicePro\\experiments\\clip-selection-ab\\scratch\\discover-c-w1-prompt.txt",
+    "-t",
+    "8",
+    "-c",
+    "8192",
+    "-n",
+    "2000",
+    "--seed",
+    "42",
+    "--no-conversation",
+    "--no-display-prompt",
+    "--no-escape",
+    "--simple-io",
+    "--verbosity",
+    "3",
+    "--temp",
+    "0.7",
+    "--top-k",
+    "20",
+    "--top-p",
+    "0.8",
+    "--min-p",
+    "0.0",
+    "-jf",
+    "C:\\CutNicePro\\experiments\\clip-selection-ab\\scratch\\discover-c-w1.schema.json"
+   ],
+   "log": "scratch\\discover-c-w1.log",
+   "returncode": 0,
+   "elapsed_s": 44.5,
+   "facts": {
+    "n_ctx": 8192,
+    "sampler": {
+     "repeat_last_n": 64.0,
+     "repeat_penalty": 1.0,
+     "frequency_penalty": 0.0,
+     "presence_penalty": 0.0,
+     "dry_multiplier": 0.0,
+     "dry_base": 1.75,
+     "dry_allowed_length": 2.0,
+     "dry_penalty_last_n": 64.0,
+     "top_k": 20.0,
+     "top_p": 0.8,
+     "min_p": 0.0,
+     "xtc_probability": 0.0,
+     "xtc_threshold": 0.1,
+     "typical_p": 1.0,
+     "top_n_sigma": -1.0,
+     "temp": 0.7,
+     "mirostat": 0.0,
+     "mirostat_lr": 0.1,
+     "mirostat_ent": 5.0,
+     "adaptive_target": -1.0,
+     "adaptive_decay": 0.9,
+     "n_ctx": 8192.0,
+     "n_batch": 2048.0,
+     "n_predict": 2000.0,
+     "n_keep": 0.0,
+     "time": 10.07,
+     "reused": 199.0,
+     "reallocs": 0.0
+    },
+    "prompt_tokens": 5996,
+    "gen_tokens": 201,
+    "error": null,
+    "_sampler_block": true
+   },
+   "ok": true
+  },
+  {
+   "stage": "discovery",
+   "ref": "window-2",
+   "argv": [
+    "C:\\CutNicePro\\experiments\\clip-selection-ab\\models\\home-c\\gpu\\llama-completion.exe",
+    "-m",
+    "C:\\CutNicePro\\experiments\\clip-selection-ab\\models\\home-c\\Qwen3-4B-Instruct-2507-Q4_K_M.gguf",
+    "-f",
+    "C:\\CutNicePro\\experiments\\clip-selection-ab\\scratch\\discover-c-w2-prompt.txt",
+    "-t",
+    "8",
+    "-c",
+    "8192",
+    "-n",
+    "2000",
+    "--seed",
+    "42",
+    "--no-conversation",
+    "--no-display-prompt",
+    "--no-escape",
+    "--simple-io",
+    "--verbosity",
+    "3",
+    "--temp",
+    "0.7",
+    "--top-k",
+    "20",
+    "--top-p",
+    "0.8",
+    "--min-p",
+    "0.0",
+    "-jf",
+    "C:\\CutNicePro\\experiments\\clip-selection-ab\\scratch\\discover-c-w2.schema.json"
+   ],
+   "log": "scratch\\discover-c-w2.log",
+   "returncode": 0,
+   "elapsed_s": 21.2,
+   "facts": {
+    "n_ctx": 8192,
+    "sampler": {
+     "repeat_last_n": 64.0,
+     "repeat_penalty": 1.0,
+     "frequency_penalty": 0.0,
+     "presence_penalty": 0.0,
+     "dry_multiplier": 0.0,
+     "dry_base": 1.75,
+     "dry_allowed_length": 2.0,
+     "dry_penalty_last_n": 64.0,
+     "top_k": 20.0,
+     "top_p": 0.8,
+     "min_p": 0.0,
+     "xtc_probability": 0.0,
+     "xtc_threshold": 0.1,
+     "typical_p": 1.0,
+     "top_n_sigma": -1.0,
+     "temp": 0.7,
+     "mirostat": 0.0,
+     "mirostat_lr": 0.1,
+     "mirostat_ent": 5.0,
+     "adaptive_target": -1.0,
+     "adaptive_decay": 0.9,
+     "n_ctx": 8192.0,
+     "n_batch": 2048.0,
+     "n_predict": 2000.0,
+     "n_keep": 0.0,
+     "time": 8.82,
+     "reused": 199.0,
+     "reallocs": 0.0
+    },
+    "prompt_tokens": 1944,
+    "gen_tokens": 201,
+    "error": null,
+    "_sampler_block": true
+   },
+   "ok": true
+  },
+  {
+   "stage": "evaluation",
+   "ref": "batch-0",
+   "argv": [
+    "C:\\CutNicePro\\experiments\\clip-selection-ab\\models\\home-c\\gpu\\llama-completion.exe",
+    "-m",
+    "C:\\CutNicePro\\experiments\\clip-selection-ab\\models\\home-c\\Qwen3-4B-Instruct-2507-Q4_K_M.gguf",
+    "-f",
+    "C:\\CutNicePro\\experiments\\clip-selection-ab\\scratch\\eval-c-b0-prompt.txt",
+    "-t",
+    "8",
+    "-c",
+    "8192",
+    "-n",
+    "2400",
+    "--seed",
+    "42",
+    "--no-conversation",
+    "--no-display-prompt",
+    "--no-escape",
+    "--simple-io",
+    "--verbosity",
+    "3",
+    "--temp",
+    "0.7",
+    "--top-k",
+    "20",
+    "--top-p",
+    "0.8",
+    "--min-p",
+    "0.0",
+    "-jf",
+    "C:\\CutNicePro\\experiments\\clip-selection-ab\\scratch\\eval-c-b0.schema.json"
+   ],
+   "log": "scratch\\eval-c-b0.log",
+   "returncode": 0,
+   "elapsed_s": 62.4,
+   "facts": {
+    "n_ctx": 8192,
+    "sampler": {
+     "repeat_last_n": 64.0,
+     "repeat_penalty": 1.0,
+     "frequency_penalty": 0.0,
+     "presence_penalty": 0.0,
+     "dry_multiplier": 0.0,
+     "dry_base": 1.75,
+     "dry_allowed_length": 2.0,
+     "dry_penalty_last_n": 64.0,
+     "top_k": 20.0,
+     "top_p": 0.8,
+     "min_p": 0.0,
+     "xtc_probability": 0.0,
+     "xtc_threshold": 0.1,
+     "typical_p": 1.0,
+     "top_n_sigma": -1.0,
+     "temp": 0.7,
+     "mirostat": 0.0,
+     "mirostat_lr": 0.1,
+     "mirostat_ent": 5.0,
+     "adaptive_target": -1.0,
+     "adaptive_decay": 0.9,
+     "n_ctx": 8192.0,
+     "n_batch": 2048.0,
+     "n_predict": 2400.0,
+     "n_keep": 0.0,
+     "time": 32.5,
+     "reused": 1012.0,
+     "reallocs": 0.0
+    },
+    "prompt_tokens": 2042,
+    "gen_tokens": 1017,
+    "error": null,
+    "_sampler_block": true
+   },
+   "ok": true
+  },
+  {
+   "stage": "evaluation",
+   "ref": "batch-1",
+   "argv": [
+    "C:\\CutNicePro\\experiments\\clip-selection-ab\\models\\home-c\\gpu\\llama-completion.exe",
+    "-m",
+    "C:\\CutNicePro\\experiments\\clip-selection-ab\\models\\home-c\\Qwen3-4B-Instruct-2507-Q4_K_M.gguf",
+    "-f",
+    "C:\\CutNicePro\\experiments\\clip-selection-ab\\scratch\\eval-c-b1-prompt.txt",
+    "-t",
+    "8",
+    "-c",
+    "8192",
+    "-n",
+    "2400",
+    "--seed",
+    "42",
+    "--no-conversation",
+    "--no-display-prompt",
+    "--no-escape",
+    "--simple-io",
+    "--verbosity",
+    "3",
+    "--temp",
+    "0.7",
+    "--top-k",
+    "20",
+    "--top-p",
+    "0.8",
+    "--min-p",
+    "0.0",
+    "-jf",
+    "C:\\CutNicePro\\experiments\\clip-selection-ab\\scratch\\eval-c-b1.schema.json"
+   ],
+   "log": "scratch\\eval-c-b1.log",
+   "returncode": 0,
+   "elapsed_s": 41.7,
+   "facts": {
+    "n_ctx": 8192,
+    "sampler": {
+     "repeat_last_n": 64.0,
+     "repeat_penalty": 1.0,
+     "frequency_penalty": 0.0,
+     "presence_penalty": 0.0,
+     "dry_multiplier": 0.0,
+     "dry_base": 1.75,
+     "dry_allowed_length": 2.0,
+     "dry_penalty_last_n": 64.0,
+     "top_k": 20.0,
+     "top_p": 0.8,
+     "min_p": 0.0,
+     "xtc_probability": 0.0,
+     "xtc_threshold": 0.1,
+     "typical_p": 1.0,
+     "top_n_sigma": -1.0,
+     "temp": 0.7,
+     "mirostat": 0.0,
+     "mirostat_lr": 0.1,
+     "mirostat_ent": 5.0,
+     "adaptive_target": -1.0,
+     "adaptive_decay": 0.9,
+     "n_ctx": 8192.0,
+     "n_batch": 2048.0,
+     "n_predict": 2400.0,
+     "n_keep": 0.0,
+     "time": 24.37,
+     "reused": 747.0,
+     "reallocs": 0.0
+    },
+    "prompt_tokens": 1205,
+    "gen_tokens": 751,
+    "error": null,
+    "_sampler_block": true
+   },
+   "ok": true
+  }
+ ],
+ "descoberta": {
+  "por_janela": [
+   {
+    "window": [
+     0,
+     183
+    ],
+    "window_k": 0,
+    "facts": {
+     "n_ctx": 8192,
+     "prompt_tokens": 5917,
+     "gen_tokens": 194
+    },
+    "status": "ok",
+    "propostas": 6,
+    "invalidos_no_parse": 0
+   },
+   {
+    "window": [
+     133,
+     313
+    ],
+    "window_k": 1,
+    "facts": {
+     "n_ctx": 8192,
+     "prompt_tokens": 5996,
+     "gen_tokens": 201
+    },
+    "status": "ok",
+    "propostas": 6,
+    "invalidos_no_parse": 0
+   },
+   {
+    "window": [
+     273,
+     322
+    ],
+    "window_k": 2,
+    "facts": {
+     "n_ctx": 8192,
+     "prompt_tokens": 1944,
+     "gen_tokens": 201
+    },
+    "status": "ok",
+    "propostas": 6,
+    "invalidos_no_parse": 0
+   }
+  ],
+  "propostas_unicas": 12,
+  "dedupe_removidos": 6,
+  "fora_faixa": 0,
+  "alternativas": 0,
+  "construidos": 12
+ },
+ "avaliacao": {
+  "lotes": [
+   {
+    "batch": 0,
+    "n": 8,
+    "status": "ok",
+    "avaliados": 8
+   },
+   {
+    "batch": 1,
+    "n": 4,
+    "status": "ok",
+    "avaliados": 4
+   }
+  ],
+  "subdivisoes": [],
+  "avaliados": 12,
+  "construidos": 12
+ },
+ "tempos": {
+  "descoberta_s": 109.6,
+  "avaliacao_s": 104.1,
+  "total_s": 213.7
+ },
+ "resultado": {
+  "status": "RESULTADO_COMPLETO",
+  "motivo": "3 cortes selecionados por DP",
+  "clips": [
+   {
+    "start": 18.1,
+    "end": 70.5,
+    "score": 95,
+    "razao": "O trecho apresenta uma narrativa clara e envolvente sobre uma experiência negativa com um jogo (IFC), com início e fim em frases completas. O conteúdo é compreensível, tem gancho (o personagem levantando a taça), desenvolvimento com detalhes específicos (loads infinitos, thumbnail missing) e uma conclusão direta e emocional ('sério?'). O tom é autêntico, crítico e bem construído, sem publicidade. O contexto antes e depois apoia a continuidade da narrativa.",
+    "origem": "proposta [6,29]",
+    "abertura": "Recentemente, a EA deve odiar quando eu jogo os jogos dela, porque...",
+    "fechamento": "Aí, sério?"
+   },
+   {
+    "start": 129.72,
+    "end": 199.22,
+    "score": 90,
+    "razao": "O trecho tem um gancho forte (erro de tradução de 'group therapy' para 'therapy') e desenvolve uma crítica bem-estruturada sobre um passe de batalha com skins geradas por IA. Há um desenvolvimento lógico: observação do erro, identificação do problema, crítica à EA. O tom é claro, crítico e envolvente. O início e o fim são completos e o conteúdo é compreensível e relevante para o público de jogos.",
+    "origem": "proposta [63,99]",
+    "abertura": "Aí o que eu avistei hoje?",
+    "fechamento": "Ah, mas não é possível que vocês deixaram passar isso."
+   },
+   {
+    "start": 261.16,
+    "end": 301.5,
+    "score": 85,
+    "razao": "O trecho é bem construído: começa com uma observação (a palavra 'Secute' na boca do personagem), desenvolve uma análise (por que isso é estranho), e questiona se foi feito intencionalmente. O tom é crítico, inteligente e bem fundamentado. O desenvolvimento é lógico e o final é reflexivo. O conteúdo é claro, com um gancho forte e uma conclusão que desperta pensamento.",
+    "origem": "proposta [139,160]",
+    "abertura": "E aí você falou mesmo, Cross",
+    "fechamento": "E aí"
+   }
+  ]
+ }
 }

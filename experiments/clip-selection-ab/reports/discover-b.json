@@ -1,17 +1,46 @@
 {
  "perfil": "b",
- "modelo": "Qwen3 4B Instruct Awq (vendor)",
- "config": "thinking NATURAL: sem think preenchido, SEM grammar na descoberta (-n 3000), parse pós-</think>",
- "propostas": 0,
- "fora_faixa": 0,
- "construidos": 0,
- "avaliados": 0,
- "descoberta_s": 2.4,
- "avaliacao_s": 0.0,
- "total_s": 2.4,
- "descoberta_tokens": {
-  "prompt": null,
-  "geracao": null
+ "modelo": "mesmo checkpoint do instalado (Qwen3-4B-Q4_K_M vendor) — thinking natural",
+ "config": {
+  "template": "chatml_open (sem prefill de <think>)",
+  "ctx": 16384,
+  "sampling": {
+   "temp": 0.6,
+   "top_k": 20,
+   "top_p": 0.95,
+   "min_p": 0.0
+  },
+  "sampling_source": "Qwen3 model card (thinking): temp 0.6, top_p 0.95, top_k 20",
+  "grammar_discovery": false,
+  "grammar_eval": false,
+  "thinking": "natural"
  },
- "clips": []
+ "resultado": {
+  "status": "EXECUÇÃO_FALHOU",
+  "motivo": "prova curta reprovada: limite de raciocínio — thinking não termina dentro do orçamento; episódio não executado por política",
+  "clips": []
+ },
+ "evidencia": {
+  "prova_1": {
+   "n_predict": 1200,
+   "gen_tokens": 1199,
+   "think_fechado": false,
+   "amostragem_efetiva_ok": true,
+   "arquivo": "scratch/prove-b-result.json (1ª execução, sobrescrita)"
+  },
+  "prova_2": {
+   "n_predict": 3000,
+   "gen_tokens": 2999,
+   "think_fechado": false,
+   "amostragem_efetiva": "temp 0.6, top_k 20, top_p 0.95, min_p 0.0 (log)",
+   "conteudo": "enumeração não convergente de pares de IDs (\"ID 0\" re-examinado 15×, \"Wait, maybe\" repetido)",
+   "arquivo": "scratch/prove-b-result.json"
+  },
+  "conclusao": "com apenas 8 falas o raciocínio excedeu 3000 tokens; janelas de ~180 falas não caberiam em orçamento finito declarado; temperatura 0 NÃO foi usada por conveniência (proibido pela tarefa)"
+ },
+ "orcamento": {
+  "declarado": "prova_curta: 1 (+1 repetição justificada por evidência de truncamento)",
+  "executado": 2,
+  "episodio": 0
+ }
 }
