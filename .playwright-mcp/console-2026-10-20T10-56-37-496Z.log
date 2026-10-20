@@ -13,3 +13,4 @@ Read more: https://nextjs.org/docs/api-reference/next/image#priority @ http://lo
 [  180467ms] [LOG] [Fast Refresh] done in 104ms @ http://localhost:3107/_next/static/chunks/37bc0_next_dist_client_b3908241._.js:5557
 [  563825ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3107/api/tasks/826d0443-7624-41bf-b006-73c4f1e30be5/clips/b152c26f-a61f-4f40-ae15-1243aa9802a7/editor/media/thumbnails.jpg:0
 [  563831ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3107/api/tasks/826d0443-7624-41bf-b006-73c4f1e30be5/clips/6ce564db-7b2d-4e5f-8665-9b1d8cc9703d/editor/media/thumbnails.jpg:0
+[  738539ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3107/api/tasks/826d0443-7624-41bf-b006-73c4f1e30be5/clips/b152c26f-a61f-4f40-ae15-1243aa9802a7/editor/media/thumbnails.jpg:0

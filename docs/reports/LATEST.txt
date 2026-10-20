@@ -3,194 +3,140 @@
 ╚════════════════════════════════════════════╝
 
 TASK
-  Name: Laboratório local do SupoClip completo (atualização 10)
-  Status: PASS FUNCIONAL — SupoClip ORIGINAL instalado, executado e
-    utilizável em C:\SupoClipLab (aplicação inteira: interface, backend,
-    worker, banco, editor), com geração real do vídeo de 9:59, editor
-    completo verificado (reframe, legenda por palavra, desfazer/refazer,
-    salvar/reabrir) e exportação validada e reproduzida. Comparação
-    organizada com os resultados recentes do CutNicePro. CutNicePro e seus
-    dados 100% preservados (working tree limpa; vídeo copiado com sha256
-    idêntico; nenhum processo alheio encerrado; nenhum volume/cache
-    apagado). Aprovação editorial: PENDING HUMAN APPROVAL.
-  Base: HEAD b6f146e; tree limpa. SupoClip: commit f1a0c30f8d9ea9e6944b12
-  cef054d92d65219a14 (clone novo em C:\SupoClipLab\supoclip).
+  Name: Benchmark editorial controlado — SupoClip × CutNicePro (atualização 11)
+  Status: PASS FUNCIONAL — investigação com código+evidência e duas execuções
+    controladas concluídas. CAUSA DOS 3 CORTES COMPROVADA (prompt "Choose
+    2-5" + julgamento do modelo; zero perda de dados). Comparação A
+    (9/3/14 reais) e B (controlada) separadas. Recomendações fundamentadas
+    entregues, inclusive uma LACUNA descoberta no app CutNicePro (filtro de
+    publicidade não alcança propostas diretas). Julgamento editorial final:
+    PENDING HUMAN APPROVAL.
+  Base: HEAD b6f146e; produção do CutNicePro inalterada (tree rastreada
+    limpa). Lab SupoClip reutilizado (f1a0c30), sem novos downloads.
 
-IMPLEMENTATION
-  1. INSTALAÇÃO ISOLADA SEM ELEVAÇÃO (item 1):
-     - Docker/Compose oficial exigiria instalar Docker Desktop ou WSL
-       (elevação de administrador + possível reinício) — operações
-       ESPECÍFICAS informadas aqui, NÃO executadas. Caminho compatível
-       adotado: execução NATIVA da aplicação ORIGINAL seguindo o próprio
-       procedimento de testes locais do repo (docs/testing-local.md) —
-       nenhuma função substituída por scripts: frontend Next.js real
-       (porta 3107), backend FastAPI real (8000), worker ARQ real,
-       PostgreSQL 15.6 real, Redis 5.0.14 real, editor original.
-     - Recursos exclusivos do lab: postgres/redis/ollama portáteis em
-       C:\SupoClipLab\tools; dados em pgdata/redisdata/ollama-models/
-       uploads/outputs próprios; portas 3107/8000/5432/6379/11434
-       verificadas livres antes de usar; 159 GB de disco conferidos.
-     - start-lab.cmd / stop-lab.cmd (duplo clique) — stop/start testados
-       de ponta a ponta ao final (stack re-levantada e saudável).
-  2. PRESERVAÇÃO DO AMBIENTE (item 2): CutNicePro somente leitura — zero
-     modificações rastreadas no git; cópia do vídeo de 9:59 verificada
-     (599,098050 s no ffprobe; sha256 57fbe0fa… idêntico ao original);
-     arquivos de upload temporários criados em .playwright-mcp foram
-     REMOVIDOS após o uso; nenhum serviço externo, rede social, cobrança
-     ou chave usada; laboratório acessível só em 127.0.0.1/localhost.
-  3. PROCESSAMENTO LOCAL FUNCIONAL (item 3):
-     - LLM: Gemma-4-12B-IT QAT Q4_0 pelo provedor Ollama do SupoClip —
-       IDENTIDADE COMPROVADA: o blob do Ollama é nomeado pelo sha256 do
-       arquivo (93567e57a8fe10b23569b9d9ec38cd005deedf71e29477c421a4b83f
-       418a538b), mesma quantização Q4_0/arquitetura gemma4/11,9B; sem
-       download duplicado (importado do arquivo local por Modelfile);
-       renderer/parser gemma4 nativos. Diferença REGISTRADA: no Ollama o
-       thinking vem ATIVO por padrão (CutNicePro roda com thinking off,
-       temp 1,0 seed 42) e o /v1 ignora "think":false — documentado; sem
-       alterar prompts do SupoClip.
-     - Correções de AMBIENTE isoladas e documentadas (nenhuma muda lógica
-       editorial): num_ctx 32768/num_predict 8192 no Modelfile (o default
-       4096 do Ollama fazia o agente falhar com "Model token limit
-       exceeded before any response"); pydantic-ai==1.89.1 exato do
-       uv.lock (a versão nova do pip removeu o argumento que o app usa);
-       shim fcntl.py→msvcrt no venv do lab (POSIX-only no código);
-       try/except PermissionError no unlink do log de render no Windows
-       (1 trecho comentado LAB-WINDOWS em editor_document.py).
-     - Dispositivos verificados separadamente: transcrição = openai-whisper
-       base com torch cu128, CUDA disponível (RTX 5070) no venv do worker;
-       599 s transcritos em ~92 s (6,5× tempo real). LLM = Ollama com
-       "inference compute library=CUDA" no log (RTX 5070, 10,3 GiB). Vídeo
-       = ffmpeg 9.0.2 com libx264 (Lavc63.1.102) e libass 0.17.5 para
-       legendas queimadas (log da exportação). Nenhuma diferença de tempo
-       foi atribuída à "linguagem": transcritor, runtime de LLM e
-       codificador estão identificados acima.
-     - Integrações sem credenciais ficaram DESATIVADAS e registradas como
-       não exercidas: publicação social, B-roll (Pexels), importação
-       YouTube (Apify), e-mails, cobrança.
-  4. EXPERIÊNCIA COMPLETA (item 4):
-     - Prova curta primeiro (recorte de 25 s do próprio vídeo): cadastro
-       local → upload → pipeline completo → 1 clipe gerado em 76,5 s.
-     - Vídeo completo (9:59) pelo fluxo normal da interface, sem injetar
-       candidatos do CutNicePro e sem alterar prompts: 3 clipes gerados
-       pelo próprio SupoClip em 291 s; transcrição própria (a do worker,
-       não a do CNP); limites padrão do próprio app (MAX_CLIPS=10; o LLM
-       propôs 3; nada forçado para imitar Opus nem os exemplos do CNP).
-     - Resultados: 00:48–01:44 "O jogo que faz o SSD torar" (nota 72) —
-       história do save COM abertura antecipada; 05:17–05:59 "O cara mais
-       preparado para a guerra" (78) — contagem das pistolas; 04:36–05:21
-       "Design de jogo ou meme de propósito?" (76). Notas por dimensão
-       (hook/engagement/value/shareability) no banco.
-     - Verificações de UI executadas: lista acessível (ordenar por nota/
-       linha do tempo) ✓; reprodução dos vídeos (readyState 4, playing
-       true; clipes 9:16 1080×1920) ✓; editor abre ✓; montagem/legendas
-       preservadas ao entrar no editor ("Show captions" ativo, trilha com
-       segmento 0–57,32 s) ✓; alteração de enquadramento (9:16→1:1) e de
-       uma legenda (edição POR PALAVRA: "Olha"→"VEJAM") ✓; desfazer/refazer
-       (Olha→VEJAM→Olha→VEJAM verificado) ✓; autosave contínuo ("All
-       changes saved") ✓; salvar-fechar-reabrir persistiu AMBAS as mudanças
-       ✓; exportação em segundo plano do rascunho editado (1080×1080,
-       H.264+AAC, 57,32 s, 15,5 s de render) ✓; arquivo exportado
-       REPRODUZIDO em navegador (playing true) ✓. Geração original
-       preservada ("Generated clips are never overwritten… editable
-       draft" + botão Restore original) ✓.
-  5. COMPARAÇÃO (item 5): documento experiments/clip-selection-ab/reports/
-     supoclip-vs-cutnicepro.md — usa os resultados RECENTES do CNP
-     (atualizações 8/9; nenhuma regeração). Destaques honestos: save —
-     SupoClip 48–104 s pronto-para-postar × CNP-auto 53–233 s completo ×
-     CNP-integração-Gemma não achou (variância já documentada); skin Valve
-     — CNP achou, SupoClip não (3 clipes); publicidade — política explícita
-     só no CNP (caso não exercido no SupoClip: nenhum comercial proposto);
-     montagem/reframe/legenda/export — vantagem clara do SupoClip (editor
-     completo); correção de clipe — edição por palavra em segundos no
-     SupoClip × regeneração no CNP hoje; automáticos × manuais
-     distinguidos; configurações diferentes (transcritor, runtime, amostra)
-     registradas na tabela — nenhuma conclusão vendida como "prova
-     isolada de algoritmo". Relação ADOTAR/ADAPTAR/PORTAR/DESCARTAR
-     incluída (adotar: rascunho separado+restore/autosave/undo/export em
-     2º plano; adaptar: legenda por palavra — CNP já tem words —, presets,
-     razões por dimensão; portar: montagem interna e crop 9:16 face-aware;
-     descartar: Docker como requisito local).
-  6. ENTREGA (item 6): SupoClip instalado e utilizável; endereço local
-     verificado (http://localhost:3107 — 200); iniciar/parar por duplo
-     clique (testados); vídeo processado e resultados disponíveis no app
-     (tarefas "proof-25s" e "test-video.mp4" com clipes e downloads);
-     exportação validada em uploads/editor/c05ec5c4…/export-94c3a3ce….mp4;
-     comparação organizada; medições e limitações abaixo; credenciais
-     locais fora de relatórios (em C:\SupoClipLab\lab-login.txt).
+IMPLEMENTATION / ENTREGÁVEIS (13 itens da tarefa)
+  1. CAUSA DOS 3 (com rastreio): 599 s ≤ 900 s → 1 janela; prompt ordena
+     "Choose 2-5 segments total" (ai.py:718+); cota pós-modelo =
+     max_final_clips_for_duration(599,10)=5; ORIGINAL: modelo devolveu 3
+     (log "AI analysis found N" truncado por restart — ausência de bruto
+     declarada); CONTROLADA com teto "up to 20": modelo devolveu 4;
+     _validate/dedupe sem descartes em ambas. BRUTO capturado por proxy
+     (llm-capture 011: 4 segmentos textuais + repara 65→60 s).
+  2. CONFIG DOS 7 CORTES CNP: coleção do app = 9 gerados (7 pendentes +
+     2 rejeitados pelo mantenedor); engine=experimentalGemma,
+     gemma-4-12b-it-qat-q4_0.gguf, thinking-off, temp 1.0/top_k 64/
+     top_p 0.95/min_p 0/seed 42, modo automático; transcrição whisper.cpp
+     base (hash 6879be3a) — NÃO presumido: lido dos metadados persistidos.
+  3. CONFIG CONTROLADA EXECUTADA: mesma transcrição (322 falas exportadas
+     sem alterar o original); mesmo checkpoint/quantização (blob sha
+     93567e57); mesmo runtime Ollama CUDA; temp 1.0, top_p 0.95, top_k 64,
+     min_p 0, seed 42, thinking OFF — CAMPOS COMPROVADOS nas capturas do
+     proxy 11435 (braço CNP: /api/chat think=false+grammar; braço SupoClip:
+     /v1 com reasoning_effort none, reasoning 0 chars). Tetos de quantidade
+     = 20 nos dois braços (quantidade como resultado).
+  4. DIFERENÇAS INEVITÁVEIS REGISTRADAS: políticas de duração próprias
+     mantidas (CNP 10–180 s × SupoClip 15–60 s — parte da estratégia
+     comparada); harness Python porta o app CNP (7/7 testes de fidelidade
+     espelhando selection.rs) enquanto o SupoClip rodou o app original com
+     patches env-gated (LAB_BENCH) só de amostragem/teto/texto-alvo.
+  5. RESULTADOS BRUTOS: CNP 4 janelas (6068 tokens medidos por llama-
+     tokenize), 11 candidatos brutos, 11 conformes, 0 descartes, DP→7;
+     SupoClip 1 janela, 4 segmentos, 1 reparo de duração, 4 clipes.
+     Tempos: descoberta CNP 1,5–4,7 s/janela; análise SupoClip 49,6 s.
+  6. TABELA DE TODOS OS CANDIDATOS (não só vencedores): index.md +
+     cnp-controlled.json (11 com span/score/janela/destino; 4 excluídos
+     por sobreposição na DP — motivo por candidato).
+  7. MAPA TEMPORAL: inventário de 10 acontecimentos (A–J) × braços +
+     OpusClip; visual em bench-visual.html (visualizações da sessão).
+  8. COMPARAÇÃO A (9/3/14): editorial-evaluation.md — CNP 9 = 8–9
+     acontecimentos; SupoClip 3 = B+C+E; OpusClip 14 = maior cobertura com
+     fragmentação deliberada (save em 1:24+0:17) e comercial identificado
+     em último (60); leituras sem tratar OpusClip como verdade absoluta.
+  9. COMPARAÇÃO B (controlada): CNP cobre 8/10 (save COMPLETO em uma
+     unidade de 107 s; Valve fechando em "vale 3 mil reais"); SupoClip
+     4/10 (save em duas peças dependentes; perde Valve/PUBG/barulho/
+     buzina/publicidade). Nenhum candidato sumiu sem motivo rastreável.
+  10. UI/UX APROFUNDADO: ux-analysis.md — capacidade→módulo→auto/manual→
+     comportamento→oportunidade (rascunho não destrutivo; undo com
+     coalescimento <700 ms por grupo; autosave serializado; export job;
+     legenda por palavra; face-crop na GERAÇÃO via MediaPipe; split/
+     reorder/combine de segmentos).
+  11. ADOTAR/ADAPTAR/PORTAR/SUBSTITUIR: adotar rascunho+Restore/autosave/
+     undo/export-2º-plano; adaptar legenda-por-palavra (CNP já tem words) e
+     posição arrastável; portar (decisão do mantenedor) face-crop 9:16 e
+     montagem por segmentos; substituir nada do pipeline textual.
+  12. PROBLEMAS DE METODOLOGIA/LIMITAÇÕES: 1 amostra por braço (sem
+     votação); bruto da execução ORIGINAL do SupoClip não persistido pelo
+     app (declarado; controlada 100% capturada); OpusClip sem dados
+     internos (posições estimadas por conteúdo); seed fixa não testa
+     variância (fora do orçamento).
+  13. RECOMENDAÇÕES: (a) corrigir no app CNP o filtro de publicidade para
+     propostas diretas no modo automático (o comercial Logitech entrou com
+     nota 80 no bench e 46 na coleção real); (b) cobertura alta do CNP vem
+     do PROMPT de unidades narrativas — mesmo modelo/seed produziu 11
+     candidatos sob esse prompt vs 4 sob o do SupoClip; (c) unidade longa
+     completa (save 107 s) foi a melhor entrega editorial; (d) prioridade
+     de UX: rascunho+autosave+undo antes de montagem/face-crop.
 
 VALIDATION
-  FUNCTIONAL STATUS: PASS (critério da tarefa cumprido: geração + editor +
-    persistência + exportação, não só "a página abriu")
-    - Prova curta: 25 s → completed 100 % (76,5 s), 1 clipe renderizado.
-    - Vídeo completo: 9:59 → completed 100 % (291 s), 3 clipes 9:16 com
-      legendas queimadas; reprodução verificada no navegador.
-    - Editor: reframe+legenda aplicados, undo/redo, autosave, persistência
-      ao reabrir — verificados um a um.
-    - Export: ffprobe H.264 1080×1080 + AAC 57,32 s; reprodução OK.
-    - Prova estruturada do LLM antes do vídeo: JSON válido direto do
-      provedor (2,7–9,6 s quente; primeira carga ~115 s do modelo).
-    - Dispositivos: LLM CUDA (log Ollama), transcrição torch-CUDA
-      disponível (6,5× tempo real), codificador libx264+libass (log ffmpeg).
-  REGRESSION STATUS: PASS (CutNicePro: zero arquivos modificados — git
-    status sem alterações rastreadas; dados do usuário intactos; mídia só
-    lida para copiar; processos/ports alheios não tocados; volumes Docker
-    inexistentes/não apagados)
-  VISUAL STATUS: PENDING HUMAN APPROVAL (capturas: C:\SupoClipLab\evidence\
-    supoclip-results.png e supoclip-editor.png)
-  Tempos: transcrição ~92 s; análise+3 renders ~199 s; total 291 s;
-    export 15,5 s; prova 76,5 s. Limitação de medição: o restart do worker
-    trunca worker.log (redireção ">") — os marcos acima foram capturados
-    ao vivo durante a execução.
-
-ISSUES
-  - Ollama /v1 ignora "think":false e o Modelfile não tem o parâmetro — o
-    thinking ATIVO é o comportamento padrão do modelo no provedor e foi
-    MANTIDO (sem alterar o app); diferença registrada na comparação.
-  - Contexto default 4096 do Ollama estourava o prompt do próprio SupoClip
-    com erro genérico de "token limit" — corrigido no AMBIENTE (num_ctx
-    32768), documentado; é exatamente a classe de falha que a tarefa pedia
-    para não atribuir à linguagem sem verificar dispositivo/config.
-  - SupoClip não selecionou a história da skin da Valve (3 clipes) e não
-    tem política explícita de publicidade — registrado; o caso publicidade
-    não foi exercido (nenhum comercial proposto nesta amostra).
-  - Primeira carga do modelo Gemma no Ollama demora ~1–2 min (frio) —
-    avisado no README do lab.
-  - Reasoning do LLM em inglês (comportamento do prompt original do
-    SupoClip); títulos/captions em português.
-  - Docker/WSL no caminho oficial exigiria elevação — NÃO executado;
-    operação específica para adoção futura: instalar Docker Desktop (ou
-    wsl --install) com reinício, e então usar o docker-compose.yml do repo
-    com o mesmo .env do lab.
+  FUNCTIONAL STATUS: PASS
+    - Braço CNP: 7/7 testes de fidelidade (conform/repair/DP/janelas/
+      escape/IDs globais) + execução completa com traço (11 brutos→7).
+    - Braço SupoClip: app original, tarefa 1feeffd2 COMPLETED (4 clipes),
+      config comprovada na captura 011; 1 reparo de duração logado.
+    - Equivalência comprovada: mesma transcrição (mesmas 322 falas nos dois
+      braços), mesmo modelo (blob único), amostragem idêntica nos corpos
+      das requisições capturadas, thinking 0 chars nos dois.
+    - OpusClip: 14 cortes lidos do painel do mantenedor (login dele na
+      janela controlada por mim; nada digitado por mim), salvos em
+      evidence/opusclip-14-reference.json.
+  REGRESSION STATUS: PASS (produção do CutNicePro intacta: coleção do
+    mantenedor apenas LIDA; transcrição exportada por cópia; git sem
+    mudanças rastreadas; lab isolado; nenhum volume/cache/serviço tocado)
+  VISUAL STATUS: PENDING HUMAN APPROVAL
+  Inferências do bench: 2 analíticas de prova + 4 descoberta + 1 SupoClip
+  controlado (+ reprocessamento) — dentro do orçamento, sem repetições
+  para obter amostra favorável (1 falha técnica corrigida e reexecutada:
+  import os faltante no patch LAB-BENCH do lab).
 
 FILES
-  Created: C:\SupoClipLab\{README.md,lab.env,lab-login.txt,start-lab.sh,
-    start-lab.cmd,stop-lab.sh,stop-lab.cmd,Modelfile-gemma4,evidence/,
-    media/, tools/, uploads/, outputs/, logs/, pgdata/, redisdata/,
-    ollama-models/, supoclip/ (clone)}; experiments/clip-selection-ab/
-    reports/supoclip-vs-cutnicepro.md; docs/reports/history/
-    2026-10-20_0805_laboratorio-supoclip.txt
-  Modified: C:\SupoClipLab\supoclip\backend\src\editor_document.py (1
-    trecho LAB-WINDOWS, comentado, sem mudança de lógica) e
-    backend\.venv-lab\...\site-packages\fcntl.py (shim isolado no venv);
-    docs/reports/LATEST.txt
-  Deleted: temporários de upload em C:\CutNicePro\.playwright-mcp\*.mp4
-    (removidos após o uso; nada do CutNicePro foi alterado)
+  Created: experiments/clip-selection-ab/reports/bench/{index.md,
+    controlled-results.md, editorial-evaluation.md, ux-analysis.md,
+    cnp-controlled.json}; tools/{bench_cnp.py,test_bench_cnp.py};
+    scratch/bench-cnp/*; C:\SupoClipLab\{tools/llm-proxy.py,
+    evidence/opusclip-14-reference.json, media/reference-transcript.*,
+    logs/llm-capture/*}; visualização bench-visual.html (dir de sessão);
+    docs/reports/history/2026-10-20_0945_*.txt
+  Modified: C:\SupoClipLab\supoclip\backend\src\{ai.py (3 pontos LAB-BENCH
+    env-gated + import os), media/transcription.py (override env-gated)};
+    lab.env (LAB_BENCH + proxy 11435); docs/reports/LATEST.txt
+  Deleted: temporário .playwright-mcp/test-video.mp4 (removido após uso)
+
+ISSUES
+  - LACUNA NO APP CUTNICEPRO (descoberta pelo bench): no modo automático,
+    a exclusão de publicidade só alcança candidatos reavaliados
+    (alternativas de reparo); propostas diretas ficam com a nota do modelo
+    e entram — o comercial Logitech entrou nas DUAS execuções CNP (real 46
+    / bench 80). Correção recomendada (fora do escopo desta tarefa).
+  - O prompt single-window do SupoClip ("2-5") e a cota 1-corte/5-min são
+    decisões editoriais DELES — mantidas no relatório como causa, alteradas
+    apenas no braço controlado (env-gated) conforme pedido da tarefa.
+  - A peça 2 do save no SupoClip controlado ("O pesadelo de perder o
+    save", 201–230 aproximado no mapa visual) depende da peça 1 — perde
+    autonomia; registrado na avaliação (posição exata: 01:31–02:00).
 
 FINAL
-  Delivery status: PASS FUNCIONAL — laboratório completo e utilizável pelo
-    mantenedor sem comandos (duplo clique + navegador), com geração,
-    editor, persistência e exportação reais, comparação e recomendações
-    baseadas no teste.
-  User action required: abrir http://localhost:3107 (após start-lab.cmd),
-    assistir aos 3 clipes e ao export, ler experiments/.../
-    supoclip-vs-cutnicepro.md e decidir sobre as recomendações
-    adotar/adaptar/portar/descartar.
-  Ready for next task: SIM — condição de parada atingida (laboratório
-    funcionando + comparação entregue); nenhuma integração no CutNicePro
-    foi iniciada.
+  Delivery status: PASS — bench entregue com causa comprovada, execuções
+    controladas rastreáveis, comparações A/B separadas, análise de UX por
+    módulo e recomendações fundamentadas. Nenhuma integração/porte iniciado
+    (condição de parada respeitada).
+  User action required: julgar editorialmente (bench-visual.html +
+    reports/bench/); decidir sobre as 4 recomendações (filtro de
+    publicidade; adoções de UX; face-crop; montagem).
+  Ready for next task: SIM.
 
 REPORT
   Latest file: docs/reports/LATEST.txt
-  Historical file: docs/reports/history/2026-10-20_0805_laboratorio-supoclip.txt
+  Historical file: docs/reports/history/2026-10-20_0945_benchmark-editorial-controlado.txt
 
 END OF REPORT

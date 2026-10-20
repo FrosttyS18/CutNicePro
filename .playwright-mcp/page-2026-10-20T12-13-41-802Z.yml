@@ -1,0 +1,102 @@
+- generic [active] [ref=f18e1]:
+  - generic [ref=f18e477]:
+    - complementary [ref=f18e478]:
+      - link "SupoClip" [ref=f18e479] [cursor=pointer]:
+        - /url: /
+      - link "New generation N" [ref=f18e480] [cursor=pointer]:
+        - /url: /
+        - generic [ref=f18e482]: New generation
+        - generic [ref=f18e483]: "N"
+      - navigation "Main navigation" [ref=f18e484]:
+        - link "Create" [ref=f18e485] [cursor=pointer]:
+          - /url: /
+        - link "Library" [ref=f18e490] [cursor=pointer]:
+          - /url: /list
+        - link "Social" [ref=f18e494] [cursor=pointer]:
+          - /url: /settings/social
+        - link "Analytics" [ref=f18e502] [cursor=pointer]:
+          - /url: /analytics
+        - link "Agents & API" [ref=f18e506] [cursor=pointer]:
+          - /url: /settings/api-keys
+        - link "Settings" [ref=f18e511] [cursor=pointer]:
+          - /url: /settings
+      - button "Search generations" [ref=f18e516]:
+        - generic [ref=f18e520]: Search
+        - generic: ⌘K
+      - generic [ref=f18e521]:
+        - button "What's new, 1 unread announcement" [ref=f18e522]:
+          - generic [ref=f18e526]: What's new
+          - generic [aria-hidden] [ref=f18e527]: "1"
+        - generic [ref=f18e528]:
+          - generic [ref=f18e529]: LT
+          - generic [ref=f18e530]:
+            - paragraph [ref=f18e531]: Lab Tester
+            - paragraph [ref=f18e532]: lab@supoclip.local
+          - button "Sign out" [ref=f18e533]
+    - main [ref=f18e538]:
+      - generic [ref=f18e539]:
+        - heading "Good morning, Lab" [level=1] [ref=f18e540]
+        - paragraph [ref=f18e541]: Drop in a long video. Get back captioned, ready-to-post clips.
+        - status "YouTube import status" [ref=f18e542]:
+          - generic [ref=f18e546]:
+            - generic [ref=f18e547]:
+              - paragraph [ref=f18e548]: YouTube imports · Degraded
+              - link "View status page" [ref=f18e549] [cursor=pointer]:
+                - /url: /status
+            - paragraph [ref=f18e550]: Investigating
+            - paragraph [ref=f18e551]: We are investigating slow video downloads. Importing videos from YouTube may take longer than usual or fail with a timeout. Please avoid repeatedly retrying the same video while we investigate. We will update this page when we have more information.
+        - generic [ref=f18e552]:
+          - generic [ref=f18e554]:
+            - generic [ref=f18e560]:
+              - paragraph [ref=f18e561]: test-video.mp4
+              - paragraph [ref=f18e562]: 27 MB · ready to upload
+            - button "Remove file" [ref=f18e563]
+          - generic [ref=f18e567]:
+            - button "Default" [ref=f18e568]
+            - button "Auto 9:16" [ref=f18e575]
+            - button "Captions" [pressed] [ref=f18e581]
+            - button "Cleanup 2" [ref=f18e585]:
+              - text: Cleanup
+              - generic [ref=f18e589]: "2"
+            - generic [ref=f18e592]:
+              - generic [ref=f18e593]:
+                - generic: ⌘
+                - generic: ↵
+              - button "Generate clips" [ref=f18e594]
+        - paragraph [ref=f18e595]:
+          - text: "Self-Hosted: YouTube videos up to 90 minutes. We check the length before using a generation. Completion emails follow your preference in"
+          - link "Settings" [ref=f18e596] [cursor=pointer]:
+            - /url: /settings
+          - text: .
+      - region [ref=f18e597]:
+        - generic [ref=f18e598]:
+          - heading "Recent" [level=2] [ref=f18e599]
+          - link "View library" [ref=f18e600] [cursor=pointer]:
+            - /url: /list
+        - generic [ref=f18e603]:
+          - link "Virality score 78 out of 100 Upload 3 clips test-video.mp4 há 2 horas" [ref=f18e605] [cursor=pointer]:
+            - /url: /tasks/826d0443-7624-41bf-b006-73c4f1e30be5
+            - generic [ref=f18e606]:
+              - img "Virality score 78 out of 100" [ref=f18e609]:
+                - generic [ref=f18e613]: "78"
+              - generic [ref=f18e614]:
+                - generic [ref=f18e615]: Upload
+                - generic [ref=f18e619]: 3 clips
+            - generic [ref=f18e620]:
+              - heading "test-video.mp4" [level=3] [ref=f18e621]
+              - generic [ref=f18e622]: há 2 horas
+          - link "Virality score 67 out of 100 Upload 1 clip proof-25s.mp4 há 2 horas" [ref=f18e625] [cursor=pointer]:
+            - /url: /tasks/fa497fce-6d57-4dd5-8aa6-2a1652be38bd
+            - generic [ref=f18e626]:
+              - img "Virality score 67 out of 100" [ref=f18e629]:
+                - generic [ref=f18e633]: "67"
+              - generic [ref=f18e634]:
+                - generic [ref=f18e635]: Upload
+                - generic [ref=f18e639]: 1 clip
+            - generic [ref=f18e640]:
+              - heading "proof-25s.mp4" [level=3] [ref=f18e641]
+              - generic [ref=f18e642]: há 2 horas
+  - button [ref=f18e644]
+  - region "Notifications alt+T"
+  - button "Open Next.js Dev Tools" [ref=f18e650] [cursor=pointer]
+  - alert [ref=f18e476]

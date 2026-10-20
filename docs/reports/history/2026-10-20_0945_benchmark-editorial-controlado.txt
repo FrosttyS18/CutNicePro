@@ -1,0 +1,142 @@
+╔════════════════════════════════════════════╗
+║       CUTNICEPRO — ZCODE REPORT            ║
+╚════════════════════════════════════════════╝
+
+TASK
+  Name: Benchmark editorial controlado — SupoClip × CutNicePro (atualização 11)
+  Status: PASS FUNCIONAL — investigação com código+evidência e duas execuções
+    controladas concluídas. CAUSA DOS 3 CORTES COMPROVADA (prompt "Choose
+    2-5" + julgamento do modelo; zero perda de dados). Comparação A
+    (9/3/14 reais) e B (controlada) separadas. Recomendações fundamentadas
+    entregues, inclusive uma LACUNA descoberta no app CutNicePro (filtro de
+    publicidade não alcança propostas diretas). Julgamento editorial final:
+    PENDING HUMAN APPROVAL.
+  Base: HEAD b6f146e; produção do CutNicePro inalterada (tree rastreada
+    limpa). Lab SupoClip reutilizado (f1a0c30), sem novos downloads.
+
+IMPLEMENTATION / ENTREGÁVEIS (13 itens da tarefa)
+  1. CAUSA DOS 3 (com rastreio): 599 s ≤ 900 s → 1 janela; prompt ordena
+     "Choose 2-5 segments total" (ai.py:718+); cota pós-modelo =
+     max_final_clips_for_duration(599,10)=5; ORIGINAL: modelo devolveu 3
+     (log "AI analysis found N" truncado por restart — ausência de bruto
+     declarada); CONTROLADA com teto "up to 20": modelo devolveu 4;
+     _validate/dedupe sem descartes em ambas. BRUTO capturado por proxy
+     (llm-capture 011: 4 segmentos textuais + repara 65→60 s).
+  2. CONFIG DOS 7 CORTES CNP: coleção do app = 9 gerados (7 pendentes +
+     2 rejeitados pelo mantenedor); engine=experimentalGemma,
+     gemma-4-12b-it-qat-q4_0.gguf, thinking-off, temp 1.0/top_k 64/
+     top_p 0.95/min_p 0/seed 42, modo automático; transcrição whisper.cpp
+     base (hash 6879be3a) — NÃO presumido: lido dos metadados persistidos.
+  3. CONFIG CONTROLADA EXECUTADA: mesma transcrição (322 falas exportadas
+     sem alterar o original); mesmo checkpoint/quantização (blob sha
+     93567e57); mesmo runtime Ollama CUDA; temp 1.0, top_p 0.95, top_k 64,
+     min_p 0, seed 42, thinking OFF — CAMPOS COMPROVADOS nas capturas do
+     proxy 11435 (braço CNP: /api/chat think=false+grammar; braço SupoClip:
+     /v1 com reasoning_effort none, reasoning 0 chars). Tetos de quantidade
+     = 20 nos dois braços (quantidade como resultado).
+  4. DIFERENÇAS INEVITÁVEIS REGISTRADAS: políticas de duração próprias
+     mantidas (CNP 10–180 s × SupoClip 15–60 s — parte da estratégia
+     comparada); harness Python porta o app CNP (7/7 testes de fidelidade
+     espelhando selection.rs) enquanto o SupoClip rodou o app original com
+     patches env-gated (LAB_BENCH) só de amostragem/teto/texto-alvo.
+  5. RESULTADOS BRUTOS: CNP 4 janelas (6068 tokens medidos por llama-
+     tokenize), 11 candidatos brutos, 11 conformes, 0 descartes, DP→7;
+     SupoClip 1 janela, 4 segmentos, 1 reparo de duração, 4 clipes.
+     Tempos: descoberta CNP 1,5–4,7 s/janela; análise SupoClip 49,6 s.
+  6. TABELA DE TODOS OS CANDIDATOS (não só vencedores): index.md +
+     cnp-controlled.json (11 com span/score/janela/destino; 4 excluídos
+     por sobreposição na DP — motivo por candidato).
+  7. MAPA TEMPORAL: inventário de 10 acontecimentos (A–J) × braços +
+     OpusClip; visual em bench-visual.html (visualizações da sessão).
+  8. COMPARAÇÃO A (9/3/14): editorial-evaluation.md — CNP 9 = 8–9
+     acontecimentos; SupoClip 3 = B+C+E; OpusClip 14 = maior cobertura com
+     fragmentação deliberada (save em 1:24+0:17) e comercial identificado
+     em último (60); leituras sem tratar OpusClip como verdade absoluta.
+  9. COMPARAÇÃO B (controlada): CNP cobre 8/10 (save COMPLETO em uma
+     unidade de 107 s; Valve fechando em "vale 3 mil reais"); SupoClip
+     4/10 (save em duas peças dependentes; perde Valve/PUBG/barulho/
+     buzina/publicidade). Nenhum candidato sumiu sem motivo rastreável.
+  10. UI/UX APROFUNDADO: ux-analysis.md — capacidade→módulo→auto/manual→
+     comportamento→oportunidade (rascunho não destrutivo; undo com
+     coalescimento <700 ms por grupo; autosave serializado; export job;
+     legenda por palavra; face-crop na GERAÇÃO via MediaPipe; split/
+     reorder/combine de segmentos).
+  11. ADOTAR/ADAPTAR/PORTAR/SUBSTITUIR: adotar rascunho+Restore/autosave/
+     undo/export-2º-plano; adaptar legenda-por-palavra (CNP já tem words) e
+     posição arrastável; portar (decisão do mantenedor) face-crop 9:16 e
+     montagem por segmentos; substituir nada do pipeline textual.
+  12. PROBLEMAS DE METODOLOGIA/LIMITAÇÕES: 1 amostra por braço (sem
+     votação); bruto da execução ORIGINAL do SupoClip não persistido pelo
+     app (declarado; controlada 100% capturada); OpusClip sem dados
+     internos (posições estimadas por conteúdo); seed fixa não testa
+     variância (fora do orçamento).
+  13. RECOMENDAÇÕES: (a) corrigir no app CNP o filtro de publicidade para
+     propostas diretas no modo automático (o comercial Logitech entrou com
+     nota 80 no bench e 46 na coleção real); (b) cobertura alta do CNP vem
+     do PROMPT de unidades narrativas — mesmo modelo/seed produziu 11
+     candidatos sob esse prompt vs 4 sob o do SupoClip; (c) unidade longa
+     completa (save 107 s) foi a melhor entrega editorial; (d) prioridade
+     de UX: rascunho+autosave+undo antes de montagem/face-crop.
+
+VALIDATION
+  FUNCTIONAL STATUS: PASS
+    - Braço CNP: 7/7 testes de fidelidade (conform/repair/DP/janelas/
+      escape/IDs globais) + execução completa com traço (11 brutos→7).
+    - Braço SupoClip: app original, tarefa 1feeffd2 COMPLETED (4 clipes),
+      config comprovada na captura 011; 1 reparo de duração logado.
+    - Equivalência comprovada: mesma transcrição (mesmas 322 falas nos dois
+      braços), mesmo modelo (blob único), amostragem idêntica nos corpos
+      das requisições capturadas, thinking 0 chars nos dois.
+    - OpusClip: 14 cortes lidos do painel do mantenedor (login dele na
+      janela controlada por mim; nada digitado por mim), salvos em
+      evidence/opusclip-14-reference.json.
+  REGRESSION STATUS: PASS (produção do CutNicePro intacta: coleção do
+    mantenedor apenas LIDA; transcrição exportada por cópia; git sem
+    mudanças rastreadas; lab isolado; nenhum volume/cache/serviço tocado)
+  VISUAL STATUS: PENDING HUMAN APPROVAL
+  Inferências do bench: 2 analíticas de prova + 4 descoberta + 1 SupoClip
+  controlado (+ reprocessamento) — dentro do orçamento, sem repetições
+  para obter amostra favorável (1 falha técnica corrigida e reexecutada:
+  import os faltante no patch LAB-BENCH do lab).
+
+FILES
+  Created: experiments/clip-selection-ab/reports/bench/{index.md,
+    controlled-results.md, editorial-evaluation.md, ux-analysis.md,
+    cnp-controlled.json}; tools/{bench_cnp.py,test_bench_cnp.py};
+    scratch/bench-cnp/*; C:\SupoClipLab\{tools/llm-proxy.py,
+    evidence/opusclip-14-reference.json, media/reference-transcript.*,
+    logs/llm-capture/*}; visualização bench-visual.html (dir de sessão);
+    docs/reports/history/2026-10-20_0945_*.txt
+  Modified: C:\SupoClipLab\supoclip\backend\src\{ai.py (3 pontos LAB-BENCH
+    env-gated + import os), media/transcription.py (override env-gated)};
+    lab.env (LAB_BENCH + proxy 11435); docs/reports/LATEST.txt
+  Deleted: temporário .playwright-mcp/test-video.mp4 (removido após uso)
+
+ISSUES
+  - LACUNA NO APP CUTNICEPRO (descoberta pelo bench): no modo automático,
+    a exclusão de publicidade só alcança candidatos reavaliados
+    (alternativas de reparo); propostas diretas ficam com a nota do modelo
+    e entram — o comercial Logitech entrou nas DUAS execuções CNP (real 46
+    / bench 80). Correção recomendada (fora do escopo desta tarefa).
+  - O prompt single-window do SupoClip ("2-5") e a cota 1-corte/5-min são
+    decisões editoriais DELES — mantidas no relatório como causa, alteradas
+    apenas no braço controlado (env-gated) conforme pedido da tarefa.
+  - A peça 2 do save no SupoClip controlado ("O pesadelo de perder o
+    save", 201–230 aproximado no mapa visual) depende da peça 1 — perde
+    autonomia; registrado na avaliação (posição exata: 01:31–02:00).
+
+FINAL
+  Delivery status: PASS — bench entregue com causa comprovada, execuções
+    controladas rastreáveis, comparações A/B separadas, análise de UX por
+    módulo e recomendações fundamentadas. Nenhuma integração/porte iniciado
+    (condição de parada respeitada).
+  User action required: julgar editorialmente (bench-visual.html +
+    reports/bench/); decidir sobre as 4 recomendações (filtro de
+    publicidade; adoções de UX; face-crop; montagem).
+  Ready for next task: SIM.
+
+REPORT
+  Latest file: docs/reports/LATEST.txt
+  Historical file: docs/reports/history/2026-10-20_0945_benchmark-editorial-controlado.txt
+
+END OF REPORT

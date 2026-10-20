@@ -1,0 +1,324 @@
+{
+ "etapa": {
+  "janelas": {
+   "budget": 6068,
+   "janelas": [
+    [
+     0,
+     109
+    ],
+    [
+     52,
+     218
+    ],
+    [
+     110,
+     216
+    ],
+    [
+     157,
+     322
+    ]
+   ],
+   "medicoes_tokenizador": [
+    {
+     "window": [
+      0,
+      322
+     ],
+     "tokens": 9935,
+     "calibracao": true
+    },
+    {
+     "window": [
+      110,
+      322
+     ],
+     "tokens": 6735
+    },
+    {
+     "window": [
+      110,
+      216
+     ],
+     "tokens": 3447
+    },
+    {
+     "window": [
+      157,
+      322
+     ],
+     "tokens": 5362
+    },
+    {
+     "window": [
+      0,
+      218
+     ],
+     "tokens": 6711
+    },
+    {
+     "window": [
+      0,
+      109
+     ],
+     "tokens": 3524
+    },
+    {
+     "window": [
+      52,
+      218
+     ],
+     "tokens": 5117
+    }
+   ],
+   "segundos": 5.0
+  },
+  "descoberta": {
+   "por_janela": [
+    {
+     "tag": "discover-w0",
+     "elapsed_s": 1.5,
+     "prompt_tokens": 3520,
+     "gen_tokens": 75,
+     "janela": [
+      0,
+      109
+     ]
+    },
+    {
+     "tag": "discover-w1",
+     "elapsed_s": 4.0,
+     "prompt_tokens": 5113,
+     "gen_tokens": 114,
+     "janela": [
+      52,
+      218
+     ]
+    },
+    {
+     "tag": "discover-w2",
+     "elapsed_s": 2.9,
+     "prompt_tokens": 3443,
+     "gen_tokens": 79,
+     "janela": [
+      110,
+      216
+     ]
+    },
+    {
+     "tag": "discover-w3",
+     "elapsed_s": 4.7,
+     "prompt_tokens": 5358,
+     "gen_tokens": 151,
+     "janela": [
+      157,
+      322
+     ]
+    }
+   ],
+   "brutos": [
+    {
+     "window": [
+      0,
+      109
+     ],
+     "candidates": [
+      {
+       "firstId": 6,
+       "lastId": 59,
+       "score": 95
+      },
+      {
+       "firstId": 63,
+       "lastId": 108,
+       "score": 92
+      }
+     ]
+    },
+    {
+     "window": [
+      52,
+      218
+     ],
+     "candidates": [
+      {
+       "firstId": 63,
+       "lastId": 123,
+       "score": 95
+      },
+      {
+       "firstId": 124,
+       "lastId": 185,
+       "score": 88
+      },
+      {
+       "firstId": 186,
+       "lastId": 217,
+       "score": 92
+      }
+     ]
+    },
+    {
+     "window": [
+      110,
+      216
+     ],
+     "candidates": [
+      {
+       "firstId": 128,
+       "lastId": 150,
+       "score": 85
+      },
+      {
+       "firstId": 164,
+       "lastId": 200,
+       "score": 92
+      }
+     ]
+    },
+    {
+     "window": [
+      157,
+      322
+     ],
+     "candidates": [
+      {
+       "firstId": 169,
+       "lastId": 204,
+       "score": 92
+      },
+      {
+       "firstId": 231,
+       "lastId": 240,
+       "score": 88
+      },
+      {
+       "firstId": 268,
+       "lastId": 285,
+       "score": 85
+      },
+      {
+       "firstId": 293,
+       "lastId": 321,
+       "score": 80
+      }
+     ]
+    }
+   ]
+  },
+  "construcao": {
+   "diretos": 11,
+   "alternativas_pendentes": 0
+  },
+  "avaliacao": {
+   "lotes": [],
+   "pendentes": 0,
+   "avaliadas": 0
+  },
+  "selecao": {
+   "em_disputa": 11,
+   "escolhidos": 7
+  }
+ },
+ "descartes": [],
+ "resultado": [
+  {
+   "start": 18.1,
+   "end": 125.54,
+   "score": 95,
+   "origem": "proposta [6,59] w0-109",
+   "valid_score": 95,
+   "nature": null,
+   "advertising": false,
+   "razao": "",
+   "abertura": "Recentemente, a EA deve odiar quando eu jogo os jogos dela, porque...",
+   "fechamento": "É, é."
+  },
+  {
+   "start": 129.72,
+   "end": 234.44,
+   "score": 95,
+   "origem": "proposta [63,123] w52-218",
+   "valid_score": 95,
+   "nature": null,
+   "advertising": false,
+   "razao": "",
+   "abertura": "Aí o que eu avistei hoje?",
+   "fechamento": "Ih, cara!"
+  },
+  {
+   "start": 238.4,
+   "end": 346.16,
+   "score": 88,
+   "origem": "proposta [124,185] w52-218",
+   "valid_score": 88,
+   "nature": null,
+   "advertising": false,
+   "razao": "",
+   "abertura": "Vai, Corinthians.",
+   "fechamento": "Pistola assim, assim, esquisito."
+  },
+  {
+   "start": 346.38,
+   "end": 393.36,
+   "score": 92,
+   "origem": "proposta [186,217] w52-218",
+   "valid_score": 92,
+   "nature": null,
+   "advertising": false,
+   "razao": "",
+   "abertura": "São duas aqui, beleza?",
+   "fechamento": "É isso aí que a EA costuma fazer."
+  },
+  {
+   "start": 418.4,
+   "end": 455.04,
+   "score": 88,
+   "origem": "proposta [231,240] w157-322",
+   "valid_score": 88,
+   "nature": null,
+   "advertising": false,
+   "razao": "",
+   "abertura": "Você gasta o seu dinheiro para comprar a skin bugada, não é, mano?",
+   "fechamento": "Mas manteve a skin antiga e aí a skin antiga hoje vale 3 mil reais."
+  },
+  {
+   "start": 484.08,
+   "end": 518.3,
+   "score": 85,
+   "origem": "proposta [268,285] w157-322",
+   "valid_score": 85,
+   "nature": null,
+   "advertising": false,
+   "razao": "",
+   "abertura": "Então tem lá, quanto é que tá valendo?",
+   "fechamento": "É meu, o Fernandinho tá só rachando o barulho."
+  },
+  {
+   "start": 536.72,
+   "end": 599.08,
+   "score": 80,
+   "origem": "proposta [293,321] w157-322",
+   "valid_score": 80,
+   "nature": null,
+   "advertising": false,
+   "razao": "",
+   "abertura": "Bom, galera, e agradecer mais uma vez o Logitech G",
+   "fechamento": "E vamos embora."
+  }
+ ],
+ "config": {
+  "modo": "automatico (app) + motor gemma experimental",
+  "backend": "ollama nativo via http://127.0.0.1:11435 (mesmos pesos/quant/seed/thinking-off)",
+  "amostragem": "temp 1.0, top_p 0.95, top_k 64, min_p 0, seed 42, think=false",
+  "limites": {
+   "min_s": 10.0,
+   "max_s": 180.0,
+   "por_janela": 20,
+   "teto_final_bench": 20,
+   "piso_editorial": 50
+  },
+  "transcricao": "referência compartilhada (322 falas, whisper.cpp base do app)"
+ }
+}

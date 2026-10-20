@@ -1,0 +1,344 @@
+- generic [active] [ref=f18e1]:
+  - generic [ref=f18e2]:
+    - navigation [ref=f18e3]:
+      - generic [ref=f18e4]:
+        - link "SupoClip SupoClip" [ref=f18e5] [cursor=pointer]:
+          - /url: /
+          - img "SupoClip" [ref=f18e6]
+          - generic [ref=f18e7]: SupoClip
+        - generic [ref=f18e8]:
+          - link "How It Works" [ref=f18e9] [cursor=pointer]:
+            - /url: "#how-it-works"
+          - link "Features" [ref=f18e10] [cursor=pointer]:
+            - /url: "#features"
+          - link "Pricing" [ref=f18e11] [cursor=pointer]:
+            - /url: "#pricing"
+          - link "Open Source" [ref=f18e12] [cursor=pointer]:
+            - /url: "#open-source"
+          - link "Blog" [ref=f18e13] [cursor=pointer]:
+            - /url: /blog
+          - link "Affiliate" [ref=f18e14] [cursor=pointer]:
+            - /url: /affiliate
+        - generic [ref=f18e15]:
+          - link [ref=f18e16] [cursor=pointer]:
+            - /url: /sign-in
+            - button "Sign In" [ref=f18e17]
+          - link [ref=f18e18] [cursor=pointer]:
+            - /url: /sign-up
+            - button "Get Started" [ref=f18e19]
+    - generic [ref=f18e23]:
+      - generic [ref=f18e24]:
+        - generic [ref=f18e25]: Open Source & Self-Hostable
+        - heading "Open-source AI video clipper for better shorts" [level=1] [ref=f18e27]: Open-source AI video clipperfor better shorts
+        - paragraph [ref=f18e28]: Turn long videos into captioned YouTube Shorts, TikToks, and Reels with AI-assisted highlight detection, virality scoring, and face-aware vertical crops.
+        - generic [ref=f18e29]:
+          - link [ref=f18e30] [cursor=pointer]:
+            - /url: /sign-up
+            - button "Start Clipping" [ref=f18e31]
+          - link [ref=f18e32] [cursor=pointer]:
+            - /url: https://github.com/FujiwaraChoki/supoclip
+            - button "View Source" [ref=f18e33]
+          - link "Download SupoClip on the App Store" [ref=f18e34] [cursor=pointer]:
+            - /url: https://apps.apple.com/us/app/supoclip/id6784760040
+            - img "Download on the App Store" [ref=f18e35]
+        - generic [ref=f18e36]:
+          - generic [ref=f18e37]: 9:16 Auto-Crop
+          - generic [ref=f18e44]: Word-Synced Captions
+          - generic [ref=f18e47]: Virality Scoring
+        - link [ref=f18e52] [cursor=pointer]:
+          - /url: https://www.producthunt.com/products/supoclip?embed=true&utm_source=badge-featured&utm_medium=badge&utm_campaign=badge-supoclip
+          - 'img "SupoClip - Open-source AI clipper: long videos into viral shorts | Product Hunt" [ref=f18e53]'
+      - generic [ref=f18e57]:
+        - link [ref=f18e58] [cursor=pointer]:
+          - /url: https://www.youtube.com/watch?v=OpANpfEjNw8
+          - generic [ref=f18e63]:
+            - paragraph [ref=f18e64]: Steven Bartlett — How I Make $1.2 Million A Year From This Podcast
+            - paragraph [ref=f18e65]: youtube.com · long-form source
+        - generic [ref=f18e70]: 2 clips found
+        - generic [ref=f18e80]:
+          - generic "Publishing every Monday grew listeners 10x" [ref=f18e81]
+          - generic "10 million views each, yet nobody remembered" [ref=f18e82]
+          - button "Pause clip" [ref=f18e83]
+          - button "Unmute clip" [ref=f18e87]
+          - generic:
+            - paragraph: 04:11 – 05:03
+        - generic [ref=f18e92]:
+          - button "Publishing every Monday grew listeners 10x 04:11 – 05:03 · 0:55 9:16" [ref=f18e93]:
+            - generic [ref=f18e94]:
+              - generic [ref=f18e95]: Publishing every Monday grew listeners 10x
+              - generic [ref=f18e96]: 04:11 – 05:03 · 0:55
+            - generic [ref=f18e97]: 9:16
+          - button "10 million views each, yet nobody remembered 22:38 – 23:28 · 0:53 9:16" [ref=f18e98]:
+            - generic [ref=f18e99]:
+              - generic [ref=f18e100]: 10 million views each, yet nobody remembered
+              - generic [ref=f18e101]: 22:38 – 23:28 · 0:53
+            - generic [ref=f18e102]: 9:16
+        - link "How these clips were made" [ref=f18e103] [cursor=pointer]:
+          - /url: /demo
+    - generic [ref=f18e112]:
+      - generic [ref=f18e113]:
+        - paragraph [ref=f18e114]: How It Works
+        - heading "Three steps. Zero effort." [level=2] [ref=f18e115]
+      - generic [ref=f18e116]:
+        - generic [ref=f18e119]:
+          - generic [ref=f18e120]: "01"
+          - heading "Drop a link or file" [level=3] [ref=f18e125]
+          - paragraph [ref=f18e126]: Paste any YouTube URL or drag-and-drop your own video file.
+        - generic [ref=f18e129]:
+          - generic [ref=f18e130]: "02"
+          - heading "AI finds the gold" [level=3] [ref=f18e135]
+          - paragraph [ref=f18e136]: Transcription, virality scoring, and segment detection surface the best moments.
+        - generic [ref=f18e139]:
+          - generic [ref=f18e140]: "03"
+          - heading "Export & publish" [level=3] [ref=f18e148]
+          - paragraph [ref=f18e149]: Get vertical, captioned, face-tracked clips ready for every platform.
+    - generic [ref=f18e151]:
+      - generic [ref=f18e152]:
+        - paragraph [ref=f18e153]: Features
+        - heading "Everything you need to go viral" [level=2] [ref=f18e154]
+        - paragraph [ref=f18e155]: Professional-grade video clipping with AI intelligence at every step of the pipeline.
+      - generic [ref=f18e156]:
+        - generic [ref=f18e159]:
+          - heading "Face-Centered Cropping" [level=3] [ref=f18e167]
+          - paragraph [ref=f18e168]: MediaPipe + OpenCV detects and tracks faces for perfect 9:16 vertical framing.
+        - generic [ref=f18e171]:
+          - heading "Word-Synced Subtitles" [level=3] [ref=f18e175]
+          - paragraph [ref=f18e176]: Word-level timestamps power perfectly timed, animated captions on every clip.
+        - generic [ref=f18e179]:
+          - heading "Virality Scoring" [level=3] [ref=f18e185]
+          - paragraph [ref=f18e186]: AI rates hook, engagement, value, and shareability — scored 0 to 100.
+        - generic [ref=f18e189]:
+          - heading "B-Roll Overlays" [level=3] [ref=f18e193]
+          - paragraph [ref=f18e194]: Automatically source and overlay relevant stock footage from Pexels.
+        - generic [ref=f18e197]:
+          - heading "Caption Templates" [level=3] [ref=f18e202]
+          - paragraph [ref=f18e203]: Multiple animation styles and font presets to match your brand.
+        - generic [ref=f18e206]:
+          - heading "Platform Export" [level=3] [ref=f18e211]
+          - paragraph [ref=f18e212]: One-click presets for TikTok, Reels, and Shorts with optimized encoding.
+    - generic [ref=f18e214]:
+      - generic [ref=f18e215]:
+        - paragraph [ref=f18e216]: Pricing
+        - heading "Simple pricing, no surprises" [level=2] [ref=f18e217]
+        - paragraph [ref=f18e218]: Free to self-host. Hosted plans start at $10/month, with processing and hosting handled for you. Change or cancel anytime.
+      - generic [ref=f18e219]:
+        - generic [ref=f18e222]:
+          - generic [ref=f18e223]:
+            - heading "Self-Hosted" [level=3] [ref=f18e224]
+            - paragraph [ref=f18e225]: Run on your own computer. No subscription or monthly video limit.
+          - generic [ref=f18e226]:
+            - generic [ref=f18e227]: $0
+            - generic [ref=f18e228]: forever
+          - list [ref=f18e229]:
+            - listitem [ref=f18e230]:
+              - generic [ref=f18e233]: Face-centered cropping
+            - listitem [ref=f18e234]:
+              - generic [ref=f18e237]: Word-synced subtitles
+            - listitem [ref=f18e238]:
+              - generic [ref=f18e241]: Virality scoring
+            - listitem [ref=f18e242]:
+              - generic [ref=f18e245]: All export presets
+            - listitem [ref=f18e246]:
+              - generic [ref=f18e249]: Full source code access
+          - generic [ref=f18e250]:
+            - paragraph [ref=f18e251]: Setup required. You provide the hardware and any paid AI services you choose.
+            - link [ref=f18e252] [cursor=pointer]:
+              - /url: /blog/self-host-supoclip-docker
+              - button "Self-hosting guide" [ref=f18e253]
+            - link "View on GitHub" [ref=f18e254] [cursor=pointer]:
+              - /url: https://github.com/FujiwaraChoki/supoclip
+        - generic [ref=f18e263]:
+          - generic [ref=f18e264]: Most Popular
+          - generic [ref=f18e266]:
+            - generic [ref=f18e267]:
+              - heading "Pro" [level=3] [ref=f18e268]
+              - paragraph [ref=f18e269]: For creators who clip consistently each month.
+            - generic [ref=f18e270]:
+              - generic [ref=f18e271]: $10
+              - generic [ref=f18e272]: /month
+            - list [ref=f18e273]:
+              - listitem [ref=f18e274]:
+                - generic [ref=f18e277]: 50 generations per month
+              - listitem [ref=f18e278]:
+                - generic [ref=f18e281]: Face tracking, captions and virality scoring
+              - listitem [ref=f18e282]:
+                - generic [ref=f18e285]: B-Roll overlays
+              - listitem [ref=f18e286]:
+                - generic [ref=f18e289]: Caption templates
+              - listitem [ref=f18e290]:
+                - generic [ref=f18e293]: Platform export presets
+              - listitem [ref=f18e294]:
+                - generic [ref=f18e297]: Early access to new features
+            - link [ref=f18e298] [cursor=pointer]:
+              - /url: /sign-up
+              - button "Upgrade to Pro" [ref=f18e299]
+        - generic [ref=f18e302]:
+          - generic [ref=f18e303]:
+            - heading "Scale" [level=3] [ref=f18e304]
+            - paragraph [ref=f18e305]: For teams and high-volume publishing workflows.
+          - generic [ref=f18e306]:
+            - generic [ref=f18e307]: $50
+            - generic [ref=f18e308]: /month
+          - list [ref=f18e309]:
+            - listitem [ref=f18e310]:
+              - generic [ref=f18e313]: 300 generations per month
+            - listitem [ref=f18e314]:
+              - generic [ref=f18e317]: Face tracking, captions and virality scoring
+            - listitem [ref=f18e318]:
+              - generic [ref=f18e321]: B-Roll overlays
+            - listitem [ref=f18e322]:
+              - generic [ref=f18e325]: Caption templates
+            - listitem [ref=f18e326]:
+              - generic [ref=f18e329]: Platform export presets
+            - listitem [ref=f18e330]:
+              - generic [ref=f18e333]: YouTube videos up to 3 hours
+            - listitem [ref=f18e334]:
+              - generic [ref=f18e337]: Priority processing
+          - link [ref=f18e338] [cursor=pointer]:
+            - /url: /sign-up
+            - button "Upgrade to Scale" [ref=f18e339]
+      - paragraph [ref=f18e341]:
+        - text: Self-hosting? All features are free and unlimited.
+        - link "See the self-hosting guide" [ref=f18e342] [cursor=pointer]:
+          - /url: /blog/self-host-supoclip-docker
+        - text: .
+    - generic [ref=f18e344]:
+      - generic [ref=f18e345]:
+        - generic [ref=f18e346]: AGPL-3.0 Licensed
+        - heading "Built in the open" [level=2] [ref=f18e347]
+        - paragraph [ref=f18e348]: Fully open source. Self-host on your infrastructure, contribute features, or fork it and make it yours.
+      - generic [ref=f18e351]:
+        - paragraph [ref=f18e352]: "Self-host with Docker Compose:"
+        - generic [ref=f18e353]:
+          - generic [ref=f18e354]: $ git clone https://github.com/FujiwaraChoki/supoclip
+          - generic [ref=f18e355]: $ cd supoclip && cp .env.example .env
+          - generic [ref=f18e356]: "# add a transcription + LLM provider to .env"
+          - generic [ref=f18e357]: $ docker compose up -d --build
+        - generic [ref=f18e358]:
+          - link [ref=f18e359] [cursor=pointer]:
+            - /url: https://github.com/FujiwaraChoki/supoclip
+            - button "View on GitHub" [ref=f18e360]
+          - link [ref=f18e361] [cursor=pointer]:
+            - /url: /blog/self-host-supoclip-docker
+            - button "Self-hosting guide" [ref=f18e362]
+          - link [ref=f18e363] [cursor=pointer]:
+            - /url: /sign-up
+            - button "Try the hosted version" [ref=f18e364]
+    - generic [ref=f18e366]:
+      - generic [ref=f18e367]:
+        - paragraph [ref=f18e368]: Guides & Comparisons
+        - heading "Learn the complete clipping workflow" [level=2] [ref=f18e369]
+        - paragraph [ref=f18e370]: Practical, source-backed pages for choosing a video clipper, self-hosting SupoClip, and turning long recordings into short-form content.
+      - generic [ref=f18e371]:
+        - link [ref=f18e373] [cursor=pointer]:
+          - /url: /blog/supoclip-vs-opusclip
+          - paragraph [ref=f18e374]: Comparison
+          - 'heading "SupoClip vs OpusClip: a sourced comparison" [level=3] [ref=f18e375]'
+          - paragraph [ref=f18e376]: Pricing model, deployment, watermarks, and workflow, with every claim linked to a source.
+          - generic [ref=f18e377]: Read guide
+        - link [ref=f18e381] [cursor=pointer]:
+          - /url: /blog/self-host-supoclip-docker
+          - paragraph [ref=f18e382]: Self-Hosting Guide
+          - heading "Self-host SupoClip with Docker Compose" [level=3] [ref=f18e383]
+          - paragraph [ref=f18e384]: Requirements, environment variables, first boot, a fully local setup, and production checks.
+          - generic [ref=f18e385]: Read guide
+        - link [ref=f18e389] [cursor=pointer]:
+          - /url: /ai-video-clipper
+          - paragraph [ref=f18e390]: AI Video Clipping
+          - heading "AI video clipper for Shorts, Reels, and TikTok" [level=3] [ref=f18e391]
+          - paragraph [ref=f18e392]: How SupoClip finds moments, scores candidates, reframes faces, and adds captions.
+          - generic [ref=f18e393]: Read guide
+        - link [ref=f18e397] [cursor=pointer]:
+          - /url: /youtube-shorts-clipper
+          - paragraph [ref=f18e398]: YouTube to Shorts
+          - heading "Repurpose long YouTube videos into Shorts" [level=3] [ref=f18e399]
+          - paragraph [ref=f18e400]: A practical workflow for selecting, captioning, reframing, and reviewing clips.
+          - generic [ref=f18e401]: Read guide
+        - link [ref=f18e405] [cursor=pointer]:
+          - /url: /open-source-video-clipper
+          - paragraph [ref=f18e406]: Open Source
+          - heading "Open-source video clipper you can control" [level=3] [ref=f18e407]
+          - paragraph [ref=f18e408]: What self-hosting changes about control, model providers, and infrastructure.
+          - generic [ref=f18e409]: Read guide
+        - link [ref=f18e413] [cursor=pointer]:
+          - /url: /blog/supoclip-vs-supo-live
+          - paragraph [ref=f18e414]: Comparison
+          - 'heading "SupoClip vs supo.live: open-source control" [level=3] [ref=f18e415]'
+          - paragraph [ref=f18e416]: Compare self-hosting, AI clipping, and editing workflows before choosing a video tool.
+          - generic [ref=f18e417]: Read guide
+    - generic [ref=f18e421]:
+      - heading "Ready to clip?" [level=2] [ref=f18e422]
+      - paragraph [ref=f18e423]: Turn your next video into scroll-stopping shorts. Use the hosted app, or self-host the open-source version for free.
+      - link [ref=f18e424] [cursor=pointer]:
+        - /url: /sign-up
+        - button "Get Started" [ref=f18e425]
+    - contentinfo [ref=f18e426]:
+      - generic [ref=f18e427]:
+        - generic [ref=f18e428]:
+          - link "SupoClip SupoClip" [ref=f18e429] [cursor=pointer]:
+            - /url: /
+            - img "SupoClip" [ref=f18e430]
+            - generic [ref=f18e431]: SupoClip
+          - paragraph [ref=f18e432]: Open-source AI video clipper. Use the hosted app or run it on your own infrastructure.
+          - generic [ref=f18e433]:
+            - link "GitHub" [ref=f18e434] [cursor=pointer]:
+              - /url: https://github.com/FujiwaraChoki/supoclip
+            - link "iOS App" [ref=f18e435] [cursor=pointer]:
+              - /url: https://apps.apple.com/us/app/supoclip/id6784760040
+            - generic [ref=f18e436]: © 2026
+        - navigation "Guides links" [ref=f18e437]:
+          - paragraph [ref=f18e438]: Guides
+          - list [ref=f18e439]:
+            - listitem [ref=f18e440]:
+              - link "AI video clipper" [ref=f18e441] [cursor=pointer]:
+                - /url: /ai-video-clipper
+            - listitem [ref=f18e442]:
+              - link "YouTube Shorts clipper" [ref=f18e443] [cursor=pointer]:
+                - /url: /youtube-shorts-clipper
+            - listitem [ref=f18e444]:
+              - link "Open-source clipper" [ref=f18e445] [cursor=pointer]:
+                - /url: /open-source-video-clipper
+            - listitem [ref=f18e446]:
+              - link "Self-hosting guide" [ref=f18e447] [cursor=pointer]:
+                - /url: /blog/self-host-supoclip-docker
+        - navigation "Compare links" [ref=f18e448]:
+          - paragraph [ref=f18e449]: Compare
+          - list [ref=f18e450]:
+            - listitem [ref=f18e451]:
+              - link "SupoClip vs OpusClip" [ref=f18e452] [cursor=pointer]:
+                - /url: /blog/supoclip-vs-opusclip
+            - listitem [ref=f18e453]:
+              - link "Self-hosted OpusClip alternative" [ref=f18e454] [cursor=pointer]:
+                - /url: /blog/best-free-opusclip-alternative
+            - listitem [ref=f18e455]:
+              - link "SupoClip vs supo.live" [ref=f18e456] [cursor=pointer]:
+                - /url: /blog/supoclip-vs-supo-live
+            - listitem [ref=f18e457]:
+              - link "All articles" [ref=f18e458] [cursor=pointer]:
+                - /url: /blog
+        - navigation "Product links" [ref=f18e459]:
+          - paragraph [ref=f18e460]: Product
+          - list [ref=f18e461]:
+            - listitem [ref=f18e462]:
+              - link "Demo" [ref=f18e463] [cursor=pointer]:
+                - /url: /demo
+            - listitem [ref=f18e464]:
+              - link "Start clipping" [ref=f18e465] [cursor=pointer]:
+                - /url: /sign-up
+            - listitem [ref=f18e466]:
+              - link "Pricing" [ref=f18e467] [cursor=pointer]:
+                - /url: /#pricing
+            - listitem [ref=f18e468]:
+              - link "Affiliate" [ref=f18e469] [cursor=pointer]:
+                - /url: /affiliate
+            - listitem [ref=f18e470]:
+              - link "Service status" [ref=f18e471] [cursor=pointer]:
+                - /url: /status
+            - listitem [ref=f18e472]:
+              - link "Privacy" [ref=f18e473] [cursor=pointer]:
+                - /url: /privacy
+            - listitem [ref=f18e474]:
+              - link "Terms" [ref=f18e475] [cursor=pointer]:
+                - /url: /terms
+  - region "Notifications alt+T"
+  - alert [ref=f18e476]

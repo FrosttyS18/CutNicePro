@@ -1,0 +1,102 @@
+- generic [active] [ref=f17e1]:
+  - generic [ref=f17e2418]:
+    - complementary [ref=f17e2419]:
+      - link "SupoClip" [ref=f17e2420] [cursor=pointer]:
+        - /url: /
+      - link "New generation N" [ref=f17e2421] [cursor=pointer]:
+        - /url: /
+        - generic [ref=f17e2423]: New generation
+        - generic [ref=f17e2424]: "N"
+      - navigation "Main navigation" [ref=f17e2425]:
+        - link "Create" [ref=f17e2426] [cursor=pointer]:
+          - /url: /
+        - link "Library" [ref=f17e2431] [cursor=pointer]:
+          - /url: /list
+        - link "Social" [ref=f17e2435] [cursor=pointer]:
+          - /url: /settings/social
+        - link "Analytics" [ref=f17e2443] [cursor=pointer]:
+          - /url: /analytics
+        - link "Agents & API" [ref=f17e2447] [cursor=pointer]:
+          - /url: /settings/api-keys
+        - link "Settings" [ref=f17e2452] [cursor=pointer]:
+          - /url: /settings
+      - button "Search generations" [ref=f17e2457]:
+        - generic [ref=f17e2461]: Search
+        - generic: ⌘K
+      - generic [ref=f17e2462]:
+        - button "What's new, 1 unread announcement" [ref=f17e2463]:
+          - generic [ref=f17e2467]: What's new
+          - generic [aria-hidden] [ref=f17e2468]: "1"
+        - generic [ref=f17e2469]:
+          - generic [ref=f17e2470]: LT
+          - generic [ref=f17e2471]:
+            - paragraph [ref=f17e2472]: Lab Tester
+            - paragraph [ref=f17e2473]: lab@supoclip.local
+          - button "Sign out" [ref=f17e2474]
+    - main [ref=f17e2479]:
+      - generic [ref=f17e2480]:
+        - generic [ref=f17e2481]:
+          - heading "Library" [level=1] [ref=f17e2482]
+          - paragraph [ref=f17e2483]: 2 generations · hover to preview, select to batch-manage
+        - generic [ref=f17e2484]:
+          - generic [ref=f17e2485]:
+            - textbox "Search generations" [ref=f17e2486]:
+              - /placeholder: Search by title
+            - generic: /
+          - link "New" [ref=f17e2487] [cursor=pointer]:
+            - /url: /
+      - generic [ref=f17e2489]:
+        - tablist "Filter generations" [ref=f17e2490]:
+          - tab "All 2" [selected] [ref=f17e2491]:
+            - text: All
+            - generic [ref=f17e2492]: "2"
+          - tab "Ready 2" [ref=f17e2493]:
+            - text: Ready
+            - generic [ref=f17e2494]: "2"
+          - tab "In progress 0" [ref=f17e2495]:
+            - text: In progress
+            - generic [ref=f17e2496]: "0"
+          - tab "Needs attention 0" [ref=f17e2497]:
+            - text: Needs attention
+            - generic [ref=f17e2498]: "0"
+        - tablist "Sort generations" [ref=f17e2499]:
+          - tab "Newest" [selected] [ref=f17e2500]
+          - tab "By video" [ref=f17e2501]
+        - generic [ref=f17e2502]:
+          - checkbox "Select all generations" [ref=f17e2503]
+          - generic [ref=f17e2504]: Select all
+      - generic [ref=f17e2506]:
+        - generic [ref=f17e2507]:
+          - link "Virality score 78 out of 100 Upload 3 clips test-video.mp4 há 1 hora Completed" [ref=f17e2508] [cursor=pointer]:
+            - /url: /tasks/826d0443-7624-41bf-b006-73c4f1e30be5
+            - generic [ref=f17e2509]:
+              - img "Virality score 78 out of 100" [ref=f17e2512]:
+                - generic [ref=f17e2516]: "78"
+              - generic [ref=f17e2517]:
+                - generic [ref=f17e2518]: Upload
+                - generic [ref=f17e2522]: 3 clips
+            - generic [ref=f17e2523]:
+              - heading "test-video.mp4" [level=3] [ref=f17e2524]
+              - generic [ref=f17e2525]:
+                - generic [ref=f17e2526]: há 1 hora
+                - generic [ref=f17e2527]: Completed
+          - checkbox "Select test-video.mp4" [ref=f17e2529]
+        - generic [ref=f17e2533]:
+          - link "Virality score 67 out of 100 Upload 1 clip proof-25s.mp4 há 1 hora Completed" [ref=f17e2534] [cursor=pointer]:
+            - /url: /tasks/fa497fce-6d57-4dd5-8aa6-2a1652be38bd
+            - generic [ref=f17e2535]:
+              - img "Virality score 67 out of 100" [ref=f17e2538]:
+                - generic [ref=f17e2542]: "67"
+              - generic [ref=f17e2543]:
+                - generic [ref=f17e2544]: Upload
+                - generic [ref=f17e2548]: 1 clip
+            - generic [ref=f17e2549]:
+              - heading "proof-25s.mp4" [level=3] [ref=f17e2550]
+              - generic [ref=f17e2551]:
+                - generic [ref=f17e2552]: há 1 hora
+                - generic [ref=f17e2553]: Completed
+          - checkbox "Select proof-25s.mp4" [ref=f17e2555]
+  - button [ref=f17e2408]
+  - region "Notifications alt+T"
+  - button "Open Next.js Dev Tools" [ref=f17e2414] [cursor=pointer]
+  - alert [ref=f17e10]: SupoClip – Open-Source AI Video Clipper

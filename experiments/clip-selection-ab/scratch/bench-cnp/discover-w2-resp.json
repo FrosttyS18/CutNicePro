@@ -1,0 +1,17 @@
+{
+ "model": "gemma4-qat",
+ "created_at": "2026-10-20T12:11:14.4483362Z",
+ "message": {
+  "role": "assistant",
+  "content": "{\"candidates\": [\n  {\n    \"firstId\": 128,\n    \"lastId\": 150,\n    \"score\": 85\n  },\n  {\n    \"firstId\": 164,\n    \"lastId\": 200,\n    \"score\": 92\n  }\n]}"
+ },
+ "done": true,
+ "done_reason": "stop",
+ "total_duration": 2942559200,
+ "load_duration": 3502500,
+ "prompt_eval_count": 3443,
+ "prompt_eval_cached_count": 0,
+ "prompt_eval_duration": 1248941000,
+ "eval_count": 79,
+ "eval_duration": 1500886000
+}
