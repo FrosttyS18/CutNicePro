@@ -1,0 +1,17 @@
+{
+  "casos_estruturais": [
+    "vazio",
+    "encostados (fim==início do próximo)",
+    "encostados-com-epsilon (1e-9)",
+    "duplicatas exatas",
+    "empates de nota",
+    "3 permutações do mesmo conjunto",
+    "count > n"
+  ],
+  "cenarios": 249,
+  "falhas": [],
+  "gerador": "LCG determinístico (seed fixa 0x9E3779B97F4A7C15): n∈[1,8], count∈[1,4], start∈[0,60) com parte fracionária (centésimos), duração∈[1,~26) com parte fracionária, nota∈[0,100]",
+  "kind": "validação da DP contra enumeração exaustiva independente (bitmask) — determinístico, sem LLM",
+  "objetivo_comparado": "max (soma, cardinalidade) sob não-sobreposição e até count (contrato atual)",
+  "veredito": "DP == enumeração em TODOS os cenários (por soma e cardinalidade)"
+}

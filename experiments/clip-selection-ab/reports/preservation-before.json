@@ -1,0 +1,38 @@
+{
+ "clips\\453eefc7-2f8e-4681-aa61-980ab6cf39d9.json": [
+  "ce70a2336812196b0278e6bcebc9ddb210803628ab0b3df32fa508f1d7c0cd5e",
+  5656
+ ],
+ "collections.json": [
+  "bce1b8f9d59a9a00fcb7f3f44baa452d31e9913324d18230356c5da7689995b2",
+  206
+ ],
+ "media\\index.json": [
+  "f0f4c5225e8c21bbf54045bd9a01d1d49085b25d795eeaec043be352fc67a393",
+  613
+ ],
+ "previews\\57fbe0fabed97558cd779579475e9e49e07c492d8d2d2a20603ccb4ccd6730ca.json": [
+  "291de34c9abef22dc2f8430d4b24a8b095a8e6d25a97aa0a622a3aab981481fe",
+  1052509
+ ],
+ "projects.json": [
+  "31c2637740e8bb3f231996683e03e9a2547a3ed569b97619b105e848e6775977",
+  197
+ ],
+ "render-temp\\5fdc0241-9e32-498d-b10a-13dcc1cdb396\\selection-0-result.json": [
+  "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  0
+ ],
+ "render-temp\\5fdc0241-9e32-498d-b10a-13dcc1cdb396\\selection-0.schema.json": [
+  "617f41c95588c6de94790a6d64ae40ebc4da343999051056183f74eb933a8e4e",
+  2220
+ ],
+ "scene-cache\\064a2185601cb5712909866259b09679e2cb8b3b913e510d273bf4390d7c166b.json": [
+  "87184ea84c00dc7e9da20f053891ad22b6a9de9998767cb619afc0ff9e7aa5b2",
+  53
+ ],
+ "transcripts\\453eefc7-2f8e-4681-aa61-980ab6cf39d9.json": [
+  "8288384f38ba12727076f962961fce73569a4e1d550fed50ec8c10ef716a22e5",
+  112104
+ ]
+}

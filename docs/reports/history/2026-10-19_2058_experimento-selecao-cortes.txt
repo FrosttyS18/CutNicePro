@@ -1,0 +1,288 @@
+╔════════════════════════════════════════════╗
+║       CUTNICEPRO — ZCODE REPORT            ║
+╚════════════════════════════════════════════╝
+
+TASK
+  Name: Experimento comparativo de seleção de cortes (A atual × B conjunta)
+  Status: PASS (FUNCTIONAL: experimento executável entregue e executado;
+    REGRESSION: PASS no escopo; recomendação fundamentada emitida;
+    integração NÃO executada — aguardando decisão do mantenedor)
+  Scope: comparar a finalização atual do seletor (gulosa por ordem de
+    score, selection.rs:141-153) com avaliação conjunta dos candidatos
+    antes da limitação final (conceito SupoClip), em diretório isolado,
+    sobre cópias, sem tocar o app/configs/memórias/hooks/untracked
+    preexistentes, sem commits, sem envio externo de mídia/transcrições.
+  Objective: implementação experimental executável + resultados comparáveis
+    + recomendação (manter/modificar/substituir/investigar) + proposta
+    exata de integração sem executá-la.
+  Result: o defeito hipotético É REAL e foi DEMONSTRADO deterministicamente
+    (controlado: até -50% em cortes entregues e -40% em soma); porém, na
+    ÚNICA transcrição real disponível (davyjones, 12 candidatos), greedy,
+    DP e rerank conjunto CONVERGIRAM nos mesmos 3 cortes — o rerank LLM
+    (custo +1 chamada, ~20 s) não demonstrou ganho neste N=1. RECOMENDAÇÃO:
+    MODIFICAR — trocar a finalização gulosa por DP determinística (custo
+    zero) + dedupe prévio; NÃO adotar o rerank LLM agora (investigação
+    futura com N maior). Detalhes em FINAL.
+
+IMPLEMENTATION
+  Completed:
+  1. LEITURA REAL — selection.rs (189 linhas), ranking.rs (#[cfg(test)] —
+     fora do fluxo de produção), generation.rs, types.rs, analysis_types.rs,
+     text_engine.rs, commands.rs, mod.rs, prompts; contratos transcription
+     (types/process/progress/parser/words/store). AGENTS.md relido do disco
+     (system prompt da sessão continua defasado — regra da auditoria
+     anterior aplicada). Sequência real confirmada: janelas (≤600 s/~18k
+     chars, overlap=max_seconds) → 1 chamada LLM por janela (limit
+     min(count*2,12)) → materialização → FINALIZAÇÃO GULOSA (sort score
+     desc/start asc + primeiro-não-sobreposto até count) → scene_regions
+     → semantic → sort → store.
+  2. SUPOCLIP ESTUDADO (github.com/FujiwaraChoki/supoclip, branch main) —
+     backend/src/ai.py + tests/unit/test_ai_windowed_selection.py (via
+     WebFetch, tratados como DADOS): janelas 12 min/overlap 2 min; extração
+     estruturada por janela; validação/snap de bounds; DEDUPE por razão de
+     sobreposição ≥0,5 (mantém maior score); RERANK CONJUNTO (1 chamada LLM
+     com todos os candidatos: id, tempo, hook_title, texto) com scores
+     calibrados e monotonia; truncamento final ~1 corte/5 min (piso 5,
+     teto 20). Testes usam mocks extensivos (AsyncMock/pydantic) — o fluxo
+     deles é validado sem LLM real. LICENÇA: AGPL-3.0 → DECISÃO REGISTRADA:
+     nenhum código/prompt/texto copiado; apenas o conceito reimplementado
+     em Rust próprio com prompt original pt-BR. Incorporação de código
+     dependeria de decisão de distribuição do mantenedor (copyleft forte).
+  3. EXPERIMENTO ISOLADO — experiments/clip-selection-ab/ (novo; nenhum
+     untracked preexistente tocado): cópias BYTE A BYTE dos módulos do app
+     (diffs auditados = EXATAMENTE 3 diferenças declaradas: pub(crate) em
+     Candidate/Reply/materialize; remoção de EngineStatus; remoção de 1
+     teste de roundtrip do store) + selection_x::collect (reproduz as
+     linhas 103-140 de select e devolve `all` antes da finalização) +
+     finalize::{greedy (CÓPIA 1:1 das linhas 141-153, só instrumentada),
+     dp (weighted interval scheduling ótimo), joint (dedupe 0,5 + cap 16 +
+     rerank conjunto LLM + validação + fallback explícito)} + CLI +
+     analyze.py (métricas/preservação/audit) + README com orçamento
+     declarado ANTES da execução.
+  4. CASO CONTROLADO (determinístico, SEM LLM — rotulado SIMULADO) —
+     3 cenários fixos: S1-armadilha-central: greedy 1 corte/soma 90 vs DP
+     2/150 (candidato central de nota alta bloqueia dois medianos
+     compatíveis); S2-duplicatas-de-janela: greedy 2/160 vs DP 3/220;
+     S3-controle-sem-conflito: IDÊNTICOS (234/234) — a perda é específica
+     de conflito, não ganho universal. M8: gap 60 pontos/1 corte nos
+     cenários com conflito.
+  5. EXECUÇÃO REAL (rotulada REAL; logs do llama em scratch/) — transcrição
+     davyjones (cópia byte a byte; 322 falas; 599,098 s por ffprobe na
+     mídia gerenciada): UMA coleta = 2 janelas [0,259]/[210,322], 6+6=12
+     candidatos, 86,0 s (GPU Vulkan, sem fallback de engine). Finalizações
+     sobre o MESMO conjunto (constantes idênticas por construção):
+     greedy (A) = 3 cortes 0,0–88,7/400,7–455,8/483,3–505,7 (soma 250);
+     dp = IDÊNTICO a A; joint (B) = MESMOS intervalos + razões editoriais
+     próprias + notas recalibradas (85/85/80), 19,9 s, SEM fallback,
+     2 dedupes (duplicatas de janela 63,5% de sobreposição), 10
+     apresentados ao rerank, 7 não escolhidos (sem motivo individual —
+     limitação registrada). Convergência A=B=dp nesta transcrição.
+  6. MÉTRICAS INDEPENDENTES (analyze.py; não usam a nota como prova):
+     M1 3/3 em todas; M3 repetição textual entre escolhidos: Jaccard
+     bigrama máx 0,017 (baixíssima); M4 fronteiras/durações todas válidas
+     (88,7/55,1/22,4 s ∈ 15–90; fim ≤ 599,098; start em segmento); M5
+     greedy 9 descartes (8 por sobreposição-ordem, 1 não avaliado);
+     M6 gap mínimo entre inícios 82,6 s; regiões 60 s cobertas [0,6,8];
+     M7 tempos 0/0/19,9 s (+ coleta 86 s compartilhada). Comparação com
+     a PRODUÇÃO (clipes que o app gerou para o mesmo vídeo): 2 de 3
+     inícios coincidem (400,7/483,3 — inclusive id idêntico); diferenças
+     do 1º (0,0 vs 16,4) e do fim do 3º (505,7 vs 528,5) atribuídas ao
+     scene_regions::refine e opções desconhecidas da geração original —
+     QUALIFICADAS, sem afirmação de identidade.
+  7. PRESERVAÇÃO — preservation-before/after (JSONs de estado): idênticos;
+     preservation-after-full: 21 arquivos hashados (total); audit-mtime:
+     ZERO arquivos do app-data criados/modificados após o início
+     (20:30). Revisor independente confirmou mtimes pré-existentes.
+  8. REVISÃO INDEPENDENTE (subagente somente leitura; recebeu pedido,
+     código, diffs e provas — não o resumo): 0 BLOCKING, 2 SHOULD-FIX
+     (ambos ENDEREÇADOS: seed documentado como fato; preservação
+     estendida a escopo total + audit), 5 NIT (4 corrigidos: M8
+     implementada, flags do CLI, registro de pick inválido, nota de
+     conjunto vazio; README/HEAD atualizado), 4 OBSERVAÇÕES documentadas.
+     Não-regressão pós-correções: greedy/dp re-executados — idênticos.
+  Not completed: análise semântica por clipe (semantic::run — pós-seleção,
+    idêntica para A e B no app; não diferenciadora; orçamento); rerank em
+    mais transcrições (só existe 1 real com transcrição no app-data);
+    investigação do binário llama_completion quanto à flag --seed.
+  Changes: NENHUMA no aplicativo/configs/hooks/memórias (instrução da
+    tarefa respeitada — memórias do agente também não foram alteradas).
+  Architecture impact: nenhum no produto (experimento isolado).
+
+FILES
+  Created: experiments/clip-selection-ab/** (Cargo.toml, src/{main.rs,
+    transcription/{mod,types,process,progress,parser,words}.rs, clips/
+    {mod,types,analysis_types,text_engine,selection,selection_x,finalize}.rs,
+    clips/{selection,joint}-prompt.txt}, README.md, tools/analyze.py,
+    data/{transcript-davyjones.json,media-duration.txt,
+    production-clips.json}, scratch/ (3 conjuntos de artefatos LLM),
+    reports/{controlled,candidates,real-greedy,real-dp,real-joint,metrics,
+    preservation-before,preservation-after,preservation-after-full,
+    preservation-check,audit-mtime}.json, reports/ab-summary.md, target/)
+  Modified: docs/reports/LATEST.txt (este relatório, conforme protocolo)
+  Deleted: NONE
+  Unexpected changes: NONE. O commit 8c5b504 (docs: relatório da auditoria
+    anterior) foi criado PELO MANTENEDOR às 19:53 — não por esta tarefa.
+
+VALIDATION
+  Typecheck: SKIP (Rust do experimento compila — cargo build --release OK)
+  Lint: SKIP (warnings dead_code esperados nas cópias fiéis — documentado)
+  Unit tests: PASS — 19/19 (14 herdados das cópias + 5 novos; inclui teste
+    que codifica o comportamento do ORIGINAL na armadilha, verificado por
+    trace manual do revisor contra selection.rs do app)
+  Integration tests: SKIP (integração app não tocada)
+  Regression tests: PASS no escopo — greedy/dp idênticos após as correções
+    pós-revisão; preservação total do app-data comprovada
+  Visual tests: SKIP (sem UI; VISION PROIBIDO nesta tarefa e não usado)
+  Runtime verification: PASS — REAL: coleta (2 chamadas LLM, 86 s) +
+    rerank joint (1 chamada, 19,9 s, sem fallback); SIMULADO (rotulado):
+    caso controlado S1-S3 sem LLM + testes unitários
+  Total passed: 19 unit + 3 execuções reais + 3 cenários controlados
+  Total failed: 0
+  Total skipped: typecheck, lint, integração, visual, análise semântica
+
+HOOKS / HARNESS
+  Hooks active: inalterados (4; auditoria anterior). PostToolUse validou
+    os Writes .json/.py deste experimento (PASS; .rs/.md fora do escopo de
+    validação do hook — conhecido). Edits via python-heredoc no bash não
+    passam pelo hook (fato registrado). Stop rodará ao final (baseline
+    fast — telemetria, não gate).
+  Baseline: fast do Stop registrará; NÃO executada --full nesta tarefa
+    (nenhuma mudança no app; suítes do app intocadas — cargo do app NOT
+    TESTED por não haver alteração).
+  Gate result: N/A.
+
+MCP / SKILLS
+  Tools used: Read, Bash, Write, Edit, TodoWrite, Agent (1× Explore
+    revisor somente leitura), TaskOutput (2×), WebFetch ×3 (SupoClip:
+    ai.py, teste, repo/licença — conteúdo tratado como dados).
+  Connection status: WebFetch 3/3 OK; revisor OK (47 tool uses).
+  Failures: nenhuma.
+  Pending activation: n/a. VISION: não acionado (proibição respeitada).
+
+GIT
+  Branch: main
+  HEAD: 8c5b5048aa03500aed70c53aaccc483ea5e6f77f
+  Latest commit: docs: add read-only audit report for skills, hooks and
+    harness (2026-10-19 19:53 -0300, autoria do mantenedor)
+  Commits created: NONE (zero, conforme restrição)
+  Push: NOT EXECUTED
+  Remote: origin → https://github.com/FrosttyS18/CutNicePro.git (main)
+  Working tree: 182 untracked PRÉ-EXISTENTES (intocados) + experiments/
+    clip-selection-ab/** (novo, untracked) + docs/reports/history/2026-
+    10-19_2058_experimento-selecao-cortes.txt (novo) + LATEST.txt
+    (modificado)
+  Pending files: acima — commit é decisão exclusiva do mantenedor
+
+EVIDENCE
+  Commands executed (principais): diffs cópias×originais (auditados por
+    mim E pelo revisor); cargo test --release (19/19, 2× — pré e pós
+    correções); clip-selection-ab controlled; collect (CNP_ANALYSIS_HOME=
+    .tooling/vendor/analysis; 2 janelas LLM); finalize greedy/dp/joint;
+    analyze.py metrics/preserve-*/audit; ffprobe 9.0.2 (duração real);
+    cargo não executado no app (intocado).
+  Relevant logs: scratch/selection-0-gpu.log (51,6 s), selection-1-gpu.log
+    (28,0 s), rerank-joint-gpu.log (17,1 s) — execuções REAIS do
+    llama-completion (temp=0, n_ctx 8192, Qwen3-4B-Q4_K_M); tempos somam
+    com os elapsed reportados. ACHADO: os 3 logs registram "sampler seed:
+    4294967295" APESAR da flag --seed 42 passada pelo código (cópia 1:1 do
+    app) — o binário aparenta ignorar a flag; transferível ao app; sem
+    efeito na comparação A/B (mesmo caminho; determinismo por temp=0).
+  Screenshots: NONE.
+  Test artifacts: reports/*.json (12 arquivos); reports/ab-summary.md
+    (resumo para avaliação do mantenedor com os textos dos trechos).
+  Reproduction details: README do experimento (comandos completos);
+    constantes: 3 cortes/15–90 s/9:16/transcrição davyjones/599,098 s.
+
+ISSUES
+  Bugs found (transferíveis ao APP, não corrigidos — fora do escopo):
+  B1 Finalização gulosa perde cortes em conflito (DEMONSTRADO S1/S2: até
+     -50% quantidade/-40% soma; S3 mostra que não é universal).
+  B2 Duplicatas de janela chegam à finalização sem dedupe (2 removidas
+     pelo B; no app competem por score).
+  B3 Flag --seed 42 aparentemente ignorada pelo llama_completion (logs;
+     investigar binário/versão — o app passa a flag desde a origem).
+  Limitações do experimento (honestas):
+  L1 N=1 transcrição real (só há 1 no app-data) — a convergência A=B=dp
+     tem poder estatístico baixo; o rerank LLM não foi contra-provado,
+     apenas não demonstrou ganho neste caso.
+  L2 Equivalência greedy ≡ original garantida por extração 1:1 + diff +
+     teste com expectativas derivadas do original + trace manual do
+     revisor — não por execução lado a lado do select() integral.
+  L3 7 candidatos não escolhidos pelo rerank ficam sem motivo individual
+     (as razões explicam escolhas, não descartes).
+  L4 Evidência do orçamento "declarado antes" baseia-se em mtimes
+     (experimento não commitado) — ordenação corroborada pelo revisor.
+  L5 Comparação com a produção usa opções originais desconhecidas
+     (qualificada; coincidência de 2 inícios + id idêntico é indicativa,
+     não probatória).
+  Risks: nada aplicado ao produto; integração futura muda clipes finais
+     exatamente nos casos de conflito (intenção da correção).
+
+FINAL
+  Delivery status: EXPERIMENTO ENTREGUE (executável + resultados brutos +
+    tempos + limitações + resumo para avaliação humana em
+    experiments/clip-selection-ab/reports/ab-summary.md). Integração
+    BLOQUEADA aguardando decisão do mantenedor (condição de parada).
+  Requirements met: todos os itens do ofício (referências estudadas sem
+    aceitar regras delas; sequência real conferida; SupoClip revisado com
+    funções/dependências/limites/licença; caso controlado ANTES das
+    transcrições reais; constantes mantidas; simulado × real separados;
+    métricas independentes; preservação comprovada; revisor com acesso a
+    código/diff/provas; conjunto finito respeitado — 3 chamadas LLM no
+    total, zero repetições).
+  O QUE MELHOROU / PIOROU / PERMANECEU INCONCLUSIVO:
+    MELHOROU (demonstrado): a viabilidade de uma finalização melhor sem
+      custo de LLM (DP) e o dedupe de duplicatas de janela.
+    PIOROU: nada — nenhuma variante foi pior que A nas métricas (joint
+      custa +19,9 s e +1 chamada sem ganho observado neste N=1).
+    INCONCLUSIVO: ganho EDITORIAL do rerank conjunto (convergiu com A
+      aqui; razões/notas calibradas são o único diferencial observado).
+  RECOMENDAÇÃO: MODIFICAR (não manter, não substituir, não adotar o
+    caminho LLM agora):
+    R1 Substituir a finalização gulosa (selection.rs:141-153) por DP
+       determinística (weighted interval scheduling, mesma ordenação de
+       entrada, maximiza soma sob não-sobreposição e count) — custo zero,
+       resolve B1 com o ganho já demonstrado no controlado.
+    R2 Adicionar dedupe prévio por sobreposição ≥50% (mantém maior nota,
+       registra motivo) antes da finalização — resolve B2, alinhado ao
+       conceito estudado.
+    R3 NÃO incorporar o rerank LLM agora: custo +1 chamada por geração
+       sem ganho demonstrado (N=1); registrar no backlog como investigação
+       com mais transcrições SE razões editoriais explícitas/calibração
+       forem desejadas (benefício colateral observado do B).
+    R4 Investigar B3 (seed) separadamente — não bloqueia R1/R2.
+  PROPOSTA EXATA DE INTEGRAÇÃO (NÃO EXECUTADA):
+    1. Em app/src-tauri/src/clips/selection.rs: extrair a finalização
+       (141-153) para fn privada `finalize(all, count) -> Vec<Clip>` com
+       DP (portar experiments/.../finalize.rs::dp, ~60 linhas, sem deps
+       novas); manter o sort atual antes da chamada.
+    2. Adicionar `dedupe_overlapping(all, 0.5)` antes de finalize (portar
+       fn já testada; registrar descartes em reasons/log do job).
+    3. Testes NO APP: portar S1/S2/S3 como testes unitários de
+       selection (esperando o novo comportamento) + manter
+       ranks_actual_boundaries_and_suppresses_overlapping_clips (deve
+       continuar passando — fixture sem armadilha) + teste de
+       não-regressão (cenário sem conflito == saída anterior).
+    4. Critério de aceite: cargo test do app 100% + uma geração real no
+       Tauri com a transcrição davyjones comparando cortes antes/depois
+       (esperado: iguais neste caso — greedy==dp aqui — e S1/S2 verdes
+       nos unitários).
+    5. Riscos: mudança de comportamento apenas em cenários de conflito
+       (desejado); ids de clipes mudam quando intervalos mudarem (regra
+       de reuse por id já trata); nenhuma mudança de contrato IPC.
+  AÇÕES QUE DEPENDEM DE AUTORIZAÇÃO: a integração R1/R2 inteira; commit
+    de qualquer artefato; investigação B3; rerank em mais transcrições.
+  RECURSOS PRESERVADOS: app intocado (0 modified rastreados); app-data
+    PRESERVADO (3 evidências); untracked preexistentes intocados;
+    memórias do agente não alteradas (instrução da tarefa).
+  User action required: decisão sobre R1-R4 (e leitura de
+    experiments/clip-selection-ab/reports/ab-summary.md para avaliação
+    editorial dos cortes A/B).
+  Restart required: NO.
+  Ready for next task: SIM — aguardando decisão sobre integração.
+
+REPORT
+  Latest file: docs/reports/LATEST.txt
+  Historical file: docs/reports/history/2026-10-19_2058_experimento-selecao-cortes.txt
+
+END OF REPORT

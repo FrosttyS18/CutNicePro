@@ -1,0 +1,90 @@
+{
+  "contraprova_R2_dedupe_antes_da_dp": {
+    "candidatos": [
+      {
+        "intervalo_s": [
+          0.0,
+          60.0
+        ],
+        "nome": "longo",
+        "nota": 90
+      },
+      {
+        "intervalo_s": [
+          0.0,
+          30.0
+        ],
+        "nome": "esquerda",
+        "nota": 75
+      },
+      {
+        "intervalo_s": [
+          30.0,
+          60.0
+        ],
+        "nome": "direita",
+        "nota": 75
+      }
+    ],
+    "composicao_dedupe50_dp": {
+      "cortes": 1,
+      "escolhido": "longo",
+      "soma": 90
+    },
+    "conclusao": "CONFIRMADA: a deduplicação por sobreposição a 50% aplicada ANTES da DP destrói a solução ótima neste caso (2 cortes/soma 150 → 1 corte/soma 90)",
+    "count": 2,
+    "dp_sem_poda": {
+      "cortes": 2,
+      "soma": 150
+    },
+    "formula_dedupe": "inter = min(fim_a, fim_b) - max(ini_a, ini_b); razao = inter / min(dur_a, dur_b); remove B se razao >= 0,5 contra já-mantido de nota maior (ordem: nota desc, início asc)"
+  },
+  "kind": "contraprovas determinísticas (sem LLM)",
+  "objetivos_distintos_max_soma_vs_max_quantidade": {
+    "candidatos": [
+      {
+        "intervalo_s": [
+          0.0,
+          60.0
+        ],
+        "nome": "longo",
+        "nota": 100
+      },
+      {
+        "intervalo_s": [
+          0.0,
+          30.0
+        ],
+        "nome": "esquerda",
+        "nota": 49
+      },
+      {
+        "intervalo_s": [
+          30.0,
+          60.0
+        ],
+        "nome": "direita",
+        "nota": 49
+      }
+    ],
+    "conclusao": "objetivos diferentes, não defeito: o contrato vigente na UI/interno é TETO com qualidade por nota (max soma com até count); priorizar quantidade é decisão de produto não tomada aqui",
+    "count": 2,
+    "dp_max_soma_contrato_atual": {
+      "cortes": 1,
+      "soma": 100
+    },
+    "enumeracao_max_quantidade_depois_soma": {
+      "cortes": 2,
+      "escolhidos": [
+        1,
+        2
+      ],
+      "soma": 98
+    },
+    "enumeracao_max_soma": {
+      "cortes": 1,
+      "soma": 100
+    }
+  },
+  "referencia_independente": "external/contraprovas_selecao.py (+.json), enumeração exaustiva em Python fornecida pelo mantenedor; reproduzida aqui no código Rust do experimento"
+}

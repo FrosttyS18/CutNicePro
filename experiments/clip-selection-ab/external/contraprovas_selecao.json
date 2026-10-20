@@ -1,0 +1,96 @@
+{
+  "scope": "Independent synthetic enumeration; not the experimental Rust implementation",
+  "llm_calls": 0,
+  "dedupe_can_destroy_optimal_solution": {
+    "candidates": [
+      {
+        "name": "longo",
+        "start": 0,
+        "end": 60,
+        "score": 90
+      },
+      {
+        "name": "esquerda",
+        "start": 0,
+        "end": 30,
+        "score": 75
+      },
+      {
+        "name": "direita",
+        "start": 30,
+        "end": 60,
+        "score": 75
+      }
+    ],
+    "without_pruning": {
+      "ids": [
+        "esquerda",
+        "direita"
+      ],
+      "count": 2,
+      "sum_of_supplied_scores": 150
+    },
+    "after_highest_score_overlap_suppression_at_50_percent": {
+      "iou": {
+        "ids": [
+          "longo"
+        ],
+        "count": 1,
+        "sum_of_supplied_scores": 90
+      },
+      "shorter": {
+        "ids": [
+          "longo"
+        ],
+        "count": 1,
+        "sum_of_supplied_scores": 90
+      },
+      "longer": {
+        "ids": [
+          "longo"
+        ],
+        "count": 1,
+        "sum_of_supplied_scores": 90
+      }
+    }
+  },
+  "max_sum_is_not_max_count": {
+    "candidates": [
+      {
+        "name": "longo",
+        "start": 0,
+        "end": 60,
+        "score": 100
+      },
+      {
+        "name": "esquerda",
+        "start": 0,
+        "end": 30,
+        "score": 49
+      },
+      {
+        "name": "direita",
+        "start": 30,
+        "end": 60,
+        "score": 49
+      }
+    ],
+    "max_sum_at_most_two": {
+      "ids": [
+        "longo"
+      ],
+      "count": 1,
+      "sum_of_supplied_scores": 100
+    },
+    "max_count_then_sum": {
+      "ids": [
+        "esquerda",
+        "direita"
+      ],
+      "count": 2,
+      "sum_of_supplied_scores": 98
+    },
+    "interpretation": "These are different product objectives, not an implementation bug by themselves"
+  },
+  "editorial_quality": "NOT MEASURED; supplied scores are synthetic weights, not human ratings"
+}

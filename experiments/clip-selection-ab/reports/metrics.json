@@ -1,0 +1,442 @@
+{
+  "coleta": {
+    "janelas": [
+      [
+        0,
+        259
+      ],
+      [
+        210,
+        322
+      ]
+    ],
+    "candidatos_por_janela": [
+      6,
+      6
+    ],
+    "total_candidatos": 12,
+    "elapsed_s": 85.9641616
+  },
+  "greedy": {
+    "M1_cortes": 3,
+    "M2_scores": {
+      "soma": 250,
+      "mediana": 85
+    },
+    "M3_sobreposição_textual": [
+      {
+        "par": [
+          0,
+          1
+        ],
+        "jaccard_unigram": 0.1593,
+        "jaccard_bigram": 0.0168
+      },
+      {
+        "par": [
+          0,
+          2
+        ],
+        "jaccard_unigram": 0.1165,
+        "jaccard_bigram": 0.0056
+      },
+      {
+        "par": [
+          1,
+          2
+        ],
+        "jaccard_unigram": 0.1318,
+        "jaccard_bigram": 0.014
+      }
+    ],
+    "M3_max_jaccard_bigram": 0.0168,
+    "M4_fronteiras": [
+      {
+        "start": 0.0,
+        "end": 88.66,
+        "duracao": 88.66,
+        "duracao_valida": true,
+        "dentro_da_midia": true,
+        "start_em_segmento": true
+      },
+      {
+        "start": 400.7,
+        "end": 455.76,
+        "duracao": 55.06,
+        "duracao_valida": true,
+        "dentro_da_midia": true,
+        "start_em_segmento": true
+      },
+      {
+        "start": 483.26,
+        "end": 505.66,
+        "duracao": 22.4,
+        "duracao_valida": true,
+        "dentro_da_midia": true,
+        "start_em_segmento": true
+      }
+    ],
+    "M4_todas_validas": true,
+    "M6_diversidade": {
+      "gap_minimo_entre_starts_s": 82.56,
+      "regioes_60s_cobertas": [
+        0,
+        6,
+        8
+      ]
+    },
+    "picks": [
+      {
+        "start": 0.0,
+        "end": 88.66,
+        "score": 85
+      },
+      {
+        "start": 400.7,
+        "end": 455.76,
+        "score": 85
+      },
+      {
+        "start": 483.26,
+        "end": 505.66,
+        "score": 80
+      }
+    ],
+    "M5_descartes": [
+      {
+        "motivo": "não avaliado — limite de 3 cortes já atingido",
+        "nota": 75
+      },
+      {
+        "motivo": "não avaliado — limite de 3 cortes já atingido",
+        "nota": 75
+      },
+      {
+        "motivo": "não avaliado — limite de 3 cortes já atingido",
+        "nota": 75
+      },
+      {
+        "motivo": "não avaliado — limite de 3 cortes já atingido",
+        "nota": 70
+      },
+      {
+        "motivo": "não avaliado — limite de 3 cortes já atingido",
+        "nota": 70
+      },
+      {
+        "motivo": "não avaliado — limite de 3 cortes já atingido",
+        "nota": 65
+      },
+      {
+        "motivo": "não avaliado — limite de 3 cortes já atingido",
+        "nota": 65
+      },
+      {
+        "motivo": "não avaliado — limite de 3 cortes já atingido",
+        "nota": 60
+      },
+      {
+        "motivo": "não avaliado — limite de 3 cortes já atingido",
+        "nota": 55
+      }
+    ],
+    "M5_resumo": {
+      "não avaliado": 9
+    },
+    "M7_tempo_s": 1.51e-05,
+    "fallback": null,
+    "detalhes": null
+  },
+  "dp": {
+    "M1_cortes": 3,
+    "M2_scores": {
+      "soma": 250,
+      "mediana": 85
+    },
+    "M3_sobreposição_textual": [
+      {
+        "par": [
+          0,
+          1
+        ],
+        "jaccard_unigram": 0.1593,
+        "jaccard_bigram": 0.0168
+      },
+      {
+        "par": [
+          0,
+          2
+        ],
+        "jaccard_unigram": 0.1165,
+        "jaccard_bigram": 0.0056
+      },
+      {
+        "par": [
+          1,
+          2
+        ],
+        "jaccard_unigram": 0.1318,
+        "jaccard_bigram": 0.014
+      }
+    ],
+    "M3_max_jaccard_bigram": 0.0168,
+    "M4_fronteiras": [
+      {
+        "start": 0.0,
+        "end": 88.66,
+        "duracao": 88.66,
+        "duracao_valida": true,
+        "dentro_da_midia": true,
+        "start_em_segmento": true
+      },
+      {
+        "start": 400.7,
+        "end": 455.76,
+        "duracao": 55.06,
+        "duracao_valida": true,
+        "dentro_da_midia": true,
+        "start_em_segmento": true
+      },
+      {
+        "start": 483.26,
+        "end": 505.66,
+        "duracao": 22.4,
+        "duracao_valida": true,
+        "dentro_da_midia": true,
+        "start_em_segmento": true
+      }
+    ],
+    "M4_todas_validas": true,
+    "M6_diversidade": {
+      "gap_minimo_entre_starts_s": 82.56,
+      "regioes_60s_cobertas": [
+        0,
+        6,
+        8
+      ]
+    },
+    "picks": [
+      {
+        "start": 0.0,
+        "end": 88.66,
+        "score": 85
+      },
+      {
+        "start": 400.7,
+        "end": 455.76,
+        "score": 85
+      },
+      {
+        "start": 483.26,
+        "end": 505.66,
+        "score": 80
+      }
+    ],
+    "M5_descartes": [
+      {
+        "motivo": "não escolhido pelo ótimo de soma (dp)",
+        "nota": 75
+      },
+      {
+        "motivo": "não escolhido pelo ótimo de soma (dp)",
+        "nota": 75
+      },
+      {
+        "motivo": "não escolhido pelo ótimo de soma (dp)",
+        "nota": 75
+      },
+      {
+        "motivo": "não escolhido pelo ótimo de soma (dp)",
+        "nota": 70
+      },
+      {
+        "motivo": "não escolhido pelo ótimo de soma (dp)",
+        "nota": 70
+      },
+      {
+        "motivo": "não escolhido pelo ótimo de soma (dp)",
+        "nota": 65
+      },
+      {
+        "motivo": "não escolhido pelo ótimo de soma (dp)",
+        "nota": 65
+      },
+      {
+        "motivo": "não escolhido pelo ótimo de soma (dp)",
+        "nota": 60
+      },
+      {
+        "motivo": "não escolhido pelo ótimo de soma (dp)",
+        "nota": 55
+      }
+    ],
+    "M5_resumo": {
+      "não escolhido pelo ótimo de soma": 9
+    },
+    "M7_tempo_s": 3.17e-05,
+    "fallback": null,
+    "detalhes": {
+      "chosen_count": 3,
+      "score_sum": 250
+    }
+  },
+  "joint": {
+    "M1_cortes": 3,
+    "M2_scores": {
+      "soma": 250,
+      "mediana": 85
+    },
+    "M3_sobreposição_textual": [
+      {
+        "par": [
+          0,
+          1
+        ],
+        "jaccard_unigram": 0.1593,
+        "jaccard_bigram": 0.0168
+      },
+      {
+        "par": [
+          0,
+          2
+        ],
+        "jaccard_unigram": 0.1165,
+        "jaccard_bigram": 0.0056
+      },
+      {
+        "par": [
+          1,
+          2
+        ],
+        "jaccard_unigram": 0.1318,
+        "jaccard_bigram": 0.014
+      }
+    ],
+    "M3_max_jaccard_bigram": 0.0168,
+    "M4_fronteiras": [
+      {
+        "start": 0.0,
+        "end": 88.66,
+        "duracao": 88.66,
+        "duracao_valida": true,
+        "dentro_da_midia": true,
+        "start_em_segmento": true
+      },
+      {
+        "start": 400.7,
+        "end": 455.76,
+        "duracao": 55.06,
+        "duracao_valida": true,
+        "dentro_da_midia": true,
+        "start_em_segmento": true
+      },
+      {
+        "start": 483.26,
+        "end": 505.66,
+        "duracao": 22.4,
+        "duracao_valida": true,
+        "dentro_da_midia": true,
+        "start_em_segmento": true
+      }
+    ],
+    "M4_todas_validas": true,
+    "M6_diversidade": {
+      "gap_minimo_entre_starts_s": 82.56,
+      "regioes_60s_cobertas": [
+        0,
+        6,
+        8
+      ]
+    },
+    "picks": [
+      {
+        "start": 0.0,
+        "end": 88.66,
+        "score": 85
+      },
+      {
+        "start": 400.7,
+        "end": 455.76,
+        "score": 85
+      },
+      {
+        "start": 483.26,
+        "end": 505.66,
+        "score": 80
+      }
+    ],
+    "M5_descartes": [
+      {
+        "motivo": "dedupe: sobreposição ≥50% com candidato de nota maior (598c561f…) [210s–227s]",
+        "nota": 65
+      },
+      {
+        "motivo": "dedupe: sobreposição ≥50% com candidato de nota maior (2745177a…) [224s–243s]",
+        "nota": 55
+      }
+    ],
+    "M5_resumo": {
+      "dedupe: sobreposição ≥50% com candidato de nota maior": 2
+    },
+    "M7_tempo_s": 19.9401222,
+    "fallback": null,
+    "detalhes": {
+      "picks": [
+        {
+          "id": "C1",
+          "reason": "Conteúdo introdutório com uma observação crítica sobre o GTA e a EA, oferecendo um contexto inicial que pode ser usado para iniciar o vídeo.",
+          "score": 85
+        },
+        {
+          "id": "C2",
+          "reason": "Trecho com crítica direta e humorístico sobre a utilização de skins no jogo, destacando um assunto específico e relevante para o público de jogos.",
+          "score": 85
+        },
+        {
+          "id": "C3",
+          "reason": "Análise crítica sobre o desempenho do PC e a competição entre jogadores, oferecendo uma perspectiva de desenvolvimento e fechamento com base em observações reais.",
+          "score": 80
+        }
+      ],
+      "picks_beyond_limit": [],
+      "presented": 10
+    }
+  },
+  "producao_referencia": {
+    "picks": [
+      {
+        "start": 16.36,
+        "end": 105.18,
+        "score": 79
+      },
+      {
+        "start": 400.7,
+        "end": 455.76,
+        "score": 78
+      },
+      {
+        "start": 483.26,
+        "end": 528.48,
+        "score": 69
+      }
+    ],
+    "nota": "clipes gerados pelo app (pipeline atual) na produção; opções originais não são conhecidas"
+  },
+  "M8_controlado": [
+    {
+      "cenario": "S1-armadilha-central",
+      "gap_soma": 60,
+      "gap_cortes": 1
+    },
+    {
+      "cenario": "S2-duplicatas-de-janela",
+      "gap_soma": 60,
+      "gap_cortes": 1
+    },
+    {
+      "cenario": "S3-controle-sem-conflito",
+      "gap_soma": 0,
+      "gap_cortes": 0
+    }
+  ]
+}

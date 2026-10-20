@@ -1,0 +1,227 @@
+{
+  "kind": "caso controlado determinístico (sem LLM)",
+  "purpose": "demonstrar o efeito da ordem de seleção e descarte na limitação final",
+  "scenarios": [
+    {
+      "dp": {
+        "count": 2,
+        "discards": [
+          {
+            "end": 90.0,
+            "id": "alfa",
+            "reason": "não escolhido pelo ótimo de soma (dp)",
+            "score": 90,
+            "start": 30.0
+          }
+        ],
+        "fallback": null,
+        "picks": [
+          {
+            "end": 35.0,
+            "id": "beta",
+            "score": 75,
+            "start": 0.0
+          },
+          {
+            "end": 120.0,
+            "id": "gamma",
+            "score": 75,
+            "start": 85.0
+          }
+        ],
+        "score_sum": 150
+      },
+      "greedy": {
+        "count": 1,
+        "discards": [
+          {
+            "end": 35.0,
+            "id": "beta",
+            "reason": "sobrepõe corte já selecionado (descarte por ordem de score)",
+            "score": 75,
+            "start": 0.0
+          },
+          {
+            "end": 120.0,
+            "id": "gamma",
+            "reason": "sobrepõe corte já selecionado (descarte por ordem de score)",
+            "score": 75,
+            "start": 85.0
+          }
+        ],
+        "fallback": null,
+        "picks": [
+          {
+            "end": 90.0,
+            "id": "alfa",
+            "score": 90,
+            "start": 30.0
+          }
+        ],
+        "score_sum": 90
+      },
+      "name": "S1-armadilha-central",
+      "note": "candidato central de nota alta cobre dois medianos compatíveis entre si",
+      "requested": 2
+    },
+    {
+      "dp": {
+        "count": 3,
+        "discards": [
+          {
+            "end": 90.0,
+            "id": "alfa",
+            "reason": "não escolhido pelo ótimo de soma (dp)",
+            "score": 90,
+            "start": 30.0
+          },
+          {
+            "end": 91.0,
+            "id": "alfa2",
+            "reason": "não escolhido pelo ótimo de soma (dp)",
+            "score": 89,
+            "start": 31.0
+          },
+          {
+            "end": 40.0,
+            "id": "epsilon",
+            "reason": "não escolhido pelo ótimo de soma (dp)",
+            "score": 68,
+            "start": 2.0
+          }
+        ],
+        "fallback": null,
+        "picks": [
+          {
+            "end": 35.0,
+            "id": "beta",
+            "score": 75,
+            "start": 0.0
+          },
+          {
+            "end": 120.0,
+            "id": "gamma",
+            "score": 75,
+            "start": 85.0
+          },
+          {
+            "end": 150.0,
+            "id": "delta",
+            "score": 70,
+            "start": 122.0
+          }
+        ],
+        "score_sum": 220
+      },
+      "greedy": {
+        "count": 2,
+        "discards": [
+          {
+            "end": 91.0,
+            "id": "alfa2",
+            "reason": "sobrepõe corte já selecionado (descarte por ordem de score)",
+            "score": 89,
+            "start": 31.0
+          },
+          {
+            "end": 35.0,
+            "id": "beta",
+            "reason": "sobrepõe corte já selecionado (descarte por ordem de score)",
+            "score": 75,
+            "start": 0.0
+          },
+          {
+            "end": 120.0,
+            "id": "gamma",
+            "reason": "sobrepõe corte já selecionado (descarte por ordem de score)",
+            "score": 75,
+            "start": 85.0
+          },
+          {
+            "end": 40.0,
+            "id": "epsilon",
+            "reason": "sobrepõe corte já selecionado (descarte por ordem de score)",
+            "score": 68,
+            "start": 2.0
+          }
+        ],
+        "fallback": null,
+        "picks": [
+          {
+            "end": 90.0,
+            "id": "alfa",
+            "score": 90,
+            "start": 30.0
+          },
+          {
+            "end": 150.0,
+            "id": "delta",
+            "score": 70,
+            "start": 122.0
+          }
+        ],
+        "score_sum": 160
+      },
+      "name": "S2-duplicatas-de-janela",
+      "note": "candidatos quase duplicados vindos de janelas com sobreposição",
+      "requested": 3
+    },
+    {
+      "dp": {
+        "count": 3,
+        "discards": [],
+        "fallback": null,
+        "picks": [
+          {
+            "end": 30.0,
+            "id": "p",
+            "score": 80,
+            "start": 0.0
+          },
+          {
+            "end": 70.0,
+            "id": "q",
+            "score": 78,
+            "start": 40.0
+          },
+          {
+            "end": 110.0,
+            "id": "r",
+            "score": 76,
+            "start": 80.0
+          }
+        ],
+        "score_sum": 234
+      },
+      "greedy": {
+        "count": 3,
+        "discards": [],
+        "fallback": null,
+        "picks": [
+          {
+            "end": 30.0,
+            "id": "p",
+            "score": 80,
+            "start": 0.0
+          },
+          {
+            "end": 70.0,
+            "id": "q",
+            "score": 78,
+            "start": 40.0
+          },
+          {
+            "end": 110.0,
+            "id": "r",
+            "score": 76,
+            "start": 80.0
+          }
+        ],
+        "score_sum": 234
+      },
+      "name": "S3-controle-sem-conflito",
+      "note": "candidatos disjuntos: estratégias devem coincidir",
+      "requested": 3
+    }
+  ]
+}

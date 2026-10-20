@@ -1,0 +1,80 @@
+{
+  "strategy": "joint",
+  "elapsed_s": 19.9401222,
+  "clips": [
+    {
+      "id": "5c76593d7792a1bf8e42ed9ceeaf3c71b4f202634b87becf3c7014fb39d1c9b3",
+      "start": 0.0,
+      "end": 88.66,
+      "title": "Trecho 00:00",
+      "score": 85,
+      "reasons": [
+        "Rerank conjunto: Conteúdo introdutório com uma observação crítica sobre o GTA e a EA, oferecendo um contexto inicial que pode ser usado para iniciar o vídeo."
+      ],
+      "review": "pending",
+      "format": "9:16"
+    },
+    {
+      "id": "b4e9a906747af6605f1c8f6334fb6bb67109b4e2f6877de9dd3624a635b89ea6",
+      "start": 400.7,
+      "end": 455.76,
+      "title": "Trecho 06:40",
+      "score": 85,
+      "reasons": [
+        "Rerank conjunto: Trecho com crítica direta e humorístico sobre a utilização de skins no jogo, destacando um assunto específico e relevante para o público de jogos."
+      ],
+      "review": "pending",
+      "format": "9:16"
+    },
+    {
+      "id": "c44da5c5d70d11ef8c79f3d691ffd5e0c602f8d54ca899a0f6000e97f3e793e0",
+      "start": 483.26,
+      "end": 505.66,
+      "title": "Trecho 08:03",
+      "score": 80,
+      "reasons": [
+        "Rerank conjunto: Análise crítica sobre o desempenho do PC e a competição entre jogadores, oferecendo uma perspectiva de desenvolvimento e fechamento com base em observações reais."
+      ],
+      "review": "pending",
+      "format": "9:16"
+    }
+  ],
+  "discards": [
+    {
+      "id": "8ba118fc5140c5eed78541093917ef4433dca6e77f5cade52de229118bee241f",
+      "score": 65,
+      "start": 217.1,
+      "end": 232.24,
+      "reason": "dedupe: sobreposição ≥50% com candidato de nota maior (598c561f…) [210s–227s]"
+    },
+    {
+      "id": "b5fcbe5c83df71bd2adecda4387c240e00493bba4378f372cf61d3811c6a8f0a",
+      "score": 55,
+      "start": 232.28,
+      "end": 248.78,
+      "reason": "dedupe: sobreposição ≥50% com candidato de nota maior (2745177a…) [224s–243s]"
+    }
+  ],
+  "fallback": null,
+  "details": {
+    "picks": [
+      {
+        "id": "C1",
+        "reason": "Conteúdo introdutório com uma observação crítica sobre o GTA e a EA, oferecendo um contexto inicial que pode ser usado para iniciar o vídeo.",
+        "score": 85
+      },
+      {
+        "id": "C2",
+        "reason": "Trecho com crítica direta e humorístico sobre a utilização de skins no jogo, destacando um assunto específico e relevante para o público de jogos.",
+        "score": 85
+      },
+      {
+        "id": "C3",
+        "reason": "Análise crítica sobre o desempenho do PC e a competição entre jogadores, oferecendo uma perspectiva de desenvolvimento e fechamento com base em observações reais.",
+        "score": 80
+      }
+    ],
+    "picks_beyond_limit": [],
+    "presented": 10
+  }
+}

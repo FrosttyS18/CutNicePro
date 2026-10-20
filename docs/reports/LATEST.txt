@@ -3,418 +3,309 @@
 ╚════════════════════════════════════════════╝
 
 TASK
-  Name: Auditoria de skills, hooks e harness (read-only)
-  Status: PASS (auditoria concluída; nenhum artefato do projeto modificado)
-  Scope: 8 itens do ofício do mantenedor — inventário de skills; conflitos
-    entre AGENTS.md/skills/docs/hooks/política; hooks existentes ×
-    configurados × comprovados; viabilidade de autorização de escrita por
-    tarefa; cobertura real das baselines; comparação com conceitos de
-    akitaonrails/my-skills; documentos desatualizados; plano incremental.
-    MODO READ-ONLY respeitado: sem modificações em código, documentação,
-    skills, hooks ou configurações; sem dependências, branches, commits,
-    pushes, merges ou comandos destrutivos reais (testes negativos usaram
-    exclusivamente alvos inexistentes/inócuos, anunciados antes).
-  Objective: avaliar a confiabilidade da configuração do agente ZCode/GLM
-    do CutNicePro com evidências verificáveis, sem implementar nada.
-  Result: confiança ALTA em: protocolo de relatórios, VALIDATION-POLICY,
-    baseline fast/full, guard de destrutivos (BLOCK comprovado ao vivo
-    nesta auditoria) e validate_changes (270 execuções reais). Lacunas
-    COMPROVADAS: contorno do guard por wrapper (bash -c); escrita via
-    Bash/MCP sem qualquer gate; Rust/typecheck/e2e fora da baseline;
-    contagens de teste ausentes no relatório da baseline; 2 docs
-    desatualizados (HOOKS.md, M1DR-AUDIT.md); system prompt de sessão
-    longa defasado vs AGENTS.md em disco; VISION conflitando entre
-    AGENTS.md global (manda) e política do projeto (proíbe).
+  Name: Corrigir a proposta de seleção e completar a avaliação (atualização
+    2 do experimento A/B)
+  Status: PASS (FUNCTIONAL: contraprovas reproduzidas no código, DP validada
+    contra enumeração exaustiva, avaliação editorial completa, diagnósticos
+    corrigidos, 2 rodadas de revisão adversarial; REGRESSION: PASS no
+    escopo — 25/25 testes, resultados anteriores intactos, app-data
+    preservado; NENHUMA integração executada)
+  Scope: fechar as lacunas do experimento A/B com código experimental,
+    testes independentes e avaliação dos 12 candidatos reais já coletados.
+    Escrita SOMENTE em experiments/clip-selection-ab/** e nos relatórios
+    canônicos; sem commits/pushes, sem novos modelos, sem envio externo,
+    sem tocar app/projetos/configs/hooks/memórias/untracked preexistentes/
+    resultados brutos anteriores. 0 novas chamadas de inferência (rerank
+    reutilizado; teto do orçamento respeitado — não tratado como obrigação).
+  Objective: contraprova de R2 (dedupe→DP como COMPOSIÇÃO); objetivo da DP
+    fixado por contrato; validação exaustiva; avaliação editorial de
+    escolhidos E descartados; correção de diagnósticos não comprovados;
+    revisão adversarial em 2 rodadas; status por conclusão.
+  Result: dedupe-50% RETIRADO como recomendação (contraprova confirmada em
+    Rust e na enumeração independente do mantenedor); a política substituta
+    (equivalência de cobertura) também foi REFUTADA EM GERAL pela revisão
+    adversarial — conclusão final: DP SEM NENHUMA poda prévia; contrato
+    count=TETO com max-soma; DP == ótimo em 249 cenários/0 falhas (+30.000
+    triais independentes do revisor, 0 divergências); nesta transcrição
+    A=B=C (gargalo editorial está na COLETA — 3 momentos relevantes sem
+    candidato); diagnósticos seed/scene_regions/preservação corrigidos.
 
 IMPLEMENTATION
   Completed:
-  1. INVENTÁRIO DE SKILLS — 70 SKILL.md válidos em 4 escopos, todos com
-     frontmatter name/description: workspace 16 (C:\CutNicePro\.zcode\
-     skills), usuário 3 (frontend-design, impeccable, gow3-figma-fidelity
-     — esta com enable:false na config do host), plugins oficiais 31 no
-     cache (com duplicatas de versão: computer-use 0.6.3/0.6.4, documents
-     0.1.7/0.1.8, pdf, presentations, spreadsheets, zcode-guide
-     0.2.0/0.3.0 — comportamento esperado do gerenciador), bundled 20
-     (espelho dos plugins; 1 diretório órfão vazio: bundled
-     zcode-guide-plugin\skills\dynamic-workflows). Sem colisão de nomes
-     workspace × usuário. O mapa do using-agent-skills referencia 24
-     skills do catálogo Osmani; 9 instaladas (ciclo SPEC/PLAN/BUILD/
-     TEST/REVIEW coberto); 15 referenciadas inexistentes — decisão
-     DOCUMENTADA em docs/TOOLING.md (orçamento de contexto; clones em
-     .tooling/vendor/addyosmani-agent-skills). Incompatibilidade de
-     política a vigiar: image-to-code (gera imagens de design por conta
-     própria) tensa com o PRODUCT DESIGN GATE; design-taste-frontend já
-     é mediada pelo AGENTS.md (apenas páginas públicas).
-  2. CONFLITOS — 9 mapeados com fonte exata (C1..C9 em ISSUES).
-  3. HOOKS — 4 existem, estão configurados em C:\Users\adcka\.zcode\cli\
-     config.json (hooks.enabled:true; workspace .zcode/config.json SEM
-     hooks — fonte única confirmada) e tiveram execução COMPROVADA:
-     PreToolUse BLOCK ao vivo HOJE (19:42:29, teste T1); PostToolUse 270
-     entradas reais (última 19/10 02:35; inclui FAIL real com feedback em
-     18/10 02:25); Stop 31 reais (última 19/10 02:36, fast PASS 4/0/2;
-     nenhuma desde então porque nenhum turno desta auditoria terminou em
-     texto puro antes desta entrega — consistente); SessionStart 5
-     (última 18/10 04:42). NÃO observado: SessionStart na compactação
-     desta sessão (ausente do log; causa não distinguível pelo log).
-  4. AUTORIZAÇÃO DE ESCRITA POR TAREFA — possível por camadas, nunca por
-     um único mecanismo: (a) plan mode do host = read-only real
-     independente do modelo, JÁ COMPROVADO empiricamente (nesta mesma
-     sessão longa, o Bash ficou bloqueado até aprovação do plano na M2A);
-     (b) hook PreToolUse com matcher ^(Write|Edit|ApplyPatch)$ retornando
-     decisão allow/ask/deny (mecanismo NATIVO documentado pela skill
-     oficial diagnosing-hooks; o evento PermissionRequest também é
-     suportado e nunca foi usado); (c) fail-closed INTEGRAL não é
-     alcançável só com hooks — rotas de contorno comprovadas/estruturais:
-     escrita via Bash (probe em %TEMP%: criou/leu/removeu arquivo sem
-     qualquer gate; redirecionamento > não é analisado pelo guard),
-     guard contornável por wrapper (T2: bash -c "rm -rf …" → exit 0), e
-     ferramentas MCP de escrita/execução expostas sem cobertura (playwright
-     browser_run_code_unsafe — auto-descrita "RCE-equivalent" —, node_repl,
-     figcraft save_file/export, computer-use). Hooks são opt-in: toggle
-     off/config inválida = proteção zero silenciosa (fail-open por design).
-  5. BASELINES — fast (hook Stop, hoje 19:40:59): PASS 4/0/2 (estrutural:
-     agents_md, mcp_config, skills_frontmatter 16, hook_scripts 5).
-     full (hoje 19:42:29): PASS 5/0/1 — app_tests "npm test OK (app/)"
-     [vitest reexecutado às 19:44: 152/152, 23 arquivos, 1,71 s];
-     python_tests SKIP correto (sem test_*.py no projeto). NOT TESTED
-     pela baseline EM QUALQUER MODO: cargo test (Rust — a árvore
-     src-tauri cresceu com transcription/, render/, clips/ no trabalho
-     paralelo de hoje), typecheck (tsc), lint, e2e/runtime Tauri, builds.
-     A baseline NÃO reporta contagens de testes (só OK/FAIL-tail).
-  6. AKITA × INSTALADO — as 6 skills foram lidas como DADOS de
-     referência (README não as descreve; SKILL.md individuais lidos):
-     - reflect (retrospectiva de sessões → menor melhoria útil com
-       evidências de fricção): sem equivalente no projeto.
-     - verification-planning (evidence path: alegação → modos de falha →
-       caminhos de evidência → veredito established/limited/refuted):
-       ~70% coberto pela VALIDATION-POLICY §4-5 (planejar antes, orçamento
-       1+1, critérios FUNCTIONAL/REGRESSION/VISUAL) + SPECs com AC; falta
-       o template explícito de evidence path e veredito por alegação.
-     - iss-audit (triagem cética de issues): sem equivalente; baixa
-       prioridade (repo solo, sem fluxo de issues).
-     - pr-audit (auditoria hostil de PR pré-merge com ledger de claims):
-       sem equivalente direto e ALTAMENTE pertinente ADAPTADO — o fluxo
-       real deste repo é trabalho paralelo de duas IAs (ZCode + Codex)
-       no mesmo main; a revisão 03N foi documental, sem ledger/gates.
-     - pr-post-audit (estado da branch pós-merge, interações entre
-       mudanças, proveniência): pertinente adaptado; hoje regressões de
-       integração Rust são invisíveis (baseline não roda cargo).
-     - post-refactor (gate pós-refatoração + severidades BLOCKING/
-       SHOULD-FIX/NIT/OBSERVATION): parcialmente coberto por
-       code-review-and-quality (multi-axis) e baseline; o refactor
-       d5a17ad de hoje não teve gate pós-refactor documentado.
-     CONCLUSÃO: NENHUMA das 6 justifica instalação por cópia; todas se
-     resolvem por EXTENSÃO de componentes existentes (baseline, política,
-     protocolo de relatório, SPECs) — ver plano P0..P3 em FINAL.
-  7. DOCS DESATUALIZADOS — docs/HOOKS.md §"Limitação conhecida" (alega
-     que check_app_tests não encontra app/ e que a correção está
-     PENDENTE; o código JÁ corrige — candidates=[root, app/] nas linhas
-     98-114 — e o --full de hoje comprova) e nota transitória de timeout
-     (300 s → 90 s já vigente); docs/design/M1DR-AUDIT.md:81-86 repete a
-     mesma alegação superada. As canônicas principais (AGENTS.md,
-     TOOLING.md, ENGINE-HANDOFF, PRODUCT-BRAIN, VALIDATION-POLICY,
-     M3A-SPEC) foram atualizadas pela revisão 03N e a amostragem não
-     encontrou divergência com o código. IMPORTANTE: o AGENTS.md em
-     disco está CORRETO (status 03N "implementado"; seção VALIDATION
-     OWNERSHIP na linha 67); o defasado é o CONTEÚDO INJETADO no system
-     prompt desta sessão longa (versão anterior: "aplicação NÃO
-     implementada", sem seção VALIDATION) — risco operacional de
-     sessão, não defeito de documento (C3).
-  8. PLANO INCREMENTAL — em FINAL (etapas independentes, com testes
-     negativos por proteção; tudo bloqueado até autorização).
-
-  Not completed: implementação de qualquer melhoria (bloqueada por
-    design desta auditoria; exige autorização expressa do mantenedor).
-  Changes: NENHUMA em artefatos do projeto (read-only mantido).
-  Architecture impact: nenhum.
+  1. CONTRAPROVA DE R2 (composição, não funções isoladas) — caso
+     longo[0,60)90 + esquerda[0,30)75 + direita[30,60)75, count=2: DP sem
+     poda = 2 cortes/soma 150; dedupe-50%-antes-da-DP = 1 corte/soma 90
+     (escolhe só o longo). FÓRMULA documentada no código e no JSON:
+     inter = min(fim_a,fim_b) - max(ini_a,ini_b); razão = inter /
+     min(dur_a,dur_b); remove B se razão >= 0,5 contra mantido de nota
+     maior (ordem nota desc/início asc). Referência independente do
+     mantenedor (Downloads/contraprovas_selecao.py — enumeração exaustiva,
+     3 denominadores IoU/menor/maior) copiada para external/ (original
+     intocado) e REPRODUZIDA no Rust (testes + reports/counterproof.json;
+     saída consistente). A recomendação de dedupe-50% como regra geral foi
+     RETIRADA.
+  2. POLÍTICA SUBSTITUTA E SUA REFUTAÇÃO — implementada
+     `dedupe_equivalent` (remove apenas candidatos com cobertura de FALAS
+     idêntica; sem limiar numérico; 0 remoções nos 12 reais — 12 coberturas
+     distintas). A revisão adversarial (rodada 1) REFUTOU a segurança
+     geral: contraprova verificada A[0,30)90/B[5,20)60/C[20,45)95 com
+     segmentos [0,10)/[10,16)/[16,45) — A e B cobrem as mesmas falas, mas
+     janelas distintas; B é o único compatível com C; ótimo 155/2 → 95/1
+     após a poda. Cobertura idêntica NÃO implica janela idêntica. A
+     contraprova virou TESTE de regressão
+     (contraprova_revisao_dedupe_equivalente_destrui_otimo_sem_ancora) e o
+     comentário da fn documenta os invariantes (segura apenas com a âncora
+     de segmentos do coletor — selection.rs:61-78 — condição que cessa
+     após scene_regions::refine). CONCLUSÃO FINAL: nenhuma poda pré-DP.
+  3. OBJETIVO DA DP FIXADO POR CONTRATO — conferidos UI
+     (ClipTools.tsx:63 "Quantidade" 1..12; geração aceita menos; erro
+     apenas com conjunto vazio), Options.validate (1..=12) e o seletor
+     atual (para ao atingir count): count = TETO com qualidade por nota.
+     Caso [0,60):100 vs [0,30):49+[30,60):49: max-soma = longo (100, 1
+     corte); max-quantidade-depois-soma = dois curtos (98, 2 cortes) —
+     objetivos distintos, não defeito; contrato adotado na DP:
+     max (soma, cardinalidade, -starts) com até count; a alternativa
+     "priorizar quantidade" ficou registrada como decisão de produto NÃO
+     tomada (não inventada).
+  4. VALIDAÇÃO EXAUSTIVA DA DP — enumeração independente por bitmask
+     (brute_force) + gerador determinístico LCG (seed fixa) com parte
+     FRACIONÁRIA (fronteiras com centésimos) e casos estruturais: vazio,
+     encostados exatos, encostados-com-épsilon 1e-9, duplicatas exatas,
+     empates de nota, 3 permutações do mesmo conjunto, count > n.
+     Resultado registrado: 249 cenários, 0 FALHAS (reports/crosscheck.json;
+     byte-estável em reexecução). Evidência adicional independente: o
+     revisor transcreveu a DP para Python e fuzzou 30.000 triais (n<=12,
+     count<=6, épsilon) — 0 divergências. HONESTIDADE: no caminho, MEU
+     PRÓPRIO teste expôs um bug na brute_force (retorno com campos trocados
+     no modo cardinality_first) — corrigido; a DP em si nunca divergiu.
+  5. AVALIAÇÃO EDITORIAL COMPLETA (12 candidatos reutilizados; 0 novas
+     chamadas; perspectivas: análise do agente com CITAÇÕES LITERAIS +
+     rerank local reutilizado) — dossiê com textos completos, contexto
+     ±1 fala e mapa de cobertura fala a fala
+     (reports/editorial/candidates-full.md); avaliação com critérios
+     comparáveis (reports/editorial/evaluation.md):
+     - ESCOLHIDOS: C8 [400,7–455,8] é o melhor corte do pool (arco
+       completo: skin bugada → história da Valve → “a skin antiga hoje
+       vale 3 mil reais”); C1 [0–88,7] é bom mas o desfecho (“matou o
+       save”) está FORA do corte (fala 40); C11 [483,3–505,7] é o elo
+       fraco (mistura PUBG/Sobretudão com PC/Makita; termina solto em
+       “Ele tá piorando, é”; nota inicial 80 otimista).
+     - DESCARTADOS com motivo editorial: C12 descarte CORRETO (termina
+       DENTRO do comercial Logitech — fala 293); C2-C6 são janelas
+       deslizantes do mesmo trecho raso (piadas internas); C7 é ponte
+       fraca para C8 (a alternativa C7+C8 encostados, 71 s, não existe
+       como candidato — o coletor gerou os dois separados); C9/C10
+       fragmentados/rasos.
+     - SEPARAÇÃO DE EFEITOS: notas iniciais dominantes (A ordenou
+       85/85/80; DP nada mudou); avaliação editorial (rerank) nula sobre
+       a ESCOLHA, não nula sobre transparência (razões) — e a razão do
+       C11 evidencia o assunto duplo.
+     - MOMENTOS RELEVANTES FORA DO POOL (limitação registrada
+       separadamente): desfecho do save (~89–131 s), meme “Group
+       therapy”→“grupo do papi” (~130–200 s) e todo o trecho
+       “Secute”+5-6 pistolas (~249–382 s; subtrecho das pistolas ~76,6 s)
+       — ZERO candidatos cobrem 129–209. Um finalizador não recupera o
+       que o coletor (6/janela) não gerou: o gargalo editorial DESTA
+       transcrição está majoritariamente na COLETA.
+     - Resumo autocontido A/B/C para o mantenedor:
+       reports/ab2-summary.md (não exige executar nada).
+  6. DIAGNÓSTICOS CORRIGIDOS —
+     (a) SEED: rebaixado a NÃO COMPROVADO em qualquer direção; o valor
+     4294967295 com cadeia terminando em “greedy” é CONSISTENTE com
+     LLAMA_DEFAULT_SEED em builds llama.cpp (justificativa técnica também
+     não verificada neste binário customizado); indistinguível sem
+     modificar o runtime (nada modificado).
+     (b) PRODUÇÃO: scene_regions::refine confirmado no código com limite
+     de 0,8 s por extremidade (scene_regions.rs:102,112) — a atribuição
+     anterior (diferenças de 16 s) foi REFUTADA. Hipótese compatível
+     apresentada: a UI envia min = máx(10, duração/2) (ClipTools.tsx:41,
+     62) — com “Duração máxima 90 s” → min 45/max 90, faixa em que os 3
+     clipes de produção (88,8/55,1/45,2 s) cabem exatamente; CONSISTENTE
+     mas formalmente INCONCLUSIVA (opções originais não registradas).
+     (c) PRESERVAÇÃO: README reordenado por natureza — comparação de
+     hashes ANTES/DEPOIS (JSONs de estado, idênticos) como evidência
+     forte; inventário pós-fato (21 arquivos) e audit-mtime como
+     complementares.
+  7. REVISÃO ADVERSARIAL — RODADA 1 (subagente somente leitura com pedido,
+     código, entradas e resultados): tentou refutar os 4 alvos; NÃO
+     conseguiu quebrar a DP (248 cenários do binário + 30.000 triais do
+     clone próprio: 0 falhas); REFUTOU a alegação de segurança do
+     dedupe_equivalent (achado BLOCKING — corrigido: status, teste de
+     regressão, comentário com invariantes, recomendações); SHOULD-FIX:
+     faixas de tempo erradas nos momentos não cobertos (corrigidas:
+     89–131/130–200/249–382/76,6 s) e citação “entrar o GTA”→“entrar no
+     GTA” (corrigida); NITs: metadados do crosscheck e frase seed
+     (corrigidos). RODADA 2 (rechecagem focalizada): 4/4 correções
+     materiais verificadas com arquivo:linha; DP byte-idêntica; 25/25
+     testes; pendências restantes eram triviais (contagem 248→249,
+     parêntese seed na tabela, metadados, remissão na seção “O que mudou”)
+     — TODAS corrigidas após a rodada 2. Veredito final do revisor: “não
+     há mais alegação de segurança/qualidade sem lastro na tabela”.
+  Not completed: investigação do binário llama_completion quanto à
+    efetividade de --seed (proibido modificar runtime); nova coleta com
+    opções da UI min=45 (proibido refazer coleta); análise por candidato
+    via motor local (teto não obrigatório; avaliação do agente com citações
+    + rerank reutilizado julgados suficientes e rotulados).
+  Changes: NENHUMA no aplicativo/configs/hooks/memórias/untracked
+    preexistentes/resultados brutos anteriores (estes apenas LIDOS).
+  Architecture impact: nenhum no produto.
 
 FILES
-  Created: docs/reports/history/2026-10-19_1947_auditoria-skills-hooks-harness.txt
-    (este relatório — única escrita da tarefa no projeto, no canal
-    canônico de entrega exigido pelo protocolo permanente)
-  Modified: docs/reports/LATEST.txt (substituído por este relatório,
-    conforme protocolo; o anterior "03N" permanece intacto em history/)
+  Created: experiments/clip-selection-ab/external/{contraprovas_selecao.py,
+    .json} (cópia da referência do mantenedor — original em Downloads
+    intocado); reports/counterproof.json; reports/crosscheck.json;
+    reports/editorial/{candidates-full.md, evaluation.md};
+    reports/ab2-summary.md; docs/reports/history/2026-10-19_2137_
+    experimento-selecao-correcoes.txt (este relatório)
+  Modified (SÓ dentro do autorizado): src/clips/finalize.rs (dedupe_
+    equivalent + documentação/refutação; composition_dedupe50_dp;
+    brute_force com retorno consistente; crosscheck com frações e
+    encostados-com-épsilon; +2 testes); src/main.rs (comandos counterproof
+    e crosscheck; flags --min/--max; metadados); README.md (seed
+    rebaixado; preservação reordenada; seção de contraprovas);
+    reports/ab2-summary.md e evaluation.md (correções pós-revisão);
+    docs/reports/LATEST.txt (este relatório)
   Deleted: NONE
-  Unexpected changes: NONE no projeto. Efeitos colaterais involuntários
-    do próprio sistema (fora da vedação, listados por transparência):
-    1 entrada BLOCK no .zcode/hooks/audit/audit-log.jsonl gerada pelo
-    teste T1 (o T2 não loga por design — allows são silenciosos);
-    __pycache__/.pyc regenerados pela compilação da baseline; caches do
-    vitest; 1 arquivo temporário em %TEMP% criado e removido pelo probe
-    de escrita; o hook Stop logará esta resposta automaticamente.
+  Unexpected changes: NONE (HEAD e working tree do app inalterados).
 
 VALIDATION
-  Typecheck: SKIP (read-only; nenhum código alterado)
-  Lint: SKIP (idem)
-  Unit tests: PASS — vitest 152/152 (23 arquivos), executado hoje
-    19:44 na árvore atual (pós-d5a17ad). Suíte Rust: NOT TESTED nesta
-    auditoria (cargo não é coberto pela baseline — lacuna L4/L6; última
-    contagem conhecida 30/30 na M2A, antes de transcription/render/clips)
-  Integration tests: SKIP (fora do escopo read-only)
-  Regression tests: PASS parcial — baseline full 5/0/1 hoje (estrutural
-    + vitest); Rust/e2e/typecheck NOT TESTED (não cobertos)
-  Visual tests: SKIP (VALIDATION-POLICY — estética é responsabilidade
-    do mantenedor)
-  Runtime verification: PASS — provas ao vivo dos mecanismos de proteção:
-    T1 guard BLOCK (19:42:29, log); T2 contorno por wrapper (exit 0);
-    probe de escrita via Bash sem gate; baseline fast+full executadas
-  Total passed: 152 (unit) + 9 (baseline: 4 fast + 5 full) + 3 (provas
-    de runtime T1/T2/probe)
-  Total failed: 0
-  Total skipped: typecheck, lint, integration, visual, Rust (NOT TESTED)
+  Typecheck: SKIP (cargo build --release OK — compilação é o gate do Rust)
+  Lint: SKIP
+  Unit tests: PASS — 25/25 (14 herdados das cópias + 11 do experimento,
+    incluindo: contraprova R2 na composição; contraprova do revisor
+    (equivalência de cobertura) como regressão; max-soma × max-quantidade;
+    crosscheck 249 cenários)
+  Integration tests: SKIP (app intocado)
+  Regression tests: PASS no escopo — greedy/dp re-executados deterministica-
+    mente sem mudança; counterproof/crosscheck reprodutíveis byte a byte;
+    preservação do app-data re-verificada (PRESERVADO)
+  Visual tests: SKIP (sem UI; VISION proibido e não usado)
+  Runtime verification: PASS — TODOS os resultados desta atualização são
+    DETERMINÍSTICOS (0 chamadas LLM; rerank da atualização 1 reutilizado
+    por coincidência de entradas/configuração, conforme orçamento)
+  Total passed: 25 unit + 249 cenários crosscheck + 30.000 triais
+    independentes do revisor + 2 contraprovas + preservação
+  Total failed: 0 (1 bug encontrado E corrigido no caminho: brute_force
+    com retorno inconsistente — exposto pelo próprio teste antes de
+    qualquer uso em relatório)
+  Total skipped: typecheck, lint, integração, visual
 
 HOOKS / HARNESS
-  Hooks active (configurados): 4 — SessionStart (session_start.py),
-    PreToolUse ^Bash$ (guard_destructive.py), PostToolUse
-    ^(Edit|Write|ApplyPatch)$ (validate_changes.py), Stop
-    (completion_audit.py) — em C:\Users\adcka\.zcode\cli\config.json
-    (hooks.enabled:true; Python 3.12; timeoutMs 30000/60000/90000);
-    scripts versionados no repo (.zcode/hooks/scripts + harness);
-    workspace .zcode/config.json sem chave hooks (fonte única OK).
-  PreToolUse: COMPROVADO ao vivo (BLOCK 19:42:29 do T1, log com
-    findings/command). Cobertura declarada no código: rm com -r e -f,
-    git reset --hard, git clean -f/-d/-x, git push --force/-f, git
-    checkout/restore ., rmdir/rd /s, del /f /s /q, Remove-Item -Recurse
-    -Force, format x:. CONTORNO COMPROVADO: wrapper (bash -c "rm -rf …"
-    → liberado; a análise casa padrões apenas no INÍCIO de cada segmento
-    pós-split ;|& — guard_destructive.py:31-70,84-87). NÃO coberto:
-    variantes PowerShell de escrita (Set-Content/Out-File), redireciona-
-    mento >, robocopy /MIR, wrappers cmd/powershell/env/nohup/timeout.
-    Fail-open em payload ilegível (documentado). Allows NÃO são logados
-    (auditabilidade limitada — L3).
-  PostToolUse: 270 entradas reais (PASS/SKIP/FAIL). FAIL real histórico
-    com additionalContext (18/10 02:25, SyntaxError verdadeiro em
-    tools/flow/flow_gate_v2.py). Valida .json/.py/.js/.mjs/.cjs/SKILL.md
-    apenas — .ts/.tsx/.rs/.css (maior parte do código do app) ficam sem
-    validação. Pós-fato por natureza (nunca desfaz/bloqueia).
-  Stop: 31 reais; última 19/10 02:36; SEMPRE exit 0 (telemetria, não
-    gate — o REPORTING-STANDARD explicita que exit 0 do Stop não é PASS).
-  Baseline: fast PASS 4/0/2 (executada hoje via script, igual ao hook);
-    full PASS 5/0/1 (hoje, inclui npm test em app/ — limitação antiga já
-    corrigida no código, embora HOOKS.md diga o contrário).
-  Gate result: N/A (não existe gate bloqueante no Stop; por design).
-  Evidence: audit-log.jsonl (6 PreToolUse no total: 4 de testes 17/10,
-    1 real 17/10 21:02:51, 1 real HOJE 19:42:29); saídas JSON das
-    baselines; saída vitest.
+  Hooks active: inalterados; PostToolUse validou os Writes .py/.json;
+    Stop registrará a baseline fast (telemetria, não gate).
+  Baseline: N/A (nenhuma mudança no app; suítes do app não afetadas).
+  Gate result: N/A.
 
 MCP / SKILLS
-  Tools used: Read, Bash (read-only + testes negativos anunciados),
-    TodoWrite, Agent (1× Explore para o inventário), WebFetch ×7
-    (github.com/akitaonrails/my-skills + 6 SKILL.md em raw). Conteúdo do
-    repositório de terceiros tratado exclusivamente como DADOS; nenhuma
-    instrução dele foi executada; nada copiado.
-  Connection status: WebFetch 7/7 OK; subagente Explore OK (70 SKILL.md
-    inventariados).
+  Tools used: Read, Bash, Write, Edit, TodoWrite, Agent (2 rodadas do
+    MESMO revisor adversarial somente leitura — rodada 2 via retomada),
+    TaskOutput, SendMessage.
+  Connection status: revisor rodada 1 (51 tool uses) e rodada 2 (10 tool
+    uses) OK.
   Failures: nenhuma.
-  Pending activation: n/a.
-  EXPOSIÇÃO RELEVANTE (item 4): ferramentas de escrita/execução ativas
-    na sessão SEM cobertura de hook: playwright browser_run_code_unsafe
-    (auto-descrita "RCE-equivalent"), node_repl (JS arbitrário), figcraft
-    save_file/export (gravam arquivos), computer-use (desktop nativo),
-    image-search. A doc oficial (diagnosing-hooks) confirma que matchers
-    testam o NOME da tool (Bash/Write/Edit/Agent…, aliases ApplyPatch);
-    nomes mcp__* são PROVAVELMENTE matcháveis por regex, mas isso NÃO
-    foi comprovado nem documentado — validar empiricamente antes de
-    confiar (P2.3).
+  Pending activation: n/a. VISION: não usado (proibido).
 
 GIT
   Branch: main
-  HEAD: d5a17ad4ab835becb61cb54fd9b4e83c0160e4e2
-  Latest commit: refactor(clips): replace criteria evidence with quote
-    IDs and rework clip generation pipeline (2026-10-19 19:25 -0300)
-  Commits created: NONE (zero, conforme restrição absoluta)
+  HEAD: 8c5b5048aa03500aed70c53aaccc483ea5e6f77f (inalterado desde antes
+    da tarefa)
+  Latest commit: docs: add read-only audit report for skills, hooks and
+    harness (autoria do mantenedor)
+  Commits created: NONE (zero, conforme restrição)
   Push: NOT EXECUTED
   Remote: origin → https://github.com/FrosttyS18/CutNicePro.git (main)
-  Working tree: 182 untracked PRÉ-EXISTENTES (ícones, fontes Poppins,
-    posters, design exports, evidências 03B, logs .playwright-mcp) +
-    NENHUM modified rastreado + este relatório (novo)
-  Pending files: os 182 untracked pré-existentes + docs/reports/history/
-    2026-10-19_1947_auditoria-skills-hooks-harness.txt + LATEST.txt
-    (commitar/ignorar é decisão exclusiva do mantenedor)
+  Working tree: 182 untracked pré-existentes (intocados; listagem
+    conferida) + experiments/clip-selection-ab/** + este relatório;
+    ÚNICO modified rastreado: docs/reports/LATEST.txt
+  Pending files: acima — commit é decisão exclusiva do mantenedor
 
 EVIDENCE
-  Commands executed (principais): find/ls dos 4 escopos de skills;
-    git log/status/ls-tree/rev-parse/branch; greps do audit-log.jsonl
-    (contagens por evento, entradas PreToolUse/Stop/FAIL); leitura
-    integral dos 5 scripts de hook + baseline_checks.py + config do host
-    + VALIDATION-POLICY + REPORTING-STANDARD + TOOLING + amostras de
-    AGENTS/PRODUCT-BRAIN/M3A-SPEC/ENGINE-HANDOFF; baseline --fast e
-    --full (Python 3.12 do caminho da config); npm test (vitest 152/152);
-    T1: rm -rf em alvo INEXISTENTE → BLOCK do guard (stderr retornado
-    como feedback; log 19:42:29); T2: bash -c "rm -rf <inexistente>" →
-    exit 0 (contorno); probe: echo > %TEMP%\cnp-audit-write-probe.tmp →
-    cat → rm (criado/lido/removido sem qualquer gate de escrita).
-  Relevant logs: .zcode/hooks/audit/audit-log.jsonl — PreToolUse 6
-    (4 testes "t" 17/10; 1 real 17/10 21:02:51; 1 real HOJE 19:42:29);
-    PostToolUse 270; Stop 31 (última 02:36 19/10); SessionStart 5.
-  Screenshots: NONE (política de validação).
-  Test artifacts: JSONs das baselines (19:40:59 fast; 19:42:29 full);
-    saída vitest 19:44:36 (152/152, 1,71 s).
-  Reproduction details: T1/T2 reproduzíveis com qualquer alvo
-    inexistente (rm -f em path inexistente é no-op); o contorno está no
-    código (guard_destructive.py: analyze_segment usa re.match ^rm/^git/
-    etc. no INÍCIO do segmento após split por ;|&).
+  Commands executed (principais): cargo test --release (25/25, várias
+    rodadas); clip-selection-ab counterproof/crosscheck (regenerados e
+    byte-estáveis); python external/contraprovas_selecao.py (executado
+    PELO REVISOR — consistente com counterproof.json); python
+    tools/analyze.py preserve-check (PRESERVADO); leitura/citação do
+    transcript e dos 12 candidatos; grep no scene_regions.rs/ClipTools/
+    logs do llama.
+  Relevant logs: citações literais em evaluation.md/candidates-full.md
+    (falas numeradas); scratch/ inalterado da atualização 1 (0 novas
+    chamadas LLM — nenhum artefato novo em scratch/).
+  Screenshots: NONE.
+  Test artifacts: reports/counterproof.json, reports/crosscheck.json,
+    reports/editorial/*, reports/ab2-summary.md, external/*.
+  Reproduction details: README do experimento (comandos); todas as
+    contraprovas são determinísticas e reprodutíveis.
 
 ISSUES
-  CONTRADIÇÕES COMPROVADAS (fonte exata):
-  C1 VISION — C:\Users\adcka\.zcode\AGENTS.md (global; "VISION FIRST…
-    chamar PRIORITARIAMENTE o subagente VISION" para toda imagem) ×
-    C:\CutNicePro\AGENTS.md:67-73 ("VALIDATION OWNERSHIP & EXECUTION
-    BUDGET… Subagente VISION desativado por padrão: uso PROIBIDO salvo
-    solicitação") × docs/engineering/VALIDATION-POLICY.md §2 (idem).
-    O global manda, o local proíbe. Para o CutNicePro o local prevalece
-    por especificidade, mas qualquer agente que leia ambos recebe ordens
-    contraditórias. Sugestão (depende de autorização): restringir o
-    global com "onde o workspace não definir política própria".
-  C2 AUDITORIA DE UI — C:\CutNicePro\AGENTS.md §"Design e UX" ("auditar
-    interfaces com a skill web-design-guidelines") × VALIDATION-POLICY.md
-    §1/§3 (ZCode NÃO inicia auditorias estéticas; validação proporcional;
-    orçamento). Leitura conciliável (a skill audita código/acessibilidade,
-    não estética, com proporcionalidade), mas a redação atual permite a
-    interpretação custosa que a política foi criada para eliminar.
-  C3 SYSTEM PROMPT DEFASADO — o AGENTS.md injetado no contexto desta
-    sessão longa é a versão ANTERIOR à reescrita de hoje ("Status:
-    aplicação NÃO implementada"; sem seção VALIDATION) × AGENTS.md em
-    disco (status 03N "implementado"; VALIDATION na linha 67). Comprovado
-    pela diferença entre o reminder do sistema e o head/grep do arquivo.
-    Risco: agente em sessão longa age sobre mapa obsoleto do projeto.
-    Mitigação imediata sem custo: reler AGENTS.md do disco no início de
-    cada tarefa (proposta P1.5).
-  C4 docs/HOOKS.md §"Limitação conhecida — app_tests não encontra o app"
-    (correção "PENDENTE de autorização") × .zcode/hooks/harness/
-    baseline_checks.py:98-114 (candidates=[root, app/] — JÁ corrigido) ×
-    execução de hoje (--full: "npm test OK (app/)"). Doc desatualizado.
-  C5 docs/design/M1DR-AUDIT.md:81-86 — mesma alegação superada de C4.
-  C6 docs/HOOKS.md (nota: timeout do Stop "até lá 300 s") × config atual
-    timeoutMs:90000 já vigente. Menor.
-  C7 .zcode/skills/using-agent-skills/SKILL.md:19-42 e 166-192 — o mapa/
-    lifecycle referenciam 15 skills não instaladas (interview-me,
-    idea-refine, constraint-driven-development, api-and-interface-design,
-    context-engineering, doubt-driven-development,
-    browser-testing-with-devtools, debugging-and-error-recovery,
-    code-simplification, performance-optimization,
-    git-workflow-and-versioning, ci-cd-and-automation,
-    deprecation-and-migration, observability-and-instrumentation,
-    shipping-and-launch). Mitigado por TOOLING.md (decisão documentada)
-    e pelo host (só invoca skills da lista disponível); risco residual:
-    agente tenta seguir passo de skill inexistente.
-  C8 C:\CutNicePro\AGENTS.md §"Memória e documentação" ("Consultar o
-    Graphify antes de alterações estruturais") × graphify-out/graph.json
-    AUSENTE (TOOLING.md: "INSTALLED — INITIAL INDEX PENDING"). TOOLING
-    manda ler o código quando o grafo indisponível; o índice permanece
-    pendente desde a instalação (17/10) através de código novo massivo.
-  C9 Plugins/MCP de escrita/execução expostos sem gate (ver MCP/SKILLS)
-    × objetivo de "autorização de escrita por tarefa": hoje NÃO é
-    garantível pelos hooks existentes.
-
-  LACUNAS DE PROTEÇÃO E COBERTURA:
-  L1 Guard contornável por wrapper (COMPROVADO em T2) e sem cobertura
-    de escrita via redirecionamento/PowerShell.
-  L2 Sem gate de escrita por tarefa: Write/Edit/ApplyPatch não têm
-    PreToolUse; PermissionRequest e decisão ask/deny nunca usados.
-  L3 Guard não loga allows — disparo contínuo não é provável pelo log
-    (apenas blocks atestam vida; hoje atestada às 19:42:29).
-  L4 Baseline sem Rust/typecheck/lint/e2e; sem contagens de testes no
-    relatório (diz apenas "npm test OK (app/)").
-  L5 validate_changes não cobre .ts/.tsx/.rs/.css (a maior parte da
-     base do app).
-  L6 Suíte Rust cresceu (transcription/render/clips) e está fora de
-     toda baseline (NOT TESTED estrutural).
-  L7 Hooks são opt-in (fail-open global): toggle off ou config inválida
-     = proteção zero silenciosa. Camada independente comprovada: plan
-     mode do host (bloqueio real de Bash até aprovação — empirismo M2A).
-  RISCOS ADICIONAIS: trabalho paralelo de duas IAs (ZCode + Codex) no
-     mesmo main sem gate de integração pós-merge (endereçado por P3.1);
-     182 untracked acumulados (inclui binários/fontes — decisão de
-     commit/.gitignore do mantenedor); memória do agente precisou ser
-     atualizada fora do repo (estado real: HEAD d5a17ad com transcrição/
-     render/clipes implementados pela via paralela).
+  CONCLUSÕES COM STATUS (demonstrada/refutada/inconclusiva):
+  - Guloso perde cortes em conflito (S1/S2): DEMONSTRADA (determinístico).
+  - Dedupe 50% antes da DP destrói o ótimo: DEMONSTRADA (Rust + enumeração
+    independente do mantenedor, 3 denominadores).
+  - Dedupe por equivalência de cobertura é seguro para DP: REFUTADA EM
+    GERAL (contraprova da revisão: 155/2 → 95/1; teste de regressão);
+    seguro APENAS sob a âncora de segmentos do coletor (cessa após
+    scene_regions::refine) — por isso NENHUMA poda pré-DP é recomendada.
+  - DP == ótimo sob max-soma-até-count: DEMONSTRADA (249 cenários no
+    binário + 30.000 triais independentes; empates/permutações/épsilon/
+    duplicatas/vazio/count cobertos).
+  - max-soma ≠ max-quantidade (100×1 vs 98×2): DEMONSTRADA; escolha entre
+    eles é decisão de PRODUTO (contrato atual: teto com max-soma).
+  - DP/rerank melhoram os cortes DESTA transcrição: REFUTADA (A=B=C;
+    sem conflito custoso no pool).
+  - Ganho editorial do rerank em geral: INCONCLUSIVA (N=1; efeito
+    observado limitado a transparência/razões).
+  - C11 inferior a C1/C8; C12 ruim por terminar no comercial; gargalo na
+    coleta (3 momentos sem candidato): AVALIAÇÕES DE MODELO com citações
+    literais (auditoria humana pendente — avaliações não são verdade
+    humana).
+  - “--seed 42 ignorado”: NÃO COMPROVADA (indistinguível; justificativa
+    técnica também não verificada neste binário).
+  - Diferenças vs produção por scene_regions: REFUTADA (limite 0,8 s);
+    hipótese opções UI (min=45/max=90): CONSISTENTE, formalmente
+    INCONCLUSIVA.
+  - Equivalência ao SupoClip completo: NENHUMA alegada (conceito apenas;
+    AGPL; nada copiado — verificado pelo revisor nas 6 menções).
+  LIMITAÇÕES: N=1 transcrição; opções da geração de produção desconhecidas;
+    validação contínua do espaço de entradas não é exaustiva (249 + 30.000
+    amostragens); a avaliação editorial é de modelo (GLM), rotulada.
+  Bugs found: 1 (brute_force, meu, corrigido antes de uso). Sem novos
+    bugs no caminho DP.
 
 FINAL
-  Delivery status: AUDITORIA ENTREGUE; IMPLEMENTAÇÃO BLOQUEADA até
-    autorização expressa do mantenedor (conforme ofício).
-  Requirements met: 8/8 itens do escopo investigados com evidência.
-  Remaining work — PLANO INCREMENTAL (etapas INDEPENDENTES; todas
-    exigem autorização prévia; sem cópia das skills do Akita — apenas
-    conceitos adaptados):
-  P0 (minutos, risco zero):
-    P0.1 Corrigir docs/HOOKS.md (C4+C6) e docs/design/M1DR-AUDIT.md (C5),
-         retendo o histórico com nota "corrigido em <data>".
-  P1 (baixo custo, alto valor — fecha L3/L4/L6 e mitiga C3):
-    P1.1 Baseline: novo check rust_tests (cargo test em app/src-tauri;
-         SKIP se cargo ausente; timeout 240 s).
-    P1.2 Baseline: novo check typecheck (script npm do app; SKIP se
-         ausente).
-    P1.3 app_tests: reportar CONTAGENS (parse "Tests N passed" do
-         vitest) no detail.
-    P1.4 Guard: logar ALLOW resumido (1 linha truncada por invocação).
-    P1.5 Processual: campo fixo "AGENTS.md relido do disco em <data>"
-         no ZCODE REPORT.
-  P2 (médio — fecha L1/L2/C9):
-    P2.1 Guard: detectar padrões destrutivos DENTRO de wrappers
-         conhecidos (bash -c, sh -c, cmd /c, powershell -Command, env,
-         nohup, timeout) — profundidade 1, mantendo a análise por
-         segmento e o falso-positivo `grep "git reset --hard"` liberado.
-    P2.2 Gate de escrita OPCIONAL por tarefa: PreToolUse matcher
-         ^(Write|Edit|ApplyPatch)$ com decisão "ask" quando não existir
-         marcador de autorização criado/deletado SOMENTE pelo usuário
-         (ex.: .zcode/audit/write-grant.json); fail-closed de sessão
-         via plan mode do host para trabalhos de análise.
-    P2.3 Validar empiricamente se matchers alcançam tools mcp__* (hook
-         de log com matcher ^mcp__ + 1 chamada inócua) — decide a via
-         para gatear figcraft/playwright/node_repl (C9).
-  P3 (maior, após P1/P2 assentados — conceitos Akita adaptados):
-    P3.1 Skill nova DERIVADA DO CONCEITO de pr-audit/post-refactor
-         (não cópia): audit-external-commits — antes de construir sobre
-         HEAD movido por outro agente: congelar intervalo, ledger de
-         claims (mensagem do commit × código real), baseline full +
-         cargo, checar interações. Endereça o fluxo real ZCode+Codex.
-    P3.2 Retro do harness (conceito reflect): seção opcional "Fricções
-         do harness" no ZCODE REPORT ou docs/engineering/
-         HARNESS-RETRO.md acumulativo.
-    P3.3 verification-planning como TEMPLATE de seção nas SPECs
-         (alegação, modos de falha, caminhos de evidência, veredito
-         established/limited/refuted) — estende VALIDATION-POLICY §4-5.
-  TESTES NEGATIVOS exigidos para provar cada proteção (nenhum PASS de
-    proteção sem eles):
-    - Guard rm -rf direto → BLOCK [PROVADO hoje; repetir após cada
-      mudança no guard]
-    - Guard wrapper (T2) → deve passar a BLOCK após P2.1 [hoje: contorno
-      comprovado]
-    - Guard falso-positivo (grep "git reset --hard" doc) → deve seguir
-      LIBERADO [histórico 17/10; repetir após P2.1]
-    - Baseline full: 1 teste quebrado de propósito (tarefa autorizada,
-      revert imediato) → deve FAIL com exit 1; idem para rust_tests após
-      P1.1
-    - Gate de escrita P2.2: Write sem grant → ask/deny; com grant →
-      allow; contorno via Bash echo> DENTRO do workspace → decidido
-      explicitamente (bloquear ou aceitar risco documentado)
-    - Matcher mcp__* (P2.3): chamada inócua → entrada no log
-    - Stop: sempre exit 0 [comprovado]
-    - validate_changes: JSON inválido em alvo descartável → FAIL +
-      additionalContext [histórico; repetir]
-  RECURSOS A PRESERVAR (não duplicar, não substituir): protocolo ZCODE
-    REPORT + REPORTING-STANDARD (mais rigoroso que qualquer skill do
-    Akita); VALIDATION-POLICY (orçamento 1+1, VISION off, status
-    FUNCTIONAL/REGRESSION/VISUAL); baseline em 2 níveis + guard +
-    validate_changes (com provas reais de execução); as 16 skills do
-    workspace (9 do ciclo Osmani + cutnicepro-ux-writing +
-    web-design-guidelines + graphify + 3 de design mediadas pelo
-    AGENTS.md); docs da revisão 03N (TOOLING/ENGINE-HANDOFF/M3A-SPEC
-    coerentes com o código); memória de projeto do agente.
-  AÇÕES QUE DEPENDEM DE AUTORIZAÇÃO EXPLÍCITA: TODAS as P0-P3 (editam
-    docs/código/config do projeto ou do host); qualquer instalação de
-    skill; graphify build; commits/pushes; alteração em C:\Users\adcka\
-    .zcode\AGENTS.md (C1); decisão sobre os 182 untracked.
-  User action required: aceite/rejeição/ajustes do plano; decisões C1
-    e untracked.
-  Restart required: NADA desta auditoria; mudanças futuras em hooks/
-    config (P1/P2) podem exigir reinício do ZCode para vigorar (padrão
-    do host).
-  Ready for next task: SIM — aguardando autorização expressa.
+  Delivery status: ATUALIZAÇÃO 2 ENTREGUE (código experimental corrigido,
+    contraprovas, validação exaustiva, avaliação editorial, diagnósticos
+    corrigidos, revisão adversarial em 2 rodadas). Nenhuma integração foi
+    executada; nenhuma outra fase iniciada.
+  Requirements met: todos os itens do ofício (1-5).
+  RECOMENDAÇÕES DE INTEGRAÇÃO POR EVIDÊNCIA:
+  1. Corretude combinatória (DEMONSTRADA): substituir o loop guloso
+     (selection.rs:141-153) por DP max-soma-até-count SEM NENHUMA poda
+     prévia (nem 50%, nem equivalência de cobertura). Custo zero.
+  2. Qualidade editorial (NÃO demonstrada para DP/rerank neste pool): o
+     ganho editorial provável está na COLETA — candidatos por janela e/ou
+     candidatos que cruzem fronteiras de janela (ex.: unificar C7+C8;
+     capturar o desfecho do save). Registrar como investigação futura com
+     N maior de transcrições; decisão de produto sobre “priorizar
+     quantidade” permanece em aberto (não decidida aqui).
+  3. Desempenho (medido): DP ≈ 0 s; rerank +19,9 s/+1 chamada — só se
+     transparência/calibração forem desejadas.
+  ARTEFATOS PARA REVISÃO EXTERNA (identificados): código —
+     experiments/clip-selection-ab/src/clips/finalize.rs (dp, greedy,
+     brute_force, crosscheck_dp, dedupe_equivalent com refutação
+     documentada) e src/main.rs; provas — reports/counterproof.json,
+     reports/crosscheck.json, reports/controlled.json, reports/real-
+     {greedy,dp,joint}.json; editorial — reports/editorial/
+     {candidates-full.md, evaluation.md}; resumo — reports/ab2-summary.md;
+     referência independente — external/contraprovas_selecao.py.
+  User action required: decisão sobre as recomendações 1-3 (a integração
+    continua NÃO executada, conforme ofício); avaliação humana da
+    avaliação editorial (citações prontas).
+  Restart required: NO.
+  Ready for next task: SIM — parado aguardando decisão; nenhuma fase
+    adicional foi iniciada.
 
 REPORT
   Latest file: docs/reports/LATEST.txt
-  Historical file: docs/reports/history/2026-10-19_1947_auditoria-skills-hooks-harness.txt
+  Historical file: docs/reports/history/2026-10-19_2137_experimento-selecao-correcoes.txt
 
 END OF REPORT
