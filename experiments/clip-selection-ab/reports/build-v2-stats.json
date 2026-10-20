@@ -1,0 +1,25 @@
+{
+  "candidatos_finais": 12,
+  "elapsed_s": 0.0004083,
+  "kind": "construção corrigida sobre respostas brutas preservadas (0 chamadas de janela; apenas recuperação real)",
+  "por_janela": [
+    {
+      "conformes": 0,
+      "descartadas": 0,
+      "fora_do_range": 0,
+      "invalidas": 6,
+      "janela": 0,
+      "propostas_brutas": 6,
+      "reparadas_deterministicas": 6
+    },
+    {
+      "conformes": 4,
+      "descartadas": 0,
+      "fora_do_range": 0,
+      "invalidas": 2,
+      "janela": 1,
+      "propostas_brutas": 6,
+      "reparadas_deterministicas": 2
+    }
+  ]
+}

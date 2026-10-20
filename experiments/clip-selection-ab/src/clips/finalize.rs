@@ -490,6 +490,132 @@ struct JointReply {
     picks: Vec<JointPick>,
 }
 
+/// Rerank editorial com conteúdo INTEGRAL (atualização 3): sem nota inicial
+/// na entrada, sem dedupe (refutada), sem truncamento de texto, com
+/// contexto externo identificado separadamente e IDs estáveis.
+pub fn rerank_full(
+    base: &Path,
+    scratch: &Path,
+    all: &[Clip],
+    segments: &[Segment],
+    options: &Options,
+    control: &ProcessControl,
+) -> FinalOut {
+    let started = Instant::now();
+    let labels: Vec<String> = (1..=all.len()).map(|i| format!("C{i}")).collect();
+    let candidates: Vec<serde_json::Value> = all
+        .iter()
+        .enumerate()
+        .map(|(i, c)| {
+            let text = snippet(segments, c.start, c.end, usize::MAX);
+            let before = segments
+                .iter()
+                .filter(|s| s.end <= c.start + 1e-9)
+                .next_back()
+                .map(|s| s.text.clone());
+            let after = segments
+                .iter()
+                .filter(|s| s.start >= c.end - 1e-9)
+                .next()
+                .map(|s| s.text.clone());
+            serde_json::json!({
+                "id": labels[i],
+                "start": (c.start * 1000.0).round() / 1000.0,
+                "end": (c.end * 1000.0).round() / 1000.0,
+                "text": text,
+                "contextBefore": before,
+                "contextAfter": after,
+            })
+        })
+        .collect();
+    let data = serde_json::json!({"limit": options.count, "candidates": candidates});
+    let schema = serde_json::json!({"type":"object","additionalProperties":false,"required":["picks"],"properties":{"picks":{"type":"array","maxItems":options.count,"items":{
+        "type":"object","additionalProperties":false,"required":["id","score","reason"],"properties":{
+            "id":{"type":"string","enum":labels},"score":{"type":"integer","minimum":0,"maximum":100},"reason":{"type":"string"}}}}}});
+    let prompt = match text_engine::prompt(include_str!("rerank-full-prompt.txt"), &data) {
+        Ok(value) => value,
+        Err(error) => {
+            return joint_fallback(all.to_vec(), options, started, format!("montagem do prompt: {error}"))
+        }
+    };
+    let reply = text_engine::generate(
+        base,
+        scratch,
+        "rerank-full",
+        &prompt,
+        &schema,
+        1200,
+        control,
+    )
+    .map_err(|e| e.to_string())
+    .and_then(|output| {
+        serde_json::Deserializer::from_str(output.trim())
+            .into_iter::<JointReply>()
+            .next()
+            .ok_or_else(|| "resposta vazia".to_string())
+            .and_then(|value| value.map_err(|e| format!("JSON inválido: {e}")))
+    });
+    let picks = match reply {
+        Ok(value) if !value.picks.is_empty() => value.picks,
+        Ok(_) => {
+            return joint_fallback(all.to_vec(), options, started, "rerank retornou zero escolhas".into())
+        }
+        Err(error) => {
+            return joint_fallback(all.to_vec(), options, started, format!("resposta inválida: {error}"))
+        }
+    };
+    let mut chosen: Vec<Clip> = Vec::new();
+    let mut picks_raw: Vec<serde_json::Value> = Vec::new();
+    let mut beyond: Vec<String> = Vec::new();
+    let mut invalid: Vec<String> = Vec::new();
+    let mut overlap_discarded: Vec<serde_json::Value> = Vec::new();
+    for pick in picks {
+        picks_raw.push(serde_json::json!({"id": pick.id, "score": pick.score, "reason": pick.reason}));
+        if chosen.len() == options.count {
+            beyond.push(pick.id);
+            continue;
+        }
+        let index = match pick.id.strip_prefix('C').and_then(|n| n.parse::<usize>().ok()) {
+            Some(number) if number >= 1 && number <= all.len() => number - 1,
+            _ => {
+                invalid.push(pick.id);
+                continue;
+            }
+        };
+        let mut clip = all[index].clone();
+        if chosen.iter().any(|other| overlaps(&clip, other)) {
+            overlap_discarded.push(serde_json::json!({
+                "id": pick.id, "score": pick.score,
+                "intervalo": [clip.start, clip.end],
+                "motivo": "sobrepõe escolha anterior do próprio rerank",
+            }));
+            continue;
+        }
+        clip.score = pick.score;
+        clip.reasons.push(format!("Rerank integral: {}", pick.reason));
+        chosen.push(clip);
+    }
+    if chosen.is_empty() {
+        return joint_fallback(all.to_vec(), options, started, "nenhuma escolha validou".into());
+    }
+    FinalOut {
+        strategy: "rerank-full".into(),
+        elapsed_s: started.elapsed().as_secs_f64(),
+        clips: chosen,
+        discards: Vec::new(),
+        fallback: None,
+        details: Some(serde_json::json!({
+            "presented": all.len(),
+            "prompt_chars": prompt.chars().count(),
+            "picks_total": picks_raw.len() + beyond.len() + invalid.len() + overlap_discarded.len(),
+            "picks": picks_raw,
+            "picks_beyond_limit": beyond,
+            "invalid_picks": invalid,
+            "overlap_discarded": overlap_discarded,
+        })),
+    }
+}
+
 #[derive(Deserialize)]
 #[serde(rename_all = "camelCase", deny_unknown_fields)]
 struct JointPick {

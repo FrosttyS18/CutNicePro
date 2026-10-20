@@ -1,0 +1,69 @@
+{
+  "strategy": "rerank-full",
+  "elapsed_s": 26.5716222,
+  "clips": [
+    {
+      "id": "ad8beac13deffefacdb4c4e92463401544c3dd63928de4c9d67cd1ddec3ab621",
+      "start": 110.82,
+      "end": 200.4,
+      "title": "Trecho 01:50",
+      "score": 85,
+      "reasons": [
+        "intervalo ajustado deterministicamente (início avançado) de [0.0s, 200.4s] para [110.8s, 200.4s] para caber na duração pedida; nota herdada da proposta original será reavaliada pela análise do trecho",
+        "Rerank integral: O trecho inicial apresenta uma narrativa mais coesa e temática, com uma introdução mais clara e uma conclusão mais direta, embora com um pouco mais de desenvolvimento."
+      ],
+      "review": "pending",
+      "format": "9:16"
+    },
+    {
+      "id": "598c561fbe13dd711a3cde931491a6e901719268710b2064afcfd8b03d73a950",
+      "start": 209.7,
+      "end": 226.72,
+      "title": "Trecho 03:29",
+      "score": 80,
+      "reasons": [
+        "intervalo ajustado deterministicamente (fim estendido) de [209.7s, 216.6s] para [209.7s, 226.7s] para caber na duração pedida; nota herdada da proposta original será reavaliada pela análise do trecho",
+        "Rerank integral: O trecho tem uma clara continuidade com o anterior e uma conclusão mais direta, com uma narrativa mais coesa e uma lógica mais clara entre os elementos apresentados."
+      ],
+      "review": "pending",
+      "format": "9:16"
+    }
+  ],
+  "discards": [],
+  "fallback": null,
+  "details": {
+    "invalid_picks": [],
+    "picks": [
+      {
+        "id": "C1",
+        "reason": "O trecho inicial apresenta uma narrativa mais coesa e temática, com uma introdução mais clara e uma conclusão mais direta, embora com um pouco mais de desenvolvimento.",
+        "score": 85
+      },
+      {
+        "id": "C3",
+        "reason": "O trecho tem uma clara continuidade com o anterior e uma conclusão mais direta, com uma narrativa mais coesa e uma lógica mais clara entre os elementos apresentados.",
+        "score": 80
+      },
+      {
+        "id": "C5",
+        "reason": "O trecho tem uma clara continuidade com o anterior e uma conclusão mais direta, com uma narrativa mais coesa e uma lógica mais clara entre os elementos apresentados.",
+        "score": 75
+      }
+    ],
+    "picks_beyond_limit": [],
+    "presented": 12,
+    "prompt_chars": 8059,
+    "overlap_discarded": [
+      {
+        "id": "C5",
+        "score": 75,
+        "intervalo": [
+          224.48,
+          242.76
+        ],
+        "motivo": "sobrepõe escolha anterior do próprio rerank"
+      }
+    ],
+    "picks_total": 3
+  }
+}

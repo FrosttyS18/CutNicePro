@@ -26,10 +26,12 @@ fn main() {
         Some("controlled") => controlled(),
         Some("counterproof") => counterproof(),
         Some("crosscheck") => crosscheck_cmd(),
+        Some("build-v2") => build_v2_cmd(),
+        Some("rerank-full") => rerank_full_cmd(),
         Some("collect") => collect_cmd(&args),
         Some("finalize") => finalize_cmd(&args),
         _ => {
-            eprintln!("uso: clip-selection-ab <controlled|counterproof|crosscheck|collect|finalize --strategy S>");
+            eprintln!("uso: clip-selection-ab <controlled|counterproof|crosscheck|build-v2|rerank-full|collect|finalize --strategy S [--candidates P]>");
             std::process::exit(2);
         }
     }
@@ -213,6 +215,151 @@ fn crosscheck_cmd() {
     }
 }
 
+/// Construção CORRIGIDA dos candidatos (atualização 3): reaproveita as
+/// respostas BRUTAS das janelas preservadas em scratch/selection-*-result.json
+/// (nenhuma nova chamada de janela), aplica o contrato novo do app
+/// (conform → recuperação por lote → descarte explícito) e grava
+/// reports/candidates-v2.json + reports/build-v2-stats.json.
+fn build_v2_cmd() {
+    let transcript = match load_transcript("data/transcript-davyjones.json") {
+        Ok(value) => value,
+        Err(error) => {
+            eprintln!("{error}");
+            std::process::exit(1);
+        }
+    };
+    let duration: f64 = std::fs::read_to_string("data/media-duration.txt")
+        .expect("data/media-duration.txt")
+        .trim()
+        .parse()
+        .expect("duração numérica");
+    let options = mk_options(DEFAULT_COUNT);
+    let control = ProcessControl::default();
+    let ranges = clips::selection::windows(&transcript.segments, options.max_seconds);
+    let started = std::time::Instant::now();
+    let mut all: Vec<Clip> = Vec::new();
+    let mut stats: Vec<serde_json::Value> = Vec::new();
+    for (index, range) in ranges.iter().enumerate() {
+        let raw = std::fs::read_to_string(format!("scratch/selection-{index}-result.json"))
+            .unwrap_or_else(|_| panic!("bruto da janela {index} ausente"));
+        let reply = serde_json::Deserializer::from_str(raw.trim())
+            .into_iter::<clips::selection::Reply>()
+            .next()
+            .and_then(|value| value.ok())
+            .expect("primeiro JSON válido da resposta bruta");
+        let limit = (options.count * 2).min(12);
+        let mut invalid: Vec<clips::selection::Candidate> = Vec::new();
+        let mut conformes = 0usize;
+        let mut fora_do_range = 0usize;
+        for candidate in reply.candidates.into_iter().take(limit) {
+            if !range.contains(&candidate.first_id) || !range.contains(&candidate.last_id) {
+                fora_do_range += 1;
+                continue;
+            }
+            match clips::selection::conform(
+                candidate,
+                &transcript.segments,
+                &transcript.media_id,
+                duration,
+                &options,
+            ) {
+                Ok(clip) => {
+                    all.push(clip);
+                    conformes += 1;
+                }
+                Err(rejected) => invalid.push(rejected),
+            }
+        }
+        let total_invalid = invalid.len();
+        let mut reparadas = 0usize;
+        let mut descartadas = 0usize;
+        for rejected in invalid {
+            match clips::selection::repair(
+                rejected,
+                &transcript.segments,
+                &transcript.media_id,
+                duration,
+                &options,
+            ) {
+                Some(clip) => {
+                    all.push(clip);
+                    reparadas += 1;
+                }
+                None => descartadas += 1,
+            }
+        }
+        eprintln!(
+            "[build-v2] janela {index}: {conformes} conformes, {total_invalid} inválidas, {reparadas} reparadas deterministicamente, {descartadas} descartadas"
+        );
+        stats.push(serde_json::json!({
+            "janela": index,
+            "propostas_brutas": limit,
+            "fora_do_range": fora_do_range,
+            "conformes": conformes,
+            "invalidas": total_invalid,
+            "reparadas_deterministicas": reparadas,
+            "descartadas": descartadas,
+        }));
+    }
+    let elapsed = started.elapsed().as_secs_f64();
+    write_json(
+        "reports/candidates-v2.json",
+        &Collected {
+            media_id: transcript.media_id.clone(),
+            duration,
+            options: clips::selection_x::OptionsOut {
+                min_seconds: options.min_seconds,
+                max_seconds: options.max_seconds,
+                count: options.count,
+                format: options.format.clone(),
+            },
+            windows: ranges.iter().map(|r| (r.start, r.end)).collect(),
+            candidates_per_window: Vec::new(),
+            candidates: all.clone(),
+            elapsed_s: elapsed,
+        },
+    );
+    write_json(
+        "reports/build-v2-stats.json",
+        &serde_json::json!({
+            "kind": "construção corrigida sobre respostas brutas preservadas (0 chamadas de janela; apenas recuperação real)",
+            "por_janela": stats,
+            "candidatos_finais": all.len(),
+            "elapsed_s": elapsed,
+        }),
+    );
+}
+
+fn rerank_full_cmd() {
+    let collected: Collected = serde_json::from_str(
+        &std::fs::read_to_string("reports/candidates-v2.json")
+            .expect("reports/candidates-v2.json"),
+    )
+    .expect("candidates-v2.json válido");
+    let transcript = load_transcript("data/transcript-davyjones.json").expect("transcrição");
+    let options = mk_options(collected.options.count);
+    let control = ProcessControl::default();
+    let out = clips::finalize::rerank_full(
+        &PathBuf::from("."),
+        &PathBuf::from("./scratch"),
+        &collected.candidates,
+        &transcript.segments,
+        &options,
+        &control,
+    );
+    eprintln!(
+        "rerank-full: {} corte(s), prompt_chars={}, fallback={:?}",
+        out.clips.len(),
+        out.details
+            .as_ref()
+            .and_then(|d| d.get("prompt_chars"))
+            .and_then(|v| v.as_u64())
+            .unwrap_or(0),
+        out.fallback
+    );
+    write_json("reports/real-c2.json", &out);
+}
+
 fn load_transcript(path: &str) -> Result<Transcript, String> {
     let body = std::fs::read_to_string(path).map_err(|e| format!("transcrição: {e}"))?;
     serde_json::from_str(&body).map_err(|e| format!("transcrição inválida: {e}"))
@@ -273,10 +420,12 @@ fn collect_cmd(args: &[String]) {
 
 fn finalize_cmd(args: &[String]) {
     let strategy = flag(args, "--strategy").unwrap_or_else(|| "greedy".into());
+    let source = flag(args, "--candidates").unwrap_or_else(|| "reports/candidates.json".into());
+    let suffix = if source.contains("v2") { "b2" } else { "a1" };
     let collected: Collected = serde_json::from_str(
-        &std::fs::read_to_string("reports/candidates.json").expect("reports/candidates.json"),
+        &std::fs::read_to_string(&source).unwrap_or_else(|_| panic!("{source}")),
     )
-    .expect("candidates.json válido");
+    .expect("candidates json válido");
     let options = Options {
         min_seconds: collected.options.min_seconds,
         max_seconds: collected.options.max_seconds,
@@ -311,5 +460,5 @@ fn finalize_cmd(args: &[String]) {
         out.discards.len(),
         out.fallback
     );
-    write_json(&format!("reports/real-{strategy}.json"), &out);
+    write_json(&format!("reports/real-{suffix}-{strategy}.json"), &out);
 }

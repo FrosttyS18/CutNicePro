@@ -74,10 +74,14 @@ pub fn collect(
             .ok_or("Não foi possível selecionar os momentos. Tente novamente.")?
             .map_err(|_| "Não foi possível selecionar os momentos. Tente novamente.")?;
         let before = all.len();
+        // [ATUALIZAÇÃO 3] o app substituiu materialize() por conform():
+        // este coletor HISTÓRICO (rodada 1) agora descarta propostas não
+        // conformes em vez de transformá-las — para efeito de compilação;
+        // as rodadas novas usam build-v2.
         for candidate in reply.candidates.into_iter().take(limit) {
             if range.contains(&candidate.first_id) && range.contains(&candidate.last_id) {
-                if let Some(clip) =
-                    selection::materialize(candidate, segments, media, duration, options)
+                if let Ok(clip) =
+                    selection::conform(candidate, segments, media, duration, options)
                 {
                     all.push(clip);
                 }

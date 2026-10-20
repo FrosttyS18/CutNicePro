@@ -3,309 +3,276 @@
 ╚════════════════════════════════════════════╝
 
 TASK
-  Name: Corrigir a proposta de seleção e completar a avaliação (atualização
-    2 do experimento A/B)
-  Status: PASS (FUNCTIONAL: contraprovas reproduzidas no código, DP validada
-    contra enumeração exaustiva, avaliação editorial completa, diagnósticos
-    corrigidos, 2 rodadas de revisão adversarial; REGRESSION: PASS no
-    escopo — 25/25 testes, resultados anteriores intactos, app-data
-    preservado; NENHUMA integração executada)
-  Scope: fechar as lacunas do experimento A/B com código experimental,
-    testes independentes e avaliação dos 12 candidatos reais já coletados.
-    Escrita SOMENTE em experiments/clip-selection-ab/** e nos relatórios
-    canônicos; sem commits/pushes, sem novos modelos, sem envio externo,
-    sem tocar app/projetos/configs/hooks/memórias/untracked preexistentes/
-    resultados brutos anteriores. 0 novas chamadas de inferência (rerank
-    reutilizado; teto do orçamento respeitado — não tratado como obrigação).
-  Objective: contraprova de R2 (dedupe→DP como COMPOSIÇÃO); objetivo da DP
-    fixado por contrato; validação exaustiva; avaliação editorial de
-    escolhidos E descartados; correção de diagnósticos não comprovados;
-    revisão adversarial em 2 rodadas; status por conclusão.
-  Result: dedupe-50% RETIRADO como recomendação (contraprova confirmada em
-    Rust e na enumeração independente do mantenedor); a política substituta
-    (equivalência de cobertura) também foi REFUTADA EM GERAL pela revisão
-    adversarial — conclusão final: DP SEM NENHUMA poda prévia; contrato
-    count=TETO com max-soma; DP == ótimo em 249 cenários/0 falhas (+30.000
-    triais independentes do revisor, 0 divergências); nesta transcrição
-    A=B=C (gargalo editorial está na COLETA — 3 momentos relevantes sem
-    candidato); diagnósticos seed/scene_regions/preservação corrigidos.
+  Name: Corrigir construção e avaliação real dos candidatos (atualização 3)
+  Status: PASS (FUNCTIONAL: caminho de construção corrigido NO APP com
+    testes; DP integrada como mudança separável; rerank editorial integral
+    executado; causas todas reproduzidas; REGRESSION: PASS no escopo —
+    app 102/0/6, experimento 36/36, brutos das rodadas 1-2 preservados,
+    app-data PRESERVADO; aprovação editorial humana PENDENTE)
+  Scope: experimento experiments/clip-selection-ab/** + módulos/testes de
+    seleção em app/src-tauri/src/clips/ + documentação/relatórios. Sem
+    tocar UI/Whisper/render/modelos/hooks/configs/memórias/projetos
+    reais/mídia/untracked preexistentes; sem commits/pushes/merges.
+  Objective: corrigir o caminho que transforma respostas do modelo em
+    candidatos e realizar avaliação editorial local com conteúdo completo,
+    com comparação A (histórico) / B (construção corrigida) / C (avaliação
+    conjunta integral antes da escolha).
+  Result: as 3 causas do ofício foram CONFIRMADAS com os números exatos;
+    o app agora SÓ aceita propostas válidas como vieram (conform) e repara
+    deterministicamente as inválidas com marcação explícita (a nota nunca
+    mais é apresentada como avaliação de intervalo alterado); a recuperação
+    por LLM foi testada e é INEFICAZ neste motor (eco das propostas);
+    B entrega 12 candidatos com 0 descartes e 0 transformações silenciosas;
+    o primeiro corte muda de [0–88,7] para [110,8–200,4] (meme "grupo do
+    papi" agora DENTRO do corte); C (rerank integral, 8.059 chars, sem nota
+    inicial) fez 3 picks → 2 clipes e NÃO escolheu o arco da skin —
+    resultado reportado fielmente, sem forçar.
 
 IMPLEMENTATION
   Completed:
-  1. CONTRAPROVA DE R2 (composição, não funções isoladas) — caso
-     longo[0,60)90 + esquerda[0,30)75 + direita[30,60)75, count=2: DP sem
-     poda = 2 cortes/soma 150; dedupe-50%-antes-da-DP = 1 corte/soma 90
-     (escolhe só o longo). FÓRMULA documentada no código e no JSON:
-     inter = min(fim_a,fim_b) - max(ini_a,ini_b); razão = inter /
-     min(dur_a,dur_b); remove B se razão >= 0,5 contra mantido de nota
-     maior (ordem nota desc/início asc). Referência independente do
-     mantenedor (Downloads/contraprovas_selecao.py — enumeração exaustiva,
-     3 denominadores IoU/menor/maior) copiada para external/ (original
-     intocado) e REPRODUZIDA no Rust (testes + reports/counterproof.json;
-     saída consistente). A recomendação de dedupe-50% como regra geral foi
-     RETIRADA.
-  2. POLÍTICA SUBSTITUTA E SUA REFUTAÇÃO — implementada
-     `dedupe_equivalent` (remove apenas candidatos com cobertura de FALAS
-     idêntica; sem limiar numérico; 0 remoções nos 12 reais — 12 coberturas
-     distintas). A revisão adversarial (rodada 1) REFUTOU a segurança
-     geral: contraprova verificada A[0,30)90/B[5,20)60/C[20,45)95 com
-     segmentos [0,10)/[10,16)/[16,45) — A e B cobrem as mesmas falas, mas
-     janelas distintas; B é o único compatível com C; ótimo 155/2 → 95/1
-     após a poda. Cobertura idêntica NÃO implica janela idêntica. A
-     contraprova virou TESTE de regressão
-     (contraprova_revisao_dedupe_equivalente_destrui_otimo_sem_ancora) e o
-     comentário da fn documenta os invariantes (segura apenas com a âncora
-     de segmentos do coletor — selection.rs:61-78 — condição que cessa
-     após scene_regions::refine). CONCLUSÃO FINAL: nenhuma poda pré-DP.
-  3. OBJETIVO DA DP FIXADO POR CONTRATO — conferidos UI
-     (ClipTools.tsx:63 "Quantidade" 1..12; geração aceita menos; erro
-     apenas com conjunto vazio), Options.validate (1..=12) e o seletor
-     atual (para ao atingir count): count = TETO com qualidade por nota.
-     Caso [0,60):100 vs [0,30):49+[30,60):49: max-soma = longo (100, 1
-     corte); max-quantidade-depois-soma = dois curtos (98, 2 cortes) —
-     objetivos distintos, não defeito; contrato adotado na DP:
-     max (soma, cardinalidade, -starts) com até count; a alternativa
-     "priorizar quantidade" ficou registrada como decisão de produto NÃO
-     tomada (não inventada).
-  4. VALIDAÇÃO EXAUSTIVA DA DP — enumeração independente por bitmask
-     (brute_force) + gerador determinístico LCG (seed fixa) com parte
-     FRACIONÁRIA (fronteiras com centésimos) e casos estruturais: vazio,
-     encostados exatos, encostados-com-épsilon 1e-9, duplicatas exatas,
-     empates de nota, 3 permutações do mesmo conjunto, count > n.
-     Resultado registrado: 249 cenários, 0 FALHAS (reports/crosscheck.json;
-     byte-estável em reexecução). Evidência adicional independente: o
-     revisor transcreveu a DP para Python e fuzzou 30.000 triais (n<=12,
-     count<=6, épsilon) — 0 divergências. HONESTIDADE: no caminho, MEU
-     PRÓPRIO teste expôs um bug na brute_force (retorno com campos trocados
-     no modo cardinality_first) — corrigido; a DP em si nunca divergiu.
-  5. AVALIAÇÃO EDITORIAL COMPLETA (12 candidatos reutilizados; 0 novas
-     chamadas; perspectivas: análise do agente com CITAÇÕES LITERAIS +
-     rerank local reutilizado) — dossiê com textos completos, contexto
-     ±1 fala e mapa de cobertura fala a fala
-     (reports/editorial/candidates-full.md); avaliação com critérios
-     comparáveis (reports/editorial/evaluation.md):
-     - ESCOLHIDOS: C8 [400,7–455,8] é o melhor corte do pool (arco
-       completo: skin bugada → história da Valve → “a skin antiga hoje
-       vale 3 mil reais”); C1 [0–88,7] é bom mas o desfecho (“matou o
-       save”) está FORA do corte (fala 40); C11 [483,3–505,7] é o elo
-       fraco (mistura PUBG/Sobretudão com PC/Makita; termina solto em
-       “Ele tá piorando, é”; nota inicial 80 otimista).
-     - DESCARTADOS com motivo editorial: C12 descarte CORRETO (termina
-       DENTRO do comercial Logitech — fala 293); C2-C6 são janelas
-       deslizantes do mesmo trecho raso (piadas internas); C7 é ponte
-       fraca para C8 (a alternativa C7+C8 encostados, 71 s, não existe
-       como candidato — o coletor gerou os dois separados); C9/C10
-       fragmentados/rasos.
-     - SEPARAÇÃO DE EFEITOS: notas iniciais dominantes (A ordenou
-       85/85/80; DP nada mudou); avaliação editorial (rerank) nula sobre
-       a ESCOLHA, não nula sobre transparência (razões) — e a razão do
-       C11 evidencia o assunto duplo.
-     - MOMENTOS RELEVANTES FORA DO POOL (limitação registrada
-       separadamente): desfecho do save (~89–131 s), meme “Group
-       therapy”→“grupo do papi” (~130–200 s) e todo o trecho
-       “Secute”+5-6 pistolas (~249–382 s; subtrecho das pistolas ~76,6 s)
-       — ZERO candidatos cobrem 129–209. Um finalizador não recupera o
-       que o coletor (6/janela) não gerou: o gargalo editorial DESTA
-       transcrição está majoritariamente na COLETA.
-     - Resumo autocontido A/B/C para o mantenedor:
-       reports/ab2-summary.md (não exige executar nada).
-  6. DIAGNÓSTICOS CORRIGIDOS —
-     (a) SEED: rebaixado a NÃO COMPROVADO em qualquer direção; o valor
-     4294967295 com cadeia terminando em “greedy” é CONSISTENTE com
-     LLAMA_DEFAULT_SEED em builds llama.cpp (justificativa técnica também
-     não verificada neste binário customizado); indistinguível sem
-     modificar o runtime (nada modificado).
-     (b) PRODUÇÃO: scene_regions::refine confirmado no código com limite
-     de 0,8 s por extremidade (scene_regions.rs:102,112) — a atribuição
-     anterior (diferenças de 16 s) foi REFUTADA. Hipótese compatível
-     apresentada: a UI envia min = máx(10, duração/2) (ClipTools.tsx:41,
-     62) — com “Duração máxima 90 s” → min 45/max 90, faixa em que os 3
-     clipes de produção (88,8/55,1/45,2 s) cabem exatamente; CONSISTENTE
-     mas formalmente INCONCLUSIVA (opções originais não registradas).
-     (c) PRESERVAÇÃO: README reordenado por natureza — comparação de
-     hashes ANTES/DEPOIS (JSONs de estado, idênticos) como evidência
-     forte; inventário pós-fato (21 arquivos) e audit-mtime como
-     complementares.
-  7. REVISÃO ADVERSARIAL — RODADA 1 (subagente somente leitura com pedido,
-     código, entradas e resultados): tentou refutar os 4 alvos; NÃO
-     conseguiu quebrar a DP (248 cenários do binário + 30.000 triais do
-     clone próprio: 0 falhas); REFUTOU a alegação de segurança do
-     dedupe_equivalent (achado BLOCKING — corrigido: status, teste de
-     regressão, comentário com invariantes, recomendações); SHOULD-FIX:
-     faixas de tempo erradas nos momentos não cobertos (corrigidas:
-     89–131/130–200/249–382/76,6 s) e citação “entrar o GTA”→“entrar no
-     GTA” (corrigida); NITs: metadados do crosscheck e frase seed
-     (corrigidos). RODADA 2 (rechecagem focalizada): 4/4 correções
-     materiais verificadas com arquivo:linha; DP byte-idêntica; 25/25
-     testes; pendências restantes eram triviais (contagem 248→249,
-     parêntese seed na tabela, metadados, remissão na seção “O que mudou”)
-     — TODAS corrigidas após a rodada 2. Veredito final do revisor: “não
-     há mais alegação de segurança/qualidade sem lastro na tabela”.
-  Not completed: investigação do binário llama_completion quanto à
-    efetividade de --seed (proibido modificar runtime); nova coleta com
-    opções da UI min=45 (proibido refazer coleta); análise por candidato
-    via motor local (teto não obrigatório; avaliação do agente com citações
-    + rerank reutilizado julgados suficientes e rotulados).
-  Changes: NENHUMA no aplicativo/configs/hooks/memórias/untracked
-    preexistentes/resultados brutos anteriores (estes apenas LIDOS).
-  Architecture impact: nenhum no produto.
+  1. CAUSAS REPRODUZIDAS (determinístico, sobre brutos preservados):
+     (a) PROPOSTA×TRANSFORMAÇÃO: 8/12 propostas fora da faixa [15,90] —
+     1 longa (0–200,4 s, firstId 0 lastId 100) e 7 curtas (spans naturais
+     6,9–13,0 s); o materialize antigo transformava TODAS silenciosamente
+     (0–200,4→0–88,7 mantendo nota 85; 7 alongadas) com reasons vazios.
+     (b) AVALIADOR MAL INFORMADO: o rerank antigo recebia 420 chars — 3
+     textos truncados; o do clipe [400,7–455,8] cortava ANTES do desfecho
+     da Valve ("...Teve uma sk…") e o do [506,1–539,2] cortava NA ENTRADA
+     do comercial ("Bom, g…") — invisível ao avaliador.
+     (c) ACHADO ESTRUTURAL ADICIONAL: o modelo das janelas não escolheu
+     momentos — PARTITIONOU as falas em blocos quase consecutivos (janela
+     0: 0-100/101-105/106-110/111-115/116-120/121-125; janela 1 idem,
+     pulando o id 220). Distingue-se: falha da PROPOSTA (partição/blocos
+     fora da faixa) ≠ TRANSFORMAÇÃO posterior (materialize) ≠ INFORMAÇÃO
+     insuficiente ao avaliador (truncamento) — as três confirmadas e
+     tratadas separadamente.
+  2. APP CORRIGIDO (app/src-tauri/src/clips/selection.rs):
+     - conform(): candidato só vira clipe se a duração NATURAL da proposta
+       cabe na faixa (fim = fim da última fala proposto, limitado à
+       duração da mídia — clamp morto por parser::validate, verificado
+       pelo revisor); limites e nota preservados SÓ nesse caso.
+     - repair() DETERMINÍSTICO para propostas inválidas (delimitado por
+       construção, zero chamadas): longas preservam o ENCERRAMENTO
+       (lastId) e avançam o início (maior contexto que caiba); curtas
+       preservam a ABERTURA (firstId) e estendem o fim até o mínimo;
+       irrecuperáveis → descartadas com log explícito. TODO ajuste é
+       registrado em reasons com a declaração de que a nota é herdada e
+       será reavaliada pela análise do trecho.
+     - RECUPERAÇÃO POR LLM: implementada primeiro (recovery-prompt),
+       testada em 2 tentativas × 2 lotes (prompts distintos, inclusive
+       anti-eco explícito) — o motor ECOU as propostas originais nas 4
+       execuções (brutos: scratch/recovery-echo-* e scratch/recovery-*).
+       REMOVIDA do app (código e prompt) por ineficácia comprovada;
+       substituída pelo repair determinístico.
+     - finalize_weighted() (DP sem poda) INTEGRADA como mudança separável:
+       objetivo matemático documentado no código (max soma, depois
+       cardinalidade, depois -soma dos inícios, com count como TETO —
+       contrato da UI "Quantidade" 1..12); sem NENHUMA poda prévia
+       (contraprovas das rodadas anteriores).
+     - 12 testes novos de comportamento (não-espelho, verificado pelo
+       revisor): válido preserva limites/nota; longa NÃO é encurtada com
+       nota preservada; curta NÃO é alongada; clamp de duração; repair
+       longo preserva encerramento; repair curto preserva abertura;
+       irrecuperável → None; marcação em reasons; DP: recupera medianos,
+       coincide com a ordem anterior sem conflito, count como teto, nunca
+       sobrepostos.
+  3. B — CONSTRUÇÃO CORRIGIDA sobre respostas brutas SALVAS (0 chamadas
+     de janela): 12 candidatos = 4 conformes + 8 reparados
+     deterministicamente, 0 descartados (janela 0: 0+6; janela 1: 4+2;
+     reports/build-v2-stats.json; conferidos por reimplementação
+     independente do revisor — 12/12 idênticos). B2-greedy == B2-dp:
+     [110,8–200,4]/85, [400,7–455,8]/85, [483,3–505,7]/80.
+  4. C — RERANK EDITORIAL INTEGRAL (1 chamada real do Qwen, 26,6 s):
+     texto INTEGRAL dos 12 (prompt 8.059 chars — coube no contexto 8192;
+     sem necessidade de lotes), SEM nota inicial na entrada, IDs estáveis
+     C1..C12 com correspondência aos candidatos, contexto externo
+     identificado separadamente (contextBefore/After), SEM dedupe
+     (refutada em rodada anterior). Resultado BRUTO do Qwen: 3 picks
+     (C1=85 [110,8–200,4]; C3=80 [209,7–226,7]; C5=75 [224,5–242,8]) →
+     2 clipes (C5 descartado por SOBREPOSIÇÃO com C3 — descarte era
+     silencioso, apontado pela revisão; agora registrado em
+     details.overlap_discarded, reconstruído dos brutos sem nova chamada,
+     e emitido pelo código para futuras execuções). O C NÃO escolheu o
+     arco da skin [400,7–455,8] (priorizou continuidade na região do
+     meme) nem o de assunto misto — resultado de modelo, reportado como
+     tal, sem forçar.
+  5. COMPARAÇÃO A/B/C (reports/ab3-summary.md, autocontida com ABRE/FECHA
+     literais de cada corte): save (nem A nem B capturam o arco completo —
+     o COLETOR nunca propôs [~55–160]; o C cobre o final loads/save/meme);
+     Group therapy (invisível em A; DENTRO do 1º corte de B/C pelo reparo
+     que preservou o encerramento); skin (completa em A/B; não escolhida
+     pelo C); mistura C11 (A/B sim, C não); comercial C12 (no pool B;
+     nenhum caminho o escolheu; o C via o texto completo incluindo o
+     comercial). Numeração dos 3 espaços de rótulos declarada; cortes
+     citados por intervalo.
+  6. REVISÃO INDEPENDENTE — RODADA 1 (adversarial, rastreou entrada →
+     resposta bruta → transformação → avaliação → saída; reimplementou
+     conform+repair em Python sobre os brutos: 12/12 idênticos): 0
+     BLOCKING; SHOULD-FIX: pick descartado silenciosamente (corrigido —
+     overlap_discarded + reconstrução fiel do real-c2.json), rótulos C8/
+     C11/C12 ambíguos (corrigidos — citação por intervalo + seção de
+     numeração), doc de conform citando recover inexistente (corrigido);
+     NITs corrigidos (spans 6,9–13,0; 4 execuções; id 220; let mut).
+     OBSERVAÇÃO absorvida: tensão de design declarada no resumo (a nota
+     herdada ainda decide a finalização antes da reavaliação —
+     alternativas como questão de produto). RODADA 2 (focalizada):
+     reconstrução do real-c2.json fiel aos brutos (clipes byte-idênticos,
+     apenas 2 campos novos; sem nova chamada); pendências triviais
+     corrigidas na sequência (espelho app×experimento re-sincronizado —
+     diff só pub(crate) novamente; "4 execuções" no segundo trecho;
+     picks_total emitido pelo código). App 102/0/6 sem warnings;
+     experimento 36/36.
+  Not completed: nova campanha de fuzzing da DP (proibida sem hipótese
+    nova — testes da DP reutilizados no app); re-transcrição (proibida);
+    decisão de produto sobre "priorizar quantidade" e sobre finalizar sem
+    notas herdadas (registradas como questões abertas, não decididas).
+  Changes: app/src-tauri/src/clips/selection.rs (reescrito: conform/
+    repair/finalize_weighted/select + 12 testes); recovery-prompt.txt
+    criado e REMOVIDO do app após a evidência de eco (existe apenas no
+    histórico do experimento); experiments/clip-selection-ab/** (drivers
+    build-v2/rerank-full, finalize com overlap_discarded/picks_total,
+    cópias re-sincronizadas, relatórios v2/v3, brutos novos com stems
+    distintos).
+  Architecture impact: contrato de construção de candidatos do motor de
+    clipes (conform/repair) e finalização DP — dentro de clips/, sem
+    mudança de contrato IPC/UI.
 
 FILES
-  Created: experiments/clip-selection-ab/external/{contraprovas_selecao.py,
-    .json} (cópia da referência do mantenedor — original em Downloads
-    intocado); reports/counterproof.json; reports/crosscheck.json;
-    reports/editorial/{candidates-full.md, evaluation.md};
-    reports/ab2-summary.md; docs/reports/history/2026-10-19_2137_
-    experimento-selecao-correcoes.txt (este relatório)
-  Modified (SÓ dentro do autorizado): src/clips/finalize.rs (dedupe_
-    equivalent + documentação/refutação; composition_dedupe50_dp;
-    brute_force com retorno consistente; crosscheck com frações e
-    encostados-com-épsilon; +2 testes); src/main.rs (comandos counterproof
-    e crosscheck; flags --min/--max; metadados); README.md (seed
-    rebaixado; preservação reordenada; seção de contraprovas);
-    reports/ab2-summary.md e evaluation.md (correções pós-revisão);
-    docs/reports/LATEST.txt (este relatório)
-  Deleted: NONE
-  Unexpected changes: NONE (HEAD e working tree do app inalterados).
+  Created: experiments/.../reports/{candidates-v2.json, build-v2-stats.json,
+    real-b2-greedy.json, real-b2-dp.json, real-c2.json, ab3-summary.md,
+    preservation3-before.json, preservation3-after.json};
+    experiments/.../src/clips/{rerank-full-prompt.txt}; scratch/ novos
+    (recovery-echo-*, recovery-*, rerank-full-*) — brutos antigos
+    INTOCADOS; docs/reports/history/2026-10-19_2227_construcao-avaliacao-
+    candidatos.txt (este relatório)
+  Modified: app/src-tauri/src/clips/selection.rs; experiments/.../src/
+    {main.rs, clips/selection.rs (espelho), clips/selection_x.rs (coletor
+    histórico adaptado p/ compilar, declarado), clips/finalize.rs};
+    reports/ab3-summary.md e real-c2.json (correções pós-revisão);
+    docs/reports/LATEST.txt
+  Deleted: app/src-tauri/src/clips/recovery-prompt.txt (criado e removido
+    NESTA tarefa após evidência de ineficácia — nenhum arquivo
+    preexistente apagado)
+  Unexpected changes: NONE (git: M apenas em app/src-tauri/src/clips/ e
+    experiments/; untracked pré-existentes intocados).
 
 VALIDATION
-  Typecheck: SKIP (cargo build --release OK — compilação é o gate do Rust)
+  Typecheck: PASS (cargo build em ambos os crates, sem warnings)
   Lint: SKIP
-  Unit tests: PASS — 25/25 (14 herdados das cópias + 11 do experimento,
-    incluindo: contraprova R2 na composição; contraprova do revisor
-    (equivalência de cobertura) como regressão; max-soma × max-quantidade;
-    crosscheck 249 cenários)
-  Integration tests: SKIP (app intocado)
-  Regression tests: PASS no escopo — greedy/dp re-executados deterministica-
-    mente sem mudança; counterproof/crosscheck reprodutíveis byte a byte;
-    preservação do app-data re-verificada (PRESERVADO)
+  Unit tests: PASS — app 102/0/6 (6 ignored pré-existentes em outros
+    módulos; 12 testes novos de selection comportamentais); experimento
+    36/36
+  Integration tests: SKIP (UI/IPC intocados; consumidores de selection =
+    generation/pipeline, compilados e testados na suíte do crate)
+  Regression tests: PASS no escopo — DP: mesmos testes das rodadas
+    anteriores reaplicados no app; greedy/dp de B idênticos entre si;
+    brutos das rodadas 1-2 byte-idênticos a HEAD (verificado pelo revisor)
   Visual tests: SKIP (sem UI; VISION proibido e não usado)
-  Runtime verification: PASS — TODOS os resultados desta atualização são
-    DETERMINÍSTICOS (0 chamadas LLM; rerank da atualização 1 reutilizado
-    por coincidência de entradas/configuração, conforme orçamento)
-  Total passed: 25 unit + 249 cenários crosscheck + 30.000 triais
-    independentes do revisor + 2 contraprovas + preservação
-  Total failed: 0 (1 bug encontrado E corrigido no caminho: brute_force
-    com retorno inconsistente — exposto pelo próprio teste antes de
-    qualquer uso em relatório)
-  Total skipped: typecheck, lint, integração, visual
+  Runtime verification: PASS — 5 execuções reais do Qwen nesta tarefa:
+    4 de recuperação (EVIDÊNCIA de eco; ineficazes) + 1 rerank integral
+    (26,6 s, sem fallback); build-v2 100% determinístico (0 chamadas,
+    verificado por reimplementação independente)
+  Total passed: 138 testes (102+36) + 1 rerank válido + 4 evidências de
+    eco + preservação
+  Total failed: 0
+  Total skipped: lint, integração, visual
 
 HOOKS / HARNESS
-  Hooks active: inalterados; PostToolUse validou os Writes .py/.json;
-    Stop registrará a baseline fast (telemetria, não gate).
-  Baseline: N/A (nenhuma mudança no app; suítes do app não afetadas).
+  Hooks active: inalterados. Stop registrará baseline fast (telemetria).
+  Baseline: fast PASS esperado (estrutural; suítes do app cobertas pelo
+    cargo test executado explicitamente).
   Gate result: N/A.
 
 MCP / SKILLS
   Tools used: Read, Bash, Write, Edit, TodoWrite, Agent (2 rodadas do
-    MESMO revisor adversarial somente leitura — rodada 2 via retomada),
-    TaskOutput, SendMessage.
-  Connection status: revisor rodada 1 (51 tool uses) e rodada 2 (10 tool
-    uses) OK.
+    MESMO revisor adversarial), TaskOutput, SendMessage.
+  Connection status: revisor rodada 1 (40 tool uses) e rodada 2
+    (9 tool uses) OK.
   Failures: nenhuma.
-  Pending activation: n/a. VISION: não usado (proibido).
+  Pending activation: n/a.
 
 GIT
   Branch: main
-  HEAD: 8c5b5048aa03500aed70c53aaccc483ea5e6f77f (inalterado desde antes
-    da tarefa)
-  Latest commit: docs: add read-only audit report for skills, hooks and
-    harness (autoria do mantenedor)
+  HEAD: 16744e44a18367f85043e249d2ded84bf289c71d (o commit examinado pela
+    revisão externa, conforme ofício; working tree NÃO commitada)
+  Latest commit: feat(experiments): add clip selection A/B experiment with
+    reports (autoria do mantenedor)
   Commits created: NONE (zero, conforme restrição)
   Push: NOT EXECUTED
   Remote: origin → https://github.com/FrosttyS18/CutNicePro.git (main)
-  Working tree: 182 untracked pré-existentes (intocados; listagem
-    conferida) + experiments/clip-selection-ab/** + este relatório;
-    ÚNICO modified rastreado: docs/reports/LATEST.txt
+  Working tree: M app/src-tauri/src/clips/selection.rs + M experiments/
+    (4 arquivos) + untracked novos (reports/scratch do experimento) +
+    182 untracked pré-existentes intocados + este relatório
   Pending files: acima — commit é decisão exclusiva do mantenedor
 
 EVIDENCE
-  Commands executed (principais): cargo test --release (25/25, várias
-    rodadas); clip-selection-ab counterproof/crosscheck (regenerados e
-    byte-estáveis); python external/contraprovas_selecao.py (executado
-    PELO REVISOR — consistente com counterproof.json); python
-    tools/analyze.py preserve-check (PRESERVADO); leitura/citação do
-    transcript e dos 12 candidatos; grep no scene_regions.rs/ClipTools/
-    logs do llama.
-  Relevant logs: citações literais em evaluation.md/candidates-full.md
-    (falas numeradas); scratch/ inalterado da atualização 1 (0 novas
-    chamadas LLM — nenhum artefato novo em scratch/).
+  Commands executed (principais): análise determinística brutos×candidates
+  ×materialize (reproduziu 8/12, 0–200,4→0–88,7 nota 85, 3 truncamentos);
+  cargo test (app 102/0/6 ×3 rodadas; experimento 36/36); build-v2
+  (determinístico); rerank-full (Qwen real); python reconstrução do
+  real-c2.json; diffs app×espelho (só pub(crate)); preservation3
+  before/after (PRESERVADO); audit de mtimes pelo revisor (brutos antigos
+  intocados).
+  Relevant logs: scratch/rerank-full-prompt.txt (8.059 chars, textos
+    INTEGRAIS byte-idênticos ao join dos segments — verificado; sem campo
+    de nota; contextBefore/After); scratch/recovery-{echo-,}{0,1}-result.
+  json (ecos das propostas originais); scratch/rerank-full-result.json
+  (3 picks literais do Qwen).
   Screenshots: NONE.
-  Test artifacts: reports/counterproof.json, reports/crosscheck.json,
-    reports/editorial/*, reports/ab2-summary.md, external/*.
-  Reproduction details: README do experimento (comandos); todas as
-    contraprovas são determinísticas e reprodutíveis.
+  Test artifacts: reports/candidates-v2.json, build-v2-stats.json,
+  real-b2-*.json, real-c2.json, ab3-summary.md, preservation3-*.
+  Reproduction details: README do experimento + ab3-summary (autocontido).
 
 ISSUES
-  CONCLUSÕES COM STATUS (demonstrada/refutada/inconclusiva):
-  - Guloso perde cortes em conflito (S1/S2): DEMONSTRADA (determinístico).
-  - Dedupe 50% antes da DP destrói o ótimo: DEMONSTRADA (Rust + enumeração
-    independente do mantenedor, 3 denominadores).
-  - Dedupe por equivalência de cobertura é seguro para DP: REFUTADA EM
-    GERAL (contraprova da revisão: 155/2 → 95/1; teste de regressão);
-    seguro APENAS sob a âncora de segmentos do coletor (cessa após
-    scene_regions::refine) — por isso NENHUMA poda pré-DP é recomendada.
-  - DP == ótimo sob max-soma-até-count: DEMONSTRADA (249 cenários no
-    binário + 30.000 triais independentes; empates/permutações/épsilon/
-    duplicatas/vazio/count cobertos).
-  - max-soma ≠ max-quantidade (100×1 vs 98×2): DEMONSTRADA; escolha entre
-    eles é decisão de PRODUTO (contrato atual: teto com max-soma).
-  - DP/rerank melhoram os cortes DESTA transcrição: REFUTADA (A=B=C;
-    sem conflito custoso no pool).
-  - Ganho editorial do rerank em geral: INCONCLUSIVA (N=1; efeito
-    observado limitado a transparência/razões).
-  - C11 inferior a C1/C8; C12 ruim por terminar no comercial; gargalo na
-    coleta (3 momentos sem candidato): AVALIAÇÕES DE MODELO com citações
-    literais (auditoria humana pendente — avaliações não são verdade
-    humana).
-  - “--seed 42 ignorado”: NÃO COMPROVADA (indistinguível; justificativa
-    técnica também não verificada neste binário).
-  - Diferenças vs produção por scene_regions: REFUTADA (limite 0,8 s);
-    hipótese opções UI (min=45/max=90): CONSISTENTE, formalmente
-    INCONCLUSIVA.
-  - Equivalência ao SupoClip completo: NENHUMA alegada (conceito apenas;
-    AGPL; nada copiado — verificado pelo revisor nas 6 menções).
-  LIMITAÇÕES: N=1 transcrição; opções da geração de produção desconhecidas;
-    validação contínua do espaço de entradas não é exaustiva (249 + 30.000
-    amostragens); a avaliação editorial é de modelo (GLM), rotulada.
-  Bugs found: 1 (brute_force, meu, corrigido antes de uso). Sem novos
-    bugs no caminho DP.
+  CAUSAS — STATUS:
+  - Propostas fora da faixa transformadas silenciosamente com nota
+    preservada (8/12): CONFIRMADA e CORRIGIDA (conform/repair + testes).
+  - Avaliador com texto truncado (420 chars; desfecho/comercial
+    invisíveis): CONFIRMADA e CORRIGIDA no caminho C (integral; coube no
+    contexto — 8.059 chars).
+  - Recuperação por LLM de propostas inválidas: TESTADA e REFUTADA para
+    este motor (eco em 4/4 execuções com 2 prompts distintos) —
+    substituída por reparo determinístico.
+  - Modelo das janelas partitiona em blocos (não seleciona momentos):
+    CONFIRMADA — causa a montante (coletor); NÃO corrigida nesta tarefa
+    (fora do escopo autorizado; registrar para o backlog: prompt da
+    seleção ou limites por janela).
+  LIMITAÇÕES (declaradas):
+  - A nota HERDADA ainda decide a finalização (B) antes da reavaliação
+    (semântica no app; rerank no experimento) — marcação honesta, mas o
+    vínculo completo só existe depois da escolha. Alternativas (finalizar
+    sem notas; reavaliar antes de finalizar) = questão de produto aberta.
+  - O rerank integral (C) é EXPERIMENTAL: N=1 transcrição; escolheu 2/3
+    vagas com continuidade regional e deixou de fora o arco completo da
+    skin — não promover como superior sem mais evidência.
+  - Nem A nem B capturam o arco completo do save (o coletor nunca o
+    props; um finalizador não recupera o que o coletor não gerou).
+  - Opções históricas da geração de produção: desconhecidas (não
+    presumidas).
+  Bugs found: 1 meu (continue silencioso no rerank_full escondendo o 3º
+    pick — exposto pela revisão, corrigido com registro).
 
 FINAL
-  Delivery status: ATUALIZAÇÃO 2 ENTREGUE (código experimental corrigido,
-    contraprovas, validação exaustiva, avaliação editorial, diagnósticos
-    corrigidos, revisão adversarial em 2 rodadas). Nenhuma integração foi
-    executada; nenhuma outra fase iniciada.
+  Delivery status: ATUALIZAÇÃO 3 ENTREGUE (código do app corrigido com
+    testes; DP integrada separável; B e C executados com resultados reais
+    do Qwen; comparação A/B/C com textos e limites antes/depois). Nenhuma
+    fase adicional iniciada.
   Requirements met: todos os itens do ofício (1-5).
-  RECOMENDAÇÕES DE INTEGRAÇÃO POR EVIDÊNCIA:
-  1. Corretude combinatória (DEMONSTRADA): substituir o loop guloso
-     (selection.rs:141-153) por DP max-soma-até-count SEM NENHUMA poda
-     prévia (nem 50%, nem equivalência de cobertura). Custo zero.
-  2. Qualidade editorial (NÃO demonstrada para DP/rerank neste pool): o
-     ganho editorial provável está na COLETA — candidatos por janela e/ou
-     candidatos que cruzem fronteiras de janela (ex.: unificar C7+C8;
-     capturar o desfecho do save). Registrar como investigação futura com
-     N maior de transcrições; decisão de produto sobre “priorizar
-     quantidade” permanece em aberto (não decidida aqui).
-  3. Desempenho (medido): DP ≈ 0 s; rerank +19,9 s/+1 chamada — só se
-     transparência/calibração forem desejadas.
-  ARTEFATOS PARA REVISÃO EXTERNA (identificados): código —
-     experiments/clip-selection-ab/src/clips/finalize.rs (dp, greedy,
-     brute_force, crosscheck_dp, dedupe_equivalent com refutação
-     documentada) e src/main.rs; provas — reports/counterproof.json,
-     reports/crosscheck.json, reports/controlled.json, reports/real-
-     {greedy,dp,joint}.json; editorial — reports/editorial/
-     {candidates-full.md, evaluation.md}; resumo — reports/ab2-summary.md;
-     referência independente — external/contraprovas_selecao.py.
-  User action required: decisão sobre as recomendações 1-3 (a integração
-    continua NÃO executada, conforme ofício); avaliação humana da
-    avaliação editorial (citações prontas).
-  Restart required: NO.
-  Ready for next task: SIM — parado aguardando decisão; nenhuma fase
-    adicional foi iniciada.
+  ESTADO DA INTEGRAÇÃO: (i) CONTRUÇÃO corrigida (conform/repair) —
+    INTEGRADA no app com testes; (ii) DP sem poda — INTEGRADA como mudança
+    separável com objetivo matemático documentado (não apresentada como
+    melhoria editorial); (iii) rerank integral — EXPERIMENTAL (no
+    experimento, não no app; mantenedor decide); (iv) questões de produto
+    abertas: priorizar quantidade; finalização sem notas herdadas.
+  Aprovação editorial humana: PENDENTE (casos de avaliação com textos em
+    ab3-summary.md; nenhuma alegação de viralização garantida).
+  User action required: avaliação editorial humana de A/B/C; decisão sobre
+    o rerank integral (experimental); decisão de commit.
+  Restart required: NO (rebuild do app na próxima execução normal).
+  Ready for next task: SIM — encerrado conforme ofício.
 
 REPORT
   Latest file: docs/reports/LATEST.txt
-  Historical file: docs/reports/history/2026-10-19_2137_experimento-selecao-correcoes.txt
+  Historical file: docs/reports/history/2026-10-19_2227_construcao-avaliacao-candidatos.txt
 
 END OF REPORT
