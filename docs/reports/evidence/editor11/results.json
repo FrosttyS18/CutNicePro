@@ -1,0 +1,72 @@
+[
+  {
+    "name": "app aberto e projeto navegado",
+    "ok": true,
+    "detail": "http://localhost:1420/"
+  },
+  {
+    "name": "botão Editar clipe visível",
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "name": "editor com status de autosave",
+    "ok": true,
+    "detail": "Alterações salvas"
+  },
+  {
+    "name": "desfazer/refazer presentes",
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "name": "edição de proporção habilita desfazer",
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "name": "autosave concluiu após edição",
+    "ok": true,
+    "detail": "Alterações salvas → Alterações salvas"
+  },
+  {
+    "name": "desfazer restaurou proporção anterior",
+    "ok": true,
+    "detail": "9:16 → 1:1 → 9:16"
+  },
+  {
+    "name": "autosave após desfazer",
+    "ok": true,
+    "detail": "Alterações salvas"
+  },
+  {
+    "name": "refazer reaplicou a edição",
+    "ok": true,
+    "detail": "1:1"
+  },
+  {
+    "name": "fit/focal ajustados",
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "name": "botão Restaurar original presente",
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "name": "restaurar voltou ao ajuste padrão do corte",
+    "ok": true,
+    "detail": "Ajustar (imagem inteira com espaço vazio)"
+  },
+  {
+    "name": "edição por palavra exercitada",
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "name": "reabrir manteve rascunho coerente com restauração (9:16)",
+    "ok": true,
+    "detail": "9:16"
+  }
+]

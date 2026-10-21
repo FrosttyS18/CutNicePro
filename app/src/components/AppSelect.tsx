@@ -39,9 +39,21 @@ export function AppSelect({ value, onChange, children, disabled, name, id, class
     };
     const resize = () => setOpen(false);
     const scroll = (event: Event) => { if (!popup.contains(event.target as Node)) setOpen(false); };
-    document.addEventListener("pointerdown", outside, true); window.addEventListener("resize", resize);
-    document.addEventListener("scroll",scroll,true);
-    return () => { if (popup.matches(":popover-open")) popup.hidePopover(); document.removeEventListener("pointerdown", outside, true); window.removeEventListener("resize", resize); document.removeEventListener("scroll",scroll,true); };
+    // registro adiado: a própria abertura (foco/promoção do popover) pode gerar
+    // um scroll de assentamento no contêiner, que não deve fechar o popup
+    let disposed = false;
+    const register = () => {
+      if (disposed) return;
+      document.addEventListener("pointerdown", outside, true); window.addEventListener("resize", resize);
+      document.addEventListener("scroll", scroll, true);
+    };
+    const frame = requestAnimationFrame(register);
+    return () => {
+      disposed = true; cancelAnimationFrame(frame);
+      if (popup.matches(":popover-open")) popup.hidePopover();
+      document.removeEventListener("pointerdown", outside, true); window.removeEventListener("resize", resize);
+      document.removeEventListener("scroll", scroll, true);
+    };
   }, [open, options.length]);
   return <span className={`app-select ${className ?? ""}`}>
     <button type="button" ref={trigger} id={id} className="app-select__trigger" disabled={disabled}

@@ -43,14 +43,15 @@ cada); total < 1 min. Avaliação: 0 lotes (sem pendentes).
 
 1 chamada de análise (janela única 599 s ≤ 900 s). Captura 011: 49,6 s,
 8.045 chars de conteúdo, 4 segmentos devolvidos pelo modelo — com teto
-"up to 20". Funil no worker.log: "AI analysis found 4 segments" → 1
-reparo de duração (01:28→01:13: 65 s > 60 s máx) → 4 validados → 4 clipes.
+"up to 20". Funil no worker.log: "AI analysis found 4 segments" → 2
+reparos de duração (00:23–01:28→00:23–01:13 e 02:12–03:51→02:12–03:02;
+99 s e 65 s → 50 s, faixa preferida) → 4 validados → 4 clipes.
 
 | intervalo | span | virality | hook_title |
 |---|---|---|---|
 | 02:12–03:50 (proposta 02:12–03:02 pós-reparo? ver DB) | 50–98 s | 85 | A EA usou IA no Battlefield 6? |
 | 00:23–01:13 | 50 s | 75 | O jogo de 400 reais que deu erro |
-| 01:31–02:00 | 29 s | 62 | O pesadelo de perder o save |
+| 00:01:31–00:02:00 (91–120 s) | 29 s | 62 | O pesadelo de perder o save |
 | 05:20–06:15 | 55 s | 61 | O soldado mais preparado da guerra |
 
 DB (gerados): 02:12–03:02 (50 s, 85) / 00:23–01:13 (50 s, 75) /

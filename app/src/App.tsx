@@ -145,12 +145,10 @@ export default function App() {
     onProgress: (copied: number, total: number) => void,
   ): Promise<void> {
     const project = await ipc.createProject(mediaProjectName(name || path));
-    let mediaUrl: string | null = null;
     try {
       const imported = await ipc.importMedia(project.id, path, onProgress);
       const entry = imported.entry;
-      mediaUrl = ipc.mediaUrl(entry);
-      attachPersistedMedia(project.id, entry.mediaId, mediaUrl);
+      attachPersistedMedia(project.id, entry.mediaId, ipc.mediaUrl(entry));
       const saved = saveWorkspace(project.id, {
         version: 2,
         media: {

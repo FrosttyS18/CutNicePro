@@ -1,0 +1,166 @@
+╔════════════════════════════════════════════╗
+║       CUTNICEPRO — ZCODE REPORT            ║
+╚════════════════════════════════════════════╝
+
+TASK
+  Name: Auditoria Git + Graphify + consolidação editorial + editor não
+    destrutivo (atualização 12)
+  Status: PASS FUNCIONAL (GIT HYGIENE PASS; GRAPHIFY BLOCKED com
+    verificação local; implementação e validação reais concluídas).
+    Aprovação visual/editorial: PENDING HUMAN APPROVAL.
+  Base inicial: HEAD 4ccead3 (tree com 528 untracked, 2 modificados
+    preexistentes do mantenedor — preservados). Sem commits/pushes.
+
+A. GIT HYGIENE — PASS
+  Estado inicial registrado: 1.207 arquivos rastreados; 528 untracked;
+    13 ignored; .gitignore raiz + app/.gitignore; sem LFS/submodules.
+  LEVANTAMENTO REAL (git ls-files/status/check-ignore; nada inferido do
+    grafo): 513 arquivos do experimento, 182 app/src, 158 docs/reports;
+    maiores rastreados: design/cutnicepro-fase01-propostas.figcraft
+    (6,0 MB, asset legítimo de design), biblioteca da skill
+    design-taste (1,1 MB), logs .playwright-mcp (até 348 KB cada).
+  ACHADOS POR CATEGORIA:
+  - C (versionado indevidamente, retirada PENDENTE de autorização —
+    nada executado): experiments/clip-selection-ab/target/** (178
+    arquivos de build Rust: .d/.timestamp/fingerprints); .playwright-mcp/**
+    (74 arquivos: logs de console e snapshots de página — os snapshots
+    10-20T10-15/10-23 CONTÊM o e-mail pessoal do mantenedor em sessões
+    externas — risco sanitizado, valores não reproduzidos); binários de
+    runtime LICENSE em models/home-c|d (4 arquivos, 8 KB — inocentes).
+  - B (ignorados a partir de agora, regras ADICIONADAS ao .gitignore
+    com verificação git check-ignore -v): experiments/clip-selection-ab/
+    target/; .playwright-mcp/; experiments/clip-selection-ab/models/**
+    *.gguf, **/bin/, **/gpu/; __pycache__/. Untracked caiu de 528 → 184.
+  - A (permanece versionado, conferido): código, prompts, sha256 de
+    modelos, relatórios/evidências de teste, skills, design assets,
+    bench atual (bench_cnp.py, reports/bench/*).
+  - E (sensível): snapshots .playwright-mcp com dados pessoais
+    (categoria C acima). Nenhum segredo/credencial em arquivos
+    rastreados; lab.env (segredos) fica fora do repo (SupoClipLab).
+  REGRAS CRÍTICAS RESPEITADAS: adicionar .gitignore NÃO remove do
+    índice — nenhum git rm/--cached/filter-repo executado; nenhum
+    arquivo físico apagado; contagem de rastreados permaneceu 1.207
+    (só .gitignore modificado na árvore de arquivos versionados).
+    Números do Graphify NÃO foram usados como prova de excesso.
+
+B. GRAPHIFY — BLOCKED (com substituto declarado)
+  MCP instalado mas TODAS as consultas falharam: graph.json ausente
+    (graph_stats em /, /app, /experiments → "graph.json not found");
+    nenhuma indexação local (graphify-out inexistente) e o painel
+    hospedado reporta indexação "queued". Nenhuma evidência inventada.
+  SUBSTITUTO (declarado como verificação local, NÃO Graphify): mapa de
+    impacto construído por leitura direta do código:
+  | Componente | Local | Mudança | Dependências | Risco | Proteção |
+  |---|---|---|---|---|---|
+  | resolve() | selection.rs:565 | todos os candidatos avaliados; sem avaliação não disputa; publicidade prioridade secundária | select→resolve→evaluate_batch_with; generation::run; pipeline_tests | alterar contrato de avaliação | 124 testes lib + real_generation (51 s) |
+  | finalize_weighted | selection.rs | editorial primeiro, promocional completa sobras | resolve | ordem final | testes DP + novo teste de prioridade |
+  | VideoEditor | VideoEditor.tsx | undo/redo+autosave+Restaurar original | ProjectWorkspace, clip-workspace, useEditHistory | estado do editor | 160 TS + 14/14 Tauri real |
+  | EditHistoryCore | lib/edit-history.ts (NOVO) | núcleo puro do histórico | useEditHistory→VideoEditor | — | 6 testes unitários |
+  | render pipeline | render/integration.rs | teste novo 1:1+cover+focal | pipeline::run | — | real_render_applies (PASS) |
+  Registro: o grafo hospedado NÃO contém as alterações locais desta
+    sessão (nada foi commitado para forçar indexação).
+
+C. IMPLEMENTAÇÃO
+  1. BENCHMARK v2 (documentação): corrigidas as divergências apontadas —
+    peça 2 do save = 91–120 s (não 201–230); DOIS reparos de duração
+    (00:23–01:28→01:13 e 02:12–03:51→03:02, ou seja 65→50 e 99→50 s);
+    cobertura SupoClip controlado = 3/10 acontecimentos (não 4);
+    causalidade redimensionada (prompt + nº de janelas + faixa de
+    duração como confundidores conjuntos); revisão do binário da
+    geração real dos 9 = NÃO COMPROVADA (metadados registram
+    engine/config, não a revisão git; harness portou b6f146e).
+    Arquivos: reports/bench/index.md (§0 novo), controlled-results.md,
+    bench-visual.html.
+  2. CLASSIFICAÇÃO EDITORIAL (pipeline REAL, commit-able): TODO candidato
+    agora passa pela avaliação com natureza/publicidade (a nota de
+    proposta vira linha "Proveniência: nota de proposta N"); sem
+    avaliação válida o candidato NÃO disputa (log dedicado); a
+    publicidade NÃO é mais excluída no modo automático — recebe
+    prioridade secundária (DP maximiza editoriais primeiro; promocionais
+    completam sobras), marcação "Conteúdo promocional: prioridade
+    secundária" e contagem em log. Sem regras com palavras/timestamps do
+    episódio. Descoberta preservada intacta (select/janelas/prompts de
+    descoberta intocados).
+  3. EDITOR NÃO DESTRUTIVO (integração na arquitetura existente — sem
+    banco/Redis/worker paralelos, sem tocar a geração):
+    - lib/edit-history.ts (NOVO): EditHistoryCore — pilhas de snapshots
+      (máx. 50), coalescimento por grupo+700 ms, undo/redo sem efeitos em
+      updaters (StrictMode-safe), snapshot corrompido ignorado.
+    - hooks/useEditHistory.ts (NOVO): ponte React (presente na fonte do
+      workspace; sem duplicar estado).
+    - VideoEditor.tsx: desfazer/refazer com agrupamento; autosave
+      serializado (1,2 s; fila que nunca deixa gravação antiga
+      sobrescrever nova; status "Salvando…/Alterações salvas/falha");
+      botão "Restaurar corte original" (remove o rascunho do clipe e
+      volta ao isolado do corte); "Salvar agora". Edição por palavra
+      (duplo clique) já existente — agora entra no histórico.
+    - A geração original permanece imutável (clipEdits é rascunho por
+      clipe no workspace; coleção de cortes intocada pelo editor).
+    - O que NÃO foi feito (declarado): rastreamento facial e remontagem
+      fora da ordem — etapa posterior conforme ofício; documento de
+      edição com revisão numérica própria ficou como rascunho versionado
+      no workspace (persistido por saveWorkspace) em vez de novo formato
+      de arquivo — arquitetura existente preservada.
+
+D. VALIDAÇÃO
+  - Rust: 125/125 (lib) + real_generation_selects_and_persists
+    reexecutado PASS (51,3 s — regressão real do pipeline com a nova
+    avaliação integral) + real_render_applies_clip_edit_decisions PASS
+    (MP4 real 1080×1080, trim 3,5 s, cover+focal+palavra corrigida —
+    ffprobe confere dimensões/duração).
+  - TypeScript: 160/160 (6 novos de histórico/autosave) + tsc OK.
+  - TAURI REAL (tools/e2e/editor11-runtime-tauri.mjs; app dev via CDP;
+    resultados persistidos em docs/reports/evidence/editor11/):
+    14/14 — abrir corte → Editar clipe; prévia; edição de proporção
+    habilita desfazer; autosave salva e volta a "Alterações salvas";
+    desfazer restaura o valor anterior; autosave pós-desfazer; refazer
+    reaplica; Ajustar/Preencher + ponto focal; Restaurar original
+    (volta contain + proporção do formato do corte); edição de palavra;
+    fechar/reabrir mantém o rascunho coerente com a restauração.
+  - Bugs reais encontrados e corrigidos durante a validação (evidência
+    de que ela foi além de "a página abriu"): (1) crash no desfazer —
+    snapshot parcial aplicado como WorkspaceData (TypeError
+    captionCue/segments undefined) → reconstrução correta do snapshot;
+    (2) commit do histórico lia estado antigo (presentRef ainda não
+    re-renderizado) → commit agora recebe o snapshot novo; (3) guia de
+    teste usava "Restaurar original" mas o aria-label correto é
+    "Restaurar corte original".
+  - Registros de revisão humana: mantenedor já aprovou 7/rejeitou 2 na
+    coleção — intocados; novo statuses visuais pendem aceite.
+
+E. RESULTADO
+  - IMPLEMENTAÇÃO: PASS FUNCIONAL.
+  - GRAPHIFY: BLOCKED (MCP sem índice local; hospedeiro em fila; nada
+    forçado por commit).
+  - GIT HYGIENE: PASS (regras adicionadas e verificadas; retirada de
+    252 arquivos rastreados indevidos — target 178 + playwright-mcp 74 —
+    PENDENTE de autorização explícita do mantenedor; comando sugerido
+    quando autorizar: git rm -r --cached experiments/clip-selection-ab/
+    target .playwright-mcp).
+  - Aprovação visual/editorial: PENDING HUMAN APPROVAL.
+  - Próximos passos recomendados (sem iniciar): autorizar a retirada do
+    índice (categoria C); considerar revisão dos snapshots já
+    versionados com dados pessoais; decidir face-crop 9:16 e montagem
+    por segmentos com base no bench v2.
+
+FILES
+  Modified: .gitignore (+4 regras); app/src-tauri/src/clips/selection.rs
+    (avaliação integral + publicidade secundária); app/src-tauri/src/
+    render/integration.rs (teste novo); app/src/components/editor/
+    VideoEditor.tsx; app/src/screens/ProjectWorkspace.tsx;
+    experiments/.../reports/bench/{index.md,controlled-results.md};
+    bench-visual.html (dir de visualizações); docs/reports/LATEST.txt.
+    Preexistentes do mantenedor preservados: console log .playwright-mcp
+    (mantido como estava), demais untracked intocados.
+  Created: app/src/lib/edit-history.ts; app/src/hooks/useEditHistory.ts;
+    app/src/test/edit-history.test.ts; tools/e2e/editor11-runtime-tauri.mjs;
+    docs/reports/evidence/editor11/{results.json,editor-final.png};
+    docs/reports/history/2026-10-20_1300_*.txt.
+  Deleted: NENHUM arquivo físico (regra respeitada; builds/testes
+    limparam apenas seus próprios temporários).
+
+REPORT
+  Latest file: docs/reports/LATEST.txt
+  Historical file: docs/reports/history/2026-10-20_1300_higiene-graphify-editor.txt
+
+END OF REPORT

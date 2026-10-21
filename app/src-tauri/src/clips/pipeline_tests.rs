@@ -1,6 +1,5 @@
 use super::{
-    generation, store,
-    text_engine,
+    generation, store, text_engine,
     types::{Options, Quality},
 };
 use crate::transcription::{process::ProcessControl, types::Transcript};
@@ -114,14 +113,21 @@ fn real_experimental_gemma_generation_end_to_end() {
 
     assert_eq!(collection.clips.len(), 3);
     assert_eq!(
-        collection.engine.as_ref().map(|record| record.backend.as_str()),
+        collection
+            .engine
+            .as_ref()
+            .map(|record| record.backend.as_str()),
         Some("experimentalGemma")
     );
     for clip in &collection.clips {
         assert!(clip.analysis_error.is_none(), "{:?}", clip.analysis_error);
         assert_eq!(clip.format.as_deref(), Some("9:16"));
         // título concreto pelo caminho real (não o marcador "Trecho MM:SS")
-        assert!(!clip.title.starts_with("Trecho "), "título placeholder: {}", clip.title);
+        assert!(
+            !clip.title.starts_with("Trecho "),
+            "título placeholder: {}",
+            clip.title
+        );
         clip.analysis
             .as_ref()
             .unwrap()

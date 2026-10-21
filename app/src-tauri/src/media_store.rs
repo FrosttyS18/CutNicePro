@@ -62,7 +62,11 @@ fn now_ms() -> u64 {
 
 #[derive(Debug)]
 pub enum ReconcileOutcome {
-    Ok { adopted: usize, removed_parts: usize, marked_unavailable: usize },
+    Ok {
+        adopted: usize,
+        removed_parts: usize,
+        marked_unavailable: usize,
+    },
     Suspended(String),
 }
 
@@ -92,8 +96,7 @@ impl MediaStore {
         }
         let raw = fs::read_to_string(&path)
             .map_err(|e| format!("falha ao ler {}: {e}", path.display()))?;
-        serde_json::from_str(&raw)
-            .map_err(|e| format!("índice de mídia corrompido: {e}"))
+        serde_json::from_str(&raw).map_err(|e| format!("índice de mídia corrompido: {e}"))
     }
 
     fn save_index(&self, index: &MediaIndex) -> Result<(), String> {
@@ -101,10 +104,8 @@ impl MediaStore {
         let tmp = self.root.join("index.json.tmp");
         let body = serde_json::to_string_pretty(index)
             .map_err(|e| format!("falha ao serializar índice de mídia: {e}"))?;
-        fs::write(&tmp, body)
-            .map_err(|e| format!("falha ao gravar índice de mídia: {e}"))?;
-        fs::rename(&tmp, &path)
-            .map_err(|e| format!("falha ao finalizar índice de mídia: {e}"))?;
+        fs::write(&tmp, body).map_err(|e| format!("falha ao gravar índice de mídia: {e}"))?;
+        fs::rename(&tmp, &path).map_err(|e| format!("falha ao finalizar índice de mídia: {e}"))?;
         Ok(())
     }
 
@@ -130,10 +131,7 @@ impl MediaStore {
 
     pub fn get(&self, media_id: &str) -> Result<Option<MediaEntry>, String> {
         let index = self.load_index()?;
-        Ok(index
-            .entries
-            .into_iter()
-            .find(|e| e.media_id == media_id))
+        Ok(index.entries.into_iter().find(|e| e.media_id == media_id))
     }
 
     /// Publicação (última etapa da importação): move o corpo final para
@@ -237,11 +235,16 @@ impl MediaStore {
                 if e.project_ids.is_empty() {
                     let p = self.files_dir().join(format!("{}.{}", e.sha256, e.ext));
                     match fs::remove_file(&p) {
-                        Ok(()) => {},
-                        Err(e) if e.kind() == std::io::ErrorKind::NotFound => {},
+                        Ok(()) => {}
+                        Err(e) if e.kind() == std::io::ErrorKind::NotFound => {}
                         Err(e) => return Err(format!("não foi possível remover o vídeo: {e}")),
                     }
-                    removed_files.push(p.file_name().unwrap_or_default().to_string_lossy().to_string());
+                    removed_files.push(
+                        p.file_name()
+                            .unwrap_or_default()
+                            .to_string_lossy()
+                            .to_string(),
+                    );
                     continue;
                 }
             }
@@ -269,13 +272,15 @@ impl MediaStore {
         if let Ok(rd) = fs::read_dir(self.files_dir()) {
             for entry in rd.flatten() {
                 let p = entry.path();
-                let name = p.file_name().unwrap_or_default().to_string_lossy().to_string();
-                if name.ends_with(".part") {
-                    if !live_parts.iter().any(|lp| lp == &p) {
+                let name = p
+                    .file_name()
+                    .unwrap_or_default()
+                    .to_string_lossy()
+                    .to_string();
+                if name.ends_with(".part") && !live_parts.iter().any(|lp| lp == &p) {
                         let _ = fs::remove_file(&p);
                         removed_parts += 1;
-                    }
-                }
+            }
             }
         }
 
@@ -289,7 +294,10 @@ impl MediaStore {
                 if name.ends_with(".part") {
                     continue;
                 }
-                let known = index.entries.iter().any(|e| format!("{}.{}", e.sha256, e.ext) == name);
+                let known = index
+                    .entries
+                    .iter()
+                    .any(|e| format!("{}.{}", e.sha256, e.ext) == name);
                 if known {
                     continue;
                 }
@@ -328,7 +336,11 @@ impl MediaStore {
         if dirty {
             self.save_index(&index)?;
         }
-        Ok(ReconcileOutcome::Ok { adopted, removed_parts, marked_unavailable })
+        Ok(ReconcileOutcome::Ok {
+            adopted,
+            removed_parts,
+            marked_unavailable,
+        })
     }
 }
 
@@ -338,10 +350,8 @@ mod tests {
     use std::io::Write;
 
     fn temp_store(tag: &str) -> MediaStore {
-        let base = std::env::temp_dir().join(format!(
-            "cnp-m2a-test-{tag}-{}",
-            uuid::Uuid::new_v4()
-        ));
+        let base =
+            std::env::temp_dir().join(format!("cnp-m2a-test-{tag}-{}", uuid::Uuid::new_v4()));
         MediaStore::open(&base).expect("store init")
     }
 
@@ -356,9 +366,14 @@ mod tests {
     fn publish_creates_entry_with_explicit_reference() {
         let s = temp_store("publish");
         let part = write_file(&s.files_dir(), "job1.part", b"abc");
-        let e = s.publish(&part, &"a".repeat(64), 3, "mp4", "video.mp4", "p1").unwrap();
+        let e = s
+            .publish(&part, &"a".repeat(64), 3, "mp4", "video.mp4", "p1")
+            .unwrap();
         assert_eq!(e.project_ids, vec!["p1"]);
-        assert!(s.files_dir().join(format!("{}.mp4", "a".repeat(64))).exists());
+        assert!(s
+            .files_dir()
+            .join(format!("{}.mp4", "a".repeat(64)))
+            .exists());
         assert!(!part.exists());
     }
 
@@ -385,7 +400,9 @@ mod tests {
     fn link_is_idempotent() {
         let s = temp_store("link");
         let part = write_file(&s.files_dir(), "j.part", b"q");
-        let e = s.publish(&part, &"c".repeat(64), 1, "mp4", "x.mp4", "p1").unwrap();
+        let e = s
+            .publish(&part, &"c".repeat(64), 1, "mp4", "x.mp4", "p1")
+            .unwrap();
         s.link_project(&e.media_id, "p1").unwrap();
         let e2 = s.get(&e.media_id).unwrap().unwrap();
         assert_eq!(e2.project_ids.len(), 1);
@@ -418,7 +435,10 @@ mod tests {
         fs::remove_file(&file).unwrap();
         fs::create_dir(&file).unwrap();
         assert!(s.remove_project("p1").is_err());
-        assert_eq!(s.get(&entry.media_id).unwrap().unwrap().project_ids, vec!["p1"]);
+        assert_eq!(
+            s.get(&entry.media_id).unwrap().unwrap().project_ids,
+            vec!["p1"]
+        );
         fs::remove_dir(file).unwrap();
     }
 
@@ -428,14 +448,21 @@ mod tests {
         write_file(&s.files_dir(), "dead.part", b"partial");
         write_file(&s.files_dir(), &format!("{}.mp4", "e".repeat(64)), b"full");
         match s.reconcile(&[]).unwrap() {
-            ReconcileOutcome::Ok { adopted, removed_parts, .. } => {
+            ReconcileOutcome::Ok {
+                adopted,
+                removed_parts,
+                ..
+            } => {
                 assert_eq!(adopted, 1);
                 assert_eq!(removed_parts, 1);
             }
             _ => panic!("esperado Ok"),
         }
         assert!(!s.files_dir().join("dead.part").exists());
-        assert!(s.files_dir().join(format!("{}.mp4", "e".repeat(64))).exists());
+        assert!(s
+            .files_dir()
+            .join(format!("{}.mp4", "e".repeat(64)))
+            .exists());
         // adotada tem entrada sem vínculos
         let e = s.find(&"e".repeat(64)).unwrap().unwrap();
         assert!(e.project_ids.is_empty());
@@ -445,10 +472,14 @@ mod tests {
     fn reconcile_marks_missing_file_unavailable_not_removed() {
         let s = temp_store("unavail");
         let part = write_file(&s.files_dir(), "j.part", b"k");
-        let e = s.publish(&part, &"f".repeat(64), 1, "mp4", "k.mp4", "p1").unwrap();
+        let e = s
+            .publish(&part, &"f".repeat(64), 1, "mp4", "k.mp4", "p1")
+            .unwrap();
         fs::remove_file(s.files_dir().join(format!("{}.mp4", "f".repeat(64)))).unwrap();
         match s.reconcile(&[]).unwrap() {
-            ReconcileOutcome::Ok { marked_unavailable, .. } => assert_eq!(marked_unavailable, 1),
+            ReconcileOutcome::Ok {
+                marked_unavailable, ..
+            } => assert_eq!(marked_unavailable, 1),
             _ => panic!("esperado Ok"),
         }
         let e2 = s.get(&e.media_id).unwrap().unwrap();

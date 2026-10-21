@@ -3,21 +3,21 @@
 //! exposta por comandos IPC (`list_projects`, `create_project`, `open_project`
 //! e, desde a Fase 03B, os comandos de coleções — aditivos e retrocompatíveis).
 
+mod clips;
+mod file_output;
 mod local_media_scheme;
 mod media_analyze;
-mod media_tools;
 mod media_import;
-mod media_proxy;
 mod media_preview;
+mod media_proxy;
 mod media_store;
+mod media_tools;
+mod processing;
 mod project_delete;
 mod project_files;
-mod file_output;
+mod render;
 mod storage;
 mod transcription;
-mod processing;
-mod clips;
-mod render;
 
 use std::path::PathBuf;
 use std::sync::Arc;
@@ -53,11 +53,7 @@ fn free_space(path: &std::path::Path) -> Option<u64> {
 // ---- M2A: importação persistente + análise ----
 
 #[tauri::command]
-fn import_media(
-    app: AppHandle,
-    project_id: String,
-    src_path: String,
-) -> Result<String, String> {
+fn import_media(app: AppHandle, project_id: String, src_path: String) -> Result<String, String> {
     let store = media_store_of(&app)?;
     let jobs = app.state::<Arc<ImportJobs>>();
     let src = PathBuf::from(&src_path);
@@ -104,7 +100,14 @@ fn import_media(
             if let Some(ref t) = detection {
                 eprintln!("[m2a] ffprobe: {}", t.ffprobe.display());
             } else {
-                eprintln!("[m2a] ffprobe NAO encontrado (PATH={:?})", std::env::var("PATH").unwrap_or_default().chars().take(120).collect::<String>());
+                eprintln!(
+                    "[m2a] ffprobe NAO encontrado (PATH={:?})",
+                    std::env::var("PATH")
+                        .unwrap_or_default()
+                        .chars()
+                        .take(120)
+                        .collect::<String>()
+                );
             }
             let analysis_err = match detection {
                 Some(tools) => {
@@ -121,9 +124,7 @@ fn import_media(
             };
             // entrada atualizada (store_analysis grava no índice; o payload
             // precisa refletir o estado final)
-            let entry = store
-                .get(&entry.media_id)?
-                .unwrap_or(entry);
+            let entry = store.get(&entry.media_id)?.unwrap_or(entry);
             let mut payload = serde_json::to_value(&entry).unwrap_or(serde_json::Value::Null);
             if let Some(err) = analysis_err {
                 payload["analysisError"] = serde_json::Value::String(err);
@@ -150,11 +151,7 @@ fn cancel_import(app: AppHandle, job_id: String) -> Result<bool, String> {
 }
 
 #[tauri::command]
-fn link_media(
-    app: AppHandle,
-    media_id: String,
-    project_id: String,
-) -> Result<MediaEntry, String> {
+fn link_media(app: AppHandle, media_id: String, project_id: String) -> Result<MediaEntry, String> {
     media_store_of(&app)?.link_project(&media_id, &project_id)
 }
 
@@ -178,7 +175,9 @@ fn analyze_media(app: AppHandle, media_id: String) -> Result<MediaAnalysis, Stri
     let tools = media_analyze::detect_fftools().ok_or_else(|| {
         "FFmpeg não encontrado — instale-o e tente novamente (gyan.dev / winget)".to_string()
     })?;
-    let path = store.files_dir().join(format!("{}.{}", entry.sha256, entry.ext));
+    let path = store
+        .files_dir()
+        .join(format!("{}.{}", entry.sha256, entry.ext));
     let a = media_analyze::analyze(&tools, &path)?;
     store.store_analysis(&media_id, a.clone())?;
     Ok(a)
@@ -231,11 +230,7 @@ fn list_collections(app: AppHandle) -> Result<Vec<CollectionMeta>, String> {
 }
 
 #[tauri::command]
-fn create_collection(
-    app: AppHandle,
-    name: String,
-    icon: String,
-) -> Result<CollectionMeta, String> {
+fn create_collection(app: AppHandle, name: String, icon: String) -> Result<CollectionMeta, String> {
     collection_store_of(&app)?.create_collection(&name, &icon)
 }
 
@@ -331,8 +326,13 @@ pub fn run() {
             render::commands::export_video
         ])
         .on_window_event(|window, event| {
-            if matches!(event, tauri::WindowEvent::CloseRequested { .. } | tauri::WindowEvent::Destroyed) {
-                window.state::<Arc<transcription::TranscriptionJobs>>().cancel(None);
+            if matches!(
+                event,
+                tauri::WindowEvent::CloseRequested { .. } | tauri::WindowEvent::Destroyed
+            ) {
+                window
+                    .state::<Arc<transcription::TranscriptionJobs>>()
+                    .cancel(None);
                 window.state::<clips::ClipJobs>().0.cancel(None);
                 window.state::<Arc<media_preview::PreviewJobs>>().cancel();
             }

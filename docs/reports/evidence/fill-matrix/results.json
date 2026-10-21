@@ -1,0 +1,62 @@
+[
+ {
+  "caso": "1x1 Ajustar dimensões",
+  "ok": true,
+  "detalhe": "1080x1080"
+ },
+ {
+  "caso": "1x1 Ajustar barras topo/base pretas",
+  "ok": true,
+  "detalhe": "top=b'\\x00\\x00\\x00' bottom=b'\\x00\\x00\\x00'"
+ },
+ {
+  "caso": "1x1 Ajustar centro com conteúdo",
+  "ok": true,
+  "detalhe": "center=b'\\xb7\\xb5\\t'"
+ },
+ {
+  "caso": "1x1 Preencher cantos com conteúdo",
+  "ok": true,
+  "detalhe": "corners=[b'\\xff\\x00\\x00', b'\\x00\\xff\\xff', b'\\xff\\x00\\x00', b']\\x82\\xa8']"
+ },
+ {
+  "caso": "1x1 Preencher frames coerentes",
+  "ok": true,
+  "detalhe": ""
+ },
+ {
+  "caso": "9:16 Ajustar barras topo/base pretas",
+  "ok": true,
+  "detalhe": "top=b'\\x00\\x00\\x00' bottom=b'\\x00\\x00\\x00'"
+ },
+ {
+  "caso": "9:16 Ajustar centro com conteúdo",
+  "ok": true,
+  "detalhe": ""
+ },
+ {
+  "caso": "9:16 Ajustar largura ocupada (≥70% da linha + borda direita)",
+  "ok": true,
+  "detalhe": "853/1080 não pretos; right=b'\\xff\\xff\\xff'"
+ },
+ {
+  "caso": "9:16 Preencher bordas com conteúdo",
+  "ok": true,
+  "detalhe": "edges=[b'\\xfe\\x00\\xfd', b'\\x00\\xfe\\x00']"
+ },
+ {
+  "caso": "Ponto focal x=0 muda o enquadramento",
+  "ok": true,
+  "detalhe": "focal=(b'\\x00\\x00\\x00',b'\\xfd\\xfd\\x00') centro=(b'\\x00\\xff\\xff',b'\\xfd\\x00\\x00')"
+ },
+ {
+  "caso": "Proporção original dimensões",
+  "ok": true,
+  "detalhe": "1920x1080"
+ },
+ {
+  "caso": "Proporção original centro com conteúdo",
+  "ok": true,
+  "detalhe": ""
+ }
+]

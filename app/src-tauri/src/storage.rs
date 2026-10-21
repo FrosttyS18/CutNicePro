@@ -50,8 +50,7 @@ impl Store {
         }
         let raw = fs::read_to_string(&self.path)
             .map_err(|e| format!("falha ao ler {}: {e}", self.path.display()))?;
-        serde_json::from_str(&raw)
-            .map_err(|e| format!("arquivo de projetos corrompido: {e}"))
+        serde_json::from_str(&raw).map_err(|e| format!("arquivo de projetos corrompido: {e}"))
     }
 
     /// Escrita atômica: escreve em .tmp, preserva o atual como .bak e troca.
@@ -60,14 +59,11 @@ impl Store {
         let bak = self.path.with_extension("json.bak");
         let body = serde_json::to_string_pretty(projects)
             .map_err(|e| format!("falha ao serializar projetos: {e}"))?;
-        fs::write(&tmp, body)
-            .map_err(|e| format!("falha ao gravar dados (disco?): {e}"))?;
+        fs::write(&tmp, body).map_err(|e| format!("falha ao gravar dados (disco?): {e}"))?;
         if self.path.exists() {
-            fs::rename(&self.path, &bak)
-                .map_err(|e| format!("falha ao preservar backup: {e}"))?;
+            fs::rename(&self.path, &bak).map_err(|e| format!("falha ao preservar backup: {e}"))?;
         }
-        fs::rename(&tmp, &self.path)
-            .map_err(|e| format!("falha ao finalizar gravação: {e}"))?;
+        fs::rename(&tmp, &self.path).map_err(|e| format!("falha ao finalizar gravação: {e}"))?;
         let _ = fs::remove_file(&bak);
         Ok(())
     }
@@ -115,10 +111,15 @@ impl Store {
             return Err(format!("informe um nome entre 1 e {NAME_MAX} caracteres"));
         }
         let mut projects = self.load()?;
-        if projects.iter().any(|project| project.id != id && project.name == name) {
+        if projects
+            .iter()
+            .any(|project| project.id != id && project.name == name)
+        {
             return Err("já existe um projeto com esse nome".into());
         }
-        let project = projects.iter_mut().find(|project| project.id == id)
+        let project = projects
+            .iter_mut()
+            .find(|project| project.id == id)
             .ok_or_else(|| "projeto não encontrado".to_string())?;
         project.name = name.to_string();
         project.updated_at_ms = now_ms();
@@ -153,10 +154,7 @@ mod tests {
     use super::*;
 
     fn temp_store(tag: &str) -> Store {
-        let base = std::env::temp_dir().join(format!(
-            "cnp-m1-test-{tag}-{}",
-            uuid::Uuid::new_v4()
-        ));
+        let base = std::env::temp_dir().join(format!("cnp-m1-test-{tag}-{}", uuid::Uuid::new_v4()));
         Store::open(&base).expect("store init")
     }
 
@@ -184,9 +182,20 @@ mod tests {
         assert!(store.rename_project(&project.id, &"a".repeat(81)).is_err());
         assert!(store.rename_project(&project.id, "Reservado").is_err());
         assert!(store.rename_project("ausente", "Novo").is_err());
-        let renamed = store.rename_project(&project.id, "  Novo título  ").unwrap();
+        let renamed = store
+            .rename_project(&project.id, "  Novo título  ")
+            .unwrap();
         assert_eq!(renamed.name, "Novo título");
-        assert_eq!(store.load().unwrap().iter().find(|item| item.id == project.id).unwrap().name, "Novo título");
+        assert_eq!(
+            store
+                .load()
+                .unwrap()
+                .iter()
+                .find(|item| item.id == project.id)
+                .unwrap()
+                .name,
+            "Novo título"
+        );
     }
 
     #[test]
@@ -289,8 +298,7 @@ impl CollectionStore {
         }
         let raw = fs::read_to_string(&self.path)
             .map_err(|e| format!("falha ao ler {}: {e}", self.path.display()))?;
-        serde_json::from_str(&raw)
-            .map_err(|e| format!("arquivo de coleções corrompido: {e}"))
+        serde_json::from_str(&raw).map_err(|e| format!("arquivo de coleções corrompido: {e}"))
     }
 
     fn save(&self, collections: &[CollectionMeta]) -> Result<(), String> {
@@ -300,11 +308,9 @@ impl CollectionStore {
             .map_err(|e| format!("falha ao serializar coleções: {e}"))?;
         fs::write(&tmp, body).map_err(|e| format!("falha ao gravar dados (disco?): {e}"))?;
         if self.path.exists() {
-            fs::rename(&self.path, &bak)
-                .map_err(|e| format!("falha ao preservar backup: {e}"))?;
+            fs::rename(&self.path, &bak).map_err(|e| format!("falha ao preservar backup: {e}"))?;
         }
-        fs::rename(&tmp, &self.path)
-            .map_err(|e| format!("falha ao finalizar gravação: {e}"))?;
+        fs::rename(&tmp, &self.path).map_err(|e| format!("falha ao finalizar gravação: {e}"))?;
         let _ = fs::remove_file(&bak);
         Ok(())
     }
@@ -403,7 +409,9 @@ impl CollectionStore {
         for collection in &mut collections {
             let before = collection.project_ids.len();
             collection.project_ids.retain(|id| id != project_id);
-            if before != collection.project_ids.len() { collection.updated_at_ms = now_ms(); }
+            if before != collection.project_ids.len() {
+                collection.updated_at_ms = now_ms();
+            }
         }
         self.save(&collections)
     }
@@ -414,10 +422,8 @@ mod collection_tests {
     use super::*;
 
     fn temp_collection_store(tag: &str) -> CollectionStore {
-        let base = std::env::temp_dir().join(format!(
-            "cnp-03b-test-{tag}-{}",
-            uuid::Uuid::new_v4()
-        ));
+        let base =
+            std::env::temp_dir().join(format!("cnp-03b-test-{tag}-{}", uuid::Uuid::new_v4()));
         CollectionStore::open(&base).expect("collection store init")
     }
 
@@ -459,7 +465,9 @@ mod collection_tests {
     #[test]
     fn add_and_remove_project_updates_persistence() {
         let store = temp_collection_store("addremove");
-        let c = store.create_collection("Entrevistas", "archive-box").unwrap();
+        let c = store
+            .create_collection("Entrevistas", "archive-box")
+            .unwrap();
         let ids = project_ids(&[("p1", "A"), ("p2", "B")]);
 
         let updated = store.add_project(&c.id, "p1", &ids).unwrap();
@@ -500,8 +508,8 @@ mod collection_tests {
 
     #[test]
     fn collections_do_not_touch_projects_file() {
-        let base = std::env::temp_dir()
-            .join(format!("cnp-03b-test-isolate-{}", uuid::Uuid::new_v4()));
+        let base =
+            std::env::temp_dir().join(format!("cnp-03b-test-isolate-{}", uuid::Uuid::new_v4()));
         let projects = Store::open(&base).unwrap();
         let collections = CollectionStore::open(&base).unwrap();
         projects.create_project("Vídeo 1").unwrap();

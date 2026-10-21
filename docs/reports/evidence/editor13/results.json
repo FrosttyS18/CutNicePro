@@ -1,0 +1,92 @@
+[
+  {
+    "name": "header compacto com botão ícone Voltar",
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "name": "desfazer como botão ícone",
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "name": "restaurar como botão ícone",
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "name": "botão Enquadrar presente",
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "name": "modo Enquadrar ativo (canvas marcado)",
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "name": "hint do modo Enquadrar visível",
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "name": "fit mudou para Preencher",
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "name": "arraste no canvas moveu o ponto focal",
+    "ok": true,
+    "detail": "50 → 72"
+  },
+  {
+    "name": "Concluir encerrou o modo",
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "name": "botão Cortar tempo presente",
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "name": "campo de corte de tempo focado e rotulado",
+    "ok": true,
+    "detail": "Corte do vídeo"
+  },
+  {
+    "name": "transcrição sem botões de retrair (fora do conteúdo)",
+    "ok": true,
+    "detail": "botões=0"
+  },
+  {
+    "name": "arraste da borda direita redimensionou a transcrição",
+    "ok": true,
+    "detail": "320px → 360px"
+  },
+  {
+    "name": "timeline sem botões de retrair (fora do conteúdo)",
+    "ok": true,
+    "detail": "botões=0"
+  },
+  {
+    "name": "arraste da borda superior redimensionou a timeline",
+    "ok": true,
+    "detail": "220px → 130px"
+  },
+  {
+    "name": "abas de categoria funcionam (Áudio ativa)",
+    "ok": true,
+    "detail": "Áudio"
+  },
+  {
+    "name": "Ctrl+Z desfaz edição de proporção",
+    "ok": true,
+    "detail": "9:16 → 1:1 → 9:16"
+  },
+  {
+    "name": "autosave em verde após operações",
+    "ok": true,
+    "detail": "Alterações salvas"
+  }
+]

@@ -35,13 +35,14 @@ describe("editor e cortes sem navegador", () => {
     const other=renderToStaticMarkup(<FlowDialog open busy title="Salvar" onClose={noop}>Aguarde</FlowDialog>);
     expect(other).toContain('disabled=""');
   });
-  it("expõe clique do vídeo e controles reais de proporção, enquadramento e recorte", () => {
+  it("expõe clique do vídeo e ações de modo no topo; proporção vive no inspetor", () => {
     const settings={...defaultEditorSettings(),fit:"cover" as const,focalPoint:{x:20,y:70}};
     const preview=renderToStaticMarkup(<VideoPreview media={null} localUrl="http://cnplocal.localhost/media.mp4" settings={settings} nativeControls={false} onTogglePlay={noop}/>);
     expect(preview).toContain('aria-label="Reproduzir ou pausar vídeo"'); expect(preview).toContain("object-position:20% 70%");
     expect(preview).not.toContain('controls=""');
-    const toolbar=renderToStaticMarkup(<FramingToolbar settings={settings} onSettings={noop} onFrame={noop}/>);
-    expect(toolbar).toContain('aria-label="Proporção do vídeo"'); expect(toolbar).toContain("9:16"); expect(toolbar).toContain("Recortar");
+    const toolbar=renderToStaticMarkup(<FramingToolbar settings={settings} framing={false} onSettings={noop} onFraming={noop} onFocusTrim={noop}/>);
+    expect(toolbar).toContain("Cortar tempo"); expect(toolbar).toContain("Enquadrar");
+    expect(toolbar).not.toContain('aria-label="Proporção do vídeo"'); expect(toolbar).not.toContain('aria-label="Ajuste do vídeo"');
   });
   it("rejeita dados de cortes fora do contrato e eventos de outro motor", () => {
     const value={version:1,mediaId:"m",transcriptHash:"hash",clips:[clip]};

@@ -1,0 +1,27 @@
+# Política de finais de linha (correção local, sem renormalização em massa):
+# - core.autocrlf=true no Windows converte LF↔CRLF no checkout/commit;
+#   os avisos "LF will be replaced by CRLF" são informativos e não corrompem
+#   conteúdo — o índice guarda LF e o disco recebe CRLF.
+# - Scripts executados por Git Bash/CI exigem LF de verdade.
+*.sh text eol=lf
+*.mjs text eol=lf
+*.py text eol=lf
+*.rs text eol=lf
+*.ts text eol=lf
+*.tsx text eol=lf
+*.css text eol=lf
+*.json text eol=lf
+*.md text eol=lf
+*.lock text eol=lf
+# Binários reais (evita qualquer conversão)
+*.png binary
+*.jpg binary
+*.webm binary
+*.mp4 binary
+*.gguf binary
+*.exe binary
+*.dll binary
+*.ico binary
+*.icns binary
+*.ttf binary
+*.figcraft binary

@@ -65,7 +65,21 @@ Ver tabela em `controlled-results.md`. Diferenças inevitáveis registradas:
 - Formato de chamada: /api/chat com grammar (CNP) × /v1 chat (SupoClip) —
   mesmo servidor/modelo/amostragem, verificado no proxy.
 
-## 4. RESULTADOS BRUTOS (B — controlada)
+## 0. CORREÇÕES DE RASTREABILIDADE (v2, a pedido do mantenedor):
+   - Peça 2 do save = 91–120 s (01:31–02:00 no DB), não 201–230 s como o
+     mapa visual v1 estimou errado.
+   - Reparos de duração: DOIS, não um — 00:23–01:28 (65 s) → 00:23–01:13
+     (50 s) e 02:12–03:51 (99 s) → 02:12–03:02 (50 s), ambos para dentro da
+     faixa preferida, não "65→60". (Logs worker.log 12:20:01.)
+   - Cobertura SupoClip controlado = 3/10 acontecimentos (ver acima).
+   - Causal da quantidade: prompt "2-5" + janela única + julgamento do
+     modelo (com teto 20 devolveu 4) — as três causas coexistem.
+   - Revisão da geração real dos 9: metadados registram engine/config, NÃO
+     a revisão git do binário; pela linha do tempo, o código vigente era o
+     da atualização 9 (b6f146e) — o harness portou exatamente b6f146e;
+     igualdade binário×fonte: NÃO COMPROVADA (binário não versionado).
+
+4. RESULTADOS BRUTOS (B — controlada)
 
 - **CNP**: 4 janelas (6068 tokens medidos), 11 candidatos brutos, 11
   conformes diretos, 0 descartes por piso/publicidade, DP → **7 cortes**
@@ -84,10 +98,12 @@ Inventário de 10 acontecimentos (A–J) construído da transcrição:
   publicidade do modo automático só alcança alternativas reavaliadas;
   propostas diretas passam. (Na coleção real do mantenedor o mesmo
   comercial está presente com nota 46 — comportamento consistente.)
-- **SupoClip controlado cobre 4/10** — história do save em DUAS peças (a
-  segunda não abre sozinha), passe de batalha sem a punchline do erro de
-  grafia, pistolas; perdeu Valve/PUBG/barulho/buzina/publicidade (o prompt
-  manda pular sponsor reads — nenhum comercial em nenhuma execução).
+- **SupoClip controlado cobre 3/10 acontecimentos** (save B em DUAS peças
+  dependentes — 23–73 e 91–120 s, a segunda não abre sozinha; C parcial
+  sem a punchline do erro de grafia; E pistolas); perdeu Valve/PUBG/
+  barulho/buzina/publicidade (o prompt manda pular sponsor reads — nenhum
+  comercial em nenhuma execução). CORREÇÃO da v1: contagem anterior
+  (4/10) somava as duas peças do save como acontecimentos distintos.
 
 ## 6. COMPARAÇÃO A (produtos originais 9/3/14)
 

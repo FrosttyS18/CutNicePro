@@ -30,8 +30,7 @@ pub struct SourceStat {
 }
 
 fn stat_source(p: &Path) -> Result<SourceStat, String> {
-    let md = fs::metadata(p)
-        .map_err(|e| format!("arquivo de origem inacessível: {e}"))?;
+    let md = fs::metadata(p).map_err(|e| format!("arquivo de origem inacessível: {e}"))?;
     if !md.is_file() {
         return Err("a origem não é um arquivo".into());
     }
@@ -41,7 +40,10 @@ fn stat_source(p: &Path) -> Result<SourceStat, String> {
         .and_then(|t| t.duration_since(UNIX_EPOCH).ok())
         .map(|d| d.as_millis() as u64)
         .unwrap_or(0);
-    Ok(SourceStat { size: md.len(), modified_ms })
+    Ok(SourceStat {
+        size: md.len(),
+        modified_ms,
+    })
 }
 
 pub fn allowed_ext(name: &str) -> Option<String> {
@@ -60,7 +62,9 @@ pub struct ImportJobs {
 
 impl ImportJobs {
     pub fn new() -> ImportJobs {
-        ImportJobs { cancels: Mutex::new(HashMap::new()) }
+        ImportJobs {
+            cancels: Mutex::new(HashMap::new()),
+        }
     }
 
     pub fn register(&self, job_id: &str) -> Arc<AtomicBool> {
@@ -133,7 +137,10 @@ pub fn copy_with_hash(
     free_space: &dyn Fn(&Path) -> Option<u64>,
 ) -> Result<(u64, String), ImportError> {
     let start = stat_source(src).map_err(ImportError::Io)?;
-    let stamp = OriginStamp { size: start.size, modified_ms: start.modified_ms };
+    let stamp = OriginStamp {
+        size: start.size,
+        modified_ms: start.modified_ms,
+    };
     if start.size == 0 {
         return Err(ImportError::Io("arquivo de origem vazio".into()));
     }
@@ -143,8 +150,7 @@ pub fn copy_with_hash(
         }
     }
     let mut in_file = fs::File::open(src).map_err(|e| ImportError::Io(e.to_string()))?;
-    let mut out_file =
-        fs::File::create(staged_part).map_err(|e| ImportError::Io(e.to_string()))?;
+    let mut out_file = fs::File::create(staged_part).map_err(|e| ImportError::Io(e.to_string()))?;
     let mut hasher = Sha256::new();
     let mut buf = vec![0u8; CHUNK];
     let mut copied: u64 = 0;
@@ -170,7 +176,9 @@ pub fn copy_with_hash(
         }
         on_chunk(copied);
     }
-    out_file.flush().map_err(|e| ImportError::Io(e.to_string()))?;
+    out_file
+        .flush()
+        .map_err(|e| ImportError::Io(e.to_string()))?;
 
     // Integridade: duas verificações independentes (AC-R3).
     if copied != stamp.size {
@@ -285,7 +293,10 @@ mod tests {
         }
         // o .part contém os bytes LIDOS (incl. os 2 extras) — o cleanup é do
         // command (import_media); aqui a prova é a divergência detectada.
-        assert_eq!(fs::metadata(&part).map(|m| m.len()).unwrap_or(0), 8 * 1024 * 1024 + 2);
+        assert_eq!(
+            fs::metadata(&part).map(|m| m.len()).unwrap_or(0),
+            8 * 1024 * 1024 + 2
+        );
     }
 
     #[test]

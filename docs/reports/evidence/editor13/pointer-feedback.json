@@ -1,0 +1,73 @@
+{
+  "iniciadoEm": "2026-10-20T18:23:00.289Z",
+  "cliques": [
+    {
+      "n": 1,
+      "x": 178,
+      "y": 123,
+      "viewport": {
+        "w": 1280,
+        "h": 800
+      },
+      "rota": "/",
+      "horario": "2026-10-20T18:23:00.305Z",
+      "elemento": {
+        "tag": "h1",
+        "text": "davyjones",
+        "path": "h1 < header.editor-header.editor-header--compact < section.video-editor[Editor de vídeo] < div.project-workspace.project-workspace--editing < div.panel-body < div.panel",
+        "rect": {
+          "x": 170,
+          "y": 119,
+          "w": 819,
+          "h": 24
+        }
+      }
+    },
+    {
+      "n": 2,
+      "x": 334,
+      "y": 188,
+      "viewport": {
+        "w": 1280,
+        "h": 800
+      },
+      "rota": "/",
+      "horario": "2026-10-20T18:30:25.231Z",
+      "elemento": {
+        "tag": "div",
+        "classes": "editor-pane editor-pane--transcript",
+        "text": "Transcrição Buscar na transcrição Pois, galera, antes da gente entrar no GTA, eu queria só trazer um",
+        "path": "div.editor-pane.editor-pane--transcript < div.editor-layout < section.video-editor[Editor de vídeo] < div.project-workspace.project-workspace--editing < div.panel-body < div.panel",
+        "rect": {
+          "x": 132,
+          "y": 169,
+          "w": 437,
+          "h": 453
+        }
+      }
+    },
+    {
+      "n": 3,
+      "x": 3205,
+      "y": 354,
+      "viewport": {
+        "w": 3440,
+        "h": 1392
+      },
+      "rota": "/",
+      "horario": "2026-10-20T19:04:10.870Z",
+      "elemento": {
+        "tag": "div",
+        "classes": "editor-layout",
+        "text": "Transcrição Buscar na transcrição Pois, galera, antes da gente entrar no GTA, eu queria só trazer um",
+        "path": "div.editor-layout < section.video-editor[Editor de vídeo] < div.project-workspace.project-workspace--editing < div.panel-body < div.panel < main.shell-main",
+        "rect": {
+          "x": 132,
+          "y": 157,
+          "w": 3268,
+          "h": 1069
+        }
+      }
+    }
+  ]
+}

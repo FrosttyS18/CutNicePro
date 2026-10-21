@@ -94,6 +94,8 @@ pub(crate) fn windows_budgeted(
     let full = prompt_of(&(0..segments.len()))?;
     let full_tokens = exact(&full)?;
     if full_tokens <= budget {
+        // Janela única deliberada: a transcrição inteira cabe no orçamento.
+        #[allow(clippy::single_range_in_vec_init)]
         return Ok(vec![0..segments.len()]);
     }
     // Estimativa O(1) por janela: peso proporcional de caracteres + overhead
@@ -291,10 +293,7 @@ pub(crate) fn repair_alternatives(
     };
     let natural_end = last.end.min(duration);
     let span = natural_end - first.start;
-    let mut alternative = |start: f64,
-                           end: f64,
-                           policy: &'static str,
-                           result: &mut Vec<Contender>| {
+    let alternative = |start: f64, end: f64, policy: &'static str, result: &mut Vec<Contender>| {
         let final_span = end - start;
         if final_span < options.min_seconds || final_span > options.max_seconds {
             return;
@@ -437,13 +436,11 @@ pub(crate) fn evaluate_batch_with(
                     .join(" ");
                 let before = segments
                     .iter()
-                    .filter(|s| s.end <= clip.start + 1e-9)
-                    .next_back()
+                    .rfind(|s| s.end <= clip.start + 1e-9)
                     .map(|s| s.text.clone());
                 let after = segments
                     .iter()
-                    .filter(|s| s.start >= clip.end - 1e-9)
-                    .next()
+                    .find(|s| s.start >= clip.end - 1e-9)
                     .map(|s| s.text.clone());
                 serde_json::json!({
                     "id": labels[i],
@@ -484,6 +481,9 @@ pub(crate) fn evaluate_batch_with(
 /// MATEMÁTICO: entre clipes não sobrepostos, até `count` (teto), maximizar
 /// lexicograficamente (soma das notas VÁLIDAS, cardinalidade, -soma dos
 /// inícios). Sem nenhuma poda prévia (contraprovas no experimento).
+/// Célula da DP: (soma das notas, cardinalidade, -soma dos inícios, caminho).
+type DpCell = (i64, i64, f64, Vec<usize>);
+
 fn finalize_weighted(sorted: &[Clip], count: usize) -> Vec<Clip> {
     let n = sorted.len();
     if n == 0 {
@@ -496,8 +496,7 @@ fn finalize_weighted(sorted: &[Clip], count: usize) -> Vec<Clip> {
             .total_cmp(&sorted[b].end)
             .then(sorted[a].start.total_cmp(&sorted[b].start))
     });
-    let mut best: Vec<Vec<Option<(i64, i64, f64, Vec<usize>)>>> =
-        vec![vec![None; count + 1]; n + 1];
+    let mut best: Vec<Vec<Option<DpCell>>> = vec![vec![None; count + 1]; n + 1];
     best[0][0] = Some((0, 0, 0.0, Vec::new()));
     for i in 1..=n {
         let idx = order[i - 1];
@@ -517,7 +516,7 @@ fn finalize_weighted(sorted: &[Clip], count: usize) -> Vec<Clip> {
                         neg - sorted[idx].start,
                         new_path,
                     );
-                    let replace = current.as_ref().map_or(true, |(s, l, ng, _)| {
+                    let replace = current.as_ref().is_none_or(|(s, l, ng, _)| {
                         next.0 > *s
                             || (next.0 == *s && next.1 > *l)
                             || (next.0 == *s && next.1 == *l && next.2 > *ng)
@@ -530,9 +529,9 @@ fn finalize_weighted(sorted: &[Clip], count: usize) -> Vec<Clip> {
             best[i][k] = current;
         }
     }
-    let mut winner: Option<(usize, (i64, i64, f64, Vec<usize>))> = None;
-    for k in 0..=count {
-        if let Some(cell) = best[n][k].clone() {
+    let mut winner: Option<(usize, DpCell)> = None;
+    for (k, slot) in best[n].iter().enumerate() {
+        if let Some(cell) = slot.clone() {
             let replace = match &winner {
                 None => true,
                 Some((wk, (ws, _wl, wng, _))) => {
@@ -562,13 +561,16 @@ fn finalize_weighted(sorted: &[Clip], count: usize) -> Vec<Clip> {
 /// Fluxo pós-janelas, executável sem LLM (teste de fluxo completo):
 /// propostas por janela -> construção (conform/alternativas) -> AVALIAÇÃO
 /// -> seleção definitiva (DP sem poda, apenas notas válidas).
+pub type EvaluateFn<'a> = dyn Fn(&[Clip], &[Segment]) -> Result<Vec<Evaluation>, String> + 'a;
+pub type Evaluate<'a> = &'a EvaluateFn<'a>;
+
 pub(crate) fn resolve(
     proposals: &[(std::ops::Range<usize>, Vec<Candidate>)],
     segments: &[Segment],
     media: &str,
     duration: f64,
     options: &Options,
-    evaluate: &dyn Fn(&[Clip], &[Segment]) -> Result<Vec<Evaluation>, String>,
+    evaluate: Evaluate<'_>,
 ) -> Result<Vec<Clip>, String> {
     let mut contenders: Vec<Contender> = Vec::new();
     for (range, candidates) in proposals {
@@ -593,22 +595,19 @@ pub(crate) fn resolve(
             "[clips] propostas fora da faixa: {invalid}; alternativas geradas: {alternatives}"
         );
     }
-    let pending: Vec<Clip> = contenders
-        .iter()
-        .filter(|c| c.valid_score.is_none())
-        .map(|c| c.clip.clone())
-        .collect();
+    // TODOS os candidatos disputam com avaliação própria do intervalo
+    // (bench 2026-10-20: propostas diretas entravam com a nota do modelo,
+    // sem natureza/publicidade — o comercial da Logitech contornava a
+    // política). A nota de proposta vira PROVENIÊNCIA registrada; a
+    // avaliação em lote cobre TODO o conjunto (E{n} na ordem dos
+    // contenders, sem filtro por valid_score).
+    let pending: Vec<Clip> = contenders.iter().map(|c| c.clip.clone()).collect();
     // VÍNCULO IMUTÁVEL: E{n} aponta para o n-ésimo PENDENTE na ordem em
     // que o lote foi montado (numeração de evaluate_batch). O índice
     // original em `contenders` é congelado ANTES de qualquer aplicação —
     // notas aplicadas não podem deslocar os alvos (defeito bc8a198: o
     // filtro dinâmico por valid_score levava E2+ ao candidato errado).
-    let slots: Vec<usize> = contenders
-        .iter()
-        .enumerate()
-        .filter(|(_, c)| c.valid_score.is_none())
-        .map(|(index, _)| index)
-        .collect();
+    let slots: Vec<usize> = (0..contenders.len()).collect();
     let mut evaluated = 0usize;
     let mut unevaluated = 0usize;
     if !pending.is_empty() {
@@ -625,11 +624,22 @@ pub(crate) fn resolve(
                     let Some(&slot) = slots.get(position) else {
                         continue; // fora do lote enviado
                     };
-                    if contenders[slot].valid_score.is_some() {
+                    if contenders[slot].nature.is_some() {
                         continue; // id repetido: o primeiro aplica
                     }
                     let contender = &mut contenders[slot];
-                    let ad = if judgment.advertising { "publicidade, " } else { "" };
+                    if contender.valid_score.is_some() {
+                        // proposta direta: a nota do modelo é proveniência
+                        contender.clip.reasons.push(format!(
+                            "Proveniência: nota de proposta {}",
+                            contender.clip.score
+                        ));
+                    }
+                    let ad = if judgment.advertising {
+                        "publicidade, "
+                    } else {
+                        ""
+                    };
                     contender.clip.reasons.push(format!(
                         "Avaliação do intervalo efetivo ({ad}{}): {}",
                         judgment.nature.label(),
@@ -657,18 +667,25 @@ pub(crate) fn resolve(
     let mut dispute: Vec<Clip> = Vec::new();
     let mut below_floor = 0usize;
     let mut excluded_ads = 0usize;
+    let mut unevaluated_direct = 0usize;
     for contender in contenders {
+        // Bench-11: sem avaliação (nature) o candidato NÃO disputa —
+        // ausência de classificação não vale como editorial/publicidade.
+        if contender.nature.is_none() {
+            unevaluated_direct += 1;
+            continue;
+        }
         let Some(score) = contender.valid_score else {
             continue;
         };
         if options.automatic {
-            // Política EXPLÍCITA do automático (documentada): publicidade não
-            // é sugestão editorial — avaliada e registrada, mas fora da
-            // lista; abaixo do piso editorial também fica fora. Personalizado
+            // Política EXPLÍCITA do automático (bench 2026-10-20, revisada):
+            // publicidade NÃO é excluída — recebe prioridade secundária
+            // (empurrada para o fim da disputa) e marcação visível; abaixo
+            // do piso editorial fica fora, com registro. Personalizado
             // mantém tudo o que o usuário pediu, com a marcação no motivo.
             if contender.advertising {
-                excluded_ads += 1;
-                continue;
+                excluded_ads += 1; // conta para o log; não exclui
             }
             if score < super::types::AUTOMATIC_RELEVANCE_FLOOR {
                 below_floor += 1;
@@ -677,7 +694,22 @@ pub(crate) fn resolve(
         }
         let mut clip = contender.clip;
         clip.score = score;
+        if let Provenance::Alternative { original, policy } = &contender.provenance {
+            clip.reasons.push(format!(
+                "Rascunho de alternativa '{policy}' sobre [{:.1}s, {:.1}s]",
+                original.0, original.1
+            ));
+        }
+        if contender.advertising {
+            clip.reasons
+                .push("Conteúdo promocional: prioridade secundária".into());
+        }
         dispute.push(clip);
+    }
+    if unevaluated_direct > 0 {
+        eprintln!(
+            "[clips] {unevaluated_direct} candidatos sem avaliação válida ficaram fora da disputa"
+        );
     }
     if options.automatic && (below_floor > 0 || excluded_ads > 0) {
         eprintln!(
@@ -690,8 +722,30 @@ pub(crate) fn resolve(
             "Não foi possível avaliar os trechos propostos nesta duração. Tente novamente.".into(),
         );
     }
-    dispute.sort_by(|a, b| b.score.cmp(&a.score).then(a.start.total_cmp(&b.start)));
-    let selected = finalize_weighted(&dispute, options.count);
+    // Publicidade depois dos destaques editoriais: a DP maximize a soma
+    // sobre os NÃO promocionais primeiro e só preenche sobras com
+    // promocionais marcados (prioridade secundária, sem exclusão).
+    let mut editorial: Vec<Clip> = Vec::new();
+    let mut promotional: Vec<Clip> = Vec::new();
+    for clip in dispute {
+        if clip
+            .reasons
+            .iter()
+            .any(|r| r.contains("Conteúdo promocional"))
+        {
+            promotional.push(clip);
+        } else {
+            editorial.push(clip);
+        }
+    }
+    editorial.sort_by(|a, b| b.score.cmp(&a.score).then(a.start.total_cmp(&b.start)));
+    promotional.sort_by(|a, b| b.score.cmp(&a.score).then(a.start.total_cmp(&b.start)));
+    let budget = options.count;
+    let mut selected = finalize_weighted(&editorial, budget);
+    if selected.len() < budget {
+        let rest = finalize_weighted(&promotional, budget - selected.len());
+        selected.extend(rest);
+    }
     if selected.is_empty() {
         return Err("Não encontramos trechos completos nesta duração. Aumente a duração dos cortes e tente novamente.".into());
     }
@@ -953,7 +1007,8 @@ mod tests {
             .collect();
         for judgment in evaluations {
             if let Some(contender) = contenders.iter_mut().find(|c| {
-                c.valid_score.is_none() && label_of(&c.clip).as_deref() == Some(judgment.id.as_str())
+                c.valid_score.is_none()
+                    && label_of(&c.clip).as_deref() == Some(judgment.id.as_str())
             }) {
                 contender.clip.reasons.push(format!(
                     "Avaliação do intervalo efetivo ({}): {}",
@@ -987,21 +1042,26 @@ mod tests {
         let segments = speech_from(60);
         let options = options(1, 15.0, 90.0);
         let proposals = vec![(0..40, vec![candidate(0, 29, 90), candidate(2, 6, 80)])];
-        // avaliador mock: 1a pendente (alternativa de A) -> 30
-        let evaluate = |pending: &[Clip], _segs: &[Segment]| {
-            Ok(pending
-                .iter()
-                .enumerate()
-                .map(|(i, _)| judgment(&format!("E{}", i + 1), 30, "avaliação baixa"))
-                .collect())
+        // Contrato v2: TODOS avaliados — A gera 2 alternativas (E1, E2)
+        // e B conforme é E3; B vence com AVALIAÇÃO própria.
+        let evaluate = |_pending: &[Clip], _segs: &[Segment]| {
+            Ok(vec![
+                judgment("E1", 30, "alternativa de A"),
+                judgment("E2", 30, "alternativa de A"),
+                judgment("E3", 60, "avaliação de B"),
+            ])
         };
         let chosen =
             resolve(&proposals, &segments, "media", 240.0, &options, &evaluate).expect("seleção");
         assert_eq!(chosen.len(), 1);
         assert_eq!(
-            chosen[0].score, 80,
-            "B (proposta válida 80) vence; alternativas de A disputam com 30"
+            chosen[0].score, 60,
+            "B vence com avaliação própria (60); nota de proposta 80 é proveniência"
         );
+        assert!(chosen[0]
+            .reasons
+            .iter()
+            .any(|r| r.contains("Proveniência: nota de proposta 80")));
     }
 
     #[test]
@@ -1012,10 +1072,13 @@ mod tests {
         let failing = |_pending: &[Clip], _segs: &[Segment]| {
             Err::<Vec<Evaluation>, String>("motor indisponível".into())
         };
-        let chosen = resolve(&proposals, &segments, "media", 240.0, &options, &failing)
-            .expect("conforme segue sem avaliação de alternativas");
-        assert_eq!(chosen.len(), 1);
-        assert_eq!(chosen[0].score, 80);
+        // Contrato v2 (bench-11): avaliação é obrigatória — falha do
+        // motor NÃO promove propostas diretas com nota de modelo.
+        let result = resolve(&proposals, &segments, "media", 240.0, &options, &failing);
+        assert!(
+            result.is_err(),
+            "sem avaliação válida não há seleção (proposta direta não disputa)"
+        );
     }
 
     /// Regressão do defeito de associação (contraprova do mantenedor,
@@ -1086,7 +1149,7 @@ mod tests {
 
     #[test]
     fn associacao_ordem_inversa_e_permutada() {
-        let base = vec![
+        let base = [
             ("E1".into(), 10, "raz-E1".into()),
             ("E2".into(), 90, "raz-E2".into()),
             ("E3".into(), 20, "raz-E3".into()),
@@ -1110,7 +1173,9 @@ mod tests {
     fn associacao_com_conforme_intercalado_nao_desloca_ids() {
         let segments = speech_from(60);
         let options = options(4, 15.0, 90.0);
-        // conforme ENTRE as curtas: nota própria, NÃO ocupa E-id
+        // Contrato v2 (bench-11): o conforme INTERCALADO também é avaliado
+        // — E1/E2/E3 na ordem dos contenders (alt1, conforme, alt2); a nota
+        // de proposta 81 vira PROVENIÊNCIA e a avaliação decide.
         let proposals = vec![(
             0..30,
             vec![
@@ -1122,15 +1187,17 @@ mod tests {
         let evaluate = |_pending: &[Clip], _segs: &[Segment]| {
             Ok(vec![
                 judgment("E1", 10, "raz-E1"),
-                judgment("E2", 90, "raz-E2"),
+                judgment("E2", 85, "raz-E2-conforme"),
+                judgment("E3", 90, "raz-E3"),
             ])
         };
         let chosen = resolve(&proposals, &segments, "media", 240.0, &options, &evaluate).unwrap();
-        // disputa: conforme 81, E2=90, E1=10 -> top3 = E2, conforme, E1
-        assert_associacao(&chosen[..1], &[("raz-E2", 90)]);
-        assert!(chosen
-            .iter()
-            .any(|c| c.score == 81 && c.reasons.iter().all(|r| !r.contains("raz-"))));
+        // E2 (conforme) carrega proveniência da proposta 81 + avaliação 85
+        assert!(chosen.iter().any(|c| c.score == 85
+            && c.reasons.iter().any(|r| r.contains("raz-E2-conforme"))
+            && c.reasons
+                .iter()
+                .any(|r| r.contains("Proveniência: nota de proposta 81"))));
     }
 
     #[test]
@@ -1190,7 +1257,7 @@ pub fn select(
     duration: f64,
     options: &Options,
     control: &ProcessControl,
-    evaluate: &dyn Fn(&[Clip], &[Segment]) -> Result<Vec<Evaluation>, String>,
+    evaluate: Evaluate<'_>,
     mut progress: impl FnMut(u8),
 ) -> Result<Vec<Clip>, String> {
     options.validate()?;
@@ -1214,8 +1281,14 @@ pub fn select(
                 calls += 1;
                 counting_engine.count_tokens(scratch_ref, text)
             };
-            let ranges =
-                windows_budgeted(segments, options, limit, engine, selection_system, &mut tokenize)?;
+            let ranges = windows_budgeted(
+                segments,
+                options,
+                limit,
+                engine,
+                selection_system,
+                &mut tokenize,
+            )?;
             eprintln!(
                 "[clips] orçamento de janelas: {} medições do tokenizador",
                 calls
@@ -1273,9 +1346,10 @@ mod budgeted_window_tests {
                 start: id as f64 * 10.0,
                 end: id as f64 * 10.0 + 9.0,
                 text: format!(
-                "fala numero {id}: {}",
-                "conteudo do teste com palavras variadas e longas para ocupar tokens. ".repeat(3)
-            ),
+                    "fala numero {id}: {}",
+                    "conteudo do teste com palavras variadas e longas para ocupar tokens. "
+                        .repeat(3)
+                ),
                 words: vec![],
             })
             .collect()
@@ -1309,7 +1383,8 @@ mod budgeted_window_tests {
             calls += 1;
             Ok(text.len() / 2)
         };
-        let ranges = windows_budgeted(&segments, &options(), 6, &engine, "sistema", &mut tokenize).unwrap();
+        let ranges =
+            windows_budgeted(&segments, &options(), 6, &engine, "sistema", &mut tokenize).unwrap();
         assert!(ranges.len() >= 2, "esperava mais de uma janela");
         // cobertura sem lacunas
         let mut covered = vec![false; segments.len()];
@@ -1343,11 +1418,20 @@ mod budgeted_window_tests {
                 Ok(100)
             }
         };
-        let ranges = windows_budgeted(&segments, &options(), 6, &engine, "sistema", &mut tokenize).unwrap();
-        assert!(ranges.iter().all(|r| r.len() <= 20 + 20), "subdivisão não limitou o tamanho");
+        let ranges =
+            windows_budgeted(&segments, &options(), 6, &engine, "sistema", &mut tokenize).unwrap();
+        assert!(
+            ranges.iter().all(|r| r.len() <= 20 + 20),
+            "subdivisão não limitou o tamanho"
+        );
         let mut covered = vec![false; segments.len()];
         for range in &ranges {
-            assert!(range.len() <= 20, "janela {}..{} não foi subdividida", range.start, range.end);
+            assert!(
+                range.len() <= 20,
+                "janela {}..{} não foi subdividida",
+                range.start,
+                range.end
+            );
             for i in range.clone() {
                 covered[i] = true;
             }
@@ -1400,7 +1484,13 @@ mod automatic_tests {
             automatic: false,
         }
     }
-    fn judgment(id: &str, score: u8, reason: &str, nature: Nature, advertising: bool) -> Evaluation {
+    fn judgment(
+        id: &str,
+        score: u8,
+        reason: &str,
+        nature: Nature,
+        advertising: bool,
+    ) -> Evaluation {
         Evaluation {
             id: id.into(),
             score,
@@ -1426,8 +1516,14 @@ mod automatic_tests {
         .resolve()
         .unwrap();
         assert!(automatic.automatic);
-        assert_eq!(automatic.min_seconds, super::super::types::AUTOMATIC_MIN_SECONDS);
-        assert_eq!(automatic.max_seconds, super::super::types::AUTOMATIC_MAX_SECONDS);
+        assert_eq!(
+            automatic.min_seconds,
+            super::super::types::AUTOMATIC_MIN_SECONDS
+        );
+        assert_eq!(
+            automatic.max_seconds,
+            super::super::types::AUTOMATIC_MAX_SECONDS
+        );
         assert_eq!(automatic.count, super::super::types::AUTOMATIC_MAX_CLIPS);
         // automático não aceita duração/quantidade junto
         let mixed: Result<_, _> = serde_json::from_str::<super::super::types::GenerateOptions>(
@@ -1444,7 +1540,10 @@ mod automatic_tests {
         .resolve()
         .unwrap();
         assert!(!custom.automatic);
-        assert_eq!((custom.min_seconds, custom.max_seconds, custom.count), (10.0, 180.0, 4));
+        assert_eq!(
+            (custom.min_seconds, custom.max_seconds, custom.count),
+            (10.0, 180.0, 4)
+        );
         let incomplete = serde_json::from_str::<super::super::types::GenerateOptions>(
             "{\"maxSeconds\":60,\"count\":3}",
         )
@@ -1474,20 +1573,48 @@ mod automatic_tests {
             let evaluations = evaluations.clone();
             move |_pending: &[Clip], _segs: &[Segment]| Ok(evaluations.clone())
         };
-        // AUTOMÁTICO: só E1 sobrevive (piso 50 + publicidade fora)
-        let chosen = resolve(&proposals, &segments, "media", 240.0, &auto_options(), &evaluate)
-            .expect("seleção automática");
-        assert_eq!(chosen.len(), 1);
+        // AUTOMÁTICO (política revisada bench-11): E1 editorial + E3
+        // publicidade como PRIORIDADE SECUNDÁRIA (marcada, não excluída);
+        // E2 fora pelo piso 50.
+        let chosen = resolve(
+            &proposals,
+            &segments,
+            "media",
+            240.0,
+            &auto_options(),
+            &evaluate,
+        )
+        .expect("seleção automática");
+        assert_eq!(chosen.len(), 2, "editorial + promocional secundária");
         assert_eq!(chosen[0].score, 80);
         assert!(chosen[0].reasons.iter().any(|r| r.contains("relato")));
+        assert!(
+            chosen
+                .iter()
+                .any(|c| c.reasons.iter().any(|r| r.contains("Conteúdo promocional"))),
+            "publicidade presente com identificação e prioridade secundária"
+        );
+        // promocional vem DEPOIS do editorial
+        let pos_promo = chosen
+            .iter()
+            .position(|c| c.reasons.iter().any(|r| r.contains("Conteúdo promocional")))
+            .expect("há promocional");
+        assert_eq!(pos_promo, chosen.len() - 1, "promocional ao final");
         // PERSONALIZADO: as propostas seguem na disputa; publicidade marcada
 
         let evaluate2 = {
             let evaluations = evaluations.clone();
             move |_pending: &[Clip], _segs: &[Segment]| Ok(evaluations.clone())
         };
-        let custom = resolve(&proposals, &segments, "media", 240.0, &custom_options(), &evaluate2)
-            .expect("seleção personalizada");
+        let custom = resolve(
+            &proposals,
+            &segments,
+            "media",
+            240.0,
+            &custom_options(),
+            &evaluate2,
+        )
+        .expect("seleção personalizada");
         // propostas curtas geram até 2 alternativas; a DP escolhe sem
         // sobreposição — o que importa: a publicidade AVALIADA permanece
         // disponível ao usuário com a marcação explícita no motivo.
@@ -1497,13 +1624,15 @@ mod automatic_tests {
             custom.len()
         );
         assert!(
-            custom.iter().any(|c| c.reasons.iter().any(|r| r.contains("publicidade"))),
+            custom
+                .iter()
+                .any(|c| c.reasons.iter().any(|r| r.contains("publicidade"))),
             "personalizado mantém publicidade com marcação explícita"
         );
-        // no automático nada abaixo do piso e nenhuma publicidade aparecem
+        // no automático nada abaixo do piso aparece; publicidade aparece
+        // apenas com marcação e prioridade secundária
         for clip in &chosen {
             assert!(clip.score >= super::super::types::AUTOMATIC_RELEVANCE_FLOOR);
-            assert!(!clip.reasons.iter().any(|r| r.contains("publicidade")));
         }
     }
 
@@ -1517,8 +1646,18 @@ mod automatic_tests {
                 judgment("E2", 30, "fraco", Nature::Opiniao, false),
             ])
         };
-        let result = resolve(&proposals, &segments, "media", 160.0, &auto_options(), &evaluate);
-        assert!(result.is_err(), "sem candidato acima do piso não há sugestão automática");
+        let result = resolve(
+            &proposals,
+            &segments,
+            "media",
+            160.0,
+            &auto_options(),
+            &evaluate,
+        );
+        assert!(
+            result.is_err(),
+            "sem candidato acima do piso não há sugestão automática"
+        );
     }
 
     #[test]

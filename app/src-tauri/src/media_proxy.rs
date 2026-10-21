@@ -28,12 +28,26 @@ const CDN_BASE: &str = "https://pub-d187d959393643849829e2af107e1fd4.r2.dev/cutN
 
 /// Whitelist: diretório/pasta/nome.mp4 permitidos (os 20 arquivos da 03B.6).
 const ALLOWED: &[&str] = &[
-    "1-1/1-1_01.mp4", "1-1/1-1_02.mp4", "1-1/1-1_03.mp4", "1-1/1-1_04.mp4",
-    "1-1/1-1_05.mp4", "1-1/1-1_06.mp4", "1-1/1-1_07.mp4",
-    "9-16/9-16_01.mp4", "9-16/9-16_02.mp4", "9-16/9-16_03.mp4", "9-16/9-16_04.mp4",
-    "9-16/9-16_05.mp4", "9-16/9-16_06.mp4", "9-16/9-16_07.mp4",
-    "16-9/16-9_01.mp4", "16-9/16-9_02.mp4", "16-9/16-9_03.mp4",
-    "16-9/16-9_05.mp4", "16-9/16-9_06.mp4", "16-9/16-9_07.mp4",
+    "1-1/1-1_01.mp4",
+    "1-1/1-1_02.mp4",
+    "1-1/1-1_03.mp4",
+    "1-1/1-1_04.mp4",
+    "1-1/1-1_05.mp4",
+    "1-1/1-1_06.mp4",
+    "1-1/1-1_07.mp4",
+    "9-16/9-16_01.mp4",
+    "9-16/9-16_02.mp4",
+    "9-16/9-16_03.mp4",
+    "9-16/9-16_04.mp4",
+    "9-16/9-16_05.mp4",
+    "9-16/9-16_06.mp4",
+    "9-16/9-16_07.mp4",
+    "16-9/16-9_01.mp4",
+    "16-9/16-9_02.mp4",
+    "16-9/16-9_03.mp4",
+    "16-9/16-9_05.mp4",
+    "16-9/16-9_06.mp4",
+    "16-9/16-9_07.mp4",
 ];
 
 fn cache_path(app: &AppHandle, rel: &str) -> PathBuf {
@@ -50,9 +64,7 @@ fn cache_path(app: &AppHandle, rel: &str) -> PathBuf {
 fn allowed_rel(uri: &tauri::http::Uri) -> Option<String> {
     let path = uri.path().trim_start_matches('/');
     // aceita "cutNicePro/<dir>/<file>" e "<dir>/<file>"
-    let rel = path
-        .strip_prefix("cutNicePro/")
-        .unwrap_or(path);
+    let rel = path.strip_prefix("cutNicePro/").unwrap_or(path);
     if ALLOWED.contains(&rel) {
         Some(rel.to_string())
     } else {
@@ -65,7 +77,11 @@ fn parse_range(headers: &tauri::http::HeaderMap, len: u64) -> Option<(u64, u64)>
     let spec = h.strip_prefix("bytes=")?;
     let (a, b) = spec.split_once('-')?;
     let start: u64 = a.parse().ok()?;
-    let end = if b.is_empty() { len - 1 } else { b.parse().ok()? };
+    let end = if b.is_empty() {
+        len - 1
+    } else {
+        b.parse().ok()?
+    };
     if start <= end && end < len {
         Some((start, end))
     } else {
@@ -100,7 +116,8 @@ fn error_response(code: StatusCode, msg: &str) -> Response<Vec<u8>> {
 }
 
 /// Handler assíncrono do scheme (registrado no builder do Tauri).
-pub fn handle(ctx: UriSchemeContext<'_, Wry>,
+pub fn handle(
+    ctx: UriSchemeContext<'_, Wry>,
     request: Request<Vec<u8>>,
     responder: tauri::UriSchemeResponder,
 ) {
@@ -120,7 +137,9 @@ async fn serve(app: &AppHandle, request: &Request<Vec<u8>>) -> Response<Vec<u8>>
     let data: Vec<u8> = if cache.is_file() {
         match std::fs::read(&cache) {
             Ok(d) => d,
-            Err(e) => return error_response(StatusCode::INTERNAL_SERVER_ERROR, &format!("cache: {e}")),
+            Err(e) => {
+                return error_response(StatusCode::INTERNAL_SERVER_ERROR, &format!("cache: {e}"))
+            }
         }
     } else {
         // Primeira requisição: baixa completo, grava no cache e serve.
@@ -158,10 +177,7 @@ async fn serve(app: &AppHandle, request: &Request<Vec<u8>>) -> Response<Vec<u8>>
                 StatusCode::PARTIAL_CONTENT,
                 slice,
                 vec![
-                    (
-                        header::CONTENT_RANGE,
-                        format!("bytes {s}-{e}/{len}"),
-                    ),
+                    (header::CONTENT_RANGE, format!("bytes {s}-{e}/{len}")),
                     (header::CONTENT_LENGTH, format!("{}", e - s + 1)),
                 ],
             )

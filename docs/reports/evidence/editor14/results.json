@@ -1,0 +1,77 @@
+[
+  {
+    "name": "editor aberto com transcrição visível",
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "name": "linha superior da transcrição removida",
+    "ok": true,
+    "detail": "0px none"
+  },
+  {
+    "name": "inspetor expandiu pela divisória esquerda (até o limite da janela)",
+    "ok": true,
+    "detail": "353px → 393px (teto desta janela: 393px)"
+  },
+  {
+    "name": "inspetor reduziu pela divisória (sem sumir)",
+    "ok": true,
+    "detail": "393px → 327px (mín 300)"
+  },
+  {
+    "name": "limite máximo respeitado e canvas preservado",
+    "ok": true,
+    "detail": "inspetor=393px (máx 500), canvas=356px"
+  },
+  {
+    "name": "abas alternam (Legendas/Enquadrar/Texto/Áudio)",
+    "ok": true,
+    "detail": "última ativa: Áudio"
+  },
+  {
+    "name": "propriedade de legenda real aplicada na prévia",
+    "ok": true,
+    "detail": "Posição=Centro → data-position=middle"
+  },
+  {
+    "name": "proporção alterada na aba Enquadrar",
+    "ok": true,
+    "detail": "1:1 → 9:16"
+  },
+  {
+    "name": "Ctrl+Z desfaz e Ctrl+Shift+Z refaz proporção",
+    "ok": true,
+    "detail": "1:1 → 9:16 → 1:1 → 9:16"
+  },
+  {
+    "name": "autosave concluiu após alterações",
+    "ok": true,
+    "detail": "Alterações salvas"
+  },
+  {
+    "name": "persistência: posição da legenda mantida ao reabrir",
+    "ok": true,
+    "detail": "Centro"
+  },
+  {
+    "name": "persistência: largura do inspetor mantida ao reabrir",
+    "ok": true,
+    "detail": "393px → 393px"
+  },
+  {
+    "name": "transcrição ainda redimensiona pela borda direita (reduzindo)",
+    "ok": true,
+    "detail": "320px → 257px"
+  },
+  {
+    "name": "timeline ainda redimensiona pela borda superior",
+    "ok": true,
+    "detail": "220px → 284px"
+  },
+  {
+    "name": "busca da transcrição filtra (termo inexistente)",
+    "ok": true,
+    "detail": "Nenhum trecho encontrado."
+  }
+]

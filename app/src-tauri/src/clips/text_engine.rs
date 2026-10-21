@@ -499,9 +499,10 @@ mod tests {
         let bytes = serde_json::to_vec(&value).unwrap();
         let restored: ClipCollection = serde_json::from_slice(&bytes).unwrap();
         assert_eq!(restored.engine, value.engine);
-        let legacy: ClipCollection =
-            serde_json::from_slice(b"{\"version\":1,\"mediaId\":\"m\",\"transcriptHash\":\"h\",\"clips\":[]}")
-                .unwrap();
+        let legacy: ClipCollection = serde_json::from_slice(
+            b"{\"version\":1,\"mediaId\":\"m\",\"transcriptHash\":\"h\",\"clips\":[]}",
+        )
+        .unwrap();
         assert!(legacy.engine.is_none());
     }
 }

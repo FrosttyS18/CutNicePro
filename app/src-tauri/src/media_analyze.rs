@@ -89,7 +89,10 @@ pub fn parse_probe_output(json: &[u8]) -> Option<MediaAnalysis> {
     if !(duration_s.is_finite()) || duration_s <= 0.0 {
         return None;
     }
-    let video = probe.streams.iter().find(|s| s.codec_type.as_deref() == Some("video"))?;
+    let video = probe
+        .streams
+        .iter()
+        .find(|s| s.codec_type.as_deref() == Some("video"))?;
     let audio = probe
         .streams
         .iter()
@@ -145,7 +148,8 @@ mod tests {
 
     #[test]
     fn no_video_or_zero_duration_is_rejected() {
-        let audio_only = r#"{"streams":[{"codec_type":"audio","codec_name":"mp3"}],"format":{"duration":"5"}}"#;
+        let audio_only =
+            r#"{"streams":[{"codec_type":"audio","codec_name":"mp3"}],"format":{"duration":"5"}}"#;
         assert!(parse_probe_output(audio_only.as_bytes()).is_none());
         let zero = r#"{"streams":[{"codec_type":"video","codec_name":"h264","width":1,"height":1}],"format":{"duration":"0"}}"#;
         assert!(parse_probe_output(zero.as_bytes()).is_none());

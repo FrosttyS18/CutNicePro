@@ -29,7 +29,7 @@ pub fn delete(base: &Path, media: &MediaStore, id: &str) -> Result<(), String> {
         Err(e) => return Err(format!("não foi possível remover a transcrição: {e}")),
     }
     media.remove_project(&id)?;
-    crate::clips::commands::remove(base,&id)?;
+    crate::clips::commands::remove(base, &id)?;
     std::fs::remove_file(pending).map_err(|e| e.to_string())?;
     Ok(())
 }
@@ -54,7 +54,9 @@ pub fn resume(base: &Path, media: &MediaStore) -> Result<(), String> {
 
 #[tauri::command]
 pub fn delete_project(app: AppHandle, id: String) -> Result<(), String> {
-    let _lease = app.state::<std::sync::Arc<crate::processing::ProcessingGate>>().acquire()?;
+    let _lease = app
+        .state::<std::sync::Arc<crate::processing::ProcessingGate>>()
+        .acquire()?;
     let jobs = app.state::<std::sync::Arc<crate::transcription::TranscriptionJobs>>();
     jobs.edit(|| {
         delete(

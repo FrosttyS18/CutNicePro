@@ -24,3 +24,22 @@ Thumbs.db
 
 # Backups locais do arquivo FigCraft (nao publicar)
 design/backups/
+
+# Builds do experimento (regeneráveis; app/.gitignore já cobre src-tauri/target)
+experiments/clip-selection-ab/target/
+
+# Saída de runtime do Playwright MCP: logs de console e snapshots de página
+# podem conter dados pessoais (ex.: e-mail em snapshot de sessão externa).
+.playwright-mcp/
+
+# Modelos GGUF e runtimes copiados nos lares do experimento (artefatos de
+# laboratório multi-GB; presença registrada por .sha256/relatórios)
+experiments/clip-selection-ab/models/**/*.gguf
+experiments/clip-selection-ab/models/**/bin/
+experiments/clip-selection-ab/models/**/gpu/
+
+# Cache Python das ferramentas
+__pycache__/
+
+# Saída transitória de testes
+.tooling/test-output/

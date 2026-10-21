@@ -71,7 +71,7 @@ export function ProjectWorkspace({ project, initialView = "overview", onRename, 
         <header className="project-clips__heading"><div><button type="button" className="flow-button" onClick={() => setView("overview")}>Voltar ao projeto</button><h1>{project.name}</h1></div><div className="project-clips__tools">{clipTools}</div></header>
         <ClipGallery entries={(clips.collection?.clips ?? []).map(clip => ({project,mediaId: clips.collection!.mediaId,clip}))} loading={clips.loading} error={clips.error} notice={clipNotice}
           onRetry={clips.reload} onInspect={setInspecting}/>
-      </> : <VideoEditor key={`${workspace.data.tool}:${activeClip ?? "video"}`} title={project.name} data={workspace.data} localUrl={workspace.localUrl} dirty={workspace.dirty}
+      </> : <VideoEditor key={`${workspace.data.tool}:${activeClip ?? "video"}`} title={project.name} activeClip={activeClip ? clips.collection?.clips.find(clip => clip.id === activeClip) : undefined} data={workspace.data} localUrl={workspace.localUrl} dirty={workspace.dirty}
         onChange={workspace.change} onSave={workspace.save} onBack={() => setView("overview")} transcriptionControls={<>{transcriptionControls}{clipTools}</>}transcribing={transcription.busy || clips.busy} />}
       {workspace.notice && <p className={workspace.notice.error ? "workspace-notice workspace-notice--error" : "workspace-notice"}
         role={workspace.notice.error ? "alert" : "status"}>{workspace.notice.text}</p>}

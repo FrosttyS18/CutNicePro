@@ -1,0 +1,290 @@
+╔════════════════════════════════════════════╗
+║       CUTNICEPRO — ZCODE REPORT            ║
+╚════════════════════════════════════════════╝
+
+TASK
+  Name: Atualização 13 — Ofício longo: correções de UX do editor, higiene
+        git/lint/porta, preenchimento visual e modo apontar
+  Status: PARTIAL (funcional PASS; estética e ajustes apontados aguardam o
+          mantenedor via modo apontar; commit aguarda autorização)
+  Scope: app/src (editor), tools/dev, tools/e2e, .gitignore/.gitattributes,
+         docs/reports, docs/REPORTING-STANDARD.md. Sem tocar em descoberta/
+         Gemma/Whisper/exportação.
+  Objective: resolver os 8 problemas do ofício (git add failed/252 arquivos
+         rastreados; warnings Rust e lint inexistente; porta 1420; validação
+         visual de preenchimento; Enquadrar/Recortar incompreensíveis; má
+         distribuição dos painéis; instruções didáticas) + 3 direcionamentos
+         complementares do mantenedor (remover botões de retrair; outline/
+         foco duplicado e scroll nativo; modo apontar).
+  Result: todos os itens implementados e validados por automação; layout em
+         versão rev3 conforme os 2 feedbacks de UX; app aberto na tela do
+         mantenedor com o modo apontar ativo para ele indicar os ajustes.
+
+IMPLEMENTATION
+  Completed:
+  1. Git: removidos do índice os 252 arquivos rastreados indevidamente
+     (74 .playwright-mcp + 178 experiments/clip-selection-ab/target) com
+     `git rm -r --cached` (autorização específica do ofício; arquivos físicos
+     preservados); .gitignore ampliado (+.playwright-mcp/, +target, +modelos
+     GGUF/bin/gpu, +.tooling/test-output/); .gitattributes novo (LF para
+     texto, binários marcados); `git add` voltou a funcionar (staging
+     legítimo de 296 arquivos preparado, sem commit).
+  2. Lint/warnings: ESLint 9 flat config criado (eslint.config.js + scripts
+     `npm run lint` / `lint:fix`); área tocada zerada; Rust `cargo fmt` +
+     `cargo check` sem warnings; clippy 18→7 avisos (6 too-many-args de API
+     estável + 1 allow justificado) — dívida declarada, não silenciada.
+  3. Porta 1420: tools/dev/cleanup-dev.js (`npm run dev:clean`) encerra
+     SOMENTE processos comprovadamente deste repo (node com caminho do repo
+     / cutnicepro.exe sob C:\CutNicePro), com verificação de origem;
+     ciclo ocupado→limpeza→subida validado.
+  4. Preenchimento visual: validado por PIXEL (ffmpeg crop rawvideo rgba)
+     em matriz 6 configs (9:16 e 1:1 × Ajustar/Preencher/focal, +
+     proporção-original) × 3 instantes = 12/12 PASS; montagem em
+     docs/reports/evidence/fill-matrix/montagem.png; paridade
+     prévia↔exportação garantida em VideoPreview (objectFit/objectPosition).
+  5. Semânticas claras: botão "Enquadrar" (aria-pressed; vira "Concluir
+     enquadramento"; Esc sai; hint role=status; Ajuste vai para Preencher;
+     arraste na prévia move o ponto focal) e "Cortar tempo" (rola e foca o
+     campo Início em #editor-trim); labels "Ajustar (imagem inteira com
+     espaço vazio)" / "Preencher (corta o excedente)".
+  6. Distribuição dos painéis (rev3, após 2 feedbacks do mantenedor):
+     header compacto com botões-ícone (voltar, desfazer, refazer,
+     restaurar corte, salvar agora; tooltips com Ctrl+Z/Ctrl+Shift+Z);
+     inspetor com abas Legendas/Enquadrar/Texto/Áudio; painéis
+     redimensionáveis APENAS arrastando a linha divisória (transcrição:
+     borda DIREITA; linha do tempo: borda SUPERIOR) — botões «/»/▲/▼/⟲
+     REMOVIDOS; sem realce de foco/hover nas divisórias (outline:none,
+     tabIndex removido); única linha separadora da timeline
+     (.editor-timeline border-top:0); scrollbar premium do projeto
+     (thin #494949, webkit 7px) aplicada aos contêineres novos.
+  7. Instruções didáticas: seção GUIA DO MANTENEDOR criada e tornada
+     PERMANENTE em docs/REPORTING-STANDARD.md (regra 13) e no formato.
+  8. MODO APONTAR (pedido complementar): tools/e2e/pointer-mode.mjs conecta
+     ao app real via CDP, navega até o editor e injeta banner vermelho
+     "MODO APONTAR ATIVO"; cada clique desenha marcador numerado e grava
+     {n, x, y, viewport, rota, horário, elemento(tag/id/classes/aria-label/
+     texto/caminho/rect)} em docs/reports/evidence/editor13/
+     pointer-feedback.json; Ctrl+clique desfaz o último ponto; gravação em
+     segundo plano enquanto o app estiver aberto.
+  Not completed: commits (aguardam autorização); ajustes que o mantenedor
+     vier a apontar no modo apontar (natureza desta entrega).
+  Changes: ver FILES; arquitetura preservada (React/IPC/Rust intactos;
+     mudanças concentradas em editor + tooling + docs).
+
+FILES
+  Created: app/eslint.config.js; .gitattributes; tools/dev/cleanup-dev.js;
+     tools/e2e/editor13-runtime-tauri.mjs; tools/e2e/pointer-mode.mjs;
+     tools/dev/verify_fill_matrix.py; app/src-tauri/src/render/fill_matrix.rs
+     (teste #[ignore] da matriz); docs/reports/evidence/editor13/*
+     (results.json, editor13-final.png, pointer-feedback.json);
+     docs/reports/evidence/fill-matrix/* (21 PNGs + montagem + results).
+  Modified: app/src/components/editor/VideoEditor.tsx (header compacto,
+     atalhos, Enquadrar, divisórias); app/src/hooks/useEditorLayout.ts
+     (remodelado: só beginResize, sem botões); app/src/hooks/useEditHistory.ts
+     + app/src/lib/edit-history.ts + testes (correção do commit de
+     histórico); app/src/components/editor/FramingToolbar.tsx;
+     app/src/components/editor/EditorInspector.tsx (abas);
+     app/src/screens/editor-refinement.css (bloco Atualização 13 rev3);
+     app/src/components/workspace/VideoPreview.tsx; app/src/App.tsx;
+     app/src/test/*; app/package.json (scripts lint/lint:fix/dev:clean);
+     .gitignore; docs/REPORTING-STANDARD.md (regra 13 + formato);
+     docs/reports/evidence/editor11/results.json (reexecução).
+  Deleted: NENHUM arquivo físico; apenas saídas do índice git (252).
+  Unexpected changes: NONE.
+
+VALIDATION
+  Typecheck: PASS — tsc --noEmit sem erros (2026-10-20, pós-rev3).
+  Lint: PASS — ESLint área tocada 0 erros; 20 pré-existentes classificados
+     fora do escopo (App.tsx setState-in-effect, hooks de mídia/transcrição,
+     refs-during-render) — dívida declarada. Rust fmt/check 0 warnings;
+     clippy 7 avisos dívida declarada.
+  Unit tests: PASS — vitest 160/160 (inclui edit-history 6/6 e autocut com
+     novas props); cargo test 125/125 (executados antes das alterações
+     finais, que foram somente CSS/TSX — Rust inalterado desde então).
+  Integration tests: PASS — e2e sobre TAURI REAL via CDP (janela de dev):
+     editor13 18/18 (header ícone; Enquadrar ativo+hint+Preencher; arraste
+     do ponto focal 50→65; Concluir; Cortar tempo focado; transcrição sem
+     botões e 320px→437px pela borda; timeline sem botões e 220px→130px
+     pela borda superior; abas; Ctrl+Z 9:16→1:1→9:16; autosave
+     "Alterações salvas") e editor11 (regressão) 14/14.
+  Regression tests: PASS — editor11 14/14 + vitest 160/160 + cargo 125/125.
+  Visual tests: PASS por PIXEL (automação de preenchimento 12/12 — não é
+     aprovação estética); screenshot final em evidence/editor13.
+  Runtime verification: PASS — app aberto agora com modo apontar injetado;
+     autoteste do mecanismo gravou o clique n=1 (título "davyjones", header
+     compacto) no JSON de feedback.
+  Total passed: 329 | Total failed: 0 | Total skipped: 0
+
+HOOKS / HARNESS
+  Hooks active: PreToolUse (bloqueio de comandos destrutivos), PostToolUse
+     (validação de arquivos escritos), Stop (baseline).
+  PreToolUse: ativo, sem bloqueios nesta tarefa (uso de comandos restritos).
+  PostToolUse: arquivos Write/Edit validados; sem falhas.
+  Stop: baseline registrada no log de auditoria (não é gate).
+  Baseline: .zcode/hooks/audit/audit-log.jsonl
+  Gate result: N/A (não-gate por política).
+  Evidence: log de auditoria acima.
+
+MCP / SKILLS
+  Tools used: Playwright (chromium.connectOverCDP sobre WebView2 do Tauri,
+     porta 9381) para e2e e modo apontar; ffmpeg para a matriz de
+     preenchimento. Sem serviços externos.
+  Connection status: CDP conectado e funcional.
+  Failures: nenhuma.
+  Pending activation: nenhuma.
+
+GIT
+  Branch: main
+  HEAD: 4ccead3e2ed771f637d078e96b984cf5ffc88a33
+  Latest commit: chore: update Playwright console log
+  Commits created: NENHUM (commit/push exigem autorização explícita).
+  Push: NOT EXECUTED
+  Remote: origin → repositório do mantenedor (main).
+  Working tree: MODIFIED + UNTRACKED — staging pronto: 296 arquivos no
+     índice (código da Atualização 13, remoções dos 252, evidências,
+     relatórios).
+  Pending files: 188 untracked NÃO adicionados de propósito (ícones, fontes
+     Poppins, posters, design/exports, design/flow-v2 — artefatos do
+     mantenedor, decisão dele); relatórios TXT desta entrega
+     (docs/reports/LATEST.txt + history/2026-10-20_1524_*) incluídos no
+     staging ao final.
+
+EVIDENCE
+  Commands executed (principais, com resultado):
+    npx tsc --noEmit → 0 erros
+    npx vitest run → 160 passed
+    npx eslint <arquivos tocados> → 0 erros
+    cargo fmt/check → 0 warnings; cargo test → 125 passed (fase Rust)
+    E13_PORT=9381 node tools/e2e/editor13-runtime-tauri.mjs → 18/18
+    E11_EXTERNAL=1 E11_PORT=9381 node tools/e2e/editor11-runtime-tauri.mjs
+      → 14/14
+    python tools/dev/verify_fill_matrix.py → 12/12 (fase visual)
+    POINTER_PORT=9381 node tools/e2e/pointer-mode.mjs → injetado +
+      autoteste gravado
+  Relevant logs: docs/reports/evidence/editor13/results.json;
+     docs/reports/evidence/fill-matrix/results.json
+  Screenshots: evidence/editor13/editor13-final.png;
+     evidence/fill-matrix/montagem.png (6 configs lado a lado)
+  Test artifacts: evidence/editor13/pointer-feedback.json (cliques do
+     mantenedor em tempo real; clique n=1 é autoteste do ZCode no título).
+  Reproduction details: matriz de preenchimento reproduzível pelos filtros
+     ffmpeg registrados em evidence/fill-matrix/results.json.
+
+ISSUES
+  Bugs found: durante a tarefa — (a) commit de histórico lia estado antigo
+     (corrigido: commit(next, group)); (b) undo aplicava snapshot parcial
+     como WorkspaceData (corrigido: reconstrução sobre dados atuais);
+     (c) e2e de drag lia valor 560px já máximo salvo (corrigido: reset de
+     cnp-editor-layout antes do teste); (d) inspetor transbordava sobre a
+     timeline (corrigido: colunas contidas + scroll).
+  Unresolved failures: nenhuma nas suítes executadas.
+  Regressions: nenhuma observada nos escopos testados.
+  Risks: 7 avisos clippy e 20 erros ESLint pré-existentes seguem como
+     dívida documentada; staging grande (296 arquivos) depende de revisão
+     do mantenedor antes do commit.
+  Blockers: nenhum técnico.
+
+FINAL
+  Delivery status: FUNCIONAL ENTREGUE — estética/layout sob avaliação do
+     mantenedor (rev3 já incorpora os 2 feedbacks enviados durante a
+     tarefa).
+  Requirements met: 8/8 itens do ofício + 3 direcionamentos complementares.
+  Remaining work: ler pointer-feedback.json e aplicar os ajustes apontados;
+     commit após autorização; dívidas de lint/clippy.
+  User action required: (1) clicar nos pontos a ajustar com o MODO APONTAR
+     ativo (banner vermelho) e avisar; (2) depois fechar a janela do app e,
+     se preciso, rodar `npm run dev:clean`; (3) decidir commit do staging;
+     (4) aprovação visual.
+  Restart required: NO — o app aberto já roda a versão final (rev3).
+  Ready for next task: YES (após feedback do modo apontar).
+
+REPORT
+  Latest file: docs/reports/LATEST.txt
+  Historical file: docs/reports/history/2026-10-20_1524_atualizacao13-oficio-editor-higiene.txt
+
+GUIA DO MANTENEDOR — O QUE MUDOU E COMO TESTAR
+
+O que mudou (resumo simples):
+  • Os painéis do editor agora são ajustados ARRASTANDO AS LINHAS com o
+    mouse: a linha da borda DIREITA da transcrição alarga/estreita a
+    transcrição; a linha de CIMA da linha do tempo muda a altura dela.
+    Todos os botões de retrair foram removidos.
+  • Nada de contorno extra: ao passar o mouse não aparece quadrado de
+    foco, e a linha do tempo tem UMA única linha separadora (sem borda
+    dupla).
+  • As barras de rolagem novas seguem o padrão escuro/fininho do projeto.
+  • "Enquadrar" = mover a imagem dentro do quadro (arrastando o vídeo na
+    prévia). "Cortar tempo" = escolher onde o vídeo começa e termina. O
+    arquivo original nunca é alterado.
+  • O cabeçalho ficou compacto, com ícones e atalhos: Ctrl+Z desfaz,
+    Ctrl+Shift+Z refaz, Esc sai do modo Enquadrar.
+  • O painel da direita tem abas: Legendas, Enquadrar, Texto, Áudio.
+  • MODO APONTAR: o app está aberto AGORA na sua tela com um aviso
+    vermelho. Clique em qualquer ponto que precise de ajuste: aparece um
+    número no local e eu leio depois (posição + o que é o elemento).
+    Ctrl+clique apaga o último ponto se errar.
+
+Teste 1 — Redimensionar painéis sem botões
+  1. Com o editor aberto (Projeto → Cortes → Editar clipe), olhe a
+     transcrição: NÃO existem mais botões «/» nela.
+  2. Posicione o mouse na linha da borda direita da transcrição (cursor
+     vira ↔) e arraste para a direita e para a esquerda.
+  Resultado esperado: a transcrição alarga/estreita acompanhando o mouse,
+  sem botão nenhum, e a linha continua sendo a única divisória.
+  3. Agora arraste a linha de cima da linha do tempo para baixo e para
+     cima.
+  Resultado esperado: a linha do tempo cresce/encolhe; não aparece nenhuma
+  segunda linha nem botões ▲/▼.
+
+Teste 2 — Sem foco indesejado e com o scroll do projeto
+  1. Passe o mouse devagar pelas divisórias e por todo o editor.
+  Resultado esperado: NENHUM contorno/quadrado de foco aparece.
+  2. Role o texto da transcrição e o painel da direita.
+  Resultado esperado: barra de rolagem fina e escura (padrão do projeto),
+  não a barra clara padrão do navegador.
+
+Teste 3 — Enquadrar (mover a imagem no quadro)
+  1. Clique em "Enquadrar".
+  Resultado esperado: o botão fica pressionado, surge a mensagem "Modo
+  Enquadrar ativo" e o Ajuste muda sozinho para "Preencher".
+  2. Arraste o vídeo na prévia com o mouse.
+  Resultado esperado: a imagem se move dentro do quadro; as legendas
+  ficam paradas no lugar.
+  3. Pressione Esc.
+  Resultado esperado: o modo sai (ou botão "Concluir enquadramento").
+
+Teste 4 — Cortar tempo (início/fim)
+  1. Clique em "Cortar tempo".
+  Resultado esperado: o painel rola até "Corte do vídeo" com o campo
+  Início pronto para digitar.
+  2. Aumente o Início um pouco e dê play.
+  Resultado esperado: o vídeo começa do ponto escolhido; o arquivo
+  original continua intacto.
+
+Teste 5 — Cabeçalho compacto e atalhos
+  1. Mude algo (ex.: proporção) e pressione Ctrl+Z, depois Ctrl+Shift+Z.
+  Resultado esperado: desfaz e refaz; o status no topo alterna
+  "Alterações não salvas" → "Alterações salvas" sozinho (autosave).
+  2. Confira os ícones do topo: voltar, desfazer, refazer, restaurar
+     corte, salvar agora — com dicas ao passar o mouse.
+
+Teste 6 — MODO APONTAR (para você indicar ajustes)
+  1. A janela do app está aberta com o aviso vermelho no canto superior
+     direito.
+  2. Clique em cada ponto que precisa de ajuste.
+  Resultado esperado: um círculo vermelho numerado fica em cada ponto.
+  3. Se errar, Ctrl+clique remove o último ponto.
+  4. Quando terminar, é só me avisar.
+  Resultado esperado: eu leio o arquivo com seus cliques (posição + o
+  elemento de cada um) e corrijo o que você apontou.
+
+Teste 7 — Porta 1420 ocupada (se acontecer de novo)
+  1. Feche o app e rode na pasta app: npm run dev:clean
+  Resultado esperado: aparecem os processos antigos deste projeto sendo
+  encerrados (somente os comprovadamente deste repositório) e o próximo
+  `npm run tauri dev` sobe limpo na porta 1420.
+
+O que NÃO mudou: descoberta de cortes, modelo Gemma, transcrição Whisper e
+exportação FFmpeg — intocados nesta atualização.
+
+END OF REPORT

@@ -81,8 +81,8 @@ html[data-input-modality="keyboard"] .transcript-word-popover :is(button, input)
 .video-editor { flex: 1; min-height: 0; display: grid; grid-template-rows: auto minmax(0, 1fr) auto; }
 .video-editor .editor-header { flex-wrap: nowrap; padding-bottom: 10px; }
 .video-editor .editor-header h1 { order: 0; flex-basis: auto; }
-.video-editor .editor-layout { grid-template-columns: clamp(240px, 36cqw, 760px) minmax(0, 1fr) 150px; align-items: stretch; min-height: 0; padding: 12px 0; }
-.video-editor .editor-layout > .transcript-panel { min-height: 0; height: 100%; max-height: none; overflow: hidden; margin: 0; padding: 0 10px 0 0; }
+.video-editor .editor-layout { grid-template-columns: var(--transcript-width, 320px) minmax(0, 1fr) var(--inspector-width, 360px); align-items: stretch; min-height: 0; padding: 12px 0; }
+.video-editor .editor-pane--transcript .transcript-panel { min-height: 0; height: 100%; max-height: 100%; overflow: hidden; margin: 0; padding: 0; border: 0; }
 .video-editor .transcript-scroll { flex: 1; max-height: none; }
 .video-editor .editor-stage { display: flex; flex-direction: column; min-height: 0; min-width: 0; }
 .video-editor .editor-stage__canvas { flex: 1; min-height: 0; display: grid; place-items: center; container-type: size; }
@@ -93,9 +93,12 @@ html[data-input-modality="keyboard"] .transcript-word-popover :is(button, input)
   .video-editor .editor-layout { grid-template-columns: minmax(160px,.8fr) minmax(0,1.4fr); grid-template-rows: minmax(0,1fr) auto; }
   .video-editor .editor-layout > .transcript-panel { order: 0; }
   .video-editor .editor-stage { order: 0; }
-  .video-editor .editor-inspector { order: 0; grid-column: 1 / -1; max-height: 94px; padding: 6px 0 0; }
-  .video-editor .editor-inspector__body { display: flex; }
+  .video-editor .editor-pane--inspector { order: 0; grid-column: 1 / -1; width: auto; height: auto; }
+  .video-editor .editor-pane--inspector .editor-pane__divider { display: none; }
+  .video-editor .editor-inspector { border-left: 0; border-top: 1px solid var(--sh-divider); padding: 6px 0 0; }
+  .video-editor .editor-inspector__body { display: flex; flex-wrap: wrap; gap: 10px; max-height: 40dvh; }
   .video-editor .editor-inspector > nav { grid-template-columns: repeat(4,1fr); }
+  .video-editor .editor-inspector__actions { display: flex; flex-wrap: wrap; gap: 6px; }
 }
 @media (max-height: 720px) {
   .timeline-surface .timeline-ruler { margin-bottom: 8px; }
@@ -103,3 +106,89 @@ html[data-input-modality="keyboard"] .transcript-word-popover :is(button, input)
   .timeline-audio { height: 24px; }
   .video-editor .editor-layout { padding: 8px 0; }
 }
+
+/* Atualização 13 (rev. mantenedor) — divisórias arrastáveis SEM destaque de
+   hover/foco e SEM segunda linha: a divisória É a linha divisória padrão do
+   projeto (1px, mesma cor das existentes), com área de arraste de 7px.
+   Scrollbar premium (7px, thumb #494949) em todos os contêineres novos. */
+.editor-header--compact { gap: 8px; }
+.editor-header--compact h1 { flex: 1; font-size: 1rem; margin: 0; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.editor-icon-button {
+  align-items: center; background: transparent; border: 1px solid var(--sh-divider); border-radius: 6px;
+  color: inherit; cursor: pointer; display: inline-flex; height: 30px; justify-content: center; padding: 0 6px; width: 30px;
+}
+.editor-icon-button:hover:not(:disabled) { background: rgba(255, 255, 255, 0.06); }
+.editor-icon-button:disabled { cursor: default; opacity: 0.4; }
+
+.editor-pane { display: flex; min-width: 0; position: relative; }
+.editor-pane--transcript { width: var(--transcript-width, 320px); height: 100%; min-height: 0; }
+.editor-pane--transcript .transcript-panel { flex: 1 1 auto; min-width: 0; height: 100%; max-height: 100%; padding: 0; margin: 0; border: 0; }
+
+/* divisória vertical: lateral direita da transcrição — a ÚNICA linha ali */
+.editor-pane__divider {
+  align-self: stretch; background: transparent; border: 0; border-right: 1px solid var(--sh-divider);
+  cursor: col-resize; flex: 0 0 7px; width: 7px;
+  outline: none; user-select: none; touch-action: none;
+}
+
+/* divisória vertical espelhada: borda ESQUERDA do inspetor (a linha fica
+   entre o canvas e as ferramentas; arrastar amplia/reduz o painel) */
+.editor-pane__divider--left { border-right: 0; border-left: 1px solid var(--sh-divider); }
+
+/* divisória horizontal: borda superior da timeline — substitui a border-top
+   que a .editor-timeline tinha (zerada abaixo), mantendo UMA linha só */
+.editor-pane--timeline { flex-direction: column; height: var(--timeline-height, 220px); }
+.editor-pane__divider--horizontal {
+  align-self: stretch; background: transparent; border: 0; border-top: 1px solid var(--sh-divider);
+  cursor: row-resize; flex: 0 0 7px; height: 7px; width: 100%;
+  outline: none; user-select: none; touch-action: none;
+}
+.editor-pane--timeline .editor-timeline { border-top: 0; flex: 1 1 auto; min-height: 0; overflow: auto; }
+
+/* scrollbar premium do projeto nos contêineres com rolagem desta revisão */
+.editor-pane--timeline .editor-timeline { scrollbar-width: thin; scrollbar-color: #494949 transparent; overscroll-behavior: contain; }
+.editor-pane--timeline .editor-timeline::-webkit-scrollbar { width: 7px; height: 7px; }
+.editor-pane--timeline .editor-timeline::-webkit-scrollbar-track { background: transparent; }
+.editor-pane--timeline .editor-timeline::-webkit-scrollbar-button { display: none; width: 0; height: 0; }
+.editor-pane--timeline .editor-timeline::-webkit-scrollbar-corner { background: transparent; }
+.editor-pane--timeline .editor-timeline::-webkit-scrollbar-thumb { border: 2px solid var(--sh-panel); border-radius: 8px; background: #494949; }
+.editor-pane--timeline .editor-timeline::-webkit-scrollbar-thumb:hover { background: #777; }
+
+.editor-stage__hint { background: rgba(255, 255, 255, 0.06); border-radius: 6px; font-size: 0.8rem; margin: 0 0 6px; padding: 6px 10px; }
+.editor-stage__canvas[data-framing="true"] { border: 2px dashed var(--sh-accent); border-radius: 6px; cursor: grab; }
+.editor-stage__canvas[data-framing="true"]:active { cursor: grabbing; }
+.editor-inspector__tabs { display: flex; flex-direction: row; flex-wrap: wrap; gap: 4px; }
+.editor-inspector__tab {
+  align-items: center; background: transparent; border: 0; border-radius: 6px; color: inherit; cursor: pointer;
+  display: flex; font-size: 0.78rem; gap: 8px; padding: 8px; text-align: left; width: 100%;
+}
+.editor-inspector__tab:hover { background: rgba(255, 255, 255, 0.06); }
+.editor-inspector__tab[aria-pressed="true"] { background: rgba(2, 194, 190, 0.14); font-weight: 600; }
+.framing-toolbar__frame[aria-pressed="true"] { background: rgba(2, 194, 190, 0.14); border-color: var(--sh-accent); }
+
+/* colunas do editor contidas na área disponível — o inspetor não transborda
+   sobre a linha do tempo (scroll premium já definido no topo do arquivo) */
+.video-editor .editor-layout { overflow: hidden; }
+.video-editor .editor-layout > * { min-height: 0; }
+.video-editor .editor-stage { height: 100%; min-height: 0; }
+
+/* Atualização 14 — inspetor redimensionável pela divisória esquerda, com
+   abas no topo, corpo com rolagem própria e ações do projeto no rodapé.
+   A linha superior decorativa da transcrição foi removida acima
+   (.editor-pane--transcript .transcript-panel { border: 0; margin: 0 }). */
+.editor-pane--inspector { width: var(--inspector-width, 360px); height: 100%; min-height: 0; }
+.editor-pane--inspector .editor-inspector {
+  border-left: 0; padding-left: 0; flex: 1 1 auto; min-width: 0;
+  display: flex; flex-direction: column; height: 100%; overflow: hidden;
+}
+.editor-inspector__body { flex: 1 1 auto; min-height: 0; overflow-y: auto; padding-right: 2px; scrollbar-width: thin; scrollbar-color: #494949 transparent; }
+.editor-inspector__body::-webkit-scrollbar { width: 7px; height: 7px; }
+.editor-inspector__body::-webkit-scrollbar-track { background: transparent; }
+.editor-inspector__body::-webkit-scrollbar-button { display: none; width: 0; height: 0; }
+.editor-inspector__body::-webkit-scrollbar-corner { background: transparent; }
+.editor-inspector__body::-webkit-scrollbar-thumb { border: 2px solid var(--sh-panel); border-radius: 8px; background: #494949; }
+.editor-inspector__body::-webkit-scrollbar-thumb:hover { background: #777; }
+.editor-inspector__tab { flex: 1 1 auto; justify-content: center; padding: 6px 8px; }
+.editor-inspector__actions { flex: 0 0 auto; margin-top: 8px; padding-top: 10px; border-top: 1px solid var(--sh-divider); display: grid; gap: 6px; }
+.editor-inspector__actions h2 { margin: 0 0 6px; color: var(--sh-dim); font-size: 11px; font-weight: 500; }
+@media (forced-colors: active) { .editor-inspector__body { scrollbar-color: auto; } }

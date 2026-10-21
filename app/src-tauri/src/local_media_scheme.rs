@@ -7,8 +7,8 @@
 use std::path::PathBuf;
 
 use tauri::http::{header, Request, Response, StatusCode};
-use tauri::{UriSchemeContext, UriSchemeResponder};
 use tauri::{AppHandle, Manager, Wry};
+use tauri::{UriSchemeContext, UriSchemeResponder};
 
 use crate::media_store::MediaStore;
 
@@ -28,7 +28,11 @@ fn parse_range(headers: &tauri::http::HeaderMap, len: u64) -> Option<(u64, u64)>
     let spec = h.strip_prefix("bytes=")?;
     let (a, b) = spec.split_once('-')?;
     let start: u64 = a.parse().ok()?;
-    let end = if b.is_empty() { len - 1 } else { b.parse().ok()? };
+    let end = if b.is_empty() {
+        len - 1
+    } else {
+        b.parse().ok()?
+    };
     if start <= end && end < len {
         Some((start, end))
     } else {
@@ -52,7 +56,11 @@ fn media_response(
     b.body(body).unwrap_or_else(|_| Response::new(Vec::new()))
 }
 
-pub fn handle(ctx: UriSchemeContext<'_, Wry>, request: Request<Vec<u8>>, responder: UriSchemeResponder) {
+pub fn handle(
+    ctx: UriSchemeContext<'_, Wry>,
+    request: Request<Vec<u8>>,
+    responder: UriSchemeResponder,
+) {
     let app = ctx.app_handle().clone();
     tauri::async_runtime::spawn(async move {
         let resp = serve(&app, &request);
@@ -62,7 +70,10 @@ pub fn handle(ctx: UriSchemeContext<'_, Wry>, request: Request<Vec<u8>>, respond
 
 fn serve(app: &AppHandle, request: &Request<Vec<u8>>) -> Response<Vec<u8>> {
     let Some(store) = app.try_state::<MediaStore>() else {
-        return error_response(StatusCode::INTERNAL_SERVER_ERROR, "store de mídia indisponível");
+        return error_response(
+            StatusCode::INTERNAL_SERVER_ERROR,
+            "store de mídia indisponível",
+        );
     };
     // Aceita "cnplocal://localhost/<file>" e sobras "http://cnplocal.localhost/<file>"
     let name = request
@@ -94,7 +105,10 @@ fn serve(app: &AppHandle, request: &Request<Vec<u8>>) -> Response<Vec<u8>> {
     let data = match std::fs::read(&path) {
         Ok(d) => d,
         Err(_) => {
-            return error_response(StatusCode::NOT_FOUND, "arquivo de mídia não encontrado no disco")
+            return error_response(
+                StatusCode::NOT_FOUND,
+                "arquivo de mídia não encontrado no disco",
+            )
         }
     };
     let len = data.len() as u64;
@@ -107,10 +121,7 @@ fn serve(app: &AppHandle, request: &Request<Vec<u8>>) -> Response<Vec<u8>> {
                 slice,
                 vec![
                     (header::CONTENT_TYPE, ctype.to_string()),
-                    (
-                        header::CONTENT_RANGE,
-                        format!("bytes {s}-{e}/{len}"),
-                    ),
+                    (header::CONTENT_RANGE, format!("bytes {s}-{e}/{len}")),
                     (header::CONTENT_LENGTH, format!("{}", e - s + 1)),
                 ],
             )

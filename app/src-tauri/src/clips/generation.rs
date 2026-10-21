@@ -64,10 +64,12 @@ fn analyze(
 /// experimental não pode publicar avaliações de outro modelo, nem o padrão
 /// as do experimental.
 pub(crate) fn merge_previous(value: &mut ClipCollection, previous: &ClipCollection) {
-    let same_engine = previous
-        .engine
-        .as_ref()
-        .is_some_and(|record| value.engine.as_ref().is_some_and(|new| new.backend == record.backend));
+    let same_engine = previous.engine.as_ref().is_some_and(|record| {
+        value
+            .engine
+            .as_ref()
+            .is_some_and(|new| new.backend == record.backend)
+    });
     for clip in &mut value.clips {
         if let Some(old) = previous.clips.iter().find(|old| {
             old.id == clip.id
@@ -207,8 +209,8 @@ mod tests {
 
 #[cfg(test)]
 mod merge_tests {
-    use super::merge_previous;
     use super::super::types::{Clip, ClipCollection, EngineRecord, Review};
+    use super::merge_previous;
 
     fn record(backend: &str) -> Option<EngineRecord> {
         Some(EngineRecord {
@@ -230,12 +232,15 @@ mod merge_tests {
             review: Review::Pending,
             format: None,
             analysis: if analysis {
-                Some(serde_json::from_value(serde_json::json!({
+                Some(
+                    serde_json::from_value(serde_json::json!({
                     "title":"T","summary":"S",
                     "criteria":[
                         {"label":"Gancho","score":1,"explanation":"a","evidence":"e"},
                         {"label":"Desenvolvimento","score":1,"explanation":"a","evidence":"e"},
-                        {"label":"Fechamento","score":1,"explanation":"a","evidence":"e"}]})).unwrap())
+                        {"label":"Fechamento","score":1,"explanation":"a","evidence":"e"}]}))
+                    .unwrap(),
+                )
             } else {
                 None
             },
@@ -255,10 +260,13 @@ mod merge_tests {
     #[test]
     fn review_merges_across_engines_but_analysis_only_within_same_backend() {
         let old_clip = clip("a", true);
-        let mut previous = collection(record("standard"), vec![Clip {
-            review: Review::Approved,
-            ..old_clip.clone()
-        }]);
+        let mut previous = collection(
+            record("standard"),
+            vec![Clip {
+                review: Review::Approved,
+                ..old_clip.clone()
+            }],
+        );
         previous.transcript_hash = "h".into();
         let mut experimental = collection(record("experimentalGemma"), vec![clip("a", false)]);
         merge_previous(&mut experimental, &previous);
@@ -269,15 +277,21 @@ mod merge_tests {
 
         let mut same = collection(record("standard"), vec![clip("a", false)]);
         merge_previous(&mut same, &previous);
-        assert!(same.clips[0].analysis.is_some(), "mesmo backend deve reaproveitar");
+        assert!(
+            same.clips[0].analysis.is_some(),
+            "mesmo backend deve reaproveitar"
+        );
     }
 
     #[test]
     fn legacy_collection_without_engine_keeps_review_and_never_reuses_analysis() {
-        let mut previous = collection(None, vec![Clip {
-            review: Review::Approved,
-            ..clip("a", true)
-        }]);
+        let mut previous = collection(
+            None,
+            vec![Clip {
+                review: Review::Approved,
+                ..clip("a", true)
+            }],
+        );
         previous.transcript_hash = "h".into();
         let mut standard = collection(record("standard"), vec![clip("a", false)]);
         merge_previous(&mut standard, &previous);

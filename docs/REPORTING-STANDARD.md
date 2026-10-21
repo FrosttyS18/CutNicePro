@@ -20,6 +20,12 @@ e manutenção.
 10. Não confundir testes simulados com validação de eventos reais.
 11. Não considerar a tarefa concluída antes da geração e verificação do relatório.
 12. O relatório apresentado no chat corresponde integralmente ao conteúdo persistido no TXT.
+13. **Todo relatório contém a seção `GUIA DO MANTENEDOR — O QUE MUDOU E COMO TESTAR`**
+    (estabelecida no ofício da Atualização 13, 2026-10-20): em português simples, explica o
+    que mudou na prática e traz testes manuais passo a passo (numerados), cada um com o
+    resultado esperado. Mesmo em tarefas sem mudança de interface, a seção informa o que o
+    mantenedor precisa verificar manualmente (ou declara "nada para testar manualmente" com
+    o motivo).
 
 ## Persistência
 
@@ -117,6 +123,12 @@ FINAL
 REPORT
   Latest file:
   Historical file:
+
+GUIA DO MANTENEDOR — O QUE MUDOU E COMO TESTAR
+  O que mudou: (linguagem simples, sem jargão)
+  Teste 1 — (nome): passos numerados → Resultado esperado:
+  Teste N — ... (quantos forem necessários; sem mudança de interface,
+  declarar o que exige verificação manual e por quê)
 
 END OF REPORT
 ```

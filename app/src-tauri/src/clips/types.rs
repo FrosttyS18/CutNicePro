@@ -127,7 +127,8 @@ impl Options {
             return Err("Escolha de 1 a 12 cortes, com duração entre 10 e 180 segundos.".into());
         }
         if self.automatic
-            && self.format
+            && self
+                .format
                 .as_ref()
                 .is_some_and(|v| !["16:9", "9:16", "1:1", "4:5"].contains(&v.as_str()))
         {

@@ -7,5 +7,6 @@ mod settings;
 
 #[cfg(test)]
 mod integration;
+mod fill_matrix;
 #[cfg(test)]
 mod tests;
