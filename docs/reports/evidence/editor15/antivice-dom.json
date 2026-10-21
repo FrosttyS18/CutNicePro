@@ -1,0 +1,29 @@
+{
+  "focoPointer": {
+    "modality": "pointer",
+    "outline": "none"
+  },
+  "botaoIcone": {
+    "display": "flex",
+    "gap": "7px",
+    "svgFlexNone": "0 0 auto",
+    "sobreposicao": null
+  },
+  "dropdown": {
+    "paddingLeft": "12px",
+    "paddingRight": "12px",
+    "minHeight": "36px"
+  },
+  "slider": {
+    "mesmaLinha": true,
+    "chipDireita": true,
+    "barraLarguraTotal": 457,
+    "alturaChip": 23
+  },
+  "parBotoes": {
+    "gap": 12
+  },
+  "labelCampo": {
+    "gap": 8
+  }
+}

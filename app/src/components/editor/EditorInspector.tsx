@@ -1,114 +1,289 @@
-import { ColorControl } from "../ColorControl";
+import { useState, type ReactNode } from "react";
 import { AppSelect } from "../AppSelect";
-import { aspectRatios, type ToolId } from "../upload/tools";
+import { editorAspectRatios, type ToolId } from "../upload/tools";
 import { captionFonts, captionPresets, effectiveCaptionStyle, type CaptionStyle } from "../../lib/captions";
-import type { EditorSettings } from "../../lib/workspace-types";
-import type { ReactNode } from "react";
+import { DEFAULT_EFFECTS } from "../../lib/workspace";
+import type { EditorEffects, EditorSettings } from "../../lib/workspace-types";
 import { ClosedCaptioningIcon } from "@phosphor-icons/react/dist/csr/ClosedCaptioning";
 import { CropIcon } from "@phosphor-icons/react/dist/csr/Crop";
-import { TextTIcon } from "@phosphor-icons/react/dist/csr/TextT";
+import { PaletteIcon } from "@phosphor-icons/react/dist/csr/Palette";
 import { SpeakerHighIcon } from "@phosphor-icons/react/dist/csr/SpeakerHigh";
+import { BookmarkSimpleIcon } from "@phosphor-icons/react/dist/csr/BookmarkSimple";
+import { FolderOpenIcon } from "@phosphor-icons/react/dist/csr/FolderOpen";
+import { CheckSquareIcon } from "@phosphor-icons/react/dist/csr/CheckSquare";
+import { ArrowsInIcon } from "@phosphor-icons/react/dist/csr/ArrowsIn";
+import { ArrowCounterClockwiseIcon } from "@phosphor-icons/react/dist/csr/ArrowCounterClockwise";
+import { CaretDownIcon } from "@phosphor-icons/react/dist/csr/CaretDown";
 
-export type EditorPanel = "captions" | "reframe" | "text" | "audio";
+export type EditorPanel = "captions" | "reframe" | "audio" | "effects";
 interface Props {
   panel: EditorPanel;
   settings: EditorSettings;
   onPanel: (panel: EditorPanel) => void;
   onSettings: (settings: Partial<EditorSettings>) => void;
-  onCaptions: () => void;
-  tools?: ReactNode;
+  /** Aplica o estilo de legenda atual a todos os cortes do projeto (não destrutivo). */
+  onApplyAll?: (model: number, style: CaptionStyle) => Promise<void>;
 }
 
 export function panelForTool(tool: ToolId): EditorPanel { return tool === "reframe" ? "reframe" : "captions"; }
 
-export function EditorInspector({ panel, settings, onPanel, onSettings, onCaptions, tools }: Props) {
+function SwitchRow({ id, label, checked, onChange }: { id: string; label: ReactNode; checked: boolean; onChange: (checked: boolean) => void }) {
+  return (
+    <div className="studio-switch-row">
+      <label htmlFor={id}>{label}</label>
+      <button type="button" id={id} role="switch" aria-checked={checked} className="studio-switch"
+        onClick={() => onChange(!checked)}>
+        <span className="studio-switch__knob" aria-hidden="true" />
+      </button>
+    </div>
+  );
+}
+
+function ColorField({ label, inputLabel, value, onChange }: { label: string; inputLabel: string; value: string; onChange: (value: string) => void }) {
+  return (
+    <div className="studio-field">
+      <span className="studio-field__label">{label}</span>
+      <div className="studio-color">
+        <input aria-label={inputLabel} type="color" value={value} onChange={(event) => onChange(event.target.value)} />
+        <span className="studio-color__value">{value.toUpperCase()}</span>
+      </div>
+    </div>
+  );
+}
+
+function RangeField({ label, value, min, max, step = 1, unit = "", onChange, inputLabel }:
+  { label: string; value: number; min: number; max: number; step?: number; unit?: string; onChange: (value: number) => void; inputLabel: string }) {
+  return (
+    <div className="studio-field studio-range">
+      <span className="studio-field__label">{label}: <strong>{Number.isInteger(value) ? value : value.toFixed(step < 1 ? 1 : 0)}{unit}</strong></span>
+      <input aria-label={inputLabel} type="range" min={min} max={max} step={step} value={value} onChange={(event) => onChange(Number(event.target.value))} />
+    </div>
+  );
+}
+
+const RATIO_LABELS: Record<string, { ratio: string; name: string }> = {
+  "9:16": { ratio: "9:16", name: "Vertical" }, "1:1": { ratio: "1:1", name: "Quadrado" },
+  original: { ratio: "Src", name: "Original" }, "16:9": { ratio: "16:9", name: "Paisagem" }, "4:5": { ratio: "4:5", name: "Retrato" },
+};
+
+export function EditorInspector({ panel, settings, onPanel, onSettings, onApplyAll }: Props) {
   const panels: { id: EditorPanel; label: string }[] = [
     { id: "captions", label: "Legendas" }, { id: "reframe", label: "Enquadrar" },
-    { id: "text", label: "Texto" }, { id: "audio", label: "Áudio" },
+    { id: "audio", label: "Áudio" }, { id: "effects", label: "Efeitos" },
   ];
-  const icons = { captions: ClosedCaptioningIcon, reframe: CropIcon, text: TextTIcon, audio: SpeakerHighIcon };
+  const icons = { captions: ClosedCaptioningIcon, reframe: CropIcon, audio: SpeakerHighIcon, effects: PaletteIcon };
+  const [notice, setNotice] = useState<string | null>(null);
+  const [applying, setApplying] = useState(false);
+  const [todosEstilos, setTodosEstilos] = useState(false);
   const caption = effectiveCaptionStyle(settings.captionModel, settings.captionStyle);
   const setCaption = (change: Partial<CaptionStyle>) => onSettings({ captionStyle: { ...caption, ...change } });
-  const focal = settings.focalPoint ?? { x: 50, y: 50 };
+  const effects = settings.effects ?? { ...DEFAULT_EFFECTS };
+  const setEffect = (change: Partial<EditorEffects>) => onSettings({ effects: { ...effects, ...change } });
+  const enabled = settings.captionModel > 0;
+  const saveKey = "cnp-caption-style";
   return (
     <aside className="editor-inspector" aria-label="Ferramentas do editor">
-      <nav className="editor-inspector__tabs" aria-label="Painéis de edição">{panels.map((item) => {
+      <nav className="studio-tabs" aria-label="Abas de edição">{panels.map((item) => {
         const Icon = icons[item.id];
-        return <button className="editor-inspector__tab" type="button" key={item.id} aria-pressed={panel === item.id}
-          title={item.label}
+        return <button className="studio-tab" type="button" key={item.id} aria-pressed={panel === item.id}
           onClick={() => onPanel(item.id)}>
-          <Icon size={16} aria-hidden="true"/><span>{item.label}</span>
+          <Icon size={18} aria-hidden="true"/><span>{item.label}</span>
         </button>;
       })}</nav>
       <div className="editor-inspector__body">
         {panel === "captions" ? <>
-          <h2>Legendas</h2>
-          <label>Estilo<AppSelect aria-label="Estilo de legenda" value={settings.captionModel}
-            onChange={(event) => { const model = Number(event.target.value); onSettings({ captionModel: model, captionStyle: { ...captionPresets[model].style } }); }}>
-            {captionPresets.map((preset, index) => <option key={preset.name} value={index}>{preset.name}</option>)}
-          </AppSelect></label>
-          <label>Fonte<AppSelect aria-label="Fonte da legenda" value={caption.font} onChange={(event) => setCaption({ font: event.target.value as CaptionStyle["font"] })}>
-            {captionFonts.map((font) => <option key={font}>{font}</option>)}
-          </AppSelect></label>
-          <label>Tamanho: {caption.size}<input aria-label="Tamanho da legenda" type="range" min={16} max={160} value={caption.size}
-            onChange={(event) => setCaption({ size: Number(event.target.value) })} /></label>
-          <label>Peso<AppSelect aria-label="Peso da fonte" value={caption.weight} onChange={(event) => setCaption({ weight: Number(event.target.value) as CaptionStyle["weight"] })}>
-            <option value={400}>Normal</option><option value={600}>Seminegrito</option><option value={700}>Negrito</option>
-          </AppSelect></label>
-          <label>Posição<AppSelect aria-label="Posição da legenda" value={caption.position} onChange={(event) => setCaption({ position: event.target.value as CaptionStyle["position"] })}>
-            <option value="bottom">Inferior</option><option value="middle">Centro</option><option value="top">Superior</option>
-          </AppSelect></label>
-          <label>Efeito<AppSelect aria-label="Efeito da legenda" value={caption.effect} onChange={(event) => setCaption({ effect: event.target.value as CaptionStyle["effect"] })}>
-            <option value="none">Nenhum</option><option value="highlight">Destaque de palavra</option><option value="karaoke">Karaokê</option>
-          </AppSelect></label>
-          <div className="caption-field"><span>Cor do texto</span><ColorControl label="Cor do texto" value={caption.color} onChange={color => setCaption({ color })} /></div>
-          <div className="caption-field"><span>Cor do destaque</span><ColorControl label="Cor do destaque" value={caption.highlightColor} onChange={highlightColor => setCaption({ highlightColor })} /></div>
-          <label>Contorno: {caption.outline}<input aria-label="Contorno da legenda" type="range" min={0} max={12} value={caption.outline}
-            onChange={(event) => setCaption({ outline: Number(event.target.value) })} /></label>
-          <div className="caption-field"><span>Cor do contorno</span><ColorControl label="Cor do contorno" value={caption.outlineColor} onChange={outlineColor => setCaption({ outlineColor })} /></div>
-          <label className="editor-checkbox"><input type="checkbox" checked={caption.shadow} onChange={(event) => setCaption({ shadow: event.target.checked })} />Sombra</label>
-          <div className="caption-field"><span>Fundo</span><ColorControl label="Fundo da legenda" value={caption.background === "transparent" ? "#000000" : caption.background} onChange={background => setCaption({ background })} />
-            <button type="button" className="flow-text-button" aria-label="Remover fundo da legenda" disabled={caption.background === "transparent"} onClick={() => setCaption({ background: "transparent" })}>Sem fundo</button></div>
-          <fieldset><legend>Aparência do texto</legend>
-            <label className="editor-checkbox"><input type="checkbox" checked={caption.italic} onChange={(event) => setCaption({ italic: event.target.checked })} />Itálico</label>
-            <label className="editor-checkbox"><input type="checkbox" checked={caption.underline} onChange={(event) => setCaption({ underline: event.target.checked })} />Sublinhado</label>
-            <label className="editor-checkbox"><input type="checkbox" checked={caption.uppercase} onChange={(event) => setCaption({ uppercase: event.target.checked })} />MAIÚSCULAS</label>
-          </fieldset>
-          <button type="button" className="flow-button" aria-haspopup="dialog" onClick={onCaptions}>Ver estilos prontos</button>
-          <p className="flow-muted">Para corrigir palavras, edite a transcrição no painel esquerdo.</p>
+          <section className="studio-section">
+            <header className="studio-section__head">
+              <div>
+                <h2>Estilo de legenda</h2>
+                <p>Escolha um visual e refine abaixo.</p>
+              </div>
+              <SwitchRow id="captions-enabled" label={<span className="sr-only">Mostrar legendas</span>}
+                checked={enabled} onChange={(on) => onSettings({ captionModel: on ? Math.max(1, settings.captionModel) : 0 })} />
+            </header>
+            <div className="studio-presets" role="group" aria-label="Presets de legenda">
+              {([["Limpo", "transparent", "#FFFFFF"], ["Destaque", "#181818", "#FACC15"], ["Pop", "#181818", "#A3E635"]] as const).map(([name, background, accent]) => {
+                const active = caption.background === background && caption.highlightColor.toUpperCase() === accent;
+                return (
+                  <button type="button" key={name} className="studio-preset" aria-pressed={active}
+                    onClick={() => setCaption({ background, highlightColor: accent })}>
+                    <span className="studio-preset__sample">
+                      <span className="studio-preset__caption" style={background === "transparent" ? undefined : { background }}>
+                        Sua <span style={{ color: accent }}>história</span>
+                      </span>
+                    </span>
+                    <span className="studio-preset__name">{name}</span>
+                  </button>
+                );
+              })}
+            </div>
+            <button type="button" className="studio-toggle-estilos" aria-expanded={todosEstilos}
+              aria-label={todosEstilos ? "Mostrar menos estilos" : "Ver todos os 10 estilos"} title="Todos os estilos"
+              onClick={() => setTodosEstilos(current => !current)}>
+              <CaretDownIcon size={18} aria-hidden="true"/>
+            </button>
+            {todosEstilos && <div className="studio-presets studio-presets--all" role="group" aria-label="Todos os estilos prontos">
+              {captionPresets.map((preset, index) => (
+                <button type="button" key={preset.name} className="studio-preset"
+                  aria-pressed={settings.captionModel === index}
+                  onClick={() => onSettings({ captionModel: index, captionStyle: { ...preset.style } })}>
+                  <span className="studio-preset__sample">
+                    <span className="studio-preset__caption" style={preset.style.background === "transparent" ? undefined : { background: preset.style.background }}>
+                      Sua <span style={{ color: preset.style.highlightColor }}>história</span>
+                    </span>
+                  </span>
+                  <span className="studio-preset__name">{preset.name}</span>
+                </button>
+              ))}
+            </div>}
+            <div className="studio-field">
+              <span className="studio-field__label">Fonte</span>
+              <AppSelect aria-label="Fonte da legenda" value={caption.font}
+                onChange={(event) => setCaption({ font: event.target.value as CaptionStyle["font"] })}>
+                {captionFonts.map((font) => <option key={font}>{font}</option>)}
+              </AppSelect>
+            </div>
+            <RangeField label="Tamanho" inputLabel="Tamanho da legenda" value={caption.size} min={16} max={160}
+              onChange={(size) => setCaption({ size })} />
+            <RangeField label="Posição vertical" inputLabel="Posição vertical da legenda" value={Math.round(caption.y! * 100)}
+              min={10} max={90} unit="%" onChange={(y) => setCaption({ y: y / 100 })} />
+            <div className="studio-grid-2">
+              <ColorField label="Texto" inputLabel="Cor do texto da legenda" value={caption.color} onChange={color => setCaption({ color })} />
+              <ColorField label="Destaque" inputLabel="Cor do destaque" value={caption.highlightColor} onChange={highlightColor => setCaption({ highlightColor })} />
+            </div>
+            <SwitchRow id="caption-background" label="Fundo do texto"
+              checked={caption.background !== "transparent"}
+              onChange={(on) => setCaption({ background: on ? "#181818" : "transparent" })} />
+            <SwitchRow id="caption-highlight" label="Destacar palavra falada"
+              checked={caption.effect !== "none"}
+              onChange={(on) => setCaption({ effect: on ? "highlight" : "none" })} />
+            <SwitchRow id="caption-uppercase" label="MAIÚSCULAS"
+              checked={caption.uppercase}
+              onChange={(uppercase) => setCaption({ uppercase })} />
+            <div className="studio-inline-select">
+              <span className="studio-field__label" id="words-per-caption-label">Palavras por legenda</span>
+              <span className="studio-select-narrow">
+                <AppSelect aria-labelledby="words-per-caption-label" value={String(caption.wordsPerCaption)}
+                  onChange={(event) => setCaption({ wordsPerCaption: Number(event.target.value) })}>
+                  {[1, 2, 3, 4, 5, 6, 7, 8].map((n) => <option key={n} value={n}>{n}</option>)}
+                </AppSelect>
+              </span>
+            </div>
+            <div className="studio-grid-2">
+              <button type="button" className="flow-button" onClick={() => {
+                try {
+                  window.localStorage.setItem(saveKey, JSON.stringify({ captionModel: settings.captionModel, captionStyle: caption }));
+                  setNotice("Estilo salvo neste dispositivo.");
+                } catch { setNotice("Não foi possível salvar o estilo aqui."); }
+              }}><BookmarkSimpleIcon size={16} aria-hidden="true"/>Salvar estilo</button>
+              <button type="button" className="flow-button" onClick={() => {
+                try {
+                  const saved = JSON.parse(window.localStorage.getItem(saveKey) ?? "null");
+                  if (saved?.captionStyle?.font && saved?.captionStyle?.size) {
+                    onSettings({ captionModel: saved.captionModel ?? 1, captionStyle: { ...saved.captionStyle } });
+                    setNotice("Estilo carregado.");
+                  } else setNotice("Salve um estilo primeiro.");
+                } catch { setNotice("Não foi possível carregar o estilo salvo."); }
+              }}><FolderOpenIcon size={16} aria-hidden="true"/>Carregar estilo</button>
+              <button type="button" className="flow-button studio-span-2" disabled={applying || !onApplyAll}
+                onClick={async () => {
+                  setApplying(true);
+                  try { await onApplyAll!(settings.captionModel, caption); setNotice("Estilo aplicado a todos os cortes."); }
+                  catch { setNotice("Não foi possível aplicar a todos os cortes."); }
+                  finally { setApplying(false); }
+                }}>
+                <CheckSquareIcon size={16} aria-hidden="true"/>{applying ? "Aplicando…" : "Aplicar a todos os cortes"}
+              </button>
+            </div>
+            {notice && <p className="studio-notice" role="status">{notice}</p>}
+          </section>
+          <hr className="studio-separator" />
+          <section className="studio-section">
+            <h2>Texto sobre o vídeo</h2>
+            <label className="studio-textarea">Seu texto
+              <textarea maxLength={240} value={settings.text} placeholder="Adicione uma chamada…"
+                onChange={(event) => onSettings({ text: event.target.value })} />
+            </label>
+            <button type="button" className="flow-button" disabled={!settings.text} onClick={() => onSettings({ text: "" })}>Remover texto</button>
+          </section>
         </>
         : panel === "reframe" ? <>
-          <h2>Enquadramento</h2>
-          <label>Proporção<AppSelect aria-label="Proporção do vídeo" value={settings.ratio} onChange={(event) => onSettings({ ratio: event.target.value as EditorSettings["ratio"] })}>
-            {aspectRatios.map((ratio) => <option key={ratio}>{ratio}</option>)}
-          </AppSelect></label>
-          <label>Ajuste da imagem<AppSelect aria-label="Ajuste do vídeo" value={settings.fit} onChange={(event) => onSettings({ fit: event.target.value as EditorSettings["fit"] })}>
-            <option value="contain">Ajustar (imagem inteira com espaço vazio)</option><option value="cover">Preencher (corta o excedente)</option>
-          </AppSelect></label>
-          <div className="caption-field"><span>Fundo</span><ColorControl label="Fundo" value={settings.background} onChange={background => onSettings({ background })} /></div>
-          {settings.fit === "cover" && <fieldset><legend>Área visível</legend>
-            <label>Horizontal: {focal.x}<input aria-label="Posição horizontal" type="range" min={0} max={100} value={focal.x} onChange={event => onSettings({ focalPoint: { x: Number(event.target.value), y: focal.y } })} /></label>
-            <label>Vertical: {focal.y}<input aria-label="Posição vertical" type="range" min={0} max={100} value={focal.y} onChange={event => onSettings({ focalPoint: { x: focal.x, y: Number(event.target.value) } })} /></label>
-            <button type="button" className="flow-button" onClick={() => onSettings({ focalPoint: { x: 50, y: 50 } })}>Centralizar imagem</button>
-          </fieldset>}
-          <button type="button" className="flow-button" onClick={() => onSettings({ fit: "contain", focalPoint: { x: 50, y: 50 } })}>Restaurar enquadramento</button>
+          <section className="studio-section">
+            <h2>Enquadramento</h2>
+            <p>Arraste o vídeo na prévia para manter o assunto em foco.</p>
+            <div className="studio-field">
+              <span className="studio-field__label">Proporção</span>
+              <div className="studio-toggle-group" role="group" aria-label="Proporção do vídeo">
+                {editorAspectRatios.map((ratio) => (
+                  <button type="button" key={ratio} className="studio-toggle" aria-pressed={settings.ratio === ratio}
+                    aria-label={RATIO_LABELS[ratio].name}
+                    onClick={() => onSettings({ ratio })}>
+                    <span className="studio-toggle__value">{RATIO_LABELS[ratio].ratio}</span>
+                    <span className="studio-toggle__name">{RATIO_LABELS[ratio].name}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div className="studio-field">
+              <span className="studio-field__label">Ajuste</span>
+              <div className="studio-toggle-group" role="group" aria-label="Ajuste do vídeo">
+                <button type="button" className="studio-toggle studio-toggle--wide" aria-pressed={settings.fit === "cover"}
+                  onClick={() => onSettings({ fit: "cover" })}>Preencher quadro</button>
+                <button type="button" className="studio-toggle studio-toggle--wide" aria-pressed={settings.fit === "contain"}
+                  onClick={() => onSettings({ fit: "contain" })}>Vídeo completo</button>
+              </div>
+            </div>
+            <ColorField label="Fundo" inputLabel="Cor de fundo" value={settings.background} onChange={background => onSettings({ background })} />
+          </section>
+          <hr className="studio-separator" />
+          <section className="studio-section">
+            <h2>Posição</h2>
+            <RangeField label="Zoom" inputLabel="Zoom" value={settings.zoom ?? 1} min={1} max={3} step={0.01} unit="×"
+              onChange={(zoom) => onSettings({ zoom })} />
+            <RangeField label="Posição horizontal" inputLabel="Posição horizontal" value={settings.focalPoint?.x ?? 50} min={0} max={100} unit="%"
+              onChange={(x) => onSettings({ focalPoint: { x, y: settings.focalPoint?.y ?? 50 } })} />
+            <RangeField label="Posição vertical" inputLabel="Posição vertical" value={settings.focalPoint?.y ?? 50} min={0} max={100} unit="%"
+              onChange={(y) => onSettings({ focalPoint: { x: settings.focalPoint?.x ?? 50, y } })} />
+            <button type="button" className="flow-button" onClick={() => onSettings({ focalPoint: { x: 50, y: 50 }, zoom: 1 })}>
+              <ArrowsInIcon size={16} aria-hidden="true"/>Centralizar assunto
+            </button>
+          </section>
         </>
-        : panel === "text" ? <>
-          <h2>Texto sobre o vídeo</h2>
-          <label>Seu texto<textarea maxLength={240} value={settings.text}
-            placeholder="Adicione uma chamada…" onChange={(event) => onSettings({ text: event.target.value })} /></label>
-          <button type="button" className="flow-button" disabled={!settings.text} onClick={() => onSettings({ text: "" })}>Remover texto</button>
+        : panel === "audio" ? <>
+          <section className="studio-section">
+            <h2>Áudio</h2>
+            <p>As alterações de áudio entram na exportação.</p>
+            <RangeField label="Volume" inputLabel="Volume" value={Math.round(settings.volume * 100)} min={0} max={200} unit="%"
+              onChange={(volume) => onSettings({ volume: volume / 100 })} />
+            <SwitchRow id="mute-export" label="Silenciar áudio da exportação"
+              checked={settings.muted} onChange={(muted) => onSettings({ muted })} />
+            {settings.volume > 1 && <p className="flow-muted">A prévia reproduz até 100 %; o valor acima disso é aplicado no arquivo exportado. Aumentar muito pode distorcer picotes altos.</p>}
+          </section>
         </>
         : <>
-          <h2>Áudio da prévia</h2>
-          <label>Volume: {Math.round(settings.volume * 100)}%<input type="range" min={0} max={1} step={0.01}
-            value={settings.volume} onChange={(event) => onSettings({ volume: Number(event.target.value) })} /></label>
-          <label className="editor-checkbox"><input type="checkbox" checked={settings.muted} onChange={(event) => onSettings({ muted: event.target.checked })} />Sem áudio</label>
+          <section className="studio-section">
+            <header className="studio-section__head">
+              <div>
+                <h2>Efeitos</h2>
+                <p>Aplicados ao vídeo; as legendas continuam nítidas.</p>
+              </div>
+              <button type="button" className="flow-text-button" onClick={() => onSettings({ effects: { ...DEFAULT_EFFECTS } })}>
+                <ArrowCounterClockwiseIcon size={14} aria-hidden="true"/>Restaurar
+              </button>
+            </header>
+            <RangeField label="Brilho" inputLabel="Brilho" value={effects.brightness} min={40} max={180}
+              onChange={(brightness) => setEffect({ brightness })} />
+            <RangeField label="Contraste" inputLabel="Contraste" value={effects.contrast} min={40} max={180}
+              onChange={(contrast) => setEffect({ contrast })} />
+            <RangeField label="Saturação" inputLabel="Saturação" value={effects.saturation} min={0} max={220}
+              onChange={(saturation) => setEffect({ saturation })} />
+            <RangeField label="Desfoque" inputLabel="Desfoque" value={effects.blur} min={0} max={8} step={0.1}
+              onChange={(blur) => setEffect({ blur })} />
+            <RangeField label="Matiz" inputLabel="Matiz" value={effects.hue} min={-180} max={180}
+              onChange={(hue) => setEffect({ hue })} />
+          </section>
         </>}
       </div>
-      {tools && <section className="editor-inspector__actions" aria-label="Ações do projeto">
-        <h2>Ações do projeto</h2>{tools}
-      </section>}
     </aside>
   );
 }

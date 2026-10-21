@@ -129,3 +129,195 @@ fn real_video_export_uses_nvenc_and_preserves_source() {
     .unwrap();
     assert_eq!(encoder, "h264_nvenc");
 }
+
+#[test]
+fn continuous_y_and_per_line_groups_with_pause() {
+    let mut value = settings();
+    value.caption_style.as_mut().unwrap().y = Some(0.4);
+    value.caption_style.as_mut().unwrap().words_per_line = Some(2);
+    let segments = vec![Segment {
+        id: "s".into(),
+        start: 1.0,
+        end: 5.0,
+        text: "a b c d".into(),
+        words: vec![
+            Word {
+                text: "a".into(),
+                start: 1.0,
+                end: 1.4,
+            },
+            Word {
+                text: "b".into(),
+                start: 1.5,
+                end: 1.9,
+            },
+            // pausa > 0,6s fecha o grupo mesmo antes do limite de palavras
+            Word {
+                text: "c".into(),
+                start: 3.0,
+                end: 3.4,
+            },
+            Word {
+                text: "d".into(),
+                start: 3.5,
+                end: 3.9,
+            },
+        ],
+    }];
+    let ass = ass::build(&segments, &value, 2.0, 4.0).unwrap();
+    assert!(ass.contains(r"\pos(540.00,768.00)")); // 9:16 → x=1080/2, y=0.4*1920
+                                                   // grupos [a b] e [c d]: dois blocos com a posição contínua
+    assert_eq!(ass.matches(r"\pos(540.00,768.00)").count() >= 2, true);
+    // sem legenda da pausa: "b" termina em 1.9 (< offset 2.0) e não vira diálogo próprio
+    assert!(!ass.contains("Dialogue: 0,0:00:00.00,0:00:00.00"));
+}
+
+#[test]
+fn zoom_geometry_uses_source_anchor_and_crop() {
+    let mut value = settings(); // 9:16, cover, focal 20/50
+    value.zoom = Some(1.5);
+    value.source_width = Some(1920);
+    value.source_height = Some(1080);
+    value.validate(10.0).unwrap();
+    let geometry = value.geometry().unwrap();
+    // cover 1080x1920 a partir de 1920x1080: escala máx(1080/1920,1920/1080)=1.7778 * 1.5 = 2.6667
+    // rw=5120, rh=2880; crop 1080x1920 ancorado em (5120-1080)*0.2 e (2880-1920)*0.5
+    assert!(
+        geometry.contains("scale=5120:2880"),
+        "geometria: {geometry}"
+    );
+    assert!(
+        geometry.contains("crop=1080:1920:808:480"),
+        "geometria: {geometry}"
+    );
+    assert!(geometry.contains("pad=1080:1920:0:0"));
+}
+
+#[test]
+fn original_ratio_uses_source_dimensions_capped_at_1920() {
+    let mut value = settings();
+    value.ratio = "original".into();
+    value.source_width = Some(3840);
+    value.source_height = Some(2160);
+    assert_eq!(value.dimensions().unwrap(), (1920, 1080));
+    value.source_width = None;
+    assert!(value.dimensions().is_err());
+    value.source_width = Some(1280);
+    value.source_height = Some(720);
+    assert_eq!(value.dimensions().unwrap(), (1280, 720));
+}
+
+#[test]
+fn effects_filter_matches_supoclip_formula_and_stays_off_when_neutral() {
+    let mut value = settings();
+    assert!(value.effects_filter().is_none());
+    value.effects = Some(super::settings::Effects {
+        brightness: 120.0,
+        contrast: 90.0,
+        saturation: 50.0,
+        blur: 2.0,
+        hue: 30.0,
+    });
+    let filter = value.effects_filter().unwrap();
+    assert!(
+        filter.contains("lutrgb=r='clip(val*1.0800+12.80,0,255)'"),
+        "filtro: {filter}"
+    );
+    assert!(filter.contains("hue=h=30:s=0.5000"));
+    assert!(filter.contains("gblur=sigma=2.0000")); // 9:16 → width 1080 → 2*1080/1080
+    let args = pipeline::arguments(
+        std::path::Path::new("a.mp4"),
+        std::path::Path::new("b.mp4"),
+        &value,
+        10.0,
+        true,
+    )
+    .unwrap();
+    let joined = args
+        .iter()
+        .map(|a| a.to_str().unwrap())
+        .collect::<Vec<_>>()
+        .join(" ");
+    assert!(joined.contains("lutrgb"));
+    assert!(joined.contains(",ass=filename=captions.ass")); // efeitos antes das legendas
+}
+
+#[test]
+fn volume_above_unity_is_accepted_and_zero_still_mutes() {
+    let mut value = settings();
+    value.volume = 1.5;
+    assert!(value.validate(10.0).is_ok());
+    value.volume = 2.1;
+    assert!(value.validate(10.0).is_err());
+    value.volume = 2.0;
+    value.muted = true;
+    let args = pipeline::arguments(
+        std::path::Path::new("a.mp4"),
+        std::path::Path::new("b.mp4"),
+        &value,
+        10.0,
+        true,
+    )
+    .unwrap();
+    let joined = args
+        .iter()
+        .map(|a| a.to_str().unwrap())
+        .collect::<Vec<_>>()
+        .join(" ");
+    assert!(joined.contains("volume=0"));
+}
+
+#[test]
+#[ignore = "Renderiza com zoom+efeitos+volume reais para verificação de pixels"]
+fn real_render_applies_zoom_effects_and_volume() {
+    use super::settings::Effects;
+    let base = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+        .join("../../.tooling/test-output/effects-evidence");
+    std::fs::create_dir_all(&base).unwrap();
+    let source = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+        .join("../../.tooling/vendor/pipeline-validation/source.mp4");
+    // caso neutro (referência) e caso com decisões da atualização 15
+    for (name, zoom, effects, y, per_line, volume) in [
+        ("neutro", None, None, None, None, 1.0),
+        (
+            "editado",
+            Some(2.0),
+            Some(serde_json::from_value::<Effects>(serde_json::json!({
+                "brightness": 160.0, "contrast": 100.0, "saturation": 100.0, "blur": 0.0, "hue": 0.0
+            })).unwrap()),
+            Some(0.3),
+            Some(2),
+            1.5,
+        ),
+    ] {
+        let mut value = settings();
+        value.ratio = "9:16".into();
+        value.fit = "cover".into();
+        value.focal_point = None;
+        // fixture real do laboratório: 640×360 (zoom exige dimensões da fonte)
+        value.source_width = Some(640);
+        value.source_height = Some(360);
+        value.trim_start = 10.0;
+        value.trim_end = Some(12.0);
+        value.zoom = zoom;
+        value.effects = effects;
+        value.volume = volume;
+        value.caption_style.as_mut().unwrap().y = y;
+        value.caption_style.as_mut().unwrap().words_per_line = per_line;
+        value.caption_style.as_mut().unwrap().effect = "karaoke".into();
+        let (scratch, output) = pipeline::run(
+            &base,
+            &source,
+            &[],
+            &value,
+            599.098,
+            true,
+            &ProcessControl::default(),
+            |_| {},
+        )
+        .unwrap_or_else(|error| panic!("render do caso {name}: {error}"));
+        std::fs::copy(output, base.join(format!("{name}.mp4"))).unwrap();
+        std::fs::write(base.join(format!("{name}-args.txt")), format!("{:?}", value.geometry().unwrap())).unwrap();
+        let _ = scratch;
+    }
+}

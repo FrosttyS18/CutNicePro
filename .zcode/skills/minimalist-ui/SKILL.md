@@ -84,3 +84,20 @@ When tasked with writing frontend code (HTML, React, Tailwind, Vue) or designing
 5. Add scroll-entry animations to all major content blocks.
 6. Ensure sections have visual depth through imagery, ambient gradients, or subtle textures — no empty flat backgrounds.
 7. Provide code that reflects this high-end, uncluttered, editorial aesthetic natively without requiring manual adjustments.
+
+## CutNicePro — proibições obrigatórias de layout (atualização 15)
+
+Ao aplicar este estilo no CutNicePro, além das diretrizes acima:
+
+- Sem caixa com borda dentro de caixa com borda; sem contorno decorativo em
+  cada objeto (hierarquia por espaçamento/fundo/tipografia).
+- Botão com ícone: inline-flex, `gap ≥ 6px`, ícone `flex:none` — nunca ícone
+  sobreposto ao texto.
+- Dropdown/campo: padding lateral ≥ 12px.
+- Slider: rótulo à esquerda, valor em chip à direita, mesma linha; barra em
+  largura total abaixo.
+- Botões vizinhos: gap ≥ 8px; label ↔ campo: gap ≥ 8px.
+- Foco visível SOMENTE para teclado (`data-input-modality="keyboard"`);
+  clique de mouse não desenha anel de foco.
+- Reestilizar sem destruir funcionalidade: mudança visual não altera seletores
+  usados por testes nem comportamento; validar por DOM/computed styles.

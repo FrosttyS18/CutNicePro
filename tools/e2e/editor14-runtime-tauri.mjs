@@ -83,37 +83,40 @@ const canvasBox = await page.locator(".editor-stage__canvas").boundingBox();
 check("limite máximo respeitado e canvas preservado", larguraExtrema <= 500 && canvasBox.width >= 300, `inspetor=${larguraExtrema}px (máx 500), canvas=${Math.round(canvasBox.width)}px`);
 
 // 5) alternar abas
-const abas = ["Legendas", "Enquadrar", "Texto", "Áudio"];
+const abas = ["Legendas", "Enquadrar", "Áudio", "Efeitos"];
 let abasOk = true; let ultima = "";
 for (const nome of abas) {
-  const tab = page.locator(".editor-inspector__tab", { hasText: nome }).first();
+  const tab = page.locator(".studio-tab", { hasText: nome }).first();
   await tab.click(); await sleep(300);
-  ultima = await page.locator('.editor-inspector__tab[aria-pressed="true"]').textContent();
+  ultima = await page.locator('.studio-tab[aria-pressed="true"]').textContent();
   if (!ultima.includes(nome)) abasOk = false;
 }
-check("abas alternam (Legendas/Enquadrar/Texto/Áudio)", abasOk, `última ativa: ${ultima.trim()}`);
+check("abas alternam (Legendas/Enquadrar/Áudio/Efeitos)", abasOk, `última ativa: ${ultima.trim()}`);
 
 // 6) propriedade real de legenda reflete na prévia (Posição → data-position)
-await page.locator(".editor-inspector__tab", { hasText: "Legendas" }).first().click(); await sleep(400);
-const posicaoTrigger = page.locator('[aria-haspopup="listbox"][aria-label="Posição da legenda"]');
-await posicaoTrigger.click(); await sleep(400);
-await page.getByRole("option", { name: "Centro", exact: true }).first().click(); await sleep(500);
+await page.locator(".studio-tab", { hasText: "Legendas" }).first().click(); await sleep(400);
+await page.locator('input[aria-label="Posição vertical da legenda"]').fill("40"); await sleep(500);
 const videoOverlay = page.locator(".editor-stage__canvas .caption-overlay");
 const playButton = page.getByRole("button", { name: "Reproduzir ou pausar vídeo" }).first();
 await playButton.click().catch(() => {}); // play
 let posicaoPreview = "sem cue no tempo atual";
 for (let i = 0; i < 10 && (await videoOverlay.count()) === 0; i++) await sleep(600);
-if (await videoOverlay.count()) posicaoPreview = await videoOverlay.first().getAttribute("data-position");
+if (await videoOverlay.count()) {
+  const top = await videoOverlay.first().evaluate((el) => getComputedStyle(el).top);
+  const box = await videoOverlay.first().boundingBox();
+  const stage = await page.locator(".editor-stage__canvas").boundingBox();
+  posicaoPreview = `${Math.round((box.y + box.height / 2 - stage.y) / stage.height * 100)}% (computed top ${top})`;
+}
 await playButton.click().catch(() => {}); // pausa
-check("propriedade de legenda real aplicada na prévia", posicaoPreview === "middle", `Posição=Centro → data-position=${posicaoPreview}`);
+const posicaoOk = /^4[0-6]%/.test(posicaoPreview);
+check("propriedade de legenda real aplicada na prévia (y contínuo)", posicaoOk, `slider 40% → centro do overlay em ${posicaoPreview}`);
 
 // 7) enquadramento: proporção pela aba Enquadrar
-await page.locator(".editor-inspector__tab", { hasText: "Enquadrar" }).first().click(); await sleep(400);
-const ratioSelecionado = async () => page.locator('[role="listbox"][aria-label="Proporção do vídeo"] [aria-selected="true"]').textContent();
+await page.locator(".studio-tab", { hasText: "Enquadrar" }).first().click(); await sleep(400);
+const ratioSelecionado = async () => page.locator('.studio-toggle[aria-pressed="true"] .studio-toggle__value').first().textContent();
 const ratioInicial = (await resilient(ratioSelecionado)).trim();
 const alvo = ratioInicial === "1:1" ? "9:16" : "1:1";
-await page.locator('[aria-haspopup="listbox"][aria-label="Proporção do vídeo"]').click(); await sleep(400);
-await page.getByRole("option", { name: alvo, exact: true }).first().click(); await sleep(500);
+await page.locator('[role="group"][aria-label="Proporção do vídeo"] .studio-toggle', { hasText: alvo }).first().click(); await sleep(500);
 const ratioApos = (await resilient(ratioSelecionado)).trim();
 check("proporção alterada na aba Enquadrar", ratioApos === alvo, `${ratioInicial} → ${ratioApos}`);
 
@@ -134,9 +137,9 @@ await page.getByRole("button", { name: "Voltar ao projeto" }).first().click(); a
 await page.getByRole("button", { name: /Cortes \(/ }).first().click(); await sleep(1600);
 await page.locator('[class*="clip-card__open"], [aria-label^="Ver clipe"]').first().click(); await sleep(1200);
 await page.getByRole("button", { name: "Editar clipe" }).first().click(); await sleep(2200);
-await page.locator(".editor-inspector__tab", { hasText: "Legendas" }).first().click(); await sleep(400);
-const posicaoReaberta = (await resilient(() => page.locator('[role="listbox"][aria-label="Posição da legenda"] [aria-selected="true"]').textContent())).trim();
-check("persistência: posição da legenda mantida ao reabrir", posicaoReaberta === "Centro", posicaoReaberta);
+await page.locator(".studio-tab", { hasText: "Legendas" }).first().click(); await sleep(400);
+const posicaoReaberta = (await resilient(() => page.locator('input[aria-label="Posição vertical da legenda"]').inputValue())).trim();
+check("persistência: posição da legenda mantida ao reabrir", posicaoReaberta === "40", posicaoReaberta);
 const larguraReaberta = await resilient(inspectorWidth);
 check("persistência: largura do inspetor mantida ao reabrir", Math.abs(larguraReaberta - larguraExtrema) <= 2, `${larguraExtrema}px → ${larguraReaberta}px`);
 

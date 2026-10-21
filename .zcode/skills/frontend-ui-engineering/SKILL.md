@@ -338,3 +338,33 @@ After building UI:
 - [ ] Follows the project's design system (spacing, colors, typography)
 - [ ] The rendered result passes a final UI-specific finish-gate review
 - [ ] No accessibility warnings in dev tools or axe-core
+
+## PROIBIÇÕES DE LAYOUT — CutNicePro (regra permanente, atualização 15)
+
+Aplicar ANTES de qualquer componente/estilo novo. Falha em qualquer item = retrabalho:
+
+1. **Box dentro de box é proibido**: não empilhar contornos (caixa com borda
+   dentro de caixa com borda) nem delimitar cada objeto com contorno próprio.
+   Hierarquia vem de espaçamento, fundo e tipografia; borda só em campo de
+   formulário, cartão selecionável e separação que o design pedir.
+2. **Ícone em botão**: botão com ícone é inline-flex com `align-items:center`,
+   `gap ≥ 6px` e `svg { flex: none }`. Ícone jamais sobrepõe ou encosta no texto.
+3. **Dropdowns e campos**: padding lateral mínimo de 12px; texto nunca colado
+   na borda do controle.
+4. **Slider + rótulo + valor**: rótulo à esquerda e valor em chip à direita na
+   MESMA linha (`display:flex; justify-content:space-between`); barra abaixo,
+   largura total. Nunca valor colado ao rótulo nem rótulo quebrando em várias
+   linhas.
+5. **Botões vizinhos**: gap mínimo de 8px (linhas de ações, pares de botões,
+   header). Nunca colados nem sobrepostos.
+6. **Label ↔ campo**: espaçamento mínimo de 8px entre rótulo e controle
+   (incluindo barra de busca).
+7. **Foco de acessibilidade = TECLADO somente**: clique de mouse NUNCA desenha
+   anel de foco. Usar o tracker existente:
+   `html:not([data-input-modality="keyboard"]) :where(button,[role="switch"],[role="tab"],a):focus { outline: none }`
+   + `html[data-input-modality="keyboard"] ...:focus-visible { outline: 2px solid var(--sh-accent) }`
+   (regras globais já em `app/src/global.css` — não duplicar, não reverter).
+
+**Reestilização nunca quebra funcionalidade**: mudança estética de CSS não pode
+alterar contratos, seletores usados por testes/e2e, nem desligar comportamentos.
+Validar por estilos computados/DOM após qualquer mudança visual.

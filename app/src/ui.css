@@ -84,8 +84,10 @@
   cursor: pointer;
   border-radius: 8px;
 }
+/* ativo = BRANCO com ícone preto; inativo = ícone cinza (pedido upd 15) */
 .rail__btn--active {
-  color: var(--sh-accent);
+  background: #ffffff;
+  color: #0a0a0a;
 }
 .rail__btn:not(.rail__btn--active):not(:disabled):hover {
   color: #ffffff;

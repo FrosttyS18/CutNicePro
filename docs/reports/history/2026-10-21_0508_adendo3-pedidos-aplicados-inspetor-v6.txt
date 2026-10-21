@@ -1,0 +1,173 @@
+╔════════════════════════════════════════════╗
+║       CUTNICEPRO — ZCODE REPORT            ║
+╚════════════════════════════════════════════╝
+
+TASK
+  Name: Atualização 15 — ADENDO 3: apontamentos do mantenedor aplicados
+        (6 pedidos estéticos) + MODO APONTAR v6 (modelo Figma)
+  Status: PASS (6/6 pedidos aplicados e verificados por estilos computados;
+        inspetor v6 validado de ponta a ponta; regressão completa verde;
+        estética PENDING HUMAN APPROVAL)
+  Scope: app/src (CSS do editor/botões + EditorInspector + TranscriptPanel-
+        adjacente via CSS), tools/e2e/pointer-mode.mjs (v6). Nenhuma mudança
+        de comportamento/funcionalidade do app; pedidos eram estéticos.
+  Objective: aplicar EXATAMENTE os 6 pedidos anotados no app (nada além) e
+        evoluir o inspetor para o modelo Figma: clique sem interagir com a
+        interface, ping fixo ao conteúdo (scroll), hover revela o texto,
+        clique no pino abre cartão com Editar/Responder/Remover.
+  Result: 8/8 verificações DOM dos pedidos TRUE; inspetor v6 completo com
+        todas as interações validadas no app real; regressão 100% verde.
+
+IMPLEMENTATION
+  PEDIDOS APLICADOS (pointer-feedback.json, 6 anotações):
+  1. "os botões padrão do app é BRANCO com texto e icon preto e nao tem
+     outline no botão" → .flow-button global: fundo BRANCO, texto/ícone
+     PRETO, SEM borda (hover #ececec, desabilitado com opacidade, pressionado
+     com texto accent). Vale para todos os botões padrão do app.
+  2. "o visual desse dropdown precisa remover esse contorno" →
+     .editor-inspector .studio-select SEM borda (fundo escuro mantém a
+     leitura do campo).
+  3. "esse botão nao é para ser um texto, é pra ser um icon arrow virado
+     para baixo com animação cima e baixo" → "Ver todos os 10 estilos"
+     substituído por BOTÃO DE ÍCONE (seta para baixo) que GIRA 180° ao
+     expandir/recolher (transition 200ms). Acessível (aria-label +
+     aria-expanded), tooltip via title.
+  4. "precisa remover o outline dos cards desses elementos... o estado ativo
+     o objeto tem que ser branco com texto preto" → .studio-preset SEM borda
+     (removidos border + box-shadow + ring); estado ativo: fundo BRANCO,
+     nome do preset PRETO, amostra em cinza-claro.
+  5. "o campo de search tambem precisa ser removido o outiline, e ter um
+     icon de lupa" → busca da transcrição (no editor) SEM borda + ÍCONE DE
+     LUPA embutido (SVG via background, 16px, cinza) com respiro à esquerda.
+  6. "tem um outline no topo dessa area?... se sim remova" → DIAGNOSTICADO:
+     a única linha era o border-bottom (1px #202020) do cabeçalho do editor
+     (nenhum ancestral do .editor-layout tem borda — verificado por computed
+     style em toda a cadeia). REMOVIDA no editor (demais telas mantêm).
+  MODO APONTAR v6 (modelo Figma):
+  7. LIGADO: o clique NÃO interage com a interface — pointerdown/mousedown/
+     mouseup/click/dblclick/auxclick são bloqueados na fase de captura
+     (preventDefault + stopPropagation), então clicar num botão/aba NÃO
+     navega nem dispara nada do app; a rolagem por roda continua livre.
+  8. Clique abre o COMPOSITOR estilo Figma (ponto colorido + campo
+     "Adicionar comentário" + botão enviar); Enter/envia → resta apenas um
+     PING (marcador em gota, numerado) fixo ONDE você clicou.
+  9. DEFEITO DO SCROLL CORRIGIDO: os pings vivem numa camada ANCORADA NO
+     DOCUMENTO (position:absolute, altura = página inteira) — rolam JUNTO
+     com o conteúdo (variação 0px no teste; antes ficavam fixos na tela).
+     Além disso cada ping é ANCORADO AO ELEMENTO (offset % dentro do retângulo)
+     e é reposicionado em scroll/resize — segue o componente em qualquer layout.
+  10. HOVER no ping REVELA o texto do pedido (bolha escura).
+  11. CLIQUE no ping abre o CARTÃO: título "Comentário N", o pedido, o
+      elemento-alvo, botões EDITAR (compositor pré-preenchido; salva sobre o
+      mesmo registro), RESPONDER ("Adicionar comentário…" — respostas em
+      lista, o "adicionar mais comentários") e REMOVER (ping + registro).
+  12. Roteamento de eventos: a UI do inspetor (compositor/cartão/pings) vive
+      dentro das camadas próprias e seus cliques NÃO criam apontamentos nem
+      interagem com o app; CliX direito na interface (LIGADO) é bloqueado
+      (sem menu nativo atrapalhando).
+  Not completed: nada nesta rodada.
+
+FILES
+  Created: tools/e2e/{verify-v6,verify-ui-pedidos,verify-rightedit,
+     verify-rightclick,diag-nav2,diag-linha-topo,nav-editor}.mjs
+     (verificações desta rodada).
+  Modified: app/src/screens/workspace.css (flow-button branco);
+     app/src/screens/editor-refinement.css (header sem linha, select sem
+     borda, presets sem borda + ativo branco, alternador-ícone, busca com
+     lupa); app/src/components/editor/EditorInspector.tsx (ícone CaretDown
+     animado no lugar do botão de texto); tools/e2e/pointer-mode.mjs (v6);
+     docs/reports/evidence/editor15/ui-ajustes-final.png.
+  Deleted: nenhum.
+  Unexpected changes: NONE.
+
+VALIDATION
+  Pedidos (computed styles, verify-ui-pedidos.mjs — 8/8 TRUE):
+     1 botão branco/preto/sem outline ✅; 2 dropdown sem contorno ✅;
+     3 alternador ícone animado ✅; 4 preset ativo branco ✅ + sem borda ✅;
+     5 busca sem outline ✅ + com lupa ✅; 6 header sem linha ✅.
+  Inspetor v6 (verify-v6.mjs, app real): compositor abre ✅; 1 clique = 1
+     ping ✅; ping fixo no documento sob rolagem (variação 0px) ✅; hover
+     revela o pedido ✅; clique no ping abre o cartão ✅; Editar abre
+     compositor PRÉ-PREENCHIDO e atualiza o mesmo registro ✅; Responder
+     adiciona comentário ✅; Remover exclui ping+registro ✅; clique em
+     botão do app com F7 ligado NÃO muda de aba (interface congelada) ✅.
+  Regressão: PASS — e15 20/20, e13 18/18, e14 15/15, e11 14/14 (bateria
+     completa em série, app limpo, sem gravador interferindo).
+  Typecheck: PASS — tsc --noEmit 0 erros. Lint: PASS (EditorInspector).
+  Unit tests: PASS — vitest 169/169 (ajustado ao ícone animado).
+  Visual: screenshot evidence/editor15/ui-ajustes-final.png; aprovação
+     estética PENDING HUMAN APPROVAL.
+  Total passed: 67 (67 checks e2e) + 169 unit | failed: 0
+
+GIT
+  Branch: main | HEAD: 4ccead3e2ed771f637d078e96b984cf5ffc88a33
+  Commits created: NENHUM. Push: NOT EXECUTED.
+  Working tree: MODIFIED + UNTRACKED (staging das upds 12–15: 437 arquivos;
+     ajustes desta rodada a incluir no próximo staging).
+
+ISSUES
+  Bugs corrigidos: (a) pings fixos na tela não acompanhavam o scroll —
+     camada ancorada ao documento; (b) filhos inalcançáveis dentro de pai
+     selecionado; (c) cliques na UI do inspetor criavam apontamentos falsos
+     (movidos para dentro do overlay); (d) duplo registro por clique
+     (dedupe 200 ms); (e) JSON circular no salvamento.
+  Limitação conhecida: atualizar a injeção exige reiniciar o app (o
+     gravador detecta e recusa atualizar sobre cópia antiga).
+  Blockers: nenhum.
+
+FINAL
+  Delivery status: ENTREGUE — 6/6 pedidos aplicados + inspetor v6 completo.
+  User action required: usar o F7 na janela (aberta, maximizada) para
+     apontar novos ajustes se quiser; avaliar a estética; autorizar commit.
+  Restart required: NO.
+  Ready for next task: YES.
+
+REPORT
+  Latest file: docs/reports/LATEST.txt
+  Historical file: docs/reports/history/2026-10-21_0508_adendo3-pedidos-aplicados-inspetor-v6.txt
+  Relatórios anteriores da Atualização 15: history/2026-10-21_0030_*.txt,
+     history/2026-10-21_0100_adendo-modo-apontar-v4.txt,
+     history/2026-10-21_0215_adendo2-modo-apontar-v5.txt
+
+GUIA DO MANTENEDOR — O QUE MUDOU E COMO TESTAR
+
+Os 6 pedidos seus (aplicados):
+  1. Botões padrão do app: agora BRANCOS, com texto e ícone PRETOS e SEM
+     contorno (Salvar estilo, Carregar estilo, Aplicar a todos, Centralizar,
+     Restaurar, Remover texto etc.).
+  2. Dropdown "Fonte" (e os demais do painel): SEM contorno — só o fundo
+     escuro do campo.
+  3. "Ver todos os 10 estilos": virou um ÍCONE de seta para baixo que VIRA
+     PARA CIMA com animação ao expandir (e volta ao recolher).
+  4. Cartões de preset: SEM contorno; o selecionado fica BRANCO com o nome
+     em PRETO.
+  5. Busca da transcrição: SEM contorno e com ÍCONE DE LUPA dentro do campo.
+  6. A linha no topo da área do editor: era o contorno inferior do
+     cabeçalho — REMOVIDA (nenhuma outra linha existe na cadeia da área).
+
+O inspetor (F7) ficou no modelo do Figma:
+  • F7 liga; a interface CONGELA (clicar em botão/aba não navega mais —
+    pode apontar sem medo de sair da tela).
+  • Clique no elemento → balãozinho com seu avatar e campo "Adicionar
+    comentário" → Enter/enviar → resta apenas um PING (gotinha numerada)
+    fixo ONDE você clicou.
+  • O pingo acompanha a rolagem da página (não fica "flutuando" errado).
+  • Passar o mouse no pingo REVELA o texto que você escreveu.
+  • Clicar no pingo abre o cartão do comentário: ver o pedido, "Editar"
+    (campo já preenchido), "Responder" (adicionar mais comentários ao
+    mesmo ponto, em lista) e "Remover".
+  • F7 desliga e o app volta a responder normalmente.
+
+Teste rápido (2 minutos):
+  1. F7 → passe o mouse: elementos contornados com ficha técnica.
+  2. Clique no título do projeto → escreva "exemplo" → Enter → pingo.
+  3. Role a página: o pingo desce JUNTO com o conteúdo.
+  4. Mouse no pingo: o texto "exemplo" aparece. Clique nele: cartão com
+     "Editar" e "Responder".
+  5. "Editar" → mude o texto → Salvar → clique-direito... clique no pingo
+     de novo: o texto novo aparece. "Remover": some tudo.
+  6. F7 desliga; confira os botões brancos, o dropdown sem contorno, os
+     cartões sem borda (ativo branco/preto), a busca com lupa e a ausência
+     da linha no topo.
+
+END OF REPORT

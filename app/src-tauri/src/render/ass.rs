@@ -40,6 +40,23 @@ fn event(out: &mut String, start: f64, end: f64, style: &str, text: &str) {
     }
 }
 
+/** Pausa maior que 0,6 s fecha o grupo (paridade SupoClip). */
+const GROUP_GAP: f64 = 0.6;
+fn word_groups(words: &[Word], per_line: usize) -> Vec<&[Word]> {
+    let mut groups = Vec::new();
+    let mut start = 0;
+    for i in 1..=words.len() {
+        let boundary = i == words.len()
+            || (i - start) >= per_line
+            || words[i].start - words[i - 1].end > GROUP_GAP;
+        if boundary && i > start {
+            groups.push(&words[start..i]);
+            start = i;
+        }
+    }
+    groups
+}
+
 fn group(
     out: &mut String,
     words: &[Word],
@@ -47,6 +64,7 @@ fn group(
     end: f64,
     offset: f64,
     style: &CaptionStyle,
+    position: &str,
 ) {
     let start = start.max(offset) - offset;
     let end = end - offset;
@@ -59,11 +77,14 @@ fn group(
             start,
             end,
             "Main",
-            &words
-                .iter()
-                .map(|w| styled(&w.text, style))
-                .collect::<Vec<_>>()
-                .join(" "),
+            &format!(
+                "{position}{}",
+                words
+                    .iter()
+                    .map(|w| styled(&w.text, style))
+                    .collect::<Vec<_>>()
+                    .join(" ")
+            ),
         );
         return;
     }
@@ -96,7 +117,13 @@ fn group(
             })
             .collect::<Vec<_>>()
             .join(" ");
-        event(out, interval[0], interval[1], "Main", &text);
+        event(
+            out,
+            interval[0],
+            interval[1],
+            "Main",
+            &format!("{position}{text}"),
+        );
     }
 }
 pub fn build(
@@ -112,11 +139,6 @@ pub fn build(
         .as_ref()
         .filter(|_| settings.caption_model > 0)
     {
-        let align = match style.position.as_str() {
-            "top" => 8,
-            "middle" => 5,
-            _ => 2,
-        };
         let size = style.size * height as f64 / 1080.0;
         let outline = style.outline * height as f64 / 1080.0;
         let background = if style.background == "transparent" {
@@ -124,10 +146,11 @@ pub fn build(
         } else {
             color(&style.background)
         };
-        out.push_str(&format!("Style: Main,{},{size},{},{},{},{background},{},{},{},0,100,100,0,0,{},{outline},{},{align},60,60,{},1\n",
+        // a posição real vem do \pos por evento (y contínuo); alinhamento 5
+        out.push_str(&format!("Style: Main,{},{size},{},{},{},{background},{},{},{},0,100,100,0,0,{},{outline},{},5,60,60,0,1\n",
             style.font,color(&style.color),color(&style.highlight_color),if style.background=="transparent" { color(&style.outline_color) } else { color(&style.background) },
             if style.weight>=600 { -1 } else { 0 },if style.italic { -1 } else { 0 },if style.underline { -1 } else { 0 },
-            if style.background=="transparent" { 1 } else { 3 },if style.shadow { 2 } else { 0 },height/10));
+            if style.background=="transparent" { 1 } else { 3 },if style.shadow { 2 } else { 0 }));
     }
     out.push_str("Style: Callout,Poppins,56,&H00FFFFFF,&H00FFFFFF,&H00000000,&H80000000,-1,0,0,0,100,100,0,0,1,2,1,8,60,60,70,1\n\n[Events]\nFormat: Layer,Start,End,Style,Name,MarginL,MarginR,MarginV,Effect,Text\n");
     if let Some(style) = settings
@@ -135,6 +158,11 @@ pub fn build(
         .as_ref()
         .filter(|_| settings.caption_model > 0)
     {
+        let position = format!(
+            "{{\\pos({:.2},{:.2})}}",
+            width as f64 / 2.0,
+            height as f64 * style.vertical()
+        );
         for segment in segments.iter().filter(|s| s.start < end && s.end > start) {
             if segment.words.is_empty() {
                 event(
@@ -142,13 +170,13 @@ pub fn build(
                     segment.start.max(start) - start,
                     segment.end.min(end) - start,
                     "Main",
-                    &styled(&segment.text, style),
+                    &format!("{position}{}", styled(&segment.text, style)),
                 );
             } else {
-                for words in segment.words.chunks(5) {
+                for words in word_groups(&segment.words, style.per_line()) {
                     let from = words.first().unwrap().start.max(start);
                     let until = words.last().unwrap().end.min(end);
-                    group(&mut out, words, from, until, start, style);
+                    group(&mut out, words, from, until, start, style, &position);
                 }
             }
         }

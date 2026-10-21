@@ -1,0 +1,131 @@
+╔════════════════════════════════════════════╗
+║       CUTNICEPRO — ZCODE REPORT            ║
+╚════════════════════════════════════════════╝
+
+TASK
+  Name: Atualização 15 — ADENDO: MODO APONTAR v4 (inspetor estilo DevTools
+        com F7, seleção por elemento e comentários)
+  Status: PASS (ferramenta entregue e autotestada; aguardando os apontamentos
+        do mantenedor; estética PENDING HUMAN APPROVAL)
+  Scope: tools/e2e/pointer-mode.mjs (reescrito), docs/reports/evidence/
+        editor15/pointer-feedback.json. Nenhum arquivo do app alterado.
+  Objective: substituir a marcação por PIXEL (ruim entre resoluções) por um
+        inspetor profissional estilo DevTools: F7 liga/desliga (app navegável
+        quando desligado), hover com tooltip (tag, WxH, color, background,
+        font), clique seleciona QUALQUER elemento individual (incluindo div),
+        comentário por apontamento, ✕ para remover.
+  Result: entregue e autotestado; causa-raiz das versões anteriores
+        (injeção em document-start sem DOM) encontrada e corrigida.
+
+IMPLEMENTATION
+  1. F7 liga/desliga: com F7 DESLIGADO nenhum clique é interceptado — o app
+     navega 100% normal; banner indicando o estado (vermelho ligado, cinza
+     desligado). Estado persiste em sessionStorage (sobrevive a reload).
+  2. HOVER (ligado): contorno tracejado azul no elemento sob o cursor +
+     TOOLTIP estilo DevTools com tag#id, WxH, color, background e fonte.
+  3. CLIQUE (ligado): seleciona o elemento EXATO sob o cursor (qualquer tag —
+     div incluída, sem estreitamento semântico); contorno vermelho permanente
+     + numeração + campo de COMENTÁRIO; Enter/Registrar grava; Esc cancela;
+     ✕ no marcador remove o apontamento.
+  4. Registro resolution-independent: seletor CSS estável (id/testid/classes
+     + nth-of-type, máx. 8 níveis) + retângulo em % da viewport + px do
+     momento + tag/rotulo/texto/cor/fundo/fonte + comentário + horário.
+  5. Persistência: injeção via addInitScript (sobrevive a navegação/recarregamento);
+     apontamentos em sessionStorage (sobrevivem a reload); gravação contínua
+     em docs/reports/evidence/editor15/pointer-feedback.json (versão 4).
+  6. CAUSA-RAIZ das versões 2/3 encontrada: a injeção rodava em document-start,
+     quando document.documentElement/BODY ainda não existem — o appendChild do
+     overlay lançava exceção e o código morria ANTES de registrar os listeners
+     de teclado/clique (window.__pointerV4 já setado mascarava a falha — F7
+     nunca era tratado). Correção: inicialização adiada ao DOMContentLoaded
+     (com fallback imediato se o DOM já estiver pronto).
+  7. Autoteste determinístico: F7 → hover → clique no H1 → registrar via botão
+     → conferência da contagem; fallback DOM apenas para provar o canal de
+     gravação; lista zerada ao final para o mantenedor começar limpo.
+  Not completed: nada nesta ferramenta; apontamentos do mantenedor são a
+     próxima entrada.
+
+FILES
+  Created: tools/e2e/diag-inspector.mjs; tools/e2e/diag-f7.mjs;
+     tools/e2e/limpar-apontamentos.mjs (diagnósticos/limpeza da sessão).
+  Modified: tools/e2e/pointer-mode.mjs (v4 completo); docs/reports/evidence/
+     editor15/pointer-feedback.json (formato v4).
+  Deleted: nenhum.
+  Unexpected changes: NONE.
+
+VALIDATION
+  Diagnóstico da causa-raiz: F7 chegava à página (spy capturou 'F7') mas o
+     handler não existia — evento sintético também não togglava; raiz = exceção
+     em document-start; correção validada ao vivo.
+  Autoteste v4: caixa de comentário apareceu (input:true); registro criado pelo
+     fluxo REAL de clique (n=2: seletor do h1, retângulo 4.9/8.5 84.8×1.7%,
+     cor capturada); F7 desligado ao final (app navegável).
+  Regressão: nenhuma — nenhum arquivo do app foi alterado (suítes anteriores
+     permanecem válidas: e15 20/20, e13 18/18, e14 15/15, e11 14/14).
+  Total passed: autoteste + diagnóstico | failed: 0
+
+GIT
+  Branch: main | HEAD: 4ccead3e2ed771f637d078e96b984cf5ffc88a33
+  Commits created: NENHUM. Push: NOT EXECUTED.
+  Working tree: MODIFIED + UNTRACKED (staging das upds 12–15: 416 arquivos;
+     novos arquivos de diagnóstico desta entrega a incluir no próximo staging).
+
+ISSUES
+  Bugs corrigidos: injeção em document-start sem DOM (v2/v3 mortas na prática).
+  Risks: F7 atua por sessão de janela (após recarregar a página a injeção é
+     reaplicada automaticamente, mas apontamentos antigos só são preservados
+     pelo sessionStorage da MESMA aba — fechar o app encerra a coleta; o
+     arquivo JSON preserva tudo que foi gravado).
+  Blockers: nenhum.
+
+FINAL
+  Delivery status: ENTREGUE — ferramenta pronta para uso imediato.
+  User action required: pressionar F7 na janela do app, passar o mouse
+     (tooltip de inspeção), clicar no elemento, escrever o ajuste, Enter;
+     repetir; me avisar ao terminar (ou apenas fechar quando acabar — o
+     arquivo fica preservado).
+  Restart required: NO.
+  Ready for next task: YES (aplicar os apontamentos recebidos).
+
+REPORT
+  Latest file: docs/reports/LATEST.txt
+  Historical file: docs/reports/history/2026-10-21_0100_adendo-modo-apontar-v4.txt
+  Relatório completo da Atualização 15: history/2026-10-21_0030_atualizacao15-fidelidade-supoclip.txt
+
+GUIA DO MANTENEDOR — O QUE MUDOU E COMO TESTAR
+
+O que mudou?
+  O modo apontar virou um INSPECTOR de verdade, igual ao do navegador:
+  • F7 LIGA e DESLIGA. Desligado, o app é 100% normal (você navega, dá play,
+    edita — nada é interceptado).
+  • Com F7 ligado, ao passar o mouse cada elemento é contornado em azul
+    tracejado e um TOOLTIP mostra o que é: tag, tamanho (largura×altura),
+    cor do texto, cor de fundo e fonte — incluindo divs e qualquer objeto.
+  • Clicar em um elemento o seleciona (contorno vermelho + número) e abre um
+    campo para você ESCREVER o que precisa ajustar ali. Enter registra.
+  • Cada marcação tem um ✕ para remover. As marcações usam o ELEMENTO (não
+    um pixel), então continuam válidas mesmo se a janela mudar de tamanho.
+  Por que não no navegador/Playwright MCP: nosso app é Tauri — os dados
+  (projetos, cortes, transcrição) vivem no backend Rust; numa página de
+  navegador o painel ficaria vazio e você apontaria erros de uma UI sem
+  dados. O inspector roda dentro do app real, com dados reais.
+
+Como usar (passo a passo):
+  1. Vá para a janela do CutNicePro (aberta, maximizada).
+  2. Pressione F7 — o aviso no canto direito fica vermelho ("INSPECTOR
+     LIGADO").
+  3. Passe o mouse: o objeto sob o cursor ganha contorno azul com ficha
+     técnica (tag, tamanho, cores, fonte).
+  4. Clique no elemento problemático → contorno vermelho + campo de texto.
+  5. Escreva o que ajustar (ex.: "esse rótulo está cortado") e pressione
+     Enter. O ponto fica numerado.
+  6. Errou? Clique no ✕ ao lado do número para remover aquele apontamento,
+     ou Ctrl+clique para cancelar a marcação aberta.
+  7. Continue navegando apontando tudo; quando terminar, pressione F7 de novo
+     (o app volta ao normal) e me avise — eu leio a lista completa
+     (elemento + comentário + medidas) e corrijo.
+
+Observação: os dois apontamentos de autoteste ("autoteste v4") foram limpos —
+a lista começa vazia para você.
+
+END OF REPORT

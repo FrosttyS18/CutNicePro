@@ -1,0 +1,245 @@
+{
+  "atualizadoEm": "2026-10-21T10:52:55.201Z",
+  "versao": 6,
+  "cliques": [
+    {
+      "n": 1,
+      "pedido": "defeito no hover ao passar o mouse me um ta ativando o outro, tamanho dos botões muito grande! diminuir 20% e",
+      "seletor": "[data-testid=\"video-editor\"] > div.editor-pane:nth-of-type(2) > section.editor-timeline > header > label.timeline-zoom",
+      "objeto": {
+        "tag": "label",
+        "classes": "timeline-zoom",
+        "texto": "− Zoom +",
+        "cor": "rgb(146, 146, 146)",
+        "fundo": "rgba(0, 0, 0, 0)",
+        "fonte": "11px Poppins"
+      },
+      "retangulo": {
+        "xPct": 93,
+        "yPct": 82.9,
+        "wPct": 5.6,
+        "hPct": 1.9,
+        "px": {
+          "x": 3198,
+          "y": 1154,
+          "w": 192,
+          "h": 26
+        }
+      },
+      "ancora": {
+        "dxPct": 56.8,
+        "dyPct": 3.8
+      },
+      "doc": {
+        "x": 3307,
+        "y": 1155
+      },
+      "viewport": {
+        "w": 3440,
+        "h": 1392
+      },
+      "respostas": [],
+      "horario": "2026-10-21T10:48:39.694Z",
+      "_ping": {}
+    },
+    {
+      "n": 2,
+      "pedido": "defeito ao mostrar o conteudo, voce ajustou o pading do arrow mas nao validou se o caractere da seleçao continuou visivel ou quebrou, ajuste",
+      "seletor": "div.editor-pane:nth-of-type(3) > aside.editor-inspector > div.editor-inspector__body > section.studio-section:nth-of-type(1) > div.studio-inline-select:nth-of-type(9) > span.studio-select-narrow:nth-of-type(2) > span.app-select > button.app-select__trigger",
+      "objeto": {
+        "tag": "button",
+        "classes": "app-select__trigger",
+        "texto": "5",
+        "cor": "rgb(245, 245, 245)",
+        "fundo": "rgb(40, 40, 40)",
+        "fonte": "12px Poppins"
+      },
+      "retangulo": {
+        "xPct": 96.3,
+        "yPct": 59.7,
+        "wPct": 1.9,
+        "hPct": 2.7,
+        "px": {
+          "x": 3314,
+          "y": 831,
+          "w": 64,
+          "h": 38
+        }
+      },
+      "ancora": {
+        "dxPct": 31.3,
+        "dyPct": 39.5
+      },
+      "doc": {
+        "x": 3334,
+        "y": 846
+      },
+      "viewport": {
+        "w": 3440,
+        "h": 1392
+      },
+      "respostas": [],
+      "horario": "2026-10-21T10:49:20.644Z",
+      "_ping": {}
+    },
+    {
+      "n": 3,
+      "pedido": "esses botoes quando ativa fica branco com icon e texto preto, desativado permanece nesse estado atual",
+      "seletor": "[data-testid=\"video-editor\"] > div.editor-layout:nth-of-type(1) > div.editor-pane:nth-of-type(3) > aside.editor-inspector > nav.studio-tabs",
+      "objeto": {
+        "tag": "nav",
+        "classes": "studio-tabs",
+        "rotulo": "Abas de edição",
+        "texto": "Legendas Enquadrar Áudio Efeitos",
+        "cor": "rgb(255, 255, 255)",
+        "fundo": "rgba(0, 0, 0, 0)",
+        "fonte": "14px Poppins"
+      },
+      "retangulo": {
+        "xPct": 88.6,
+        "yPct": 12.1,
+        "wPct": 10.3,
+        "hPct": 4.9,
+        "px": {
+          "x": 3047,
+          "y": 168,
+          "w": 353,
+          "h": 68
+        }
+      },
+      "ancora": {
+        "dxPct": 75.4,
+        "dyPct": 4.4
+      },
+      "doc": {
+        "x": 3313,
+        "y": 171
+      },
+      "viewport": {
+        "w": 3440,
+        "h": 1392
+      },
+      "respostas": [],
+      "horario": "2026-10-21T10:50:28.143Z",
+      "_ping": {}
+    },
+    {
+      "n": 4,
+      "pedido": "essa informação precisa ser um toasting e nao um texto fixo na UI, criar toasting com visual padrao do projeto e nao padrao de navegador",
+      "seletor": "[data-testid=\"editor-save-status\"]",
+      "objeto": {
+        "tag": "span",
+        "texto": "Alterações salvas",
+        "cor": "rgb(255, 255, 255)",
+        "fundo": "rgba(0, 0, 0, 0)",
+        "fonte": "14px Poppins"
+      },
+      "retangulo": {
+        "xPct": 90,
+        "yPct": 8.7,
+        "wPct": 3.6,
+        "hPct": 1.5,
+        "px": {
+          "x": 3097,
+          "y": 121,
+          "w": 123,
+          "h": 21
+        }
+      },
+      "ancora": {
+        "dxPct": 75.7,
+        "dyPct": 54.8
+      },
+      "doc": {
+        "x": 3190,
+        "y": 132
+      },
+      "viewport": {
+        "w": 3440,
+        "h": 1392
+      },
+      "respostas": [],
+      "horario": "2026-10-21T10:51:43.683Z",
+      "_ping": {}
+    },
+    {
+      "n": 5,
+      "pedido": "esse botão ativo precisa ficar branco com icon preto, e inativo, no estado padrao icon cinza igual o home",
+      "seletor": "#root > div.shell:nth-of-type(2) > aside.rail > button.rail__btn:nth-of-type(2)",
+      "objeto": {
+        "tag": "button",
+        "classes": "rail__btn rail__btn--active",
+        "rotulo": "Meus Projetos",
+        "cor": "rgb(2, 194, 190)",
+        "fundo": "rgba(0, 0, 0, 0)",
+        "fonte": "13.3333px Poppins"
+      },
+      "retangulo": {
+        "xPct": 0.6,
+        "yPct": 11.3,
+        "wPct": 1.4,
+        "hPct": 2.9,
+        "px": {
+          "x": 22,
+          "y": 157,
+          "w": 48,
+          "h": 40
+        }
+      },
+      "ancora": {
+        "dxPct": 80.2,
+        "dyPct": 35
+      },
+      "doc": {
+        "x": 60,
+        "y": 171
+      },
+      "viewport": {
+        "w": 3440,
+        "h": 1392
+      },
+      "respostas": [],
+      "horario": "2026-10-21T10:52:23.621Z",
+      "_ping": {}
+    },
+    {
+      "n": 6,
+      "pedido": "remover outline do slide",
+      "seletor": "[data-testid=\"video-editor\"] > div.editor-pane:nth-of-type(2) > section.editor-timeline > header > label.timeline-zoom > input",
+      "objeto": {
+        "tag": "input",
+        "rotulo": "Zoom da linha do tempo",
+        "cor": "rgb(255, 255, 255)",
+        "fundo": "rgb(59, 59, 59)",
+        "fonte": "13.3333px Arial"
+      },
+      "retangulo": {
+        "xPct": 94,
+        "yPct": 83.3,
+        "wPct": 3.5,
+        "hPct": 1.1,
+        "px": {
+          "x": 3234,
+          "y": 1159,
+          "w": 120,
+          "h": 16
+        }
+      },
+      "ancora": {
+        "dxPct": 82.5,
+        "dyPct": 56.3
+      },
+      "doc": {
+        "x": 3333,
+        "y": 1168
+      },
+      "viewport": {
+        "w": 3440,
+        "h": 1392
+      },
+      "respostas": [],
+      "horario": "2026-10-21T10:52:45.588Z",
+      "_ping": {}
+    }
+  ]
+}

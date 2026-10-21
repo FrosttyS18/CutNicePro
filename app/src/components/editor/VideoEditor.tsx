@@ -4,19 +4,20 @@ import { ArrowCounterClockwiseIcon } from "@phosphor-icons/react/dist/csr/ArrowC
 import { ArrowClockwiseIcon } from "@phosphor-icons/react/dist/csr/ArrowClockwise";
 import { ArrowBendUpLeftIcon } from "@phosphor-icons/react/dist/csr/ArrowBendUpLeft";
 import { FloppyDiskIcon } from "@phosphor-icons/react/dist/csr/FloppyDisk";
+import { ListIcon } from "@phosphor-icons/react/dist/csr/List";
+import type { CaptionStyle } from "../../lib/captions";
 import { useEditorLayout } from "../../hooks/useEditorLayout";
 import { clampTime } from "../../lib/workspace";
 import { useEditHistory } from "../../hooks/useEditHistory";
 import { isolatedClipSettings } from "../../lib/clips";
 import { editTranscriptSegment } from "../../lib/transcript-text";
-import { captionCue, captionPresets, effectiveCaptionStyle } from "../../lib/captions";
+import { captionCue, effectiveCaptionStyle } from "../../lib/captions";
 import type { Clip } from "../../lib/clips";
 import type { EditorSettings, WorkspaceData } from "../../lib/workspace-types";
 import { VideoPreview } from "../workspace/VideoPreview";
 import { TranscriptPanel } from "../workspace/TranscriptPanel";
 import { EditorTimeline } from "./EditorTimeline";
 import { EditorInspector, panelForTool } from "./EditorInspector";
-import { CaptionPresetsDialog } from "./CaptionPresetsDialog";
 import { usePlaybackShortcut } from "../../hooks/usePlaybackShortcut";
 import { FramingToolbar } from "./FramingToolbar";
 
@@ -31,9 +32,11 @@ interface Props {
   onBack: () => void;
   transcriptionControls?: ReactNode;
   transcribing?: boolean;
+  /** Cortes do projeto — usados por "Aplicar a todos os cortes" (commit único, desfazível). */
+  allClips?: Clip[];
 }
 
-export function VideoEditor({ title, activeClip, data, localUrl, dirty, onChange, onSave, onBack, transcriptionControls, transcribing }: Props) {
+export function VideoEditor({ title, activeClip, data, localUrl, dirty, onChange, onSave, onBack, transcriptionControls, transcribing, allClips }: Props) {
   const video = useRef<HTMLVideoElement>(null);
   const serialize = useCallback(
     (value: WorkspaceData) =>
@@ -87,6 +90,7 @@ export function VideoEditor({ title, activeClip, data, localUrl, dirty, onChange
         if (!pending.current) break;
       }
       setSaveState("saved");
+      setToastGeracao(g => g + 1);
     } finally {
       saving.current = false;
     }
@@ -97,13 +101,15 @@ export function VideoEditor({ title, activeClip, data, localUrl, dirty, onChange
     return () => window.clearTimeout(timer);
   }, [dirty, data, runSave]);
   const displayStatus = dirty && saveState === "saved" ? "dirty" : saveState;
+  // status de salvamento vira TOAST temporário (pedido upd 15: nada de texto
+  // fixo na UI); a auto-soma é feita por animação CSS (sem timer em effect)
+  const [toastGeracao, setToastGeracao] = useState(0);
   const changeSettings = (settings: Partial<EditorSettings>) => changeWithHistory({ ...data, settings: { ...data.settings, ...settings } }, "settings");
   const [time, setTime] = useState(0);
   const [duration, setDuration] = useState(data.media?.duration ?? null);
   const [playing, setPlaying] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [panel, setPanel] = useState(panelForTool(data.tool));
-  const [captionsOpen, setCaptionsOpen] = useState(data.tool === "captions");
   const [framing, setFraming] = useState(false);
   const { layout, beginResize } = useEditorLayout();
   const canPlay = Boolean(localUrl);
@@ -129,13 +135,31 @@ export function VideoEditor({ title, activeClip, data, localUrl, dirty, onChange
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
   }, [framing, history]);
-  // arraste do vídeo no modo Enquadrar (imagem; legendas ficam no lugar)
+  // arraste do vídeo no modo Enquadrar (imagem) ou da legenda na aba Legendas
   const onCanvasPointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
-    if (!framing || data.settings.fit !== "cover" || event.button !== 0) return;
+    if (event.button !== 0) return;
+    const rect = event.currentTarget.getBoundingClientRect();
+    if (!framing && panel === "captions") {
+      const startY = event.clientY;
+      const style = effectiveCaptionStyle(data.settings.captionModel, data.settings.captionStyle);
+      const baseY = style.y ?? 0.86;
+      const moveCaption = (moveEvent: PointerEvent) => {
+        const y = Math.min(0.9, Math.max(0.1, baseY + (moveEvent.clientY - startY) / rect.height));
+        changeSettings({ captionStyle: { ...style, y } });
+      };
+      const upCaption = () => {
+        window.removeEventListener("pointermove", moveCaption);
+        window.removeEventListener("pointerup", upCaption);
+      };
+      event.preventDefault();
+      window.addEventListener("pointermove", moveCaption);
+      window.addEventListener("pointerup", upCaption);
+      return;
+    }
+    if (!framing || data.settings.fit !== "cover") return;
     const startX = event.clientX;
     const startY = event.clientY;
     const base = { x: data.settings.focalPoint?.x ?? 50, y: data.settings.focalPoint?.y ?? 50 };
-    const rect = event.currentTarget.getBoundingClientRect();
     const move = (moveEvent: PointerEvent) => {
       const dx = ((moveEvent.clientX - startX) / rect.width) * 100;
       const dy = ((moveEvent.clientY - startY) / rect.height) * 100;
@@ -180,16 +204,56 @@ export function VideoEditor({ title, activeClip, data, localUrl, dirty, onChange
     } else element.pause();
   }
   usePlaybackShortcut(canPlay && !transcribing,togglePlay);
-  const cue = captionCue(data.transcript,time);
+  const cue = captionCue(data.transcript,time,effectiveCaptionStyle(data.settings.captionModel,data.settings.captionStyle).wordsPerCaption);
+  // popover "Ações do projeto" no cabeçalho: transcrição/cortes/exportação fora do inspetor
+  const [actionsOpen, setActionsOpen] = useState(false);
+  const actionsRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (!actionsOpen) return;
+    const close = (event: PointerEvent) => {
+      if (!actionsRef.current?.contains(event.target as Node)) setActionsOpen(false);
+    };
+    document.addEventListener("pointerdown", close, true);
+    return () => document.removeEventListener("pointerdown", close, true);
+  }, [actionsOpen]);
+  // aplica o estilo de legenda a todos os cortes em UM commit (desfazível de uma vez)
+  const applyCaptionsToAll = useCallback(async (model: number, style: CaptionStyle) => {
+    if (!allClips?.length) throw new Error("Este projeto ainda não tem cortes.");
+    const edits = { ...(data.clipEdits ?? {}) };
+    for (const clip of allClips) {
+      const base = edits[clip.id] ?? isolatedClipSettings(clip, undefined, data.media);
+      edits[clip.id] = { ...base, captionModel: model, captionStyle: { ...style } };
+    }
+    changeWithHistory({ ...data, clipEdits: edits, settings: { ...data.settings, captionModel: model, captionStyle: { ...style } } }, "apply-all");
+  }, [allClips, data, changeWithHistory]);
   return (
     <section className="video-editor" data-testid="video-editor" aria-label="Editor de vídeo">
       <header className="editor-header editor-header--compact">
         <button type="button" className="editor-icon-button" onClick={onBack} title="Voltar ao projeto" aria-label="Voltar ao projeto"><ArrowLeftIcon size={18} aria-hidden="true"/></button>
         <h1>{title}</h1>
         <div className="editor-header__actions">
-          <span role="status" aria-live="polite" data-testid="editor-save-status">
+          <span role="status" data-testid="editor-save-status" className="sr-only">
             {displayStatus === "saving" ? "Salvando…" : displayStatus === "error" ? "Falha ao salvar" : displayStatus === "dirty" ? "Alterações não salvas" : "Alterações salvas"}
           </span>
+          {displayStatus === "saved" && (
+            <div key={`ok-${toastGeracao}`} className="editor-toast editor-toast--ok" role="status" data-testid="editor-toast">
+              <svg width="15" height="15" viewBox="0 0 256 256" fill="#4ade80" aria-hidden="true"><path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm45.66,85.66-56,56a8,8,0,0,1-11.32,0l-24-24a8,8,0,0,1,11.32-11.32L112,148.69l50.34-50.35a8,8,0,0,1,11.32,11.32Z"></path></svg>
+              <span>Alterações salvas</span>
+            </div>
+          )}
+          {displayStatus === "error" && (
+            <div key={`erro-${toastGeracao}`} className="editor-toast editor-toast--erro" role="alert" data-testid="editor-toast-erro">
+              <svg width="15" height="15" viewBox="0 0 256 256" fill="#ff8787" aria-hidden="true"><path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm-8,56a8,8,0,0,1,16,0v40a8,8,0,0,1-16,0Zm8,88a12,12,0,1,1-12-12A12,12,0,0,1,128,168Z"></path></svg>
+              <span>Falha ao salvar</span>
+            </div>
+          )}
+          {transcriptionControls && <div className="editor-actions" ref={actionsRef}>
+            <button type="button" className="editor-icon-button" aria-label="Ações do projeto" title="Ações do projeto (transcrever, cortes, exportar)"
+              aria-haspopup="dialog" aria-expanded={actionsOpen} onClick={() => setActionsOpen(current => !current)}>
+              <ListIcon size={18} aria-hidden="true"/>
+            </button>
+            {actionsOpen && <div className="editor-actions__popover" role="dialog" aria-label="Ações do projeto">{transcriptionControls}</div>}
+          </div>}
           <button type="button" className="editor-icon-button" disabled={!history.canUndo} onClick={history.undo} title="Desfazer (Ctrl+Z)" aria-label="Desfazer (Ctrl+Z)"><ArrowCounterClockwiseIcon size={18} aria-hidden="true"/></button>
           <button type="button" className="editor-icon-button" disabled={!history.canRedo} onClick={history.redo} title="Refazer (Ctrl+Shift+Z)" aria-label="Refazer (Ctrl+Shift+Z)"><ArrowClockwiseIcon size={18} aria-hidden="true"/></button>
           {data.activeClipId && activeClip && <button type="button" className="editor-icon-button" onClick={() => {
@@ -223,7 +287,7 @@ export function VideoEditor({ title, activeClip, data, localUrl, dirty, onChange
             aria-label="Redimensionar ferramentas (arraste)" title="Arraste para redimensionar as ferramentas"
             onPointerDown={beginResize("inspector")}/>
           <EditorInspector panel={panel} settings={data.settings} onPanel={setPanel} onSettings={changeSettings}
-            onCaptions={() => setCaptionsOpen(true)} tools={transcriptionControls} />
+            onApplyAll={applyCaptionsToAll} />
         </div>
       </div>
       <div className="editor-pane editor-pane--timeline" style={{ ["--timeline-height" as string]: `${layout.timelineHeight}px` }}>
@@ -233,10 +297,6 @@ export function VideoEditor({ title, activeClip, data, localUrl, dirty, onChange
         <EditorTimeline mediaId={data.media?.mediaId} localUrl={localUrl} duration={duration} time={time} playing={playing} canPlay={canPlay} settings={data.settings} onSeek={seek}
           onSettings={changeSettings} onTogglePlay={togglePlay} />
       </div>
-      <CaptionPresetsDialog open={captionsOpen} model={data.settings.captionModel} style={data.settings.captionStyle}
-        onModel={(captionModel) => changeSettings({ captionModel, captionStyle:{...captionPresets[captionModel].style} })}
-        onStyle={change=>changeSettings({captionModel:data.settings.captionModel||1,captionStyle:{...effectiveCaptionStyle(data.settings.captionModel,data.settings.captionStyle),...change}})}
-        onClose={() => setCaptionsOpen(false)} />
     </section>
   );
 }

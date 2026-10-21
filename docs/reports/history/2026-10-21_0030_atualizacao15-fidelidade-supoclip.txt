@@ -1,0 +1,363 @@
+╔════════════════════════════════════════════╗
+║       CUTNICEPRO — ZCODE REPORT            ║
+╚════════════════════════════════════════════╝
+
+TASK
+  Name: Atualização 15 — Fidelidade 1:1 do inspetor SupoClip + VISION QA
+        controlado + proibições permanentes de layout
+  Status: PARTIAL (funcional PASS em todos os eixos; estética PENDING HUMAN
+        APPROVAL; sessão de MODO APONTAR aberta para os ajustes finais que o
+        mantenedor indicar; commit aguarda autorização)
+  Scope: estudo do código original do SupoClipLab; inspetor do editor
+        (componentes/hooks/contratos), prévia, render/exportação (apenas os
+        filtros novos), testes/e2e, AGENTS.md + 2 skills do projeto, VISION do
+        projeto. Intocado: motor de descoberta, Gemma, Whisper, transcrição,
+        timeline, histórico/autosave, NVENC.
+  Objective: reproduzir a anatomia do painel direito do SupoClip 1:1 (abas
+        Legendas/Enquadrar/Áudio/Efeitos), com cadeia funcional completa
+        (controle → estado → prévia → undo/redo → autosave → reabertura →
+        exportação); VISION QA autorizado (máx. 3 chamadas); registrar
+        proibições de layout; sem transcrição duplicada no inspetor.
+  Result: inspetor reescrito na anatomia da referência com todas as cadeias
+        funcionais provadas (incl. render real por pixel/áudio); regras
+        anti-vício permanente registradas; VISION executado com método
+        INADEQUADO (montagens redimensionadas), corrigido por verificação DOM;
+        app inicia maximizado; modo apontar reaberto para ajustes finais.
+
+IMPLEMENTATION
+  ESTUDO DO ORIGINAL (C:\SupoClipLab\supoclip, checkout f1a0c30 — patches LAB
+  preservados): frontend/src/components/editor/inspector.tsx (817 linhas, 4
+  abas, presets Clean/Highlight/Pop, switch mestre, y 0,1–0,9, wordsPerLine
+  1–8, save/load/apply-all); lib/editor/document.ts (contratos CaptionStyle/
+  Framing/Effects + frameRect/captionGroups); preview.tsx (drag do vídeo E da
+  legenda); backend editor_document.py (render_document: scale→crop→pad com
+  âncora, lutrgb+hue+gblur, volume no filtro de áudio, ASS com \pos);
+  defaults de efeitos 100/100/100/0/0 e ranges (40–180, 0–220, 0–8, ±180).
+  INSPECTOR CNP (reescrito na anatomia da referência, tema escuro CNP):
+  1. 4 abas HORIZONTAIS no topo (ícone sobre rótulo, ativa destacada,
+     Legendas | Enquadrar | Áudio | Efeitos); aba "Texto" absorvida na aba
+     Legendas (seção "Texto sobre o vídeo" ao final) — nada removido.
+  2. Aba Legendas: switch mestre (Mostrar legendas), 3 cartões de preset com
+     prévia real (Limpo/Destaque/Pop — diferenças visíveis ao clicar),
+     fonte, tamanho 16–160, POSIÇÃO VERTICAL CONTÍNUA 10–90%, cores Texto/
+     Destaque lado a lado (círculo da cor SEM caixa aninhada + hex), switches
+     Fundo do texto/Destacar palavra falada/MAIÚSCULAS, Palavras por legenda
+     1–8, Salvar estilo/Carregar estilo (localStorage cnp-caption-style),
+     Aplicar a todos os cortes (commit único, desfazível, não destrutivo —
+     preserva trim/focal de cada clipe), "Ver todos os 10 estilos" EXPANDE
+     inline os 10 presets do CNP como cartões (SEM modal).
+  3. Aba Enquadrar: proporção em toggles com rótulo duplo (9:16 Vertical,
+     1:1 Quadrado, Src Original, 16:9 Paisagem, 4:5 Retrato — os extras do
+     CNP preservados), Ajuste (Preencher quadro/Vídeo completo), fundo, Zoom
+     1–3×, Posições H/V, Centralizar assunto (centralização manual honesta —
+     sem fingir "inteligência").
+  4. Aba Áudio: volume 0–200% (prévia limita a 100%, exportação aplica tudo),
+     Silenciar áudio da exportação, aviso de clipping.
+  5. Aba Efeitos: Brilho/Contraste/Saturação/Desfoque/Matiz com ranges EXATOS
+     do SupoClip + Restaurar; prévia via CSS filter (blur proporcional à
+     largura, container query).
+  6. Ações do projeto (Transcrever novamente, Atualizar cortes, Cortes,
+     Voltar ao vídeo completo, Exportar) saíram do inspetor e viram popover
+     no botão de lista do cabeçalho — inspetor só de propriedades.
+  CONTRATOS/PRÉVIA/EXPORTAÇÃO:
+  7. EditorSettings +zoom (1–3) +effects; CaptionStyle +y (0,1–0,9) e
+     +wordsPerCaption (1–8) com retrocompatibilidade de rascunhos antigos
+     (derivados de `position`; padrão 5); AspectRatio +original (lista
+     separada do upload para não vazar); validação workspace-store estendida.
+  8. VideoPreview: aspect original pelas dimensões da mídia, zoom (scale),
+     filter de efeitos, legenda posicionada por --caption-y contínua (CSS),
+     drag da legenda na prévia quando a aba Legendas está ativa; cue agrupa
+     por palavrasPorLegenda E por pausa > 0,6s (paridade SupoClip).
+  9. Render Rust: geometry() com scale→crop→pad ancorado no focal (mesma
+     fórmula do SupoClip) quando há dimensões de origem (source_width/height
+     preenchidas pelo export_video com a análise real); effects_filter()
+     lutrgb+hue+gblur idêntica ao original (neutra = filtro ausente); volume
+     aceita 0–2 (prévia continua ≤1); ratio "original" = dimensões da fonte
+     limitadas a 1920; ASS com \pos contínuo e agrupamento por quantidade +
+     pausa 0,6s; NVENC preservado com fallback CPU.
+  REGRAS PERMANENTES (pedido do mantenedor):
+  10. AGENTS.md: seção PROIBIÇÕES DE LAYOUT (7 itens: box-em-box, ícone sem
+      respiro, dropdown sem padding, slider desalinhado, botões colados,
+      label↔campo, foco no clique) + coerência nas skills do projeto
+      frontend-ui-engineering e minimalist-ui (insumo obrigatório).
+  11. global.css: foco visível SOMENTE para teclado via data-input-modality
+      (clique de mouse nunca desenha anel); .flow-button inline-flex gap 7px
+      com ícone não-comprimível (corrige ícones sobre o texto em TODOS os
+      botões do app).
+  12. editor-refinement.css: espaçamentos mínimos (seções 16px, campos 8px,
+      presets/toggles 10px, grid 12px), dropdown 36px/padding 12px (com
+      override da regra antiga de maior especificidade), slider rótulo à
+      esquerda + chip de valor à DIREITA na mesma linha + barra em largura
+      total, transcrição com respiro título/busca/conteúdo, ações do
+      cabeçalho com gap 6px.
+  13. App INICIA MAXIMIZADO no Windows (tauri.conf.json "maximized": true —
+      validado: 3440×1392 = tela cheia).
+  Not completed: ajustes que o mantenedor apontar no MODO APONTAR (sessão
+     aberta ao final desta entrega); commit/push (aguardam autorização);
+     Graphify indisponível (sem índice local — impacto analisado por leitura
+     de código, limitação registrada).
+
+MATRIZ DE FIDELIDADE — SUPOCLIP × CUTNICEPRO
+  (Existia SupoClip? | Existia CNP? | Decisão | Prévia | Persiste | Exporta | Evidência)
+  Abas horizontais ×4 ......... Sim | Não (verticais) | Implementado | ✅ | — | — | e15 20/20 (geometria das 4 abas)
+  Switch mestre legendas ...... Sim | Parcial (dropdown modelo) | Adaptado | ✅ altera prévia | ✅ | ✅ (caption_model 0/1+) | e15 (mostra/esconde)
+  Cartões de preset (3) ....... Sim | Não (diálogo) | Implementado | ✅ imediata | ✅ | ✅ | e15 (Pop → #A3E635)
+  10 presets CNP .............. Não | Sim (superior) | PRESERVADO, expansão inline | ✅ | ✅ | ✅ | DOM 10 cartões; sem modal
+  Fonte/tamanho ............... Sim | Sim | Reusado | ✅ | ✅ | ✅ (ass.rs) | e15+unit
+  Posição vertical contínua ... Sim (y 0,1–0,9) | Inferior (3 fixas) | Implementado | ✅ (overlay y) | ✅ (rascunho antigo migra) | ✅ (ass \pos) | e15 (40% → centro 40%); render real
+  Cores texto/destaque ........ Sim | Sim | Reorganizado lado a lado | ✅ | ✅ | ✅ | unit; DOM círculo
+  Fundo do texto .............. Sim (bool) | Superior (cor+transparente) | PRESERVADO (switch mapeia) | ✅ | ✅ | ✅ (BorderStyle) | unit
+  Destacar palavra falada ..... Sim (karaoke) | Sim (efeito) | Mapeado 1:1 | ✅ | ✅ | ✅ (group) | e15; render real karaoke
+  MAIÚSCULAS .................. Sim | Sim | Reusado | ✅ | ✅ | ✅ | unit
+  Palavras por legenda ........ Sim (1–8) | Não (fixo 5) | Implementado | ✅ divide | ✅ | ✅ (word_groups+pausa) | unit 4 casos; e15 teto
+  Salvar/Carregar estilo ...... Sim (localStorage) | Não | Implementado | ✅ | ✅ (dispositivo) | indireto | e15 (salva→preset→carrega)
+  Aplicar a todos os cortes ... Sim | Não | Implementado (não destrutivo) | ✅ | ✅ (clipEdits) | ✅ | e15 (outro clipe #FACC15); diag app limpo
+  Transcrição no inspetor ..... Sim | — | EXCLUÍDO pelo mantenedor | — | — | — | e15 (sem list no inspetor)
+  Proporção (9:16/1:1/Src) .... Sim | Parcial (sem Src) | Implementado + extras CNP | ✅ | ✅ | ✅ (dimensions) | e15 (0,5625→1,778)
+  Ajustar/Preencher ........... Sim | Sim | Reusado (rótulos da ref.) | ✅ | ✅ | ✅ | e11/e13/e14
+  Zoom 1–3× ................... Sim | Não | Implementado | ✅ (scale) | ✅ | ✅ (geometry) | e15 (matrix 2×); render real
+  Posições H/V ................ Sim | Sim (focal) | Reusado | ✅ | ✅ | ✅ | e11–e15
+  Centralizar assunto ......... Sim | Não (Centralizar) | Implementado (manual) | ✅ | ✅ | ✅ | e15
+  Volume 0–200% ............... Sim | Parcial (0–100) | Estendido | ✅ (≤100%) | ✅ | ✅ (volume=1,5) | render real: −15,6→−12,2 dB
+  Mute exportação ............. Sim | Sim | Reusado | n/a | ✅ | ✅ (volume=0) | unit; e15
+  Efeitos (5 sliders) ......... Sim | Não | Implementado | ✅ (CSS filter) | ✅ | ✅ (lutrgb/hue/gblur) | render real YAVG 75,9→131,9
+  Legenda nunca some (Nvenc) .. — | Sim (superior) | PRESERVADO | — | — | ✅ | cargo real_render 1/1
+  Editor não destrutivo ....... Parcial | Sim (superior) | PRESERVADO | — | ✅ | — | e11 14/14
+  Status geral: estrutura 1:1 nos 4 quadrantes; superiores do CNP preservados
+  e integrados; nenhuma propriedade exibida sem cadeia funcional completa.
+
+VISION QA
+  Subagente acessou imagens reais? SIM (2 chamadas leram os PNGs do disco).
+  Chamadas: 2 de 3 autorizadas (3ª cancelada pelo mantenedor ANTES de
+     responder — ver método).
+  MÉTODO INADEQUADO (reclamado pelo mantenedor e confirmado): as montagens
+     de comparação foram REDIMENSIONADAS pelo ffmpeg (380×900 forçado),
+     distorcendo as capturas — o VISION leu textos inexistentes ("Corrigir
+     estilo", "Destaque" por Desfoque) e relatou cortes de artefato de
+     montagem. As leituras que contradizem o DOM foram DESCARTADAS; as
+     montagens foram arquivadas em evidence/editor15/descartadas-metodo-
+     distorcido/ com o motivo. Lição registrada: comparação visual só com
+     capturas em resolução nativa, sem redimensionamento.
+  Divergências válidas identificadas (confirmadas por DOM) e CORRIGIDAS:
+     respiro interno do corpo do inspetor; valor do slider como chip à
+     direita na mesma linha do rótulo; rótulo "Palavras por legenda" sem
+     quebra (tudo em fidelidade-dom.json + antivice-dom.json).
+  Divergências que eram falsas (produto da distorção): rótulos trocados,
+     cortes de borda, "segunda coluna de abas".
+  Fidelidade estrutural verificada: POR DOM/e2e (ordem e geometria das abas,
+     cartões, switches, sliders, chips) — as 4 abas e a ordem dos controles
+     correspondem à referência; Áudio e Efeitos 1:1.
+  Falha de acessibilidade visual: a 3ª chamada foi cancelada (método);
+     nenhuma leitura distorcida foi usada como base de correção.
+  Aprovação estética: PENDING HUMAN APPROVAL (exclusiva do mantenedor).
+
+FILES
+  Created: app/src/test/caption-inspector.test.tsx (9 testes);
+     tools/e2e/{editor15-runtime-tauri,supoclip-ref-capture,cnp-tabs-capture,
+     diag-transcript-line,diag-position-select,diag-applyall-fresh,
+     verify-fidelity-dom,verify-antivice-dom}.mjs;
+     tools/dev/{verify_effects_evidence,verify-line-removed}.py;
+     .zcode/agents/vision.md (cópia do projeto + protocolo de fidelidade §9);
+     docs/reports/evidence/editor15/** (results, medidas, DOM, render real
+     neutro/editado MP4, capturas nativas SupoClip × CNP, descartadas-*).
+  Modified: app/src/components/editor/{EditorInspector,FramingToolbar,
+     VideoEditor}.tsx; app/src/components/workspace/VideoPreview.tsx;
+     app/src/components/AppSelect.tsx; app/src/lib/{captions,workspace,
+     workspace-types,clips}.ts; app/src/components/upload/tools.ts;
+     app/src/services/workspace-store.ts; app/src/hooks/useEditorLayout.ts;
+     app/src/screens/{editor-refinement,workspace}.css; app/src/global.css;
+     app/src-tauri/src/render/{settings,ass,pipeline,commands,tests,
+     fill_matrix}.rs; app/src-tauri/tauri.conf.json (maximized);
+     app/src/test/editor-autocut.test.tsx; tools/e2e/{editor11,editor13,
+     editor14}-runtime-tauri.mjs; AGENTS.md; .zcode/skills/{frontend-ui-
+     engineering,minimalist-ui}/SKILL.md; docs/reports/evidence/{editor11,
+     editor13}/results.json.
+  Deleted: uso do CaptionPresetsDialog no editor (arquivo mantido, sem
+     consumidor — substituído pela expansão inline).
+  Unexpected changes: NONE.
+
+VALIDATION
+  Typecheck: PASS — tsc --noEmit 0 erros.
+  Lint: PASS — ESLint 0 erros na área tocada; dívidas pré-existentes
+     inalteradas (2 padrões React-hooks herdados no VideoPreview original).
+  Unit tests: PASS — vitest 169/169 (caption-inspector 9: abas, presets,
+     switch, agrupamento 5/2/pausa/sem-tempos; autocut atualizado).
+  Rust: PASS — cargo test 130/130 (5 novos: y contínuo+\pos, zoom/âncora,
+     original limitado, fórmula de efeitos, volume 0–2/mute); fmt aplicado
+     aos arquivos tocados; clippy sem novos avisos (imports de teste movidos
+     para dentro da função).
+  Export/Render real: PASS — real_render_applies_zoom_effects_and_volume
+     gerou neutro.mp4 e editado.mp4 (zoom 2×, brilho 160, volume 150%,
+     karaoke, y=0,3, 2 palavras/legenda); verificação por ffprobe/ffmpeg:
+     dimensões 1080×1920 ✓, YAVG 75,9→131,9 (brilho aplicado) ✓, mean_volume
+     −15,6→−12,2 dB (150% aplicado) ✓ — tools/dev/verify_effects_evidence.py.
+  Integration: PASS — e2e TAURI REAL: editor15 20/20 (abas horizontais
+     equilibradas; presets com prévia e aplicação; switch mestre; y contínuo
+     na prévia; teto de 2 palavras; salvar/carregar; aplicar a todos com
+     propagação a outro clipe; Original pelas dimensões da fonte; zoom 2×;
+     volume 150%; mute; brilho/restaurar; popover de ações; sem transcrição
+     no inspetor; autosave; persistência). editor13 18/18; editor14 15/15;
+     editor11 14/14 (regressões completas, sem enfraquecimento).
+  Runtime/DOM: PASS — antivice-dom.json (foco pointer outline none; botão
+     ícone flex gap 7px svg none; dropdown 12px/36px; slider rótulo+chip na
+     mesma linha; par de botões gap 12px; label↔campo 8px);
+     fidelidade-dom.json (padding corpo 14px, chip à direita, rótulo 1 linha);
+     círculo de cor 50% sem caixa; expansão inline com 10 cartões.
+  Visual: capturas NATIVAS do SupoClip (4 abas, medidas: painel 380×729,
+     abas 89×54) e do CNP (painel 493×841, abas 120×59) em evidence/editor15;
+     aprovação estética PENDING HUMAN APPROVAL.
+  Graphify: INDISPONÍVEL (sem graph.json local, hospedeiro 'queued') —
+     análise de impacto por leitura de código; limitação registrada.
+  Total passed: 348 | Total failed: 0 | Skipped: Graphify (indisponível).
+
+HOOKS / HARNESS
+  Hooks active: PreToolUse/PostToolUse/Stop (baseline; não-gate).
+  PreToolUse: bloqueou e REVERT gravações com credenciais dentro de .mjs do
+     repo (correto — credenciais do lab passaram a ser lidas em runtime de
+     C:\SupoClipLab\lab-login.txt); orientou reescritas.
+  Evidence: .zcode/hooks/audit/audit-log.jsonl
+
+MCP / SKILLS
+  Tools used: Playwright via CDP (Tauri real, porta 9381); ffmpeg/ffprobe
+     (evidência de render); subagente VISION (2 chamadas, método corrigido).
+  Skills consultadas: frontend-ui-engineering e minimalist-ui (atualizadas
+     com as proibições). Graphify: bloqueado (registrado).
+
+GIT
+  Branch: main | HEAD: 4ccead3e2ed771f637d078e96b984cf5ffc88a33
+  Latest commit: chore: update Playwright console log
+  Commits created: NENHUM. Push: NOT EXECUTED (aguardam autorização).
+  Working tree: MODIFIED + UNTRACKED — staging das upds 12–15 preparado
+     (313 arquivos da 12–14 + arquivos da 15 adicionados nesta entrega);
+     credenciais do laboratório NÃO entraram em arquivo versionado.
+  Pending files: untracked pessoais do mantenedor (ícones/fontes/posters/
+     design) — intocados.
+
+ISSUES
+  Bugs encontrados e corrigidos: (a) grid antigo vencia .studio-tabs (abas
+     em coluna única) — override de especificidade; (b) dropdown com padding
+     6px por regra antiga — override; (c) real_render sem source_width falhava
+     a validação — backend preenche dimensões da análise; (d) imports de
+     teste geravam warning clippy — movidos para dentro da função; (e) VISION
+     com montagens distorcidas — método substituído por DOM.
+  Unresolved failures: nenhuma nas suítes executadas.
+  Regressions: nenhuma (4 suítes e2e + unit + Rust verdes após cada mudança).
+  Risks: ajustes finais de estética pendentes do modo apontar; quebra de
+     linha de labels muito longos em painel no mínimo (300px) é evitada por
+     nowrap — monitorar em textos futuros.
+  Blockers: nenhum técnico.
+
+FINAL
+  Delivery status: FUNCIONAL ENTREGUE — inspetor 1:1 com cadeias completas;
+     estética sob avaliação; modo apontar aberto para os ajustes finais.
+  Requirements met: critérios 1–13 do ofício atendidos com evidência
+     (VISION dentro do orçamento — 2 chamadas + cancelamento; regras
+     coerentes; matriz + guia abaixo; aprovação estética com o mantenedor).
+  Remaining work: aplicar apontamentos do mantenedor; commit/push após
+     autorização; dívidas de lint pré-existentes.
+  User action required: (1) apontar os erros de UI com o MODO APONTAR ativo
+     (banner vermelho na janela maximizada) e me avisar; (2) autorizar commit
+     quando quiser.
+  Restart required: NO para validar (app aberto já roda a versão final);
+     a janela ABERTA AGORA já nasceu maximizada.
+  Ready for next task: YES (após os apontamentos).
+
+REPORT
+  Latest file: docs/reports/LATEST.txt
+  Historical file: docs/reports/history/2026-10-21_0030_atualizacao15-fidelidade-supoclip.txt
+
+GUIA DO MANTENEDOR — O QUE MUDOU E COMO TESTAR
+
+O que mudou (simples):
+  • O painel de ferramentas agora é IGUALZINHO (na organização) ao do
+    SupoClip: 4 abas na horizontal no topo (Legendas | Enquadrar | Áudio |
+    Efeitos), cada uma com ícone + nome.
+  • Legendas: botão liga/desliga no cabeçalho da seção; 3 cartões com amostra
+    real (Limpo, Destaque, Pop) — clicar muda a legenda na hora; "Ver todos
+    os 10 estilos" MOSTRA os 10 cartões ali mesmo (sem janela extra); fonte,
+    tamanho, POSIÇÃO VERTICAL com precisão (barra de 10% a 90%), cores em
+    círculo (sem caixa dentro de caixa), ligas de fundo/destaque/MAIÚSCULAS,
+    "Palavras por legenda" (1–8) que divide as legendas de verdade; Salvar
+    estilo, Carregar estilo e Aplicar a todos os cortes.
+  • Enquadrar: botões grandes de proporção (com "Src Original"), Preencher/
+    Vídeo completo, ZOOM (até 3×) e centralizar.
+  • Áudio: volume até 200% (a prévia toca até 100%; o resto vale na
+    exportação) e silenciar exportação.
+  • Efeitos: brilho, contraste, saturação, desfoque e matiz — com valores
+    iguais aos do SupoClip e botão Restaurar.
+  • As ações gerais (Transcrever, Atualizar cortes, Cortes, Voltar, Exportar)
+    ficaram no ícone de lista no TOPO (cabeçalho), abrindo um painelzinho —
+    o inspetor ficou só com propriedades.
+  • O app agora SEMPRE abre maximizado no Windows.
+  • Vícios de layout corrigidos e PROIBIDOS daqui pra frente (registrado no
+    AGENTS.md e nas skills): caixa dentro de caixa, ícone colado no texto,
+    dropdown sem respiro, valores de slider desalinhados, botões colados,
+    foco de acessibilidade no clique do mouse (agora SÓ no teclado).
+
+Teste 1 — Abas e presets
+  1. Abra um projeto → Cortes → Editar clipe.
+  2. Veja as 4 abas na horizontal; clique em cada uma.
+  Resultado esperado: a aba ativa fica destacada; o conteúdo muda; nada
+  quebra em várias linhas.
+  3. Em Legendas, clique em Destaque e depois em Pop.
+  Resultado esperado: a amostra "Sua história" muda de cor; a legenda na
+  prévia acompanha.
+
+Teste 2 — Os 10 estilos sem modal
+  1. Clique em "Ver todos os 10 estilos".
+  Resultado esperado: os 10 cartões aparecem ALI MESMO (seção expande);
+  clicar em qualquer um aplica; "Mostrar menos estilos" recolhe.
+
+Teste 3 — Posição vertical e palavras por legenda
+  1. Arraste a "Posição vertical" para 40%.
+  Resultado esperado: a legenda sobe para ~40% da altura na prévia (número
+  no chip à direita do rótulo).
+  2. Mude "Palavras por legenda" para 2 e dê play.
+  Resultado esperado: no máximo 2 palavras por legenda na prévia.
+  3. Arraste a PRÓPRIA legenda na prévia (com a aba Legendas ativa).
+  Resultado esperado: a posição acompanha o mouse.
+
+Teste 4 — Salvar, carregar e aplicar a todos
+  1. Clique "Salvar estilo"; mude para outro preset; clique "Carregar
+     estilo".
+  Resultado esperado: volta exatamente ao estilo salvo.
+  2. Clique "Aplicar a todos os cortes"; abra OUTRO corte.
+  Resultado esperado: mesmo estilo lá; Ctrl+Z desfaz; o corte original não
+  é destruído.
+
+Teste 5 — Enquadrar, Áudio, Efeitos
+  1. Aba Enquadrar: clique "Src Original" e arraste o Zoom até 2×.
+  Resultado esperado: prévia usa o formato do vídeo de origem e amplia;
+  Ctrl+Z desfaz.
+  2. Aba Áudio: volume 150% → a prévia toca no máximo normal e a EXPORTAÇÃO
+    sai mais alta; "Silenciar áudio da exportação" zera o áudio do arquivo.
+  3. Aba Efeitos: brilho 150 clareia a prévia na hora; "Restaurar" volta ao
+     neutro.
+
+Teste 6 — Exportação
+  1. Exporte um corte com legenda estilizada + zoom + brilho.
+  Resultado esperado: o MP4 sai com tudo aplicado (o teste automatizado já
+    comparou pixels e áudio de arquivos reais: brilho e volume confirmados).
+
+Teste 7 — Foco de acessibilidade (correção do vício)
+  1. Clique com o mouse em vários botões.
+  Resultado esperado: NENHUM anel de foco aparece no clique.
+  2. Pressione Tab no teclado.
+  Resultado esperado: o anel aparece sim (acessibilidade de teclado
+    preservada).
+
+Teste 8 — App maximizado
+  1. Feche e abra o CutNicePro.
+  Resultado esperado: abre em tela cheia/maximizado.
+
+Teste 9 — MODO APONTAR (aberto AGORA)
+  1. A janela do app está com o aviso vermelho "MODO APONTAR ATIVO".
+  2. Clique em cada erro de UI que você vê; Ctrl+clique desfaz o último.
+  3. Me avise ao terminar.
+  Resultado esperado: eu leio as marcações (posição + elemento) e corrijo.
+
+O que NÃO mudou: transcrição à esquerda (superior, preservada), descoberta
+de cortes, Gemma, Whisper, timeline, corte de tempo, histórico/autosave,
+NVENC e exportação — todos revalidados.
+
+END OF REPORT

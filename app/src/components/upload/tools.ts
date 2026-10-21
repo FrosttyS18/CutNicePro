@@ -15,4 +15,5 @@ export const videoTools: VideoTool[] = [
 
 export const captionModels = ["Sem legenda", "Essencial", "Destaque", "Karaokê", "Editorial", "Cartão", "Impacto", "Contorno", "Suave", "Cinema"];
 export const aspectRatios = ["16:9", "9:16", "1:1", "4:5"] as const;
-export type AspectRatio = typeof aspectRatios[number];
+export const editorAspectRatios = ["9:16", "1:1", "original", "16:9", "4:5"] as const;
+export type AspectRatio = typeof aspectRatios[number] | "original";

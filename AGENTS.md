@@ -53,6 +53,29 @@ Plataforma de edição inteligente de vídeos (inspirada no OpusClip).
 - Priorizar interfaces profissionais de ferramentas criativas: densidade funcional equilibrada, hierarquia visual planejada, legibilidade e consistência.
 - Evitar gradientes gratuitos, excesso de glassmorphism, cartões repetitivos, efeitos decorativos e componentes genéricos sem função.
 - Garantir estados de hover, foco, loading, erro, sucesso, vazio e desabilitado.
+- **PROIBIÇÕES DE LAYOUT (regra permanente, atualização 15 — vício de implementação):**
+  1. **Contornos em excesso / box dentro de box**: não criar caixas com borda
+     dentro de caixas com borda, nem delimitar cada objeto do layout com
+     contorno próprio. Contorno só quando a hierarquia pede (campos de
+     formulário, cartões de seleção); separação por espaçamento e fundo.
+  2. **Ícone em botão sem respiro**: ícone nunca sobrepõe ou encosta no texto —
+     `.flow-button` é inline-flex com gap mínimo de 7px e ícone não-comprimível.
+  3. **Dropdowns e campos sem respiro lateral**: padding lateral mínimo de 12px
+     (nunca texto colado na borda do controle).
+  4. **Parâmetros de slider desalinhados do texto**: rótulo à esquerda e valor
+     em chip à direita NA MESMA linha; a barra ocupa a largura abaixo.
+  5. **Botões colados ou sobrepostos**: vizinhança de botões exige gap mínimo
+     de 8px (linha de ações do cabeçalho, pares Salvar/Carregar etc.).
+  6. **Falta de respiro entre label e campo/busca**: todo rótulo tem espaçamento
+     mínimo de 8px até seu controle (inclusive busca da transcrição).
+  7. **Foco de acessibilidade no clique do mouse**: PROIBIDO. Foco visível é
+     para controle por TECLADO (o tracker `data-input-modality` distingue:
+     `html[data-input-modality="keyboard"]`). Regras globais em
+     `app/src/global.css`; nunca reintroduzir anel de foco para pointer.
+  Estas proibições também valem como insumo obrigatório das skills de frontend
+  do projeto (`frontend-ui-engineering`, `minimalist-ui`): consultá-las antes
+  de implementar interface e não "reestilizar" quebrando funcionalidade —
+  mudança visual nunca é desculpa para regressão de comportamento.
 - Respeitar navegação por teclado e acessibilidade; auditar interfaces com a skill `web-design-guidelines` (resultado verificável, não aprovação subjetiva).
 - A skill `design-taste-frontend` é para **páginas públicas** (landing/marketing); não aplicá-la a dashboards ou editores complexos quando conflitar com usabilidade. Para interfaces internas da aplicação, avaliar `minimalist-ui`.
 - Referências de design são material de estudo (`docs/references/design-md-shortlist.md`); não copiar a identidade de marcas existentes.
@@ -73,6 +96,15 @@ Plataforma de edição inteligente de vídeos (inspirada no OpusClip).
 - **Subagente VISION desativado por padrão**: uso PROIBIDO salvo solicitação
   explícita do mantenedor ou autorização específica na tarefa; mesmo
   autorizado, exige objetivo delimitado e condição de parada objetiva.
+- **Verificação objetiva de fidelidade por tarefa** (desde 2026-10-20, upd 15):
+  o mantenedor pode autorizar, por tarefa, o uso pontual do VISION para
+  verificação de FIDELIDADE visual contra uma referência (anatomia, geometria,
+  hierarquia, defeitos observáveis), com número de chamadas e correções
+  definidos previamente (padrão: 1 leitura da referência + 1 comparação final,
+  máx. 3). Essa verificação NÃO substitui a aprovação estética humana, não cria
+  loops autônomos e divergências subjetivas seguem para o mantenedor. O
+  protocolo completo de fidelidade está na configuração do projeto
+  (`.zcode/agents/vision.md`, seção 9).
 - Validação proporcional ao escopo (pequena → testes relacionados;
   funcional → unitários/integração/runtime; arquitetura → baseline completa;
   exclusivamente visual → compilação + runtime sem erros + integridade

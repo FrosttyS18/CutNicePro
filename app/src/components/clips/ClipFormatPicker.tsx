@@ -1,6 +1,6 @@
 import { aspectRatios,type AspectRatio } from "../upload/tools";
 
-const names: Record<AspectRatio,string> = { "9:16":"Vertical", "16:9":"Horizontal", "1:1":"Quadrado", "4:5":"Retrato" };
+const names: Record<(typeof aspectRatios)[number], string> = { "9:16":"Vertical", "16:9":"Horizontal", "1:1":"Quadrado", "4:5":"Retrato" };
 export function ClipFormatPicker({value,onChange}: { value: AspectRatio; onChange: (value: AspectRatio) => void }) {
   return <fieldset className="clip-format"><legend>Formato dos clipes</legend><div>
     {aspectRatios.map(ratio => <label key={ratio} data-selected={value === ratio}>

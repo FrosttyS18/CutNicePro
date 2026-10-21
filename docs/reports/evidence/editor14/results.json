@@ -12,37 +12,37 @@
   {
     "name": "inspetor expandiu pela divisória esquerda (até o limite da janela)",
     "ok": true,
-    "detail": "353px → 393px (teto desta janela: 393px)"
+    "detail": "353px → 467px (teto desta janela: 493px)"
   },
   {
     "name": "inspetor reduziu pela divisória (sem sumir)",
     "ok": true,
-    "detail": "393px → 327px (mín 300)"
+    "detail": "467px → 400px (mín 300)"
   },
   {
     "name": "limite máximo respeitado e canvas preservado",
     "ok": true,
-    "detail": "inspetor=393px (máx 500), canvas=356px"
+    "detail": "inspetor=493px (máx 500), canvas=2416px"
   },
   {
-    "name": "abas alternam (Legendas/Enquadrar/Texto/Áudio)",
+    "name": "abas alternam (Legendas/Enquadrar/Áudio/Efeitos)",
     "ok": true,
-    "detail": "última ativa: Áudio"
+    "detail": "última ativa: Efeitos"
   },
   {
-    "name": "propriedade de legenda real aplicada na prévia",
+    "name": "propriedade de legenda real aplicada na prévia (y contínuo)",
     "ok": true,
-    "detail": "Posição=Centro → data-position=middle"
+    "detail": "slider 40% → centro do overlay em 40% (computed top 364px)"
   },
   {
     "name": "proporção alterada na aba Enquadrar",
     "ok": true,
-    "detail": "1:1 → 9:16"
+    "detail": "9:16 → 1:1"
   },
   {
     "name": "Ctrl+Z desfaz e Ctrl+Shift+Z refaz proporção",
     "ok": true,
-    "detail": "1:1 → 9:16 → 1:1 → 9:16"
+    "detail": "9:16 → 1:1 → 9:16 → 1:1"
   },
   {
     "name": "autosave concluiu após alterações",
@@ -52,12 +52,12 @@
   {
     "name": "persistência: posição da legenda mantida ao reabrir",
     "ok": true,
-    "detail": "Centro"
+    "detail": "40"
   },
   {
     "name": "persistência: largura do inspetor mantida ao reabrir",
     "ok": true,
-    "detail": "393px → 393px"
+    "detail": "493px → 493px"
   },
   {
     "name": "transcrição ainda redimensiona pela borda direita (reduzindo)",

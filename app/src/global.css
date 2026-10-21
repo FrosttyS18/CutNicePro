@@ -397,3 +397,29 @@ button {
   justify-content: flex-end;
   gap: var(--cnp-space-3);
 }
+
+/* ── Acessibilidade de foco (regra permanente, atualização 15) ──────────────
+   Foco visível é para CONTROLE POR TECLADO; clique de mouse NUNCA desenha anel
+   de foco. O modality tracker (data-input-modality) distingue os dois. */
+html:not([data-input-modality="keyboard"]) :where(button, [role="switch"], [role="tab"], [role="option"], a,
+  input[type="range"], input[type="checkbox"], input[type="color"]):focus {
+  outline: none;
+}
+html[data-input-modality="keyboard"] :where(button, [role="switch"], [role="tab"], [role="option"], a,
+  input[type="range"], input[type="checkbox"], input[type="color"]):focus-visible {
+  outline: 2px solid var(--sh-accent);
+  outline-offset: 2px;
+}
+
+/* slider do zoom da timeline: sem outline no clique do mouse (pedido upd 15) */
+html:not([data-input-modality="keyboard"]) .timeline-zoom input[type="range"]:focus {
+  outline: none;
+}
+
+/* ── Anti-vícios de layout (regra permanente, atualização 15) ───────────────
+   1. Ícone em botão SEMPRE com respiro: flex + gap mínimo de 6px.
+   2. Botões vizinhos SEMPRE com espaçamento mínimo (nunca colados/sobrepostos).
+   3. Dropdowns/campos com respiro lateral mínimo de 10px. */
+.flow-button { display: inline-flex; align-items: center; justify-content: center; gap: 7px; }
+.flow-button > svg { flex: none; }
+.project-actions .flow-button { justify-content: flex-start; }

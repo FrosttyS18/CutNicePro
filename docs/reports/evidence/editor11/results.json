@@ -32,7 +32,7 @@
   {
     "name": "desfazer restaurou proporção anterior",
     "ok": true,
-    "detail": "9:16 → 1:1 → 9:16"
+    "detail": "1:1 → 9:16 → 1:1"
   },
   {
     "name": "autosave após desfazer",
@@ -42,7 +42,7 @@
   {
     "name": "refazer reaplicou a edição",
     "ok": true,
-    "detail": "1:1"
+    "detail": "9:16"
   },
   {
     "name": "fit/focal ajustados",
@@ -57,7 +57,7 @@
   {
     "name": "restaurar voltou ao ajuste padrão do corte",
     "ok": true,
-    "detail": "Ajustar (imagem inteira com espaço vazio)"
+    "detail": "Vídeo completo"
   },
   {
     "name": "edição por palavra exercitada",

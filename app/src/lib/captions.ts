@@ -9,9 +9,15 @@ export interface CaptionStyle {
   outline: number; outlineColor: string; shadow: boolean; background: string;
   highlightColor: string; effect: "none" | "highlight" | "karaoke";
   position: "bottom" | "middle" | "top";
+  /** Posição vertical contínua (0,1–0,9); ausente em rascunhos antigos. */
+  y?: number;
+  /** Palavras por legenda (1–8); ausente em rascunhos antigos (padrão 5). */
+  wordsPerCaption?: number;
 }
+/** Rascunhos salvos antes do y contínuo: deriva o valor da posição antiga. */
+const yFromPosition = { bottom: 0.86, middle: 0.5, top: 0.14 } as const;
 const base: CaptionStyle = { font:"Poppins", size:64, weight:600, color:"#ffffff", italic:false, underline:false,
-  uppercase:false, outline:2, outlineColor:"#000000", shadow:true, background:"transparent", highlightColor:"#02c2be", effect:"none", position:"bottom" };
+  uppercase:false, outline:2, outlineColor:"#000000", shadow:true, background:"transparent", highlightColor:"#02c2be", effect:"none", position:"bottom", y:0.86, wordsPerCaption:5 };
 export const captionPresets: {name:string; style:CaptionStyle}[] = [
   {name:"Sem legenda",style:{...base}},
   {name:"Essencial",style:{...base}},
@@ -24,7 +30,14 @@ export const captionPresets: {name:string; style:CaptionStyle}[] = [
   {name:"Suave",style:{...base,size:56,weight:400,outline:0,shadow:true}},
   {name:"Cinema",style:{...base,color:"#ffe6a7",font:"Georgia",outline:1}},
 ];
-export const effectiveCaptionStyle = (model:number, style?:CaptionStyle):CaptionStyle => style ?? captionPresets[model]?.style ?? base;
+export const effectiveCaptionStyle = (model:number, style?:CaptionStyle):CaptionStyle => {
+  const resolved = style ?? captionPresets[model]?.style ?? base;
+  const y = typeof resolved.y === "number" && resolved.y >= 0.1 && resolved.y <= 0.9
+    ? resolved.y : yFromPosition[resolved.position];
+  const wordsPerCaption = typeof resolved.wordsPerCaption === "number" && resolved.wordsPerCaption >= 1 && resolved.wordsPerCaption <= 8
+    ? Math.round(resolved.wordsPerCaption) : 5;
+  return { ...resolved, y, wordsPerCaption };
+};
 const color = (value:unknown) => typeof value === "string" && /^#[\da-f]{6}$/i.test(value);
 export function isCaptionStyle(value:unknown): value is CaptionStyle {
   if (!value || typeof value !== "object") return false;
@@ -34,7 +47,9 @@ export function isCaptionStyle(value:unknown): value is CaptionStyle {
     && typeof s.italic==="boolean" && typeof s.underline==="boolean" && typeof s.uppercase==="boolean" && typeof s.shadow==="boolean"
     && typeof s.outline==="number" && Number.isFinite(s.outline) && s.outline>=0 && s.outline<=12
     && (s.background==="transparent" || color(s.background)) && ["none","highlight","karaoke"].includes(s.effect??"")
-    && ["bottom","middle","top"].includes(s.position??"");
+    && ["bottom","middle","top"].includes(s.position??"")
+    && (s.y===undefined || (typeof s.y==="number" && Number.isFinite(s.y) && s.y>=0.1 && s.y<=0.9))
+    && (s.wordsPerCaption===undefined || (typeof s.wordsPerCaption==="number" && Number.isInteger(s.wordsPerCaption) && s.wordsPerCaption>=1 && s.wordsPerCaption<=8));
 }
 export function captionPresentation(s:CaptionStyle, ratio=16/9, sample=false):CSSProperties {
   const scale=sample ? 18/s.size : 1;
@@ -46,16 +61,26 @@ export function captionPresentation(s:CaptionStyle, ratio=16/9, sample=false):CS
     paintOrder:"stroke fill", textShadow:s.shadow?"0 2px 4px #000a":"none", background:s.background };
 }
 export interface CaptionCue { words:{text:string;active:boolean;spoken:boolean}[] }
-export function captionCue(segments:TranscriptSegment[],time:number):CaptionCue | null {
+/** Pausa maior que 0,6 s entre palavras fecha o grupo (paridade SupoClip). */
+const GROUP_GAP = 0.6;
+export function captionCue(segments:TranscriptSegment[],time:number,wordsPerCaption=5):CaptionCue | null {
   const segment=segments.find(s=>time>=s.start && time<s.end);
   if (!segment) return null;
   const words=displayWords(segment);
   if (!words.length) return null;
-  let selected=0;
-  words.forEach((word,i)=>{if(word.start!==null && word.start<=time) selected=i;});
   const timed=words.some(word=>word.start!==null);
-  const first=timed?Math.floor(selected/5)*5:0;
-  const visible=timed?words.slice(first,first+5):words;
-  return {words:visible.map(word=>({text:cleanTranscriptText(word.text),active:word.start!==null && word.end!==null && time>=word.start && time<word.end,
+  if (!timed) return {words:words.map(word=>({text:cleanTranscriptText(word.text),active:false,spoken:false}))};
+  const groups:typeof words[]=[];
+  let current:typeof words=[];
+  for (const word of words) {
+    const previous=current[current.length-1];
+    if (previous && previous.end!==null && word.start!==null &&
+      (current.length>=wordsPerCaption || word.start-previous.end>GROUP_GAP)) { groups.push(current); current=[]; }
+    current.push(word);
+  }
+  if (current.length) groups.push(current);
+  let active=groups[0];
+  for (const group of groups) if (group[0].start!==null && group[0].start<=time) active=group;
+  return {words:active.map(word=>({text:cleanTranscriptText(word.text),active:word.start!==null && word.end!==null && time>=word.start && time<word.end,
     spoken:word.start!==null && time>=word.start}))};
 }

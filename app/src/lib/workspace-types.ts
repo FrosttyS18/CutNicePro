@@ -27,13 +27,26 @@ export interface TranscriptSegment {
 
 export interface TranscriptWord { text: string; start: number; end: number }
 
+/** Ajustes visuais aplicados ao vídeo (paridade SupoClip): neutro = 100/100/100/0/0. */
+export interface EditorEffects {
+  brightness: number;
+  contrast: number;
+  saturation: number;
+  blur: number;
+  hue: number;
+}
+
 export interface EditorSettings {
   ratio: AspectRatio;
   fit: "contain" | "cover";
   focalPoint?: { x: number; y: number };
+  /** Ampliação da imagem (1–3); combinada com fit/foco na prévia e na exportação. */
+  zoom?: number;
+  effects?: EditorEffects;
   captionModel: number;
   captionStyle?: CaptionStyle;
   text: string;
+  /** 0–2 (0–200 %); a prévia limita a 100 %, a exportação aplica o valor integral. */
   volume: number;
   muted: boolean;
   background: string;

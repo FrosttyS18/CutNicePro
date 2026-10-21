@@ -102,19 +102,19 @@ async function main() {
   check("desfazer/refazer presentes", (await undo.count()) > 0 && (await redo.count()) > 0);
 
   // 4) editar proporção para um valor DIFERENTE do atual (histórico entra)
-  // (atualização 14: proporção/ajuste vivem na aba Enquadrar do inspetor)
-  await page.locator(".editor-inspector__tab", { hasText: "Enquadrar" }).first().click().catch(() => {});
+  // (atualização 15: proporção/ajuste são toggles na aba Enquadrar)
+  await page.locator(".studio-tab", { hasText: "Enquadrar" }).first().click().catch(() => {});
   await sleep(400);
   const before = await status.textContent().catch(() => "");
-  const ratio = page.getByLabel("Proporção do vídeo").first();
   const ratioValue = async () => {
-    const pill = page.locator('[role="listbox"][aria-label="Proporção do vídeo"] [aria-selected="true"]');
-    return (await pill.count()) ? (await pill.textContent()).trim() : "?";
+    const toggle = page.locator('.studio-toggle[aria-pressed="true"] .studio-toggle__value').first();
+    return (await toggle.count()) ? (await toggle.textContent()).trim() : "?";
   };
   const inicial = await ratioValue();
   const alvo = inicial === "1:1" ? "9:16" : "1:1";
-  if (await ratio.count()) {
-    await ratio.click().catch(() => {});
+  const ratioToggle = page.locator('[role="group"][aria-label="Proporção do vídeo"] .studio-toggle', { hasText: alvo }).first();
+  if (await ratioToggle.count()) {
+    await ratioToggle.click().catch(() => {});
     await sleep(400);
     await page.getByRole("option", { name: alvo, exact: true }).first().click().catch(() => {});
     await sleep(400);
@@ -141,12 +141,8 @@ async function main() {
   check("refazer reaplicou a edição", afterRedo === alvo, afterRedo);
 
   // 7) ajuste Ajustar/Preencher e posição
-  const fit = page.getByLabel("Ajuste do vídeo").first();
-  if (await fit.count()) {
-    await fit.click().catch(() => {}); await sleep(300);
-    await page.getByRole("option", { name: "Preencher" }).first().click().catch(() => {});
-    await sleep(300);
-  }
+  const fitToggle = page.locator('.studio-toggle--wide', { hasText: "Preencher quadro" }).first();
+  if (await fitToggle.count()) { await fitToggle.click().catch(() => {}); await sleep(300); }
   const focalX = page.locator('input[type="range"]').first();
   if (await focalX.count()) { await focalX.fill("30").catch(() => {}); await sleep(300); }
   check("fit/focal ajustados", true);
@@ -159,8 +155,8 @@ async function main() {
   if (await restore.count()) {
     await restore.click().catch(() => {});
     await sleep(600);
-    const fitAfter = await page.locator('[role="listbox"][aria-label="Ajuste do vídeo"] [aria-selected="true"]').textContent().catch(() => "?");
-    check("restaurar voltou ao ajuste padrão do corte", fitAfter !== "cover" || fitAfter === "?", fitAfter);
+    const fitAfter = (await page.locator('.studio-toggle--wide[aria-pressed="true"]').first().textContent().catch(() => "?")).trim();
+    check("restaurar voltou ao ajuste padrão do corte", fitAfter.includes("Vídeo completo") || fitAfter === "?", fitAfter);
   }
 
   // 9) edição de palavra da transcrição (duplo clique em palavra)
@@ -192,9 +188,9 @@ async function main() {
   await page.getByRole("button", { name: "Editar clipe" }).first().click().catch(() => {});
   await sleep(2000);
   await sleep(1500);
-  await page.locator(".editor-inspector__tab", { hasText: "Enquadrar" }).first().click().catch(() => {});
+  await page.locator(".studio-tab", { hasText: "Enquadrar" }).first().click().catch(() => {});
   await sleep(400);
-  const ratioReopen = (await page.locator('[role="listbox"][aria-label="Proporção do vídeo"] [aria-selected="true"]').textContent().catch(() => "?")).trim();
+  const ratioReopen = (await page.locator('.studio-toggle[aria-pressed="true"] .studio-toggle__value').first().textContent().catch(() => "?")).trim();
   check("reabrir manteve rascunho coerente com restauração (9:16)", ratioReopen === "9:16", ratioReopen);
 
   await page.screenshot({ path: path.join(OUT, "editor-final.png") }).catch(() => {});

@@ -1,0 +1,31 @@
+import { createRequire } from "node:module";
+import { setTimeout as sleep } from "node:timers/promises";
+const require = createRequire("C:/CutNicePro/tools/e2e/editor11-runtime-tauri.mjs");
+const { chromium } = require("C:/CutNicePro/.tooling/playwright/node_modules/playwright");
+const browser = await chromium.connectOverCDP("http://127.0.0.1:9381");
+await sleep(1500);
+const page = browser.contexts()[0].pages().find(p => !p.url().startsWith("chrome-error"));
+if (!(await page.locator('[data-testid="video-editor"]').count())) { console.log("FORA DO EDITOR"); process.exit(2); }
+const ui = await page.evaluate(() => {
+  const r = {};
+  const btn = [...document.querySelectorAll(".flow-button")].find(b => b.textContent.includes("Salvar estilo"));
+  const cs = btn ? getComputedStyle(btn) : null;
+  r["1 botao branco/preto/sem outline"] = cs ? (cs.backgroundColor === "rgb(255, 255, 255)" && cs.color === "rgb(10, 10, 10)" && parseFloat(cs.borderTopWidth) === 0) : null;
+  const sel = document.querySelector(".studio-select");
+  r["2 dropdown sem contorno"] = sel ? parseFloat(getComputedStyle(sel).borderTopWidth) === 0 : null;
+  const tg = document.querySelector(".studio-toggle-estilos");
+  r["3 alternador = icone animado"] = tg ? (Boolean(tg.querySelector("svg")) && getComputedStyle(tg.querySelector("svg")).transitionProperty.includes("transform")) : null;
+  const pa = document.querySelector('.studio-preset[aria-pressed="true"]');
+  r["4a preset ativo branco"] = pa ? getComputedStyle(pa).backgroundColor === "rgb(255, 255, 255)" : null;
+  r["4b preset sem borda"] = pa ? parseFloat(getComputedStyle(pa).borderTopWidth) === 0 : null;
+  const busca = document.querySelector('.editor-pane--transcript input[type="search"]');
+  const bcs = busca ? getComputedStyle(busca) : null;
+  r["5a busca sem outline"] = bcs ? parseFloat(bcs.borderTopWidth) === 0 : null;
+  r["5b busca com lupa"] = bcs ? bcs.backgroundImage.includes("svg") : null;
+  const header = document.querySelector(".video-editor .editor-header");
+  r["6 header sem linha no topo"] = header ? parseFloat(getComputedStyle(header).borderBottomWidth) === 0 : null;
+  return r;
+});
+console.log(JSON.stringify(ui, null, 1));
+await page.screenshot({ path: "C:/CutNicePro/docs/reports/evidence/editor15/ui-ajustes-final.png" });
+await browser.close().catch(() => {});

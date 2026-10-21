@@ -18,11 +18,16 @@ pub async fn export_video(
     project_id: String,
     media_id: String,
     job_id: String,
-    settings: RenderSettings,
+    mut settings: RenderSettings,
     clip_id: Option<String>,
 ) -> Result<bool, String> {
     let lease = app.state::<Arc<ProcessingGate>>().acquire()?;
     let (entry, duration) = media(&app, &project_id, &media_id)?;
+    // proporção original/zoom precisam das dimensões reais da fonte
+    if let Some(analysis) = entry.analysis.as_ref() {
+        settings.source_width = Some(analysis.width);
+        settings.source_height = Some(analysis.height);
+    }
     settings.validate(duration)?;
     let base = crate::app_data_base(&app)?;
     if let Some(id) = clip_id {

@@ -1,14 +1,14 @@
 import { emptyWorkspace } from "../lib/workspace";
 import type { EditorSettings, UploadSource, WorkspaceData } from "../lib/workspace-types";
-import { aspectRatios } from "../components/upload/tools";
 import { validSegmentWords } from "../lib/transcript-text";
 import { isCaptionStyle } from "../lib/captions";
+import { editorAspectRatios } from "../components/upload/tools";
 
 const key = (id: string) => `cnp.workspace.v1.${id}`;
 const sessionMedia = new Map<string, { file: File; url: string }>();
 
 function validSettings(settings: EditorSettings | undefined): boolean {
-  return Boolean(settings && aspectRatios.includes(settings.ratio) && ["contain", "cover"].includes(settings.fit)
+  return Boolean(settings && editorAspectRatios.includes(settings.ratio as (typeof editorAspectRatios)[number]) && ["contain", "cover"].includes(settings.fit)
     && Number.isInteger(settings.captionModel) && settings.captionModel >= 0 && settings.captionModel <= 9
     && (settings.captionStyle === undefined || isCaptionStyle(settings.captionStyle))
     && (settings.focalPoint === undefined || [settings.focalPoint.x,settings.focalPoint.y].every(v => Number.isFinite(v) && v >= 0 && v <= 100))

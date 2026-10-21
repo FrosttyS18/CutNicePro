@@ -1,0 +1,191 @@
+╔════════════════════════════════════════════╗
+║       CUTNICEPRO — ZCODE REPORT            ║
+╚════════════════════════════════════════════╝
+
+TASK
+  Name: Atualização 15 — ADENDO 2: MODO APONTAR v5 (inspetor estilo DevTools
+        com F7, seleção por elemento, comentários editáveis e regras globais
+        de visão própria)
+  Status: PASS (ferramenta entregue, validada de ponta a ponta; aguardando os
+        apontamentos do mantenedor; estética PENDING HUMAN APPROVAL)
+  Scope: tools/e2e/pointer-mode.mjs (v5), C:\Users\adcka\.zcode\AGENTS.md
+        (política global de visão — autorização explícita do mantenedor),
+        docs/reports/evidence/editor15/. Nenhum arquivo do app alterado.
+  Objective: (1) atualizar o AGENTS.md global: agente multimodal usa a PRÓPRIA
+        visão, liberada em qualquer projeto, sem depender do subagente VISION;
+        (2) remover a seleção vermelha com véu escuro — contorno leve e fino;
+        (3) permitir voltar em um ponto já clicado e EDITAR o comentário
+        (clique-direito com menu de contexto); (4) corrigir o defeito de não
+        conseguir selecionar elementos filhos dentro de um bloco maior;
+        (5) permitir desfazer clique/comentário; (6) separar claramente o
+        PEDIDO do mantenedor do OBJETO selecionado nos registros.
+  Result: tudo entregue e validado; duas causas-raiz profundas encontradas
+        (injeção em document-start sem DOM; acúmulo de cópias da injeção com
+        prioridade para a cópia ANTIGA) e definitivamente resolvidas.
+
+IMPLEMENTATION
+  1. AGENTS.md GLOBAL (C:\Users\adcka\.zcode\AGENTS.md): seção
+     "VISION FIRST" SUBSTITUÍDA por "POLÍTICA GLOBAL DE INSPEÇÃO VISUAL":
+     agente multimodal usa a própria visão diretamente, LIBERADO em qualquer
+     projeto (global/individual); subagente VISION opcional (pedido explícito,
+     protocolo com orçamento, ou agente sem visão); rigor mantido
+     (OBSERVADO/INFERIDO/INCERTO, bloqueio declarado); aprovação estética do
+     mantenedor onde regras de projeto a reservarem permanece.
+  2. MODO APONTAR v5 (tools/e2e/pointer-mode.mjs):
+     a. F7 LIGA/DESLIGA — desligado, navegação 100% normal (estado persiste
+        em sessionStorage).
+     b. HOVER estilo DevTools: contorno tracejado + TOOLTIP (tag#id, WxH,
+        color, background, fonte) em QUALQUER elemento, incluindo div.
+     c. CLIQUE seleciona o elemento EXATO (sem estreitamento semântico).
+     d. SEM véu escuro: seleção com contorno FINO e leve (1,5px, teal
+        0.95) — o véu rgba 20000px foi REMOVIDO.
+     e. Clique-direito em elemento JÁ APONTADO abre MENU DE CONTEXTO:
+        "Editar comentário…" (campo pré-preenchido; Enter/Salvar atualiza o
+        MESMO registro, sem duplicar) e "Remover apontamento".
+     f. DEFEITO DOS FILHOS CORRIGIDO: o clique em elemento filho de um bloco
+        selecionado era engolido pela guarda contains() — agora todo clique
+        seleciona o elemento exato sob o cursor (pai → filho funciona).
+        Clicar de novo no MESMO elemento escala para o PAI.
+     g. Campos do registro separados: `pedido` (o que o mantenedor quer) ×
+        `objeto` (elemento selecionado: tag/id/classes/rótulo/texto/cor/
+        fundo/fonte) — sem confusão na geração do relatório.
+     h. Deduplicação temporal (mesmo seletor < 200 ms é ignorado) — imune a
+        eventos fantasma de duplo dispatch.
+     i. Blindagem definitiva contra cópias acumuladas: flag no document
+        (document.__pointerV5Ativo) garante que, com N cópias da injeção
+        vivas, só a PRIMEIRA instala handlers; o gravador confere a versão
+        da cópia ativa (window.__pointerV5Versao) e RECUSA rodar sobre uma
+        cópia antiga (exige reiniciar o app).
+  3. CAUSAS-RAIZ encontradas e corrigidas durante a entrega:
+     a. v2/v3/v4 "mortas": a injeção rodava em document-start sem
+        documentElement (appendChild lançava antes dos listeners) →
+        inicialização adiada ao DOMContentLoaded.
+     b. salvarSessao com JSON.stringify de registros contendo _el/_vis
+        (DOM com React fiber = circular) → serializar apenas campos planos.
+     c. Menu/caixa anexados fora do overlay: cliques neles viravam NOVAS
+        seleções (registros vazios) → movidos para DENTRO do overlay.
+     d. Múltiplos addInitScript (um por execução do gravador) acumulavam
+        handlers → blindagem (b.i acima) + reinício do app para sessão limpa.
+  Not completed: nada na ferramenta; apontamentos do mantenedor são a
+     próxima entrada.
+
+FILES
+  Created: tools/e2e/{nav-editor,verify-final-v5,verify-rightedit,
+     verify-rightclick,verify-v5,verify-v5-passo,diag-v5,diag-ctx,
+     diag-ctx2,diag-hit,diag-hit2,diag-mouse,diag-estado,diag-instancias,
+     diag-f7v5}.mjs (diagnósticos/verificações da sessão).
+  Modified: tools/e2e/pointer-mode.mjs (v5 completo); C:\Users\adcka\.zcode\
+     AGENTS.md (política global de visão — FORA do repo, autorizado);
+     docs/reports/evidence/editor15/pointer-feedback.json (formato v5).
+  Deleted: nenhum.
+  Unexpected changes: NONE.
+
+VALIDATION
+  Fluxo completo do usuário (verify-final-v5.mjs, app real):
+     F7 liga ✅; PAI (h1) selecionado + comentado ✅; FILHO (path do ícone,
+     dentro do bloco já selecionado) selecionado + comentado ✅ (defeito
+     corrigido); clique-direito abre o menu ✅ (com registro existente);
+     Editar pré-preenche ✅ e atualiza o MESMO registro ("pedido do PAI
+     EDITADO", sem duplicar) ✅; limpar + F7 desligar ✅.
+  Contenção de duplicação: 1 clique = 1 caixa = 1 registro
+     (diag-instancias: caixas=1, sessão=1) após a blindagem.
+  Verificação de versão: cópia ativa confirmada v5 na sessão limpa.
+  Regressão: nenhuma — nenhum arquivo do app alterado (suítes anteriores
+     permanecem válidas: e15 20/20, e13 18/18, e14 15/15, e11 14/14).
+  Runtime: app reiniciado limpo (sem injeções acumuladas), gravador único
+     ativo e gravando em evidence/editor15/pointer-feedback.json.
+  Total passed: fluxo completo + contenção | failed: 0
+
+GIT
+  Branch: main | HEAD: 4ccead3e2ed771f637d078e96b984cf5ffc88a33
+  Commits created: NENHUM. Push: NOT EXECUTED.
+  Working tree: MODIFIED + UNTRACKED (staging das upds 12–15: 420 arquivos;
+     ferramentas desta entrega a incluir no próximo staging).
+
+ISSUES
+  Bugs corrigidos: (a) filhos não selecionáveis dentro de pai selecionado
+     (guarda contains); (b) véu escuro na seleção (removido); (c) menu/caixa
+     fora do overlay viravam seleção (movidos para dentro); (d) JSON circular
+     no salvamento (serialização de campos planos); (e) injeção em
+     document-start sem DOM (init adiado); (f) cópias acumuladas com cópia
+     antiga vencendo (blindagem + verificação de versão).
+  Limitação conhecida: mudar o código da injeção exige REINICIAR O APP
+     (init scripts vivem enquanto o processo do navegador vive); o gravador
+     agora detecta e recusa rodar sobre cópia antiga (exit 3 com aviso).
+  Blockers: nenhum.
+
+FINAL
+  Delivery status: ENTREGUE — ferramenta pronta para uso imediato.
+  User action required: F7 para ligar; passar o mouse (inspeção); clicar no
+     elemento; escrever o pedido; Enter. Clique-direito num apontamento
+     existente para Editar/Remover. Ao terminar, avisar — eu leio
+     `pedido` × `objeto` e corrijo exatamente o que foi pedido.
+  Restart required: NO (a janela atual já roda a versão final e o gravador
+     está ativo).
+  Ready for next task: YES (aplicar os apontamentos recebidos).
+
+REPORT
+  Latest file: docs/reports/LATEST.txt
+  Historical file: docs/reports/history/2026-10-21_0215_adendo2-modo-apontar-v5.txt
+  Relatórios anteriores da Atualização 15: history/2026-10-21_0030_*.txt e
+     history/2026-10-21_0100_adendo-modo-apontar-v4.txt
+
+GUIA DO MANTENEDOR — O QUE MUDOU E COMO TESTAR
+
+O que mudou?
+  O modo apontar ficou completo, no padrão dos inspetores profissionais:
+  • F7 liga/desliga. Desligado, o app é 100% normal.
+  • Ligado: passe o mouse — cada elemento é contornado e um TOOLTIP mostra
+    tag, tamanho, cores e fonte (qualquer elemento, incluindo divs).
+  • Clique no elemento → contorno FINO e leve (sem tela escura) + campo para
+    escrever O QUE você quer ajustar ali. Enter registra.
+  • Clique num elemento MENOR dentro de um bloco já apontado? Agora funciona:
+    todo clique pega o elemento exato sob o cursor.
+  • Clicar de novo no MESMO elemento sobe para o elemento pai (para apontar
+    o bloco em vez do item interno).
+  • QUER CORRIGIR UM COMENTÁRIO? Clique com o BOTÃO DIREITO no ponto já
+    apontado (ou no número dele): menu com "Editar comentário…" (já vem
+    preenchido) e "Remover apontamento".
+  • No arquivo que eu leio, o seu texto fica registrado como `pedido` e o
+    elemento como `objeto` — eu corrijo exatamente o seu pedido, no lugar
+    certo, sem confundir um com o outro.
+  E no AGENTS.md global: agentes com visão própria (como eu) agora analisam
+  imagens diretamente, liberados em qualquer projeto — o subagente VISION
+  passou a ser opcional.
+
+Teste 1 — Ligar/desligar
+  1. Pressione F7 (aviso vermelho no canto INFERIOR direito = ligado).
+  2. Navegue com F7 desligado: o app responde normalmente (play, edição,
+    sliders). Pressione F7 de novo para apontar.
+  Resultado esperado: com F7 desligado, NENHUM clique é interceptado.
+
+Teste 2 — Inspecionar
+  1. Com F7 ligado, passe o mouse pelos controles.
+  Resultado esperado: contorno azul tracejado + ficha técnica do elemento
+  (tag, tamanho, cores, fonte).
+
+Teste 3 — Apontar com comentário
+  1. Clique num elemento → contorno fino + campo de texto.
+  2. Escreva o ajuste (ex.: "esse rótulo está cortado") e Enter.
+  Resultado esperado: número verde fixado no elemento; o comentário fica
+  vinculado a ele.
+
+Teste 4 — Editar e remover
+  1. Clique com o BOTÃO DIREITO num ponto já apontado.
+  2. "Editar comentário…" → o campo abre preenchido → altere → Enter.
+  3. "Remover apontamento" exclui o ponto (ou use o ✕ dele).
+  Resultado esperado: o comentário atualiza no MESMO número, sem criar
+  outro; a remoção tira o ponto e o comentário.
+
+Teste 5 — Filho dentro do pai
+  1. Aponte o cabeçalho (bloco grande). Depois clique num ícone DENTRO dele.
+  Resultado esperado: o clique pega o ícone (elemento menor), não o bloco.
+  2. Clique de novo no MESMO elemento: sobe para o pai.
+  Resultado esperado: útil para apontar o bloco em vez do item interno.
+
+Teste 6 — Me avisar
+  1. Aponte tudo o que precisar e me diga "pronto".
+  Resultado esperado: eu leio cada `pedido` com o `objeto` exato (seletor,
+  posição em % da tela — válido em qualquer resolução) e corrijo.
+
+END OF REPORT

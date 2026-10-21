@@ -1,5 +1,3 @@
-use super::{pipeline, scratch::Scratch, settings::RenderSettings};
-use crate::transcription::{process::ProcessControl, types::Segment};
 
 /// Matriz de preenchimento para validação VISUAL (atualização 13): renderiza
 /// as 6 configurações com fonte de padrão conhecido (testsrc, 320x180) e
@@ -9,6 +7,9 @@ use crate::transcription::{process::ProcessControl, types::Segment};
 #[test]
 #[ignore = "Renderiza 6 MP4s reais para validação visual de preenchimento"]
 fn render_fill_matrix() {
+    use super::{pipeline, scratch::Scratch, settings::RenderSettings};
+    use crate::transcription::{process::ProcessControl, types::Segment};
+
     let tools = crate::media_analyze::detect_fftools().expect("FFmpeg exigido");
     let base = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"))
         .join("../../.tooling/test-output/fill-matrix");

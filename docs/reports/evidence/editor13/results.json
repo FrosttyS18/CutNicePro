@@ -37,7 +37,7 @@
   {
     "name": "arraste no canvas moveu o ponto focal",
     "ok": true,
-    "detail": "50 → 72"
+    "detail": "50 → 53"
   },
   {
     "name": "Concluir encerrou o modo",
@@ -62,7 +62,7 @@
   {
     "name": "arraste da borda direita redimensionou a transcrição",
     "ok": true,
-    "detail": "320px → 360px"
+    "detail": "320px → 437px"
   },
   {
     "name": "timeline sem botões de retrair (fora do conteúdo)",
@@ -75,9 +75,9 @@
     "detail": "220px → 130px"
   },
   {
-    "name": "abas de categoria funcionam (Áudio ativa)",
+    "name": "abas de categoria funcionam (Efeitos ativa)",
     "ok": true,
-    "detail": "Áudio"
+    "detail": "Efeitos"
   },
   {
     "name": "Ctrl+Z desfaz edição de proporção",

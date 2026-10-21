@@ -10,11 +10,22 @@ interface Props {
   settings: EditorSettings;
   videoRef?: RefObject<HTMLVideoElement | null>;
   onTime?: (time: number) => void;
-  onDuration?: (duration: number) => void;
+  onDuration?: (value: number) => void;
   cue?: CaptionCue | null;
   nativeControls?: boolean;
   onTogglePlay?: () => void;
   original?: boolean;
+}
+
+function previewFilter(effects: EditorSettings["effects"]): string | undefined {
+  if (!effects) return undefined;
+  const parts: string[] = [];
+  if (effects.brightness !== 100) parts.push(`brightness(${effects.brightness / 100})`);
+  if (effects.contrast !== 100) parts.push(`contrast(${effects.contrast / 100})`);
+  if (effects.saturation !== 100) parts.push(`saturate(${effects.saturation / 100})`);
+  if (effects.hue !== 0) parts.push(`hue-rotate(${effects.hue}deg)`);
+  if (effects.blur > 0) parts.push(`blur(calc(100cqw * ${effects.blur / 1080}))`);
+  return parts.length ? parts.join(" ") : undefined;
 }
 
 export function VideoPreview({ media, localUrl, settings, videoRef, onTime, onDuration, cue, nativeControls=true, onTogglePlay, original=false }: Props) {
@@ -40,9 +51,14 @@ export function VideoPreview({ media, localUrl, settings, videoRef, onTime, onDu
   },[ref,localUrl]);
   useEffect(() => setError(false), [localUrl, media?.videoId]);
   useEffect(() => {
-    if (ref.current) { ref.current.volume = original ? 1 : settings.volume; ref.current.muted = original ? false : settings.muted; }
+    if (ref.current) { ref.current.volume = original ? 1 : Math.min(1, settings.volume); ref.current.muted = original ? false : settings.muted; }
   }, [settings.volume, settings.muted, ref, localUrl,original]);
-  const ratio = original ? (media?.width && media?.height ? media.width/media.height : 16/9) : Number(settings.ratio.split(":")[0])/Number(settings.ratio.split(":")[1]);
+  const ratioNumber = (label: string) => Number(label.split(":")[0])/Number(label.split(":")[1]);
+  const ratio = original ? (media?.width && media?.height ? media.width/media.height : 16/9)
+    : settings.ratio === "original" ? (media?.width && media?.height ? media.width/media.height : 16/9)
+    : ratioNumber(settings.ratio);
+  const caption = effectiveCaptionStyle(settings.captionModel, settings.captionStyle);
+  const zoom = original ? 1 : (settings.zoom ?? 1);
   return (
     <div className="workspace-preview" data-original={original} style={{ aspectRatio: ratio, background: original ? "#000000" : settings.background,
       "--preview-ratio": ratio } as CSSProperties}>
@@ -50,7 +66,9 @@ export function VideoPreview({ media, localUrl, settings, videoRef, onTime, onDu
         src={`https://www.youtube-nocookie.com/embed/${media.videoId}`} title="Vídeo de origem no YouTube"
         allow="fullscreen; picture-in-picture" allowFullScreen referrerPolicy="strict-origin-when-cross-origin" />
         : localUrl ? <video ref={ref} key={localUrl} src={localUrl} crossOrigin="anonymous" controls={nativeControls} playsInline preload="metadata"
-          style={{ objectFit: original ? "contain" : settings.fit, objectPosition: original ? "50% 50%" : `${settings.focalPoint?.x ?? 50}% ${settings.focalPoint?.y ?? 50}%` }} aria-label={`Prévia de ${media?.name ?? "vídeo"}`}
+          style={{ objectFit: original ? "contain" : settings.fit, objectPosition: original ? "50% 50%" : `${settings.focalPoint?.x ?? 50}% ${settings.focalPoint?.y ?? 50}%`,
+            transform: zoom !== 1 ? `scale(${zoom})` : undefined,
+            filter: original ? undefined : previewFilter(settings.effects) }} aria-label={`Prévia de ${media?.name ?? "vídeo"}`}
           tabIndex={nativeControls ? undefined : 0} aria-keyshortcuts={nativeControls ? undefined : "Space"}
           onError={() => setError(true)} onTimeUpdate={(event) => onTime?.(event.currentTarget.currentTime)}
           onLoadedMetadata={(event) => {
@@ -68,8 +86,9 @@ export function VideoPreview({ media, localUrl, settings, videoRef, onTime, onDu
         }}/>}
       {error && <p className="workspace-preview__error" role="alert">Não foi possível reproduzir este arquivo. Reconecte um vídeo compatível.</p>}
       {!original && settings.text && <span className="workspace-preview__text">{settings.text}</span>}
-      {!original && settings.captionModel>0 && cue && <div className="caption-overlay" data-position={effectiveCaptionStyle(settings.captionModel,settings.captionStyle).position} aria-label="Legenda">
-        <CaptionVisual style={effectiveCaptionStyle(settings.captionModel,settings.captionStyle)} ratio={Number(settings.ratio.split(":")[0])/Number(settings.ratio.split(":")[1])} cue={cue}/>
+      {!original && settings.captionModel>0 && cue && <div className="caption-overlay" data-position={caption.position}
+          style={{ "--caption-y": `${Math.round((caption.y ?? 0.86) * 100)}%` } as CSSProperties} aria-label="Legenda">
+        <CaptionVisual style={caption} ratio={ratio} cue={cue}/>
       </div>}
     </div>
   );

@@ -1,0 +1,12 @@
+import { createRequire } from "node:module";
+import { setTimeout as sleep } from "node:timers/promises";
+const require = createRequire("C:/CutNicePro/tools/e2e/editor11-runtime-tauri.mjs");
+const { chromium } = require("C:/CutNicePro/.tooling/playwright/node_modules/playwright");
+const browser = await chromium.connectOverCDP("http://127.0.0.1:9381");
+await sleep(1500);
+const page = browser.contexts()[0].pages().find(p => !p.url().startsWith("chrome-error"));
+const btn = page.locator(".flow-button", { hasText: "Aplicar a todos os cortes" }).first();
+await btn.hover(); await sleep(300);
+const cs = await btn.evaluate(el => { const c = getComputedStyle(el); return { bg: c.backgroundColor, cor: c.color }; });
+console.log("hover REAL:", JSON.stringify(cs), "| escuro+branco:", cs.bg === "rgb(36, 36, 36)" && cs.cor === "rgb(255, 255, 255)");
+await browser.close().catch(() => {});

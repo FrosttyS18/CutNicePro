@@ -79,10 +79,16 @@ html[data-input-modality="keyboard"] .transcript-word-popover :is(button, input)
 .project-workspace--editing { height: 100%; min-height: 0; display: flex; flex-direction: column; padding: 12px 16px; }
 .project-workspace--editing .workspace-notice { flex: none; margin-top: 4px; padding: 4px 8px; }
 .video-editor { flex: 1; min-height: 0; display: grid; grid-template-rows: auto minmax(0, 1fr) auto; }
-.video-editor .editor-header { flex-wrap: nowrap; padding-bottom: 10px; }
+.video-editor .editor-header { flex-wrap: nowrap; padding-bottom: 10px; border-bottom: 0; } /* sem linha horizontal no topo da área (pedido upd 15) */
 .video-editor .editor-header h1 { order: 0; flex-basis: auto; }
 .video-editor .editor-layout { grid-template-columns: var(--transcript-width, 320px) minmax(0, 1fr) var(--inspector-width, 360px); align-items: stretch; min-height: 0; padding: 12px 0; }
-.video-editor .editor-pane--transcript .transcript-panel { min-height: 0; height: 100%; max-height: 100%; overflow: hidden; margin: 0; padding: 0; border: 0; }
+.video-editor .editor-pane--transcript .transcript-panel { min-height: 0; height: 100%; max-height: 100%; overflow: hidden; margin: 0; padding: 0; border: 0; display: flex; flex-direction: column; gap: 10px; }
+.video-editor .editor-pane--transcript .transcript-panel > header { padding: 12px 0 0; }
+.video-editor .editor-pane--transcript .transcript-panel > input[type="search"] {
+  margin: 0 0 4px; border: 0; padding-left: 34px;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 256 256' fill='%239a9a9a'><path d='M229.66,218.34l-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z'/></svg>");
+  background-repeat: no-repeat; background-position: 10px center; background-size: 16px 16px;
+} /* sem outline + lupa (pedido upd 15) */
 .video-editor .transcript-scroll { flex: 1; max-height: none; }
 .video-editor .editor-stage { display: flex; flex-direction: column; min-height: 0; min-width: 0; }
 .video-editor .editor-stage__canvas { flex: 1; min-height: 0; display: grid; place-items: center; container-type: size; }
@@ -113,6 +119,7 @@ html[data-input-modality="keyboard"] .transcript-word-popover :is(button, input)
    Scrollbar premium (7px, thumb #494949) em todos os contêineres novos. */
 .editor-header--compact { gap: 8px; }
 .editor-header--compact h1 { flex: 1; font-size: 1rem; margin: 0; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.editor-header__actions { align-items: center; display: flex; gap: 6px; }
 .editor-icon-button {
   align-items: center; background: transparent; border: 1px solid var(--sh-divider); border-radius: 6px;
   color: inherit; cursor: pointer; display: inline-flex; height: 30px; justify-content: center; padding: 0 6px; width: 30px;
@@ -172,6 +179,20 @@ html[data-input-modality="keyboard"] .transcript-word-popover :is(button, input)
 .video-editor .editor-layout > * { min-height: 0; }
 .video-editor .editor-stage { height: 100%; min-height: 0; }
 
+/* zoom da timeline: botões −/+ no padrão do projeto (branco/preto, sem
+   outline, hover escuro com ícone branco — pedido upd 15) */
+.timeline-zoom { align-items: center; display: flex; gap: 6px; }
+.timeline-zoom-btn {
+  align-items: center; background: #ffffff; border: 0; border-radius: 5px; color: #0a0a0a;
+  cursor: pointer; display: inline-flex; font: 700 12px/1 system-ui; height: 21px; justify-content: center; width: 21px;
+} /* 20% menor (pedido upd 15) */
+.timeline-zoom-btn:hover { background: #242424; color: #ffffff; }
+.timeline-zoom-btn:active { background: #1a1a1a; }
+.timeline-zoom input { flex: 1; min-width: 120px; }
+
+/* transcrição do editor em SEMIBOLD (pedido upd 15) */
+.video-editor .transcript-sentence { font-weight: 600; }
+
 /* Atualização 14 — inspetor redimensionável pela divisória esquerda, com
    abas no topo, corpo com rolagem própria e ações do projeto no rodapé.
    A linha superior decorativa da transcrição foi removida acima
@@ -192,3 +213,143 @@ html[data-input-modality="keyboard"] .transcript-word-popover :is(button, input)
 .editor-inspector__actions { flex: 0 0 auto; margin-top: 8px; padding-top: 10px; border-top: 1px solid var(--sh-divider); display: grid; gap: 6px; }
 .editor-inspector__actions h2 { margin: 0 0 6px; color: var(--sh-dim); font-size: 11px; font-weight: 500; }
 @media (forced-colors: active) { .editor-inspector__body { scrollbar-color: auto; } }
+
+/* Atualização 15 — inspetor 1:1 com a anatomia do SupoClip (tema escuro CNP):
+   abas horizontais no topo, presets em cartões, switches, ranges com valor,
+   cores compactas lado a lado, toggles de proporção. Ações do projeto saem do
+   inspetor e viram popover no cabeçalho do editor. */
+.studio-tabs { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; flex: 0 0 auto; border-bottom: 1px solid var(--sh-divider); padding-bottom: 8px; }
+.studio-tab {
+  align-items: center; background: transparent; border: 1px solid transparent; border-radius: 6px; color: var(--sh-dim);
+  cursor: pointer; display: flex; flex-direction: column; gap: 4px; font-size: 0.72rem; padding: 8px 4px; white-space: nowrap;
+}
+.studio-tab:hover { background: rgba(255, 255, 255, 0.06); color: var(--ink); }
+/* aba ATIVA = BRANCA com ícone/texto pretos (pedido upd 15) */
+.studio-tab[aria-pressed="true"] { background: #ffffff; border-color: #ffffff; color: #0a0a0a; font-weight: 600; }
+.studio-section { display: grid; gap: 16px; }
+.studio-section h2 { margin: 0; font-size: 13px; font-weight: 600; }
+.studio-section p { margin: 0; color: var(--sh-dim); font-size: 11px; line-height: 1.5; }
+.studio-section__head { align-items: start; display: flex; gap: 12px; justify-content: space-between; }
+.studio-section__head .studio-switch-row { flex: none; }
+.studio-separator { border: 0; border-top: 1px solid var(--sh-divider); margin: 4px 0; width: 100%; }
+.studio-field { display: grid; gap: 8px; min-width: 0; }
+.studio-field__label { color: var(--sh-dim); font-size: 11px; }
+.studio-field__label strong { color: var(--ink); font-variant-numeric: tabular-nums; }
+.studio-select { min-height: 36px; padding: 6px 12px; border: 1px solid var(--line); border-radius: 6px; background: var(--sh-surface); color: var(--ink); font: inherit; font-size: 12px; width: 100%; }
+.studio-select--narrow { width: 56px; text-align: center; }
+.studio-range input { width: 100%; accent-color: var(--sh-accent); }
+.studio-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.studio-span-2 { grid-column: 1 / -1; }
+.studio-inline-select { align-items: center; display: flex; gap: 10px; justify-content: space-between; }
+/* cor SEM caixa aninhada: o próprio input é um círculo da cor; hex ao lado */
+.studio-color { align-items: center; display: flex; gap: 10px; min-height: 30px; }
+.studio-color input[type="color"] {
+  background: none; border: 0; border-radius: 50%; cursor: pointer; flex: none;
+  height: 26px; padding: 0; width: 26px;
+}
+.studio-color input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
+.studio-color input[type="color"]::-webkit-color-swatch { border: 1px solid var(--line); border-radius: 50%; }
+.studio-color input[type="color"]::-moz-color-swatch { border: 1px solid var(--line); border-radius: 50%; }
+
+.studio-color__value { color: var(--sh-dim); font-size: 11px; font-variant-numeric: tabular-nums; text-transform: uppercase; }
+.studio-switch-row { align-items: center; display: flex; gap: 12px; justify-content: space-between; }
+.studio-switch-row > label { color: var(--ink); font-size: 12px; }
+.studio-switch { background: #2a2a2a; border: 1px solid var(--line); border-radius: 999px; cursor: pointer; flex: none; height: 20px; padding: 0; position: relative; width: 36px; }
+.studio-switch__knob { background: #9a9a9a; border-radius: 50%; display: block; height: 14px; left: 2px; position: absolute; top: 2px; transition: transform 120ms ease, background 120ms ease; width: 14px; }
+.studio-switch[aria-checked="true"] { background: rgba(2, 194, 190, 0.25); border-color: var(--sh-accent); }
+.studio-switch[aria-checked="true"] .studio-switch__knob { background: var(--sh-accent); transform: translateX(16px); }
+.studio-switch:focus-visible { outline: 2px solid var(--sh-accent); outline-offset: 2px; }
+.studio-presets { display: grid; gap: 10px; grid-template-columns: repeat(3, 1fr); }
+.studio-presets--all { grid-template-columns: repeat(3, 1fr); }
+/* cards SEM contorno, fundo CINZA do dropdown (upd 15); ativo = BRANCO c/ texto preto */
+.studio-preset { background: #151515; border: 0; border-radius: 8px; cursor: pointer; display: grid; gap: 6px; padding: 6px; text-align: left; }
+.studio-preset:hover { background: #1d1d1d; }
+.studio-preset:hover .studio-preset__name { color: #ffffff; }
+.studio-preset[aria-pressed="true"] { background: #ffffff; }
+.studio-preset[aria-pressed="true"] .studio-preset__name { color: #0a0a0a; }
+.studio-preset[aria-pressed="true"] .studio-preset__sample { background: #e9e9e9; }
+.studio-preset__sample { align-items: center; background: #262626; border-radius: 6px; display: flex; height: 44px; justify-content: center; }
+.studio-preset__caption { border-radius: 4px; color: #ffffff; font-size: 12px; font-weight: 700; padding: 2px 6px; }
+.studio-preset__name { color: var(--ink); font-size: 11px; font-weight: 500; padding: 0 2px; }
+.studio-toggle-group { display: flex; gap: 8px; }
+.studio-toggle { background: transparent; border: 1px solid var(--line); border-radius: 6px; color: var(--sh-dim); cursor: pointer; display: grid; flex: 1; gap: 3px; padding: 8px 10px; }
+.studio-toggle:hover { background: rgba(255, 255, 255, 0.05); color: var(--ink); }
+.studio-toggle[aria-pressed="true"] { background: rgba(2, 194, 190, 0.14); border-color: var(--sh-accent); color: var(--ink); }
+.studio-toggle__value { font-size: 13px; font-weight: 600; }
+.studio-toggle__name { font-size: 10px; }
+.studio-toggle--wide { padding: 8px; font-size: 12px; }
+.studio-textarea { color: var(--sh-dim); display: grid; font-size: 11px; gap: 6px; }
+.studio-textarea textarea { background: var(--sh-surface); border: 1px solid var(--line); border-radius: 6px; color: var(--ink); font: inherit; min-height: 84px; padding: 8px; resize: vertical; }
+.studio-notice { color: var(--sh-accent); font-size: 11px; margin: 0; }
+.studio-grid-2 .flow-button { min-height: 32px; padding: 4px 8px; font-size: 12px; justify-content: center; }
+
+/* popover de ações do projeto no cabeçalho (transcrição/cortes/exportação) */
+.editor-actions { position: relative; }
+.editor-actions__popover {
+  background: var(--sh-panel); border: 1px solid var(--sh-divider); border-radius: 8px; box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
+  display: grid; gap: 8px; max-height: min(56dvh, 480px); min-width: 300px; overflow-y: auto; padding: 12px;
+  position: absolute; right: 0; top: calc(100% + 6px); z-index: 80;
+  scrollbar-width: thin; scrollbar-color: #494949 transparent;
+}
+.editor-actions__popover::-webkit-scrollbar { width: 7px; }
+.editor-actions__popover::-webkit-scrollbar-thumb { border: 2px solid var(--sh-panel); border-radius: 8px; background: #494949; }
+
+/* alternador "todos os estilos": ÍCONE seta com animação cima/baixo
+   (upd 15 — substitui o botão de texto) */
+.studio-toggle-estilos {
+  align-items: center; background: transparent; border: 0; border-radius: 6px; color: var(--sh-dim);
+  cursor: pointer; display: inline-flex; justify-content: center; padding: 6px; width: 100%;
+}
+.studio-toggle-estilos:hover { background: rgba(255, 255, 255, 0.06); color: var(--ink); }
+.studio-toggle-estilos svg { transition: transform 200ms ease; }
+.studio-toggle-estilos[aria-expanded="true"] svg { transform: rotate(180deg); }
+
+/* override de regras antigas de maior especificidade (nav 1fr / botões à
+   esquerda) — as abas do studio são sempre a faixa horizontal 4 colunas */
+.video-editor .editor-inspector > nav.studio-tabs { grid-template-columns: repeat(4, 1fr); margin-top: 0; }
+.video-editor .editor-inspector > nav.studio-tabs > button { justify-content: center; padding: 8px 4px; font-size: 0.72rem; }
+
+/* ajustes de fidelidade pós-VISION (atualização 15): respiro interno do corpo,
+   valor dos sliders como chip à direita (padrão da referência) e linha das
+   palavras por legenda sem quebra */
+.editor-pane--inspector .editor-inspector__body { padding: 12px 12px 16px 14px; }
+/* slider: rótulo à esquerda + valor em chip à DIREITA na mesma linha;
+   a barra fica abaixo, alinhada à largura inteira do campo */
+.studio-range .studio-field__label {
+  align-items: center; display: flex; gap: 10px; justify-content: space-between; white-space: nowrap;
+}
+.studio-range .studio-field__label strong {
+  background: #262626; border-radius: 5px; color: var(--ink); flex: none;
+  font-size: 11px; font-weight: 600; min-width: 40px; padding: 3px 8px; text-align: center;
+}
+.studio-inline-select > .studio-field__label { white-space: nowrap; }
+.studio-select-narrow { display: inline-block; width: 74px; }
+.studio-select-narrow .app-select { width: 100%; }
+.studio-select-narrow .app-select__trigger { padding-right: 8px; justify-content: space-between; }
+.studio-inline-select .studio-select--narrow { flex: none; width: 56px; }
+
+/* override de regra antiga de maior especificidade (.editor-inspector :is(select,textarea))
+   — dropdowns do studio com respiro lateral de 12px (proibição de layout upd 15) */
+.editor-inspector .studio-select { min-height: 36px; padding: 6px 12px; border-radius: 6px; border: 0; }
+
+/* toast de salvamento (pedido upd 15): status temporário com visual do
+   projeto — NÃO é alert() do navegador; aparece acima do botão Anotar */
+/* auto-soma por ANIMAÇÃO (sem timer em effect): entra, fica visível e some */
+.editor-toast {
+  align-items: center; animation: editor-toast-some 2.6s ease forwards; background: #1c1c1c;
+  border: 1px solid #333; border-radius: 10px; box-shadow: 0 12px 32px rgba(0, 0, 0, .55);
+  display: flex; gap: 9px; padding: 10px 14px; pointer-events: none;
+  position: fixed; right: 18px; bottom: 104px; z-index: 2147483646;
+}
+.editor-toast--erro { animation-duration: 4.2s; border-color: #5c2b2b; }
+.editor-toast span:last-child { color: #fff; font: 500 12.5px system-ui; }
+@keyframes editor-toast-some {
+  0% { opacity: 0; transform: translateY(8px); }
+  9% { opacity: 1; transform: none; }
+  82% { opacity: 1; }
+  100% { opacity: 0; visibility: hidden; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .editor-toast { animation: editor-toast-fica 1.2s ease forwards; }
+  @keyframes editor-toast-fica { from { opacity: 0; } to { opacity: 1; } }
+}

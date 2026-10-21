@@ -1,7 +1,9 @@
-import type { UploadSource, WorkspaceData, EditorSettings, UploadOptions } from "./workspace-types";
+import type { EditorEffects, UploadSource, WorkspaceData, EditorSettings, UploadOptions } from "./workspace-types";
+
+export const DEFAULT_EFFECTS: EditorEffects = { brightness: 100, contrast: 100, saturation: 100, blur: 0, hue: 0 };
 
 export const defaultEditorSettings = (): EditorSettings => ({
-  ratio: "16:9", fit: "contain", captionModel: 1, text: "", volume: 1,
+  ratio: "16:9", fit: "contain", zoom: 1, effects: { ...DEFAULT_EFFECTS }, captionModel: 1, text: "", volume: 1,
   muted: false, background: "#000000", trimStart: 0, trimEnd: null,
 });
 

@@ -52,9 +52,14 @@ fn arguments_for(
     .map(Into::into)
     .collect();
     args.push(source.into());
+    let effects = settings
+        .effects_filter()
+        .map(|filter| format!("{filter},"))
+        .unwrap_or_default();
     let filter = format!(
-        "{},ass=filename=captions.ass:fontsdir=fonts",
-        settings.geometry()?
+        "{},{}ass=filename=captions.ass:fontsdir=fonts",
+        settings.geometry()?,
+        effects
     );
     args.extend(
         [

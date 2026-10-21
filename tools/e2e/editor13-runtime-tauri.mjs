@@ -46,11 +46,11 @@ await enquadrar.click(); await sleep(600);
 const canvas = page.locator(".editor-stage__canvas").first();
 check("modo Enquadrar ativo (canvas marcado)", (await canvas.getAttribute("data-framing")) === "true");
 check("hint do modo Enquadrar visível", (await page.getByRole("status").filter({ hasText: "Modo Enquadrar ativo" }).count()) > 0);
-await page.locator('.editor-inspector__tab', { hasText: "Enquadrar" }).first().click(); await sleep(400);
-check("fit mudou para Preencher", (await page.locator('[role="listbox"][aria-label="Ajuste do vídeo"] [aria-selected="true"]').textContent()).includes("Preencher"));
+await page.locator(".studio-tab", { hasText: "Enquadrar" }).first().click(); await sleep(400);
+check("fit mudou para Preencher", (await page.locator('.studio-toggle--wide[aria-pressed="true"]').textContent()).includes("Preencher"));
 
 // 3) arraste no canvas muda o ponto focal (x inicial 50)
-const focalX = () => page.locator('input[type="range"]').first().inputValue().catch(() => "?");
+const focalX = () => page.locator('input[aria-label="Posição horizontal"]').first().inputValue().catch(() => "?");
 const xAntes = await focalX();
 const box = await canvas.boundingBox();
 await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
@@ -110,21 +110,20 @@ await page.mouse.up(); await sleep(600);
 const alturaDepois = Math.round((await page.locator(".editor-pane--timeline").boundingBox()).height);
 check("arraste da borda superior redimensionou a timeline", Math.abs(alturaDepois - alturaAntes) > 30, `${alturaAntes}px → ${alturaDepois}px`);
 
-// 8) inspector por categorias com abas compactas
-for (const cat of ["Legendas", "Enquadrar", "Texto", "Áudio"]) {
-  const tab = page.locator(".editor-inspector__tab", { hasText: cat }).first();
+// 8) inspector por categorias com abas horizontais (atualização 15)
+for (const cat of ["Legendas", "Enquadrar", "Áudio", "Efeitos"]) {
+  const tab = page.locator(".studio-tab", { hasText: cat }).first();
   if (await tab.count()) { await tab.click(); await sleep(300); }
 }
-const ativa = await page.locator('.editor-inspector__tab[aria-pressed="true"]').textContent().catch(() => "?");
-check("abas de categoria funcionam (Áudio ativa)", String(ativa).includes("Áudio"), ativa);
+const ativa = await page.locator('.studio-tab[aria-pressed="true"]').textContent().catch(() => "?");
+check("abas de categoria funcionam (Efeitos ativa)", String(ativa).includes("Efeitos"), ativa);
 
 // 9) regressão undo por atalho (Ctrl+Z)
-const ratioValue = async () => { const pill = page.locator('[role="listbox"][aria-label="Proporção do vídeo"] [aria-selected="true"]'); return (await pill.count()) ? (await pill.textContent()).trim() : "?"; };
-await page.locator(".editor-inspector__tab", { hasText: "Enquadrar" }).first().click(); await sleep(400);
+const ratioValue = async () => { const toggle = page.locator('.studio-toggle[aria-pressed="true"] .studio-toggle__value'); return (await toggle.count()) ? (await toggle.textContent()).trim() : "?"; };
+await page.locator(".studio-tab", { hasText: "Enquadrar" }).first().click(); await sleep(400);
 const inicial = await ratioValue();
 const alvo = inicial === "1:1" ? "9:16" : "1:1";
-await page.getByRole("button", { name: "Proporção do vídeo" }).first().click(); await sleep(400);
-await page.getByRole("option", { name: alvo, exact: true }).first().click(); await sleep(600);
+await page.locator('[role="group"][aria-label="Proporção do vídeo"] .studio-toggle', { hasText: alvo }).first().click(); await sleep(600);
 await page.keyboard.press("Control+z"); await sleep(800);
 const aposCtrlZ = await resilient(ratioValue);
 check("Ctrl+Z desfaz edição de proporção", aposCtrlZ === inicial, `${inicial} → ${alvo} → ${aposCtrlZ}`);

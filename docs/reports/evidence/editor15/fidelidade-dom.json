@@ -1,0 +1,21 @@
+{
+  "respiroCorpo": {
+    "left": "14px",
+    "right": "12px",
+    "top": "12px"
+  },
+  "descricaoInteira": {
+    "texto": "Escolha um visual e refine abaixo.",
+    "overflow": true
+  },
+  "chipValor": {
+    "gapLabelFimAteChip": 2939,
+    "chipDireitaDaLinha": true,
+    "chipFundo": "rgb(38, 38, 38)"
+  },
+  "palavrasUmaLinha": {
+    "altura": 17,
+    "umaLinha": true
+  },
+  "selectLargura": "56px"
+}

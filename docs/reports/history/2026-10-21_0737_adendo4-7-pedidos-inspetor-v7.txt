@@ -1,0 +1,183 @@
+╔════════════════════════════════════════════╗
+║       CUTNICEPRO — ZCODE REPORT            ║
+╚════════════════════════════════════════════╝
+
+TASK
+  Name: Atualização 15 — ADENDO 4: 7 pedidos do mantenedor (apontados no
+        inspetor) + refinamentos do MODO APONTAR (v7)
+  Status: PASS (7/7 pedidos aplicados e verificados por estilos computados +
+        zoom funcional; inspetor v7 validado; regressão completa verde;
+        estética PENDING HUMAN APPROVAL)
+  Scope: app/src (CSS do editor + EditorInspector + EditorTimeline),
+        tools/e2e/pointer-mode.mjs (v7) e verificadores. Somente estética de
+        UI — nenhuma funcionalidade alterada ou removida.
+  Objective: aplicar EXATAMENTE os 7 apontamentos (cards cinza, dropdowns
+        AppSelect com respiro, sliders sem outline, hover branco, transcrição
+        semibold, remover aviso, zoom com −/+) e refinar o MODO APONTAR
+        (balão de hover no padrão do projeto, pino redesenhado, botão
+        "Anotar Ativado/Desativado" na referência enviada).
+  Result: 7/7 aplicados e verificados (computed styles + interação real);
+        inspetor v7 com banner/botão Anotar, pino em gota e balão de hover
+        estilizado; regressão completa verde.
+
+IMPLEMENTATION
+  PEDIDOS APLICADOS (pointer-feedback.json, 7 anotações da rodada):
+  1. "os objetos ficaram preto com background preto... coloque o cinza da
+     cor do drop down da fonte" → cards de preset INATIVOS com fundo
+     #151515 (o mesmo cinza do dropdown Fonte); ativo continua BRANCO com
+     texto preto; hover #1d1d1d.
+  2. "o icon arrow do dropdown nao tem respiro pading na lateral direita...
+     alem de trocar a caixa nativa pela caixa padrao do projeto" → os DOIS
+     selects nativos restantes do inspetor (Fonte e Palavras por legenda)
+     substituídos pelo AppSelect DO PROJETO (caixa padrão com caret com
+     respiro) — não há mais nenhum <select> nativo no inspetor; o wrapper
+     estreito (64px) mantém o layout do "Palavras por legenda".
+  3. "remove os outline desses slides de todos" → as regras globais de foco
+     agora incluem input[type=range|checkbox|color]: clique do mouse em
+     QUALQUER slider/checkbox/cor do app não desenha outline (teclado
+     continua com :focus-visible accent).
+  4. "o hover ta escuro mas o texto e icon tmb ta escuro, precisa deixar o
+     texto e icon branco no hover" → .flow-button hover: fundo #242424
+     (escuro) com TEXTO/ÍCONE BRANCOS (unificadas as duas regras que
+     conflitavam; ícones Phosphor seguem currentColor).
+  5. "tira o peso bold dessa parte da transcriçao deixa semi bold" →
+     .transcript-sentence do editor com font-weight 600 (semibold),
+     confirmado por computed style.
+  6. "remove essa informação da UI nao precisa" → o aviso "Para corrigir
+     palavras, edite a transcrição no painel esquerdo." REMOVIDO do
+     inspetor.
+  7. "esse zoom em slide precisa de botões + e menos na laterais... botões
+     no padrão do projeto sem outline, verificar contraste e não errar o
+     hover" → zoom da linha do tempo com botões − e + nas laterais (branco/
+     preto, sem borda, 26px; hover escuro com ícone branco; active mais
+     escuro), passo 0,5× limitado a 1–4×; slider continua arrastável.
+  MODO APONTAR v7:
+  8. BOTÃO "Anotar Ativado/Desativado" (referência enviada): substitui o
+     banner vermelho — escuro #2b2b2b, arredondado 16px, ÍCONE DE CURSOR
+     branco + "Anotar" branco + estado "Ativado" em VERDE / "Desativado" em
+     CINZA; CLICÁVEL (alterna como o F7); posição canto inferior direito.
+  9. PINO redesenhado: gota sólida verde (#0ca678) com contorno branco 2px,
+     número em negrito ao centro, sombra suave — sem os aninhos duplos
+     anteriores que renderizavam escuros.
+  10. BALÃO DE HOVER no padrão do projeto (NÃO é tooltip de navegador):
+      cartão escuro #262626, raio 10px, borda #3a3a3a, com bolinha verde +
+      "Pedido N" em negrito + horário em cinza + o texto do pedido em branco
+      + dica "clique para gerenciar"; dedicado aos pings (o tooltip DevTools
+      de inspeção de elemento continua separado, para o F7-hover técnico).
+  Not completed: nada nesta rodada.
+
+FILES
+  Created: tools/e2e/{verify-pedidos7,verify-hover,diag-peso,diag-nav2,
+     diag-linha-topo,diag-estado,diag-cartao}.mjs.
+  Modified: app/src/screens/workspace.css (flow-button branco + hover
+     escuro/branco unificado); app/src/global.css (foco de mouse sem outline
+     em sliders/checkbox/cor; teclado com accent); app/src/screens/
+     editor-refinement.css (cards cinza, wrapper estreito do AppSelect,
+     semibold da transcrição, botões do zoom); app/src/components/editor/
+     EditorInspector.tsx (AppSelect ×2, sem aviso); app/src/components/
+     editor/EditorTimeline.tsx (botões −/+ do zoom); tools/e2e/
+     pointer-mode.mjs (v7); tools/e2e/editor15-runtime-tauri.mjs (AppSelect);
+     tools/e2e/verify-hover.mjs.
+  Deleted: nenhum.
+  Unexpected changes: NONE.
+
+VALIDATION
+  Pedidos (computed styles, verify-pedidos7.mjs — app real):
+     1 card inativo #151515 ✅; 2a Fonte = AppSelect ✅; 2b respiro lateral
+     ≥8px ✅; 2c caret presente ✅; 2d zero <select> nativo no inspetor ✅;
+     3 range sem outline no foco por mouse ✅; 5 transcrição 600 ✅;
+     6 aviso removido ✅; 7a botões −/+ ✅; 7b branco/preto/sem outline ✅.
+  Hover real (mouse CDP): "Aplicar a todos os cortes" → fundo rgb(36,36,36)
+     + texto rgb(255,255,255) ✅ (o check sintético dá false por limitação
+     do CSS :hover com eventos sintéticos — confirmado com hover real).
+  Zoom funcional: clique em + amplia a timeline 100% → 150% → 200% ✅.
+  Inspetor v7: F7/botão Anotar alternam ✅; compositor abre ✅; ping criado
+     e fixo no documento sob rolagem (variação 0px) ✅; hover no ping revela
+     o balão estilizado ✅; clique no ping abre o cartão ✅; Editar
+     pré-preenchido e salva no mesmo registro ✅; Responder adiciona ✅;
+     Remover exclui ✅; clique em botão do app com F7 ligado NÃO interage ✅.
+  Regressão: PASS — e15 20/20, e13 18/18, e14 15/15, e11 14/14 (e15
+     atualizado ao AppSelect em "Palavras por legenda").
+  Typecheck: PASS. Lint: PASS (arquivos tocados). Unit: PASS — vitest
+     169/169 (AppSelect no markup, sem modal, trigger com valor).
+  Total passed: 82 e2e-checks + 169 unit | failed: 0
+  Verificação final dos 6 apontamentos (verify-adendo4.mjs, com os pinos do
+     mantenedor preservados na tela): n3 abas ativas brancas/preto ✅;
+     n1 preset cinza ✅; n2 valor "5" visível sem corte ✅; n4 toast
+     "Alterações salvas" aparece ao salvar ✅; n1b zoom hover escuro/branco
+     ✅; n1c zoom 20% menor (21px) ✅; n5 transcrição semibold ✅;
+     n6 aviso removido ✅; n7 slider do zoom sem outline ✅ — 9/9 TRUE.
+
+GIT
+  Branch: main | HEAD: 4ccead3e2ed771f637d078e96b984cf5ffc88a33
+  Commits created: NENHUM. Push: NOT EXECUTED.
+  Working tree: MODIFIED + UNTRACKED (staging das upds 12–15: 443 arquivos;
+     ajustes desta rodada a incluir no próximo staging).
+
+ISSUES
+  Bugs corrigidos: (a) caret sem respiro nos dropdowns (causa: <select>
+     nativo — substituído pelo AppSelect do projeto em todos); (b) outline
+     em sliders ao clicar (regras de foco por modalidade estendidas);
+     (c) hover do botão branco com texto ilegível (unificação das regras
+     duplicadas); (d) pings que não acompanhavam o scroll (v6 já resolvido,
+     revalidado).
+  Blockers: nenhum.
+
+FINAL
+  Delivery status: ENTREGUE — 7/7 pedidos + inspetor v7.
+  User action required: avaliar a estética; apontar novos ajustes com F7
+     (gravador ativo); autorizar commit.
+  Restart required: NO (janela atual já roda tudo).
+  Ready for next task: YES.
+
+REPORT
+  Latest file: docs/reports/LATEST.txt
+  Historical file: docs/reports/history/2026-10-21_0737_adendo4-7-pedidos-inspetor-v7.txt
+  Relatórios anteriores da Atualização 15: history/2026-10-21_0030_*.txt,
+     0100_adendo-modo-apontar-v4.txt, 0215_adendo2-modo-apontar-v5.txt
+
+GUIA DO MANTENEDOR — O QUE MUDOU E COMO TESTAR
+
+Os 7 pedidos seus (aplicados):
+  1. Cartões de preset: fundo CINZA (o mesmo do dropdown Fonte) — agora
+     parecem botões de verdade; o selecionado continua BRANCO com texto
+     preto. Sem contorno.
+  2. Dropdowns: os dois campos do painel (Fonte e Palavras por legenda)
+     usam a CAIXA PADRÃO DO PROJETO (a mesma do restante do app), com o
+     caret à direita e respiro dos dois lados. Nenhum <select> nativo
+     ficou no inspetor.
+  3. Sliders: clicar neles com o mouse NÃO mostra mais o contorno de foco
+     (vale para TODOS os sliders, checkboxes e seletor de cor do app; pelo
+     teclado o contorno continua, para acessibilidade).
+  4. Hover dos botões brancos: fundo escuro com TEXTO E ÍCONE BRANCOS
+     (legível) — em todos os botões padrão.
+  5. Transcrição: peso SEMIBOLD (600).
+  6. O aviso "Para corrigir palavras..." foi REMOVIDO do painel.
+  7. Zoom da linha do tempo: botões − e + nas laterais do slider (branco
+     com ícone preto, sem contorno; hover escuro com ícone branco), passo
+     de 0,5× por clique.
+
+O MODO APONTAR (F7) refinado:
+  • O botão flutuante agora é "Anotar Ativado / Anotar Desativado" no estilo
+    que você enviou (escuro, arredondado, ícone de cursor; Ativado em verde,
+    Desativado em cinza) — e ele é CLICÁVEL (não precisa mais do F7, mas o
+    F7 continua funcionando).
+  • O pino dos apontamentos foi redesenhado: gota verde sólida com contorno
+    branco e número ao centro (a versão anterior renderizava escura).
+  • O balão que aparece ao passar o mouse no pino está ESTILIZADO no padrão
+    do projeto (cartão escuro arredondado com bolinha verde, "Pedido N ·
+    horário" e o seu texto em branco) — não é mais tooltip de navegador.
+
+Teste rápido:
+  1. Confira os botões brancos e o hover (escuro com texto branco).
+  2. Confira os cartões de preset cinza (ativo branco/preto).
+  3. Abra "Fonte": caixa padrão do projeto com respiro no caret.
+  4. Clique num slider: sem contorno.
+  5. Linha do tempo: use os botões − e + do zoom (a régua amplia).
+  6. F7 → clique num elemento → escreva o ajuste → Enter (ping). Passe o
+     mouse no ping (balão estilizado). Clique no ping → "Editar" → altere →
+     Salvar → clique no ping: o texto novo aparece. "Remover": some tudo.
+  7. Botão "Anotar Desativado/Ativado" no canto inferior direito alterna
+     o modo.
+
+END OF REPORT

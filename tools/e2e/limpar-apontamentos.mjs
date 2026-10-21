@@ -1,0 +1,14 @@
+import { createRequire } from "node:module";
+import { setTimeout as sleep } from "node:timers/promises";
+const require = createRequire("C:/CutNicePro/tools/e2e/editor11-runtime-tauri.mjs");
+const { chromium } = require("C:/CutNicePro/.tooling/playwright/node_modules/playwright");
+import fs from "node:fs";
+const OUT = "C:/CutNicePro/docs/reports/evidence/editor15/pointer-feedback.json";
+const browser = await chromium.connectOverCDP("http://127.0.0.1:9381");
+await sleep(1500);
+const page = browser.contexts()[0].pages().find(p => !p.url().startsWith("chrome-error"));
+await page.evaluate(() => sessionStorage.removeItem("pointer-v4-registros"));
+await page.evaluate(() => { if (window.__pointerV4) window.__pointerV4.registros.length = 0; });
+fs.writeFileSync(OUT, JSON.stringify({ atualizadoEm: new Date().toISOString(), versao: 4, cliques: [] }, null, 2));
+console.log("lista de apontamentos zerada (sessão limpa para o mantenedor)");
+await browser.close().catch(() => {});

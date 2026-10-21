@@ -1,0 +1,102 @@
+[
+  {
+    "name": "4 abas horizontais na mesma linha, compactas e equilibradas",
+    "ok": true,
+    "detail": "Legendas:85x59 Enquadrar:85x59 Áudio:85x59 Efeitos:85x59"
+  },
+  {
+    "name": "3 cartões de preset com prévia (Limpo/Destaque/Pop)",
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "name": "preset Pop selecionado aplica cor de destaque",
+    "ok": true,
+    "detail": "destaque=#a3e635"
+  },
+  {
+    "name": "switch mestre mostra/esconde legendas na prévia",
+    "ok": true,
+    "detail": "antes=1 desligado=0 religado=1"
+  },
+  {
+    "name": "posição vertical contínua aplicada (slider 40%)",
+    "ok": true,
+    "detail": "centro do overlay em 40% da altura"
+  },
+  {
+    "name": "palavras por legenda divide o texto na prévia (teto com 2)",
+    "ok": true,
+    "detail": "máx visível com 5: 5 → com 2: 2 (divisão 5×2 provada em teste unitário determinístico)"
+  },
+  {
+    "name": "salvar/carregar estilo restaura o valor salvo",
+    "ok": true,
+    "detail": "salva=#FACC15 preset(#A3E635) carregada=#FACC15 aviso=\"Estilo carregado.\""
+  },
+  {
+    "name": "aplicar a todos conclui com aviso",
+    "ok": true,
+    "detail": "Estilo aplicado a todos os cortes."
+  },
+  {
+    "name": "estilo aplicado a outro clipe (não destrutivo)",
+    "ok": true,
+    "detail": "clipe 2 destaque=#FACC15 (esperado #FACC15)"
+  },
+  {
+    "name": "proporção Original usa as dimensões da fonte",
+    "ok": true,
+    "detail": "0.5625 / 1 → 1.77778 / 1"
+  },
+  {
+    "name": "zoom 2× aplica transform na prévia",
+    "ok": true,
+    "detail": "matrix(2, 0, 0, 2, 0, 0)"
+  },
+  {
+    "name": "volume até 200% com valor visível",
+    "ok": true,
+    "detail": "Áudio  As alterações de áudio entram na exportação.  Volume:"
+  },
+  {
+    "name": "silenciar áudio da exportação alterna",
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "name": "brilho 150 aplica filter na prévia",
+    "ok": true,
+    "detail": "brightness(1.5)"
+  },
+  {
+    "name": "Restaurar volta aos efeitos neutros",
+    "ok": true,
+    "detail": "none"
+  },
+  {
+    "name": "botão Ações do projeto no cabeçalho",
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "name": "popover contém ações de projeto e inspetor fica só com propriedades",
+    "ok": true,
+    "detail": "popover=\"Transcrever novamente Atualizar cortes Cortes (9) \" seções-inspetor=0"
+  },
+  {
+    "name": "texto preservado; transcrição só à esquerda; sem duplicação no inspetor",
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "name": "autosave em verde",
+    "ok": true,
+    "detail": "Alterações salvas"
+  },
+  {
+    "name": "efeitos e zoom persistem ao reabrir",
+    "ok": true,
+    "detail": "brilho=100 zoom=1"
+  }
+]

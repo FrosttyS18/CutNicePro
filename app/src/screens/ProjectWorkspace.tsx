@@ -72,7 +72,8 @@ export function ProjectWorkspace({ project, initialView = "overview", onRename, 
         <ClipGallery entries={(clips.collection?.clips ?? []).map(clip => ({project,mediaId: clips.collection!.mediaId,clip}))} loading={clips.loading} error={clips.error} notice={clipNotice}
           onRetry={clips.reload} onInspect={setInspecting}/>
       </> : <VideoEditor key={`${workspace.data.tool}:${activeClip ?? "video"}`} title={project.name} activeClip={activeClip ? clips.collection?.clips.find(clip => clip.id === activeClip) : undefined} data={workspace.data} localUrl={workspace.localUrl} dirty={workspace.dirty}
-        onChange={workspace.change} onSave={workspace.save} onBack={() => setView("overview")} transcriptionControls={<>{transcriptionControls}{clipTools}</>}transcribing={transcription.busy || clips.busy} />}
+        onChange={workspace.change} onSave={workspace.save} onBack={() => setView("overview")} transcriptionControls={<>{transcriptionControls}{clipTools}</>}transcribing={transcription.busy || clips.busy}
+        allClips={clips.collection?.clips} />}
       {workspace.notice && <p className={workspace.notice.error ? "workspace-notice workspace-notice--error" : "workspace-notice"}
         role={workspace.notice.error ? "alert" : "status"}>{workspace.notice.text}</p>}
       {inspecting && <ClipInspection entry={inspecting} onClose={() => setInspecting(null)} onChanged={notice=>{setClipNotice(notice ?? null);clips.reload();}}
