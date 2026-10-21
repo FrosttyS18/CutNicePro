@@ -278,9 +278,9 @@ impl MediaStore {
                     .to_string_lossy()
                     .to_string();
                 if name.ends_with(".part") && !live_parts.iter().any(|lp| lp == &p) {
-                        let _ = fs::remove_file(&p);
-                        removed_parts += 1;
-            }
+                    let _ = fs::remove_file(&p);
+                    removed_parts += 1;
+                }
             }
         }
 

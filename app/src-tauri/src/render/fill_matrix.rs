@@ -1,4 +1,3 @@
-
 /// Matriz de preenchimento para validação VISUAL (atualização 13): renderiza
 /// as 6 configurações com fonte de padrão conhecido (testsrc, 320x180) e
 /// grava MP4s + a string de geometria efetiva de cada caso em
@@ -22,12 +21,31 @@ fn render_fill_matrix() {
         "ffmpeg"
     });
     let mut command = std::process::Command::new(&ffmpeg);
-    command.args([
-        "-nostdin", "-hide_banner", "-loglevel", "error",
-        "-f", "lavfi", "-i", "testsrc=size=320x180:rate=10",
-        "-f", "lavfi", "-i", "sine=frequency=440:sample_rate=16000",
-        "-t", "3", "-c:v", "libx264", "-threads", "2", "-c:a", "aac", "-y",
-    ]).arg(&source);
+    command
+        .args([
+            "-nostdin",
+            "-hide_banner",
+            "-loglevel",
+            "error",
+            "-f",
+            "lavfi",
+            "-i",
+            "testsrc=size=320x180:rate=10",
+            "-f",
+            "lavfi",
+            "-i",
+            "sine=frequency=440:sample_rate=16000",
+            "-t",
+            "3",
+            "-c:v",
+            "libx264",
+            "-threads",
+            "2",
+            "-c:a",
+            "aac",
+            "-y",
+        ])
+        .arg(&source);
     #[cfg(windows)]
     {
         use std::os::windows::process::CommandExt;
@@ -52,7 +70,11 @@ fn render_fill_matrix() {
     }];
     let mut geometry_report = String::new();
     for (name, ratio, focal) in cases {
-        let fit = if name.contains("preencher") { "cover" } else { "contain" };
+        let fit = if name.contains("preencher") {
+            "cover"
+        } else {
+            "contain"
+        };
         let settings: RenderSettings = serde_json::from_value(serde_json::json!({
             "ratio": ratio, "fit": fit,
             "focalPoint": focal.map(|(x, y)| serde_json::json!({"x": x, "y": y})),
@@ -72,7 +94,8 @@ fn render_fill_matrix() {
             true,
             &ProcessControl::default(),
             |_| {},
-        ).expect("render do caso");
+        )
+        .expect("render do caso");
         let dest = base.join(format!("{name}.mp4"));
         std::fs::rename(&output, &dest).unwrap();
         geometry_report.push_str(&format!("{name}: {}\n", settings.geometry().unwrap()));

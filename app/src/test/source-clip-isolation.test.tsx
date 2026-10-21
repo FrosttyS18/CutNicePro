@@ -40,7 +40,10 @@ describe("original e edições isolados",()=>{
     const data = captureClipEdits(openClipWorkspace(emptyWorkspace(),clip));saveWorkspace("p",data);
     expect(readWorkspace("p").clipEdits?.[clip.id].ratio).toBe("9:16");
     const corrupted = {...data,clipEdits:{[clip.id]:{...data.settings,ratio:"invalid"}}};store.set("cnp.workspace.v1.p",JSON.stringify(corrupted));
-    expect(readWorkspace("p")).toEqual(emptyWorkspace());
+    // atualização 16: campo corrompido é corrigido isoladamente — o projeto
+    // NÃO pode virar vazio por causa de uma entrada inválida
+    expect(readWorkspace("p").version).toBe(2);
+    expect(readWorkspace("p").clipEdits?.[clip.id]?.ratio).toBe("16:9");
   });
   it("aceita formato persistido, preserva legado e recusa formato desconhecido",()=>{
     const collection={version:1,mediaId:"m",transcriptHash:"h",clips:[clip]};

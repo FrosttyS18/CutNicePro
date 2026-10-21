@@ -712,8 +712,10 @@ pub(crate) fn resolve(
         );
     }
     if options.automatic && (below_floor > 0 || excluded_ads > 0) {
+        // atualização 16: frase neutra — o desfecho real da publicidade é
+        // reportado pelo log de resultado, após a seleção
         eprintln!(
-            "[clips] automático: {below_floor} abaixo do piso editorial ({}) e {excluded_ads} de publicidade ficaram fora das sugestões",
+            "[clips] automático: {below_floor} candidatos abaixo do piso editorial ({}); {excluded_ads} candidatos de publicidade no lote (política: prioridade secundária)",
             super::types::AUTOMATIC_RELEVANCE_FLOOR
         );
     }
@@ -742,9 +744,48 @@ pub(crate) fn resolve(
     promotional.sort_by(|a, b| b.score.cmp(&a.score).then(a.start.total_cmp(&b.start)));
     let budget = options.count;
     let mut selected = finalize_weighted(&editorial, budget);
-    if selected.len() < budget {
+    // Atualização 16: promocionais só podem ocupar intervalos LIVRES. A DP
+    // independente anterior ignorava os cortes editoriais já fixados e
+    // produzia sobreposição editorial×promocional (reprovação comprovada).
+    // Editorial tem prioridade: promocional conflitante fica fora, com
+    // registro — os demais disputam as vagas restantes pela DP normal.
+    let ads_no_lote = promotional.len();
+    let mut ads_conflito = 0usize;
+    if selected.len() < budget && !promotional.is_empty() {
+        promotional.retain(|ad| {
+            let conflita = selected
+                .iter()
+                .any(|fixado| ad.start < fixado.end && fixado.start < ad.end);
+            if conflita {
+                ads_conflito += 1;
+            }
+            !conflita
+        });
         let rest = finalize_weighted(&promotional, budget - selected.len());
         selected.extend(rest);
+    }
+    let promocionais = selected
+        .iter()
+        .filter(|c| c.reasons.iter().any(|r| r.contains("Conteúdo promocional")))
+        .count();
+    let editoriais = selected.len() - promocionais;
+    if options.automatic {
+        // log honesto: descreve exatamente o resultado (atualização 16) —
+        // substitui a mensagem antiga que afirmava que publicidade "ficou
+        // fora" mesmo quando ela entrava como prioridade secundária
+        let motivo_fora = if ads_conflito > 0 {
+            format!("{ads_conflito} por conflito temporal com cortes já escolhidos")
+        } else if selected.len() >= budget && ads_no_lote > promocionais {
+            "orçamento esgotado pelos editoriais".to_string()
+        } else {
+            "sem vagas restantes".to_string()
+        };
+        eprintln!(
+            "[clips] automático: {editoriais} editoriais e {promocionais} promocionais nas sugestões; \
+             {below_floor} descartados pelo piso editorial ({}); {} promocionais de fora ({motivo_fora})",
+            super::types::AUTOMATIC_RELEVANCE_FLOOR,
+            ads_no_lote - promocionais,
+        );
     }
     if selected.is_empty() {
         return Err("Não encontramos trechos completos nesta duração. Aumente a duração dos cortes e tente novamente.".into());
@@ -1555,13 +1596,16 @@ mod automatic_tests {
     #[test]
     fn automatico_exclui_piso_e_publicidade_personalizado_mantem_marca() {
         let segments = speech(60);
-        // 3 propostas curtas disjuntas -> 3 pendentes E1..E3
+        // atualização 16: candidatos DIRETOS disjuntos (propostas curtas
+        // eram rejeitadas pelo conform e viravam alternativas cuja
+        // numeração E{n} fazia a publicidade cair em janela conflitante —
+        // exatamente a sobreposição que esta atualização elimina)
         let proposals = vec![(
-            0..40,
+            0..60,
             vec![
-                candidate(1, 2, 70),
-                candidate(10, 11, 71),
-                candidate(20, 21, 72),
+                candidate(2, 5, 70),   // [8, 23.9] editorial
+                candidate(6, 9, 71),   // [24, 39.9] abaixo do piso no automático
+                candidate(10, 13, 72), // [40, 55.9] publicidade
             ],
         )];
         let evaluations = vec![
@@ -1697,5 +1741,147 @@ mod automatic_tests {
         .unwrap();
         assert_eq!(legacy.items[0].nature, Nature::Relato);
         assert!(!legacy.items[0].advertising);
+    }
+
+    // ── Atualização 16: invariável GLOBAL de não-sobreposição ────────────
+    fn overlaps(a: &Clip, b: &Clip) -> bool {
+        a.start < b.end && b.start < a.end
+    }
+
+    #[test]
+    fn REPRODUCAO_promocional_sobreposto_a_editorial_nao_pode_entrar() {
+        // Cenário do ofício 16: editorial A 20–60 (85), promocional B 40–70
+        // (75), promocional C 75–95 (65). Segmentos de 10s: A=(2,5) B=(4,6)
+        // C=(7,9). Esperado: A + C (B conflita com A temporalmente).
+        // speech local: segmentos de 4s (grid do módulo automatic_tests)
+        let segments = speech(60);
+        let proposals = vec![(
+            0..60,
+            vec![
+                candidate(2, 5, 50),  // A editorial [8, 23.9]
+                candidate(4, 7, 50),  // B promocional [16, 31.9] (sobrepõe A)
+                candidate(9, 12, 50), // C promocional [36, 51.9] (livre)
+            ],
+        )];
+        let evaluations = vec![
+            judgment("E1", 85, "história", Nature::Relato, false),
+            judgment("E2", 75, "patrocínio", Nature::Demonstracao, true),
+            judgment("E3", 65, "patrocínio", Nature::Demonstracao, true),
+        ];
+        let evaluate = move |_pending: &[Clip], _segs: &[Segment]| Ok(evaluations.clone());
+        let chosen = resolve(
+            &proposals,
+            &segments,
+            "media",
+            600.0,
+            &custom_options(),
+            &evaluate,
+        )
+        .expect("seleção");
+        for (i, a) in chosen.iter().enumerate() {
+            for b in chosen.iter().skip(i + 1) {
+                assert!(
+                    !overlaps(a, b),
+                    "sobreposição: [{},{}] × [{},{}]",
+                    a.start,
+                    a.end,
+                    b.start,
+                    b.end
+                );
+            }
+        }
+        assert_eq!(chosen.len(), 2, "A + C; B fica fora por conflito temporal");
+        assert!(chosen.iter().any(|c| c.score == 85));
+        assert!(chosen.iter().any(|c| c.score == 65));
+    }
+
+    #[test]
+    fn selecao_global_editoriais_parcialmente_sobrepostos_nao_coexistem() {
+        // dois editoriais relevantes disputam intervalos parcialmente
+        // sobrepostos: a DP editorial escolhe sem interseção (qualidade
+        // preservada — não é um filtro guloso)
+        let segments = speech(60);
+        let proposals = vec![(
+            0..60,
+            vec![
+                candidate(2, 6, 50),   // A [8, 27.9] nota 90
+                candidate(5, 9, 50),   // B [20, 39.9] nota 88 (sobrepõe A)
+                candidate(12, 15, 50), // C [48, 63.9] nota 70 (livre)
+            ],
+        )];
+        let evaluations = vec![
+            judgment("E1", 90, "história", Nature::Relato, false),
+            judgment("E2", 88, "história", Nature::Relato, false),
+            judgment("E3", 70, "história", Nature::Relato, false),
+        ];
+        let evaluate = move |_pending: &[Clip], _segs: &[Segment]| Ok(evaluations.clone());
+        let chosen = resolve(
+            &proposals,
+            &segments,
+            "media",
+            600.0,
+            &custom_options(),
+            &evaluate,
+        )
+        .expect("seleção");
+        for (i, a) in chosen.iter().enumerate() {
+            for b in chosen.iter().skip(i + 1) {
+                assert!(
+                    !overlaps(a, b),
+                    "sobreposição: [{},{}] × [{},{}]",
+                    a.start,
+                    a.end,
+                    b.start,
+                    b.end
+                );
+            }
+        }
+        // A+C (soma 160) supera B+C (158): qualidade editorial decide
+        assert_eq!(chosen.len(), 2);
+        assert!(chosen.iter().any(|c| c.score == 90));
+        assert!(chosen.iter().any(|c| c.score == 70));
+    }
+
+    #[test]
+    fn selecao_global_aceita_adjacencia_exata_e_comercial_livre() {
+        // adjacente (fim == início do outro) NÃO é sobreposição: ambos
+        // entram; comercial não sobreposto entra como secundária
+        let segments = speech(60);
+        let proposals = vec![(
+            0..60,
+            vec![
+                candidate(2, 5, 50),   // A editorial [8, 23.9]
+                candidate(6, 9, 50),   // B comercial [24, 39.9] adjacente a A (livre)
+                candidate(10, 13, 50), // C comercial [40, 55.9]
+            ],
+        )];
+        let evaluations = vec![
+            judgment("E1", 85, "história", Nature::Relato, false),
+            judgment("E2", 75, "patrocínio", Nature::Demonstracao, true),
+            judgment("E3", 65, "patrocínio", Nature::Demonstracao, true),
+        ];
+        let evaluate = move |_pending: &[Clip], _segs: &[Segment]| Ok(evaluations.clone());
+        let chosen = resolve(
+            &proposals,
+            &segments,
+            "media",
+            600.0,
+            &custom_options(),
+            &evaluate,
+        )
+        .expect("seleção");
+        for (i, a) in chosen.iter().enumerate() {
+            for b in chosen.iter().skip(i + 1) {
+                assert!(
+                    !overlaps(a, b),
+                    "sobreposição indevida: [{},{}] × [{},{}]",
+                    a.start,
+                    a.end,
+                    b.start,
+                    b.end
+                );
+            }
+        }
+        assert_eq!(chosen.len(), 3, "adjacência não é conflito; todos entram");
     }
 }

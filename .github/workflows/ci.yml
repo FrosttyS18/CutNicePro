@@ -1,0 +1,58 @@
+# CI mínimo (atualização 16) — protege contra regressões básicas em cada
+# push/PR para main. Sem modelos GGUF, vídeos, credenciais ou runtimes
+# locais: os testes que exigem mídia real continuam LOCAIS (cargo --ignored
+# + e2e Tauri via CDP), documentados em docs/engineering/VALIDATION-POLICY.
+# ESLint roda com orçamento versionado (tools/ci/lint-budget.mjs): a dívida
+# técnica conhecida não cresce nem mascara erros novos. clippy permanece
+# verificação LOCAL: carrega 5 avisos too-many-args de API estável (dívida
+# registrada); um -D warnings aqui quebraria falsamente.
+name: CI
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  frontend:
+    name: Frontend (typecheck + build + vitest + lint orçado)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: app
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: app/package-lock.json
+      - run: npm ci
+      - run: npm run build
+      - run: npx vitest run
+      - name: ESLint com orçamento de dívida
+        run: npx eslint src --format json | node ../tools/ci/lint-budget.mjs
+  rust:
+    name: Rust (fmt + check + testes unitários/integração da lib)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: app/src-tauri
+    steps:
+      - uses: actions/checkout@v4
+      - name: Dependências de sistema do Tauri (webkit2gtk etc.)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: app/src-tauri
+      - run: cargo fmt --check
+      - run: cargo check --lib
+      # --lib executa os testes unitários/de integração da lib; os
+      # #[ignore] exigem mídia/NVENC locais e NÃO fazem parte do CI
+      - run: cargo test --lib

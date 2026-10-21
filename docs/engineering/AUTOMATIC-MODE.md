@@ -32,9 +32,9 @@ nada é escondido do usuário nem fixado a partir de um episódio.
   distintos; propostas idênticas entre janelas competem como candidaturas
   próprias e a DP elimina sobreposição.
 - Nenhuma redução silenciosa: limites por janela são técnicos e a seleção
-  final é matemática (DP). Exclusões do automático são registradas em log:
-  `[clips] automático: N abaixo do piso editorial (50) e M de publicidade
-  ficaram fora das sugestões`.
+  final é matemática (DP). O resultado é registrado em log com contagens
+  exatas (atualização 16): lote por piso, editoriais e promocionais nas
+  sugestões, promocionais de fora e conflitos temporais — ver Políticas.
 
 ## Avaliação conforme a natureza do conteúdo (`evaluate-prompt.txt`)
 
@@ -56,10 +56,16 @@ nada é escondido do usuário nem fixado a partir de um episódio.
 - **Piso editorial 50/100**: candidato cuja própria avaliação fica abaixo
   disso não vira sugestão automática (registrado em log). No personalizado
   não existe piso — o usuário pediu aquela quantidade.
-- **Publicidade**: reconhecida pela avaliação e EXCLUÍDA das sugestões
-  automáticas (o objetivo do automático são momentos editoriais; política
-  registrada, não desaparecimento silencioso). No personalizado ela
-  permanece, com o motivo marcado "publicidade" para o usuário decidir.
+- **Publicidade** (política revisada em 2026-10-20, bench-11; texto
+  anterior "excluída das sugestões" OBSOLETO): reconhecida pela avaliação e
+  tratada com PRIORIDADE SECUNDÁRIA — entra marcada "Conteúdo promocional:
+  prioridade secundária", DEPOIS dos editoriais, sem excluí-la do produto.
+- **Não-sobreposição global** (atualização 16): nenhuma coleção final pode
+  conter dois cortes com interseção temporal positiva, inclusive entre
+  editorial e promocional. Editorial tem prioridade: promocional
+  conflitante fica fora (registrado); os demais disputam as vagas
+  restantes pela DP normal. Adjacência exata (fim == início) não é
+  conflito.
 
 ## Títulos e resumos (`analysis-prompt.txt`)
 

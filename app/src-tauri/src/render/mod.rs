@@ -5,8 +5,8 @@ mod pipeline;
 pub(crate) mod scratch;
 mod settings;
 
+mod fill_matrix;
 #[cfg(test)]
 mod integration;
-mod fill_matrix;
 #[cfg(test)]
 mod tests;

@@ -76,4 +76,25 @@ Backend experimental integrado ao app sem trocar a produção: `Options.quality`
 
 ## Histórico — modo automático por conteúdo e avaliação por natureza (2026-10-20, atualização 9)
 
-Diálogo "Gerar cortes" ganhou modos: Automática (recomendada; UI não envia duração/quantidade — `GenerateOptions::resolve` aplica limites técnicos 10–180 s e teto 12) e Personalizada (mínima TÉCNICA 10 s, desassociada da máxima). Prompt próprio `discover-auto-prompt.txt` (duração pelo conteúdo, sem quantidade fixa). Avaliação reescrita: `nature` (relato/humor/explicação/opinião/demonstração) identificada ANTES do fechamento, `advertising` marcado, nota = julgamento editorial (não validade técnica nem viralização); schema `-jf` EXIGE os dois campos (grammar sem eles devolveria defaults — corrigido antes da execução real). Políticas do automático (registradas em log, nunca silenciosas): piso editorial 50 na avaliação de seleção e publicidade fora das sugestões; personalizado mantém tudo com marcação. Análise reescrita: título específico do acontecimento, resumo natural sem "o falante analisa", justificativa separada. Comparação real em experiments/clip-selection-ab/reports/mode-comparison.md; critérios em docs/engineering/AUTOMATIC-MODE.md. Achados para o mantenedor: nota publicada vem da análise final (piso atua na seleção); DP por soma pode aprovar unidades adjacentes do mesmo assunto. Preservado: motor padrão/experimental, revisão humana, IDs, mesclagem por backend; sem mudanças em Whisper/9:16/render/hooks/config global.
+Diálogo "Gerar cortes" ganhou modos: Automática (recomendada; UI não envia duração/quantidade — `GenerateOptions::resolve` aplica limites técnicos 10–180 s e teto 12) e Personalizada (mínima TÉCNICA 10 s, desassociada da máxima). Prompt próprio `discover-auto-prompt.txt` (duração pelo conteúdo, sem quantidade fixa). Avaliação reescrita: `nature` (relato/humor/explicação/opinião/demonstração) identificada ANTES do fechamento, `advertising` marcado, nota = julgamento editorial (não validade técnica nem viralização); schema `-jf` EXIGE os dois campos (grammar sem eles devolveria defaults — corrigido antes da execução real). Políticas do automático (registradas em log, nunca silenciosas; revisão bench-11 + atualização 16): piso editorial 50 na seleção; publicidade como PRIORIDADE SECUNDÁRIA (entra marcada, depois dos editoriais — o texto antigo "fora das sugestões" está obsoleto); invariável global de não-sobreposição entre todos os cortes finais; personalizado mantém tudo com marcação. Análise reescrita: título específico do acontecimento, resumo natural sem "o falante analisa", justificativa separada. Comparação real em experiments/clip-selection-ab/reports/mode-comparison.md; critérios em docs/engineering/AUTOMATIC-MODE.md. Achados para o mantenedor: nota publicada vem da análise final (piso atua na seleção); DP por soma pode aprovar unidades adjacentes do mesmo assunto. Preservado: motor padrão/experimental, revisão humana, IDs, mesclagem por backend; sem mudanças em Whisper/9:16/render/hooks/config global.
+
+
+## Atualização 16 — integridade, seleção sem sobreposição e CI (2026-10-21)
+
+- **Persistência**: o validador do workspace aceita agora volume 0–2
+  (contrato do render; antes volume>1 invalidava o projeto INTEIRO na
+  reabertura) e valida zoom/effects/captionStyle.y/wordsPerCaption quando
+  presentes. `readWorkspace` recupera em camadas: campos corrompidos são
+  corrigidos isoladamente (clamp/padrão), segmentos/edições irrecuperáveis
+  são descartados individualmente, e registros sem recuperação são
+  preservados intactos + copiados para `cnp.workspace.backup.<id>`
+  (nunca substituídos por vazio silenciosamente). Testes:
+  app/src/test/workspace-integrity.test.ts.
+- **Seleção**: promocionais só disputam intervalos LIVRES após a DP
+  editorial (invariável global sem interseção temporal); log de resultado
+  com contagens exatas (editoriais/promocionais escolhidos, piso,
+  conflitos). Testes adversariais em src/clips/selection.rs.
+- **CI**: .github/workflows/ci.yml (typecheck+build+vitest+lint orçado;
+  cargo fmt/check/test --lib). Testes com mídia real continuam locais
+  (cargo --ignored, e2e Tauri por CDP). Validação no GitHub Actions
+  PENDENTE de execução efetiva (exige push).
