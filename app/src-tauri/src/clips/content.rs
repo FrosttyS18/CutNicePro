@@ -123,6 +123,7 @@ mod tests {
             reasons: vec![],
             review: super::super::types::Review::Pending,
             format: None,
+            fit: None,
             analysis: None,
             analysis_error: None,
         };

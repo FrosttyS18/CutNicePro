@@ -20,6 +20,7 @@ fn real_generation_selects_and_persists_grounded_clips() {
         max_seconds: 90.0,
         count: 3,
         format: Some("9:16".into()),
+        fit: None,
         quality: None,
         automatic: false,
     };
@@ -79,6 +80,7 @@ fn real_experimental_gemma_generation_end_to_end() {
         max_seconds: 90.0,
         count: 3,
         format: Some("9:16".into()),
+        fit: None,
         quality: Some(Quality::ExperimentalGemma),
         automatic: false,
     };
@@ -177,6 +179,7 @@ fn real_comparison_custom_floor_vs_automatic() {
         max_seconds: 90.0,
         count: 3,
         format: Some("9:16".into()),
+        fit: None,
         quality: None,
         automatic: false,
     };

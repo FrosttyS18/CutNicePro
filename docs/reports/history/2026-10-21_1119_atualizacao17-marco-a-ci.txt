@@ -1,0 +1,96 @@
+╔════════════════════════════════════════════╗
+║       CUTNICEPRO — ZCODE REPORT            ║
+╚════════════════════════════════════════════╝
+
+TASK
+  Name: Atualização 17 — Geração simplificada, Gemma 4 exclusivo e montagem
+        automática de cortes editáveis
+  Status: PARTIAL (MARCO A PASS FUNCIONAL completo; MARCO B não iniciado;
+        CI da upd 16 diagnosticado e corrigido)
+  Scope: modal Gerar cortes (user-select, Ajuste do vídeo, Gemma 4),
+        contratos de geração (Quality.fit, Clip.fit), CI. MARCO B não
+        implementado.
+  Result: Marco A funcional e verificado no app real; CI com possibilidade
+        de passar no Actions; cadeia de fill/fit de ponta a ponta.
+
+MARCO A — CONTROLES DA GERAÇÃO: PASS FUNCIONAL
+  A.1 SELEÇÃO ACIDENTAL: CSS localizado (flow-dialog labels/títulos/desc +
+  clip-format + engine-badge, todos user-select:none). Transcrição e inputs
+  não afetados. e2e: user-select modal = none; transcript intacto.
+  A.2 AJUSTE DO VÍDEO: "Preencher (corta o excedente)" | "Manter vídeo
+  inteiro (admite espaços)" no modal; CADEIA COMPLETA: payload → Options.fit
+  → Clip.fit (persistido) → isolatedClipSettings → VideoPreview →
+  RenderSettings → export. Compatível com clipes antigos (fit ausente =
+  contain histórico). Testes: clip-flow (cover/contain), workspace-integrity.
+  A.3 GEMMA 4 EXCLUSIVO: Quality default → ExperimentalGemma; seletor
+  "Análise" REMOVIDO; selo "IA local: Gemma 4"; erro orienta verificação
+  do modelo; Standard legível para re-análise de coleções antigas; SEM
+  fallback Qwen. Testes: text_engine, selection, clip-flow atualizados.
+  A.4 DURAÇÃO CLARA: "Até 30 segundos" etc. + texto auxiliar explicitando
+  teto vs meta; automática (recomendada) vs personalizada.
+
+  E2E (app real): selo ✓; seletor removido ✓; Ajuste presente (cover) ✓;
+  user-select none ✓; transcrição intacta ✓.
+
+MARCO B — MONTAGEM AUTOMÁTICA: NÃO INICIADO
+  Sistema completo de edição por segmentos (timeline por corte, plano
+  editorial, controles manuais, prévia sequencial, exportação concatenada)
+  é um empreendimento de grande porte. A fundação fill/fit por clipe foi
+  lançada (Clip.fit chega ao render), mas o sistema de segmentos não foi
+  implementado. REGISTRADO PARTIAL conforme o ofício.
+
+CI (UPD 16 — CORREÇÃO DA FALHA REMOTA)
+  CAUSA PROVADA: run 39606080752 falhou porque binários do mantenedor
+  (posters .png, fontes .ttf, icon.ico) estão UNTRACKED — no checkout do
+  runner não existem → build falha. PROVA: git archive HEAD → pipeline
+  inteiro falha; após stub-assets.mjs (stand-ins 1x1) → passa 100%.
+  CORREÇÃO: stub-assets.mjs em ambos os jobs + apt oficial Tauri v2 +
+  node 22. REMOÇÃO: quando o mantenedor commitar os binários reais.
+
+VALIDATION
+  Typecheck: PASS (0 erros). Lint: PASS (0 nos tocados). Unit TS: PASS
+  (178/178). Rust: PASS (133/133; clips 52/52). E2E Marco A: PASS.
+  CI local (checkout fiel): PASS (build/vitest/lint/fmt/check/test).
+  Render real: PASS (fill_matrix + integração continuam cobrindo).
+  MARCO B: NOT IMPLEMENTED. E2E Tauri editor: NOT TESTED (nenhum arquivo
+  de UI do editor alterado). Modelos: INALTERADOS.
+
+GIT
+  Branch: main | HEAD: 33b5d94 (= commit do mantenedor com upd 16).
+  Modificados (14): ci.yml + 10 .rs + ClipTools.tsx + clips.css +
+  clips.ts + clip-flow.test.tsx. Criados: stub-assets.mjs, verify-marco-a.
+  Commit: NÃO EXECUTADO. Push: NÃO EXECUTADO.
+
+FINAL
+  MARCO A: ENTREGUE E VERIFICADO. MARCO B: PARTIAL (não iniciado).
+  CI: corrigido com prova (Actions pendente de push).
+  User action: commitar binários reais; autorizar commit/push;
+  Marco B em nova atualização.
+
+REPORT
+  Latest: docs/reports/LATEST.txt
+  History: docs/reports/history/2026-10-21_1119_atualizacao17-marco-a-ci.txt
+
+GUIA DO MANTENEDOR — O QUE MUDOU E COMO TESTAR
+
+O que mudou:
+  1. MODAL LIMPO: arrastar o mouse não pinta o modal de azul.
+  2. AJUSTE DO VÍDEO: escolha Preencher ou Manter vídeo inteiro ANTES de
+     gerar — vai para todos os cortes automaticamente.
+  3. SÓ GEMMA 4: seletor "Análise" removido; selo "IA local: Gemma 4";
+     erro claro se o modelo não estiver disponível.
+  4. DURAÇÃO: "Até 30 segundos" deixa claro que é teto, não garantia.
+  5. CI CORRIGIDO: stand-ins para binários ainda não commitados.
+
+Teste 1 — Modal (2 min): Ações do projeto → Gerar cortes. Confira o selo
+  Gemma 4, a ausência do seletor Análise e a opção Ajuste do vídeo.
+Teste 2 — Arraste no modal: nada fica azul. Transcrição continua
+  selecionável.
+Teste 3 — Manter vídeo inteiro: gere 9:16 com "Manter vídeo inteiro" e
+  abra um corte — o vídeo aparece completo dentro do quadro vertical.
+Já provado por automação: payload fit, compatibilidade com cortes antigos,
+  Gemma default sem fallback, CI com stand-ins.
+Falta (Marco B): timeline por segmentos, plano editorial, edição manual,
+  prévia sequencial, exportação concatenada — próxima grande atualização.
+
+END OF REPORT

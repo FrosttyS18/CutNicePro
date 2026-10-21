@@ -20,7 +20,9 @@ export function useWorkspaceData(id: string) {
   const [saved,setSaved] = useState(() => JSON.stringify(data));
   const source = useVideoSource();
   const latest = useRef(data);
-  latest.current = data;
+  // sync pós-render (deferred): change() e acceptTranscript() fazem o sync
+  // SINCRONO em contexto de evento; este cobre qualquer setData direto
+  useEffect(() => { latest.current = data; }, [data]);
   const acceptTranscript = useCallback((record: TranscriptRecord) => {
     const current = latest.current;
     if (record.mediaId !== current.media?.mediaId) return;
@@ -67,14 +69,25 @@ export function useWorkspaceData(id: string) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data.media?.mediaId, id]);
 
-  function change(next: WorkspaceData) { setData(captureClipEdits(next)); setNotice(null); }
+  function change(next: WorkspaceData) {
+    const captured = captureClipEdits(next);
+    // atualiza o ref SINCRONAMENTE: save() chamado no mesmo tick que uma
+    // edição (ex.: onSave antes de gerar) precisa ver a versão NOVA, não
+    // a do closure do render anterior (causa da reversão da transcrição)
+    latest.current = captured;
+    setData(captured);
+    setNotice(null);
+  }
   async function save() {
+    // usa latest.current (sempre atual) — NUNCA `data` do closure, que
+    // pode estar obsoleto se o componente ainda não re-renderizou
+    const current = latest.current;
     try {
-      if (data.transcriptMode === "real" && data.media?.mediaId) {
-        await saveTranscript(id, data.media.mediaId, data.transcript);
+      if (current.transcriptMode === "real" && current.media?.mediaId) {
+        await saveTranscript(id, current.media.mediaId, current.transcript);
       }
-      if (saveWorkspace(id, data)) {
-        setSaved(JSON.stringify(data));
+      if (saveWorkspace(id, current)) {
+        setSaved(JSON.stringify(current));
         setNotice(null);
         return true;
       } else setNotice({ text: "Não foi possível salvar suas alterações. Tente novamente.", error: true });

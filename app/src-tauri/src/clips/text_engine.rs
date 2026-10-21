@@ -472,15 +472,23 @@ mod tests {
     }
 
     #[test]
-    fn options_quality_defaults_to_standard_and_parses_experimental() {
+    fn options_default_to_gemma_and_standard_remains_parseable_for_legacy() {
+        // atualização 17: Gemma 4 é o ÚNICO motor de geração — o default do
+        // payload resolve para Gemma; Standard continua desserializável
+        // (re-análise de coleções antigas)
         let base: Options =
             serde_json::from_str("{\"minSeconds\":10,\"maxSeconds\":60,\"count\":3}").unwrap();
-        assert_eq!(base.quality(), Quality::Standard);
-        let experimental: Options = serde_json::from_str(
+        assert_eq!(base.quality(), Quality::ExperimentalGemma);
+        let explicit_gemma: Options = serde_json::from_str(
             "{\"minSeconds\":10,\"maxSeconds\":60,\"count\":3,\"quality\":\"experimentalGemma\"}",
         )
         .unwrap();
-        assert_eq!(experimental.quality(), Quality::ExperimentalGemma);
+        assert_eq!(explicit_gemma.quality(), Quality::ExperimentalGemma);
+        let legacy_standard: Options = serde_json::from_str(
+            "{\"minSeconds\":10,\"maxSeconds\":60,\"count\":3,\"quality\":\"standard\"}",
+        )
+        .unwrap();
+        assert_eq!(legacy_standard.quality(), Quality::Standard);
         assert!(serde_json::from_str::<Options>(
             "{\"minSeconds\":10,\"maxSeconds\":60,\"count\":3,\"quality\":\"outra\"}"
         )

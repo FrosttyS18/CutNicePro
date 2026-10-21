@@ -22,6 +22,10 @@ pub struct Clip {
     pub review: Review,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub format: Option<String>,
+    /// Preenchimento inicial escolhido na geração ("cover"/"contain").
+    /// Ausente = coleções antigas → o editor usa "contain" (padrão histórico).
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub fit: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub analysis: Option<super::analysis_types::Analysis>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -79,11 +83,14 @@ pub struct EngineRecord {
 #[derive(Clone, Copy, Debug, Default, Deserialize, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub enum Quality {
-    /// Motor padrão de produção (Qwen3-4B local, ChatML + think vazio).
-    #[default]
+    /// Motor padrão histórico (Qwen3-4B local). NÃO é mais usado para GERAR
+    /// (decisão do mantenedor, atualização 17: Gemma 4 exclusivo); permanece
+    /// para LER e re-analisar coleções antigas que o registraram.
     Standard,
-    /// Modo experimental de qualidade (Gemma-4-12B-IT QAT Q4_0 local) —
-    /// fluxo validado na atualização 7 do experimento.
+    /// Gemma-4-12B-IT QAT Q4_0 local — ÚNICO motor de geração desde a
+    /// atualização 17. Default do payload: pedidos sem `quality` explícito
+    /// também geram com Gemma 4.
+    #[default]
     ExperimentalGemma,
 }
 
@@ -95,9 +102,13 @@ pub struct Options {
     pub count: usize,
     #[serde(default)]
     pub format: Option<String>,
-    /// Escolha explícita de motor; ausente = padrão de produção. Nunca há
-    /// troca silenciosa: o experimental falha com erro próprio se o modelo
-    /// não estiver disponível.
+    /// Preenchimento aplicado aos cortes gerados ("cover"=Preencher,
+    /// "contain"=Manter vídeo inteiro). Ausente = "contain" (histórico).
+    #[serde(default)]
+    pub fit: Option<String>,
+    /// Escolha explícita de motor; ignorado na geração desde a atualização
+    /// 17 (Gemma 4 exclusivo — o default resolve para Gemma). Nunca houve
+    /// troca silenciosa: o Gemma falha com erro próprio se indisponível.
     #[serde(default)]
     pub quality: Option<Quality>,
     /// Modo automático: quantidade e duração resultam dos momentos
@@ -166,6 +177,8 @@ pub struct GenerateOptions {
     #[serde(default)]
     pub format: Option<String>,
     #[serde(default)]
+    pub fit: Option<String>,
+    #[serde(default)]
     pub quality: Option<Quality>,
 }
 impl GenerateOptions {
@@ -180,6 +193,13 @@ impl GenerateOptions {
         if !format_valid {
             return Err("Proporção de corte inválida.".into());
         }
+        if !self
+            .fit
+            .as_ref()
+            .is_none_or(|v| ["cover", "contain"].contains(&v.as_str()))
+        {
+            return Err("Ajuste do vídeo inválido.".into());
+        }
         if self.automatic {
             if self.min_seconds.is_some() || self.max_seconds.is_some() || self.count.is_some() {
                 return Err("No modo automático, quantidade e duração não são informados.".into());
@@ -189,6 +209,7 @@ impl GenerateOptions {
                 max_seconds: AUTOMATIC_MAX_SECONDS,
                 count: AUTOMATIC_MAX_CLIPS,
                 format: self.format,
+                fit: self.fit,
                 quality: self.quality,
                 automatic: true,
             });
@@ -203,6 +224,7 @@ impl GenerateOptions {
             max_seconds,
             count,
             format: self.format,
+            fit: self.fit,
             quality: self.quality,
             automatic: false,
         };

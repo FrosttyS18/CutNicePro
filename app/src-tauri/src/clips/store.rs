@@ -148,6 +148,7 @@ mod tests {
                 reasons: vec!["Final com frase concluída".into()],
                 review: super::super::types::Review::Approved,
                 format: Some("9:16".into()),
+                fit: None,
                 analysis: None,
                 analysis_error: None,
             }],

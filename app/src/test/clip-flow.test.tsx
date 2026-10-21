@@ -69,23 +69,29 @@ describe("modo experimental de qualidade (Gemma 4)",()=>{
     const c=controller(existing);
     await openDialog(c);
     await mounted!.click("Gerar cortes");
-    expect(c.generate).toHaveBeenCalledWith({automatic:true,format:"9:16"});
+    // atualização 17: Gemma 4 é o único motor (sempre no payload) + ajuste
+    // de preenchimento (fit) escolhido no modal; sem duração/quantidade
+    expect(c.generate).toHaveBeenCalledWith({automatic:true,format:"9:16",fit:"cover",quality:"experimentalGemma"});
     // personalizada: duração/quantidade explícitas; mínima técnica (10), sem vínculo com a máxima
     const c2=controller(existing);
     await openDialog(c2);
     await mounted!.chooseOption("Geração","Personalizada");
     await mounted!.click("Gerar cortes");
-    expect(c2.generate).toHaveBeenCalledWith({minSeconds:10,maxSeconds:60,count:3,format:"9:16"});
-    // experimental soma quality em qualquer modo
+    expect(c2.generate).toHaveBeenCalledWith({minSeconds:10,maxSeconds:60,count:3,format:"9:16",fit:"cover",quality:"experimentalGemma"});
+    // manter vídeo inteiro propaga fit=contain em qualquer modo; selo Gemma 4
+    // e ausência do seletor "Análise" conferidos com o diálogo ABERTO
     const c3=controller(existing);
     await openDialog(c3);
-    await mounted!.chooseOption("Análise","Experimental (Gemma 4)");
+    expect(mounted!.host.textContent).toContain("IA local: Gemma 4");
+    expect(mounted!.host.querySelector('[aria-label="Análise"]')).toBeNull();
+    await mounted!.chooseOption("Ajuste do vídeo","Manter vídeo inteiro (admite espaços)");
     await mounted!.click("Gerar cortes");
-    expect(c3.generate).toHaveBeenCalledWith({automatic:true,format:"9:16",quality:"experimentalGemma"});
+    expect(c3.generate).toHaveBeenCalledWith({automatic:true,format:"9:16",fit:"contain",quality:"experimentalGemma"});
   });
-  it("coleção experimental é identificada na lista de cortes",async()=>{
+  it("seletor de motor não existe; selo IA local: Gemma 4 no modal",async()=>{
     const c=controller({version:1,mediaId:"m",transcriptHash:"h",clips:[entry.clip],engine:{backend:"experimentalGemma",model:"gemma-4-12b-it-qat-q4_0.gguf",template:"gemma4-canonical-nothink",sampling:"temp 1.0, top_k 64, top_p 0.95, min_p 0, seed 42",seed:42}});
-    mounted=await reactHost(<ClipTools controller={c} settings={defaultEditorSettings()} ready disabled={false} onSave={async()=>true} onShowClips={()=>undefined} onFullVideo={()=>undefined}/>);
-    expect(mounted.host.textContent).toContain("experimental");
+    await openDialog(c);
+    expect(mounted!.host.textContent).toContain("IA local: Gemma 4");
+    expect(mounted!.host.querySelector('[aria-label="Análise"]')).toBeNull();
   });
 });

@@ -34,3 +34,15 @@ html[data-input-modality="keyboard"] .clip-format label:has(input:focus-visible)
 .clip-format strong { font-size: 12px; font-weight: 500; }
 .clip-format small { color: var(--sh-dim); font-size: 10px; }
 .clip-list > li[data-review="rejected"] { opacity: .65; }
+
+/* Atualização 17 — seleção acidental de texto nos CONTROLES do modal de
+   geração (títulos, labels, descrições auxiliares, cartões de formato).
+   NÃO atinge transcrição, campos de entrada ou áreas de edição — o
+   user-select continua livre onde copiar é ação legítima. */
+.flow-dialog :is(h2, header, p, legend, label) { user-select: none; }
+.clip-format :is(strong, small, span) { user-select: none; }
+.clip-engine-badge {
+  align-items: center; color: var(--sh-dim); display: inline-flex; font-size: 11px; gap: 6px;
+  margin: 2px 0 10px; user-select: none;
+}
+.clip-engine-badge svg { color: var(--sh-accent); }

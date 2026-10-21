@@ -118,7 +118,11 @@ pub fn run(
         request.options,
         control,
     )?;
+    // Ajuste de preenchimento escolhido na geração (atualização 17): aplica
+    // a TODOS os cortes resultantes, de qualquer caminho (conform, reparo,
+    // ranking). Ausente = coleções antigas seguem "contain" no editor.
     for clip in &mut clips {
+        clip.fit = request.options.fit.clone();
         clip.id =
             super::types::identity(request.media, clip.start, clip.end, clip.format.as_deref());
     }
@@ -160,6 +164,7 @@ mod tests {
             reasons: vec![],
             review: super::super::types::Review::Pending,
             format: Some("9:16".into()),
+            fit: None,
             analysis: None,
             analysis_error: None,
         };
@@ -231,6 +236,7 @@ mod merge_tests {
             reasons: vec![],
             review: Review::Pending,
             format: None,
+            fit: None,
             analysis: if analysis {
                 Some(
                     serde_json::from_value(serde_json::json!({

@@ -43,3 +43,7 @@ __pycache__/
 
 # Saída transitória de testes
 .tooling/test-output/
+.tooling/ci-checkout/
+.tooling/_runs.json
+.tooling/_log_*.txt
+.tooling/_jobs.json

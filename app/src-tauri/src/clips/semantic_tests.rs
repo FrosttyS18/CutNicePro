@@ -56,6 +56,7 @@ fn changed_transcript_invalidates_analysis_and_review_without_changing_clip_form
             reasons: vec![],
             review: super::types::Review::Approved,
             format: Some("9:16".into()),
+            fit: None,
             analysis: Some(analysis()),
             analysis_error: None,
         }],

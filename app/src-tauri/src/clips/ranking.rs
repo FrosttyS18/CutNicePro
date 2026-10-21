@@ -108,6 +108,7 @@ pub fn select(
                 reasons,
                 review: Review::Pending,
                 format: options.format.clone(),
+                fit: None,
                 analysis: None,
                 analysis_error: None,
             };
@@ -175,6 +176,7 @@ mod tests {
                 max_seconds: 40.0,
                 count: 4,
                 format: Some("9:16".into()),
+                fit: None,
                 quality: None,
                 automatic: false,
             },
@@ -203,6 +205,7 @@ mod tests {
                     max_seconds: 40.0,
                     count: 4,
                     format: Some("9:16".into()),
+                    fit: None,
                     quality: None,
                     automatic: false,
                 }
@@ -224,6 +227,7 @@ mod tests {
                 max_seconds: 40.0,
                 count: 3,
                 format: None,
+                fit: None,
                 quality: None,
                 automatic: false,
             }
@@ -235,6 +239,7 @@ mod tests {
             max_seconds: 40.0,
             count: 3,
             format: None,
+            fit: None,
             quality: None,
             automatic: false,
         }
@@ -245,6 +250,7 @@ mod tests {
             max_seconds: 200.0,
             count: 3,
             format: None,
+            fit: None,
             quality: None,
             automatic: false,
         }
@@ -258,6 +264,7 @@ mod tests {
             max_seconds: 40.0,
             count: 1,
             format: Some("9:16".into()),
+            fit: None,
             quality: None,
             automatic: false,
         };

@@ -208,6 +208,7 @@ pub(crate) struct Contender {
 fn clip_for(media: &str, start: f64, end: f64, score: u8, format: Option<&str>) -> Clip {
     Clip {
         id: super::types::identity(media, start, end, format),
+        fit: None,
         start,
         end,
         title: format!(
@@ -825,6 +826,7 @@ mod tests {
             max_seconds: max,
             count,
             format: Some("9:16".into()),
+            fit: None,
             quality: None,
             automatic: false,
         }
@@ -949,6 +951,7 @@ mod tests {
             reasons: Vec::new(),
             review: Review::Pending,
             format: Some("9:16".into()),
+            fit: None,
             analysis: None,
             analysis_error: None,
         }
@@ -1409,6 +1412,7 @@ mod budgeted_window_tests {
             max_seconds: 90.0,
             count: 3,
             format: None,
+            fit: None,
             quality: None,
             automatic: false,
         }
@@ -1511,6 +1515,7 @@ mod automatic_tests {
             max_seconds: super::super::types::AUTOMATIC_MAX_SECONDS,
             count: super::super::types::AUTOMATIC_MAX_CLIPS,
             format: None,
+            fit: None,
             quality: None,
             automatic: true,
         }
@@ -1521,6 +1526,7 @@ mod automatic_tests {
             max_seconds: 90.0,
             count: 3,
             format: None,
+            fit: None,
             quality: None,
             automatic: false,
         }
@@ -1709,15 +1715,17 @@ mod automatic_tests {
         let automatic = selection_system(&auto_options());
         assert!(automatic.contains("limites técnicos"));
         assert!(automatic.contains("Não há quantidade fixa"));
-        let standard = selection_system(&custom_options());
-        assert!(standard.contains("momentos completos"));
-        let experimental = selection_system(&Options {
-            quality: Some(Quality::ExperimentalGemma),
+        // atualização 17: o default resolve para Gemma (motor exclusivo); o
+        // prompt Standard só aparece quando coleções antigas pedem explícito
+        let default_agora_gemma = selection_system(&custom_options());
+        assert!(default_agora_gemma.contains("UNIDADES NARRATIVAS COMPLETAS"));
+        let standard = selection_system(&Options {
+            quality: Some(Quality::Standard),
             ..custom_options()
         });
-        assert!(experimental.contains("UNIDADES NARRATIVAS COMPLETAS"));
+        assert!(standard.contains("momentos completos"));
         // nenhum prompt fixa duração ou quantidade deste episódio
-        for system in [automatic, standard, experimental] {
+        for system in [automatic, standard, default_agora_gemma] {
             assert!(!system.contains("90 segundos"));
             assert!(!system.contains("3 cortes"));
         }

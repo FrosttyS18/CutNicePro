@@ -8,9 +8,10 @@ export type ClipReview = "pending" | "approved" | "rejected";
 export type ClipQuality = "standard" | "experimentalGemma";
 export interface ClipEngine { backend: string; model: string; template: string; sampling: string; seed: number }
 export interface ClipAnalysis { title: string; summary: string; criteria: {label: string; score: number; explanation: string; evidence: string}[] }
-export interface Clip { id: string; start: number; end: number; title: string; score: number; reasons: string[]; review: ClipReview; format?: AspectRatio; analysis?: ClipAnalysis; analysisError?: string }
+export type ClipFit = "cover" | "contain";
+export interface Clip { id: string; start: number; end: number; title: string; score: number; reasons: string[]; review: ClipReview; format?: AspectRatio; fit?: ClipFit; analysis?: ClipAnalysis; analysisError?: string }
 export interface ClipCollection { version: 1; mediaId: string; transcriptHash: string; clips: Clip[]; engine?: ClipEngine }
-export interface ClipOptions { format?: AspectRatio; quality?: ClipQuality; automatic?: boolean; minSeconds?: number; maxSeconds?: number; count?: number }
+export interface ClipOptions { format?: AspectRatio; fit?: ClipFit; quality?: ClipQuality; automatic?: boolean; minSeconds?: number; maxSeconds?: number; count?: number }
 export interface ClipJob { jobId: string; projectId: string; state: "running" | "completed" | "failed" | "cancelled"; stage: "analyzing" | "rendering"; progress: number; error: string | null; operation?: "generate" | "analyze" | "export" }
 
 export function parseClips(value: unknown): ClipCollection {
@@ -22,6 +23,7 @@ export function parseClips(value: unknown): ClipCollection {
       && Number.isFinite(c.start) && Number.isFinite(c.end) && c.start >= 0 && c.end > c.start && typeof c.title === "string" && c.title.length > 0
       && Number.isInteger(c.score) && c.score >= 0 && c.score <= 100 && Array.isArray(c.reasons) && c.reasons.every(r => typeof r === "string")
       && (c.format === undefined || ["16:9","9:16","1:1","4:5"].includes(c.format))
+      && (c.fit === undefined || ["cover","contain"].includes(c.fit))
       && (c.analysis === undefined || validAnalysis(c.analysis))
       && (c.analysisError === undefined || typeof c.analysisError === "string")
       && ["pending", "approved", "rejected"].includes(c.review))) throw new Error("Cortes inválidos.");
@@ -50,14 +52,14 @@ export function isolatedClipSettings(clip: Clip, saved?: EditorSettings, media?:
   const ratios: AspectRatio[] = ["16:9","9:16","1:1","4:5"];
   const fallback = ratios.reduce((best,ratio) => Math.abs(Number(ratio.split(":")[0])/Number(ratio.split(":")[1])-sourceRatio)
     < Math.abs(Number(best.split(":")[0])/Number(best.split(":")[1])-sourceRatio) ? ratio : best);
-  return clipSettings(saved ?? { ...defaults, ratio: clip.format ?? fallback, fit: "contain", captionModel: 2 },clip);
+  return clipSettings(saved ?? { ...defaults, ratio: clip.format ?? fallback, fit: clip.fit ?? "contain", captionModel: 2 },clip);
 }
 export function renderSettings(settings: EditorSettings): EditorSettings {
   return { ...settings, captionStyle: effectiveCaptionStyle(settings.captionModel, settings.captionStyle) };
 }
 export function clipMessage(error: unknown): string {
   const text = String(error);
-  if (/motor experimental/i.test(text)) return "O modo experimental está indisponível neste dispositivo. Gere novamente com a análise padrão.";
+  if (/motor experimental|gemma|modelo de análise/i.test(text)) return "A IA local (Gemma 4) está indisponível neste dispositivo. Verifique o modelo em .tooling/vendor (o arquivo do modelo e os binários precisam estar presentes) e tente novamente.";
   if (/trechos completos|selecionar os momentos/i.test(text)) return "Não encontramos trechos completos nesta duração. Aumente a duração dos cortes e tente novamente.";
   if (/transcrição mudou/i.test(text)) return "A transcrição mudou. Atualize os cortes do projeto para analisar novamente.";
   if (/evidências válidas/i.test(text)) return "Não foi possível confirmar a análise deste trecho. Tente analisar novamente.";
