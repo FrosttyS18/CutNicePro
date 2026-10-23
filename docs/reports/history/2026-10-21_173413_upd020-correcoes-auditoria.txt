@@ -1,0 +1,323 @@
+╔════════════════════════════════════════════╗
+║       CUTNICEPRO — ZCODE REPORT            ║
+╚════════════════════════════════════════════╝
+
+TASK
+  Name: UPD-020 — correções da auditoria externa e fechamento da entrega 0.19.0
+  Status: PARTIAL
+  Scope: 9 seções — (1) download preserva edição; (2) resultado real do
+    download; (3) nota editorial sem análise válida; (4) migração legada
+    durável; (5) motor/dados dos clipes antigos; (6) deduplicação por
+    conteúdo e descoberta incremental; (7) validação real da UI;
+    (8) versionamento/continuidade; (9) testes e relatório com contagens
+    corrigidas. Preservação integral da UPD-019 e dos dados reais.
+  Objective: corrigir todos os achados da auditoria, validar os caminhos
+    reais da interface e instituir continuidade/versionamento entre chats,
+    consolidando a entrega 0.19.0 (UPD-018/019/020).
+  Result: TODOS os achados corrigidos com testes e provas antes/depois;
+    laboratório de UI real 24/27 verificações (2 limitações de harness e 1
+    captura por timing, declaradas); versão promovida a 0.19.0 após
+    critérios técnicos; PARTIAL porque a aprovação humana permanece
+    pendente e a publicação de arquivo pelo diálogo nativo de destino não
+    foi automatizável (cobertura de comando/IPC/UI parcial declarada).
+    Commit/push/merge/tag/release NÃO EXECUTADOS.
+  FUNCTIONAL STATUS: PASS (achados corrigidos; ver VALIDATION)
+  REGRESSION STATUS: PASS (suítes pertinentes sem falha)
+  VISUAL STATUS: PENDING HUMAN APPROVAL
+
+IMPLEMENTATION (achado → causa → correção)
+  - OBJ 1 — download preservava a edição? NÃO (confirmado). CAUSA:
+    clipSettings() sobrescrevia trimStart/trimEnd com os limites originais
+    do clipe e `captionModel || 2` convertia o ZERO legítimo (legendas
+    desativadas) em modelo 2. CORREÇÃO: clipSettings preserva o intervalo
+    salvo (com clamp para dentro do clipe) e o captionModel recebido; o
+    padrão "legendas ativas (2)" continua apenas no caminho SEM edição
+    salva (isolatedClipSettings). Consumidores conferidos em conjunto:
+    reabertura do editor (openClipWorkspace), prévia/controles/limites da
+    inspeção (limites EFETIVOS from/to em seek, PlaybackControls,
+    transcrição, cabeçalho do ClipDetails), download por card e pela
+    inspeção e exportação pelo editor — todos usam as mesmas configurações.
+    PROVA antes/depois: com a implementação auditada, 3/6 testes falham
+    (cenário da auditoria incluso); corrigida, 6/6 passam.
+  - OBJ 2 — resultado real do download. CAUSA: execute() não devolvia
+    resultado e ClipDownload chamava onChanged em .then() sempre — falha ou
+    cancelamento podiam exibir "Vídeo exportado". CORREÇÃO:
+    ClipOperationResult tipado (completed/dialog-cancelled/cancelled/
+    failed/blocked/abandoned); sucesso somente quando o IPC retorna true
+    (arquivo publicado); cancelamento do diálogo (false) e do processamento
+    (job cancelled) são silenciosos; falha mantém o executor visível com
+    mensagem e repetição; mídia indisponível NÃO inicia exportação (painel
+    de erro com fechar); bloqueio orienta. Testes: hook (5) + componente (6).
+  - OBJ 3 — nota editorial sem análise. CAUSA: refresh removia analysis/
+    analysisError mas mantinha score; ClipGallery exibia a nota sempre que
+    analysisError estava ausente. CORREÇÃO: campo analysis_stale — análise
+    DESATUALIZADA fica preservada (recuperável) e marcada; a UI distingue
+    válida (nota + critérios), desatualizada ("Análise desatualizada" +
+    "Analisar novamente" com explicação da mudança da transcrição), ausente
+    ("Sem análise") e falha ("Análise pendente"); ordenação por nota usa
+    apenas nota VÁLIDA (desatualizadas não lideram); cabeçalho da inspeção
+    só exibe nota válida; ClipDetails exige análise válida para critérios.
+  - OBJ 4 — migração legada não durável. CAUSA: "confiar uma vez" era em
+    memória e recomputado a cada leitura — sem gravação, a confiança se
+    renovava indefinidamente a cada edição de transcrição. CORREÇÃO:
+    refresh_analysis_state v2 — hash confere → assinatura atribuída com
+    som (a coleção é íntegra para ESTA transcrição); hash divergiu → quem
+    TEM assinatura e divergiu fica stale; legado SEM baseline fica stale
+    (incerteza representada, análise preservada). Estado recomputado igual
+    a cada leitura (monótono, sem renovação) e NENHUM comando de leitura
+    grava; persistência ocorre nas gravações legítimas (review/analyze/
+    generate), tornando a granularidade durável. Teste com DISCO cobre o
+    cenário completo da auditoria (criar → ler sem gravar → editar →
+    reler do disco → sem renovação de confiança; e o contraste consistente
+    com salvar). Revisão histórica nunca é redefinida pelo refresh.
+  - OBJ 5 — motor/dados dos antigos. CAUSA: merge_incremental substituía
+    previous.engine sem preencher clipes legados (analyze_clip caía para o
+    motor da coleção, agora da última execução) e analyze() rodava sobre
+    TODA a biblioteca com o motor atual. CORREÇÃO: mesclagem preserva a
+    origem CONHECIDA (clipes legados herdam previous.engine ANTES da
+    troca; sem metadado permanece sem origem); analyze na geração roda
+    SOMENTE sobre os novos; válidos/rejeitados/excluídos/desatualizados
+    intocados (títulos e notas incluídos); reanálise explícita usa o motor
+    do próprio clipe e REGISTRA o motor que efetivamente produziu a nova
+    análise (clip.engine atualizado em analyze_clip). Teste de biblioteca
+    mista Standard/Gemma/legado/rejeitado/excluído/desatualizado.
+  - OBJ 6 — dedupe incompatível com o contrato. CAUSA: id OU (mesmo formato
+    e IoU ≥ 75%) — sobreposição decidia sozinha. CORREÇÃO: sobreposição é
+    SINAL; quase duplicata exige também as UNIDADES DE FALA do candidato
+    contidas nas do existente (mesma história, outros limites); história
+    distinta que inclui unidade nova é variação legítima e entra; outro
+    formato e sem interseção não são duplicatas; excluído não ressuscita
+    pelo MESMO conteúdo. DESCODERTA: quando a 1ª passada não acha nada
+    novo, UMA segunda passada delimitada roda sobre a fala ainda não
+    ocupada pela biblioteca (sem loops; falta de fala livre preserva a
+    biblioteca e informa). Testes: unidades de fala, variação legítima
+    sobreposta, outro formato, duplicata exata, exclusão.
+  - OBJ 7 — validação real da UI: ver VALIDATION/Runtime.
+  - OBJ 8 — versionamento e continuidade: bump 0.19.0 em app/package.json,
+    app/src-tauri/tauri.conf.json, app/src-tauri/Cargo.toml + Cargo.lock
+    (sincronizados via cargo check; nenhuma dependência adicionada).
+    Registro de continuidade canônico criado no ENGINE-HANDOFF (seção
+    "ENTREGA 0.19.0 — REGISTRO DE CONTINUIDADE": versões, tarefas UPD
+    incluídas, estado/critérios/evidências por item, pendências herdadas,
+    commit, validação humana, próximo passo). Regra permanente adicionada
+    ao AGENTS.md do workspace: toda tarefa (inclusive PARTIAL/BLOCKED)
+    consulta e atualiza esse registro; UPD-XXX ≠ versão; sem documentos
+    concorrentes; manifestos/locks sincronizados; versionamento não
+    substitui coordenação. Backlog segue canônico para pendências de
+    produto. Relatórios antigos NÃO renumerados; NENHUM release fabricado.
+  - OBJ 9 — contagens corrigidas: ver VALIDATION (separação aprovados/
+    ignorados/comandos com falha; demonstrações de regressão identificadas
+    caso a caso; lint pré-existente distinguido; hook Stop declarado como
+    pendente de execução no encerramento).
+  Not completed (declarado):
+  - Publicação de arquivo pela UI através do diálogo NATIVO de destino:
+    harness não consegue acionar o diálogo (CDP não o alcança; SendKeys
+    não chegou ao campo). Cobertura existente: início/cancelamento/
+    resultado do comando export_video pela UI (cancelar → sem falso
+    sucesso ✓) e publicação real em NÍVEL DE COMANDO no laboratório cargo
+    da UPD-019 (arquivo publicado + ffprobe). EVIDÊNCIA AUSENTE: um MP4
+    gerado a partir do clique em "Baixar" com o diálogo confirmado.
+  - Revisor independente externo: BLOCKED (sem ferramenta de subagente na
+    sessão). Os achados corrigidos vêm da AUDITORIA EXTERNA do mantenedor;
+    a revisão estruturada sobre o diff final é de autoria do próprio ZCode
+    (limitação declarada).
+
+FILES
+  Created:
+  - app/src/test/clip-settings.test.ts (obj 1; prova 3/6 na impl. antiga)
+  - app/src/test/useclips-export-result.test.tsx (obj 2, hook)
+  - app/src/test/clip-download.test.tsx (obj 2, componente)
+  - tools/e2e/upd20-ui-lab.mjs (laboratório de UI, instância própria CDP)
+  - Backup novo: ~/cutnicepro-backups/2026-10-21_upd20_pre-task (fora do Git)
+  Modified (Rust): clips/{types,store,generation,commands,semantic}.rs,
+    semantic_tests.rs; app/src-tauri/Cargo.{toml,lock}, tauri.conf.json
+    (0.19.0)
+  Modified (TS): lib/clips.ts, lib/clip-library.ts, hooks/useClips.ts,
+    components/clips/{ClipDetails,ClipInspection}.tsx, clip-library.css,
+    test/{clip-flow,clip-library,editor-autocut,source-clip-isolation,
+    workspace-save-regression}.test.{ts,tsx}; app/package.json (0.19.0)
+  Modified (docs/gov): AGENTS.md (regra de continuidade),
+    docs/engineering/ENGINE-HANDOFF.md (registro 0.19.0 + upd 20),
+    app/.gitignore (src-tauri/target-upd20/ do laboratório)
+  Deleted: NENHUM arquivo físico
+  Unexpected changes: NENHUMA no working tree do projeto. No app-data real,
+    durante a sessão o MANTENEDOR usou o app (reabertura às 13:39 e
+    15:34:44 — processos alheios NÃO encerrados; hashes da coleção e da
+    transcrição conferidos contra o backup pré-UPD-020 no início e no fim:
+    IDÊNTICOS).
+
+VALIDATION (contagens corrigidas e separadas)
+  Typecheck: PASS — npx tsc --noEmit (0 erros)
+  Build frontend: PASS — vite build (usada pelo laboratório de UI)
+  Lint: FALHA PRÉ-EXISTENTE — 19 erros + 1 aviso, todos em arquivos NÃO
+    tocados por UPD-018/019/020 (App.tsx, useTranscription, VideoPreview,
+    TranscriptPanel, useTimelinePreview, useSplashPhase,
+    usePlaybackShortcut, useClipMedia, useClipLibrary,
+    TranscriptWordPopover, ProjectContextMenu, ToolDialog, SourceForm,
+    hero-galaxy, HalftoneWordmarkFooter). Nenhum arquivo destas tarefas
+    aparece no lint; escopo de correção integral NÃO foi ampliado (ordem
+    da seção 9).
+  Unit tests (aprovados): Rust cargo test --lib = 138 aprovados, 0 falhas.
+    TS vitest = 214 aprovados, 0 falhas (27 arquivos).
+  Ignored (não executados nesta tarefa): 11 testes Rust --ignored
+    (10 pré-existentes de mídia real + 1 laboratório UPD-019, executado na
+   quela tarefa; nenhuma inferência Gemma repetida nesta — ordem da seção 7).
+  Demonstrações de regressão (executadas e REVERTIDAS, contadas à parte
+    dos testes): [UPD-020/obj1] clipSettings antigo → 3/6 FALHAM
+    (clip-settings.test.ts, cenário da auditoria); [UPD-019/obj1,
+    tarefa anterior] save() antigo → 5/8 FALHAM (workspace-save-regression).
+    Dois saves sequenciais NÃO são tratados como prova de todas as
+    condições de concorrência: cada caso tem teste próprio (mesmo ciclo,
+    callback retido, save em andamento + nova edição, resposta antiga da
+    MESMA mídia — adicionada nesta tarefa, falha antiga incluída).
+  Integration/Runtime (app real, laboratório de UI — instância própria exe
+    target-upd20 + working tree via devUrl, CDP, mídia de 90 s criada por
+    ffmpeg): 24 APROVADAS / 3 FALHAS em 27 verificações —
+    APROVADAS: projeto/mídia/transcrição real (whisper, 49 segmentos);
+    edição de transcrição pela UI persistiu SEM reversão e visível após
+    reabrir; geração real (Gemma 4) publicou cortes com análise e aviso
+    "N novos cortes adicionados — M no total"; nota válida no card; sem
+    Aprovar/Rejeitar; ações de card; filtro Excluídos; inspeção com
+    resumo/critérios/nota (48–82/100 entre execuções); edição do clipe
+    (intervalo personalizado 21,13–31,13 s + legendas desativadas)
+    aplicada na prévia e persistente na reabertura; cancelamento do
+    diálogo de destino SEM aviso de sucesso; excluir → Desfazer →
+    restaurado; filtro Excluídos → Restaurar; biblioteca persistiu
+    (disco); 2ª geração preservou TODOS os anteriores (1→1); coleção REAL
+    do mantenedor INTOCADA (hash idêntico do início ao fim).
+    FALHAS (declaradas): publicação de arquivo pelo diálogo nativo
+    (harness); aviso da 2ª geração não capturado por timing (o da 1ª foi
+    verificado na UI e a lógica é testada em TS); limpeza bloqueada pelo
+    gate durante a execução (limpa com êxito no micro-teste final —
+    list_projects final = somente o projeto do mantenedor).
+    Iterações do harness ANTES da execução válida (declaradas): 6
+    execuções falharam por infraestrutura de automação (CDP vs. instância
+    do mantenedor, reload do build embutido, localStorage da pasta WebView2
+    isolada, navegação/seções recolhidas) — nenhuma por defeito do produto;
+    a execução final é a evidência.
+  Comandos com falha (lista completa e distinta): npm run lint (pré-
+    existente acima); 6 iterações do e2e descritas acima; micro-teste de
+    export via SendKeys (não publicado — limitação de harness declarada).
+  Hook Stop/baseline: PENDENTE de execução no encerramento da sessão —
+    NÃO apresentado como já executado; exit 0 dele não é prova de PASS.
+
+HOOKS / HARNESS
+  Hooks active: PreToolUse (destrutivos), PostToolUse (validação de
+    gravação), Stop (baseline registrada, não é gate)
+  PreToolUse: sem bloqueios
+  PostToolUse: validações sem falhas
+  Stop: pendente do encerramento (declarado)
+  Baseline: idem
+  Gate result: N/A
+  Evidence: .zcode/hooks/audit/audit-log.jsonl
+
+MCP / SKILLS
+  Tools used: Playwright via CDP (instância própria do app, porta 9382);
+    ffmpeg/ffprobe (mídia de lab e validações); ferramentas nativas
+    (Read/Write/Edit/Bash/TodoWrite). FigCraft não aplicável (sem artefato
+    de design; mudanças seguem o design system existente e as proibições
+    de layout).
+  Connection status: CDP OK na execução final
+  Failures: SendKeys ao diálogo nativo de destino (sem efeito) — declarado
+  Pending activation: nenhuma
+
+GIT
+  Branch: main
+  HEAD: e22555b682ccad97a68eb356032c245b86b54baf
+  Latest commit: "feat(clips): add per-clip fill mode ("fit") persisted from
+    generation options" (commit do MANTENEDOR)
+  Commits created: NENHUM (sem autorização; nada de push/merge/tag/release)
+  Push: NOT EXECUTED
+  Remote: origin → github.com/FrosttyS18/CutNicePro (branch main)
+  Working tree: MODIFIED + UNTRACKED (38 alterações rastreadas: UPD-019+020
+    aguardando commit do mantenedor; untracked pessoais pré-existentes
+    INTOCADOS; staged: D .tooling/_checks.json da UPD-019)
+  Pending files: alterações UPD-019/020 (código+testes+docs+0.19.0) e
+    relatórios em docs/reports/ — listados no git status; nunca omitidos.
+
+EVIDENCE
+  Commands executed (principais): suítes cargo/vitest/tsc/lint; provas de
+    regressão com reversão temporária; build frontend+backend isolado;
+    node tools/e2e/upd20-ui-lab.mjs (execução final completa); micro-teste
+    final de export+limpeza; sha256sum contra backups (2× início/fim);
+    ffprobe; Get-Process (monitorar processos alheios — nenhum encerrado).
+  Relevant logs: .tooling/vendor/upd20-lab/upd20-ui-lab.log (execução
+    final 24/27) e upd20-ui-lab-result.json; registros de diagnóstico das
+    iterações de harness no mesmo diretório.
+  Screenshots: NENHUM (verificação direta de estado/contratos; política)
+  Test artifacts: backups ~/cutnicepro-backups/2026-10-21_upd19_pre-task
+    (íntegro) e 2026-10-21_upd20_pre-task (6 arquivos, verificado);
+    mídia de lab e export em .tooling/vendor/upd20-lab/ (ignorado pelo Git)
+  Reproduction details: provas de regressão reproduzíveis revertendo
+    clipSettings (3/6 falham) e save() (5/8 falham, tarefa anterior).
+
+ISSUES
+  Bugs found (da auditoria; todos corrigidos): 6 achados das seções 1–6.
+  Unresolved failures: NENHUMA nas suítes; lint pré-existente permanece
+    (fora do escopo, contagem inalterada); limitações de harness da UI
+    declaradas acima.
+  Regressions: NENHUMA observada nas suítes pertinentes nem no laboratório.
+  Risks:
+  - Coleções novas não abrem em builds antigos (campos novos com
+    deny_unknown_fields) — irrelevante sem distribuição; registrado;
+  - Stale preserva análise antiga no arquivo (recuperável por design);
+    UI nunca a publica como válida;
+  - 2ª passada de descoberta usa inferência adicional QUANDO a 1ª não
+    encontra nada novo (delimitada a 1 tentativa; sem loops);
+  - Migração legada: análises pré-assinatura com transcrição editada
+    aparecem como DESATUALIZADAS (honestidade exigida pela auditoria) —
+    reanálise explícita atualiza e limpa o marcador.
+  Blockers: publicação de arquivo via diálogo nativo na UI (harness);
+    revisor independente externo (sem ferramenta de agente na sessão).
+
+FINAL
+  Delivery status: ENTREGUE (PARTIAL por aprovação humana pendente e
+    limitações declaradas)
+  Requirements met: 9/9 seções endereçadas; critério final da entrega
+    atendido (nenhuma condição bloqueante permanece no produto)
+  Remaining work: aprovação visual/manual do mantenedor; commit da
+    entrega 0.19.0; diálogo nativo de exportação permanece não
+    automatizável (validação manual recomendada no guia); pendências
+    herdadas no registro (qualidade editorial, 9:16 p/ publicação, Large
+    completo, estudo open-source, lint, CI pending push).
+  User action required: validação manual pelo guia; commit quando decidir.
+  Restart required: SIM (app em execução usa binário antigo).
+  Ready for next task: SIM
+  Versões: inicial 0.1.0 → destino 0.19.0 → EFETIVA 0.19.0 (manifestos e
+    locks sincronizados; publicação NÃO autorizada).
+
+REPORT
+  Latest file: docs/reports/LATEST.txt
+  Historical file: docs/reports/history/2026-10-21_173413_upd020-correcoes-auditoria.txt
+
+GUIA DO MANTENEDOR — O QUE MUDOU E COMO TESTAR
+  O que mudou:
+  1. Baixar (card ou inspeção) usa o intervalo EDITADO e respeita legendas
+     desativadas — a prévia mostra exatamente o que será exportado.
+  2. "Vídeo exportado" só aparece quando o arquivo é publicado; cancelar o
+     diálogo ou o processamento é silencioso; falha mostra o erro.
+  3. Nota só aparece com análise VÁLIDA; análise de trecho editado fica
+     "Análise desatualizada" com botão de atualizar.
+  4. Geração não reanalisa antigos; análise antiga desatualizada fica
+     preservada e marcada (não some, não mente).
+  Teste 1 — Baixar com edição:
+    1. abra um clipe, "Editar", ajuste Início/Fim (ex.: 5–15 s) e desative
+       legendas; 2. volte e "Baixar"; 3. salve o arquivo.
+    Resultado esperado: vídeo com ~10 s (intervalo editado) e sem legendas.
+  Teste 2 — Cancelar sem falso sucesso:
+    1. "Baixar"; 2. cancele o diálogo de destino.
+    Resultado esperado: nenhum "Vídeo exportado".
+  Teste 3 — Nota desatualizada:
+    1. edite um trecho da transcrição que alimenta um clipe; 2. abra os
+       cortes.
+    Resultado esperado: clipe afetado mostra "Análise desatualizada"
+    (sem nota como válida); não afetados seguem com nota e critérios;
+    "Analisar novamente" atualiza.
+  Teste 4 — Excluir/recuperar: Excluir → "Desfazer" (ou filtro
+    "Excluídos" → Restaurar); nada é apagado.
+  Teste 5 — Gerar mais cortes: os atuais permanecem idênticos; o aviso
+    informa quantos novos entraram (ou "Nenhum corte novo").
+  Teste 6 — Reabrir: transcrição editada, análises e intervalos editados
+    persistem após fechar e reabrir o app.
+
+END OF REPORT

@@ -9,7 +9,15 @@ export type ClipQuality = "standard" | "experimentalGemma";
 export interface ClipEngine { backend: string; model: string; template: string; sampling: string; seed: number }
 export interface ClipAnalysis { title: string; summary: string; criteria: {label: string; score: number; explanation: string; evidence: string}[] }
 export type ClipFit = "cover" | "contain";
-export interface Clip { id: string; start: number; end: number; title: string; score: number; reasons: string[]; review: ClipReview; format?: AspectRatio; fit?: ClipFit; analysis?: ClipAnalysis; analysisError?: string }
+export interface Clip { id: string; start: number; end: number; title: string; score: number; reasons: string[]; review: ClipReview; format?: AspectRatio; fit?: ClipFit; analysis?: ClipAnalysis; analysisError?: string;
+  /** Assinatura da janela da transcrição que alimentou a análise (invalidação granular, atualização 19). */
+  analysisSignature?: string;
+  /** Análise DESATUALIZADA (upd 20): preservada para recuperação, mas NÃO é avaliação válida do texto atual. */
+  analysisStale?: boolean;
+  /** Exclusão recuperável: `true` sai da experiência; nada é apagado e a restauração desfaz. */
+  deleted?: boolean;
+  /** Motor que gerou este clipe (biblioteca cumulativa mistura resultados históricos). */
+  engine?: ClipEngine }
 export interface ClipCollection { version: 1; mediaId: string; transcriptHash: string; clips: Clip[]; engine?: ClipEngine }
 export interface ClipOptions { format?: AspectRatio; fit?: ClipFit; quality?: ClipQuality; automatic?: boolean; minSeconds?: number; maxSeconds?: number; count?: number }
 export interface ClipJob { jobId: string; projectId: string; state: "running" | "completed" | "failed" | "cancelled"; stage: "analyzing" | "rendering"; progress: number; error: string | null; operation?: "generate" | "analyze" | "export" }
@@ -18,7 +26,9 @@ export function parseClips(value: unknown): ClipCollection {
   if (!value || typeof value !== "object") throw new Error("Cortes inválidos.");
   const v = value as Partial<ClipCollection>;
   const ids = new Set<string>();
-  if (v.version !== 1 || typeof v.mediaId !== "string" || typeof v.transcriptHash !== "string" || !Array.isArray(v.clips) || v.clips.length > 12
+  // Atualização 19: a biblioteca é CUMULATIVA — sem teto total aqui; o limite
+  // de 12 é por EXECUÇÃO (dialog/backend), não do total armazenado.
+  if (v.version !== 1 || typeof v.mediaId !== "string" || typeof v.transcriptHash !== "string" || !Array.isArray(v.clips)
     || !v.clips.every(c => c && typeof c.id === "string" && /^[a-f\d]{64}$/i.test(c.id) && !ids.has(c.id) && Boolean(ids.add(c.id))
       && Number.isFinite(c.start) && Number.isFinite(c.end) && c.start >= 0 && c.end > c.start && typeof c.title === "string" && c.title.length > 0
       && Number.isInteger(c.score) && c.score >= 0 && c.score <= 100 && Array.isArray(c.reasons) && c.reasons.every(r => typeof r === "string")
@@ -26,8 +36,16 @@ export function parseClips(value: unknown): ClipCollection {
       && (c.fit === undefined || ["cover","contain"].includes(c.fit))
       && (c.analysis === undefined || validAnalysis(c.analysis))
       && (c.analysisError === undefined || typeof c.analysisError === "string")
+      && (c.analysisSignature === undefined || typeof c.analysisSignature === "string")
+      && (c.analysisStale === undefined || typeof c.analysisStale === "boolean")
+      && (c.deleted === undefined || typeof c.deleted === "boolean")
+      && (c.engine === undefined || validEngine(c.engine))
       && ["pending", "approved", "rejected"].includes(c.review))) throw new Error("Cortes inválidos.");
   return v as ClipCollection;
+}
+function validEngine(value: ClipEngine): boolean {
+  return Boolean(value && typeof value.backend === "string" && typeof value.model === "string"
+    && typeof value.template === "string" && typeof value.sampling === "string" && Number.isInteger(value.seed));
 }
 function validAnalysis(value: ClipAnalysis): boolean {
   return Boolean(value && typeof value.title === "string" && typeof value.summary === "string" && Array.isArray(value.criteria)
@@ -42,9 +60,22 @@ export function isClipJob(value: unknown): value is ClipJob {
     && (v.operation === undefined || ["generate","analyze","export"].includes(v.operation))
     && (v.error === null || typeof v.error === "string");
 }
+/**
+ * Configurações efetivas do clipe. Atualização 20 (auditoria): preserva a
+ * EDIÇÃO salva — o intervalo efetivamente aparado dentro do clipe e a
+ * escolha de legendas (captionModel 0 = desativadas é LEGÍTIMO e nunca é
+ * trocado por outro modelo). Limites salvos fora do clipe são apenas
+ * ajustados para dentro; ausentes usam os limites originais do clipe.
+ */
 export function clipSettings(settings: EditorSettings, clip: Clip): EditorSettings {
-  const model = settings.captionModel || 2;
-  return { ...settings, trimStart: clip.start, trimEnd: clip.end, captionModel: model, captionStyle: effectiveCaptionStyle(model, settings.captionStyle) };
+  const start = Number.isFinite(settings.trimStart)
+    ? Math.min(Math.max(settings.trimStart, clip.start), clip.end)
+    : clip.start;
+  const end = settings.trimEnd !== null && Number.isFinite(settings.trimEnd)
+    ? Math.min(Math.max(settings.trimEnd, start), clip.end)
+    : clip.end;
+  return { ...settings, trimStart: start, trimEnd: end,
+    captionStyle: effectiveCaptionStyle(settings.captionModel, settings.captionStyle) };
 }
 export function isolatedClipSettings(clip: Clip, saved?: EditorSettings, media?: Pick<SourceDescriptor,"width" | "height"> | null): EditorSettings {
   const defaults = defaultEditorSettings();
@@ -52,6 +83,8 @@ export function isolatedClipSettings(clip: Clip, saved?: EditorSettings, media?:
   const ratios: AspectRatio[] = ["16:9","9:16","1:1","4:5"];
   const fallback = ratios.reduce((best,ratio) => Math.abs(Number(ratio.split(":")[0])/Number(ratio.split(":")[1])-sourceRatio)
     < Math.abs(Number(best.split(":")[0])/Number(best.split(":")[1])-sourceRatio) ? ratio : best);
+  // sem edição salva: limites originais do clipe e legendas ATIVAS (padrão
+  // histórico do clipe); com edição salva: tudo vem do que o usuário deixou
   return clipSettings(saved ?? { ...defaults, ratio: clip.format ?? fallback, fit: clip.fit ?? "contain", captionModel: 2 },clip);
 }
 export function renderSettings(settings: EditorSettings): EditorSettings {
@@ -65,7 +98,6 @@ export function clipMessage(error: unknown): string {
   if (/evidências válidas/i.test(text)) return "Não foi possível confirmar a análise deste trecho. Tente analisar novamente.";
   if (/análise.*indisponível/i.test(text)) return "A análise está indisponível. Repare a instalação do aplicativo e tente novamente.";
   if (/análise/i.test(text)) return "Não foi possível analisar este trecho. Tente novamente.";
-  if (/aprove/i.test(text)) return "Aprove o corte antes de exportar.";
   if (/andamento|aguarde/i.test(text)) return "Há um processamento em andamento. Aguarde ou cancele antes de continuar.";
   if (/fala suficiente/i.test(text)) return "Não há fala suficiente para sugerir cortes. Escolha outro vídeo.";
   if (/transcreva|transcrição/i.test(text)) return "Transcreva o vídeo antes de gerar cortes com legendas.";
@@ -90,6 +122,13 @@ export async function analyzeClip(projectId: string,mediaId: string,clipId: stri
 }
 export async function reviewClip(projectId: string, mediaId: string, clipId: string, review: ClipReview) {
   return parseClips(await invoke<unknown>("review_clip", { projectId, mediaId, clipId, review }));
+}
+/** Exclusão persistente recuperável: marca sem apagar nada. */
+export async function deleteClip(projectId: string, mediaId: string, clipId: string) {
+  return parseClips(await invoke<unknown>("delete_clip", { projectId, mediaId, clipId }));
+}
+export async function restoreClip(projectId: string, mediaId: string, clipId: string) {
+  return parseClips(await invoke<unknown>("restore_clip", { projectId, mediaId, clipId }));
 }
 export const getClipJob = () => invoke<unknown>("clips_job");
 export const cancelClips = (jobId: string) => invoke<boolean>("cancel_clips", { jobId });

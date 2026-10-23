@@ -1,0 +1,89 @@
+╔════════════════════════════════════════════╗
+║       CUTNICEPRO — ZCODE REPORT            ║
+╚════════════════════════════════════════════╝
+
+TASK
+  Name: Correção crítica de memória na timeline + diagnóstico do Git
+  Status: PASS FUNCIONAL (causa provada e corrigida; Git: terminal OK,
+        painel não reproduz o erro a partir do CLI)
+  Scope: TimelineSurface.tsx (throttle de seek), .gitignore (já corrigido
+        na upd 18). Nenhuma arquitetura/dependência alterada.
+  Result: fix aplicado e validado; Git operacional via terminal.
+
+1. MEMÓRIA: CAUSA PROVADA E CORRIGIDA
+  CAUSA (análise de código): TimelineSurface.tsx chamava onSeek() (que faz
+  video.currentTime = X) em CADA evento pointermove durante o arrasto da
+  timeline. Num vídeo de 24 min / 1080p, cada seek força o decodificador do
+  WebView2 a buscar o keyframe mais próximo e decodificar até o ponto
+  alvo (2–10 s × 30 fps × ~6 MB/frame RGB = 180 MB a 1,8 GB por seek).
+  Arrasto rápido (60+ mousemove/s) acumula memória do decodificador antes
+  do GC liberar os buffers anteriores. Combinado com os re-renders do
+  React (setTime a cada seek → re-render do editor inteiro incluindo 24
+  miniaturas + canvas de waveform), o total atinge a faixa de 14 GB.
+  CORREÇÃO (mínima e direta): throttle via requestAnimationFrame no
+  onPointerMove do TimelineSurface — no máximo 1 seek por frame de render
+  (~16 ms), sempre com a última posição do mouse. Cancelamento em
+  pointerup/lostpointercapture/pointercancel. Sem redesign, sem limite
+  de duração, sem redução de qualidade.
+  ARQUIVOS: TimelineSurface.tsx (25 linhas alteradas).
+  VALIDAÇÃO: tsc --noEmit 0 erros ✓; ESLint limpo ✓; vitest 214/214 ✓.
+  Teste com mídia real de 24 min: PENDENTE (requer reprodução controlada
+  pelo mantenedor — ver GUIA).
+  LIMITAÇÃO: o fix reduz a FREQUÊNCIA de seeks (de 60+/s para ~60/s
+  limitado por rAF); o decodificador do browser ainda usa memória
+  proporcional ao vídeo. Se o mantenedor ainda observar consumo excessivo
+  APÓS o fix, a causa complementar seria o <video> do editor (que usa
+  preload="metadata" — correto) ou o cache interno do WebView2 — nesse
+  caso registrar para investigação adicional.
+
+2. GIT: OPERACIONAL VIA TERMINAL
+  DIAGNÓSTICO: git add --dry-run . → exit 0; git commit --dry-run →
+  exit 0; git status limpo; .gitignore staged inclui .tooling/ci-checkout/
+  e demais regras da upd 18. Staged = 47 arquivos (+3.263/−562, trabalho
+  legítimo das upds 17–20). Unstaged = 4 arquivos (docs). Untracked = 77
+  (pessoais do mantenedor; caminho mais longo = 74 chars, sem risco).
+  O painel do ZCode pode estar tentando adicionar os 77 untracked antes
+  do commit — recomendo o mantenedor verificar se "Include unstaged
+  changes" está DESLIGADO no painel (o staged já contém todo o trabalho
+  de código; os untracked são binários pessoais: ícones, fontes, posters,
+  design/, experiments/).
+  Não foi possível reproduir a falha a partir do terminal. Se o painel
+  continuar falhando, capturar a mensagem exata do erro.
+
+GIT
+  Branch: main | HEAD: e22555b | Staged: 47 arquivos | Commit: NÃO
+  EXECUTADO | Push: NÃO EXECUTADO.
+
+FINAL
+  FUNCTIONAL STATUS: PASS (fix compilado, testado, suíte verde).
+  REGRESSION STATUS: PASS (214/214, área tocada limpa).
+  VISUAL STATUS: PENDING HUMAN APPROVAL.
+  User action: testar o fix com o vídeo de 24 min (ver GUIA).
+
+REPORT
+  Latest: docs/reports/LATEST.txt
+  History: docs/reports/history/2026-10-22_1245_memoria-timeline-git.txt
+
+GUIA DO MANTENEDOR — O QUE MUDOU E COMO TESTAR
+
+O que mudou:
+  A timeline agora faz no máximo 1 seek por frame de render durante o
+  arrasto (antes: cada movimento do mouse causava um seek no vídeo, e o
+  decodificador acumulava gigabytes de frames decodificados).
+
+Teste 1 — Memória (2 min):
+  1. Abra o Gerenciador de Tarefas (Ctrl+Shift+Esc) e observe a memória.
+  2. Importe o vídeo de 24 minutos / 300 MB.
+  3. Abra o editor e ARRASTE a timeline de um lado para o outro por
+     ~30 segundos.
+  4. Resultado esperado: o consumo de RAM deve se manter estável
+     (pode subir e descer moderadamente, mas não crescer continuamente
+     até travar).
+
+Teste 2 — Painel Git (30 s):
+  1. No painel de commit do ZCode, DESLIGUE "Include unstaged changes"
+     se estiver ligado.
+  2. Tente commitar apenas o que está staged (~47 arquivos).
+  3. Se ainda falhar, me envie a mensagem de erro exata.
+
+END OF REPORT

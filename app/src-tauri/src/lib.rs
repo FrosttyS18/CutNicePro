@@ -321,6 +321,8 @@ pub fn run() {
             clips::commands::clips_job,
             clips::commands::cancel_clips,
             clips::commands::review_clip,
+            clips::commands::delete_clip,
+            clips::commands::restore_clip,
             clips::commands::generate_clips,
             clips::commands::analyze_clip,
             render::commands::export_video

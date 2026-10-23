@@ -1,0 +1,67 @@
+╔════════════════════════════════════════════╗
+║       CUTNICEPRO — ZCODE REPORT            ║
+╚════════════════════════════════════════════╝
+
+TASK
+  Name: Estudo OpenCut + correção estrutural da timeline (Blob URL)
+  Status: PARTIAL (correção estrutural aplicada: Blob URL substitui scheme
+        cnplocal para o vídeo; validação com scrub real PENDENTE)
+
+DIFERENÇA ESTRUTURAL CONFIRMADA (estudo do código-fonte do OpenCut)
+  OpenCut Classic (rev cf5e79e, clonado localmente para verificação):
+  TODA mídia usa URL.createObjectURL(file) — ver media/processing.ts:120,202
+  e services/storage/service.ts:361-367. O browser gerencia seek, buffer,
+  decode e cache nativamente. ZERO IPC por operação de vídeo.
+  CutNicePro: mídia persistente era servida via scheme cnplocal — CADA Range
+  request do browser passava por IPC → handler Rust → file I/O → IPC →
+  WebView2. Mesmo com o fix de Range (seek+read_exact), o custo de IPC
+  serialização/desserialização por requisição durante o scrub era o gargalo.
+
+CORREÇÃO ESTRUTURAL APLICADA
+  useWorkspaceData.ts (linha ~37-70): ao reconectar mídia persistente, o
+  hook agora faz UM fetch do cnplocal URL (uma leitura integral, já com o
+  fix de Range do backend), cria um Blob, e usa URL.createObjectURL(blob)
+  como src do <video>. A partir daí, TODO o seek/scrub/playback é nativo
+  do browser — sem uma única chamada IPC adicional. O scheme cnplocal
+  permanece para autenticação/carga inicial (uma vez).
+  Isso é exatamente o que o OpenCut faz e é a razão estrutural de sua
+  timeline leve: o browser tem um pipeline de mídia otimizado (C++,
+  GPU, cache de frames) que o custom scheme do Tauri não consegue igualar.
+
+ARQUIVOS ALTERADOS NESTA SESSÃO (todas as camadas)
+  1. local_media_scheme.rs: Range faz seek+read_exact (não lê arquivo
+     inteiro); sufixo -N; rejeita múltiplos ranges; teste parse_range.
+  2. VideoEditor.tsx: onTime gated por video.seeking (elimina snapback);
+     TranscriptPanel com currentTime throttled (150ms).
+  3. TimelineSurface.tsx: rAF throttle no pointermove (coalescência).
+  4. VideoEditor.tsx: coalescência de seek (pendingSeekRef + listener
+     seeked — no máximo 1 seek ativo).
+  5. useWorkspaceData.ts: Blob URL em vez de cnplocal para vídeo.
+
+VALIDAÇÃO
+  TS: 214/214. Rust: 139/139. Lint: PASS. fmt: OK.
+  Teste com scrub no vídeo de 24 min: PENDENTE (responsabilidade do
+  mantenedor — ver GUIA). O Blob URL muda a arquitetura de entrega;
+  expectativa: seeking nativo do browser (igual a qualquer player web).
+
+FUNCTIONAL STATUS: PARTIAL (correção estrutural aplicada; scrub real pendente)
+REGRESSION STATUS: PASS (214/214 TS + 139/139 Rust)
+VISUAL STATUS: PENDING HUMAN APPROVAL
+
+GIT
+  HEAD: e22555b. Commit: NÃO EXECUTADO. Push: NÃO EXECUTADO.
+
+REPORT
+  Latest: docs/reports/LATEST.txt
+  History: docs/reports/history/2026-10-22_1530_opencut-blob-url.txt
+
+GUIA DO MANTENEDOR — TESTE (2 min)
+  1. Abra o editor com o vídeo de 24 min. Pode levar 2-5s para o vídeo
+     carregar (Blob criado uma única vez).
+  2. ARRASTE a timeline de um lado para o outro continuamente.
+  3. Resultado esperado: playhead responde IMEDIATAMENTE (sem travar),
+     sem snapback (não volta para posição antiga), memória estável.
+     A prévia do vídeo deve buscar o frame de forma similar ao OpenCut.
+  4. Após soltar: a prévia mostra o frame correto rapidamente (não 2-3s).
+
+END OF REPORT

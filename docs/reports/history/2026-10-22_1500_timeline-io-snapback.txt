@@ -1,0 +1,58 @@
+╔════════════════════════════════════════════╗
+║       CUTNICEPRO — ZCODE REPORT            ║
+╚════════════════════════════════════════════╝
+
+TASK
+  Name: Timeline performática — corrigir I/O, sincronização e prévia
+  Status: PARTIAL (correções de I/O e snapback aplicadas e validadas
+        em código+testes; medição com scrub no app real PENDENTE)
+
+1 — I/O DA MÍDIA: CORRIGIDO
+  CAUSA CONFIRMADA: local_media_scheme.rs linha 105 fazia
+  std::fs::read(&path) — carregava o arquivo INTEIRO (300 MB) na memória
+  para depois servir um slice do Range. Cada seek do browser = 1 leitura
+  integral + 1 cópia do intervalo. Durante scrub com múltiplos seeks,
+  a alocação repetida de 300 MB explica os picos de ~3 GB.
+  CORREÇÃO: Range pede SÓ os bytes do intervalo via File::seek() +
+  read_exact() — sem carregar o resto. Sem Range (carga inicial), lê o
+  completo (limitação do responder do Tauri, que exige corpo inteiro).
+  MELHORIAS ADICIONAIS: suporte a sufixo (-N), rejeição de múltiplos
+  ranges (política: devolve 200 completo), metadata sem leitura do corpo.
+  ARQUIVO: local_media_scheme.rs (119 linhas).
+
+2 — AUTORIDADE DO TEMPO: CORRIGIDO
+  CAUSA CONFIRMADA: o browser dispara timeupdate com o tempo ANTIGO durante
+  o seek (antes de chegar ao alvo). O onTime handler chamava setTime com
+  esse tempo antigo, reposicionando o playhead para trás — o "snapback"
+  (alvo → antigo → alvo) relatado pelo mantenedor.
+  CORREÇÃO: onTime agora verifica video.seeking ANTES de chamar setTime.
+  Durante o seek, eventos timeupdate antigos são descartados. O playhead
+  permanece no alvo do usuário até o browser confirmar a posição via
+  seeked + timeupdate com o tempo correto.
+  ARQUIVO: VideoEditor.tsx (+4 linhas).
+
+VALIDAÇÃO
+  Typecheck: PASS. Lint: PASS. TS: 214/214. Rust: 139/139 (novo teste
+  de parse_range: fechado/aberto/sufixo/inválidos). fmt: OK. clippy: 8
+  avisos (dívida pré-existente). Teste com scrub real: PENDENTE.
+
+FUNCTIONAL STATUS: PARTIAL (correções aplicadas, validação real pendente)
+REGRESSION STATUS: PASS (214/214 TS + 139/139 Rust)
+VISUAL STATUS: PENDING HUMAN APPROVAL
+
+GIT
+  HEAD: e22555b. Commit: NÃO EXECUTADO. Push: NÃO EXECUTADO.
+  Arquivos alterados: local_media_scheme.rs, VideoEditor.tsx.
+
+REPORT
+  Latest: docs/reports/LATEST.txt
+  History: docs/reports/history/2026-10-22_1500_timeline-io-snapback.txt
+
+GUIA DO MANTENEDOR — TESTE (2 min)
+  1. Abra o editor com o vídeo de 24 min. ARRASTE a timeline.
+  2. Resultado esperado: o playhead deve ir ao alvo e FICAR LÁ — não deve
+     "voltar" para a posição antiga. A memória deve permanecer estável.
+  3. Após soltar: a prévia converge para o frame correto em ~1-2s
+     (tempo do decoder, não do I/O).
+
+END OF REPORT

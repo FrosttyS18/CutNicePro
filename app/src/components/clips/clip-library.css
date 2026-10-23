@@ -19,6 +19,16 @@
 .clip-card__meta small { font-size: 11px; color: #999; margin-left: 3px; font-weight: 400; }
 .clip-card__meta > span, .clip-card__project { font-size: 11px; color: #999; }
 .clip-card__title { padding: 0; background: none; border: 0; color: #f2f2f2; font: inherit; font-size: 13px; line-height: 1.65; text-align: left; cursor: pointer; }
+/* atualização 19 — ações diretas no card (Editar/Baixar/Excluir): vizinhança
+   de botões com gap mínimo de 8px (proibição de layout 5); sem contornos
+   extras em caixa (proibição 1) — separação por espaçamento */
+.clip-card__actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.clip-card__actions .flow-button { font-size: 11px; padding: 6px 10px; }
+.clip-card[data-deleted="true"] .clip-card__open { opacity: .45; }
+.clip-library p[role="status"] .flow-button { margin-left: 8px; padding: 4px 10px; font-size: 11px; }
+/* upd 20 — executor de download com problema declarado (mídia/falha/bloqueio) */
+.clip-download__problem { max-width: 420px; margin: 24px auto; padding: 16px; background: #1c1c1c; border-radius: 10px; display: grid; gap: 10px; justify-items: start; }
+.clip-download__problem p { margin: 0; font-size: 12px; color: #ff9d9d; }
 .clip-card__unavailable { position: absolute; inset: 0; display: grid; place-content: center; font-size: 12px; color: #999; }
 .tool-dialog.clip-inspection { width: min(1180px,calc(100vw - 48px)); max-width: none; }
 .clip-inspection__body { display: grid; grid-template-columns: minmax(0,1.25fr) minmax(260px,1fr) 180px; gap: 24px; align-items: start; }

@@ -3,97 +3,65 @@
 ╚════════════════════════════════════════════╝
 
 TASK
-  Name: Atualização 18 — Integridade da transcrição, geração incremental,
-        análises e biblioteca
-  Status: PARTIAL (reversão da transcrição CORRIGIDA com causa provada;
-        Git ENAMETOOLONG resolvido; geração incremental/análises/ações
-        NOT IMPLEMENTED por limite de orçamento)
-  Scope: useWorkspaceData.ts (fix stale closure), .gitignore (ci-checkout).
-  Result: causa da reversão provada por análise de closure; correção
-        aplicada e validada; ENAMETOOLONG resolvido.
+  Name: Estudo OpenCut + correção estrutural da timeline (Blob URL)
+  Status: PARTIAL (correção estrutural aplicada: Blob URL substitui scheme
+        cnplocal para o vídeo; validação com scrub real PENDENTE)
 
-A — TRANSCRIÇÃO: CORRIGIDA
-  CAUSA PROVADA (análise de código, useWorkspaceData.ts):
-  `save()` usava `data` do closure do render — se chamado no MESMO TICK que
-  uma edição (ex.: ClipTools chama onSave() antes de generate()), o closure
-  ainda tinha a transcrição ANTIGA. `change()` NÃO atualizava `latest.current`
-  (o ref que deveria ser a fonte da verdade), então `saveTranscript()` enviava
-  a versão antiga para o backend, sobrescrevendo a edição.
-  CORREÇÃO:
-  1. `change()` agora atualiza `latest.current` SINCRONAMENTE antes de setData
-  2. `save()` lê de `latest.current` (sempre atual), NUNCA de `data` do closure
-  3. sync do ref pós-render movido para useEffect (lint-safe react-hooks/refs)
-  EVIDÊNCIA: 178/178 testes existentes passam; análise do closure demonstra
-  o caminho da reversão (change→setData→[sem sync do ref]→save com data
-  antiga→saveTranscript antigo→backend sobrescrito). Teste dedicado com
-  renderHook requer @testing-library/react (não instalada; registrada como
-  pendência de infraestrutura de teste).
-  CONTRATO GARANTIDO: gerar cortes usa a versão EDITADA; salvar enquadramento
-  não reenvia transcrição antiga; autosave atrasado não desfaz edição recente.
+DIFERENÇA ESTRUTURAL CONFIRMADA (estudo do código-fonte do OpenCut)
+  OpenCut Classic (rev cf5e79e, clonado localmente para verificação):
+  TODA mídia usa URL.createObjectURL(file) — ver media/processing.ts:120,202
+  e services/storage/service.ts:361-367. O browser gerencia seek, buffer,
+  decode e cache nativamente. ZERO IPC por operação de vídeo.
+  CutNicePro: mídia persistente era servida via scheme cnplocal — CADA Range
+  request do browser passava por IPC → handler Rust → file I/O → IPC →
+  WebView2. Mesmo com o fix de Range (seek+read_exact), o custo de IPC
+  serialização/desserialização por requisição durante o scrub era o gargalo.
 
-E — GIT: RESOLVIDO
-  CAUSA DO ENAMETOOLONG: .tooling/ci-checkout/ (validação local do CI da
-  upd 17) continha 30.493 arquivos / 3,1 GB (cópia integral do repo dentro
-  do repo, incluindo node_modules e cargo target). O painel do ZCode, com
-  "Include unstaged changes" ativado, tentava adicionar todos esses caminhos
-  num único comando git add → argumento excede o limite do SO → ENAMETOOLONG.
-  CORREÇÃO: .gitignore atualizado (+.tooling/ci-checkout/, +.tooling/_runs.json,
-  +.tooling/_jobs.json, +.tooling/_log_*.txt). Untracked caiu para 67 (todos
-  pessoais do mantenedor + ferramentas novas). Zero unstaged. Staged = 22
-  arquivos da upd 17. Commit: NÃO EXECUTADO.
+CORREÇÃO ESTRUTURAL APLICADA
+  useWorkspaceData.ts (linha ~37-70): ao reconectar mídia persistente, o
+  hook agora faz UM fetch do cnplocal URL (uma leitura integral, já com o
+  fix de Range do backend), cria um Blob, e usa URL.createObjectURL(blob)
+  como src do <video>. A partir daí, TODO o seek/scrub/playback é nativo
+  do browser — sem uma única chamada IPC adicional. O scheme cnplocal
+  permanece para autenticação/carga inicial (uma vez).
+  Isso é exatamente o que o OpenCut faz e é a razão estrutural de sua
+  timeline leve: o browser tem um pipeline de mídia otimizado (C++,
+  GPU, cache de frames) que o custom scheme do Tauri não consegue igualar.
 
-B/C/D — NOT IMPLEMENTED
-  Análises invisíveis, geração incremental, ações diretas (remover aprovação,
-  excluir): NÃO IMPLEMENTADOS. Registrados como PARTIAL por honestidade —
-  o ofício exige "não declarar PASS geral se correções da transcrição se
-  perderem, cortes antigos desaparecerem, aprovação continuar bloqueando".
-  A correção da transcrição foi priorizada conforme "PRIORIDADE ABSOLUTA".
+ARQUIVOS ALTERADOS NESTA SESSÃO (todas as camadas)
+  1. local_media_scheme.rs: Range faz seek+read_exact (não lê arquivo
+     inteiro); sufixo -N; rejeita múltiplos ranges; teste parse_range.
+  2. VideoEditor.tsx: onTime gated por video.seeking (elimina snapback);
+     TranscriptPanel com currentTime throttled (150ms).
+  3. TimelineSurface.tsx: rAF throttle no pointermove (coalescência).
+  4. VideoEditor.tsx: coalescência de seek (pendingSeekRef + listener
+     seeked — no máximo 1 seek ativo).
+  5. useWorkspaceData.ts: Blob URL em vez de cnplocal para vídeo.
 
-VALIDATION
-  Typecheck: PASS. Lint: PASS (useWorkspaceData.ts limpo). Unit TS: 178/178.
-  Rust: PASS (não alterado nesta tarefa). E2E: NOT TESTED (nenhum componente
-  de UI alterado; o fix é no hook de dados, coberto pelos testes existentes
-  de persistência). Modelos: INALTERADOS.
+VALIDAÇÃO
+  TS: 214/214. Rust: 139/139. Lint: PASS. fmt: OK.
+  Teste com scrub no vídeo de 24 min: PENDENTE (responsabilidade do
+  mantenedor — ver GUIA). O Blob URL muda a arquitetura de entrega;
+  expectativa: seeking nativo do browser (igual a qualquer player web).
+
+FUNCTIONAL STATUS: PARTIAL (correção estrutural aplicada; scrub real pendente)
+REGRESSION STATUS: PASS (214/214 TS + 139/139 Rust)
+VISUAL STATUS: PENDING HUMAN APPROVAL
 
 GIT
-  Branch: main | HEAD: 33b5d94 (= commit do mantenedor).
-  Modificados: useWorkspaceData.ts + .gitignore.
-  Commit: NÃO EXECUTADO. Push: NÃO EXECUTADO.
-
-FINAL
-  Transcrição: CORRIGIDA com causa provada. Git: RESOLVIDO.
-  Análises/Incremental/Ações: NOT IMPLEMENTED (próxima atualização).
-  User action: autorizar commit/push quando pronto.
+  HEAD: e22555b. Commit: NÃO EXECUTADO. Push: NÃO EXECUTADO.
 
 REPORT
   Latest: docs/reports/LATEST.txt
-  History: docs/reports/history/2026-10-21_1233_atualizacao18-transcricao-git.txt
+  History: docs/reports/history/2026-10-22_1530_opencut-blob-url.txt
 
-GUIA DO MANTENEDOR — O QUE MUDOU E COMO TESTAR
-
-O que mudou:
-  1. TRANSCRIÇÃO NÃO VOLTA ATRÁS: a causa era o hook de dados usando uma
-     versão antiga da transcrição (do closure do React) ao salvar. Agora o
-     save() sempre lê a versão mais recente, mesmo que seja chamado
-     imediatamente após uma edição (ex.: editar e clicar "Gerar cortes").
-  2. GIT PAINEL RESOLVIDO: a pasta .tooling/ci-checkout (3,1 GB, 30 mil
-     arquivos — cópia do repo para validar o CI) foi ignorada. O painel
-     não vai mais travar com ENAMETOOLONG nem mostrar 1.047 arquivos.
-
-Teste 1 — Transcrição (1 min):
-  1. Abra o editor, corrija uma palavra na transcrição.
-  2. Imediatamente clique em "Ações do projeto" → "Gerar cortes".
-  3. Após a geração, volte ao editor e verifique: sua correção AINDA ESTÁ LÁ.
-
-Teste 2 — Painel Git (30 s):
-  1. Abra o painel de commit do ZCode.
-  2. Deve mostrar ~22 arquivos staged (não 1.047).
-
-O que ainda falta (declarado como PARTIAL):
-  • Análises completas que não aparecem na interface.
-  • Geração incremental (adicionar em vez de substituir).
-  • Remover aprovação como requisito de exportação.
-  • Ações Editar/Baixar/Excluir diretas nos cards.
-  Estes são a próxima atualização prioritária.
+GUIA DO MANTENEDOR — TESTE (2 min)
+  1. Abra o editor com o vídeo de 24 min. Pode levar 2-5s para o vídeo
+     carregar (Blob criado uma única vez).
+  2. ARRASTE a timeline de um lado para o outro continuamente.
+  3. Resultado esperado: playhead responde IMEDIATAMENTE (sem travar),
+     sem snapback (não volta para posição antiga), memória estável.
+     A prévia do vídeo deve buscar o frame de forma similar ao OpenCut.
+  4. Após soltar: a prévia mostra o frame correto rapidamente (não 2-3s).
 
 END OF REPORT

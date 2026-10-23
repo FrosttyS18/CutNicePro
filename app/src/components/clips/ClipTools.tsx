@@ -61,11 +61,10 @@ export function ClipTools({ controller: c, settings, ready, disabled, onSave, on
   }
   const busy = c.busy || disabled || preparing;
   return <div className="clip-tools">
-    <button type="button" className="flow-button" disabled={busy || !ready} onClick={() => setDialog("generate")}><ScissorsIcon size={18} aria-hidden="true"/>{c.collection ? "Atualizar cortes" : "Gerar cortes"}</button>
-    {!libraryView && c.collection && <button type="button" className="flow-button" disabled={busy} onClick={() => void (async () => { if (await onSave()) onShowClips(); })()}><FilmStripIcon size={18} aria-hidden="true"/>Cortes ({c.collection.clips.filter(clip=>clip.review !== "rejected").length})</button>}
+    <button type="button" className="flow-button" disabled={busy || !ready} onClick={() => setDialog("generate")}><ScissorsIcon size={18} aria-hidden="true"/>Gerar cortes</button>
+    {!libraryView && c.collection && <button type="button" className="flow-button" disabled={busy} onClick={() => void (async () => { if (await onSave()) onShowClips(); })()}><FilmStripIcon size={18} aria-hidden="true"/>Cortes ({c.collection.clips.filter(clip=>clip.review !== "rejected" && !clip.deleted).length})</button>}
     {!libraryView && activeClipId && <button type="button" className="flow-button" disabled={busy} onClick={onFullVideo}><FilmStripIcon size={18} aria-hidden="true"/>Voltar ao vídeo completo</button>}
-    {!libraryView && <button type="button" className="flow-button" disabled={busy || Boolean(activeClipId && activeClip?.review !== "approved")} onClick={() => void exportVideo(ready ? settings : { ...settings, captionModel: 0 },activeClip)}><DownloadSimpleIcon size={18} aria-hidden="true"/>Exportar vídeo</button>}
-    {!libraryView && activeClip && activeClip.review !== "approved" && <button type="button" className="flow-button" disabled={busy} onClick={() => void c.review(activeClip.id,"approved")}>Aprovar corte</button>}
+    {!libraryView && <button type="button" className="flow-button" disabled={busy} onClick={() => void exportVideo(ready ? settings : { ...settings, captionModel: 0 },activeClip)}><DownloadSimpleIcon size={18} aria-hidden="true"/>Exportar vídeo</button>}
     {!ready && <p className="flow-muted">Transcreva o vídeo para encontrar cortes e adicionar legendas.</p>}
     {c.error && <p className="upload-message upload-message--error" role="alert">{c.error}<button type="button" className="flow-button" disabled={busy} onClick={c.reload}>Tentar novamente</button></p>}
     {c.notice && <p role="status">{c.notice}</p>}
@@ -73,7 +72,7 @@ export function ClipTools({ controller: c, settings, ready, disabled, onSave, on
       <p className="flow-muted">Escolha como quer receber seus clipes.</p>
       <p className="clip-engine-badge"><CpuIcon size={14} aria-hidden="true"/>IA local: Gemma 4</p>
       <ClipFormatPicker value={format} onChange={setFormat}/>
-      {c.collection && <p>As novas sugestões substituirão a lista atual.</p>}
+      {c.collection && <p>Os novos cortes serão adicionados aos que você já tem.</p>}
       <div className="clip-options"><label>Geração<AppSelect aria-label="Geração" name="clipMode" value={automatic ? "automatic" : "custom"} onChange={event => setAutomatic(event.target.value === "automatic")}><option value="automatic">Automática (recomendada)</option><option value="custom">Personalizada</option></AppSelect></label>
         <label>Ajuste do vídeo<AppSelect aria-label="Ajuste do vídeo" name="clipFit" value={fit} onChange={event => setFit(event.target.value as ClipFit)}><option value="cover">Preencher (corta o excedente)</option><option value="contain">Manter vídeo inteiro (admite espaços)</option></AppSelect></label>
         {!automatic && <label>Duração máxima<AppSelect name="clipDuration" value={duration} onChange={event => setDuration(Number(event.target.value))}><option value={30}>Até 30 segundos</option><option value={60}>Até 1 minuto</option><option value={90}>Até 1 minuto e 30 segundos</option><option value={180}>Até 3 minutos</option></AppSelect></label>}

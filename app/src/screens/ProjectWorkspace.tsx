@@ -12,6 +12,7 @@ import "./workspace.css";
 import "./editor-refinement.css";
 import { useClips } from "../hooks/useClips";
 import { ClipTools } from "../components/clips/ClipTools";
+import { ClipDownload } from "../components/clips/ClipDownload";
 import { type Clip } from "../lib/clips";
 import { fullVideoWorkspace, openClipWorkspace } from "../lib/clip-workspace";
 import { ClipGallery } from "../components/clips/ClipGallery";
@@ -35,6 +36,8 @@ export function ProjectWorkspace({ project, initialView = "overview", onRename, 
   const [view, setView] = useState<"overview" | "editor" | "clips">(initialView);
   const [inspecting,setInspecting] = useState<LibraryClip | null>(null);
   const [clipNotice,setClipNotice] = useState<string | null>(null);
+  const [downloading,setDownloading] = useState<LibraryClip | null>(null);
+  const [undoDelete,setUndoDelete] = useState<{ clipId: string } | null>(null);
   const activeClip = view === "editor" ? workspace.data.activeClipId : undefined;
   function openClip(clip: Clip) {
     workspace.change(openClipWorkspace(workspace.data,clip));
@@ -70,7 +73,12 @@ export function ProjectWorkspace({ project, initialView = "overview", onRename, 
       </> : view === "clips" ? <>
         <header className="project-clips__heading"><div><button type="button" className="flow-button" onClick={() => setView("overview")}>Voltar ao projeto</button><h1>{project.name}</h1></div><div className="project-clips__tools">{clipTools}</div></header>
         <ClipGallery entries={(clips.collection?.clips ?? []).map(clip => ({project,mediaId: clips.collection!.mediaId,clip}))} loading={clips.loading} error={clips.error} notice={clipNotice}
-          onRetry={clips.reload} onInspect={setInspecting}/>
+          onRetry={clips.reload} onInspect={setInspecting}
+          onEdit={entry => { openClip(entry.clip); }}
+          onDownload={entry => setDownloading(entry)}
+          onDelete={entry => { void clips.remove(entry.clip.id).then(ok => { if (ok) { setClipNotice("Clipe excluído."); setUndoDelete({ clipId: entry.clip.id }); } }); }}
+          onRestore={entry => { void clips.restore(entry.clip.id).then(ok => { if (ok) { setClipNotice("Clipe restaurado."); setUndoDelete(null); } }); }}
+          undoDelete={undoDelete ? { onUndo: () => { const clipId = undoDelete.clipId; void clips.restore(clipId).then(ok => { if (ok) { setClipNotice("Clipe restaurado."); setUndoDelete(null); } }); } } : null}/>
       </> : <VideoEditor key={`${workspace.data.tool}:${activeClip ?? "video"}`} title={project.name} activeClip={activeClip ? clips.collection?.clips.find(clip => clip.id === activeClip) : undefined} data={workspace.data} localUrl={workspace.localUrl} dirty={workspace.dirty}
         onChange={workspace.change} onSave={workspace.save} onBack={() => setView("overview")} transcriptionControls={<>{transcriptionControls}{clipTools}</>}transcribing={transcription.busy || clips.busy}
         allClips={clips.collection?.clips} />}
@@ -78,6 +86,7 @@ export function ProjectWorkspace({ project, initialView = "overview", onRename, 
         role={workspace.notice.error ? "alert" : "status"}>{workspace.notice.text}</p>}
       {inspecting && <ClipInspection entry={inspecting} onClose={() => setInspecting(null)} onChanged={notice=>{setClipNotice(notice ?? null);clips.reload();}}
         onEdit={(_,clip) => { setInspecting(null); openClip(clip); }}/>}
+      {downloading && <ClipDownload entry={downloading} onClose={() => setDownloading(null)} onChanged={() => setClipNotice("Vídeo exportado.")}/>}
     </div>
   );
 }

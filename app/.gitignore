@@ -2,3 +2,6 @@ node_modules
 dist
 src-tauri/target
 src-tauri/gen
+
+# UPD-020: builds de laboratório isolados (mesma finalidade de src-tauri/target)
+src-tauri/target-upd20/

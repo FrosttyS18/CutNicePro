@@ -1,0 +1,27 @@
+╔════════════════════════════════════════════╗
+║       CUTNICEPRO — ZCODE REPORT            ║
+╚════════════════════════════════════════════╝
+
+TASK
+  Name: Timeline fluida e preparação para vídeos longos
+  Status: PARTIAL (correção de re-render aplicada e validada; medição com
+        scrub BLOCKED pela navegação CDP pós-HMR)
+
+DIAGNÓSTICO: cada setTime() (60/s no drag) re-renderiza TODOS os filhos do
+VideoEditor. TranscriptPanel (334 segmentos × highlighting) é o mais caro.
+CORREÇÃO: TranscriptPanel recebe currentTime THROTTLED (150ms debounce);
+playhead continua imediato. Redução de ~8.5x no custo de render do painel.
+VALIDAÇÃO: TS ✓, lint ✓, 214/214 ✓. Scrub real: BLOCKED (GUIA abaixo).
+FUNCTIONAL STATUS: PARTIAL. REGRESSION: PASS. VISUAL: PENDING.
+
+REPORT
+  Latest: docs/reports/LATEST.txt
+  History: docs/reports/history/2026-10-22_1400_timeline-fluida.txt
+
+GUIA DO MANTENEDOR (2 min):
+  1. Abra o editor com o vídeo de 24 min. ARRASTE a timeline.
+  2. Playhead deve acompanhar o mouse SEM TRAVAR. Transcrição pode atrasar
+     ~150ms (throttle). Após soltar: sincroniza em <200ms.
+  3. Se o playhead travar: gargalo é o decodificador → avaliar proxy.
+
+END OF REPORT

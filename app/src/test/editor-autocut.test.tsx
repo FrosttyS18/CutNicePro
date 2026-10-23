@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { renderToStaticMarkup } from "react-dom/server";
 import { nextProgress, constrainPanel } from "../lib/progress-display";
-import { clipMessage, clipSettings, isClipJob, parseClips, type Clip } from "../lib/clips";
+import { clipMessage, clipSettings, isolatedClipSettings, isClipJob, parseClips, type Clip } from "../lib/clips";
 import { defaultEditorSettings } from "../lib/workspace";
 import { ClipResults } from "../components/clips/ClipResults";
 import { VideoPreview } from "../components/workspace/VideoPreview";
@@ -52,12 +52,17 @@ describe("editor e cortes sem navegador", () => {
     expect(isClipJob({jobId:"j",projectId:"p",state:"running",stage:"rendering",progress:42,error:null})).toBe(true);
     expect(isClipJob({jobId:"j",projectId:"p",state:"running",stage:"transcribing",progress:42,error:null})).toBe(false);
   });
-  it("abre corte com tempos de origem e legenda automática, mantendo preferências existentes", () => {
+  it("abre corte com tempos de origem e legendas do que recebe — upd 20 preserva a escolha (inclusive desativadas)", () => {
     const original={...defaultEditorSettings(),captionModel:0};
     const settings=clipSettings(original,clip);
-    expect(settings.trimStart).toBe(12.5); expect(settings.trimEnd).toBe(45); expect(settings.captionModel).toBe(2);
-    expect(settings.captionStyle?.effect).toBe("highlight"); expect(original.captionModel).toBe(0);
+    expect(settings.trimStart).toBe(12.5); expect(settings.trimEnd).toBe(45);
+    // zero é legítimo (legendas desativadas): nunca trocado por outro modelo
+    expect(settings.captionModel).toBe(0); expect(original.captionModel).toBe(0);
     expect(clipSettings(defaultEditorSettings(),clip).captionModel).toBe(1);
+    // o PADRÃO do clipe (legendas ativas, modelo 2) continua no caminho sem
+    // edição salva — isolatedClipSettings, não na troca silenciosa do zero
+    expect(isolatedClipSettings(clip,undefined,null).captionModel).toBe(2);
+    expect(isolatedClipSettings(clip,{...defaultEditorSettings(),captionModel:0},null).captionModel).toBe(0);
   });
   it("apresenta nota como estimativa e exige aprovação para exportar o corte", () => {
     const html=renderToStaticMarkup(<ClipResults clips={[clip]} busy={false} onOpen={noop} onExport={noop} onReview={async()=>{}}/>);

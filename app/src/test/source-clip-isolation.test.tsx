@@ -63,9 +63,9 @@ describe("controles de corte e modelo",()=>{
   it("mostra análise específica e evidências, sem a explicação genérica anterior",()=>{
     const analysis={title:"Skins do PUBG e ruído no computador",summary:"Os participantes falam do valor de itens do PUBG e depois do ruído no PC durante a live.",
       criteria:["Gancho","Desenvolvimento","Fechamento"].map(label=>({label,score:60,explanation:"O assunto muda para o computador e termina sem solução.",evidence:"Tem que botar uma proteção aí"}))};
-    const html=renderToStaticMarkup(<ClipDetails clip={{...clip,analysis}} transcript={[]} time={10} loading={false} analyzing={false} error={null} onSeek={()=>undefined} onAnalyze={()=>undefined}/>);
+    const html=renderToStaticMarkup(<ClipDetails clip={{...clip,analysis}} transcript={[]} time={10} from={clip.start} to={clip.end} loading={false} analyzing={false} error={null} onSeek={()=>undefined} onAnalyze={()=>undefined}/>);
     expect(html).toContain("valor de itens do PUBG");expect(html).toContain("Tem que botar uma proteção");expect(html).not.toContain("A nota estima");
-    const pending=renderToStaticMarkup(<ClipDetails clip={clip} transcript={[]} time={10} loading={false} analyzing error={null} onSeek={()=>undefined} onAnalyze={()=>undefined}/>);
+    const pending=renderToStaticMarkup(<ClipDetails clip={clip} transcript={[]} time={10} from={clip.start} to={clip.end} loading={false} analyzing error={null} onSeek={()=>undefined} onAnalyze={()=>undefined}/>);
     expect(pending).toContain("Analisando o trecho");expect(pending).not.toContain("/100");
   });
   it("escala texto vertical pela largura de exportação, sem ampliar para 608px",()=>{

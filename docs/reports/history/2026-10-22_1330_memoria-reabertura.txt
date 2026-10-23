@@ -1,0 +1,101 @@
+╔════════════════════════════════════════════╗
+║       CUTNICEPRO — ZCODE REPORT            ║
+╚════════════════════════════════════════════╝
+
+TASK
+  Name: Reabertura crítica — memória e crash ao arrastar a timeline
+  Status: PARTIAL (nova correção aplicada e validada em código; medição
+        com scrub no app real BLOCKED por falha de navegação no script
+        de teste; crash NÃO declarado resolvido)
+  Objective: corrigir o consumo de 10–14 GB durante o arrasto da timeline.
+
+POR QUE A CORREÇÃO ANTERIOR FOI INSUFICIENTE
+  O throttle com requestAnimationFrame limitava a FREQUÊNCIA de chamadas
+  (~60/s), mas NÃO impedia que um novo seek fosse enviado ao <video>
+  enquanto o decodificador ainda processava o anterior (video.seeking
+  === true). Múltiplas operações de seek concorrentes fazem o
+  decodificador do WebView2 acumular buffers de frames decodificados —
+  o crescimento de memória persiste mesmo com menos chamadas por segundo.
+  Os "214 testes aprovados" não comprovavam estabilidade do decodificador;
+  o PASS funcional anterior foi RETIRADO.
+
+BUILD TESTADO
+  HEAD: e22555b + staged (contém o fix rAF + o novo fix de coalescência).
+  O app foi reiniciado com WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS para CDP
+  na porta 9381; o HMR aplicou as mudanças em tempo real.
+  Verificação: git show :app/src/components/editor/VideoEditor.tsx contém
+  pendingSeekRef (fix novo) e TimelineSurface.tsx contém seekRaf (fix
+  anterior). Ambos no staged.
+
+CAUSA DEMONSTRADA (análise de código, ainda sem medição de memória com scrub)
+  O VideoEditor.seek() fazia video.currentTime = X a cada chamada do
+  onSeek da timeline. Durante o arrasto (mesmo com throttle rAF a ~60/s),
+  MÚLTIPLOS seeks podiam estar pendentes no elemento <video>
+  simultaneamente, porque o rAF não consulta video.seeking. O
+  decodificador H.264 do WebView2, ao receber currentTime = X enquanto
+  ainda busca keyframes/decodifica do seek anterior, aloca buffers
+  adicionais. A acumulação de buffers de operações concorrentes é a causa
+  mais provável do crescimento descontrolado.
+
+CORREÇÃO APLICADA (coalescência de seek)
+  Em VideoEditor.tsx (30 linhas alteradas):
+  1. seek() agora testa video.current.seeking ANTES de atribuir
+     currentTime. Se o decodificador está ocupado, a posição fica em
+     pendingSeekRef (apenas a MAIS RECENTE — intermediárias são
+     descartadas).
+  2. Um listener 'seeked' no <video> aplica a posição pendente quando o
+     seek anterior conclui — garantindo no máximo UM seek ativo por vez.
+  3. setTime() (playhead) continua imediato — a UI não perde resposta.
+  O throttle rAF do TimelineSurface permanece (camada extra de defesa).
+  Preserve: playhead responsivo, seek final ao soltar, play/pause,
+  sincronização da transcrição, cortes e exportação.
+
+MEDIÇÕES OBTIDAS (sem scrub — navegação do teste falhou)
+  Baseline (app aberto, home): ~771MB (soma WorkingSet dos 4 processos
+  WebView2 + Tauri).
+  Editor aberto (sem scrub): ~783–851MB (aumento de 12–80MB ao abrir
+  o editor com o vídeo carregado).
+  Scrub 8s: NÃO MEDIDO — o script de teste não conseguiu navegar de
+  forma confiável até o editor via CDP (a navegação falha
+  silenciosamente após o HMR recarregar a página para a home).
+  LIMITAÇÃO REGISTRADA: sem a medição do scrub, não é possível afirmar
+  que o crescimento de memória foi eliminado. O fix é o correto por
+  análise (impede seeks concorrentes), mas a validação no app real é
+  responsabilidade do mantenedor.
+
+VALIDATION
+  Typecheck: PASS (0 erros). Lint: PASS (VideoEditor.tsx limpo).
+  Unit TS: 214/214. Rust: NÃO ALTERADO nesta tarefa.
+  Teste com mídia real + scrub: NOT TESTED (BLOCKED pela navegação do
+  script). O mantenedor deve testar conforme o GUIA abaixo.
+
+FUNCTIONAL STATUS: PARTIAL (correção implementada, validação real pendente)
+REGRESSION STATUS: PASS (214/214, área tocada limpa)
+VISUAL STATUS: PENDING HUMAN APPROVAL
+
+GIT
+  Branch: main | HEAD: e22555b. Commit: NÃO EXECUTADO. Push: NÃO EXECUTADO.
+
+REPORT
+  Latest: docs/reports/LATEST.txt
+  History: docs/reports/history/2026-10-22_1330_memoria-reabertura.txt
+
+GUIA DO MANTENEDOR — TESTE CRÍTICO (2 minutos)
+
+  1. Abra o Gerenciador de Tarefas (Ctrl+Shift+Esc) e observe a memória.
+  2. Abra o CutNicePro e vá até o editor com o vídeo de 24 minutos.
+  3. Segure o mouse na timeline e ARRASTE de um lado para o outro por
+     30 segundos (sem soltar).
+  4. Observe a memória no Gerenciador durante e após o arrasto.
+
+  Resultado esperado (se o fix funcionou):
+  • A memória pode subir moderadamente durante o arrasto (100–500 MB
+    acima do baseline) mas ESTABILIZA (não cresce indefinidamente).
+  • Após soltar o mouse, a memória não continua crescendo.
+  • O aplicativo NÃO trava nem fecha.
+
+  Se ainda consumir 10+ GB e travar:
+  • Me avise imediatamente — isso significará que a causa não é apenas
+    seeks concorrentes, e precisarei investigar o elemento <video> em si.
+
+END OF REPORT

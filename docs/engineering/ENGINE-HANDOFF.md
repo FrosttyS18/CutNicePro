@@ -98,3 +98,104 @@ Diálogo "Gerar cortes" ganhou modos: Automática (recomendada; UI não envia du
   cargo fmt/check/test --lib). Testes com mídia real continuam locais
   (cargo --ignored, e2e Tauri por CDP). Validação no GitHub Actions
   PENDENTE de execução efetiva (exige push).
+
+
+## Atualização 19 — análises granulares, biblioteca cumulativa e ações diretas (2026-10-21)
+
+- **Causa raiz das análises "perdidas" (comprovada nos dados reais)**:
+  a transcrição foi reescrita às 12:39 DEPOIS da geração das 11:46; o
+  `transcript_hash` da coleção divergiu e a apresentação antiga apagava
+  TODAS as análises em memória a cada `get_clips` (e `review_clip`/
+  `analyze_clip` PERSISTIAM o apagamento). Correção: invalidação GRANULAR —
+  cada clipe carrega `analysisSignature` (sha256 dos segmentos da sua janela,
+  mesma janela de `semantic::source`); editar um trecho invalida somente os
+  clipes cuja janela tocou os segmentos alterados; carregar/salvar sem
+  edição não invalida nada. Coleções legadas migram CONFIANDO UMA VEZ nas
+  análises persistidas (a análise salva aparece; sem baseline não há como
+  saber o que mudou — apagar tudo "por segurança" era o defeito). A
+  assinatura é atualizada em `semantic::run`; `ClipCollection::
+  refresh_analysis_state` substitui `invalidate_analysis`.
+- **Geração incremental**: `generation::run` não substitui a biblioteca —
+  os cortes existentes permanecem íntegros (id, título, revisão, análise,
+  assinatura, exclusão, motor) e apenas candidatos NOVOS entram após
+  deduplicação (`generation::duplicate_of`): id idêntico = duplicata exata;
+  mesma interseção ≥ 75% da união no mesmo formato = quase duplicata;
+  sobreposição menor = variação editorial legítima e ENTRA. Excluídos e
+  rejeitados participam da verificação: geração não ressuscita clipe
+  descartado. Sem momentos novos a biblioteca é preservada (a UI informa
+  "Nenhum corte novo encontrado"). O teto de 12 passou a ser POR EXECUÇÃO
+  (`Options::validate`/`AUTOMATIC_MAX_CLIPS`); o total armazenado é
+  cumulativo (`store::validate` e `parseClips` aceitam >12). Proveniência:
+  `Clip.engine` (por clipe) + `ClipCollection.engine` (última execução);
+  reanálise usa o motor do PRÓPRIO clipe. `merge_previous` foi substituído
+  por `merge_incremental`.
+- **Editar/Baixar/Excluir sem aprovação**: `export_video` não exige mais
+  `Review::Approved` (valida apenas existência e não-exclusão do clipe);
+  Aprovar/Rejeitar saíram da experiência (os registros históricos
+  Pending/Approved/Rejected continuam válidos e consultáveis nos filtros).
+  Cards e inspeção têm Editar/Baixar/Excluir. Exclusão é PERSISTENTE e
+  RECUPERÁVEL (`delete_clip`/`restore_clip` marcam `deleted`; nada é
+  apagado — mídia, transcrição, análise e demais clipes permanecem); a UI
+  oferece Desfazer imediato e filtro "Excluídos".
+- **Regressão da transcrição (upd 18) com prova**: teste comportamental do
+  hook (`app/src/test/workspace-save-regression.test.tsx`, 8 casos:
+  mesmo ciclo, callback retido, save em andamento + nova edição, resposta
+  antiga ignorada, autosave + save antes da geração, só enquadramento,
+  falha sem falso sucesso, persistência na reabertura). Com a
+  implementação antiga (`save()` lendo `data` do closure) 5 dos 8 FALHAM;
+  com a correção 8/8 passam — demonstração executada e revertida.
+- **Git**: `.tooling/_checks.json` (dump transitório da API de check runs
+  do GitHub, sem credenciais) ganhou ignore específico e foi removido do
+  rastreamento com `git rm --cached` (arquivo físico preservado), para o
+  próximo conjunto de alterações; commit e22555b do mantenedor não foi
+  reescrito.
+- Limites: validação em runtime do app completo (Tauri UI por CDP) não
+  executada nesta atualização — laboratório real via `cargo --ignored
+  real_incremental_gemma` (base isolada `pipeline-validation-upd19`).
+  Aprovação estética continua com o mantenedor.
+
+
+## ENTREGA 0.19.0 — REGISTRO DE CONTINUIDADE (UPD-020, 2026-10-21)
+
+> Registro canônico de versão e continuidade entre chats (regra permanente no
+> AGENTS.md). Toda tarefa consulta e atualiza esta seção — inclusive PARTIAL
+> ou BLOCKED. UPD-0XX = identificador de TAREFA; 0.Y.Z = versão de ENTREGA
+> consolidada (não confundir; relatórios antigos não são renumerados).
+
+- **Versão atual (manifestos):** 0.1.0 → ver campo "Versão efetiva" abaixo.
+- **Versão de destino desta entrega:** 0.19.0 (consolida UPD-018/019/020).
+- **Versão efetiva:** 0.19.0 — promovida ao fim da UPD-020 após os
+  critérios técnicos (testes, provas de regressão e laboratório de UI);
+  APROVAÇÃO HUMANA DO MANTENEDOR PENDENTE; nenhum commit/tag/release criado.
+- **Tarefas incluídas:** UPD-018 (correção da reversão da transcrição +
+  Git residual), UPD-019 (análises visíveis, geração incremental, ações
+  diretas), UPD-020 (correções da auditoria externa: download preserva
+  edição, resultado real do download, nota sem análise válida, migração
+  legada durável, proveniência, dedupe por conteúdo, validação real de UI,
+  versionamento).
+- **Estado dos itens da entrega:**
+  | Item | Estado | Critério de aceite | Evidência |
+  |---|---|---|---|
+  | Transcrição não reverte edição | FEITO (UPD-018/020) | save no mesmo ciclo persiste a edição | workspace-save-regression 9/9 (5/8 falham na impl. antiga) + UI lab |
+  | Análises visíveis/coerentes | FEITO (UPD-019/020) | análise válida aparece; desatualizada/ausente/falha distinguidas | incremental_tests + clip-library/flow tests + UI lab |
+  | Geração incremental | FEITO (UPD-019/020) | biblioteca cumulativa, dedupe por unidades de fala | cargo 138 PASS + laboratório real (3→7) + UI lab |
+  | Editar/Baixar/Excluir sem aprovação | FEITO (UPD-019/020) | ações em card/inspeção; export sem gate; exclusão recuperável | tests + UI lab |
+  | Download preserva intervalo/legendas | FEITO (UPD-020) | intervalo editado + captionModel 0 respeitados | clip-settings 6/6 (3/6 falham na impl. antiga) + UI lab (ffprobe ≈10 s) |
+  | Resultado real do download | FEITO (UPD-020) | sucesso só com arquivo publicado; cancel/falha/bloqueio distintos | useclips-export-result 5/5 + clip-download 6/6 + UI lab |
+  | Nota editorial sem análise válida | FEITO (UPD-020) | score só com análise válida; 4 estados na UI | clip-library/clip-flow tests + Rust stale tests |
+  | Migração legada durável | FEITO (UPD-020) | sem renovação de confiança entre leituras; incerteza representada | legacy_migration_is_durable (disco, salvar/reabrir) |
+  | Proveniência de motor | FEITO (UPD-020) | origem conhecida herdada; desconhecida honesta; reanálise registra produtor | merge_preserves_mixed_provenance |
+  | Dedupe por conteúdo | FEITO (UPD-020) | sobreposição é sinal; unidades de fala decidem; 2ª passada delimitada | duplicates_use_speech_units_not_overlap_alone |
+  | Validação real de UI | FEITO com limitações declaradas | fluxos executados no app (exe target-upd20 + working tree) | tools/e2e/upd20-ui-lab.mjs: 24/27 verificações (edição de transcrição persistente e visível na reabertura; análise coerente com nota 48–82/100; ações de card; inspeção com critérios; intervalo editado 21,13–31,13 s aplicado na prévia e persistente; cancelamento do diálogo sem falso sucesso; excluir/desfazer/restaurar; biblioteca preservada na 2ª geração; coleção real intacta). LIMITAÇÕES: publicação de arquivo pelo diálogo nativo de destino não automatizável pelo harness (comando/IPC/UI de início, cancelamento e resultado verificados; publicação em nível de comando comprovada no laboratório cargo da UPD-019 com ffprobe) e captura do aviso da 2ª geração falhou por timing (aviso da 1ª geração verificado na UI + lógica testada em TS) |
+  | Git residual (.tooling/_checks.json) | FEITO (UPD-019) | ignorado + desrastreado, arquivo físico preservado | git status (D staged) |
+- **Pendências herdadas** (fora do escopo UPD-020, ver backlog): qualidade
+  editorial das análises (linguagem natural), preenchimento 9:16 p/ publicação,
+  retirada do Whisper Large completo, estudo dos repositórios open-source
+  indicados, lint pré-existente (19 erros em arquivos não tocados),
+  CI no GitHub Actions pendente de push.
+- **Validação humana:** APROVAÇÃO ESTÉTICA PENDENTE (mantenedor) — sempre.
+- **Commit correspondente:** NENHUM até aqui (commits são do mantenedor;
+  HEAD e22555b + alterações não commitadas UPD-019/020 no working tree,
+  incluindo bump 0.19.0 em package.json/tauri.conf.json/Cargo.toml+lock).
+- **Próximo passo:** mantenedor valida pelo guia do relatório UPD-020,
+  decide commit da entrega 0.19.0 e as pendências do backlog.

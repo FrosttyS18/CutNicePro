@@ -1,9 +1,11 @@
 mod ass;
 pub mod commands;
 mod encoder;
-mod pipeline;
+// pub(crate): o laboratório da atualização 19 (clips/pipeline_tests)
+// verifica exportação de clipe da biblioteca cumulativa pelo pipeline real
+pub(crate) mod pipeline;
 pub(crate) mod scratch;
-mod settings;
+pub(crate) mod settings;
 
 mod fill_matrix;
 #[cfg(test)]

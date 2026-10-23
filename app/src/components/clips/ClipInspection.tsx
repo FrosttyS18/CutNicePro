@@ -24,15 +24,19 @@ export function ClipInspection({ entry,onClose,onEdit,onChanged }: Props) {
   const [error,setError] = useState<string | null>(null);
   const [dismissed,setDismissed] = useState<string | null>(null);
   const settings = isolatedClipSettings(clip,preferences,media.source?.media);
+  // upd 20 (auditoria): limites EFETIVOS = intervalo editado salvo (dentro do
+  // clipe); prévia, controles, transcrição e download usam os MESMOS limites
+  const from = settings.trimStart;
+  const to = settings.trimEnd ?? clip.end;
   const allTranscript = media.source?.transcript ?? [];
-  const transcript = allTranscript.filter(segment => segment.start < clip.end && segment.end > clip.start);
+  const transcript = allTranscript.filter(segment => segment.start < to && segment.end > from);
   const ownAnalysis = controller.ownedJob && controller.operation === "analyze";
-  function seek(value: number) { const bounded=Math.max(clip.start,Math.min(value,clip.end)); if (video.current) video.current.currentTime=bounded; setTime(bounded); }
+  function seek(value: number) { const bounded=Math.max(from,Math.min(value,to)); if (video.current) video.current.currentTime=bounded; setTime(bounded); }
   function toggle() {
     const player = video.current;
     if (!player) return;
     if (player.paused) {
-      if (player.currentTime >= clip.end || player.currentTime < clip.start) seek(clip.start);
+      if (player.currentTime >= to || player.currentTime < from) seek(from);
       void player.play().then(() => setPlaying(true)).catch(() => setError("Não foi possível reproduzir este vídeo. Reabra o projeto e tente novamente."));
     } else { player.pause(); setPlaying(false); }
   }
@@ -45,10 +49,10 @@ export function ClipInspection({ entry,onClose,onEdit,onChanged }: Props) {
     document.addEventListener("keydown",key);
     return () => document.removeEventListener("keydown",key);
   });
-  async function review(value: "approved" | "rejected") {
-    if (await controller.review(clip.id,value)) {
-      onChanged?.(value === "rejected" ? "Clipe rejeitado." : "Clipe aprovado.");
-      if (value === "rejected") onClose();
+  async function remove() {
+    if (await controller.remove(clip.id)) {
+      onChanged?.("Clipe excluído.");
+      onClose();
     }
   }
   return <>
@@ -58,24 +62,22 @@ export function ClipInspection({ entry,onClose,onEdit,onChanged }: Props) {
     }} busy={controller.busy && controller.ownedJob} allowCloseWhileBusy={ownAnalysis}>
       <div className="clip-inspection__body">
         <div className="clip-inspection__player"><VideoPreview media={media.source?.media ?? null} localUrl={media.source?.url ?? null} settings={settings} videoRef={video}
-          nativeControls={false} onTogglePlay={toggle} cue={captionCue(allTranscript,time)} onDuration={() => seek(clip.start)}
+          nativeControls={false} onTogglePlay={toggle} cue={captionCue(allTranscript,time)} onDuration={() => seek(from)}
           onTime={value => {
-            if (value >= clip.end) { video.current?.pause(); setPlaying(false); setTime(clip.end); }
-            else if (value < clip.start) seek(clip.start); else setTime(value);
+            if (value >= to) { video.current?.pause(); setPlaying(false); setTime(to); }
+            else if (value < from) seek(from); else setTime(value);
           }}/>
-          <PlaybackControls time={Math.max(0,time-clip.start)} start={clip.start} end={clip.end} duration={clip.end-clip.start}
+          <PlaybackControls time={Math.max(0,time-from)} start={from} end={to} duration={to-from}
             playing={playing} enabled={Boolean(media.source)} onSeek={seek} onToggle={toggle}/>
           <label className="sr-only" htmlFor="clip-inspection-seek">Posição no clipe</label>
-          <input id="clip-inspection-seek" type="range" min={clip.start} max={clip.end} step={.05} value={time} onChange={event => seek(Number(event.target.value))}/>
+          <input id="clip-inspection-seek" type="range" min={from} max={to} step={.05} value={time} onChange={event => seek(Number(event.target.value))}/>
         </div>
-        <ClipDetails clip={clip} transcript={transcript} time={time} loading={media.loading || controller.loading} analyzing={controller.busy && ownAnalysis}
+        <ClipDetails clip={clip} transcript={transcript} time={time} from={from} to={to} loading={media.loading || controller.loading} analyzing={controller.busy && ownAnalysis}
           error={ownAnalysis && controller.job?.state === "failed" ? clipMessage(controller.job.error) : null} onSeek={seek}
           onAnalyze={() => void controller.analyze(clip.id).then(() => onChanged?.())}/>
         <div className="clip-inspection__actions"><button type="button" className="upload-primary" disabled={controller.busy} onClick={() => onEdit(entry.project.id,clip)}>Editar clipe</button>
-          <button type="button" className="flow-button" disabled={controller.busy || controller.loading} aria-pressed={clip.review === "approved"} onClick={() => void review("approved")}>Aprovar</button>
-          <button type="button" className="flow-button" disabled={controller.busy || controller.loading} aria-pressed={clip.review === "rejected"} onClick={() => void review("rejected")}>Rejeitar</button>
-          <button type="button" className="flow-button" disabled={controller.busy || clip.review !== "approved"} title={clip.review !== "approved" ? "Aprove o clipe para exportar" : undefined}
-            onClick={() => void controller.exportVideo(settings,clip.id)}>Exportar vídeo</button>
+          <button type="button" className="flow-button" disabled={controller.busy} onClick={() => void controller.exportVideo(settings,clip.id)}>Baixar vídeo</button>
+          <button type="button" className="flow-button" disabled={controller.busy} onClick={() => void remove()}>Excluir clipe</button>
           {(error || controller.error || media.error) && <p role="alert">{error ?? controller.error ?? media.error}</p>}{controller.notice && <p role="status">{controller.notice}</p>}
         </div>
       </div>

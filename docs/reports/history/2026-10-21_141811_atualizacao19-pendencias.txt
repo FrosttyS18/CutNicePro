@@ -1,0 +1,326 @@
+╔════════════════════════════════════════════╗
+║       CUTNICEPRO — ZCODE REPORT            ║
+╚════════════════════════════════════════════╝
+
+TASK
+  Name: Atualização 19 — validar correção da transcrição e concluir pendências da Atualização 18
+  Status: PARTIAL
+  Scope: 5 objetivos — (1) teste da regressão da transcrição; (2) análises
+    persistidas que não aparecem; (3) geração incremental; (4) Editar/Baixar/
+    Excluir sem aprovação; (5) revisão residual do Git (e22555b). Preservação
+    dos dados reais, upd 17/18 e backup prévio obrigatório.
+  Objective: ver RESULTADO EXIGIDO do ofício: transcrição corrigida
+    preservada, análises visíveis e coerentes, biblioteca cumulativa e ações
+    diretas, sem perda dos dados reais.
+  Result: RESULTADO ALCANÇADO nos 5 objetivos, com verificação real no
+    laboratório isolado (Gemma 4 + exportação verificável). PARTIAL por duas
+    limitações declaradas: revisor independente externo não executável
+    (sem ferramenta de subagente nesta sessão) e verificação runtime da UI
+    no app Tauri não executada (escopo desta tarefa: laboratório via cargo
+    --ignored). Commit/push/merge NÃO EXECUTADOS (sem autorização).
+  FUNCTIONAL STATUS: PASS (escopos implementados; ver VALIDATION)
+  REGRESSION STATUS: PASS (suítes pertinentes executadas; nenhuma falha)
+  VISUAL STATUS: PENDING HUMAN APPROVAL
+
+IMPLEMENTATION
+  Completed:
+  - OBJETIVO 1 (validar correção da transcrição). Teste comportamental
+    novo app/src/test/workspace-save-regression.test.tsx com 8 casos:
+    edição+save no mesmo ciclo (antes do próximo render), callback de save
+    retido de render anterior, salvamento em andamento + nova edição,
+    resposta assíncrona antiga ignorada (acceptTranscript de outra mídia),
+    autosave + save solicitado antes da geração, alteração somente de
+    enquadramento, falha de salvamento sem falso sucesso, persistência
+    após reabertura. PROVA DA REGRESSÃO EXECUTADA: com o save() revertido
+    temporariamente à implementação antiga (lendo `data` do closure),
+    5 dos 8 testes FALHAM (incluindo o caso central); com a correção da
+    upd 18 (latest.current), 8/8 passam. A reversão foi desfeita e o
+    arquivo final contém a correção intacta (diff verificado).
+  - OBJETIVO 2 (análises que não aparecem). CAUSA E EVIDÊNCIA: reconfirmado
+    nos dados reais (somente leitura) — coleção com 8 clipes TODOS com
+    análise salva, sem analysisError, review=pending; collection.
+    transcriptHash=eba4661a… diverge do fingerprint da transcrição atual
+    c9e8e854… (reproduzido byte a byte com serializador validado contra o
+    arquivo gerado pelo serde). Timeline comprovada: clipes gerados 11:46,
+    transcrição reescrita 12:39 (edição de texto ao validar a upd 18) → a
+    apresentação antiga (invalidate_analysis por hash total) apagava TODAS
+    as análises EM MEMÓRIA a cada get_clips — e review_clip/analyze_clip
+    PERSISTIAM o apagamento. CORREÇÃO: invalidação granular por clipe —
+    Clip.analysisSignature (sha256 dos segmentos da janela start<end &&
+    end>start, mesma janela de semantic::source); ClipCollection::
+    refresh_analysis_state substitui invalidate_analysis: editar trecho
+    invalida SOMENTE clipes cuja janela tocou segmentos alterados;
+    carregar/salvar sem edição não invalida nada; coleções legadas migram
+    confiando UMA vez nas análises persistidas (estratégia simples
+    documentada no código e no ENGINE-HANDOFF). analyze_clip não apaga
+    mais a análise dos demais.
+  - OBJETIVO 3 (geração incremental). generation::run não substitui a
+    biblioteca: cortes existentes permanecem íntegros (id, título, revisão,
+    análise, assinatura, exclusão, motor) e somente candidatos novos
+    entram após deduplicação (generation::duplicate_of: id idêntico =
+    duplicata exata; interseção ≥ 75% da união no mesmo formato = quase
+    duplicata; sobreposição menor = variação editorial legítima e ENTRA;
+    sobreposição temporal isolada NÃO decide). Excluídos e rejeitados
+    participam da verificação (geração não ressuscita clipe descartado).
+    Teto de 12 passou a ser POR EXECUÇÃO; total armazenado cumulativo
+    (store::validate e parseClips aceitam >12). Proveniência: Clip.engine
+    por clipe + ClipCollection.engine da última execução; reanálise usa o
+    motor do próprio clipe. merge_previous substituído por merge_incremental.
+    Sem momentos novos: biblioteca preservada e UI informa "Nenhum corte
+    novo encontrado". UI: botão sempre "Gerar cortes" ("Atualizar cortes"
+    removido), diálogo exibe "Os novos cortes serão adicionados aos que
+    você já tem." e o aviso final traz quantidade real adicionada + total
+    persistido (diferença de IDs no useClips).
+  - OBJETIVO 4 (Editar/Baixar/Excluir sem aprovação). Rust: export_video
+    não exige mais Review::Approved (valida existência e não-exclusão);
+    comandos novos delete_clip/restore_clip marcam Clip.deleted (exclusão
+    persistente recuperável — NADA é apagado: mídia, transcrição, análise,
+    demais clipes e exportações permanecem). UI: Aprovar/Rejeitar
+    removidos da experiência (ClipInspection e ClipTools); registros
+    históricos Pending/Approved/Rejected preservados e consultáveis nos
+    filtros; inspeção ganha "Baixar vídeo" (sem gate; configurações =
+    prévia: intervalo editado nas preferências salvas, legendas, proporção,
+    preenchimento, áudio, efeitos via isolatedClipSettings) e "Excluir
+    clipe"; cards da galeria ganham Editar/Baixar/Excluir (Restaurar em
+    excluídos) nas DUAS telas (ProjectWorkspace e ProjectsScreen);
+    executor ClipDownload com diálogo de progresso/cancelar; exclusão com
+    Desfazer imediato + filtro "Excluídos" para recuperação. Baixar do card
+    usa as mesmas configurações da inspeção.
+  - OBJETIVO 5 (Git residual). .tooling/_checks.json CLASSIFICADO: dump
+    transitório da API de check runs do GitHub (2 runs de CI do commit
+    33b5d94, com URLs/IDs públicos; varredura de credenciais: NENHUMA).
+    Ação: regra específica adicionada ao .gitignore (.tooling/_checks.json)
+    e remoção APENAS do rastreamento (git rm --cached; arquivo físico de
+    8.701 bytes preservado) — alteração preparada para o próximo conjunto
+    de commits; commit e22555b do mantenedor NÃO foi reescrito.
+    .tooling/ci-checkout/ reconfirmado como ignorado (.gitignore:46) e não
+    rastreado. Nenhum arquivo pessoal preparado.
+  Not completed:
+  - Revisor independente somente leitura (exigência da seção 6): BLOCKED —
+    não há ferramenta de subagente/Task disponível nesta sessão do ZCode.
+    Alternativa executada: passada de revisão estruturada somente leitura
+    sobre o diff final (perda de dados, contratos, concorrência, análise,
+    exportação, Git), que produziu 1 correção real (aviso de geração
+    passou a informar análises pendentes). Não substitui o revisor externo.
+  - Verificação runtime da UI no app Tauri real (CDP/Playwright): NÃO
+    EXECUTADA (fora do escopo delimitado desta tarefa; laboratório real
+    cobriu backend ponta a ponta). Visual: PENDING HUMAN APPROVAL.
+  Changes: ver seção FILES.
+
+FILES
+  Created:
+  - app/src/components/clips/ClipDownload.tsx (executor de download no card)
+  - app/src/test/workspace-save-regression.test.tsx (8 testes, obj. 1)
+  - Artefatos de laboratório FORA do repositório (em .tooling/vendor/
+    pipeline-validation-upd19/, ignorado): upd19-clip-export.mp4 (25,4 MB),
+    upd19-incremental.json, biblioteca cumulativa salva
+  Modified (27 rastreados + .gitignore):
+  - Rust: clips/{types,store,generation,commands,semantic,selection,
+    content,ranking,scene_regions,semantic_tests,pipeline_tests}.rs,
+    render/{commands,mod}.rs, lib.rs
+  - TS: lib/clips.ts, lib/clip-library.ts, hooks/useClips.ts,
+    components/clips/{ClipTools,ClipGallery,ClipInspection}.tsx,
+    components/clips/clip-library.css, screens/{ProjectWorkspace,
+    ProjectsScreen}.tsx, test/{clip-flow,clip-library}.test.tsx
+  - .gitignore (+1 linha), docs/engineering/ENGINE-HANDOFF.md (upd 19)
+  Deleted: NENHUM arquivo físico
+  Unexpected changes: DETALHES —
+  - appdata real: projects.json alterou SOMENTE timestamps (updated_at_ms/
+    last_opened_at_ms às 13:39:37) porque o app foi aberto no dispositivo
+    (processo cutnicepro.exe ativo desde 13:48:45, não iniciado por esta
+    tarefa; todos os testes daqui rodam com IPC simulado em Node ou bases
+    isoladas). Coleção (8 clipes com análises) e transcrição INTEGRAS —
+    hashes idênticos ao backup pré-tarefa. Nenhum processo alheio foi
+    encerrado.
+
+VALIDATION
+  Typecheck: PASS (npx tsc --noEmit, app)
+  Lint: FAIL pré-existente — 19 erros + 1 aviso, TODOS em arquivos não
+    tocados por esta tarefa (useTranscription, VideoPreview, TranscriptPanel,
+    useTimelinePreview, useSplashPhase, usePlaybackShortcut, useClipMedia,
+    useClipLibrary, TranscriptWordPopover, ProjectContextMenu, ToolDialog,
+    SourceForm, hero-galaxy, HalftoneWordmarkFooter, App.tsx). Nenhum arquivo
+    desta tarefa aparece no lint. Contagem idêntica ao estado anterior.
+  Unit tests: PASS — Rust cargo test --lib: 137 aprovados, 0 falhas
+    (era 131 na upd 18; +6 novos: dedupe/incremental/granular/migração/
+    >12/exclusão-não-ressuscita). TS vitest: 192 aprovados, 0 falhas em 27
+    arquivos (era 178; +14 líquidos: 8 regressão transcrição, +3 clip-flow,
+    +3 clip-library). cargo fmt --check: PASS.
+  Integration tests: PASS — laboratório real via cargo --ignored
+    real_incremental_gemma_generation_and_verifiable_export (1 aprovado,
+    1.468 s, base ISOLADA .tooling/vendor/pipeline-validation-upd19, nada
+    tocou o app-data do mantenedor): execução 1 (Gemma 4, 3 cortes, todos
+    com análise + assinatura + fit=cover), execução 2 (até 6): os 3
+    anteriores preservados com id/título/nota/revisão IDÊNTICOS, resultado
+    7 clipes (4 novos não duplicados), todos com assinatura, biblioteca
+    persistida e relida igual; exportação do melhor clipe SEM aprovação:
+    25.436.653 bytes, validada pelo pipeline (duração ±0,3 s, dimensões,
+    áudio) e revalidada independentemente com ffprobe: 36,07 s, 1080×1920,
+    streams vídeo+áudio.
+  Regression tests: PASS — suítes pertinentes executadas sem falha:
+    workspace-integrity, source-clip-isolation, clip-flow, clip-library,
+    workspace, workspace-save-regression (TS) e suíte Rust completa
+    (inclui cancelamento de análise, falha de análise isolada, isolamento
+    entre projetos no store, corrupção sem apagamento).
+  Visual tests: SKIP — aprovação estética é do mantenedor (política);
+    UI alterada segue os tokens/proibições de layout existentes (ações de
+    card com gap 8 px, sem contornos extras).
+  Runtime verification: PARTIAL — backend verificado em laboratório real
+    (acima); app Tauri completo (UI por CDP) não executado nesta tarefa.
+  Total passed: 331 (137 Rust + 193 TS* + 1 laboratório real)
+    *192 na suíte + 1 prova adicional documentada em seção própria abaixo.
+  Total failed: 0
+  Total skipped: 11 ignorados do Rust (10 pré-existentes de mídia real não
+    executados nesta rodada + nenhum além) e lint pré-existente não corrigido
+    (fora do escopo).
+  PROVA DA REGRESSÃO (obj. 1, executada e desfeita): 5 dos 8 testes FALHAM
+    com a implementação antiga; 8/8 PASS com a correção.
+
+HOOKS / HARNESS
+  Hooks active: PreToolUse (comandos destrutivos bloqueados), PostToolUse
+    (validação JSON/Python/JS/SKILL.md), Stop (baseline_checks.py, registrado
+    no log de auditoria, nunca bloqueia)
+  PreToolUse: sem bloqueios nesta tarefa
+  PostToolUse: validações de gravação sem falhas
+  Stop: baseline registrada ao final (não é gate; não usada como prova)
+  Baseline: pendente de execução no encerramento desta sessão
+  Gate result: N/A (nenhum gate de qualidade do projeto invocado)
+  Evidence: .zcode/hooks/audit/audit-log.jsonl
+
+MCP / SKILLS
+  Tools used: nenhuma MCP externa; ferramentas nativas (Read/Write/Edit/
+    Bash/TodoWrite). FigCraft não aplicável (sem artefato de design nesta
+    tarefa — mudanças seguem design system existente).
+  Connection status: N/A
+  Failures: ferramenta de subagente/Task indisponível na sessão (revisor
+    independente BLOCKED — ver IMPLEMENTATION)
+  Pending activation: nenhuma
+
+GIT
+  Branch: main
+  HEAD: e22555b682ccad97a68eb356032c245b86b54baf
+  Latest commit: "feat(clips): add per-clip fill mode ("fit") persisted from
+    generation options" (commit do MANTENEDOR; ação NÃO atribuída ao ZCode)
+  Commits created: NENHUM (sem autorização)
+  Push: NOT EXECUTED
+  Remote: origin → github.com/FrosttyS18/CutNicePro (branch main)
+  Working tree: MODIFIED + UNTRACKED
+  Pending files (alterações desta tarefa, aguardando commit do mantenedor):
+    staged: D .tooling/_checks.json (remoção do rastreamento; arquivo físico
+    preservado);
+    modified: .gitignore, 12 arquivos Rust, 10 TS, ENGINE-HANDOFF.md;
+    created: ClipDownload.tsx, workspace-save-regression.test.tsx;
+    untracked pessoais pré-existentes (design/, ícones, fontes, assets,
+    experiments/…/discover-*) INTOCADOS por esta tarefa;
+    reports (este relatório) em docs/reports/.
+
+EVIDENCE
+  Commands executed (principais): git log/status/show/diff; sha256sum +
+    diff contra backup; python (fingerprint byte a byte validado contra o
+    arquivo serde); cargo check/test --lib; cargo test --lib
+    real_incremental_gemma -- --ignored --nocapture (1.468 s, PASS);
+    cargo fmt --check; npx tsc --noEmit; npx vitest run (192 PASS);
+    npm run lint; ffprobe (validação independente da exportação);
+    powershell Get-Process (identificar processo do app).
+  Relevant logs:
+  - Causa obj. 2: hash coleção eba4661a… × fingerprint atual c9e8e854…;
+    mtime clipes 11:46 × transcrição 12:39 (2026-10-21);
+  - Laboratório: .tooling/vendor/pipeline-validation-upd19/upd19-
+    incremental.json {"first":{"clips":3},"second":{"clips":7},"export":
+    {"bytes":25436653}}; ffprobe 36,07 s / 1080×1920 / vídeo+áudio;
+  - Integridade dos dados reais: hashes clips+transcripts IDÊNTICOS ao
+    backup pré-tarefa (92017b60… e bab4bb82…).
+  Screenshots: NENHUM (verificação direta de estado/contratos suficiente;
+    política: screenshot não é evidência principal)
+  Test artifacts: backup privado verificável em
+    C:\Users\adcka\cutnicepro-backups\2026-10-21_upd19_pre-task\
+    (MANIFEST.sha256 com 7 arquivos, conferidos 2×)
+  Reproduction details: prova da regressão obj. 1 reproduzível revertendo
+    save() para ler `data` (5/8 falham) e restaurando (8/8 passam).
+
+ISSUES
+  Bugs found: (corrigidos nesta tarefa)
+  - Apagamento em massa de análises por hash total (memória E persistência
+    via review_clip/analyze_clip) — causa raiz do "Analisar trecho" com
+    análise salva;
+  - analyze_clip apagava a análise de TODOS os clipes ao reanalisar um;
+  - geração substituía a biblioteca inteira;
+  - exportação exigia aprovação (gate removido);
+  - teto de 12 no TOTAL armazenado.
+  Unresolved failures: NENHUMA nas suítes executadas; lint pré-existente
+    (19 erros) permanece — fora do escopo, contagem inalterada.
+  Regressions: NENHUMA observada nas suítes pertinentes.
+  Risks:
+  - Coleções salvas pela NOVA versão não abrem em builds ANTIGOS (novos
+    campos em Clip com deny_unknown_fields) — irrelevante enquanto não há
+    distribuição, registrado aqui como limitação conhecida;
+  - Migração legada "confia uma vez": análises pré-upd19 são consideradas
+    válidas na primeira leitura e a partir daí valem as assinaturas
+    granulares (decisão documentada; sem baseline não há como inferir o
+    que mudou — apagar tudo era o defeito);
+  - Deduplicação por janela (IoU ≥ 75%): candidatos muito sobrepostos ao
+    existente são descartados por design; variação editorial legítima com
+    sobreposição alta exigirá ajuste manual de limites.
+  Blockers: revisor independente externo (sem ferramenta de agente na
+    sessão) — substituído por revisão estruturada declarada, não equivalente.
+
+FINAL
+  Delivery status: ENTREGUE com limitações declaradas (PARTIAL)
+  Requirements met: 5/5 objetivos implementados; validação exigida
+    executada dentro do orçamento (1 rodada; laboratório executado 1×)
+  Remaining work: verificação runtime da UI no app real + aprovação visual
+    (mantenedor); commit das alterações (mantenedor); revisor independente
+    quando houver ferramenta; lint pré-existente (tarefa própria).
+  User action required: commit quando decidir; validação manual pelo guia
+    abaixo; aprovação visual.
+  Restart required: SIM — o app em execução precisa ser reiniciado para
+    carregar o backend novo (o processo atual roda o binário antigo).
+  Ready for next task: SIM
+
+REPORT
+  Latest file: docs/reports/LATEST.txt
+  Historical file: docs/reports/history/2026-10-21_141811_atualizacao19-pendencias.txt
+
+GUIA DO MANTENEDOR — O QUE MUDOU E COMO TESTAR
+  O que mudou:
+  1. Suas 8 análises voltam a aparecer: editar a transcrição agora só
+     invalida os cortes cujo trecho foi editado (não a coleção inteira).
+  2. "Gerar cortes" ACRESCENTA à biblioteca (nunca substitui); o aviso
+     informa quantos novos entraram e o total.
+  3. Aprovar/Rejeitar saíram da experiência; Baixar, Editar e Excluir estão
+     nos cards e na inspeção; excluir é reversível (Desfazer/filtro
+     "Excluídos") e não apaga nada.
+  Teste 1 — Editar transcrição e salvar:
+    1. Abra o projeto e a transcrição; 2. corrija um trecho; 3. clique em
+    Salvar; 4. feche e reabra o projeto.
+    Resultado esperado: a correção permanece (sem reversão) e os cortes
+    cujo trecho NÃO foi editado continuam com a análise visível.
+  Teste 2 — Análises visíveis:
+    1. Abra "Cortes" do projeto; 2. toque um card.
+    Resultado esperado: resumo + critérios (Gancho/Desenvolvimento/
+    Fechamento) e nota coerente; "Analisar trecho" só em corte sem análise.
+  Teste 3 — Gerar mais cortes sem perder os atuais:
+    1. "Gerar cortes" → Automática → confirmar; 2. aguarde; 3. confira o
+    aviso e a lista.
+    Resultado esperado: aviso "N novos cortes adicionados — M no total"
+    (ou "Nenhum corte novo encontrado"); os 8 atuais continuam com os
+    mesmos títulos/notas/revisões.
+  Teste 4 — Editar clipe:
+    1. no card ou na inspeção, "Editar"; Resultado esperado: abre o editor
+    no intervalo do corte, igual antes.
+  Teste 5 — Baixar vídeo (sem aprovação):
+    1. "Baixar" no card ou "Baixar vídeo" na inspeção; 2. escolha onde
+    salvar; Resultado esperado: MP4 com intervalo editado, legendas,
+    proporção, preenchimento, áudio e efeitos iguais à prévia; nenhum
+    pedido de aprovação.
+  Teste 6 — Excluir e recuperar:
+    1. "Excluir" em um card; 2. observe "Clipe excluído. Desfazer";
+    3. clique Desfazer; 4. (alternativa) filtro "Excluídos" → "Restaurar".
+    Resultado esperado: o corte sai da lista ativa e volta ao restaurar;
+    vídeo, transcrição e os demais cortes permanecem.
+  Teste 7 — Reabrir tudo:
+    1. feche e reabra o app/projeto.
+    Resultado esperado: transcrição corrigida, 8 análises, biblioteca
+    cumulativa e estados de exclusão preservados.
+
+END OF REPORT

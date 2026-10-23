@@ -11,6 +11,26 @@ Plataforma de edição inteligente de vídeos (inspirada no OpusClip).
 - Reportar limitações reais em vez de inventar soluções. Registrar `FAIL`/`BLOCKED` quando algo não puder ser validado.
 - Não exigir comandos manuais do usuário quando for possível executar e validar a tarefa diretamente.
 
+## Continuidade e versionamento entre chats (regra permanente, UPD-020)
+
+- Toda tarefa, INCLUSIVE em PARTIAL/FAIL/BLOCKED, começa consultando e termina
+  atualizando o registro de continuidade: seção "ENTREGA <versão> — REGISTRO DE
+  CONTINUIDADE" em `docs/engineering/ENGINE-HANDOFF.md` (registro canônico de
+  versão atual/destino, tarefas UPD-XXX incluídas, estado e critérios de aceite,
+  evidências, pendências herdadas, commit correspondente, validação humana,
+  próximo passo). Não criar documentos de continuidade concorrentes; backlog em
+  `docs/product/BACKLOG.md` para pendências de produto.
+- Identificadores de tarefa (UPD-0XX) são distintos da versão de entrega
+  consolidada (0.Y.Z); não renumerar relatórios antigos nem fabricar releases
+  anteriores. Um chat novo deve compreender o estado do projeto lendo apenas
+  esse registro — sem acesso a conversas anteriores.
+- Alterar versão exige os critérios técnicos da entrega cumpridos e mantém os
+  manifestos e locks sincronizados (`app/package.json`,
+  `app/src-tauri/tauri.conf.json`, `app/src-tauri/Cargo.toml` + `Cargo.lock`);
+  nunca adicionar dependência apenas para mudar números, e versionamento não
+  substitui coordenação: em múltiplos chats, conferir alterações preexistentes
+  e delimitar arquivos/escopo antes de editar.
+
 ## Engenharia
 
 - Planejar antes de implementar. Fluxo padrão: **SPEC → PLAN → BUILD → TEST → REVIEW** (skills correspondentes em `.zcode/skills/`).

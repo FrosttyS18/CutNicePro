@@ -145,6 +145,10 @@ mod tests {
             fit: None,
             analysis: None,
             analysis_error: None,
+            analysis_signature: None,
+            analysis_stale: None,
+            deleted: None,
+            engine: None,
         };
         let selected = regions(&[clip], 7200.0);
         assert_eq!(selected, vec![(3599.0, 3601.0), (3659.0, 3661.0)]);

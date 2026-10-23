@@ -222,6 +222,10 @@ fn clip_for(media: &str, start: f64, end: f64, score: u8, format: Option<&str>) 
         format: format.map(str::to_string),
         analysis: None,
         analysis_error: None,
+        analysis_signature: None,
+        analysis_stale: None,
+        deleted: None,
+        engine: None,
     }
 }
 
@@ -954,6 +958,10 @@ mod tests {
             fit: None,
             analysis: None,
             analysis_error: None,
+            analysis_signature: None,
+            analysis_stale: None,
+            deleted: None,
+            engine: None,
         }
     }
 

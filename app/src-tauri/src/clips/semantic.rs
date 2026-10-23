@@ -79,5 +79,10 @@ pub fn run(
     clip.reasons = merged;
     clip.analysis = Some(analysis);
     clip.analysis_error = None;
+    // assinatura da transcrição que alimentou ESTA análise (atualização 19):
+    // futuras edições de trecho são comparadas contra ela, por clipe.
+    // A análise publicada agora é VÁLIDA para este texto (upd 20).
+    clip.analysis_signature = Some(super::store::clip_signature(segments, clip.start, clip.end));
+    clip.analysis_stale = None;
     Ok(())
 }

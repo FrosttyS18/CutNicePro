@@ -55,10 +55,11 @@ fn presentation(app: &AppHandle, project: &str, collection: &mut ClipCollection)
     };
     if let Ok(Some(record)) = transcription::store::load(&base, project) {
         if record.media_id == collection.media_id {
-            if let Ok(hash) = store::fingerprint(&record.segments) {
-                collection.invalidate_analysis(hash);
-                content::refresh_legacy_titles(&mut collection.clips, &record.segments);
-            }
+            // atualização 19: invalidação GRANULAR por clipe (assinatura dos
+            // segmentos da janela) — não apaga a coleção inteira quando a
+            // transcrição muda; legados migram confiado uma vez.
+            collection.refresh_analysis_state(&record.segments);
+            content::refresh_legacy_titles(&mut collection.clips, &record.segments);
         }
     }
 }
@@ -198,24 +199,31 @@ pub async fn analyze_clip(
     let transcript = transcription::store::load(&base, &project_id)?
         .filter(|t| t.media_id == media_id)
         .ok_or("Transcreva o vídeo antes de analisar cortes.")?;
-    let hash = store::fingerprint(&transcript.segments)?;
-    collection.invalidate_analysis(hash);
-    // Reanálise usa o MESMO motor que gerou a coleção (metadado técnico);
-    // coleções antigas sem metadado são do motor padrão.
-    let quality = match collection
-        .engine
-        .as_ref()
-        .map(|record| record.backend.as_str())
-    {
-        Some("experimentalGemma") => Quality::ExperimentalGemma,
-        _ => Quality::Standard,
-    };
-    let engine = text_engine::Engine::discover(&base, quality)?;
+    // atualização 19: estado granular — analisar um clipe não apaga mais a
+    // análise dos demais (o invalidate total antigo persistia o estrago).
+    collection.refresh_analysis_state(&transcript.segments);
     let index = collection
         .clips
         .iter()
         .position(|c| c.id == clip_id)
         .ok_or("Corte não encontrado.")?;
+    // Reanálise usa o motor de origem DO PRÓPRIO CLIPE (biblioteca
+    // cumulativa mistura resultados históricos); sem metadado vale o da
+    // coleção e, em último caso, o motor padrão.
+    let quality = match collection.clips[index]
+        .engine
+        .as_ref()
+        .map(|record| record.backend.as_str())
+        .or_else(|| {
+            collection
+                .engine
+                .as_ref()
+                .map(|record| record.backend.as_str())
+        }) {
+        Some("experimentalGemma") => Quality::ExperimentalGemma,
+        _ => Quality::Standard,
+    };
+    let engine = text_engine::Engine::discover(&base, quality)?;
     let jobs = app.state::<ClipJobs>().0.clone();
     let control = jobs.start_operation(job_id.clone(), project_id.clone(), Some("analyze"))?;
     if let Some(snapshot) = jobs.stage(&job_id, "analyzing") {
@@ -234,6 +242,9 @@ pub async fn analyze_clip(
                 &transcript.segments,
                 &control,
             )?;
+            // metadados correspondem ao motor que EFETIVAMENTE produziu a
+            // análise recém-publicada (upd 20 — reanálise sobrepõe origem)
+            collection.clips[index].engine = Some(engine.record());
             Ok(collection)
         })();
         task_jobs.finish(&task_id, result, |value| {
@@ -252,6 +263,53 @@ pub async fn analyze_clip(
         let _ = app.emit("clips://job", snapshot);
     }
     result
+}
+
+/// Exclusão persistente recuperável (atualização 19): marca o clipe como
+/// excluído da experiência SEM apagar nada — mídia, transcrição, análise e
+/// os demais clipes permanecem; `restore_clip` desfaz. Não transforma
+/// rejeição antiga em exclusão: o marcador é explícito e separado da revisão.
+#[tauri::command]
+pub fn delete_clip(
+    app: AppHandle,
+    project_id: String,
+    media_id: String,
+    clip_id: String,
+) -> Result<ClipCollection, String> {
+    set_deleted(app, project_id, media_id, clip_id, true)
+}
+
+#[tauri::command]
+pub fn restore_clip(
+    app: AppHandle,
+    project_id: String,
+    media_id: String,
+    clip_id: String,
+) -> Result<ClipCollection, String> {
+    set_deleted(app, project_id, media_id, clip_id, false)
+}
+
+fn set_deleted(
+    app: AppHandle,
+    project_id: String,
+    media_id: String,
+    clip_id: String,
+    deleted: bool,
+) -> Result<ClipCollection, String> {
+    let _lease = app.state::<Arc<ProcessingGate>>().acquire()?;
+    let (_, duration) = media(&app, &project_id, &media_id)?;
+    let base = crate::app_data_base(&app)?;
+    let mut value = store::load(&base, &project_id, &media_id, duration)?
+        .ok_or("Gere os cortes antes de gerenciá-los.")?;
+    presentation(&app, &project_id, &mut value);
+    let clip = value
+        .clips
+        .iter_mut()
+        .find(|c| c.id == clip_id)
+        .ok_or("Corte não encontrado.")?;
+    clip.deleted = deleted.then_some(true);
+    store::save(&base, &project_id, &value, duration)?;
+    Ok(value)
 }
 
 pub(crate) fn remove(base: &std::path::Path, project: &str) -> Result<(), String> {

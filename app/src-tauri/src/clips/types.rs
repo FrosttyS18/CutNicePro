@@ -30,6 +30,30 @@ pub struct Clip {
     pub analysis: Option<super::analysis_types::Analysis>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub analysis_error: Option<String>,
+    /// Assinatura dos segmentos da transcrição que alimentaram a análise
+    /// (janela `start < clip.end && end > clip.start`). Atualização 19:
+    /// editar um trecho da transcrição invalida SOMENTE os clipes cuja
+    /// janela tocou segmentos alterados — não a coleção inteira.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub analysis_signature: Option<String>,
+    /// Análise DESATUALIZADA (atualização 20): `Some(true)` marca que a
+    /// análise preservada foi produzida sobre uma transcrição que já mudou
+    /// (ou cuja origem não pode ser confirmada). O conteúdo histórico é
+    /// mantido para recuperação, mas NÃO é avaliação válida do texto atual
+    /// — a UI não publica a nota como concluída. Reanálise limpa o marcador.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub analysis_stale: Option<bool>,
+    /// Exclusão persistente recuperável (atualização 19): `Some(true)` marca
+    /// o clipe como excluído da experiência; NADA é apagado (mídia,
+    /// transcrição, análise e demais clipes permanecem) e a restauração
+    /// limpa o marcador. Geração não ressuscita clipe excluído.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub deleted: Option<bool>,
+    /// Motor que gerou ESTE clipe (atualização 19: biblioteca cumulativa
+    /// mistura resultados históricos; a reanálise usa o motor de origem do
+    /// próprio clipe, não o da última execução).
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub engine: Option<EngineRecord>,
 }
 
 #[derive(Clone, Debug, Deserialize, Serialize, PartialEq)]
@@ -55,15 +79,53 @@ pub struct ClipCollection {
     pub engine: Option<EngineRecord>,
 }
 impl ClipCollection {
-    pub fn invalidate_analysis(&mut self, hash: String) {
-        if self.transcript_hash != hash {
+    /// Atualiza o estado das análises após qualquer mudança na transcrição
+    /// (atualizações 19/20 — substitui a invalidação total por `transcript_hash`).
+    ///
+    /// Estratégia granular, determinística e DURÁVEL em leituras (upd 20):
+    /// cada clipe carrega a assinatura dos segmentos que o alimentam.
+    ///
+    /// - Transcrição inalterada (`transcript_hash` confere): clipes sem
+    ///   assinatura (legados) recebem a atual — a coleção foi gravada íntegra
+    ///   para ESTA transcrição, então a análise continua válida. Atribuir a
+    ///   assinatura aqui é som, não confiança cega.
+    /// - Transcrição alterada: quem TEM assinatura e ela divergiu → a análise
+    ///   é preservada e marcada `analysis_stale` (desatualizada — recuperável,
+    ///   nunca publicada como válida). Quem NÃO tem assinatura (legado sem
+    ///   baseline) também é marcado `stale`: sem baseline não se pode afirmar
+    ///   que a análise histórica corresponde ao texto atual. Este estado é
+    ///   RECOMPUTADO igual a cada leitura — confiança não é renovada em ciclo
+    ///   algum, e nenhum comando de leitura grava no disco.
+    /// - Revisão humana nunca é redefinida aqui (registros históricos
+    ///   Pending/Approved/Rejected permanecem).
+    pub fn refresh_analysis_state(&mut self, segments: &[crate::transcription::types::Segment]) {
+        let Ok(current) = super::store::fingerprint(segments) else {
+            return; // sem assinatura confiável não há o que comparar: preserva
+        };
+        if self.transcript_hash == current {
             for clip in &mut self.clips {
-                clip.analysis = None;
-                clip.analysis_error = None;
-                clip.review = Review::Pending;
+                if clip.analysis_signature.is_none() {
+                    clip.analysis_signature =
+                        Some(super::store::clip_signature(segments, clip.start, clip.end));
+                }
             }
-            self.transcript_hash = hash;
+            return;
         }
+        for clip in &mut self.clips {
+            let signature = super::store::clip_signature(segments, clip.start, clip.end);
+            let outdated = match &clip.analysis_signature {
+                // legado sem baseline: origem da análise não confirmável
+                None => clip.analysis.is_some(),
+                // assinatura divergiu: a análise foi feita sobre outro texto
+                Some(old) if *old != signature => true,
+                Some(_) => false,
+            };
+            clip.analysis_signature = Some(signature);
+            if outdated {
+                clip.analysis_stale = Some(true);
+            }
+        }
+        self.transcript_hash = current;
     }
 }
 

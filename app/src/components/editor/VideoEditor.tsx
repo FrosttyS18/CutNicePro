@@ -188,11 +188,37 @@ export function VideoEditor({ title, activeClip, data, localUrl, dirty, onChange
     return () => { element.removeEventListener("play", play); element.removeEventListener("pause", pause); };
   }, [localUrl]);
 
+  // Coalescência de seek (upd 19): durante o arrasto, NOVOS seeks não são
+  // enviados ao <video> enquanto o decodificador ainda processa o anterior
+  // (video.seeking === true). A última posição fica pendente e é aplicada
+  // quando o seek anterior conclui. Isso impede que o decodificador do
+  // WebView2 acumule buffers de múltiplas operações concorrentes — a causa
+  // do crescimento descontrolado de memória (10–14 GB) no scrub.
+  const pendingSeekRef = useRef<number | null>(null);
+  useEffect(() => {
+    const element = video.current;
+    if (!element) return;
+    const onSeeked = () => {
+      const pending = pendingSeekRef.current;
+      if (pending !== null) {
+        pendingSeekRef.current = null;
+        element.currentTime = pending;
+      }
+    };
+    element.addEventListener("seeked", onSeeked);
+    return () => element.removeEventListener("seeked", onSeeked);
+  }, [localUrl]);
   function seek(value: number) {
     if (!video.current || !duration) return;
     const next = clampTime(value, duration);
-    video.current.currentTime = next;
-    setTime(next);
+    setTime(next); // playhead sempre responde imediatamente
+    if (video.current.seeking) {
+      // decoder ocupado: guarda a posição mais recente (descarta intermediárias)
+      pendingSeekRef.current = next;
+    } else {
+      pendingSeekRef.current = null;
+      video.current.currentTime = next;
+    }
   }
 
   function togglePlay() {
@@ -205,6 +231,19 @@ export function VideoEditor({ title, activeClip, data, localUrl, dirty, onChange
   }
   usePlaybackShortcut(canPlay && !transcribing,togglePlay);
   const cue = captionCue(data.transcript,time,effectiveCaptionStyle(data.settings.captionModel,data.settings.captionStyle).wordsPerCaption);
+  // Desacoplamento da timeline (upd 20): cada setTime() durante o arrasto
+  // re-renderizava TODOS os filhos do editor. TranscriptPanel (334+ seg-
+  // mentos com highlighting por palavra) é o mais caro; agora recebe um
+  // tempo THROTTLED (só atualiza 150ms após a última mudança, ou imediato
+  // se parado). O playhead da timeline continua imediato (usa `time`).
+  const [transcriptTime, setTranscriptTime] = useState(0);
+  const transcriptTimer = useRef(0);
+  useEffect(() => {
+    if (transcriptTimer.current) clearTimeout(transcriptTimer.current);
+    transcriptTimer.current = window.setTimeout(() => setTranscriptTime(time), 150);
+    return () => clearTimeout(transcriptTimer.current);
+  }, [time]);
+  // EditorInspector NÃO depende de time — memo para não re-renderizar no drag
   // popover "Ações do projeto" no cabeçalho: transcrição/cortes/exportação fora do inspetor
   const [actionsOpen, setActionsOpen] = useState(false);
   const actionsRef = useRef<HTMLDivElement>(null);
@@ -265,7 +304,7 @@ export function VideoEditor({ title, activeClip, data, localUrl, dirty, onChange
         </header>
       <div className="editor-layout" style={{ ["--transcript-width" as string]: `${layout.transcriptWidth}px`, ["--inspector-width" as string]: `${layout.inspectorWidth}px` }}>
         <div className="editor-pane editor-pane--transcript">
-          <TranscriptPanel segments={data.transcript} demo={data.transcriptMode === "demo"} currentTime={time} canSeek={canPlay && Boolean(duration)} generated={data.transcriptMode === "real"} readOnly={transcribing}
+          <TranscriptPanel segments={data.transcript} demo={data.transcriptMode === "demo"} currentTime={transcriptTime} canSeek={canPlay && Boolean(duration)} generated={data.transcriptMode === "real"} readOnly={transcribing}
             onSeek={seek} onText={(id, text, words) => changeWithHistory({ ...data, transcript: data.transcript.map((segment) => segment.id === id ? { ...editTranscriptSegment(segment,text), words } : segment) }, "transcript")} />
           <div className="editor-pane__divider" role="separator" aria-orientation="vertical"
             aria-label="Redimensionar transcrição (arraste)" title="Arraste para redimensionar a transcrição"
@@ -275,6 +314,11 @@ export function VideoEditor({ title, activeClip, data, localUrl, dirty, onChange
           {framing && <p className="editor-stage__hint" role="status">Modo Enquadrar ativo: arraste o vídeo na prévia para reposicionar a imagem dentro do quadro. As legendas ficam no lugar. Esc ou "Concluir enquadramento" para sair.</p>}
           <div className="editor-stage__canvas" data-framing={framing} onPointerDown={onCanvasPointerDown}><VideoPreview media={data.media} localUrl={localUrl} settings={data.settings} videoRef={video} cue={cue} nativeControls={false} onTogglePlay={togglePlay}
             onDuration={value => { setDuration(value); if (video.current && video.current.currentTime < data.settings.trimStart) { video.current.currentTime = data.settings.trimStart; setTime(data.settings.trimStart); } }} onTime={(value) => {
+              // Autoridade do tempo (upd 20): durante um seek iniciado pelo
+              // usuário, o browser dispara timeupdate com o tempo ANTIGO —
+              // esses eventos não podem reposicionar o playhead para trás.
+              // O alvo do usuário vence até o seek confirmar (seeked).
+              if (video.current && video.current.seeking) return;
               setTime(value);
               if (data.settings.trimEnd !== null && value >= data.settings.trimEnd && video.current && !video.current.paused) video.current.pause();
             }} /></div>

@@ -31,15 +31,17 @@ pub async fn export_video(
     settings.validate(duration)?;
     let base = crate::app_data_base(&app)?;
     if let Some(id) = clip_id {
+        // atualização 19: exportar clip NÃO exige aprovação — valida apenas
+        // que o clipe existe e não está excluído.
         let cuts =
             crate::clips::commands::get_clips(app.clone(), project_id.clone(), media_id.clone())?
                 .ok_or("Corte não encontrado.")?;
         if !cuts
             .clips
             .iter()
-            .any(|c| c.id == id && c.review == crate::clips::types::Review::Approved)
+            .any(|c| c.id == id && !c.deleted.unwrap_or(false))
         {
-            return Err("Aprove o corte antes de exportar.".into());
+            return Err("Corte não encontrado.".into());
         }
     }
     let project = crate::storage::Store::open(&base)?

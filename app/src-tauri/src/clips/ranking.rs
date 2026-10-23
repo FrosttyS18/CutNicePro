@@ -111,6 +111,10 @@ pub fn select(
                 fit: None,
                 analysis: None,
                 analysis_error: None,
+                analysis_signature: None,
+                analysis_stale: None,
+                deleted: None,
+                engine: None,
             };
             if best.as_ref().is_none_or(|old| {
                 clip.score > old.score || (clip.score == old.score && length < old.end - old.start)

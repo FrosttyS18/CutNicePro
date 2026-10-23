@@ -47,3 +47,4 @@ __pycache__/
 .tooling/_runs.json
 .tooling/_log_*.txt
 .tooling/_jobs.json
+.tooling/_checks.json

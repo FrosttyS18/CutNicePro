@@ -126,6 +126,10 @@ mod tests {
             fit: None,
             analysis: None,
             analysis_error: None,
+            analysis_signature: None,
+            analysis_stale: None,
+            deleted: None,
+            engine: None,
         };
         let mut clips = vec![
             clip.clone(),

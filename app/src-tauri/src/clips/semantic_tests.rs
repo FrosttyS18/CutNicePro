@@ -42,6 +42,15 @@ fn rejects_extra_fields_wrong_criteria_and_out_of_range_scores() {
 
 #[test]
 fn changed_transcript_invalidates_analysis_and_review_without_changing_clip_format() {
+    fn speech(text: &str) -> Vec<crate::transcription::types::Segment> {
+        vec![crate::transcription::types::Segment {
+            id: "s0".into(),
+            start: 0.0,
+            end: 30.0,
+            text: text.into(),
+            words: vec![],
+        }]
+    }
     let mut collection = super::types::ClipCollection {
         version: 1,
         media_id: "m".into(),
@@ -59,13 +68,27 @@ fn changed_transcript_invalidates_analysis_and_review_without_changing_clip_form
             fit: None,
             analysis: Some(analysis()),
             analysis_error: None,
+            analysis_signature: None,
+            analysis_stale: None,
+            deleted: None,
+            engine: None,
         }],
     };
-    collection.invalidate_analysis("old".into());
+    // transcrição atual IGUAL à janela do clipe: assinatura registrada,
+    // análise mantida (migração legada confia uma vez)
+    collection.refresh_analysis_state(&speech("O jogo perdeu o progresso"));
     assert!(collection.clips[0].analysis.is_some());
-    collection.invalidate_analysis("new".into());
-    assert!(collection.clips[0].analysis.is_none());
-    assert_eq!(collection.clips[0].review, super::types::Review::Pending);
+    assert!(collection.clips[0].analysis_signature.is_some());
+    // mesma transcrição de novo: nada invalida
+    collection.refresh_analysis_state(&speech("O jogo perdeu o progresso"));
+    assert!(collection.clips[0].analysis.is_some());
+    // edição REAL no trecho que alimenta o clipe (upd 20): a análise é
+    // PRESERVADA para recuperação, marcada como desatualizada (nunca válida)
+    // e a revisão histórica permanece
+    collection.refresh_analysis_state(&speech("Texto corrigido pelo usuário"));
+    assert!(collection.clips[0].analysis.is_some(), "preservada");
+    assert_eq!(collection.clips[0].analysis_stale, Some(true));
+    assert_eq!(collection.clips[0].review, super::types::Review::Approved);
     assert_eq!(collection.clips[0].format.as_deref(), Some("9:16"));
     assert_eq!(collection.clips[0].start, 0.0);
 }

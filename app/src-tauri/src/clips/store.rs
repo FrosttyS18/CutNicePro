@@ -12,10 +12,30 @@ pub fn fingerprint(segments: &[crate::transcription::types::Segment]) -> Result<
         Sha256::digest(serde_json::to_vec(segments).map_err(|e| e.to_string())?)
     ))
 }
+/// Assinatura dos segmentos que alimentam a análise de um clipe — a MESMA
+/// janela usada pelo `semantic::source` (start < clip.end && end > clip.start).
+/// Determinística: mesma transcrição, mesma janela, mesmos bytes.
+pub fn clip_signature(
+    segments: &[crate::transcription::types::Segment],
+    start: f64,
+    end: f64,
+) -> String {
+    let window: Vec<crate::transcription::types::Segment> = segments
+        .iter()
+        .filter(|s| s.start < end && s.end > start)
+        .cloned()
+        .collect();
+    format!(
+        "{:x}",
+        Sha256::digest(serde_json::to_vec(&window).unwrap_or_default())
+    )
+}
 pub fn validate(value: &ClipCollection, duration: f64) -> Result<(), String> {
     let mut ids = std::collections::HashSet::new();
+    // Atualização 19: o limite de 12 é POR EXECUÇÃO (Options::validate /
+    // AUTOMATIC_MAX_CLIPS); a biblioteca salva é CUMULATIVA — coleções com
+    // mais de 12 itens são válidas e recarregáveis.
     if value.version != 1
-        || value.clips.len() > 12
         || !duration.is_finite()
         || duration <= 0.0
         || value.clips.iter().any(|c| {
@@ -151,6 +171,10 @@ mod tests {
                 fit: None,
                 analysis: None,
                 analysis_error: None,
+                analysis_signature: None,
+                analysis_stale: None,
+                deleted: None,
+                engine: None,
             }],
         };
         save(&base, &project, &value, 10.0).unwrap();

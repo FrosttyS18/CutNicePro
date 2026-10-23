@@ -259,3 +259,161 @@ fn real_comparison_custom_floor_vs_automatic() {
     )
     .unwrap();
 }
+
+/// Laboratório da atualização 19: geração INCREMENTAL real com Gemma 4 e
+/// exportação verificável de um clipe da biblioteca cumulativa — SEM
+/// aprovação. Base ISOLADA (pipeline-validation-upd19): nada toca o
+/// app-data do mantenedor nem os artefatos das validações anteriores.
+/// Execução 1: 3 cortes (biblioteca inicial persistida). Execução 2: até
+/// 6 — os anteriores devem permanecer com id/título/nota/revisão e as
+/// assinaturas granulares; novos candidatos entram sem substituí-los.
+#[test]
+#[ignore = "Executa geração incremental real (Gemma 4) + exportação verificável no vídeo local delimitado"]
+fn real_incremental_gemma_generation_and_verifiable_export() {
+    let root = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../.tooling/vendor");
+    let base = root.join("pipeline-validation-upd19");
+    let scratch = base.join("generation");
+    std::fs::create_dir_all(&scratch).unwrap();
+    let transcript: Transcript = serde_json::from_slice(
+        &std::fs::read(root.join("analysis/validation/transcript.json")).unwrap(),
+    )
+    .unwrap();
+    let options = |count: usize| Options {
+        min_seconds: 25.0,
+        max_seconds: 90.0,
+        count,
+        format: Some("9:16".into()),
+        fit: Some("cover".into()),
+        quality: Some(Quality::ExperimentalGemma),
+        automatic: false,
+    };
+    let project = "d1e2f3a4-0001-4000-8000-00000000a001";
+    let source = root.join("pipeline-validation/source.mp4");
+    let duration = 599.098;
+
+    let first = generation::run(
+        &base,
+        &scratch,
+        generation::Request {
+            project,
+            media: &transcript.media_id,
+            source: &source,
+            duration,
+            speech: &transcript.segments,
+            options: &options(3),
+        },
+        &ProcessControl::default(),
+        |_| {},
+    )
+    .unwrap();
+    assert_eq!(first.clips.len(), 3, "execução 1 deve publicar 3 cortes");
+    for clip in &first.clips {
+        assert!(
+            clip.analysis.is_some(),
+            "execução 1 sem análise: {:?}",
+            clip.analysis_error
+        );
+        assert!(
+            clip.analysis_signature.is_some(),
+            "assinatura granular ausente"
+        );
+        assert_eq!(clip.fit.as_deref(), Some("cover"));
+    }
+    store::save(&base, project, &first, duration).unwrap();
+    let snapshot: Vec<(String, String, u8, super::types::Review)> = first
+        .clips
+        .iter()
+        .map(|c| (c.id.clone(), c.title.clone(), c.score, c.review.clone()))
+        .collect();
+
+    // execução 2: biblioteca CUMULATIVA — anteriores preservados íntegros
+    let second = generation::run(
+        &base,
+        &scratch,
+        generation::Request {
+            project,
+            media: &transcript.media_id,
+            source: &source,
+            duration,
+            speech: &transcript.segments,
+            options: &options(6),
+        },
+        &ProcessControl::default(),
+        |_| {},
+    )
+    .unwrap();
+    for (id, title, score, review) in &snapshot {
+        let kept = second
+            .clips
+            .iter()
+            .find(|c| c.id == *id)
+            .expect("clipe da execução 1 deve permanecer na biblioteca");
+        assert_eq!(
+            &kept.title, title,
+            "título do clipe preservado foi alterado"
+        );
+        assert_eq!(kept.score, *score, "nota do clipe preservado foi alterada");
+        assert_eq!(
+            &kept.review, review,
+            "revisão do clipe preservado foi alterada"
+        );
+    }
+    assert!(
+        second.clips.len() >= snapshot.len(),
+        "biblioteca não pode encolher em nova geração"
+    );
+    for clip in &second.clips {
+        assert!(clip.analysis_signature.is_some());
+    }
+    store::save(&base, project, &second, duration).unwrap();
+    let reopened = store::read(&base, project).unwrap().unwrap();
+    assert_eq!(
+        reopened.clips.len(),
+        second.clips.len(),
+        "biblioteca cumulativa persistiu"
+    );
+
+    // exportação verificável do melhor clipe, SEM aprovação: intervalo do
+    // clipe, 9:16 cover, legendas da transcrição real. O pipeline valida
+    // duração (±0,3 s), dimensões e presença de áudio antes de publicar.
+    let clip = second
+        .clips
+        .iter()
+        .max_by(|a, b| a.score.cmp(&b.score))
+        .unwrap();
+    let mut render: crate::render::settings::RenderSettings = serde_json::from_value(serde_json::json!({
+        "ratio":"9:16","fit":"cover","captionModel":2,
+        "captionStyle":{"font":"Poppins","size":64,"weight":600,"color":"#ffffff","italic":false,"underline":false,
+            "uppercase":false,"outline":2,"outlineColor":"#000000","shadow":true,"background":"transparent",
+            "highlightColor":"#02c2be","effect":"highlight","position":"bottom"},
+        "volume":1.0,"muted":false,"background":"#000000","text":"",
+        "trimStart":clip.start,"trimEnd":clip.end,"focalPoint":{"x":50,"y":50}
+    }))
+    .unwrap();
+    render.source_width = None;
+    render.source_height = None;
+    let (_render_scratch, output) = crate::render::pipeline::run(
+        &base,
+        &source,
+        &transcript.segments,
+        &render,
+        duration,
+        true,
+        &ProcessControl::default(),
+        |_| {},
+    )
+    .unwrap();
+    let size = std::fs::metadata(&output).unwrap().len();
+    assert!(size > 100_000, "exportação minúscula: {size} bytes");
+    std::fs::copy(&output, base.join("upd19-clip-export.mp4")).unwrap();
+    std::fs::write(
+        base.join("upd19-incremental.json"),
+        serde_json::to_vec_pretty(&serde_json::json!({
+            "first": {"clips": first.clips.len()},
+            "second": {"clips": second.clips.len()},
+            "export": {"clip_id": clip.id, "bytes": size},
+        }))
+        .unwrap(),
+    )
+    .unwrap();
+}
