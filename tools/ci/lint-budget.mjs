@@ -10,7 +10,7 @@ import { readFileSync } from "node:fs";
 
 const DEBT = {
   "react-hooks/set-state-in-effect": 9,
-  "react-hooks/refs": 10,
+  "react-hooks/refs": 9,
   "react-hooks/immutability": 1,
 };
 const WARNINGS_BUDGET = 1;

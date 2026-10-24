@@ -1,0 +1,14 @@
+import { createRequire } from "node:module";
+import { setTimeout as sleep } from "node:timers/promises";
+const require = createRequire("C:/CutNicePro/tools/e2e/editor11-runtime-tauri.mjs");
+const { chromium } = require("C:/CutNicePro/.tooling/playwright/node_modules/playwright");
+const browser = await chromium.connectOverCDP("http://127.0.0.1:9381");
+await sleep(1000);
+const page = browser.contexts()[0].pages().find(p => !p.url().startsWith("chrome-error"));
+console.log("url:", page.url().slice(0,40));
+console.log("editor:", await page.locator('[data-testid="video-editor"]').count());
+console.log("timeline:", await page.locator(".editor-timeline").count());
+console.log("surface:", await page.locator(".timeline-surface").count());
+const body = (await page.locator("body").innerText().catch(()=>"")).slice(0,200).replace(/\n/g," | ");
+console.log("body:", body);
+await browser.close().catch(()=>{});
