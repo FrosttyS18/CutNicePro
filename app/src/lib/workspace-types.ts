@@ -36,6 +36,23 @@ export interface EditorEffects {
   hue: number;
 }
 
+/** Intervalo de mídia ORIGINAL incluído na composição do corte (segundos). */
+export interface EditSegment {
+  sourceStart: number;
+  sourceEnd: number;
+}
+
+/**
+ * Plano de edição versionado por corte (M2 cortes-multimodais): segmentos
+ * ordenados e não sobrepostos da mídia original. A prévia, a timeline e a
+ * exportação consomem o MESMO plano. Sem plano (projetos antigos): um único
+ * segmento derivado de trimStart/trimEnd — compatível, sem migração.
+ */
+export interface EditPlan {
+  version: 1;
+  segments: EditSegment[];
+}
+
 export interface EditorSettings {
   ratio: AspectRatio;
   fit: "contain" | "cover";
@@ -52,6 +69,8 @@ export interface EditorSettings {
   background: string;
   trimStart: number;
   trimEnd: number | null;
+  /** Plano multi-intervalo do corte; ausente = intervalo único (trim). */
+  editPlan?: EditPlan | null;
 }
 
 export interface WorkspaceData {

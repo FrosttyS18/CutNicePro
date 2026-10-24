@@ -128,6 +128,8 @@ mod tests {
             analysis_error: None,
             analysis_signature: None,
             analysis_stale: None,
+            multimodal: None,
+            created_at_ms: None,
             deleted: None,
             engine: None,
         };

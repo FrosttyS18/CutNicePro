@@ -11,6 +11,31 @@ fn settings() -> RenderSettings {
         "volume":0.7,"muted":false,"background":"#000000","text":"","trimStart":2.0,"trimEnd":4.0,"focalPoint":{"x":20,"y":50}})).unwrap()
 }
 #[test]
+fn ui_caption_style_payload_with_words_percaption_deserializes() {
+    // Payload EXATO que a UI envia ao exportar: effectiveCaptionStyle
+    // (lib/captions.ts) sempre inclui `y` e `wordsPerCaption`. O contrato
+    // Rust chama o campo words_per_line — o alias aceita o nome da UI.
+    // Regressão (goal-refino F2c): sem o alias, serde rejeitava o campo
+    // desconhecido e TODO export pela UI com legendas ativas falhava com
+    // erro genérico antes de abrir o diálogo.
+    let value: RenderSettings = serde_json::from_value(serde_json::json!({
+        "ratio":"9:16","fit":"cover","captionModel":2,
+        "captionStyle":{"font":"Poppins","size":64,"weight":700,"color":"#ffffff","italic":false,
+            "underline":false,"uppercase":false,"outline":2,"outlineColor":"#000000","shadow":true,
+            "background":"transparent","highlightColor":"#02c2be","effect":"highlight","position":"bottom",
+            "y":0.86,"wordsPerCaption":5},
+        "text":"","volume":1.0,"muted":false,"background":"#000000","trimStart":0.0,"trimEnd":17.12
+    })).expect("payload real da UI deve desserializar");
+    assert_eq!(
+        value.caption_style.as_ref().unwrap().words_per_line,
+        Some(5)
+    );
+    assert_eq!(value.caption_style.as_ref().unwrap().y, Some(0.86));
+    value
+        .validate(1476.789)
+        .expect("payload real da UI deve validar");
+}
+#[test]
 fn rejects_invalid_intervals_filters_and_style_injection() {
     let mut value = settings();
     assert_eq!(value.validate(5.0).unwrap(), (2.0, 4.0));
@@ -320,4 +345,95 @@ fn real_render_applies_zoom_effects_and_volume() {
         std::fs::write(base.join(format!("{name}-args.txt")), format!("{:?}", value.geometry().unwrap())).unwrap();
         let _ = scratch;
     }
+}
+
+#[test]
+fn effective_segments_prefers_valid_plan_and_rejects_invalid() {
+    let mut value = settings();
+    // sem plano: intervalo único do trim
+    assert_eq!(
+        value.effective_segments(5.0).unwrap(),
+        vec![super::settings::RenderSegment {
+            source_start: 2.0,
+            source_end: 4.0
+        }]
+    );
+    // plano válido ordenado
+    value.segments = Some(vec![
+        super::settings::RenderSegment {
+            source_start: 1.0,
+            source_end: 2.0,
+        },
+        super::settings::RenderSegment {
+            source_start: 3.0,
+            source_end: 4.5,
+        },
+    ]);
+    assert_eq!(value.effective_segments(5.0).unwrap().len(), 2);
+    // sobreposição, fora da mídia, curto demais e vazio são rejeitados
+    value.segments = Some(vec![
+        super::settings::RenderSegment {
+            source_start: 1.0,
+            source_end: 3.0,
+        },
+        super::settings::RenderSegment {
+            source_start: 2.0,
+            source_end: 4.0,
+        },
+    ]);
+    assert!(value.effective_segments(5.0).is_err());
+    value.segments = Some(vec![super::settings::RenderSegment {
+        source_start: 0.0,
+        source_end: 6.0,
+    }]);
+    assert!(value.effective_segments(5.0).is_err());
+    value.segments = Some(vec![super::settings::RenderSegment {
+        source_start: 1.0,
+        source_end: 1.03,
+    }]);
+    assert!(value.effective_segments(5.0).is_err());
+    value.segments = Some(vec![]);
+    assert_eq!(
+        value.effective_segments(5.0).unwrap(),
+        vec![super::settings::RenderSegment {
+            source_start: 2.0,
+            source_end: 4.0
+        }]
+    );
+}
+
+#[test]
+fn window_arguments_use_plan_bounds_and_own_captions() {
+    let mut value = settings();
+    value.segments = Some(vec![
+        super::settings::RenderSegment {
+            source_start: 1.0,
+            source_end: 2.0,
+        },
+        super::settings::RenderSegment {
+            source_start: 3.0,
+            source_end: 4.5,
+        },
+    ]);
+    let windows = value.effective_segments(5.0).unwrap();
+    let args = pipeline::window_arguments(
+        std::path::Path::new("src.mp4"),
+        std::path::Path::new("seg_0.mp4"),
+        &value,
+        windows[0].source_start,
+        windows[0].source_end,
+        true,
+        super::encoder::Encoder::Cpu,
+        "captions_0.ass",
+    )
+    .unwrap();
+    let text: Vec<String> = args
+        .iter()
+        .map(|a| a.to_string_lossy().into_owned())
+        .collect();
+    let ss = text.iter().position(|a| a == "-ss").unwrap();
+    assert_eq!(text[ss + 1], "1");
+    let t = text.iter().position(|a| a == "-t").unwrap();
+    assert_eq!(text[t + 1], "1");
+    assert!(text.iter().any(|a| a.contains("captions_0.ass")));
 }

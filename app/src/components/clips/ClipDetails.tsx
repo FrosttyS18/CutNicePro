@@ -29,6 +29,14 @@ export function ClipDetails({clip,transcript,time,loading,analyzing,error,onSeek
         {clip.analysis!.criteria.map(item => <section className="clip-criterion" key={item.label}>
           <h4>{item.label}<span>{item.score}<small>/100</small></span></h4><p>{item.explanation}</p><blockquote>{item.evidence}</blockquote>
         </section>)}
+        {clip.multimodal && <section className="clip-criterion clip-criterion--evidence" aria-label="Evidências multimodais">
+          <h4>Evidências recebidas<span>{clip.multimodal.backend === "experimentalGemmaMultimodal" ? "texto + áudio + frames" : "texto"}</span></h4>
+          <p>{clip.multimodal.visual}</p>
+          <blockquote>frames em {clip.multimodal.frames.map(f => `${f.toFixed(1)}s`).join(", ")}
+            {clip.multimodal.audioEvents.length ? ` · ${clip.multimodal.audioEvents.join(" · ")}` : " · sem pausas detectadas no intervalo"}
+            {(clip.multimodal.boundaryAdjustments[0] !== 0 || clip.multimodal.boundaryAdjustments[1] !== 0)
+              ? ` · fronteiras ajustadas por pausa: ${clip.multimodal.boundaryAdjustments[0] >= 0 ? "+" : ""}${clip.multimodal.boundaryAdjustments[0].toFixed(2)}s / ${clip.multimodal.boundaryAdjustments[1] >= 0 ? "+" : ""}${clip.multimodal.boundaryAdjustments[1].toFixed(2)}s` : ""}</blockquote>
+        </section>}
       </> : <div aria-busy={analyzing}>
         {analyzing ? <p role="status">Analisando o trecho…</p> : <><p role={error || clip.analysisError ? "alert" : undefined}>{error ?? clip.analysisError ?? (clip.analysisStale ? "A transcrição deste trecho mudou depois desta análise. Analise novamente para atualizar a avaliação." : "Analise este clipe para ver o resumo e os critérios da nota.")}</p>
           <button type="button" className="flow-button" disabled={loading} onClick={onAnalyze}>{error || clip.analysisStale ? "Analisar novamente" : "Analisar trecho"}</button></>}

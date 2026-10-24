@@ -2,6 +2,7 @@ import { useEffect, useRef, useState, type RefObject, type CSSProperties } from 
 import type { EditorSettings, SourceDescriptor } from "../../lib/workspace-types";
 import { effectiveCaptionStyle, type CaptionCue } from "../../lib/captions";
 import { CaptionVisual } from "../editor/CaptionVisual";
+import type { ScrubCanvas } from "../../lib/frame-seeker";
 import "../editor/captions.css";
 
 interface Props {
@@ -15,6 +16,8 @@ interface Props {
   nativeControls?: boolean;
   onTogglePlay?: () => void;
   original?: boolean;
+  /** Canvas com frame decodificado via WebCodecs (scrub instantâneo). */
+  scrubCanvas?: ScrubCanvas | null;
 }
 
 function previewFilter(effects: EditorSettings["effects"]): string | undefined {
@@ -28,7 +31,7 @@ function previewFilter(effects: EditorSettings["effects"]): string | undefined {
   return parts.length ? parts.join(" ") : undefined;
 }
 
-export function VideoPreview({ media, localUrl, settings, videoRef, onTime, onDuration, cue, nativeControls=true, onTogglePlay, original=false }: Props) {
+export function VideoPreview({ media, localUrl, settings, videoRef, onTime, onDuration, cue, nativeControls=true, onTogglePlay, original=false, scrubCanvas }: Props) {
   const fallback = useRef<HTMLVideoElement>(null);
   const ref = videoRef ?? fallback;
   const [error, setError] = useState(false);
@@ -85,6 +88,8 @@ export function VideoPreview({ media, localUrl, settings, videoRef, onTime, onDu
           if (element?.paused) void element.play().catch(() => setError(true)); else element?.pause();
         }}/>}
       {error && <p className="workspace-preview__error" role="alert">Não foi possível reproduzir este arquivo. Reconecte um vídeo compatível.</p>}
+      {!original && scrubCanvas && <canvas ref={(c) => { if (c && scrubCanvas.width > 0) { c.width = scrubCanvas.width; c.height = scrubCanvas.height; c.getContext("2d")?.drawImage(scrubCanvas, 0, 0); } }}
+        className="workspace-preview__scrub" aria-hidden="true" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: settings.fit, pointerEvents: "none", zIndex: 1 }}/>}
       {!original && settings.text && <span className="workspace-preview__text">{settings.text}</span>}
       {!original && settings.captionModel>0 && cue && <div className="caption-overlay" data-position={caption.position}
           style={{ "--caption-y": `${Math.round((caption.y ?? 0.86) * 100)}%` } as CSSProperties} aria-label="Legenda">

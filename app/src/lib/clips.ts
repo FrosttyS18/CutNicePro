@@ -1,6 +1,7 @@
 import { invoke } from "@tauri-apps/api/core";
 import { effectiveCaptionStyle } from "./captions";
-import type { EditorSettings, SourceDescriptor } from "./workspace-types";
+import type { EditorSettings, EditSegment, SourceDescriptor } from "./workspace-types";
+import { normalizePlan } from "./edit-plan";
 import type { AspectRatio } from "../components/upload/tools";
 import { defaultEditorSettings } from "./workspace";
 
@@ -9,7 +10,12 @@ export type ClipQuality = "standard" | "experimentalGemma";
 export interface ClipEngine { backend: string; model: string; template: string; sampling: string; seed: number }
 export interface ClipAnalysis { title: string; summary: string; criteria: {label: string; score: number; explanation: string; evidence: string}[] }
 export type ClipFit = "cover" | "contain";
+export interface MultimodalEvidence { frames: number[]; visual: string; audioEvents: string[]; boundaryAdjustments: [number, number]; backend: string; framing?: { cx: number; cy: number; source: string } }
 export interface Clip { id: string; start: number; end: number; title: string; score: number; reasons: string[]; review: ClipReview; format?: AspectRatio; fit?: ClipFit; analysis?: ClipAnalysis; analysisError?: string;
+  /** Evidências multimodais realmente recebidas (M3): frames/áudio com timestamps. */
+  multimodal?: MultimodalEvidence;
+  /** Criação real (ms-epoch); ausente em legados = nunca inventado. */
+  createdAtMs?: number;
   /** Assinatura da janela da transcrição que alimentou a análise (invalidação granular, atualização 19). */
   analysisSignature?: string;
   /** Análise DESATUALIZADA (upd 20): preservada para recuperação, mas NÃO é avaliação válida do texto atual. */
@@ -38,6 +44,14 @@ export function parseClips(value: unknown): ClipCollection {
       && (c.analysisError === undefined || typeof c.analysisError === "string")
       && (c.analysisSignature === undefined || typeof c.analysisSignature === "string")
       && (c.analysisStale === undefined || typeof c.analysisStale === "boolean")
+      && (c.multimodal === undefined || (typeof c.multimodal.visual === "string" && c.multimodal.visual.length > 0
+        && Array.isArray(c.multimodal.frames) && c.multimodal.frames.every(f => Number.isFinite(f))
+        && Array.isArray(c.multimodal.audioEvents) && c.multimodal.audioEvents.every(e => typeof e === "string")
+        && Array.isArray(c.multimodal.boundaryAdjustments) && c.multimodal.boundaryAdjustments.length === 2
+        && typeof c.multimodal.backend === "string"
+        && (c.multimodal.framing === undefined || (Number.isFinite(c.multimodal.framing.cx) && Number.isFinite(c.multimodal.framing.cy)
+          && typeof c.multimodal.framing.source === "string"))
+        && (c.createdAtMs === undefined || (Number.isFinite(c.createdAtMs) && c.createdAtMs > 0))))
       && (c.deleted === undefined || typeof c.deleted === "boolean")
       && (c.engine === undefined || validEngine(c.engine))
       && ["pending", "approved", "rejected"].includes(c.review))) throw new Error("Cortes inválidos.");
@@ -83,12 +97,25 @@ export function isolatedClipSettings(clip: Clip, saved?: EditorSettings, media?:
   const ratios: AspectRatio[] = ["16:9","9:16","1:1","4:5"];
   const fallback = ratios.reduce((best,ratio) => Math.abs(Number(ratio.split(":")[0])/Number(ratio.split(":")[1])-sourceRatio)
     < Math.abs(Number(best.split(":")[0])/Number(best.split(":")[1])-sourceRatio) ? ratio : best);
-  // sem edição salva: limites originais do clipe e legendas ATIVAS (padrão
-  // histórico do clipe); com edição salva: tudo vem do que o usuário deixou
-  return clipSettings(saved ?? { ...defaults, ratio: clip.format ?? fallback, fit: clip.fit ?? "contain", captionModel: 2 },clip);
+  // sem edição salva: limites originais do clipe, legendas ATIVAS (padrão
+  // histórico) e ENQUADRAMENTO AUTOMÁTICO por tracking (M4) quando houver;
+  // com edição salva: tudo vem do que o usuário deixou — a edição manual
+  // vence e desativa a automação para este corte.
+  if (saved) return clipSettings(saved, clip);
+  const fresh = { ...defaults, ratio: clip.format ?? fallback, fit: clip.fit ?? "contain", captionModel: 2 } as EditorSettings;
+  const framing = clip.multimodal?.framing;
+  if (framing && Number.isFinite(framing.cx) && Number.isFinite(framing.cy)) {
+    fresh.focalPoint = { x: Math.round(framing.cx * 100), y: Math.round(framing.cy * 100) };
+  }
+  return clipSettings(fresh, clip);
 }
-export function renderSettings(settings: EditorSettings): EditorSettings {
-  return { ...settings, captionStyle: effectiveCaptionStyle(settings.captionModel, settings.captionStyle) };
+/** Payload do export: editPlan NÃO viaja (deny_unknown_fields no Rust); o
+ * contrato é `segments` (render/settings.rs). Plano vazio/ausente → backend
+ * usa o intervalo único do trim (effective_segments). */
+export function renderSettings(settings: EditorSettings): EditorSettings & { segments?: EditSegment[] } {
+  const { editPlan, ...rest } = settings;
+  const segments = normalizePlan(editPlan);
+  return { ...rest, captionStyle: effectiveCaptionStyle(settings.captionModel, settings.captionStyle), ...(segments.length ? { segments } : {}) };
 }
 export function clipMessage(error: unknown): string {
   const text = String(error);
@@ -134,3 +161,25 @@ export const getClipJob = () => invoke<unknown>("clips_job");
 export const cancelClips = (jobId: string) => invoke<boolean>("cancel_clips", { jobId });
 export const exportVideo = (projectId: string, mediaId: string, jobId: string, settings: EditorSettings, clipId?: string) =>
   invoke<boolean>("export_video", { projectId, mediaId, jobId, settings: renderSettings(settings), clipId: clipId ?? null });
+
+
+/** G7 (goal-recuperacao-autoclip): tempo relativo SEM gerar nova data —
+ *  recebe `now` para poder testar; "Agora", "há N min/h/d". */
+export function relativeTime(fromMs: number, nowMs: number): string {
+  const diff = Math.max(0, nowMs - fromMs);
+  const min = Math.floor(diff / 60_000);
+  if (min < 1) return "Agora";
+  if (min < 60) return `há ${min} minuto${min > 1 ? "s" : ""}`;
+  const hours = Math.floor(min / 60);
+  if (hours < 24) return `há ${hours} hora${hours > 1 ? "s" : ""}`;
+  const days = Math.floor(hours / 24);
+  return `há ${days} dia${days > 1 ? "s" : ""}`;
+}
+
+export const CLIP_NEW_WINDOW_MS = 60 * 60 * 1000;
+
+export function isClipNew(clip: Clip, nowMs = Date.now()): boolean {
+  const created = clip.createdAtMs;
+  return typeof created === "number" && Number.isFinite(created) && created > 0
+    && nowMs >= created && nowMs - created < CLIP_NEW_WINDOW_MS;
+}

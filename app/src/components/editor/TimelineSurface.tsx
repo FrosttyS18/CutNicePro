@@ -1,13 +1,28 @@
 import { useEffect, useRef, useState } from "react";
 import { beginPointer, movePointer, keyboardTime } from "../../lib/timeline";
 import { formatMediaTime } from "../../lib/workspace";
-import type { EditorSettings } from "../../lib/workspace-types";
+import type { EditSegment, EditorSettings } from "../../lib/workspace-types";
 import { AudioWaveform } from "./AudioWaveform";
 
 interface Props { duration:number; time:number; canPlay:boolean; frames:string[]; peaks:number[]; loading:boolean; hasAudio:boolean;
-  settings:EditorSettings; onSeek:(time:number)=>void }
+  settings:EditorSettings; onSeek:(time:number)=>void;
+  /** Segmentos do plano de edição (tempo da FONTE): os vãos ficam sombreados
+   *  como o trim faz hoje — mesma linguagem visual, sem novos contornos. */
+  segments?: EditSegment[] | null }
 
-export function TimelineSurface({duration,time,canPlay,frames,peaks,loading,hasAudio,settings,onSeek}:Props) {
+/** Vãos = complemento do plano dentro de [0, duration] (ordenado). */
+function gapsOf(segments: EditSegment[], duration: number): EditSegment[] {
+  const gaps: EditSegment[] = [];
+  let cursor = 0;
+  for (const s of segments) {
+    if (s.sourceStart > cursor + 1e-6) gaps.push({ sourceStart: cursor, sourceEnd: s.sourceStart });
+    cursor = Math.max(cursor, s.sourceEnd);
+  }
+  if (duration > cursor + 1e-6) gaps.push({ sourceStart: cursor, sourceEnd: duration });
+  return gaps;
+}
+
+export function TimelineSurface({duration,time,canPlay,frames,peaks,loading,hasAudio,settings,onSeek,segments}:Props) {
   const [dragging,setDragging] = useState(false);
   // Throttle de seek durante drag (upd 19): cada mousemove chamava
   // video.currentTime=X — em vídeo longo o decodificador buscava keyframe +
@@ -36,8 +51,14 @@ export function TimelineSurface({duration,time,canPlay,frames,peaks,loading,hasA
     <div className="timeline-track" aria-hidden="true">
       <div className="timeline-filmstrip">{frames.map((frame,i)=><img key={i} src={frame} alt="" width={160} height={90} draggable={false}/>)}</div>
       {!frames.length && <span>{loading?"Carregando miniaturas…":"Miniaturas indisponíveis"}</span>}
-      <div className="timeline-trim-shade" style={{width:`${duration?settings.trimStart/duration*100:0}%`}}/>
-      <div className="timeline-trim-shade timeline-trim-shade--end" style={{width:`${duration?(1-(settings.trimEnd??duration)/duration)*100:0}%`}}/>
+      {segments?.length
+        ? gapsOf(segments, duration).map((gap, i) => (
+          <div key={i} className="timeline-trim-shade"
+            style={{ left: `${duration ? gap.sourceStart / duration * 100 : 0}%`, width: `${duration ? (gap.sourceEnd - gap.sourceStart) / duration * 100 : 0}%` }}/>))
+        : <>
+          <div className="timeline-trim-shade" style={{width:`${duration?settings.trimStart/duration*100:0}%`}}/>
+          <div className="timeline-trim-shade timeline-trim-shade--end" style={{width:`${duration?(1-(settings.trimEnd??duration)/duration)*100:0}%`}}/>
+        </>}
     </div>
     <div className="timeline-audio" aria-hidden="true">{peaks.length ? <AudioWaveform peaks={peaks} />
       :<span>{loading?"Carregando áudio…":hasAudio?"Áudio indisponível":"Sem faixa de áudio"}</span>}</div>

@@ -20,6 +20,9 @@ pub struct CaptionStyle {
     /// Posição vertical contínua (0,1–0,9); rascunhos antigos usam `position`.
     pub y: Option<f64>,
     /// Palavras por legenda (1–8); rascunhos antigos usam 5.
+    /// Alias: a UI envia `wordsPerCaption` (lib/captions.ts) — sem ele o
+    /// serde rejeitava o export inteiro (deny_unknown_fields).
+    #[serde(alias = "wordsPerCaption")]
     pub words_per_line: Option<u8>,
 }
 #[derive(Clone, Deserialize)]
@@ -74,6 +77,25 @@ pub struct RenderSettings {
     /// Dimensões do vídeo de origem (preenchidas pelo backend com a análise real).
     pub source_width: Option<u32>,
     pub source_height: Option<u32>,
+    /// Plano de edição multi-intervalo (M2 cortes-multimodais): tempos da
+    /// mídia ORIGINAL em segundos; quando presente e válido, substitui
+    /// trim_start/trim_end na exportação. Ausente/vazio = intervalo único do
+    /// trim (projetos antigos, sem migração).
+    pub segments: Option<Vec<RenderSegment>>,
+}
+
+/** Intervalo de mídia original incluído na composição (segundos). */
+#[derive(Deserialize, Clone, Copy, Debug, PartialEq)]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
+pub struct RenderSegment {
+    pub source_start: f64,
+    pub source_end: f64,
+}
+
+impl RenderSegment {
+    pub fn duration(&self) -> f64 {
+        self.source_end - self.source_start
+    }
 }
 pub fn color(value: &str) -> bool {
     value.len() == 7 && value.starts_with('#') && value[1..].chars().all(|c| c.is_ascii_hexdigit())
@@ -118,6 +140,33 @@ impl CaptionStyle {
     }
 }
 impl RenderSettings {
+    /// Intervalos efetivos da composição: plano multi-segmento validado ou o
+    /// intervalo único do trim (validate). Mesma semântica da prévia
+    /// (`effectiveSegments` em edit-plan.ts) — os três consumidores
+    /// (prévia/timeline/export) devem concordar.
+    pub fn effective_segments(&self, duration: f64) -> Result<Vec<RenderSegment>, String> {
+        let Some(segments) = self.segments.as_ref().filter(|list| !list.is_empty()) else {
+            let (start, end) = self.validate(duration)?;
+            return Ok(vec![RenderSegment {
+                source_start: start,
+                source_end: end,
+            }]);
+        };
+        let mut previous_end = f64::NEG_INFINITY;
+        for segment in segments {
+            if !segment.source_start.is_finite()
+                || !segment.source_end.is_finite()
+                || segment.source_start < 0.0
+                || segment.source_end > duration + 1e-6
+                || segment.duration() < 0.05
+                || segment.source_start < previous_end - 1e-6
+            {
+                return Err("Revise os segmentos do corte e tente novamente.".into());
+            }
+            previous_end = segment.source_end;
+        }
+        Ok(segments.clone())
+    }
     pub fn dimensions(&self) -> Result<(u32, u32), String> {
         match self.ratio.as_str() {
             "16:9" => Ok((1920, 1080)),

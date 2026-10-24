@@ -30,18 +30,20 @@ pub async fn export_video(
     }
     settings.validate(duration)?;
     let base = crate::app_data_base(&app)?;
+    let mut clip_title: Option<String> = None;
     if let Some(id) = clip_id {
         // atualização 19: exportar clip NÃO exige aprovação — valida apenas
         // que o clipe existe e não está excluído.
         let cuts =
             crate::clips::commands::get_clips(app.clone(), project_id.clone(), media_id.clone())?
                 .ok_or("Corte não encontrado.")?;
-        if !cuts
+        match cuts
             .clips
             .iter()
-            .any(|c| c.id == id && !c.deleted.unwrap_or(false))
+            .find(|c| c.id == id && !c.deleted.unwrap_or(false))
         {
-            return Err("Corte não encontrado.".into());
+            Some(clip) => clip_title = Some(clip.title.clone()),
+            None => return Err("Corte não encontrado.".into()),
         }
     }
     let project = crate::storage::Store::open(&base)?
@@ -69,7 +71,18 @@ pub async fn export_video(
             .set_title("Exportar vídeo")
             .add_filter("Vídeo MP4", &["mp4"])
             .set_file_name(crate::project_files::filename(
-                &format!("{}-corte", project.name),
+                // G7 (goal-recuperacao-autoclip): nome identificável — quando
+                // é um corte, inclui o TÍTULO (40 chars) para o arquivo
+                // corresponder ao card; export de vídeo completo segue "projeto-corte".
+                &clip_title
+                    .map(|title| {
+                        format!(
+                            "{}-{}",
+                            project.name,
+                            title.chars().take(40).collect::<String>()
+                        )
+                    })
+                    .unwrap_or_else(|| format!("{}-corte", project.name)),
                 "mp4",
             ));
         if let Some(window) = selected_app.get_webview_window("main") {

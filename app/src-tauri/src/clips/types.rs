@@ -54,6 +54,49 @@ pub struct Clip {
     /// próprio clipe, não o da última execução).
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub engine: Option<EngineRecord>,
+    /// Criação REAL do clipe (ms-epoch; ausente em legados = nunca visto
+    /// como novo, nunca recebe timestamp inventado). Setado UMA vez na
+    /// primeira publicação; regenerar/editar não altera (G7).
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub created_at_ms: Option<u64>,
+    /// Evidências multimodais realmente recebidas para este clipe (M3,
+    /// goal-cortes-multimodais): frames com timestamp e eventos sonoros.
+    /// Ausente = análise puramente textual (degradação declarada).
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub multimodal: Option<MultimodalEvidence>,
+}
+
+/// Evidências multimodais por clipe (M3): o que a análise REALMENTE recebeu
+/// de imagem/áudio, com timestamps — nunca afirmado sem payload real.
+#[derive(Clone, Debug, Deserialize, Serialize, PartialEq)]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
+pub struct MultimodalEvidence {
+    /// Timestamps (s, mídia original) dos frames enviados ao modelo.
+    pub frames: Vec<f64>,
+    /// Resumo visual fundamentado nos frames recebidos.
+    pub visual: String,
+    /// Eventos sonoros/pausas do intervalo (detecção FFmpeg, não suposição).
+    pub audio_events: Vec<String>,
+    /// Ajustes de fronteira aplicados por pausa de áudio: (Δinício, Δfim).
+    pub boundary_adjustments: (f64, f64),
+    /// Backend que produziu a evidência (ex.: experimentalGemmaMultimodal).
+    pub backend: String,
+    /// Enquadramento automático (M4): centro suavizado da trajetória
+    /// dominante, normalizado [0..1]; aplicado quando o corte não tem edição
+    /// manual salva (manual SEMPRE vence = desativar automação por corte).
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub framing: Option<Framing>,
+}
+
+/// Enquadramento derivado de trajetória (M4): centro normalizado + origem.
+#[derive(Clone, Debug, Deserialize, Serialize, PartialEq)]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
+pub struct Framing {
+    pub cx: f64,
+    pub cy: f64,
+    /// "tracking" (automático por trajetória) — intervenção manual muda o
+    /// focal salvo no workspace e a automação deixa de aplicar.
+    pub source: String,
 }
 
 #[derive(Clone, Debug, Deserialize, Serialize, PartialEq)]

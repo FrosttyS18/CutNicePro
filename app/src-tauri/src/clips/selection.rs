@@ -224,6 +224,8 @@ fn clip_for(media: &str, start: f64, end: f64, score: u8, format: Option<&str>) 
         analysis_error: None,
         analysis_signature: None,
         analysis_stale: None,
+        multimodal: None,
+        created_at_ms: None,
         deleted: None,
         engine: None,
     }
@@ -960,6 +962,8 @@ mod tests {
             analysis_error: None,
             analysis_signature: None,
             analysis_stale: None,
+            multimodal: None,
+            created_at_ms: None,
             deleted: None,
             engine: None,
         }

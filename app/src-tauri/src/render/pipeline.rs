@@ -18,24 +18,39 @@ pub fn arguments(
     duration: f64,
     has_audio: bool,
 ) -> Result<Vec<std::ffi::OsString>, String> {
-    arguments_for(
+    let segments = settings.effective_segments(duration)?;
+    let (start, end) = match segments.as_slice() {
+        [only] => (only.source_start, only.source_end),
+        _ => return Err("argumentos de um único segmento exigem plano único".into()),
+    };
+    window_arguments(
         source,
         destination,
         settings,
-        duration,
+        start,
+        end,
         has_audio,
         Encoder::Cpu,
+        "captions.ass",
     )
 }
-fn arguments_for(
+/// Argumentos de UMA janela (segmento) da composição. Legendas em arquivo
+/// próprio por janela: `ass::build` já re-basa as cue para o início da
+/// janela — na concatenação, o tempo local do segmento == tempo de saída.
+#[allow(clippy::too_many_arguments)]
+pub(super) fn window_arguments(
     source: &Path,
     destination: &Path,
     settings: &RenderSettings,
-    duration: f64,
+    start: f64,
+    end: f64,
     has_audio: bool,
     encoder: Encoder,
+    captions: &str,
 ) -> Result<Vec<std::ffi::OsString>, String> {
-    let (start, end) = settings.validate(duration)?;
+    if end - start < 0.05 {
+        return Err("Revise o intervalo e a duração do corte e tente novamente.".into());
+    }
     let mut args: Vec<std::ffi::OsString> = [
         "-nostdin",
         "-hide_banner",
@@ -57,7 +72,7 @@ fn arguments_for(
         .map(|filter| format!("{filter},"))
         .unwrap_or_default();
     let filter = format!(
-        "{},{}ass=filename=captions.ass:fontsdir=fonts",
+        "{},{}ass=filename={captions}:fontsdir=fonts",
         settings.geometry()?,
         effects
     );
@@ -126,13 +141,12 @@ pub fn run(
     control: &ProcessControl,
     mut progress: impl FnMut(u8),
 ) -> Result<(Scratch, PathBuf), String> {
-    let (start, end) = settings.validate(duration)?;
+    let windows = settings.effective_segments(duration)?;
+    let total: f64 = windows.iter().map(|w| w.duration()).sum();
+    if total < 0.05 {
+        return Err("Revise o intervalo e a duração do corte e tente novamente.".into());
+    }
     let scratch = Scratch::new(base)?;
-    std::fs::write(
-        scratch.path.join("captions.ass"),
-        ass::build(segments, settings, start, end)?,
-    )
-    .map_err(|e| e.to_string())?;
     let fonts = scratch.path.join("fonts");
     std::fs::create_dir_all(&fonts).map_err(|e| e.to_string())?;
     let assets: &[(&str, &[u8])] = &[
@@ -173,38 +187,118 @@ pub fn run(
         "ffmpeg"
     });
     let selected = encoder::detect(&ffmpeg, &scratch.path, control)?;
-    let mut render = |selected: Encoder| -> Result<(), String> {
-        let mut command = Command::new(&ffmpeg);
-        command.current_dir(&scratch.path).args(arguments_for(
-            source, &output, settings, duration, has_audio, selected,
-        )?);
-        control.run_with_output(
-            &mut command,
-            &scratch.path.join(if selected == Encoder::Nvenc {
-                "render-nvenc.log"
+    let single = windows.len() == 1;
+    // Renderiza TODAS as janelas com o MESMO codificador (parâmetros idênticos
+    // são pré-condição do concat sem recodificação) e concatena com demuxer.
+    let mut render_all = |selected: Encoder| -> Result<(), String> {
+        let mut rendered: Vec<std::ffi::OsString> = Vec::new();
+        let mut done = 0.0f64;
+        for (index, window) in windows.iter().enumerate() {
+            let captions = if single {
+                std::fs::write(
+                    scratch.path.join("captions.ass"),
+                    ass::build(segments, settings, window.source_start, window.source_end)?,
+                )
+                .map_err(|e| e.to_string())?;
+                "captions.ass".to_string()
             } else {
-                "render-cpu.log"
-            }),
-            |line| {
-                if let Some(us) = line
-                    .strip_prefix("out_time_us=")
-                    .and_then(|v| v.parse::<f64>().ok())
-                {
-                    if us.is_finite() {
-                        progress((us / 1_000_000.0 / (end - start) * 95.0).clamp(0.0, 95.0) as u8);
+                let name = format!("captions_{index}.ass");
+                std::fs::write(
+                    scratch.path.join(&name),
+                    ass::build(segments, settings, window.source_start, window.source_end)?,
+                )
+                .map_err(|e| e.to_string())?;
+                name
+            };
+            let destination = if single {
+                output.clone()
+            } else {
+                scratch.path.join(format!("seg_{index}.mp4"))
+            };
+            let mut command = Command::new(&ffmpeg);
+            command.current_dir(&scratch.path).args(window_arguments(
+                source,
+                &destination,
+                settings,
+                window.source_start,
+                window.source_end,
+                has_audio,
+                selected,
+                &captions,
+            )?);
+            control.run_with_output(
+                &mut command,
+                &scratch.path.join(if selected == Encoder::Nvenc {
+                    "render-nvenc.log"
+                } else {
+                    "render-cpu.log"
+                }),
+                |line| {
+                    if let Some(us) = line
+                        .strip_prefix("out_time_us=")
+                        .and_then(|v| v.parse::<f64>().ok())
+                    {
+                        if us.is_finite() {
+                            progress(
+                                ((done + us / 1_000_000.0) / total * 95.0).clamp(0.0, 95.0) as u8
+                            );
+                        }
                     }
-                }
-            },
-        )
+                },
+            )?;
+            rendered.push(destination.into());
+            done += window.duration();
+        }
+        if !single {
+            // concat demuxer com -c copy: janelas codificadas com os mesmos
+            // parâmetros (codificador, filtros, dimensões, áudio) — sem
+            // recodificação e sem alteração da mídia original.
+            let mut list = String::new();
+            for path in &rendered {
+                let name = path
+                    .to_str()
+                    .ok_or("caminho de segmento inválido")?
+                    .replace('\\', "/");
+                list.push_str(&format!("file '{name}'\n"));
+            }
+            std::fs::write(scratch.path.join("concat.txt"), list).map_err(|e| e.to_string())?;
+            let mut command = Command::new(&ffmpeg);
+            command
+                .current_dir(&scratch.path)
+                .args([
+                    "-nostdin",
+                    "-hide_banner",
+                    "-loglevel",
+                    "error",
+                    "-y",
+                    "-f",
+                    "concat",
+                    "-safe",
+                    "0",
+                    "-i",
+                    "concat.txt",
+                    "-c",
+                    "copy",
+                    "-movflags",
+                    "+faststart",
+                ])
+                .arg(&output);
+            control.run_with_output(
+                &mut command,
+                &scratch.path.join("render-concat.log"),
+                |_| {},
+            )?;
+        }
+        Ok(())
     };
     let mut actual = selected;
-    if let Err(error) = render(selected) {
+    if let Err(error) = render_all(selected) {
         control.check()?;
         if selected == Encoder::Cpu {
             return Err(error);
         }
         actual = Encoder::Cpu;
-        render(Encoder::Cpu)?;
+        render_all(Encoder::Cpu)?;
     }
     std::fs::write(
         scratch.path.join("encoder.txt"),
@@ -220,7 +314,7 @@ pub fn run(
     let (width, height) = settings.dimensions()?;
     if analysis.width != width
         || analysis.height != height
-        || ((analysis.duration_ms as f64 / 1000.0) - (end - start)).abs() > 0.3
+        || ((analysis.duration_ms as f64 / 1000.0) - total).abs() > 0.3
         || analysis.has_audio != has_audio
     {
         return Err("O vídeo exportado não passou na verificação. Tente novamente.".into());

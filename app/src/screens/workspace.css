@@ -125,7 +125,7 @@ html[data-input-modality="keyboard"] .flow-dialog :is(button, input, select):foc
 .project-title > .flow-button { display: grid; place-items: center; padding: 5px; min-width: 30px; min-height: 30px; border-color: transparent; background: transparent; color: var(--sh-dim); }
 .project-title > .flow-button:hover { color: #fff; }
 .project-overview .workspace-preview { margin-left: 0; }
-.project-without-media { max-width: 640px; margin: 60px auto; text-align: center; }
+.project-without-media { max-width: 640px; margin: 60px auto; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 16px; }
 .project-without-media p { color: var(--sh-dim); }
 .import-progress { padding: 28px 0 12px; text-align: center; }
 .import-progress > svg { color: var(--sh-dim); }
@@ -151,6 +151,7 @@ html[data-input-modality="keyboard"] .timeline-content:has(.timeline-seek input:
 .timeline-zoom { display: flex; align-items: center; gap: 8px; color: var(--sh-dim); font-size: 11px; }
 .timeline-zoom input { width: 88px; accent-color: var(--sh-accent); }
 .editor-timeline .timeline-trim { margin-top: 8px; gap: 10px; }
+.timeline-plan-actions { display: flex; align-items: center; gap: 8px; }
 .editor-timeline .timeline-trim legend { display: none; }
 .editor-timeline .timeline-trim input { width: 76px; }
 @media (min-width: 1000px) and (min-height: 650px) {

@@ -316,6 +316,7 @@ pub fn run() {
             transcription::commands::save_transcript,
             transcription::commands::transcribe_project,
             media_preview::timeline_preview,
+            media_preview::thumbnail::clip_thumbnail,
             clips::commands::get_clips,
             clips::commands::get_project_clips,
             clips::commands::clips_job,

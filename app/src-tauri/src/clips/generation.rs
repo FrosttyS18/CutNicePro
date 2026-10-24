@@ -1,5 +1,5 @@
 use super::{
-    scene_regions, selection, semantic, store, text_engine,
+    borders, multimodal, scene_regions, selection, semantic, store, text_engine,
     types::{Clip, ClipCollection, Options},
 };
 use crate::transcription::{process::ProcessControl, types::Segment};
@@ -166,8 +166,44 @@ pub fn run(
         |pending: &[Clip], segments: &[Segment]| -> Result<Vec<selection::Evaluation>, String> {
             selection::evaluate_batch_with(&engine, scratch, pending, segments, control)
         };
-    // descoberta → cenas → fit/id/proveniência (mesma preparação para a
-    // primeira passada e para a segunda delimitada)
+    // Multimodal (M3): quando o modo experimental encontra server+mmproj,
+    // o enriquecimento por candidato usa pausas REAIS de áudio (uma passada
+    // FFmpeg por geração) e frames REAIS nos limites do corte. Sem artefatos
+    // o motor degrada para textual com backend distinto (declarado).
+    let multimodal = match &engine {
+        text_engine::Engine::GemmaMultimodal { server, .. } => Some(server.clone()),
+        _ => None,
+    };
+    let ffmpeg: Option<std::path::PathBuf> = multimodal.as_ref().and_then(|_| {
+        crate::media_analyze::detect_fftools().map(|tools| {
+            tools.ffprobe.with_file_name(if cfg!(windows) {
+                "ffmpeg.exe"
+            } else {
+                "ffmpeg"
+            })
+        })
+    });
+    let pauses: Option<Vec<(f64, f64)>> = match (&multimodal, &ffmpeg) {
+        (Some(_), Some(ffmpeg)) => Some(multimodal::audio_pauses(
+            ffmpeg,
+            request.source,
+            scratch,
+            control,
+        )?),
+        (Some(_), None) => {
+            return Err("FFmpeg não encontrado. Repare a instalação e tente novamente.".into())
+        }
+        _ => None,
+    };
+    // descoberta → cenas → multimodal → fit/id/proveniência (mesma preparação
+    // para a primeira passada e para a segunda delimitada)
+    let multimodal_successes = std::cell::Cell::new(0u32);
+    let multimodal_attempts = std::cell::Cell::new(0u32);
+    let previous = store::load(base, request.project, request.media, request.duration)?;
+    let known_ids: std::collections::HashSet<String> = previous
+        .as_ref()
+        .map(|library| library.clips.iter().map(|c| c.id.clone()).collect())
+        .unwrap_or_default();
     let mut prepare = |speech: &[Segment]| -> Result<Vec<Clip>, String> {
         let mut clips = selection::select(
             &engine,
@@ -190,6 +226,61 @@ pub fn run(
             request.options,
             control,
         )?;
+        // G6 nº 2 (goal-recuperacao-autoclip): refine determinístico de
+        // fronteiras frase+pausa DEPOIS do ajuste por cenas — o LLM escolheu
+        // o momento, o código garante bordas em unidades de fala completas
+        // (adaptado dos dois AutoClip; insumos já presentes: words do Whisper
+        // + pausas reais quando o modo multimodal as calculou). Sem words →
+        // janela intacta (borders.rs é conservador). IDs dependem dos limites
+        // e são recalculados no laço seguinte.
+        let flat_pauses: Vec<(f64, f64)> = pauses.clone().unwrap_or_default();
+        {
+            let mut sorted: Vec<&mut Clip> = clips.iter_mut().collect();
+            sorted.sort_by(|a, b| a.start.total_cmp(&b.start));
+            for index in 0..sorted.len() {
+                let prev_end = if index > 0 {
+                    Some(sorted[index - 1].start)
+                } else {
+                    None
+                };
+                let next_start = sorted.get(index + 1).map(|c| c.start);
+                let (start, end) = (sorted[index].start, sorted[index].end);
+                let refined = borders::refine_boundaries(
+                    start,
+                    end,
+                    speech,
+                    &flat_pauses,
+                    request.options.min_seconds,
+                    prev_end,
+                    next_start,
+                    request.duration,
+                );
+                sorted[index].start = refined.start;
+                sorted[index].end = refined.end;
+            }
+        }
+        if let (Some(server), Some(pauses), Some(ffmpeg)) = (&multimodal, &pauses, &ffmpeg) {
+            for clip in &mut clips {
+                multimodal_attempts.set(multimodal_attempts.get() + 1);
+                // falha de UM candidato não derruba a geração: sem evidência
+                // multimodal, o clipe segue textual (contado p/ o gate abaixo)
+                if multimodal::enrich_clip(
+                    server,
+                    ffmpeg,
+                    request.source,
+                    scratch,
+                    speech,
+                    pauses,
+                    request.options.min_seconds,
+                    clip,
+                    control,
+                )
+                .is_ok()
+                {
+                    multimodal_successes.set(multimodal_successes.get() + 1);
+                }
+            }
+        }
         for clip in &mut clips {
             clip.fit = request.options.fit.clone();
             clip.id =
@@ -231,12 +322,26 @@ pub fn run(
     }
     // análise SOMENTE dos novos (upd 20): antigos, excluídos, rejeitados e
     // desatualizados não recebem trabalho oculto do motor nesta geração.
+    // Gate multimodal (M3): se o motor declarou multimodal, tentou
+    // candidatos e NENHUM recebeu evidência real (frames/áudio), a rodada
+    // NÃO pode se passar por multimodal — erro explícito em vez de PASS
+    // textual disfarçado.
+    if multimodal.is_some() && multimodal_attempts.get() > 0 && multimodal_successes.get() == 0 {
+        return Err(
+            "A análise multimodal falhou para todos os cortes. Verifique o motor multimodal e tente novamente.".into(),
+        );
+    }
     analyze(
         &mut fresh,
         control,
         |clip| semantic::run(&engine, scratch, clip, request.speech, control),
         progress,
     )?;
+    let published_at_ms = std::time::SystemTime::now()
+        .duration_since(std::time::UNIX_EPOCH)
+        .map(|d| d.as_millis() as u64)
+        .unwrap_or(0);
+    stamp_creation(&mut fresh, &known_ids, published_at_ms);
     let mut value = merge_incremental(
         previous,
         fresh,
@@ -249,6 +354,18 @@ pub fn run(
         .sort_by(|a, b| b.score.cmp(&a.score).then(a.start.total_cmp(&b.start)));
     store::validate(&value, request.duration)?;
     Ok(value)
+}
+
+fn stamp_creation(
+    clips: &mut [Clip],
+    known_ids: &std::collections::HashSet<String>,
+    published_at_ms: u64,
+) {
+    for clip in clips {
+        if clip.created_at_ms.is_none() && !known_ids.contains(&clip.id) {
+            clip.created_at_ms = Some(published_at_ms);
+        }
+    }
 }
 
 #[cfg(test)]
@@ -270,6 +387,8 @@ mod tests {
             analysis_error: None,
             analysis_signature: None,
             analysis_stale: None,
+            multimodal: None,
+            created_at_ms: None,
             deleted: None,
             engine: None,
         };
@@ -320,6 +439,7 @@ mod tests {
 #[cfg(test)]
 mod incremental_tests {
     use super::super::types::{Clip, ClipCollection, EngineRecord, Review};
+    use super::stamp_creation;
     use super::{duplicate_of, merge_incremental};
     use crate::transcription::types::Segment;
 
@@ -347,10 +467,30 @@ mod incremental_tests {
             analysis_error: None,
             analysis_signature: None,
             analysis_stale: None,
+            multimodal: None,
+            created_at_ms: None,
             deleted: None,
             engine: None,
         }
     }
+    #[test]
+    fn creation_is_stamped_once_without_rejuvenating_known_or_legacy_clips() {
+        let mut fresh = vec![
+            clip(&"a".repeat(64), 0.0, 10.0),
+            clip(&"b".repeat(64), 10.0, 20.0),
+            clip(&"c".repeat(64), 20.0, 30.0),
+        ];
+        fresh[2].created_at_ms = Some(10);
+        let known = std::collections::HashSet::from([fresh[1].id.clone(), fresh[2].id.clone()]);
+        stamp_creation(&mut fresh, &known, 20);
+        assert_eq!(fresh[0].created_at_ms, Some(20));
+        assert_eq!(fresh[1].created_at_ms, None);
+        assert_eq!(fresh[2].created_at_ms, Some(10));
+        stamp_creation(&mut fresh, &known, 30);
+        assert_eq!(fresh[0].created_at_ms, Some(20));
+        assert_eq!(fresh[1].created_at_ms, None);
+    }
+
     /// Análise com FORMA válida (o validate do store roda ao salvar em disco).
     /// Critérios 1/1/1 → score() = 1.
     fn valid_analysis() -> Option<super::super::analysis_types::Analysis> {

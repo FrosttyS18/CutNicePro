@@ -1,5 +1,6 @@
 mod analysis;
 mod ffmpeg;
+pub mod thumbnail;
 use crate::{media_store::MediaStore, transcription::process::ProcessControl};
 use serde::{Deserialize, Serialize};
 use std::{

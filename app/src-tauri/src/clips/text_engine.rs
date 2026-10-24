@@ -32,6 +32,22 @@ pub fn discover(base: &Path) -> Result<Tools, String> {
 pub enum Engine {
     Standard(Tools),
     Gemma(GemmaTools),
+    /// Textual via llama-server SEM mmproj (F1, goal-refino): MESMOS
+    /// prompts; server sobe 1x/job e TODAS as chamadas reutilizam (sem
+    /// recarga por chamada). Queda automática p/ `Gemma` se o server falhar.
+    GemmaTextServer {
+        tools: GemmaTools,
+        server: std::sync::Arc<super::multimodal::LazyServer>,
+    },
+    /// Multimodal (M3, goal-cortes-multimodais): MESMO modelo e prompts do
+    /// experimental, executando no llama-server local com o mmproj OFICIAL
+    /// (visão/áudio provados no MARCO 1). O server sobe preguiçosamente e
+    /// morre com o Engine (job = dono do ciclo). Degradação declarada: sem
+    /// server/mmproj o modo vira `Gemma` textual com backend distinto.
+    GemmaMultimodal {
+        tools: GemmaTools,
+        server: std::sync::Arc<super::multimodal::LazyServer>,
+    },
 }
 #[derive(Clone)]
 pub struct GemmaTools {
@@ -45,7 +61,39 @@ impl Engine {
     pub fn discover(base: &Path, quality: Quality) -> Result<Engine, String> {
         match quality {
             Quality::Standard => Ok(Engine::Standard(discover(base)?)),
-            Quality::ExperimentalGemma => Ok(Engine::Gemma(discover_gemma(base)?)),
+            // Decisão do mantenedor (2026-10-23, goal-cortes-texto): o
+            // caminho normal é ESTRITAMENTE TEXTUAL — nenhum mmproj, pergunta
+            // de visão/áudio ou tracking é acionado pela presença de
+            // arquivos. Multimodal permanece implementado como EXPERIMENTO
+            // opt-in explícito (CNP_ENABLE_MULTIMODAL=1), nunca default.
+            Quality::ExperimentalGemma => {
+                // F1 (goal-refino 2026-10-24): caminho textual via llama-server
+                // SEM mmproj (transporte, não modalidade) — elimina a recarga
+                // por chamada. Opt-in CNP_TEXT_SERVER=1; queda automática para o
+                // executável por chamada se o server falhar (no generate arm).
+                if std::env::var("CNP_TEXT_SERVER").as_deref() == Ok("1") {
+                    if let Some(tools) = super::multimodal::text_server_tools(base) {
+                        let gemma = discover_gemma(base)?;
+                        return Ok(Engine::GemmaTextServer {
+                            tools: gemma,
+                            server: std::sync::Arc::new(super::multimodal::LazyServer::new(tools)),
+                        });
+                    }
+                }
+                // valor habilitado documentado: "1" (presença com 0/vazio NÃO ativa)
+                if std::env::var("CNP_ENABLE_MULTIMODAL").as_deref() == Ok("1") {
+                    if let Some(server_tools) = super::multimodal::discover(base) {
+                        let tools = discover_gemma(base)?;
+                        return Ok(Engine::GemmaMultimodal {
+                            tools,
+                            server: std::sync::Arc::new(super::multimodal::LazyServer::new(
+                                server_tools,
+                            )),
+                        });
+                    }
+                }
+                Ok(Engine::Gemma(discover_gemma(base)?))
+            }
         }
     }
     /// Registro técnico persistido com a coleção (metadado, não conteúdo).
@@ -60,6 +108,31 @@ impl Engine {
                     .unwrap_or_default(),
                 template: "chatml-nothink".into(),
                 sampling: "temp 0 (greedy), seed 42".into(),
+                seed: 42,
+            },
+            Engine::GemmaTextServer { tools, .. } => EngineRecord {
+                backend: "experimentalGemmaServer".into(),
+                model: tools
+                    .model
+                    .file_name()
+                    .map(|n| n.to_string_lossy().into_owned())
+                    .unwrap_or_default(),
+                template: "gemma4-canonical-nothink (llama-server textual)".into(),
+                sampling: "temp 1.0, top_k 64, top_p 0.95, min_p 0, seed 42".into(),
+                seed: 42,
+            },
+            Engine::GemmaMultimodal { tools, .. } => EngineRecord {
+                backend: "experimentalGemmaMultimodal".into(),
+                model: format!(
+                    "{} + mmproj",
+                    tools
+                        .model
+                        .file_name()
+                        .map(|n| n.to_string_lossy().into_owned())
+                        .unwrap_or_default()
+                ),
+                template: "gemma4-canonical-nothink (llama-server)".into(),
+                sampling: "temp 1.0, top_k 64, top_p 0.95, min_p 0, seed 42".into(),
                 seed: 42,
             },
             Engine::Gemma(tools) => EngineRecord {
@@ -78,7 +151,9 @@ impl Engine {
     pub fn prompt(&self, system: &str, data: &serde_json::Value) -> Result<String, String> {
         match self {
             Engine::Standard(_) => prompt(system, data),
-            Engine::Gemma(_) => prompt_gemma(system, data),
+            Engine::Gemma(_) | Engine::GemmaTextServer { .. } | Engine::GemmaMultimodal { .. } => {
+                prompt_gemma(system, data)
+            }
         }
     }
     pub fn generate(
@@ -115,6 +190,36 @@ impl Engine {
                 control,
                 GemmaArgs,
             ),
+            Engine::GemmaTextServer { tools, server } => {
+                let schema_value = serde_json::to_value(schema).map_err(|e| e.to_string())?;
+                match server.completion(prompt, tokens, Some(&schema_value), control) {
+                    Ok(text) => Ok(text),
+                    Err(error) => {
+                        control.check()?;
+                        generate_with(
+                            tools.cpu.as_path(),
+                            tools.gpu.as_deref(),
+                            &tools.model,
+                            scratch,
+                            stem,
+                            prompt,
+                            schema,
+                            tokens,
+                            control,
+                            GemmaArgs,
+                        )
+                        .map_err(|fallback| {
+                            format!("server textual falhou ({error}) e o executável também ({fallback})")
+                        })
+                    }
+                }
+            }
+            Engine::GemmaMultimodal { server, .. } => {
+                // mesmo prompt canônico + schema como gramática quando o
+                // build aceita; stop em <turn|> fecha o turno (MARCO 1).
+                let schema_value = serde_json::to_value(schema).map_err(|e| e.to_string())?;
+                server.completion(prompt, tokens, Some(&schema_value), control)
+            }
         }
     }
     /// Contagem de tokens com o tokenizador real do modelo (llama-tokenize).
@@ -122,6 +227,8 @@ impl Engine {
     pub fn count_tokens(&self, scratch: &Path, text: &str) -> Result<usize, String> {
         let tools = match self {
             Engine::Gemma(tools) => tools,
+            Engine::GemmaTextServer { tools, .. } => tools,
+            Engine::GemmaMultimodal { tools, .. } => tools,
             Engine::Standard(_) => {
                 return Err("tokenizador disponível apenas no motor experimental".into())
             }
@@ -207,16 +314,12 @@ fn probe_gpu(root: &Path, exe: &str) -> Option<PathBuf> {
 /// Resolve o modelo experimental: (1) instalado junto ao motor; (2)
 /// configuração local preparada `engine-gemma.json`; (3) artefato verificado
 /// do experimento em builds de desenvolvimento. Sem fallback de modelo.
-fn discover_gemma(base: &Path) -> Result<GemmaTools, String> {
+/// Caminho do GGUF Gemma 4 12B QAT (mesma ordem de candidatos do modo
+/// experimental) — usado também pelo adaptador multimodal (M3), que precisa
+/// apenas do modelo para achar o mmproj OFICIAL ao lado dele.
+pub fn gemma_model_path(base: &Path) -> Option<PathBuf> {
     let root = analysis_root(base);
-    let exe = llama_exe_name();
-    let cpu = root.join("bin").join(exe);
-    let tokenizer = root.join("bin").join(if cfg!(windows) {
-        "llama-tokenize.exe"
-    } else {
-        "llama-tokenize"
-    });
-    let candidates = [
+    [
         Some(root.join("gemma-4-12b-it-qat-q4_0.gguf")),
         std::fs::read(root.join("engine-gemma.json"))
             .ok()
@@ -232,15 +335,25 @@ fn discover_gemma(base: &Path) -> Result<GemmaTools, String> {
                 "../../experiments/clip-selection-ab/models/home-e/gemma-4-12b-it-qat-q4_0.gguf",
             )
         }),
-    ];
-    let model = candidates
-        .into_iter()
-        .flatten()
-        .find(|path| path.is_file())
-        .ok_or_else(|| {
-            "O motor experimental está indisponível neste dispositivo. Use a análise padrão."
-                .to_string()
-        })?;
+    ]
+    .into_iter()
+    .flatten()
+    .find(|path| path.is_file())
+}
+
+fn discover_gemma(base: &Path) -> Result<GemmaTools, String> {
+    let root = analysis_root(base);
+    let exe = llama_exe_name();
+    let cpu = root.join("bin").join(exe);
+    let tokenizer = root.join("bin").join(if cfg!(windows) {
+        "llama-tokenize.exe"
+    } else {
+        "llama-tokenize"
+    });
+    let model = gemma_model_path(base).ok_or_else(|| {
+        "O motor experimental está indisponível neste dispositivo. Use a análise padrão."
+            .to_string()
+    })?;
     if !cpu.is_file() || !tokenizer.is_file() {
         return Err("O recurso de análise está indisponível. Repare a instalação do aplicativo e tente novamente.".into());
     }

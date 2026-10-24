@@ -14,8 +14,9 @@ describe("biblioteca persistente e mídia do corte",()=>{
     vi.stubGlobal("localStorage",{getItem:()=>{throw new Error("must not read workspace");}});
     vi.mocked(invoke).mockImplementation(async(_command,args)=>({version:1,mediaId:(args as {projectId:string}).projectId+"-media",transcriptHash:"hash",clips:[clip]}));
     const projects=["p","q"].map(id=>({id,name:id,created_at_ms:0,updated_at_ms:0,last_opened_at_ms:null}));
-    const result=await loadClipLibrary(projects);
+    const { entries: result, failed }=await loadClipLibrary(projects);
     expect(result.map(value=>[value.project.id,value.mediaId])).toEqual([["p","p-media"],["q","q-media"]]);
+    expect(failed).toEqual([]);
     expect(invoke).toHaveBeenNthCalledWith(1,"get_project_clips",{projectId:"p"});
     expect(invoke).toHaveBeenNthCalledWith(2,"get_project_clips",{projectId:"q"});
   });
@@ -26,9 +27,21 @@ describe("biblioteca persistente e mídia do corte",()=>{
     await prepareClipEditing("p","m",clip);const saved=readWorkspace("p");
     expect(saved.media?.mediaId).toBe("m");expect(saved.activeClipId).toBe(clip.id);expect(saved.settings.trimStart).toBe(2);expect(saved.transcriptMode).toBe("real");
   });
-  it("recusa fonte de outro projeto e propaga falha da biblioteca sem inventar vazio",async()=>{
+  it("recusa fonte de outro projeto e isola falha por projeto na biblioteca",async()=>{
     vi.mocked(invoke).mockImplementation(async command=>command==="get_media" ? {...entry,projectIds:["other"]} : null);
     await expect(loadClipMedia("p","m")).rejects.toThrow("indisponível");
+    // um projeto falha, o outro continua visível; falha é informada, não oculta
+    const good = {version:1,mediaId:"q-media",transcriptHash:"hash",clips:[clip]};
+    vi.mocked(invoke).mockImplementation(async(_command,args)=>{
+      const {projectId} = args as {projectId:string};
+      if (projectId === "p") throw new Error("read failure");
+      return good;
+    });
+    const projects=["p","q"].map(id=>({id,name:id,created_at_ms:0,updated_at_ms:0,last_opened_at_ms:null}));
+    const { entries, failed } = await loadClipLibrary(projects);
+    expect(entries.map(value=>value.project.id)).toEqual(["q"]);
+    expect(failed.map(value=>value.id)).toEqual(["p"]);
+    // falha TOTAL de todos os projetos continua sendo erro explícito
     vi.mocked(invoke).mockRejectedValue(new Error("read failure"));
     await expect(loadClipLibrary([{id:"p",name:"p",created_at_ms:0,updated_at_ms:0,last_opened_at_ms:null}])).rejects.toThrow();
     await expect(prepareClipEditing("p","m",clip)).rejects.toThrow("Reconecte".toLowerCase());

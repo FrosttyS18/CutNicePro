@@ -12,7 +12,10 @@ crate-type = ["staticlib", "cdylib", "rlib"]
 tauri-build = { version = "2", features = [] }
 
 [dependencies]
-reqwest = { version = "0.12", default-features = false, features = ["rustls-tls"] }
+# reqwest: cliente HTTP local para o llama-server multimodal (feature
+# "blocking" adicionada no M3 goal-cortes-multimodais: o caminho de geração
+# roda em spawn_blocking; mesma crate/versão já usada pelo app.
+reqwest = { version = "0.12", default-features = false, features = ["rustls-tls", "blocking", "json"] }
 tauri = { version = "2", features = [] }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"

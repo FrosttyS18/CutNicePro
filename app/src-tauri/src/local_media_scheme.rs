@@ -208,9 +208,18 @@ mod tests {
     fn parse_range_fechado_aberto_e_sufixo() {
         let len = 1000u64;
         assert_eq!(parse_range(&headers_with("bytes=0-99"), len), Some((0, 99)));
-        assert_eq!(parse_range(&headers_with("bytes=500-"), len), Some((500, 999)));
-        assert_eq!(parse_range(&headers_with("bytes=-100"), len), Some((900, 999)));
-        assert_eq!(parse_range(&headers_with("bytes=0-999"), len), Some((0, 999)));
+        assert_eq!(
+            parse_range(&headers_with("bytes=500-"), len),
+            Some((500, 999))
+        );
+        assert_eq!(
+            parse_range(&headers_with("bytes=-100"), len),
+            Some((900, 999))
+        );
+        assert_eq!(
+            parse_range(&headers_with("bytes=0-999"), len),
+            Some((0, 999))
+        );
         // inválidos
         assert_eq!(parse_range(&headers_with("bytes=999-0"), len), None);
         assert_eq!(parse_range(&headers_with("bytes=0-1000"), len), None);

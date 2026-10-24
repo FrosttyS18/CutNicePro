@@ -15,6 +15,9 @@ import { captionCue, effectiveCaptionStyle } from "../../lib/captions";
 import type { Clip } from "../../lib/clips";
 import type { EditorSettings, WorkspaceData } from "../../lib/workspace-types";
 import { VideoPreview } from "../workspace/VideoPreview";
+import { FrameSeeker, type ScrubCanvas } from "../../lib/frame-seeker";
+import { getMediaBlob } from "../../services/workspace-store";
+import { effectiveSegments, nextBoundary, snapSeek } from "../../lib/edit-plan";
 import { TranscriptPanel } from "../workspace/TranscriptPanel";
 import { EditorTimeline } from "./EditorTimeline";
 import { EditorInspector, panelForTool } from "./EditorInspector";
@@ -195,23 +198,61 @@ export function VideoEditor({ title, activeClip, data, localUrl, dirty, onChange
   // WebView2 acumule buffers de múltiplas operações concorrentes — a causa
   // do crescimento descontrolado de memória (10–14 GB) no scrub.
   const pendingSeekRef = useRef<number | null>(null);
+  // Scrub WebCodecs (timeline 2026-10-22, candidata 2): o <video> decoda
+  // do keyframe até o alvo (dezenas/centenas de frames por salto em H.264
+  // 1080p) — inerentemente lento para saltos distantes. O FrameSeeker
+  // (mediabunny, mesmo mecanismo do VideoCache do OpenCut Classic) decoda
+  // APENAS o frame alvo e desenha num canvas sobreposto durante o arrasto;
+  // o <video> continua sendo autoridade de playback/áudio/exportação. O
+  // overlay sai quando o frame do <video> alcança o alvo (seeked sem
+  // pendentes) ou ao dar play.
+  const seekerRef = useRef<FrameSeeker | null>(null);
+  const [scrub, setScrub] = useState<{ canvas: ScrubCanvas; localUrl: string } | null>(null);
+  // troca de mídia invalida o overlay por derivação (canvas de outra fonte não aparece)
+  const scrubCanvas = scrub && scrub.localUrl === localUrl ? scrub.canvas : null;
+  useEffect(() => () => seekerRef.current?.dispose(), []);
   useEffect(() => {
     const element = video.current;
     if (!element) return;
+    const clearScrub = () => setScrub(null);
     const onSeeked = () => {
       const pending = pendingSeekRef.current;
       if (pending !== null) {
         pendingSeekRef.current = null;
         element.currentTime = pending;
+      } else if (!element.seeking) {
+        clearScrub(); // <video> alcançou o alvo — deixa o frame nativo aparecer
       }
     };
+    const onPlay = () => clearScrub();
     element.addEventListener("seeked", onSeeked);
-    return () => element.removeEventListener("seeked", onSeeked);
+    element.addEventListener("play", onPlay);
+    return () => { element.removeEventListener("seeked", onSeeked); element.removeEventListener("play", onPlay); };
   }, [localUrl]);
   function seek(value: number) {
     if (!video.current || !duration) return;
-    const next = clampTime(value, duration);
+    // Plano de edição (M2): eixo da timeline continua no TEMPO DA FONTE; o
+    // seek salta vãos para o próximo segmento (prévia composta).
+    const next = activeClip
+      ? snapSeek(effectiveSegments(data.settings, duration), clampTime(value, duration))
+      : clampTime(value, duration);
     setTime(next); // playhead sempre responde imediatamente
+    // frame instantâneo durante scrub (pausado): só quando há Blob registrado
+    const mediaId = data.media?.mediaId;
+    if (mediaId && video.current.paused) {
+      const blob = getMediaBlob(mediaId);
+      if (blob) {
+        const url = localUrl;
+        seekerRef.current ??= new FrameSeeker();
+        void seekerRef.current.getFrameAt(mediaId, blob, next).then((canvas) => {
+          // aplica só se ainda faz sentido: mesma mídia E o <video> ainda
+          // não alcançou o alvo (resolução tardia não ressuscita o overlay)
+          const element = video.current;
+          const videoCaughtUp = element && !element.seeking && Math.abs(element.currentTime - next) < 0.05;
+          if (canvas && url !== null && url === localUrl && !videoCaughtUp) setScrub({ canvas, localUrl: url });
+        }).catch(() => { /* mantém overlay anterior ou nenhum */ });
+      }
+    }
     if (video.current.seeking) {
       // decoder ocupado: guarda a posição mais recente (descarta intermediárias)
       pendingSeekRef.current = next;
@@ -225,7 +266,19 @@ export function VideoEditor({ title, activeClip, data, localUrl, dirty, onChange
     const element=video.current;
     if(!element) return;
     if(element.paused) {
-      if(element.currentTime<data.settings.trimStart || (data.settings.trimEnd!==null && element.currentTime>=data.settings.trimEnd)) seek(data.settings.trimStart);
+      // Plano (M2): retomada sempre dentro da composição — vão/fim reinicia
+      // no ponto coerente (próximo segmento ou primeiro segmento).
+      if (activeClip && duration) {
+        const segments = effectiveSegments(data.settings, duration);
+        const first = segments[0]?.sourceStart ?? data.settings.trimStart;
+        const lastEnd = segments[segments.length - 1]?.sourceEnd ?? data.settings.trimEnd ?? duration;
+        if (element.currentTime < first || element.currentTime >= lastEnd) seek(first);
+        else {
+          const snapped = snapSeek(segments, element.currentTime);
+          if (snapped !== element.currentTime) seek(snapped);
+        }
+      }
+      else if(element.currentTime<data.settings.trimStart || (data.settings.trimEnd!==null && element.currentTime>=data.settings.trimEnd)) seek(data.settings.trimStart);
       void element.play().catch(()=>setError("Não foi possível iniciar a reprodução. Tente novamente."));
     } else element.pause();
   }
@@ -312,13 +365,31 @@ export function VideoEditor({ title, activeClip, data, localUrl, dirty, onChange
         </div>
         <div className="editor-stage"><FramingToolbar settings={data.settings} framing={framing} onSettings={changeSettings} onFraming={activateFraming} onFocusTrim={focusTrim}/>
           {framing && <p className="editor-stage__hint" role="status">Modo Enquadrar ativo: arraste o vídeo na prévia para reposicionar a imagem dentro do quadro. As legendas ficam no lugar. Esc ou "Concluir enquadramento" para sair.</p>}
-          <div className="editor-stage__canvas" data-framing={framing} onPointerDown={onCanvasPointerDown}><VideoPreview media={data.media} localUrl={localUrl} settings={data.settings} videoRef={video} cue={cue} nativeControls={false} onTogglePlay={togglePlay}
+          <div className="editor-stage__canvas" data-framing={framing} onPointerDown={onCanvasPointerDown}><VideoPreview media={data.media} localUrl={localUrl} settings={data.settings} videoRef={video} cue={cue} nativeControls={false} onTogglePlay={togglePlay} scrubCanvas={scrubCanvas}
             onDuration={value => { setDuration(value); if (video.current && video.current.currentTime < data.settings.trimStart) { video.current.currentTime = data.settings.trimStart; setTime(data.settings.trimStart); } }} onTime={(value) => {
               // Autoridade do tempo (upd 20): durante um seek iniciado pelo
               // usuário, o browser dispara timeupdate com o tempo ANTIGO —
               // esses eventos não podem reposicionar o playhead para trás.
               // O alvo do usuário vence até o seek confirmar (seeked).
               if (video.current && video.current.seeking) return;
+              // Plano de edição (M2): reprodução composta — ao atingir o fim
+              // do segmento atual, salta para o início do próximo (o vão sai
+              // da composição); no fim do último segmento, pausa.
+              if (activeClip && duration && video.current && !video.current.paused) {
+                const segments = effectiveSegments(data.settings, duration);
+                const boundary = nextBoundary(segments, value);
+                if (boundary && value >= boundary.from - 0.08) {
+                  setTime(boundary.to);
+                  video.current.currentTime = boundary.to;
+                  return;
+                }
+                const lastEnd = segments[segments.length - 1]?.sourceEnd ?? duration;
+                if (value >= lastEnd - 0.08) {
+                  setTime(lastEnd);
+                  video.current.pause();
+                  return;
+                }
+              }
               setTime(value);
               if (data.settings.trimEnd !== null && value >= data.settings.trimEnd && video.current && !video.current.paused) video.current.pause();
             }} /></div>
@@ -339,7 +410,7 @@ export function VideoEditor({ title, activeClip, data, localUrl, dirty, onChange
           aria-label="Redimensionar linha do tempo (arraste)" title="Arraste para redimensionar a linha do tempo"
           onPointerDown={beginResize("timeline")}/>
         <EditorTimeline mediaId={data.media?.mediaId} localUrl={localUrl} duration={duration} time={time} playing={playing} canPlay={canPlay} settings={data.settings} onSeek={seek}
-          onSettings={changeSettings} onTogglePlay={togglePlay} />
+          onSettings={changeSettings} onTogglePlay={togglePlay} planEnabled={Boolean(activeClip)} />
       </div>
     </section>
   );

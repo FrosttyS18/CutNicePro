@@ -70,6 +70,8 @@ fn changed_transcript_invalidates_analysis_and_review_without_changing_clip_form
             analysis_error: None,
             analysis_signature: None,
             analysis_stale: None,
+            multimodal: None,
+            created_at_ms: None,
             deleted: None,
             engine: None,
         }],

@@ -77,7 +77,7 @@ export function ProjectsScreen({ projects, loading, error, onRetry, onCreate, on
       )}
 
       {tab === "clips" ? (
-        <ClipGallery entries={library.entries} loading={library.loading} error={library.error} notice={clipNotice} onRetry={library.reload} onInspect={setInspecting} showProject
+        <ClipGallery entries={library.entries} loading={library.loading} error={library.error} notice={clipNotice ?? library.partial} onRetry={library.reload} onInspect={setInspecting} showProject
           onEdit={entry => { if (onEditClip) onEditClip(entry.project.id,entry.clip,entry.mediaId); else onOpen(entry.project.id); }}
           onDownload={entry => setDownloading(entry)}
           onDelete={entry => void exclude(entry)}

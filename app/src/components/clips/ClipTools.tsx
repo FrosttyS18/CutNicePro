@@ -1,4 +1,5 @@
 import { AppSelect } from "../AppSelect";
+import { autoGenerateEnabled, setAutoGenerateEnabled } from "../../services/workspace-store";
 import { useEffect, useRef, useState } from "react";
 import { ScissorsIcon } from "@phosphor-icons/react/dist/csr/Scissors";
 import { DownloadSimpleIcon } from "@phosphor-icons/react/dist/csr/DownloadSimple";
@@ -80,6 +81,10 @@ export function ClipTools({ controller: c, settings, ready, disabled, onSave, on
       <p className="flow-muted">{automatic
         ? "A quantidade e a duração saem dos momentos encontrados no vídeo — nenhum corte é cortado no meio para caber em um tempo."
         : "Duração máxima é teto, não meta: um corte termina quando a história termina, mesmo que mais curto. A quantidade também é máxima — sem cortes ruins para preencher."}</p>
+      <label className="clip-tools__auto" title="Inicia ESTA geração sozinho quando a transcrição terminar — não afeta quantos cortes nem a duração, definidos acima">
+        <input type="checkbox" checked={autoGenerateEnabled()} onChange={event => setAutoGenerateEnabled(event.target.checked)}/>
+        Gerar automaticamente quando a transcrição terminar
+      </label>
       <button type="button" className="upload-primary flow-wide" disabled={busy || (!automatic && (!Number.isInteger(count) || count<1 || count>12))} onClick={() => void generate()}>Gerar cortes</button>
     </FlowDialog>
     {c.job && (c.operation === "generate" || c.operation === "export") && <ProcessingDialog key={c.job.jobId} open={c.busy || (c.ownedJob && c.job.state === "failed" && dismissed !== c.job.jobId)} id={c.job.jobId} busy={c.busy}

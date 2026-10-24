@@ -7,6 +7,7 @@ import {
   attachSessionMedia,
   getSessionMedia,
   readWorkspace,
+  registerMediaBlob,
   saveWorkspace,
 } from "../services/workspace-store";
 import { createWorkspace } from "../lib/workspace";
@@ -64,6 +65,7 @@ export function useWorkspaceData(id: string) {
         const blob = await response.blob();
         if (disposed) return; // trocou de projeto durante o fetch
         const blobUrl = URL.createObjectURL(blob);
+        registerMediaBlob(mediaId, blob);
         attachPersistedMedia(id, mediaId, blobUrl);
         setLocalUrl(blobUrl);
       } catch {
