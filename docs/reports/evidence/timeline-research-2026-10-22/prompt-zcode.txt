@@ -1,0 +1,55 @@
+/start
+
+TAREFA — Timeline performática para vídeos longos: corrigir I/O, sincronização e prévia com medição real.
+
+CONTEXTO
+O mantenedor ainda observa picos de ~3 GB, playhead que vai ao alvo, volta e só se estabiliza após 2–3 s num vídeo de 24 min/~300 MB. São observações do mantenedor, não benchmarks do agente. As correções anteriores NÃO têm aceite funcional. Não repetir a conclusão “se ainda travar, é o decoder”: I/O, eventos, React e decodificação devem ser medidos separadamente.
+
+Leia AGENTS.md, ENGINE-HANDOFF, PRODUCT-BRAIN, BACKLOG e VALIDATION-POLICY. Consulte a nova seção “Timeline e vídeos longos — estudo de módulos, 2026-10-22” em docs/references/OPEN-SOURCE-ENGINE-RESEARCH.md e as evidências em docs/reports/evidence/timeline-research-2026-10-22/. O estudo já contém revisões fixadas, módulos, contratos, licenças e limites. Verifique o estado atual antes de editar, pois há alterações preexistentes no index e working tree.
+
+OBJETIVO
+Scrub responsivo, sem retorno visual para tempos antigos e sem crescimento contínuo de memória. Preservar mídia original, transcrição, cortes, exportação, aparência e stack React/TypeScript/Tauri/Rust/FFmpeg. Aplicar SPEC → PLAN → BUILD → TEST → REVIEW e skills pertinentes do projeto. Sem refatorações gerais, novas dependências, atualização de versão, commits ou push.
+
+1 — CORRIGIR O ACESSO À MÍDIA PRIMEIRO
+No código analisado, local_media_scheme.rs lê o arquivo inteiro antes de interpretar Range e depois copia o intervalo. Confirme o caminho cnplocal efetivamente utilizado no editor.
+
+Use como referência o handler asset e o exemplo streaming do Tauri: abrir arquivo, obter metadados, posicionar e ler somente o intervalo necessário. Elimine leitura integral seguida de slice/cópia em respostas parciais. Defina limite por resposta e orçamento agregado de requisições/buffers simultâneos; o limite de ~1 MiB da referência é um ponto inicial, não uma garantia universal.
+
+Trate corretamente ranges fechados, abertos e suffix; arquivo vazio; 206/416, Content-Range e Content-Length; HEAD sem corpo; ranges inválidos e múltiplos com política documentada. Preserve autorização de caminhos, MIME e segurança. Não devolva resposta 200 truncada nem faça fallback silencioso para carregar um vídeo inteiro em memória. O exemplo Tauri também lê o arquivo inteiro no caminho sem Range: NÃO copiá-lo cegamente. Se a API instalada impedir resposta sem Range eficiente, explicite essa restrição e escolha uma solução compatível antes de implementar.
+
+2 — DAR AUTORIDADE AO TEMPO SOLICITADO
+VideoEditor compartilha time entre o alvo do usuário e eventos reais do vídeo; VideoPreview publica onTimeUpdate/onTime durante seeks. Investigue a sequência que provoca alvo → tempo antigo → alvo.
+
+Separe tempo solicitado, tempo confirmado da mídia e estado da interação. Enquanto houver scrub ou último alvo pendente, eventos atrasados não podem reposicionar o playhead para trás. Ao soltar, mantenha o alvo final até sua confirmação; apenas bloquear eventos enquanto isDragging=true não resolve o período posterior.
+
+Adote “última intenção vence”, uma única pendência substituível, identificação da sessão/fonte e limpeza de listeners/rAF ao cancelar, trocar mídia ou desmontar. O evento seeked não tem ID da sua requisição: valide a confirmação pelo estado atual, alvo e tolerância documentada, sem inventar correspondência. Evite loop de seeks por diferença de ponto flutuante. Defina comportamento para arrastar durante reprodução e retomar.
+
+Corrija também o rAF de TimelineSurface: cada pointermove atualiza a coordenada mais recente; o callback lê essa coordenada. pointerup aplica o alvo final, sem restaurar uma posição capturada anteriormente.
+
+Referência: PlaybackManager, PlayheadController e useTimelinePlayhead do OpenCut Classic. Aproveitar separação entre atualização de reprodução, seek e interação; não transplantar o editor inteiro.
+
+3 — ISOLAR O TRABALHO POR FRAME
+Meça renders/commits durante scrub. Um debounce de 150 ms em uma prop não prova redução de renderização de todo TranscriptPanel. A implementação analisada reinicia o timeout, podendo adiar a atualização continuamente.
+
+Mantenha o caminho quente do playhead pequeno: ref/atualização de posição ou assinatura restrita, callbacks estáveis e memoização nas fronteiras que o perfil indicar. useSyncExternalStore é uma opção, não exigência de reescrever o estado global. Transcrição e ferramentas não devem refazer trabalho pesado a cada movimento. Se limitar atualizações, use frequência limitada com entrega final garantida; defina o sincronismo entre texto e frame efetivamente exibido.
+
+4 — TRATAR O CUSTO RESIDUAL DA PRÉVIA
+Após corrigir 1–3, meça seeks no vídeo real. Se a mídia original ainda impedir a meta, implemente uma fatia de proxy de edição com o FFmpeg existente, inspirada em ProxyTask do Kdenlive: job deduplicado, cancelável, cache persistente identificado pela fonte/perfil, publicação atômica e uso apenas após validação.
+
+Compare um perfil leve de resolução menor/GOP curto. Meça latência, memória, disco e tempo de preparação antes de fixar o perfil. Preserve orientação, duração, timestamps, áudio e mapeamento de cortes/legendas, inclusive VFR. Exportar a partir do ORIGINAL. Não gerar proxy pesado indiscriminadamente nem bloquear a interface durante preparação.
+
+Cache de miniaturas/frames precisa de limite por bytes/custo, descarte e recursos liberados. Estude ThumbnailCache do Kdenlive e VideoCache do OpenCut: pedidos obsoletos descartados, inicialização deduplicada e pool pequeno. Pool de três canvases não é limite global de memória. Não introduzir Mediabunny/WebCodecs, Remotion ou MLT automaticamente; considerar outra pipeline só se as medições justificarem. Kdenlive/Remotion são referências conceituais com licenças distintas, não código liberado para copiar indiscriminadamente.
+
+VALIDAÇÃO DEFINIDA ANTES DO BUILD
+- Testes de Range devem verificar bytes corretos e leitura limitada, não só status HTTP.
+- Reproduzir em teste a corrida: solicitar B com confirmação/evento antigo A atrasado; ao soltar deve permanecer B. Cobrir repetição rápida, cancelamento, reprodução e troca de mídia.
+- Verificar regressões de transcrição, ajustes, salvamento e exportação afetados.
+- Runtime no Tauri/Windows com build identificado e sem HMR interferindo: mídia de 24 min e mídia de 2 h, se disponível. Mídia sintética deve ser identificada.
+- Medir baseline, 30 s de scrub, 30 s parado e repetição delimitada: memória do conjunto de processos do app/WebView2, CPU, pedidos/bytes de mídia, renders e latência alvo → frame. Não atribuir RAM do navegador inteiro ao app.
+- Metas propostas para a máquina registrada: resposta visual do playhead p95 até 50 ms; prévia com proxy pronto p95 até 250 ms; ausência de snapback e crescimento monotônico entre ciclos. Registrar resolução, codec, hardware e método. São metas de aceite propostas, não resultados já obtidos. Confirmar precisão temporal conforme FPS/timebase.
+- Uma rodada inicial e no máximo uma repetição justificada. Definir limite seguro de memória e interromper antes de colocar a máquina em risco. Medir sem logs por frame que distorçam o resultado.
+
+Se o harness falhar, separar falha de automação de falha do produto e tentar a verificação mínima dentro do orçamento. Sem executar o scrub real, manter PARTIAL/BLOCKED; testes unitários e compilação não autorizam declarar a timeline resolvida.
+
+ENTREGA
+Implementar fatias verificáveis, documentar decisões nas fontes canônicas e atualizar o registro de continuidade. Relatório CUTNICEPRO — ZCODE REPORT persistido e relido, com arquivos alterados, testes reais, métricas antes/depois, limitações, pendências e FUNCTIONAL/REGRESSION/VISUAL STATUS. VISUAL STATUS: PENDING HUMAN APPROVAL. Sem alegar “causa provada”, ganho percentual ou equivalência com CapCut/OpusClip sem evidência correspondente.

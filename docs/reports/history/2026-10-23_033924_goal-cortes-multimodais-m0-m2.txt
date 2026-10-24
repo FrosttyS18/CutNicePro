@@ -1,0 +1,123 @@
+╔════════════════════════════════════════════╗
+║       CUTNICEPRO — ZCODE REPORT            ║
+╚════════════════════════════════════════════╝
+
+TASK
+  Name: Cortes multimodais pré-editados (goal-cortes-multimodais-2026-10-23)
+  Status: PARTIAL (rodada 1 — M0/M1/M2 concluídos; M3/M4/M5 pendentes)
+  Scope: executar os 6 marcos do objetivo no app existente, sem
+    commit/push/bump, preservando UI aprovada, timeline aprovada e dados do
+    mantenedor. Orçamento: 8 h ativas acumuladas (consumidas ~3 h);
+    2 candidatas por decisão de integração; 2 ciclos de calibração.
+  Objective (fatia): importar → transcrever → analisar texto/imagem/áudio
+    → cortes pré-editados ranqueados → revisar/alterar na timeline →
+    salvar/reabrir → exportar MP4 equivalente à prévia.
+  Result: MARCO 0 (mapa/baseline), MARCO 1 (multimodalidade provada no
+    runtime local com Gemma 4 + mmproj oficial) e MARCO 2 (EditPlan v1
+    ponta a ponta com MP4 == prévia no app real) CONCLUÍDOS com evidência.
+    Geração por IA multimodal (M3), tracking (M4) e orquestração (M5)
+    pendentes — a meta não está concluída.
+  FUNCTIONAL STATUS: PARTIAL (escopo comprovado: M0–M2)
+  REGRESSION STATUS: PASS (suítes completas + timeline intacta)
+  VISUAL STATUS: PENDING HUMAN APPROVAL
+  EDITORIAL STATUS: NOT STARTED (aceite editorial só na matriz final)
+
+IMPLEMENTATION
+  Completed (marcos):
+  - M0: mapa do caminho real (importação→ASR→seleção→análise→store→
+    biblioteca→workspace→timeline→export, com arquivo:função e lacunas),
+    matriz de aceite A–I, baseline de hardware/recursos/mídia declarado
+    ANTES das cargas, lista finita de alterações. Evidência:
+    marco0-mapa-baseline.md.
+  - M1: multimodalidade PROVADA em runtime local. mmproj OFICIAL do Gemma 4
+    12B QAT (google/gemma-4-12B-it-qat-q4_0-gguf, Apache-2.0, 167 MiB, sha
+    cb018338a7538a9814d994bfe54644c71eb7ed54e31eae2f721e45fd3c260da7) +
+    llama-server b11829 oficial win-vulkan (MIT) em porta local. Probes com
+    payload real e par controlado: visão (detalhes só existentes na imagem,
+    sequência temporal), áudio (3 bipes contados corretamente; ordem fina
+    440×880 trocada — experimental declarado pelo próprio runtime).
+    REGISTRO DE FALHA: llama-mtmd-cli crasha (0xC0000409) nos builds
+    b11729-CPU, b11729-Vulkan e b11829 — as 2 candidatas da decisão de
+    integração foram usadas (atualizar build: mesmo crash; server: OK).
+    Thinking OFF obrigatório (reasoning_effort none OU template canônico
+    nothink + marker). Evidência: marco1-multimodalidade.md (+ probes/).
+  - M2: EditPlan v1 — contrato versionado por corte (TS `edit-plan.ts` +
+    Rust `RenderSegment`/`effective_segments`, mesma semântica nos 3
+    consumidores); export multi-janela com legendas re-basadas por janela e
+    concat demuxer -c copy; prévia composta (seek com snap; play salta os
+    vãos; pausa no fim); timeline com vãos sombreados na linguagem visual
+    do trim + Dividir/Remover/Corte simples + undo/redo; salvar/reabrir
+    preserva exatamente; projetos antigos sem plano continuam abrindo.
+  Not completed (marcos pendentes):
+  - M3: índice temporal + descoberta multimodal + comparação na amostra
+    reservada (a geração por IA ainda é textual).
+  - M4: tracking controlado e enquadramento automático.
+  - M5: geração automática pós-import e orquestração/recuperação.
+  - Matriz A–I final e aceite editorial do mantenedor.
+
+FILES
+  Created: app/src/lib/edit-plan.ts; app/src/test/edit-plan.test.ts;
+    docs/reports/evidence/goal-cortes-multimodais-2026-10-23/{marco0-mapa-
+    baseline.md, marco1-multimodalidade.md, marco2-fatia-vertical.md,
+    probes/*, mm-m2-corte-app-real.mp4, mm-m2-lab-results.json};
+    tools/e2e/multimodal-m2-lab.mjs; tools/e2e/mm-export-probe.mjs;
+    .tooling/vendor/llamacpp-b11829/ (runtime oficial para o multimodal);
+    experiments/.../mmproj-gemma-4-12b-it-qat-q4_0.gguf (167 MiB)
+  Modified: app/src/lib/workspace-types.ts (EditPlan); app/src/lib/clips.ts
+    (renderSettings extrai segments); app/src/components/editor/
+    EditorTimeline.tsx, TimelineSurface.tsx, VideoEditor.tsx (plano na
+    timeline + prévia composta); app/src/screens/workspace.css (1 regra);
+    app/src-tauri/src/render/settings.rs (RenderSegment +
+    effective_segments), pipeline.rs (multi-janela + concat), tests.rs,
+    integration.rs (+2 testes reais); docs/engineering/ENGINE-HANDOFF.md
+    (registro da tarefa)
+  Deleted: projetos de laboratório "MM Lab M2*" (6) e perfis WebView do
+    lab; Downloads/MM Lab M2 (6)-corte.mp4 (copiado como evidência)
+  Unexpected changes: NONE (working tree anterior preservada)
+
+VALIDATION
+  Typecheck: PASS (tsc)
+  Lint: PASS nos arquivos tocados
+  Unit tests: PASS — vitest 227/227 (+13 edit-plan), cargo 141/141 (+2)
+  Integração FFmpeg REAL (novo): fixture CFR 4 s@10 fps com vão marcado em
+    COR — plano de 2 janelas → MP4 20±1 frames, 2000±120 ms, frame do meio
+    sem o vão (remoção provada por CONTEÚDO, não só duração)
+  App REAL (Tauri, vídeo 24,6 min do mantenedor por dedupe):
+    - plano construído PELA UI (3 cliques dividir + remover interno),
+      undo/redo, salvar/reabrir preserva EXATAMENTE
+      [{180,190.000023},{190.000023,196.000025},{204.000027,210}]
+    - prévia composta: play em 195 s saltou o vão 196–204 (t=205,50 s)
+    - export_video REAL (IPC + diálogo nativo): Ok(true) → MP4 22,045 s vs
+      plano 22,000 s (Δ≈1 frame @23,976 fps), 526 frames, 21,3 MB
+  Timeline aprovada: intacta (FrameSeeker, arbitragem, coalescência) —
+    seek da prévia composta opera em tempo da fonte pelos mesmos caminhos.
+  Multimodalidade: probes independentes com payload real (ver M1).
+
+LIMITS
+  1. Corte do lab M2 foi SEMEADO no store (id sha256 próprio) para isolar
+     a fatia da geração por IA — geração multimodal é o M3; declarado.
+  2. Diálogo nativo de export: SendKeys só alcança com o app em foco; no
+     sucesso final o arquivo saiu com NOME PADRÃO na pasta padrão
+     (conteúdo equivalente). Limitação de harness conhecida (upd-20), não
+     defeito do produto.
+  3. Áudio do Gemma: experimental (ordem fina de pitch pode errar);
+     registrado; quando precisão importar, usar eventos estruturados.
+  4. CORREÇÃO DE REGISTRO (meta timeline anterior): PointerEvents
+     sintéticos NÃO disparam seek (setPointerCapture rejeita pointerId
+     inativo) → a medição "playhead p95 5 ms sem hop de harness" do lab v5
+     é INVÁLIDA (mediu rAF vazio). Permanecem válidos o lab v4 (eventos
+     reais: p50 11–13 ms; p95 64,8–67,6 ms com custo de harness declarado)
+     e o reteste manual aprovado do mantenedor. Gate F medirá com eventos
+     reais.
+  5. VRAM: llama-server multimodal usa ~7,5 GB da RTX 5070 (12 GB) —
+     orçamento declarado; encerrado após os probes.
+  6. Mídia de 2 h: ainda não testada (separada no aceite I).
+
+CONTINUITY
+  ENGINE-HANDOFF atualizado ("TAREFA 2026-10-23 — CORTES MULTIMODAIS"):
+  evidências por marco, tempo/rodadas consumidos (~3 h de 8 h; candidatas
+  D2 2/2; calibração 0/2), correção do registro v5 e PRÓXIMO PASSO (M3:
+  adaptador clips/multimodal.rs gerenciando o server; índice temporal;
+  descoberta multimodal com cobertura; comparação na amostra reservada;
+  depois M4/M5 e matriz A–I). Sem commit/push/bump; limpeza de lab feita
+  (projetos do mantenedor intactos: davyjones, UX PORTFÓLIO).

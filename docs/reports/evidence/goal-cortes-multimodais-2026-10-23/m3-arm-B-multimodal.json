@@ -1,0 +1,624 @@
+{
+  "version": 1,
+  "mediaId": "33932fbc-5a4d-42a6-8784-f7c1f0231129",
+  "transcriptHash": "e6869d90224b0785bd9440dd9686589fbe5e6b956a8c48f0ae5f2a0eb0c98c2c",
+  "clips": [
+    {
+      "id": "a038dff74ebd7b8e2d7c678e26dc75316f7cbec3d7c4179c71f1d290b2a1b615",
+      "start": 586,
+      "end": 613.6800000000001,
+      "title": "A importância do wireframe para mostrar o processo de pensamento",
+      "score": 98,
+      "reasons": [
+        "Avaliação do intervalo efetivo (explicação): O trecho explica a importância do wireframe como ferramenta de pensamento e processo, concluindo com os benefícios de comunicação e portfólio.",
+        "O vídeo começa com uma pergunta direta confrontando a fala de um mentor sobre a desnecessidade do wireframe.",
+        "O falante detalha os benefícios técnicos do wireframe, como a visualização do processo de decisão e das anotações.",
+        "O trecho termina explicando como o wireframe auxilia na comunicação e na estrutura da apresentação."
+      ],
+      "review": "pending",
+      "format": "9:16",
+      "fit": "cover",
+      "analysis": {
+        "title": "A importância do wireframe para mostrar o processo de pensamento",
+        "summary": "Um falante questiona a opinião de um mentor que afirma ser desnecessário fazer wireframes. Ele defende que o processo é rápido, barato e essencial para mostrar o pensamento e as decisões tomadas. O objetivo final é destacar como essa etapa ajuda na comunicação e na organização da apresentação.",
+        "criteria": [
+          {
+            "label": "Gancho",
+            "score": 95,
+            "explanation": "O vídeo começa com uma pergunta direta confrontando a fala de um mentor sobre a desnecessidade do wireframe.",
+            "evidence": "É por isso que você não quer fazer o wireframe? Porque o teu mentor aí, genial, falou que o wireframe é desnecessário."
+          },
+          {
+            "label": "Desenvolvimento",
+            "score": 100,
+            "explanation": "O falante detalha os benefícios técnicos do wireframe, como a visualização do processo de decisão e das anotações.",
+            "evidence": "de pensamento Tu mostra como que você toma decisão Tu mostra algumas anotações Vale a pena, entendeu?"
+          },
+          {
+            "label": "Fechamento",
+            "score": 100,
+            "explanation": "O trecho termina explicando como o wireframe auxilia na comunicação e na estrutura da apresentação.",
+            "evidence": "Ajuda Ajuda na comunicação, ajuda no Lore da apresentação toda"
+          }
+        ]
+      },
+      "analysisSignature": "49c14863f6f2cfb5b0a8b46aae2a6ab189cfd4e79b202342e60090bdfd4c403b",
+      "engine": {
+        "backend": "experimentalGemmaMultimodal",
+        "model": "gemma-4-12b-it-qat-q4_0.gguf + mmproj",
+        "template": "gemma4-canonical-nothink (llama-server)",
+        "sampling": "temp 1.0, top_k 64, top_p 0.95, min_p 0, seed 42",
+        "seed": 42
+      },
+      "multimodal": {
+        "frames": [
+          586.35,
+          599.84
+        ],
+        "visual": "Um homem jovem de óculos e camiseta branca está sentado em frente a um microfone de podcast, segurando e lendo um papel. O cenário ao fundo mostra uma estante com equipamentos e uma porta de madeira.",
+        "audioEvents": [],
+        "boundaryAdjustments": [
+          0,
+          0
+        ],
+        "backend": "experimentalGemmaMultimodal"
+      }
+    },
+    {
+      "id": "1d0a67f6ab7c1ac942896974c12432bd8ea6f6242abcf88a51810ba344695a97",
+      "start": 793.3,
+      "end": 838.92,
+      "title": "Como definir seu papel e responsabilidades em um projeto de equipe",
+      "score": 91,
+      "reasons": [
+        "Avaliação do intervalo efetivo (explicação): Ensina como descrever o papel individual dentro de um projeto de equipe no portfólio. O desfecho conclui claramente o que o recrutador busca identificar.",
+        "O gancho inicia com uma pergunta direta sobre como definir o papel individual dentro de um projeto.",
+        "O desenvolvimento apresenta exemplos práticos de papéis em equipes e competências específicas como UX, UI e colaboração cross-functional.",
+        "O trecho termina de forma conclusiva ao sintetizar a necessidade de definir claramente o papel profissional em relação ao produto."
+      ],
+      "review": "pending",
+      "format": "9:16",
+      "fit": "cover",
+      "analysis": {
+        "title": "Como definir seu papel e responsabilidades em um projeto de equipe",
+        "summary": "O falante explica a importância de identificar e comunicar claramente quais responsabilidades foram assumidas em um projeto de equipe. Ele utiliza exemplos como pesquisa, wireframe e design para mostrar como demonstrar competências específicas e colaboração.",
+        "criteria": [
+          {
+            "label": "Gancho",
+            "score": 85,
+            "explanation": "O gancho inicia com uma pergunta direta sobre como definir o papel individual dentro de um projeto.",
+            "evidence": "Você traz um negócio que chama meu papel, que é assim, quem que fui eu em relação a esse projeto?"
+          },
+          {
+            "label": "Desenvolvimento",
+            "score": 90,
+            "explanation": "O desenvolvimento apresenta exemplos práticos de papéis em equipes e competências específicas como UX, UI e colaboração cross-functional.",
+            "evidence": "Você trabalhou numa equipe? Beleza, me fala. Olha, trabalhei com um PM, dois desenvolvedores, o meu papel foi UX e UI."
+          },
+          {
+            "label": "Fechamento",
+            "score": 100,
+            "explanation": "O trecho termina de forma conclusiva ao sintetizar a necessidade de definir claramente o papel profissional em relação ao produto.",
+            "evidence": "Você define muito claro quem você é em relação ao produto. Isso é o que você precisa."
+          }
+        ]
+      },
+      "analysisSignature": "1da366de9e7fd63b7914d5c156f908c87620e5d65c3b899651bc6ec9bfb88290",
+      "engine": {
+        "backend": "experimentalGemmaMultimodal",
+        "model": "gemma-4-12b-it-qat-q4_0.gguf + mmproj",
+        "template": "gemma4-canonical-nothink (llama-server)",
+        "sampling": "temp 1.0, top_k 64, top_p 0.95, min_p 0, seed 42",
+        "seed": 42
+      },
+      "multimodal": {
+        "frames": [
+          793.65,
+          816.1099999999999
+        ],
+        "visual": "Um homem jovem de óculos e camiseta branca fala em frente a um microfone de podcast. Ele está em um ambiente interno com prateleiras ao fundo e uma porta de madeira à direita.",
+        "audioEvents": [],
+        "boundaryAdjustments": [
+          0,
+          0
+        ],
+        "backend": "experimentalGemmaMultimodal"
+      }
+    },
+    {
+      "id": "9cce724255e198903cac4b35fc0c6885e2dd41419832d4d9ab2089521139ed5b",
+      "start": 689.96,
+      "end": 730.771708,
+      "title": "A importância de entender o porquê das técnicas de UX antes da prática",
+      "score": 90,
+      "reasons": [
+        "Avaliação do intervalo efetivo (opinião): O trecho é um alerta forte sobre a falta de fundamentação técnica em entrevistas de UX. Tem um início dependente de contexto anterior ('tu vai passar na entrevista ou não?').",
+        "O gancho utiliza uma abordagem de confronto direto e provocativa sobre a dificuldade de passar em uma entrevista técnica.",
+        "O desenvolvimento foca na necessidade de planejar os estudos e entender o impacto prático das técnicas de UX antes de aplicá-las.",
+        "O fechamento é eficaz pois apresenta uma conclusão direta e um aviso sobre a consequência de não dominar a teoria antes da prática."
+      ],
+      "review": "pending",
+      "format": "9:16",
+      "fit": "cover",
+      "analysis": {
+        "title": "A importância de entender o porquê das técnicas de UX antes da prática",
+        "summary": "O falante afirma que o entrevistado terá dificuldade em responder perguntas técnicas se não tiver clareza sobre o propósito de cada técnica de UX. Ele orienta que o estudante deve definir como os estudos impactarão suas práticas antes de começar a aplicá-las. O trecho conclui que praticar sem entender a teoria por trás da área não permite convencer ninguém.",
+        "criteria": [
+          {
+            "label": "Gancho",
+            "score": 90,
+            "explanation": "O gancho utiliza uma abordagem de confronto direto e provocativa sobre a dificuldade de passar em uma entrevista técnica.",
+            "evidence": "tu vai passar na entrevista ou não? não, tu vai tomar porrada do lado e torto na entrevista, porque eu vou fazer pergunta que você não vai conseguir"
+          },
+          {
+            "label": "Desenvolvimento",
+            "score": 85,
+            "explanation": "O desenvolvimento foca na necessidade de planejar os estudos e entender o impacto prático das técnicas de UX antes de aplicá-las.",
+            "evidence": "seus estudos, como esses estudos vão impactar nas suas práticas e que práticas são essas que você está fazendo."
+          },
+          {
+            "label": "Fechamento",
+            "score": 95,
+            "explanation": "O fechamento é eficaz pois apresenta uma conclusão direta e um aviso sobre a consequência de não dominar a teoria antes da prática.",
+            "evidence": "Se você decide só fazer prática sem saber UX, eu posso te garantir, você não vai conseguir enganar ninguém, a não ser você."
+          }
+        ]
+      },
+      "analysisSignature": "f32c9228167cac25cd47c1b609d5f93cf07b69809970fcbab3968031b40286f9",
+      "engine": {
+        "backend": "experimentalGemmaMultimodal",
+        "model": "gemma-4-12b-it-qat-q4_0.gguf + mmproj",
+        "template": "gemma4-canonical-nothink (llama-server)",
+        "sampling": "temp 1.0, top_k 64, top_p 0.95, min_p 0, seed 42",
+        "seed": 42
+      },
+      "multimodal": {
+        "frames": [
+          690.3100000000001,
+          710.365854
+        ],
+        "visual": "Um homem jovem de óculos e camiseta branca fala em frente a um microfone de mesa em um ambiente interno com prateleiras ao fundo. Ele está com uma expressão de surpresa ou dúvida, com a boca aberta e a mão direita levantada.",
+        "audioEvents": [],
+        "boundaryAdjustments": [
+          0,
+          0
+        ],
+        "backend": "experimentalGemmaMultimodal"
+      }
+    },
+    {
+      "id": "de9a827b4131d819db575ad2fb3acccbda0b8eb750926db883367590bbd53694",
+      "start": 455.4,
+      "end": 474.02,
+      "title": "Dicas para criar mockups unbranded usando o Clay Mockup",
+      "score": 87,
+      "reasons": [
+        "Avaliação do intervalo efetivo (explicação): O trecho ensina a usar um tipo específico de mockup e explica o porquê. O desfecho encerra bem o assunto sobre a importância da tela sobre o mockup.",
+        "O gancho inicia com uma recomendação direta de ferramenta para quem deseja criar mockups, mas não apresenta um problema inicial para resolver.",
+        "O desenvolvimento explica detalhadamente o que é o Clay Mockup, suas características de não ter cor ou modelo de celular definido.",
+        "O fechamento é claro ao concluir que o foco do design deve estar na tela, justificando a escolha por mockups unbranded."
+      ],
+      "review": "pending",
+      "format": "9:16",
+      "fit": "cover",
+      "analysis": {
+        "title": "Dicas para criar mockups unbranded usando o Clay Mockup",
+        "summary": "Uma recomendação de uso do Clay Mockup para criação de mockups unbranded em 3D. A ideia é utilizar modelos limpos e sem cores definidas para que o foco permaneça totalmente no conteúdo da tela.",
+        "criteria": [
+          {
+            "label": "Gancho",
+            "score": 75,
+            "explanation": "O gancho inicia com uma recomendação direta de ferramenta para quem deseja criar mockups, mas não apresenta um problema inicial para resolver.",
+            "evidence": "Se quiser fazer mockup Utilize um negócio que chama Clay Mockup C-L-A-Y Mockup Que são mockups unbranded Eles não tem cor, eles não tem um celular definido eles"
+          },
+          {
+            "label": "Desenvolvimento",
+            "score": 90,
+            "explanation": "O desenvolvimento explica detalhadamente o que é o Clay Mockup, suas características de não ter cor ou modelo de celular definido.",
+            "evidence": "Se quiser fazer mockup Utilize um negócio que chama Clay Mockup C-L-A-Y Mockup Que são mockups unbranded Eles não tem cor, eles não tem um celular definido eles"
+          },
+          {
+            "label": "Fechamento",
+            "score": 100,
+            "explanation": "O fechamento é claro ao concluir que o foco do design deve estar na tela, justificando a escolha por mockups unbranded.",
+            "evidence": "são simplesmente mockups em 3D, bem assim, limpos. E aí o que importa é a tela, porque o mockup não importa."
+          }
+        ]
+      },
+      "analysisSignature": "c24b4270a074b3a4a946c5e879395e3a33c7a9ccf8ae0e95c4100910164f5f79",
+      "engine": {
+        "backend": "experimentalGemmaMultimodal",
+        "model": "gemma-4-12b-it-qat-q4_0.gguf + mmproj",
+        "template": "gemma4-canonical-nothink (llama-server)",
+        "sampling": "temp 1.0, top_k 64, top_p 0.95, min_p 0, seed 42",
+        "seed": 42
+      },
+      "multimodal": {
+        "frames": [
+          455.75,
+          464.71
+        ],
+        "visual": "Um homem jovem de óculos e barba curta, vestindo uma camiseta branca, fala em frente a um microfone de podcast. Ele está em um ambiente interno com prateleiras ao fundo e uma porta de madeira à direita.",
+        "audioEvents": [],
+        "boundaryAdjustments": [
+          0,
+          0
+        ],
+        "backend": "experimentalGemmaMultimodal"
+      }
+    },
+    {
+      "id": "48e7e8232fbb7c5134d67694de50b5cf9fefec6b931ad7a20491aeb8da5e1a1c",
+      "start": 427.1,
+      "end": 443.38,
+      "title": "Dicas para apresentar telas e soluções de problemas em highlights",
+      "score": 84,
+      "reasons": [
+        "Avaliação do intervalo efetivo (explicação): Dá uma instrução direta sobre a parte de solução e mockups. O desfecho é um pedido claro de ação.",
+        "O início apresenta a oportunidade de mostrar a solução como uma chance importante para o interlocutor.",
+        "O desenvolvimento foca na técnica de mostrar as funcionalidades resolvidas em vez de apenas modelos estáticos.",
+        "O trecho termina com uma instrução direta e específica sobre o que evitar na apresentação de telas."
+      ],
+      "review": "pending",
+      "format": "9:16",
+      "fit": "cover",
+      "analysis": {
+        "title": "Dicas para apresentar telas e soluções de problemas em highlights",
+        "summary": "A fala enfatiza a importância de mostrar rapidamente quais telas foram criadas e como elas resolvem problemas reais. É recomendada a criação de highlights e o uso de menos mockups na apresentação.",
+        "criteria": [
+          {
+            "label": "Gancho",
+            "score": 80,
+            "explanation": "O início apresenta a oportunidade de mostrar a solução como uma chance importante para o interlocutor.",
+            "evidence": "A parte da solução é muito importante que você, inclusive é a sua chance, né?"
+          },
+          {
+            "label": "Desenvolvimento",
+            "score": 90,
+            "explanation": "O desenvolvimento foca na técnica de mostrar as funcionalidades resolvidas em vez de apenas modelos estáticos.",
+            "evidence": "De mostrar rapidamente, num highlight, quais as telas você fez, Como elas resolvem os problemas E por favor, menos mockup"
+          },
+          {
+            "label": "Fechamento",
+            "score": 85,
+            "explanation": "O trecho termina com uma instrução direta e específica sobre o que evitar na apresentação de telas.",
+            "evidence": "De mostrar rapidamente, num highlight, quais as telas você fez, Como elas resolvem os problemas E por favor, menos mockup"
+          }
+        ]
+      },
+      "analysisSignature": "b5ee1f1108d9097bf1dff36d2dc3856d348afa80d227f9f6ac0dd09ec095dcb6",
+      "engine": {
+        "backend": "experimentalGemmaMultimodal",
+        "model": "gemma-4-12b-it-qat-q4_0.gguf + mmproj",
+        "template": "gemma4-canonical-nothink (llama-server)",
+        "sampling": "temp 1.0, top_k 64, top_p 0.95, min_p 0, seed 42",
+        "seed": 42
+      },
+      "multimodal": {
+        "frames": [
+          427.45000000000005,
+          435.24
+        ],
+        "visual": "Um homem jovem de óculos e camiseta branca fala em frente a um microfone, com uma mão estendida em um gesto explicativo. O fundo mostra um ambiente interno com prateleiras e uma porta de madeira.",
+        "audioEvents": [],
+        "boundaryAdjustments": [
+          0,
+          0
+        ],
+        "backend": "experimentalGemmaMultimodal"
+      }
+    },
+    {
+      "id": "5a8437ab617aebb12317adbb69745ce246cb35a28b904332b18daa804b5a89de",
+      "start": 752.14,
+      "end": 787.14,
+      "title": "Apresentação de projeto focada em aprendizados e práticas reais",
+      "score": 76,
+      "reasons": [
+        "Avaliação do intervalo efetivo (explicação): Explica como apresentar um projeto sem métricas (focando em aprendizados), com um fechamento natural sobre a importância dessa prática.",
+        "O gancho é fraco pois começa com uma observação direta sobre a falta de métricas, sem contextualizar o tema principal.",
+        "O desenvolvimento apresenta uma mudança de assunto do método de apresentação para a experiência pessoal de testes e ideias.",
+        "O fechamento é satisfatório pois reforça a importância de extrair aprendizados de um caso específico."
+      ],
+      "review": "pending",
+      "format": "9:16",
+      "fit": "cover",
+      "analysis": {
+        "title": "Apresentação de projeto focada em aprendizados e práticas reais",
+        "summary": "O falante sugere apresentar um projeto como uma descrição de aprendizado em vez de usar métricas. É mencionado o aprendizado de que a simplicidade é preferível a novas funcionalidades e a necessidade de testar ideias mais cedo. O interlocutor reforça a importância de entender as práticas e fricções vivenciadas durante o processo.",
+        "criteria": [
+          {
+            "label": "Gancho",
+            "score": 60,
+            "explanation": "O gancho é fraco pois começa com uma observação direta sobre a falta de métricas, sem contextualizar o tema principal.",
+            "evidence": "Não tem métrica. Beleza, apresenta como se fosse um projeto acadêmico, a descrição de aprendizado."
+          },
+          {
+            "label": "Desenvolvimento",
+            "score": 85,
+            "explanation": "O desenvolvimento apresenta uma mudança de assunto do método de apresentação para a experiência pessoal de testes e ideias.",
+            "evidence": "A gente entendeu, eu entendi, que se fosse fazer de novo, eu testaria um pouco mais cedo as funcionalidades e as ideias que eu tive."
+          },
+          {
+            "label": "Fechamento",
+            "score": 90,
+            "explanation": "O fechamento é satisfatório pois reforça a importância de extrair aprendizados de um caso específico.",
+            "evidence": "qual foi os seus aprendizados em relação a esse case, é importante."
+          }
+        ]
+      },
+      "analysisSignature": "1d9a751a6ec7f702b9d176f7cbf8753ce298ff52bae8829f210e3b7ca2ab8e9f",
+      "engine": {
+        "backend": "experimentalGemmaMultimodal",
+        "model": "gemma-4-12b-it-qat-q4_0.gguf + mmproj",
+        "template": "gemma4-canonical-nothink (llama-server)",
+        "sampling": "temp 1.0, top_k 64, top_p 0.95, min_p 0, seed 42",
+        "seed": 42
+      },
+      "multimodal": {
+        "frames": [
+          752.49,
+          769.64
+        ],
+        "visual": "Um homem jovem de óculos e barba curta, vestindo uma camiseta branca, fala para a câmera em um ambiente interno. Ao fundo, vê-se uma estante com objetos e uma porta de madeira. Um microfone de lapela está posicionado à sua frente.",
+        "audioEvents": [],
+        "boundaryAdjustments": [
+          0,
+          0
+        ],
+        "backend": "experimentalGemmaMultimodal"
+      }
+    },
+    {
+      "id": "e71396c858241893f2401a25753fc8ba392ddc485c3444a623eb47291516719c",
+      "start": 520.34,
+      "end": 558.1,
+      "title": "Como estruturar portfólios para passar pelo filtro de seleção",
+      "score": 64,
+      "reasons": [
+        "Avaliação do intervalo efetivo (explicação): O trecho começa com a premissa de volume de portfólios e depois detalha como mostrar pesquisa. O desfecho é um elogio ao modelo sugerido.",
+        "O início estabelece o contexto do volume de portfólios que precisam ser filtrados, criando uma base para a crítica que segue.",
+        "O desenvolvimento é interrompido porque o assunto muda de uma crítica sobre a extensão do texto para uma lista de perguntas sobre o processo e pesquisa.",
+        "O trecho termina de forma abrupta com uma exemplificação positiva de como apresentar os resultados da pesquisa."
+      ],
+      "review": "pending",
+      "format": "9:16",
+      "fit": "cover",
+      "analysis": {
+        "title": "Como estruturar portfólios para passar pelo filtro de seleção",
+        "summary": "Um avaliador explica que portfólios com textos muito longos são descartados por não serem práticos para quem analisa centenas de projetos. Ele orienta que o foco deve ser no processo, nas pesquisas realizadas e nos insights práticos que levaram a decisões.",
+        "criteria": [
+          {
+            "label": "Gancho",
+            "score": 85,
+            "explanation": "O início estabelece o contexto do volume de portfólios que precisam ser filtrados, criando uma base para a crítica que segue.",
+            "evidence": "Eu tenho que ler em torno de 100 a 1.000 portfólios para tentar encontrar um filtro de quem é que vai para a entrevista."
+          },
+          {
+            "label": "Desenvolvimento",
+            "score": 40,
+            "explanation": "O desenvolvimento é interrompido porque o assunto muda de uma crítica sobre a extensão do texto para uma lista de perguntas sobre o processo e pesquisa.",
+            "evidence": "Você fez pesquisa? Quantas pesquisas? Com quais usuários? Por que você fez a pesquisa?"
+          },
+          {
+            "label": "Fechamento",
+            "score": 60,
+            "explanation": "O trecho termina de forma abrupta com uma exemplificação positiva de como apresentar os resultados da pesquisa.",
+            "evidence": "Fiz a pesquisa, 12 usuários, encontrei essas três coisas aqui que me ajudaram a tomar decisões XYZ. Lindo!"
+          }
+        ]
+      },
+      "analysisSignature": "35adb1a8af7427c8ddabdacf6d6fe9d19364960e2a3db44ac66b3b652b96a97a",
+      "engine": {
+        "backend": "experimentalGemmaMultimodal",
+        "model": "gemma-4-12b-it-qat-q4_0.gguf + mmproj",
+        "template": "gemma4-canonical-nothink (llama-server)",
+        "sampling": "temp 1.0, top_k 64, top_p 0.95, min_p 0, seed 42",
+        "seed": 42
+      },
+      "multimodal": {
+        "frames": [
+          520.69,
+          539.22
+        ],
+        "visual": "Um homem jovem de óculos e camiseta branca fala para a câmera em um ambiente interno. Ele está em frente a uma estante com equipamentos e uma porta de madeira à direita, gesticulando com a mão esquerda enquanto mantém uma expressão de surpresa ou ênfase.",
+        "audioEvents": [],
+        "boundaryAdjustments": [
+          0,
+          0
+        ],
+        "backend": "experimentalGemmaMultimodal"
+      }
+    },
+    {
+      "id": "6d92ae98ffdcb88a40fe5cd821085330f702c41f88a64cc6a547788efe124751",
+      "start": 264.42,
+      "end": 289.06,
+      "title": "Como criar títulos com contexto em vez de focar em marcas",
+      "score": 58,
+      "reasons": [
+        "Avaliação do intervalo efetivo (explicação): O trecho explica claramente como deve ser um título de portfólio, oferecendo um conselho prático com um desfecho claro sobre o que o usuário deve buscar.",
+        "O gancho é direto ao apontar um erro comum de muitos criadores ao incluir marcas nos títulos.",
+        "O desenvolvimento é interrompido porque o foco muda de uma crítica sobre nomes de marcas para as estruturas gramaticais de títulos.",
+        "O trecho termina de forma abrupta com uma pergunta sobre o conteúdo do case, sem uma conclusão ou recomendação final."
+      ],
+      "review": "pending",
+      "format": "9:16",
+      "fit": "cover",
+      "analysis": {
+        "title": "Como criar títulos com contexto em vez de focar em marcas",
+        "summary": "A fala aborda a importância de dar contexto aos títulos em vez de focar apenas em nomes de marcas. É sugerido o uso de perguntas, afirmações ou frases com ponto final para gerar entendimento imediato sobre o que o conteúdo resolve.",
+        "criteria": [
+          {
+            "label": "Gancho",
+            "score": 85,
+            "explanation": "O gancho é direto ao apontar um erro comum de muitos criadores ao incluir marcas nos títulos.",
+            "evidence": "O título não precisa falar a marca, porque muitos de vocês fazem isso."
+          },
+          {
+            "label": "Desenvolvimento",
+            "score": 50,
+            "explanation": "O desenvolvimento é interrompido porque o foco muda de uma crítica sobre nomes de marcas para as estruturas gramaticais de títulos.",
+            "evidence": "Muitas vezes pode ser uma pergunta, ou às vezes pode ser um statement, pode ser uma frase com um ponto final."
+          },
+          {
+            "label": "Fechamento",
+            "score": 30,
+            "explanation": "O trecho termina de forma abrupta com uma pergunta sobre o conteúdo do case, sem uma conclusão ou recomendação final.",
+            "evidence": "O que eu vou encontrar nesse case?"
+          }
+        ]
+      },
+      "analysisSignature": "c432fdb5f51f1881cd468ffe5f4c0d63f5f3faf5317b3f73dfcd98687697e93b",
+      "engine": {
+        "backend": "experimentalGemmaMultimodal",
+        "model": "gemma-4-12b-it-qat-q4_0.gguf + mmproj",
+        "template": "gemma4-canonical-nothink (llama-server)",
+        "sampling": "temp 1.0, top_k 64, top_p 0.95, min_p 0, seed 42",
+        "seed": 42
+      },
+      "multimodal": {
+        "frames": [
+          264.77000000000004,
+          276.74
+        ],
+        "visual": "Um homem jovem de óculos e camiseta branca fala em frente a um microfone de podcast. Ele está em um ambiente interno com prateleiras ao fundo e uma porta de madeira à direita.",
+        "audioEvents": [],
+        "boundaryAdjustments": [
+          0,
+          0
+        ],
+        "backend": "experimentalGemmaMultimodal"
+      }
+    },
+    {
+      "id": "10dc85ea430f9da5a25b030e81d9ed442a9699d484200751f3070f6b917dc342",
+      "start": 641.08,
+      "end": 678.62,
+      "title": "O erro de fazer portfólio como uma checklist de processos",
+      "score": 58,
+      "reasons": [
+        "Avaliação do intervalo efetivo (opinião): O autor critica o formato de 'checklist' nos portfólios de UX e alerta sobre a visão de recrutadores experientes. O desfecho é claro e forte.",
+        "O início é forte e direto ao apontar um erro comum em portfólios de design, gerando identificação imediata no público-alvo.",
+        "O desenvolvimento é prejudicado pela transição brusca entre a crítica à estrutura de checklist do portfólio e a reflexão sobre a experiência de quem contrata.",
+        "O trecho termina de forma abrupta com uma observação sobre a experiência dos recrutadores, sem uma conclusão ou resolução para o problema do portfólio."
+      ],
+      "review": "pending",
+      "format": "9:16",
+      "fit": "cover",
+      "analysis": {
+        "title": "O erro de fazer portfólio como uma checklist de processos",
+        "summary": "O falante aponta que muitos portfólios são feitos como checklists de processos, como aplicar o Double Diamond ou realizar testes de usabilidade sem profundidade real. Ele argumenta que essa abordagem esconde furos no projeto que profissionais mais experientes conseguem identificar facilmente.",
+        "criteria": [
+          {
+            "label": "Gancho",
+            "score": 85,
+            "explanation": "O início é forte e direto ao apontar um erro comum em portfólios de design, gerando identificação imediata no público-alvo.",
+            "evidence": "Isso aqui é o erro de todos vocês. Vocês fazem, grande parte do portfólio de vocês é como se fosse uma checklist, né?"
+          },
+          {
+            "label": "Desenvolvimento",
+            "score": 50,
+            "explanation": "O desenvolvimento é prejudicado pela transição brusca entre a crítica à estrutura de checklist do portfólio e a reflexão sobre a experiência de quem contrata.",
+            "evidence": "Cheque. É erro, porque quando a gente começar a ler de verdade, eu começo a perceber os furos."
+          },
+          {
+            "label": "Fechamento",
+            "score": 30,
+            "explanation": "O trecho termina de forma abrupta com uma observação sobre a experiência dos recrutadores, sem uma conclusão ou resolução para o problema do portfólio.",
+            "evidence": "A gente já tem cabeça velha disso."
+          }
+        ]
+      },
+      "analysisSignature": "16a5cdc4957f10878b29ce359787e7d2efb6da40dfe0f82a1e0c750ab13b8383",
+      "engine": {
+        "backend": "experimentalGemmaMultimodal",
+        "model": "gemma-4-12b-it-qat-q4_0.gguf + mmproj",
+        "template": "gemma4-canonical-nothink (llama-server)",
+        "sampling": "temp 1.0, top_k 64, top_p 0.95, min_p 0, seed 42",
+        "seed": 42
+      },
+      "multimodal": {
+        "frames": [
+          641.4300000000001,
+          659.85
+        ],
+        "visual": "Um homem jovem de óculos e camiseta branca fala para a câmera em um ambiente interno. Ao fundo, há uma estante com equipamentos e uma porta de madeira. Ele gesticula com a mão esquerda enquanto mantém uma expressão séria.",
+        "audioEvents": [],
+        "boundaryAdjustments": [
+          0,
+          0
+        ],
+        "backend": "experimentalGemmaMultimodal"
+      }
+    },
+    {
+      "id": "0e7031367999afcf4db5fa497d4fc72c5c4e3642e49c22d951c0ae1ec53d775c",
+      "start": 354.14,
+      "end": 405.66,
+      "title": "Equilíbrio entre necessidades do usuário e do negócio em projetos",
+      "score": 49,
+      "reasons": [
+        "Avaliação do intervalo efetivo (explicação): Explica a necessidade de equilibrar visão de usuário e negócio. O fechamento é natural e conclui bem o raciocínio sobre por que projetos morrem sem o lado do negócio.",
+        "O gancho é fraco pois começa com uma introdução longa e didática sobre uma analogia, em vez de capturar a atenção imediatamente com um problema ou impacto.",
+        "O desenvolvimento é prejudicado pela mudança de foco da estrutura da apresentação para uma crítica sobre a falta de investimento quando se foca apenas no usuário.",
+        "O trecho termina de forma abrupta com uma conclusão rápida sobre a importância de ambos os lados, sem uma conclusão mais elaborada ou fechamento fluido."
+      ],
+      "review": "pending",
+      "format": "9:16",
+      "fit": "cover",
+      "analysis": {
+        "title": "Equilíbrio entre necessidades do usuário e do negócio em projetos",
+        "summary": "O locutor explica que apresentações de problemas devem incluir tanto os pontos de dor do usuário quanto as necessidades do negócio. Ele alerta que focar apenas na empatia pelo usuário pode impedir que o projeto receba investimentos necessários. A conclusão reforça que é fundamental equilibrar essas duas perspectivas para que o projeto seja viável.",
+        "criteria": [
+          {
+            "label": "Gancho",
+            "score": 40,
+            "explanation": "O gancho é fraco pois começa com uma introdução longa e didática sobre uma analogia, em vez de capturar a atenção imediatamente com um problema ou impacto.",
+            "evidence": "Para ficar um pouco legal de você entender aqui a analogia. Nessa parte da apresentação do problema, você pode utilizar hypothesis statement ou pontos de dor, tanto do"
+          },
+          {
+            "label": "Desenvolvimento",
+            "score": 50,
+            "explanation": "O desenvolvimento é prejudicado pela mudança de foco da estrutura da apresentação para uma crítica sobre a falta de investimento quando se foca apenas no usuário.",
+            "evidence": "usuário, o projeto morre. Não existe investimento, isso significa que o projeto na realidade nem existe, porque precisa existir um negócio, precisa existir uma exigência do negócio."
+          },
+          {
+            "label": "Fechamento",
+            "score": 60,
+            "explanation": "O trecho termina de forma abrupta com uma conclusão rápida sobre a importância de ambos os lados, sem uma conclusão mais elaborada ou fechamento fluido.",
+            "evidence": "Então ambas as apresentações de problema são importantes."
+          }
+        ]
+      },
+      "analysisSignature": "ce45df54d1362f5f35275e47253e4ed97dd875b00c6eb5af3fdcf5e1907a3e49",
+      "engine": {
+        "backend": "experimentalGemmaMultimodal",
+        "model": "gemma-4-12b-it-qat-q4_0.gguf + mmproj",
+        "template": "gemma4-canonical-nothink (llama-server)",
+        "sampling": "temp 1.0, top_k 64, top_p 0.95, min_p 0, seed 42",
+        "seed": 42
+      },
+      "multimodal": {
+        "frames": [
+          354.49,
+          379.9
+        ],
+        "visual": "Um homem de óculos e camiseta branca fala para a câmera em um cenário de estúdio com prateleiras ao fundo. Ele faz um gesto com a mão direita enquanto fala. Há um microfone de lapela e um logotipo 'DeepCrack' na parte inferior.",
+        "audioEvents": [],
+        "boundaryAdjustments": [
+          0,
+          0
+        ],
+        "backend": "experimentalGemmaMultimodal"
+      }
+    }
+  ],
+  "engine": {
+    "backend": "experimentalGemmaMultimodal",
+    "model": "gemma-4-12b-it-qat-q4_0.gguf + mmproj",
+    "template": "gemma4-canonical-nothink (llama-server)",
+    "sampling": "temp 1.0, top_k 64, top_p 0.95, min_p 0, seed 42",
+    "seed": 42
+  }
+}

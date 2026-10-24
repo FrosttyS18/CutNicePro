@@ -1,0 +1,6 @@
+[final] 09:42:54 projeto 947363ab-b10e-4b25-9e80-7820799d67cb | mídia 33932fbc-5a4d-42a6-8784-f7c1f0231129 | transcrição REAL 568 segs no workspace (pós-ASR)
+[final] 09:43:06 projeto aberto; esperando o disparo AUTOMÁTICO da geração (M5)…
+[final] 09:43:06 GERAÇÃO AUTOMÁTICA detectada (sem clique) ✓
+[final] 09:43:06   job analyzing 0%
+[final] 10:15:02 job final: cancelled erro: Transcrição cancelada.
+[final] ERRO: ENOENT: no such file or directory, open 'C:\Users\adcka\AppData\Roaming\com.cutnicepro.app\cutnicepro\clips\947363ab-b10e-4b25-9e80-7820799d67cb.json'

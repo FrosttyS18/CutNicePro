@@ -1,0 +1,102 @@
+/start
+
+TAREFA CRÍTICA — Estudo completo do fluxo de mídia do OpenCut e correção estrutural da timeline do CutNicePro.
+
+OBJETIVO
+O mantenedor testou o OpenCut no navegador com vídeo de aproximadamente 24 minutos e observou uma timeline leve e prévia responsiva. No CutNicePro, a timeline e o vídeo continuam pesados após várias correções parciais. Investigue e corrija a diferença real de funcionamento. Não encerrar com mais um throttle, um teste de parser ou uma hipótese isolada.
+
+Esta tarefa autoriza estudo aprofundado e implementação das correções pertinentes. Preserve a interface aprovada, projetos, mídia, transcrição e exportação. Sem commit, push, versão nova, serviços pagos ou alteração de arquitetura sem justificativa técnica demonstrada.
+
+CONTEXTO E REVISÕES
+Leia AGENTS.md, ENGINE-HANDOFF, PRODUCT-BRAIN, BACKLOG, VALIDATION-POLICY e o estudo existente em docs/references/OPEN-SOURCE-ENGINE-RESEARCH.md. Inspecione o working tree atual; preserve alterações preexistentes. O relatório anterior informa Range e bloqueio de timeupdate durante seeking implementados, mas scrub real pendente: confirme o código atual e não trate as causas quantitativas como provadas.
+
+Fonte indicada: https://github.com/OpenCut-app
+O README de OpenCut, revisão e668010778568641babef2cc40be4703ae6916d6, informa que opencut.app usa Classic; a reescrita com núcleo Rust fica em new.opencut.app.
+Referência principal: https://github.com/OpenCut-app/opencut-classic
+Revisão já consultada: cf5e79e919144200294fb9fed22a222592a0aeea.
+Verifique isso novamente e registre a versão estudada. A informação do README não comprova o SHA exato do deploy: se não puder identificar o build publicado, declare essa limitação. Não explicar o desempenho dizendo apenas que ambos usam TypeScript/Rust.
+
+ETAPA 1 — ENTENDER O EDITOR INTEIRO, COM PROFUNDIDADE NO CAMINHO CRÍTICO
+
+Mapeie a estrutura completa do repositório. A partir da rota do editor, leia integralmente os arquivos que participam do funcionamento de importação, playback, scrub, preview e timeline. Siga imports, reexports, hooks, managers, workers, adaptadores e bibliotecas até a operação que realmente lê, decodifica e apresenta o frame. Não parar em interfaces, wrappers, classes vazias, README ou nos arquivos já pesquisados.
+
+Pontos de partida, não limite de escopo:
+- core/managers/playback-manager.ts
+- timeline/controllers/playhead-controller.ts
+- timeline/hooks/use-timeline-playhead.ts
+- services/video-cache/service.ts
+- renderer/nodes/video-node.ts e sua implementação herdada.
+
+Descubra e documente o fluxo completo:
+1. Importação e representação da mídia: File/Blob, URL, persistência, metadados e tempo de preparação.
+2. Montagem do editor: quem cria e compartilha leitores, decoders, caches e renderizadores.
+3. pointerdown/move/up/cancel: coordenada → tempo solicitado → agendamento → obtenção do frame → composição → apresentação.
+4. Reprodução normal: relógio mestre, áudio, vídeo, rAF, política de frames atrasados e sincronização.
+5. Scrub: saltos curtos/longos, direção reversa, último pedido, descarte de trabalho obsoleto, filas e confirmação do alvo final.
+6. Caminho de bytes: leitura parcial, demux, keyframes, decode, frames/canvases, cópias CPU/GPU e descarte.
+7. Separação entre playhead, régua, miniaturas, waveform, vídeo e painéis React: frequência de atualização de cada um.
+8. Zoom/scroll/redimensionamento: o que é recalculado, reutilizado ou limitado à região visível.
+9. Preparação, prefetch e cache: limites por bytes/frames, deduplicação, invalidação e orçamento agregado.
+10. Troca de projeto/mídia, erro, cancelamento, fim do vídeo e desmontagem: quem encerra cada recurso.
+
+Se Mediabunny, opencut-wasm ou outra biblioteca for realmente executada nesse caminho, consulte o código da versão resolvida pelo lock e a documentação correspondente. Identifique qual operação pertence ao editor e qual pertence à biblioteca. Não atribuir ao Rust ou ao servidor um trabalho cujo caminho de execução não foi encontrado.
+
+Para cada etapa, registre no documento canônico: revisão, arquivo/função, chamador, entrada/saída, dono do estado/recurso, limites de concorrência, alocações, limpeza e evidência. Registre arquivos relevantes não lidos e por quê. Ler milhares de linhas sem reconstruir o encadeamento não conclui esta etapa.
+
+ETAPA 2 — RECONSTRUIR O MESMO FLUXO NO CUTNICEPRO
+
+Trace desde TimelineSurface até o frame exibido, incluindo VideoEditor, VideoPreview, transcrição, protocolo cnplocal, preview Rust, miniaturas/waveform e callbacks indiretos. Consulte Graphify se disponível, verificando o código atual.
+
+Entregue uma matriz por etapa:
+OpenCut: mecanismo comprovado | CutNicePro: mecanismo atual | diferença | impacto medido/hipótese | correção proposta.
+
+Investigue especialmente:
+- O que ainda aloca ou copia bytes de vídeo? Range aberto é limitado? Há fallback integral, pedidos concorrentes ou resposta que mantém buffers grandes vivos?
+- O vídeo é realmente reposicionado a cada movimento? Que trabalho o OpenCut evita ou reaproveita?
+- A correção baseada somente em video.seeking cobre eventos atrasados depois de soltar e confirma o último alvo?
+- Quem manda no tempo visual, no frame mostrado e no áudio? Existem relógios/loops concorrentes?
+- Quantos componentes renderizam por movimento? Que trabalho ocorre na thread principal?
+- Há recriação de leitor/decoder, miniaturas, waveform, URLs ou listeners durante scrub?
+- Qual custo cresce com duração do vídeo, quantidade de segmentos, resolução, codec e GOP?
+
+Distinguir defeito de código observado, mecanismo inferido e contribuição comprovada por medição. Não repetir “cada seek causa X GB” sem demonstrar.
+
+ETAPA 3 — MEDIR E ESCOLHER A CORREÇÃO
+
+Reproduza usando o mesmo arquivo nos dois editores quando acessível. Registre hash da mídia, resolução, FPS/timebase, codec/GOP, hardware, navegador/WebView2, build e processamento em segundo plano. Se a comparação direta não puder ser realizada, declare o limite; screenshot não prova o desempenho.
+
+Meça separadamente:
+- movimento do ponteiro → playhead;
+- alvo solicitado → frame correto apresentado;
+- reprodução e sincronismo de áudio;
+- tempo de main thread/React;
+- bytes lidos, pedidos, trabalho de decode e memória dos processos associados;
+- abertura/preparação e custo de cache frio/quente.
+
+Compare buscas curtas, saltos distantes, scrub reverso, arrasto contínuo, soltar e retomar reprodução. Verifique a diferença entre navegador e WebView2 sem atribuir automaticamente tudo ao ambiente.
+
+Escolha a solução com base nesses resultados. Aproveite os mecanismos do OpenCut que forem pertinentes. Não obrigar um simples HTMLVideoElement a reproduzir uma pipeline diferente se isso for a limitação demonstrada; também não reescrever o motor ou instalar bibliotecas apenas porque aparecem no package.json.
+
+Se for indispensável mudar o adaptador de preview, usar decode por frames ou acrescentar proxy, justifique a escolha, compatibilidade, licença, memória, distribuição e integração. Implemente a menor fatia completa que resolva o gargalo comprovado. Proxy é uma alternativa a comparar, não conclusão automática. Exportação continua usando o original.
+
+ETAPA 4 — IMPLEMENTAR E VALIDAR
+
+Siga SPEC → PLAN → BUILD → TEST → REVIEW e skills pertinentes. Isole transporte de mídia, controle temporal, preview e UI conforme responsabilidades reais; preserve os contratos existentes.
+
+Adicione testes que reproduzam corridas, pedidos obsoletos, alvo final, cancelamento, troca de mídia e liberação de recursos. Teste limites de leitura/concorrência e comportamento, não apenas parser e mocks do decoder.
+
+Execute o app real com o vídeo de 24 min e, se disponível, um vídeo de aproximadamente 2 h. Identifique qualquer mídia sintética. Use build identificado, sem HMR interferindo. Defina antes os critérios de latência, estabilidade e precisão temporal, ancorados na comparação observável. Não aceitar prévia atrasando 1–2 s como conclusão de “timeline fluida”.
+
+Respeite uma rodada inicial de validação e no máximo uma repetição justificada. Limite seguro de recursos antes de iniciar; não provocar outro esgotamento de RAM. Instrumentação deve ser leve e removida ao final. Falha do harness é separada da falha do produto: tente uma alternativa mínima dentro do orçamento e registre BLOCKED/PARTIAL se não houver runtime.
+
+NÃO ENCERRAR A INVESTIGAÇÃO APÓS DOIS ARQUIVOS
+A pesquisa anterior é ponto de partida. O critério de conclusão do estudo é rastrear o caminho completo até o frame, explicar as diferenças e resolver lacunas críticas. Não prometer “análise completa” se faltou a camada de decode/render ou o consumidor dos eventos.
+
+ENTREGA OBRIGATÓRIA
+- Fluxo técnico completo dos dois editores e matriz comparativa, nos documentos existentes.
+- Decisão técnica ligada às diferenças encontradas; origem/licença de código eventualmente adaptado.
+- Correção implementada e resultados reais antes/depois, distinguindo playhead e prévia.
+- Regressões pertinentes e limitações explícitas.
+- Continuidade e relatório CUTNICEPRO — ZCODE REPORT persistidos e relidos.
+- Sem PASS da timeline com scrub pendente, sem equivalência ao OpenCut sem comparação e sem trocar o critério de fluidez por “não crashou”.
+- VISUAL STATUS: PENDING HUMAN APPROVAL. Sem commit/push.

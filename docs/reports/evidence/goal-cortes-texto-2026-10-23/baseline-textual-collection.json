@@ -1,0 +1,590 @@
+{
+  "version": 1,
+  "mediaId": "33932fbc-5a4d-42a6-8784-f7c1f0231129",
+  "transcriptHash": "9b58e131669aec920bfc91703a34d4618d0f0c384c3699f00ee8fb126e557072",
+  "clips": [
+    {
+      "id": "e84c6c4db789baf0bf7e27af269ad92e45cc3221037049a01416c0e4ef935a37",
+      "start": 0,
+      "end": 17.12,
+      "title": "Como identificar problemas de clareza no portfólio profissional",
+      "score": 95,
+      "reasons": [
+        "Avaliação do intervalo efetivo (explicação): O trecho apresenta um desafio direto ao espectador com uma pergunta clara e uma conclusão ('seu portfólio está errado'), funcionando bem como um gancho de conteúdo.",
+        "O gancho propõe um teste rápido e prático para o espectador avaliar seu próprio portfólio imediatamente.",
+        "O desenvolvimento foca na metodologia de apresentação, questionando a forma de resolver problemas e o impacto gerado.",
+        "O fechamento é direto e conclusivo, afirmando que o portfólio está errado caso não apresente resultados."
+      ],
+      "review": "pending",
+      "format": "9:16",
+      "fit": "cover",
+      "analysis": {
+        "title": "Como identificar problemas de clareza no portfólio profissional",
+        "summary": "O falante propõe um teste rápido para verificar se o portfólio de alguém deixa claro quais problemas foram resolvidos. Ele questiona a falta de clareza sobre métodos e impactos, concluindo que, sem essas informações, o portfólio está incorreto.",
+        "criteria": [
+          {
+            "label": "Gancho",
+            "score": 95,
+            "explanation": "O gancho propõe um teste rápido e prático para o espectador avaliar seu próprio portfólio imediatamente.",
+            "evidence": "Teste rápido. Abre o seu portfólio em 30 segundos. Alguém consegue entender qual problema você resolveu?"
+          },
+          {
+            "label": "Desenvolvimento",
+            "score": 90,
+            "explanation": "O desenvolvimento foca na metodologia de apresentação, questionando a forma de resolver problemas e o impacto gerado.",
+            "evidence": "Como você resolveu esses problemas? Qual foi o resultado e o impacto de resolver esses problemas?"
+          },
+          {
+            "label": "Fechamento",
+            "score": 100,
+            "explanation": "O fechamento é direto e conclusivo, afirmando que o portfólio está errado caso não apresente resultados.",
+            "evidence": "Não? Então seu portfólio está errado."
+          }
+        ]
+      },
+      "analysisSignature": "e39fdfbfa66dfcb2ed5f3aa1134b1cce6084e991def5f9ee0c9d6679a0f0c951",
+      "engine": {
+        "backend": "experimentalGemma",
+        "model": "gemma-4-12b-it-qat-q4_0.gguf",
+        "template": "gemma4-canonical-nothink",
+        "sampling": "temp 1.0, top_k 64, top_p 0.95, min_p 0, seed 42",
+        "seed": 42
+      }
+    },
+    {
+      "id": "93df45cc3646539a9ba467b756784b9e5a3dfe12692c33d9970cd4219abd54b9",
+      "start": 1194.42,
+      "end": 1217.92,
+      "title": "A preferência por qualidade em vez de quantidade em itens de case",
+      "score": 95,
+      "reasons": [
+        "Avaliação do intervalo efetivo (explicação): O trecho responde diretamente à dúvida sobre quantidade de cases e encerra com uma regra clara (sempre 3 bem feitos), sendo muito eficiente para um clipe curto.",
+        "O gancho é forte por iniciar com um tom de indignação e uma afirmação de longa experiência na internet.",
+        "O desenvolvimento apresenta um dilema comparativo entre diferentes quantidades e níveis de qualidade de itens.",
+        "O fechamento é claro pois o falante toma uma decisão definitiva sobre a preferência por qualidade em vez de quantidade."
+      ],
+      "review": "pending",
+      "format": "9:16",
+      "fit": "cover",
+      "analysis": {
+        "title": "A preferência por qualidade em vez de quantidade em itens de case",
+        "summary": "O falante expressa frustração por não ser ouvido sobre a qualidade de algo que defende há 10 anos na internet. Ele estabelece critérios para quantidades de itens sendo bem feitos ou de meia boca. Por fim, ele afirma que prefere três itens bem feitos do que uma quantidade maior de baixa qualidade.",
+        "criteria": [
+          {
+            "label": "Gancho",
+            "score": 95,
+            "explanation": "O gancho é forte por iniciar com um tom de indignação e uma afirmação de longa experiência na internet.",
+            "evidence": "de quantidade, porque foda-se com os colachos. Vocês não escutam mesmo? Não adianta, eu tô aqui, tem 10 anos na internet falando a mesma coisa."
+          },
+          {
+            "label": "Desenvolvimento",
+            "score": 90,
+            "explanation": "O desenvolvimento apresenta um dilema comparativo entre diferentes quantidades e níveis de qualidade de itens.",
+            "evidence": "Meia boca? Uns 8. Uns 8 pra 15. Agora, é melhor 8 ou 15, meia boca ou 3 bem feito?"
+          },
+          {
+            "label": "Fechamento",
+            "score": 100,
+            "explanation": "O fechamento é claro pois o falante toma uma decisão definitiva sobre a preferência por qualidade em vez de quantidade.",
+            "evidence": "Sempre 3 bem feito. Eu não vou olhar 15 case"
+          }
+        ]
+      },
+      "analysisSignature": "86b72367c4d3b4e1310c8c176fa54955c9a1778f0dbd14c608ed120131068352",
+      "engine": {
+        "backend": "experimentalGemma",
+        "model": "gemma-4-12b-it-qat-q4_0.gguf",
+        "template": "gemma4-canonical-nothink",
+        "sampling": "temp 1.0, top_k 64, top_p 0.95, min_p 0, seed 42",
+        "seed": 42
+      }
+    },
+    {
+      "id": "153ea72c3ff322d7acd63daca031f35978e5ad6c3f889cce4c865df08aec9d69",
+      "start": 641.08,
+      "end": 696.56,
+      "title": "O erro de portfólio baseado em checklist que reprova candidatos",
+      "score": 92,
+      "reasons": [
+        "Avaliação do intervalo efetivo (opinião): O autor critica o estilo 'checklist' dos portfólios. O fechamento é forte, criando um cenário de 'consequência' (levar porrada na entrevista) que serve como um alerta final claro.",
+        "O gancho é direto ao apontar um erro comum cometido pela grande parte das pessoas na criação de portfólios.",
+        "O desenvolvimento detalha como portfólios baseados apenas em checklists apresentam furos que são percebidos por recrutadores experientes.",
+        "O fechamento é forte pois apresenta uma consequência direta e clara para quem não domina o conteúdo do próprio portfólio."
+      ],
+      "review": "pending",
+      "format": "9:16",
+      "fit": "cover",
+      "analysis": {
+        "title": "O erro de portfólio baseado em checklist que reprova candidatos",
+        "summary": "O portfólio de muitos profissionais é construído como uma checklist de etapas sem profundidade real, o que revela falhas de execução para quem analisa. Recrutadores experientes conseguem identificar rapidamente quando o trabalho não foi feito adequadamente pelo candidato. O descumprimento dessa qualidade pode levar à reprovação em entrevistas devido à incapacidade de responder perguntas técnicas.",
+        "criteria": [
+          {
+            "label": "Gancho",
+            "score": 92,
+            "explanation": "O gancho é direto ao apontar um erro comum cometido pela grande parte das pessoas na criação de portfólios.",
+            "evidence": "Isso aqui é o erro de todos vocês. Vocês fazem, grande parte do portfólio de vocês é como se fosse uma checklist, né?"
+          },
+          {
+            "label": "Desenvolvimento",
+            "score": 90,
+            "explanation": "O desenvolvimento detalha como portfólios baseados apenas em checklists apresentam furos que são percebidos por recrutadores experientes.",
+            "evidence": "Cheque. É erro, porque quando a gente começar a ler de verdade, eu começo a perceber os furos."
+          },
+          {
+            "label": "Fechamento",
+            "score": 95,
+            "explanation": "O fechamento é forte pois apresenta uma consequência direta e clara para quem não domina o conteúdo do próprio portfólio.",
+            "evidence": "tu vai passar na entrevista ou não? não, tu vai tomar porrada do lado e torto na entrevista, porque eu vou fazer pergunta que você não vai conseguir responder"
+          }
+        ]
+      },
+      "analysisSignature": "f32c12edbf637794fc7f34917c139facf8365182765c39764978b63302f251ce",
+      "engine": {
+        "backend": "experimentalGemma",
+        "model": "gemma-4-12b-it-qat-q4_0.gguf",
+        "template": "gemma4-canonical-nothink",
+        "sampling": "temp 1.0, top_k 64, top_p 0.95, min_p 0, seed 42",
+        "seed": 42
+      }
+    },
+    {
+      "id": "89f04d00201948686d6e8a6a5951738f0cb3430c5729a794daa53a05fb9f456b",
+      "start": 180.12,
+      "end": 245.2,
+      "title": "Como evitar portfólios confusos e excesso de mock-ups inúteis",
+      "score": 87,
+      "reasons": [
+        "Avaliação do intervalo efetivo (opinião): Crítica forte sobre o uso de mockups. O fechamento é muito bom ('Ponto.'), encerrando o raciocínio com autoridade.",
+        "O gancho identifica um problema comum de portfólios com excesso de informação e falta de clareza.",
+        "O desenvolvimento detalha criticamente o uso excessivo de mock-ups e elementos visuais datados que confundem o portfólio.",
+        "O fechamento é direto e conclui o raciocínio sobre a necessidade de clareza imediata na contratação."
+      ],
+      "review": "pending",
+      "format": "9:16",
+      "fit": "cover",
+      "analysis": {
+        "title": "Como evitar portfólios confusos e excesso de mock-ups inúteis",
+        "summary": "Portfólios com textos gigantes ou excesso de mock-ups datados dificultam a compreensão de quem deseja contratar o profissional. A crítica destaca que elementos visuais genéricos não resolvem problemas reais e distraem do objetivo principal. A solução apontada é garantir que a leitura seja rápida, clara e mostre imediatamente o valor que o profissional entrega ao time.",
+        "criteria": [
+          {
+            "label": "Gancho",
+            "score": 88,
+            "explanation": "O gancho identifica um problema comum de portfólios com excesso de informação e falta de clareza.",
+            "evidence": "Um portfólio cheio de informação, mas confuso. É aquele que tem um texto gigantesco que você lê, lê, lê, lê e não entende nada."
+          },
+          {
+            "label": "Desenvolvimento",
+            "score": 85,
+            "explanation": "O desenvolvimento detalha criticamente o uso excessivo de mock-ups e elementos visuais datados que confundem o portfólio.",
+            "evidence": "Mas vocês colocam mock-up pra tudo quanto é lado. Era dribble. Mocap 3D, mocap assim, mocap assim, sombrinha, gradiente."
+          },
+          {
+            "label": "Fechamento",
+            "score": 90,
+            "explanation": "O fechamento é direto e conclui o raciocínio sobre a necessidade de clareza imediata na contratação.",
+            "evidence": "estou contratando e o que traz para o meu time. Ponto."
+          }
+        ]
+      },
+      "analysisSignature": "0e09ca062ab94d79c47dc12add0eea58fac52405c969609cadd0ad2c5bc1b090",
+      "engine": {
+        "backend": "experimentalGemma",
+        "model": "gemma-4-12b-it-qat-q4_0.gguf",
+        "template": "gemma4-canonical-nothink",
+        "sampling": "temp 1.0, top_k 64, top_p 0.95, min_p 0, seed 42",
+        "seed": 42
+      }
+    },
+    {
+      "id": "1a1c66ebf29120252586590f07ebcfd444138dc8b2a1038104f456da3252b9cb",
+      "start": 947.82,
+      "end": 1009.68,
+      "title": "Quatro perguntas para validar a estrutura de um portfólio",
+      "score": 87,
+      "reasons": [
+        "Avaliação do intervalo efetivo (explicação): Excelente fechamento. Ele sintetiza todo o aprendizado em 4 perguntas práticas e dá um veredito final sobre a eficácia do portfólio.",
+        "O gancho estabelece uma regra forte e direta sobre não copiar, chamando a atenção do espectador logo no início.",
+        "O desenvolvimento apresenta uma lista estruturada de quatro perguntas específicas para avaliar a eficácia de um portfólio.",
+        "O fechamento é direto e conclui a lógica apresentada com uma instrução clara sobre o que fazer se as perguntas não forem respondidas positivamente."
+      ],
+      "review": "pending",
+      "format": "9:16",
+      "fit": "cover",
+      "analysis": {
+        "title": "Quatro perguntas para validar a estrutura de um portfólio",
+        "summary": "As diretrizes para não copiar trabalhos e focar no aprendizado de estruturas são apresentadas através de quatro perguntas de verificação. O objetivo é garantir que o problema, a solução, o resultado e o papel do profissional estejam claros e correlacionados no portfólio.",
+        "criteria": [
+          {
+            "label": "Gancho",
+            "score": 88,
+            "explanation": "O gancho estabelece uma regra forte e direta sobre não copiar, chamando a atenção do espectador logo no início.",
+            "evidence": "E olha, dica, não dica, regra, não copia. Eu vou repetir porque às vezes vocês têm um problema aqui no ouvido."
+          },
+          {
+            "label": "Desenvolvimento",
+            "score": 85,
+            "explanation": "O desenvolvimento apresenta uma lista estruturada de quatro perguntas específicas para avaliar a eficácia de um portfólio.",
+            "evidence": "2. Eu entendi a solução? Ou a solução não faz nem sentido com a descrição do problema?"
+          },
+          {
+            "label": "Fechamento",
+            "score": 90,
+            "explanation": "O fechamento é direto e conclui a lógica apresentada com uma instrução clara sobre o que fazer se as perguntas não forem respondidas positivamente.",
+            "evidence": "Se as quatro respostas forem sim, o portfólio funciona. Se forem não, bem, você tem que refazer o seu portfólio."
+          }
+        ]
+      },
+      "analysisSignature": "9be2e953ec1bc023c261006ff4239129b91604f50d664211e56409613f3ec9f9",
+      "engine": {
+        "backend": "experimentalGemma",
+        "model": "gemma-4-12b-it-qat-q4_0.gguf",
+        "template": "gemma4-canonical-nothink",
+        "sampling": "temp 1.0, top_k 64, top_p 0.95, min_p 0, seed 42",
+        "seed": 42
+      }
+    },
+    {
+      "id": "8de1a991608fd9858c6f586abb7b69d07d17d349b4230a3456ac7d00ab353069",
+      "start": 1339.52,
+      "end": 1401.5,
+      "title": "Por que evitar o Figma para criar currículos e portfólios",
+      "score": 84,
+      "reasons": [
+        "Avaliação do intervalo efetivo (explicação): Faz um resumo técnico sobre estrutura de portfólio e currículo (ATS). O fechamento é uma conclusão direta de instrução.",
+        "O gancho utiliza uma estrutura de perguntas rápidas para confirmar pontos sobre a estrutura de portfólio.",
+        "O desenvolvimento explica tecnicamente por que arquivos do Figma são problemáticos para sistemas de leitura de currículos.",
+        "O fechamento é direto e autoritário, finalizando a instrução com uma ordem clara de execução."
+      ],
+      "review": "pending",
+      "format": "9:16",
+      "fit": "cover",
+      "analysis": {
+        "title": "Por que evitar o Figma para criar currículos e portfólios",
+        "summary": "A conversa foca na estrutura ideal para um portfólio e currículo, defendendo que a simplicidade é preferível à complexidade. O falante explica que arquivos gerados no Figma não funcionam bem em sistemas de leitura por não seguirem uma estrutura linear. A recomendação final é utilizar Google Docs ou Word para garantir que o conteúdo seja lido corretamente.",
+        "criteria": [
+          {
+            "label": "Gancho",
+            "score": 80,
+            "explanation": "O gancho utiliza uma estrutura de perguntas rápidas para confirmar pontos sobre a estrutura de portfólio.",
+            "evidence": "Resumindo, portfólio precisa ter clareza? Sim, cheque. Estrutura básica é melhor do que a complexa?"
+          },
+          {
+            "label": "Desenvolvimento",
+            "score": 85,
+            "explanation": "O desenvolvimento explica tecnicamente por que arquivos do Figma são problemáticos para sistemas de leitura de currículos.",
+            "evidence": "O próprio time do Figma já explicou que o PDF gerado do Figma, ele não segue a estrutura linear."
+          },
+          {
+            "label": "Fechamento",
+            "score": 90,
+            "explanation": "O fechamento é direto e autoritário, finalizando a instrução com uma ordem clara de execução.",
+            "evidence": "Só faz do jeito que eu tô falando."
+          }
+        ]
+      },
+      "analysisSignature": "fad9904e286ede08d1d5c1549720f516b2ca8a850ef34f1d0938f777f42bbe94",
+      "engine": {
+        "backend": "experimentalGemma",
+        "model": "gemma-4-12b-it-qat-q4_0.gguf",
+        "template": "gemma4-canonical-nothink",
+        "sampling": "temp 1.0, top_k 64, top_p 0.95, min_p 0, seed 42",
+        "seed": 42
+      }
+    },
+    {
+      "id": "8fbb55aebb7f8643c698bd873e40100c74850ea3dd6719a7c6f326768bc24d31",
+      "start": 1132.44,
+      "end": 1194.42,
+      "title": "A impossibilidade de aprender UX e UI em bootcamps de fim de semana",
+      "score": 71,
+      "reasons": [
+        "Avaliação do intervalo efetivo (opinião): O autor defende um ponto de vista forte sobre bootcamps de final de semana e conclui com um aviso sobre as consequências de seguir esse caminho, fechando o ciclo do raciocínio.",
+        "O falante inicia o vídeo com um desafio direto e polêmico sobre a viabilidade de aprender UX e UI em um curto período.",
+        "O falante sustenta o argumento de que cursos rápidos de fim de semana são insuficientes e enganam profissionais da área.",
+        "O trecho termina abruptamente com uma transição para um novo assunto, sem concluir a explicação sobre os passos corretos."
+      ],
+      "review": "pending",
+      "format": "9:16",
+      "fit": "cover",
+      "analysis": {
+        "title": "A impossibilidade de aprender UX e UI em bootcamps de fim de semana",
+        "summary": "O falante critica bootcamps de fim de semana por afirmarem que é possível aprender design de experiência e interface em tão pouco tempo. Ele afirma que esses cursos enganam os alunos e resultam em muitas negativas em processos seletivos. O conteúdo termina no momento em que ele se prepara para explicar os passos corretos.",
+        "criteria": [
+          {
+            "label": "Gancho",
+            "score": 95,
+            "explanation": "O falante inicia o vídeo com um desafio direto e polêmico sobre a viabilidade de aprender UX e UI em um curto período.",
+            "evidence": "Como assim projeta em grupo de bootcamp? É porque o problema é que vocês fazem um bootcamp de fim de semana que é impossível você aprender UX e"
+          },
+          {
+            "label": "Desenvolvimento",
+            "score": 90,
+            "explanation": "O falante sustenta o argumento de que cursos rápidos de fim de semana são insuficientes e enganam profissionais da área.",
+            "evidence": "e aí tu consegue fazer um case em 4 horas porra, não me ajuda né gente pô, cês tão querendo cês tão querendo enganar quem trabalha com isso"
+          },
+          {
+            "label": "Fechamento",
+            "score": 20,
+            "explanation": "O trecho termina abruptamente com uma transição para um novo assunto, sem concluir a explicação sobre os passos corretos.",
+            "evidence": "não tá seguindo os passos que deveria então, vamos falar agora"
+          }
+        ]
+      },
+      "analysisSignature": "ea83a0bc441e28439391e07972d5428b197fd2d89e17e5ada6861716e9a969a6",
+      "engine": {
+        "backend": "experimentalGemma",
+        "model": "gemma-4-12b-it-qat-q4_0.gguf",
+        "template": "gemma4-canonical-nothink",
+        "sampling": "temp 1.0, top_k 64, top_p 0.95, min_p 0, seed 42",
+        "seed": 42
+      }
+    },
+    {
+      "id": "bf2039b2f0ad14273612b032ba8bcb868828ea7feab0d5365d2de0a1ba5b397b",
+      "start": 730.771708,
+      "end": 787.14,
+      "title": "Como apresentar resultados e aprendizados em um case",
+      "score": 70,
+      "reasons": [
+        "Avaliação do intervalo efetivo (explicação): O trecho é muito completo, dando exemplos práticos de como apresentar métricas ou aprendizados, finalizando com a importância de mostrar a prática real.",
+        "A fala inicial introduz diretamente o tema de como finalizar um case com resultados diversos.",
+        "O conteúdo foca em como apresentar resultados de projetos, alternando entre métricas quantitativas e aprendizados qualitativos.",
+        "O trecho termina de forma abrupta com uma instrução sobre a importância dos aprendizados, sem uma conclusão ou fechamento da ideia."
+      ],
+      "review": "pending",
+      "format": "9:16",
+      "fit": "cover",
+      "analysis": {
+        "title": "Como apresentar resultados e aprendizados em um case",
+        "summary": "A orientação explica que os resultados de um case não precisam ser apenas números, podendo também ser apresentados como aprendizados. É mostrado como usar métricas de desempenho ou descrever descobertas sobre simplicidade e testes de funcionalidades em projetos passados.",
+        "criteria": [
+          {
+            "label": "Gancho",
+            "score": 90,
+            "explanation": "A fala inicial introduz diretamente o tema de como finalizar um case com resultados diversos.",
+            "evidence": "E aí tu finaliza o case com resultados. Resultados esses que não necessariamente precisam ser números."
+          },
+          {
+            "label": "Desenvolvimento",
+            "score": 85,
+            "explanation": "O conteúdo foca em como apresentar resultados de projetos, alternando entre métricas quantitativas e aprendizados qualitativos.",
+            "evidence": "Por exemplo, aprendizados. Descobrir que simplicidade é melhor do que adicionar features no aplicativo."
+          },
+          {
+            "label": "Fechamento",
+            "score": 30,
+            "explanation": "O trecho termina de forma abrupta com uma instrução sobre a importância dos aprendizados, sem uma conclusão ou fechamento da ideia.",
+            "evidence": "qual foi os seus aprendizados em relação a esse case, é importante."
+          }
+        ]
+      },
+      "analysisSignature": "79f4db9921ea878b67d6ca2cc95e38f6be83b87730822bfd9f16f94778aef966",
+      "engine": {
+        "backend": "experimentalGemma",
+        "model": "gemma-4-12b-it-qat-q4_0.gguf",
+        "template": "gemma4-canonical-nothink",
+        "sampling": "temp 1.0, top_k 64, top_p 0.95, min_p 0, seed 42",
+        "seed": 42
+      }
+    },
+    {
+      "id": "07c58d173f74b61b74168046d3f4d34eb23c3b0831b2b1ca126c346ed7df8567",
+      "start": 512.96,
+      "end": 532.2,
+      "title": "O impacto de textos longos e desnecessários em processos seletivos",
+      "score": 63,
+      "reasons": [
+        "Avaliação do intervalo efetivo (opinião): O autor defende um ponto de vista sobre o excesso de texto em portfólios. O fechamento é muito claro e impactante, mostrando a consequência direta (o portfólio não será lido).",
+        "O vídeo começa diretamente com uma crítica sobre o excesso de informações desnecessárias nos textos de candidatos.",
+        "O desenvolvimento foca na explicação do volume de trabalho do recrutador e na dificuldade de triagem de currículos.",
+        "O trecho termina abruptamente com uma afirmação negativa sobre a possibilidade de seleção, sem uma conclusão ou conclusão do raciocínio."
+      ],
+      "review": "pending",
+      "format": "9:16",
+      "fit": "cover",
+      "analysis": {
+        "title": "O impacto de textos longos e desnecessários em processos seletivos",
+        "summary": "O falante critica candidatos que escrevem conteúdos irrelevantes em seus portfólios. Ele explica que precisa analisar centenas de materiais e que textos muito longos impedem a seleção do profissional. A fala termina afirmando que candidatos com textos extensos não serão chamados para entrevista.",
+        "criteria": [
+          {
+            "label": "Gancho",
+            "score": 80,
+            "explanation": "O vídeo começa diretamente com uma crítica sobre o excesso de informações desnecessárias nos textos de candidatos.",
+            "evidence": "É porque vocês escrevem demais coisas que não são necessárias para a leitura."
+          },
+          {
+            "label": "Desenvolvimento",
+            "score": 85,
+            "explanation": "O desenvolvimento foca na explicação do volume de trabalho do recrutador e na dificuldade de triagem de currículos.",
+            "evidence": "Vale lembrar que no processo de recrutamento, Eu tenho que ler em torno de 100 a 1.000 portfólios para tentar encontrar um filtro de quem é que vai"
+          },
+          {
+            "label": "Fechamento",
+            "score": 20,
+            "explanation": "O trecho termina abruptamente com uma afirmação negativa sobre a possibilidade de seleção, sem uma conclusão ou conclusão do raciocínio.",
+            "evidence": "Não vai acontecer."
+          }
+        ]
+      },
+      "analysisSignature": "4c64d207d3e9432539c7b64c1e44dcced36b75dbf315da515fa48ae3a9a5678d",
+      "engine": {
+        "backend": "experimentalGemma",
+        "model": "gemma-4-12b-it-qat-q4_0.gguf",
+        "template": "gemma4-canonical-nothink",
+        "sampling": "temp 1.0, top_k 64, top_p 0.95, min_p 0, seed 42",
+        "seed": 42
+      }
+    },
+    {
+      "id": "aa805f437429b46c836515479aea70f3c9b3f21cdd96154d7b0a5dbf6c94d8ee",
+      "start": 405.86,
+      "end": 474.02,
+      "title": "Dicas para apresentar interfaces e evitar mockups ruins",
+      "score": 55,
+      "reasons": [
+        "Avaliação do intervalo efetivo (explicação): O trecho detalha como apresentar a solução e dá dicas práticas sobre mockups. O fechamento é forte pois encerra com uma afirmação categórica sobre o que realmente importa no portfólio (a tela).",
+        "O início apresenta a solução de uma interface simplificada com categorias de gastos e funcionalidade de biometria.",
+        "O desenvolvimento é prejudicado por uma mudança brusca de assunto, saindo da descrição de uma interface de gastos para uma crítica sobre a qualidade de apresentações de mockups.",
+        "O trecho termina de forma abrupta com uma afirmação direta sobre a importância da tela em relação ao mockup, sem uma conclusão ou transição de assunto."
+      ],
+      "review": "pending",
+      "format": "9:16",
+      "fit": "cover",
+      "analysis": {
+        "title": "Dicas para apresentar interfaces e evitar mockups ruins",
+        "summary": "Uma solução de interface para gastos é apresentada com foco em linguagem simples e cadastro rápido. O assunto muda para uma crítica sobre a escolha de mockups em apresentações de design, recomendando o uso de modelos unbranded.",
+        "criteria": [
+          {
+            "label": "Gancho",
+            "score": 85,
+            "explanation": "O início apresenta a solução de uma interface simplificada com categorias de gastos e funcionalidade de biometria.",
+            "evidence": "E aí vem a solução. Criamos uma interface simplificada com apenas cinco categorias de gastos, Cadastro rápido, onboarding rápida, você consegue escanear o seu rosto e uma visualização"
+          },
+          {
+            "label": "Desenvolvimento",
+            "score": 30,
+            "explanation": "O desenvolvimento é prejudicado por uma mudança brusca de assunto, saindo da descrição de uma interface de gastos para uma crítica sobre a qualidade de apresentações de mockups.",
+            "evidence": "Menos mockup Vocês estão pegando cada mockup terrível Que nem são os últimos celulares que foram lançados Terrível Dê preferência só pela apresentação da tela Se quiser fazer"
+          },
+          {
+            "label": "Fechamento",
+            "score": 40,
+            "explanation": "O trecho termina de forma abrupta com uma afirmação direta sobre a importância da tela em relação ao mockup, sem uma conclusão ou transição de assunto.",
+            "evidence": "em 3D, bem assim, limpos. E aí o que importa é a tela, porque o mockup não importa."
+          }
+        ]
+      },
+      "analysisSignature": "8c364836a9f99e514b1c42ef3a678ae481f3c39b77f412bb6fcf68ae10d1513a",
+      "engine": {
+        "backend": "experimentalGemma",
+        "model": "gemma-4-12b-it-qat-q4_0.gguf",
+        "template": "gemma4-canonical-nothink",
+        "sampling": "temp 1.0, top_k 64, top_p 0.95, min_p 0, seed 42",
+        "seed": 42
+      }
+    },
+    {
+      "id": "0a345c905938a258b5345476f8c8fbab5f209ce24b70a1d87848b66e26d5620f",
+      "start": 860.16,
+      "end": 892.16,
+      "title": "Teste de cinco segundos para avaliar a clareza de um website",
+      "score": 52,
+      "reasons": [
+        "Avaliação do intervalo efetivo (demonstração): O autor propõe um exercício prático (teste de 5 segundos). O desfecho é a conclusão do porquê fazer o teste (clareza vs complexidade).",
+        "O gancho é eficiente pois propõe um exercício prático e imediato para o espectador realizar.",
+        "O desenvolvimento é interrompido porque o falante muda o assunto da técnica de teste para as perguntas específicas que devem ser feitas.",
+        "O trecho termina de forma abrupta ao iniciar a explicação sobre clareza versus complexidade, sem concluir o raciocínio."
+      ],
+      "review": "pending",
+      "format": "9:16",
+      "fit": "cover",
+      "analysis": {
+        "title": "Teste de cinco segundos para avaliar a clareza de um website",
+        "summary": "O falante propõe um teste de cinco segundos para avaliar a clareza de um website após o usuário fechar os olhos. Ele lista perguntas sobre identidade, projetos e relevância para uma vaga de trabalho. O trecho termina ao mencionar que o exercício ajuda a distinguir clareza de complexidade.",
+        "criteria": [
+          {
+            "label": "Gancho",
+            "score": 85,
+            "explanation": "O gancho é eficiente pois propõe um exercício prático e imediato para o espectador realizar.",
+            "evidence": "Fecha o olho aqui, abre teu website. Abre o olho. 1, 2, 3, 4, 5."
+          },
+          {
+            "label": "Desenvolvimento",
+            "score": 40,
+            "explanation": "O desenvolvimento é interrompido porque o falante muda o assunto da técnica de teste para as perguntas específicas que devem ser feitas.",
+            "evidence": "Quem é você? O que você faz? Quais são os projetos que você entrega?"
+          },
+          {
+            "label": "Fechamento",
+            "score": 20,
+            "explanation": "O trecho termina de forma abrupta ao iniciar a explicação sobre clareza versus complexidade, sem concluir o raciocínio.",
+            "evidence": "Por quê? Porque isso vai te ajudar a entender clareza versus complexidade. Ok,"
+          }
+        ]
+      },
+      "analysisSignature": "96961f6ae5994a616622a8512a5d6249301200e9dc6957e4652d6f67245824e2",
+      "engine": {
+        "backend": "experimentalGemma",
+        "model": "gemma-4-12b-it-qat-q4_0.gguf",
+        "template": "gemma4-canonical-nothink",
+        "sampling": "temp 1.0, top_k 64, top_p 0.95, min_p 0, seed 42",
+        "seed": 42
+      }
+    },
+    {
+      "id": "2614b7a0d57f0be47935c77215af8e33c3c8f5098219bd863f6233b3420b9197",
+      "start": 1411.15975,
+      "end": 1457.82,
+      "title": "Critérios para validação de portfólio e clareza de conteúdo",
+      "score": 27,
+      "reasons": [
+        "Avaliação do intervalo efetivo (explicação): Dá dicas sobre uso de imagens, texto e o 'teste dos 30 segundos'. O fechamento é uma conclusão prática de validação.",
+        "O gancho é fraco pois inicia com uma transição de fala ('Outro ponto'), indicando que o contexto inicial já foi perdido.",
+        "O desenvolvimento é prejudicado pela mudança brusca de assunto, saindo da análise de imagens e textos para critérios de experiência e portfólio.",
+        "O fechamento é extremamente abrupto, consistindo apenas em um pedido de interação sem qualquer conclusão sobre o conteúdo discutido."
+      ],
+      "review": "pending",
+      "format": "9:16",
+      "fit": "cover",
+      "analysis": {
+        "title": "Critérios para validação de portfólio e clareza de conteúdo",
+        "summary": "A orientação foca na importância de ter um propósito claro para cada imagem e texto em um projeto. O falante propõe o teste de 30 segundos para validar se o portfólio é compreensível para terceiros, sugerindo a reescrita total caso a mensagem não seja clara.",
+        "criteria": [
+          {
+            "label": "Gancho",
+            "score": 30,
+            "explanation": "O gancho é fraco pois inicia com uma transição de fala ('Outro ponto'), indicando que o contexto inicial já foi perdido.",
+            "evidence": "Outro ponto, evita tocar imagem pra caralho. Texto demais. Se não tiver um processo, se não tiver um pensamento por trás, se não tiver um porquê."
+          },
+          {
+            "label": "Desenvolvimento",
+            "score": 40,
+            "explanation": "O desenvolvimento é prejudicado pela mudança brusca de assunto, saindo da análise de imagens e textos para critérios de experiência e portfólio.",
+            "evidence": "Próximo passo. Se não tem experiência, projeto acadêmico, pro bono, bem documentado, com usuário real, pesquisa real, problema real."
+          },
+          {
+            "label": "Fechamento",
+            "score": 10,
+            "explanation": "O fechamento é extremamente abrupto, consistindo apenas em um pedido de interação sem qualquer conclusão sobre o conteúdo discutido.",
+            "evidence": "Deixa o like."
+          }
+        ]
+      },
+      "analysisSignature": "179207016d04fe0ed3a1d2845f4f1dcefdb24c424912e6efee44549e5a80baf0",
+      "engine": {
+        "backend": "experimentalGemma",
+        "model": "gemma-4-12b-it-qat-q4_0.gguf",
+        "template": "gemma4-canonical-nothink",
+        "sampling": "temp 1.0, top_k 64, top_p 0.95, min_p 0, seed 42",
+        "seed": 42
+      }
+    }
+  ],
+  "engine": {
+    "backend": "experimentalGemma",
+    "model": "gemma-4-12b-it-qat-q4_0.gguf",
+    "template": "gemma4-canonical-nothink",
+    "sampling": "temp 1.0, top_k 64, top_p 0.95, min_p 0, seed 42",
+    "seed": 42
+  }
+}

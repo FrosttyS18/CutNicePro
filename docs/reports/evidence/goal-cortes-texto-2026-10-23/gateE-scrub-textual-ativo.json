@@ -1,0 +1,46 @@
+{
+  "lab": "gateE-textual-ativo",
+  "duration": 1476.789,
+  "counts": {
+    "ptr": 184,
+    "ph": 85,
+    "rvfc": 37,
+    "ups": 3
+  },
+  "playhead": {
+    "n": 85,
+    "p50": 21.899999976158142,
+    "p95": 84.10000002384186,
+    "max": 208.30000007152557
+  },
+  "videoFinal": {
+    "t": 738.394558,
+    "seeking": false,
+    "paused": true
+  },
+  "frames": [
+    {
+      "upT": 22390.800000071526,
+      "lastSeekT": 22305.899999976158,
+      "lastPaintT": 22390,
+      "firstRvfcAfter": 21211.4,
+      "mediaTime": 147.6475
+    },
+    {
+      "upT": 26142,
+      "lastSeekT": 26081.600000023842,
+      "lastPaintT": 26121.200000047684,
+      "firstRvfcAfter": 24987.3,
+      "mediaTime": 1255.254
+    },
+    {
+      "upT": 40176.10000002384,
+      "lastSeekT": 40007.200000047684,
+      "lastPaintT": 40017.89999997616,
+      "firstRvfcAfter": 39272,
+      "mediaTime": 73.82375
+    }
+  ],
+  "iaAtiva": true,
+  "engine": "textual (llama-completion em outra instância)"
+}

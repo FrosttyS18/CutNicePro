@@ -1,0 +1,61 @@
+{
+  "steps": [
+    {
+      "name": "corte semeado abre no editor",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "dividir no playhead cria 2 segmentos e salva",
+      "ok": true,
+      "detail": "[{\"sourceStart\":180,\"sourceEnd\":190.000023},{\"sourceStart\":190.000023,\"sourceEnd\":210}]"
+    },
+    {
+      "name": "undo restaura o intervalo único",
+      "ok": true,
+      "detail": "null"
+    },
+    {
+      "name": "redo volta aos 2 segmentos",
+      "ok": true,
+      "detail": "2"
+    },
+    {
+      "name": "montagem final remove a pausa interna (180–196 + 204–210)",
+      "ok": false,
+      "detail": "[{\"sourceStart\":180,\"sourceEnd\":190.000023},{\"sourceStart\":190.000023,\"sourceEnd\":196.000025},{\"sourceStart\":204.000027,\"sourceEnd\":210}]"
+    },
+    {
+      "name": "salvar/reabrir preserva o plano exatamente",
+      "ok": false,
+      "detail": "[{\"sourceStart\":180,\"sourceEnd\":190.000023},{\"sourceStart\":190.000023,\"sourceEnd\":196.000025},{\"sourceStart\":204.000027,\"sourceEnd\":210}]"
+    },
+    {
+      "name": "play salta o vão (tempo não fica em 196–204)",
+      "ok": true,
+      "detail": "t=205.50s playing=true"
+    },
+    {
+      "name": "MP4 exportado publicado",
+      "ok": false,
+      "detail": "não apareceu"
+    }
+  ],
+  "env": {
+    "projectId": "2464b51e-856b-4b6a-aec6-307c883a49f8",
+    "mediaId": "33932fbc-5a4d-42a6-8784-f7c1f0231129",
+    "duration": 1476.789
+  },
+  "playbackJump": {
+    "t": 205.50249,
+    "playing": true
+  },
+  "exportDiag": {
+    "notice": "Meus Projetos | Enviar vídeo | Todos | Coleções | Meus Projetos | > | MM Lab M2 (6) | Voltar ao projeto | MM Lab M2 (6) | Gerar cortes |  | Transcreva o vídeo para encontrar cortes e adicionar legendas. |  | 1 clipe | Ativos | Maior nota | 30 s | Sem análise | Para revisar | Corte de laboratório M2 | Editar | Baixar | Excluir |  | Não foi possível processar o vídeo. Verifique o espaço disponível e",
+    "renderTemp": [
+      "59e6413e-3e8f-499e-89e1-d8f8b01e2307",
+      "5fdc0241-9e32-498d-b10a-13dcc1cdb396",
+      "7d617d41-5fb5-48ab-8738-34b3c94849c6"
+    ]
+  }
+}

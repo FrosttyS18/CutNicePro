@@ -1,0 +1,92 @@
+╔════════════════════════════════════════════╗
+║       CUTNICEPRO — ZCODE REPORT            ║
+╚════════════════════════════════════════════╝
+
+TASK
+  Name: Preparação do goal de recuperação e estudo AutoClip.
+  Status: PASS para preparação; implementação NOT STARTED.
+  Scope: Prompt, fontes, continuidade e proteção do trabalho existente.
+  Objective: Recuperação funcional + estudo completo + comparação local.
+  Result: Prompt de até 24 h preparado; nenhum goal iniciado aqui.
+
+IMPLEMENTATION
+  Completed: Prompt salvo e conferido com o texto entregue.
+  Changes: Somente documentação.
+  Not completed: Correção dos defeitos e estudo integral do AutoClip.
+  Architecture impact: Nenhum.
+
+FILES
+  Created: Prompt, snapshot Git e histórico indicados abaixo.
+  Modified: ENGINE-HANDOFF.md; OPEN-SOURCE-ENGINE-RESEARCH.md; LATEST.txt.
+  Deleted: 0
+  Unexpected changes: NONE nesta preparação.
+
+VALIDATION
+  FUNCTIONAL STATUS: PASS preparação; produto não validado.
+  REGRESSION STATUS: NOT TESTED
+  VISUAL STATUS: PENDING HUMAN APPROVAL
+  Typecheck / Lint / Unit / Integration / Regression / Visual / Runtime:
+    SKIP — nenhum código do app alterado.
+  Total passed / failed: 0 testes do app executados.
+  Total skipped: 7 categorias.
+  Verificação documental: releitura, igualdade do prompt/relatórios e diff check.
+
+HOOKS / HARNESS
+  Hooks active / PreToolUse / PostToolUse / Stop: Não comprovados.
+  Baseline / Gate result: SKIP.
+  Evidence: Inspeção estática e fontes públicas.
+
+MCP / SKILLS
+  Tools used: Web, leitura local e edição documental.
+  Skills: source-driven-development, planning-and-task-breakdown,
+    documentation-and-adrs.
+  Connection status: Repositórios consultados.
+  Failures: Endpoint público de commits inacessível no navegador.
+  Pending activation: Estudo fixará a revisão; nenhum plugin ativado aqui.
+
+GIT
+  Branch: main
+  HEAD: ab501e26634648a59e005238c2c50b3230b4cac0
+  Latest commit: feat(clips): add multimodal generation with real audio pauses and frame evidence
+  Commits created: 0
+  Push: NOT EXECUTED
+  Remote: origin → https://github.com/FrosttyS18/CutNicePro.git
+  Working tree: MODIFIED / UNTRACKED; index preservado.
+  Pending files: 461 (458 anteriores).
+  Lista completa: C:/CutNicePro/docs/reports/evidence/goal-recuperacao-autoclip-2026-10-23/git-status.txt
+
+EVIDENCE
+  Commands executed: Leituras, buscas, Git e diff check.
+  Relevant logs: Continuidade e relatórios anteriores consultados.
+  Screenshots: Prints do mantenedor; sem novas capturas.
+  Test artifacts: Nenhum novo teste/MP4.
+  Reproduction details: Fallback em clipMessage e falha global da
+    biblioteca identificados estaticamente; causa runtime ainda pendente.
+
+ISSUES
+  Bugs found: Relatos do usuário incorporados ao goal; não corrigidos.
+  Unresolved failures: Exportação, biblioteca, UI e qualidade editorial.
+  Regressions: Não reexecutadas.
+  Risks: Trabalho local acumulado e limpeza insegura dos labs anteriores.
+  Blockers: Nenhum para preparar o prompt.
+
+FINAL
+  Delivery status: Prompt entregue.
+  Requirements met: Recuperação, estudo rastreável, MCP/web, 4B/12B,
+    identificação dos cortes e aceites incluídos.
+  Remaining work: Executar o goal no ZCode.
+  User action required: Copiar o texto entregue ao ZCode.
+  Restart required: Não.
+  Ready for next task: YES para execução autorizada pelo mantenedor.
+
+REPORT
+  Prompt: C:/CutNicePro/docs/reports/evidence/goal-recuperacao-autoclip-2026-10-23/prompt-goal-zcode.txt
+  Latest file: C:/CutNicePro/docs/reports/LATEST.txt
+  Historical file: C:/CutNicePro/docs/reports/history/2026-10-23_122830_preparacao-goal-recuperacao-autoclip.txt
+
+GUIA DO MANTENEDOR — O QUE MUDOU E COMO TESTAR
+  1. Copiar o prompt ao ZCode. Esperado: novo goal com teto de 24 h,
+     preservação dos dados e recuperação dos fluxos antes do aceite.
+  Nada para testar no app nesta preparação: aplicativo não foi alterado.
+
+END OF REPORT

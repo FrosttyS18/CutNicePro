@@ -1,0 +1,84 @@
+╔════════════════════════════════════════════╗
+║       CUTNICEPRO — ZCODE REPORT            ║
+╚════════════════════════════════════════════╝
+
+TASK
+  Name: Goal de refinamento editorial e fluxo local.
+  Status: PASS — preparação do prompt.
+  Scope/Objective: entregar instrução completa ao ZCode.
+  Result: texto canônico atualizado; aplicativo não alterado.
+  FUNCTIONAL STATUS: PASS somente documental.
+  REGRESSION STATUS: NOT TESTED no aplicativo.
+  VISUAL STATUS: PENDING HUMAN APPROVAL.
+
+IMPLEMENTATION
+  Completed: três reprovações registradas; instância/dados primeiro;
+    Novo por 1 h; biblioteca por projeto/geração; diagnóstico editorial;
+    estudo AutoClip pendente; comparação local com marcas Qwen/Gemma.
+  Decisions: teto acumulado de 24 h, descontando consumo anterior.
+  Not completed: execução do goal e correções pertencem ao ZCode.
+  Architecture impact: nenhum.
+
+FILES
+  Modified:
+    C:/CutNicePro/docs/reports/evidence/goal-recuperacao-autoclip-2026-10-23/prompt-goal-zcode.txt
+    C:/CutNicePro/docs/engineering/ENGINE-HANDOFF.md
+    C:/CutNicePro/docs/reports/LATEST.txt
+  Created: histórico e inventário Git abaixo.
+  Deleted: nenhum. Unexpected changes: nenhuma nesta tarefa.
+
+VALIDATION
+  Typecheck/Lint/Unit/Integration/Regression/Runtime: SKIP; documentação.
+  Visual tests: SKIP; sem alteração de interface.
+  Total tests: 0 executados, 0 aprovados, 0 falhos.
+  Document checks: prompt relido e conferido; continuidade registrada;
+    git diff --check exit 0; relatório/histórico verificados após escrita.
+  Limits: avisos de fim de linha preexistentes; sem validação do produto.
+
+HOOKS / HARNESS
+  Hooks/Baseline/Stop: não executados nem usados como prova.
+
+MCP / SKILLS
+  Tools: leitura local, edição e verificações Git.
+  Skills: planejamento e documentação do projeto.
+  Graphify: não exposto nesta sessão; nenhuma chamada ou configuração.
+  Pending activation: ZCode deve validar acesso remoto antes de implementar.
+
+GIT
+  Branch: main.
+  HEAD: ab501e26634648a59e005238c2c50b3230b4cac0
+  Latest commit: feat(clips): add multimodal generation with real audio pauses and frame evidence
+  Commits created: 0. Push: NOT EXECUTED.
+  Remote: https://github.com/FrosttyS18/CutNicePro.git (origin/main).
+  Working tree: MODIFIED/UNTRACKED; trabalho preexistente preservado.
+  Pending files: 509; lista integral:
+    C:/CutNicePro/docs/reports/evidence/goal-recuperacao-autoclip-2026-10-23/git-status-prompt-refino-2026-10-24_010917.txt
+
+EVIDENCE
+  Commands: leituras, status/log Git, comparação textual, diff --check.
+  Screenshots/Test artifacts: nenhum novo; somente inventário documental.
+  Previous report preserved:
+    C:/CutNicePro/docs/reports/history/2026-10-24_004933_analise-retorno-biblioteca-modelos.txt
+
+ISSUES
+  Bugs: os três cortes foram reprovados pelo mantenedor.
+  Unresolved: causas e divergência entre instâncias ainda exigem execução.
+  Regressions: não avaliadas. Blockers: nenhum para preparar o prompt.
+
+FINAL
+  Delivery status: prompt completo; produto não declarado corrigido.
+  Requirements met: conteúdo salvo igual ao apresentado.
+  Remaining work/User action: encaminhar o texto ao ZCode.
+  Restart required: não. Ready for next task: sim, execução pelo ZCode.
+
+REPORT
+  Latest file: C:/CutNicePro/docs/reports/LATEST.txt
+  Historical file: C:/CutNicePro/docs/reports/history/2026-10-24_010917_goal-refino-editorial-prompt.txt
+
+GUIA DO MANTENEDOR — O QUE MUDOU E COMO TESTAR
+  O que mudou: o goal exige resultados identificáveis no seu app normal.
+  Teste 1: copiar o prompt completo e enviar ao ZCode.
+  Resultado esperado: ele executa as correções e apresenta vídeos marcados;
+    esta preparação não corrigiu nem gerou vídeos.
+
+END OF REPORT

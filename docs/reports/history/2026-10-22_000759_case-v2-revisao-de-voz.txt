@@ -1,0 +1,100 @@
+CUTNICEPRO — ZCODE REPORT
+
+TASK
+  Name: Revisão de voz do case v2
+  Status: PASS
+  Scope: textos da apresentação e roteiro, no mesmo FigCraft.
+  Objective: escrever na voz de Wesley e remover linguagem interna dos slides.
+  Result: 60 camadas revisadas; PDF e roteiro atualizados.
+  FUNCTIONAL STATUS: PASS
+  REGRESSION STATUS: NOT TESTED
+  VISUAL STATUS: PENDING HUMAN APPROVAL
+
+IMPLEMENTATION
+  Completed: primeira pessoa, textos concisos e remoção de notas de auditoria.
+  Changes: 61 operações textuais em 60 camadas; nenhum novo documento FigCraft.
+  Not completed: aprovação narrativa/estética humana.
+  Architecture impact: nenhum.
+  Preservação: carregada a versão salva pelo usuário antes de editar.
+    Fundos brancos, imagens, fontes, posições e frame adicional mantidos.
+
+FILES
+  Created: revisao-textual.json, validation-revisao-textual.json e este relatório.
+  Modified: mesmo FigCraft, PDF, roteiro, fontes, README, inspeção, validação,
+    renders, inventários, ENGINE-HANDOFF.md, CASE-STUDY-LOG.md e LATEST.txt.
+  Deleted: nenhum arquivo preexistente; intermediários próprios removidos.
+  Unexpected changes: NONE. Código do aplicativo preservado.
+
+VALIDATION
+  Typecheck: SKIP — sem código alterado
+  Lint: SKIP — sem código alterado
+  Unit tests: SKIP — apresentação
+  Integration tests: PASS — arquivo nativo relido pela CLI
+  Regression tests: SKIP — aplicativo fora do escopo
+  Visual tests: SKIP para aprovação estética; PDF inspecionado
+  Runtime verification: PASS — FigCraft e exportação
+  Total passed: 12 critérios objetivos
+  Total failed: 0 finais
+  Total skipped: 5 categorias acima
+  Conferido: IDs, estilos, posições, frame extra, texto removido pelo usuário,
+    limites, colisões, linguagem interna, PDF de 12 páginas e roteiro.
+
+HOOKS / HARNESS
+  Hooks active: execução automática não observada.
+  PreToolUse / PostToolUse / Stop / Baseline: não executados manualmente.
+  Gate result: não utilizado.
+  Evidence: validation-revisao-textual.json.
+
+MCP / SKILLS
+  Tools used: FigCraft MCP attached, arquivos, pypdf e pdftoppm.
+  Connection status: FigCraft 0.8.0 conectado.
+  Failures: consulta a ID removido pelo usuário ajustada antes de editar.
+  Pending activation: nenhuma. Skills de apresentações/PDF já consultadas.
+
+GIT
+  Branch: main
+  HEAD: e22555b682ccad97a68eb356032c245b86b54baf
+  Latest commit: feat(clips): add per-clip fill mode ("fit") persisted from generation options
+  Commits created: nenhum
+  Push: NOT EXECUTED
+  Remote: origin → https://github.com/FrosttyS18/CutNicePro.git; origin/main
+  Working tree: MODIFIED / UNTRACKED; pendências anteriores preservadas.
+  Pending files: inventário integral em design/case-study-v2/git-pending.txt.
+
+EVIDENCE
+  Commands executed: FigCraft inspect/revert/set/save/export; CLI info;
+    verificação e renderização do PDF; git status/log.
+  Relevant logs: revisao-textual.json e validation-revisao-textual.json.
+  Screenshots: renders/01.png a 12.png e renders/pdf-01.png a pdf-12.png.
+  Test artifacts: PDF com 12 páginas 1920×1080, texto selecionável.
+  Reproduction details: abrir o mesmo arquivo v2.
+
+ISSUES
+  Bugs found: linguagem editorial inadequada corrigida.
+  Unresolved failures: nenhuma no escopo.
+  Regressions: aplicativo não testado.
+  Risks: aprovação estética/narrativa pendente.
+  Blockers: nenhum.
+
+FINAL
+  Delivery status: revisão salva no mesmo documento.
+  Requirements met: voz pessoal e ajustes do usuário preservados.
+  Remaining work: revisão humana.
+  User action required: conferir os textos atualizados.
+  Restart required: não
+  Ready for next task: sim
+
+REPORT
+  Latest file: C:/CutNicePro/docs/reports/LATEST.txt
+  Historical file: C:/CutNicePro/docs/reports/history/2026-10-22_000759_case-v2-revisao-de-voz.txt
+
+GUIA DO MANTENEDOR — O QUE MUDOU E COMO TESTAR
+  O que mudou: os slides agora apresentam suas ações em primeira pessoa.
+  1. Conferir os frames 8, 9, 10 e 12 no mesmo FigCraft.
+     Esperado: textos pessoais, sem atribuições a um autor externo.
+  2. Conferir fundos, imagens e o frame adicional.
+     Esperado: seus ajustes preservados.
+  3. Abrir o PDF atualizado.
+     Esperado: 12 páginas com a revisão de texto.
+
+END OF REPORT

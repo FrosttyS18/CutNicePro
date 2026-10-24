@@ -1,0 +1,93 @@
+CUTNICEPRO — ZCODE REPORT
+
+TASK
+  Name: Análise estática da timeline e comparação com OpusClip
+  Status: PARTIAL — diagnóstico; sem correção ou medição em runtime.
+  Scope: Leitura autorizada do código e pesquisa oficial.
+  Objective: Explicar atraso, retorno do playhead e riscos de memória.
+  Result: Quatro problemas concretos identificados no código.
+
+IMPLEMENTATION
+  Completed: Diagnóstico e registro de evidências.
+  Not completed: Correção, profiling e verificação no aplicativo.
+  Changes: Somente documentação de continuidade e relatório.
+  Architecture impact: Nenhum.
+
+FILES
+  Created: evidence/timeline-static-2026-10-22/{analysis.txt,
+    source-hashes.json,git-status.txt}, sob docs/reports/; histórico abaixo.
+  Modified: docs/engineering/ENGINE-HANDOFF.md; docs/reports/LATEST.txt.
+  Deleted: Nenhum.
+  Unexpected changes: Nenhuma alteração de código pelo agente.
+
+VALIDATION
+  FUNCTIONAL STATUS: PARTIAL — problema permanece sem correção nesta tarefa.
+  REGRESSION STATUS: NOT TESTED.
+  VISUAL STATUS: PENDING HUMAN APPROVAL.
+  Typecheck: SKIP; Lint: SKIP; Unit tests: SKIP;
+  Integration tests: SKIP; Regression tests: SKIP;
+  Visual tests: SKIP; Runtime verification: SKIP — análise estática.
+  Total passed: 0 testes executados.
+  Total failed: 0 testes executados; não significa ausência de defeitos.
+  Total skipped: Sete categorias de validação executável.
+
+HOOKS / HARNESS
+  Hooks active: Não verificados.
+  PreToolUse: Sem rejeição observada.
+  PostToolUse: Sem evidência utilizada.
+  Stop: Não usado como prova.
+  Baseline: SKIP.
+  Gate result: Sem gate de funcionamento aprovado.
+  Evidence: analysis.txt e source-hashes.json no diretório de evidências.
+
+MCP / SKILLS
+  Tools used: Leitura local, Git de leitura e pesquisa web oficial.
+  Connection status: Leituras concluídas.
+  Failures: Consultas a caminhos inexistentes corrigidas na investigação.
+  Pending activation: Nenhuma.
+
+GIT
+  Branch: main
+  HEAD: e22555b682ccad97a68eb356032c245b86b54baf
+  Latest commit: feat(clips): add per-clip fill mode ("fit") persisted from generation options
+  Commits created: Nenhum.
+  Push: NOT EXECUTED.
+  Remote: origin → https://github.com/FrosttyS18/CutNicePro.git; main.
+  Working tree: MODIFIED / UNTRACKED; alterações anteriores preservadas.
+  Pending files: Lista em evidence/timeline-static-2026-10-22/git-status.txt,
+    sob docs/reports/, incluindo esta documentação.
+
+EVIDENCE
+  Commands executed: rg, Get-Content, Get-FileHash e git somente leitura.
+  Relevant logs: analysis.txt, com arquivos, linhas e fontes oficiais.
+  Screenshots: Relatos/imagens do mantenedor; sem nova captura.
+  Test artifacts: Hashes de seis arquivos; nenhum teste do app.
+  Reproduction details: Reprodução não executada.
+
+ISSUES
+  Bugs found: Leitura integral antes de Range; disputa do estado de tempo;
+    debounce sem isolamento de render; rAF retém coordenada inicial.
+  Unresolved failures: Impacto em memória/latência ainda sem medição.
+  Regressions: Não testadas.
+  Risks: Não atribuir travamento somente ao decoder ou exigir nuvem.
+  Blockers: Nenhum para a análise; runtime fora do escopo executado.
+
+FINAL
+  Delivery status: Diagnóstico entregue; funcionamento PARTIAL.
+  Requirements met: Código analisado e comparação pública fundamentada.
+  Remaining work: ZCode corrigir e medir com mídia real.
+  User action required: Encaminhar as prioridades ao ZCode.
+  Restart required: Não.
+  Ready for next task: Sim.
+
+REPORT
+  Latest file: docs/reports/LATEST.txt
+  Historical file: docs/reports/history/2026-10-22_220429_analise-estatica-timeline.txt
+
+GUIA DO MANTENEDOR — O QUE MUDOU E COMO TESTAR
+  O que mudou: Somente diagnóstico documentado; aplicativo inalterado.
+  Teste 1 — 1. Encaminhe os achados ao ZCode. 2. Exija medições após
+    a correção. Esperado: evidência separada para memória, playhead e imagem.
+  Não é necessário repetir o cenário de crash para validar este relatório.
+
+END OF REPORT

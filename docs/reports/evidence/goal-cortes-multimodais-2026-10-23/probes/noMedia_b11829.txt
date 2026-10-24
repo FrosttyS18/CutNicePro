@@ -1,0 +1,8 @@
+0.00.902.016 W load: control-looking token:     50 '<|tool_response>' was not control-type; this is probably a bug in the model. its type will be overridden
+0.00.902.082 W load: control-looking token:    212 '</s>' was not control-type; this is probably a bug in the model. its type will be overridden
+0.00.948.162 W load: '</s>' is a normal token here, removing it from EOG list
+0.10.702.083 I cmn          init: llama threadpool init, n_threads = 8
+0.11.079.193 W init_vision_context: cap image_max_tokens (original=1120) to n_ubatch (512) because model needs non-causal attention on image
+0.11.079.197 W init_vision_context: increase n_ubatch (-ub) to increase vision token budget
+0.11.541.337 W init_audio: audio input is in experimental stage and may have reduced quality:
+    https://github.com/ggml-org/llama.cpp/discussions/13759

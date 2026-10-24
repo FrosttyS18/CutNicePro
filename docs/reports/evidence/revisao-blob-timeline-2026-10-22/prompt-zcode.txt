@@ -1,0 +1,62 @@
+/start
+
+REABERTURA CRÍTICA — Timeline ainda trava após Blob URL. Exigir diagnóstico medido e correção do caminho de frames.
+
+O mantenedor testou novamente: arrastar de A para B continua com atraso e travamento. A solução anterior não atingiu o objetivo. O estudo completo solicitado anteriormente continua obrigatório; esta instrução acrescenta critérios concretos para impedir outra correção por suposição.
+
+1. CORRIGIR AS CONCLUSÕES DO RELATÓRIO
+
+Retire “IPC era o gargalo” e “snapback eliminado” como conclusões comprovadas se não houver trace e teste real. Marque como hipóteses/correções ainda sem aceite. Passar 214 testes TS e 139 Rust não mede scrub nem confirma frame apresentado.
+
+URL.createObjectURL é um identificador de uma fonte. Não determina sozinho leitura, decode, cache e render. File do navegador e fetch(url).blob() têm caminhos de aquisição diferentes. Não afirmar “mesma arquitetura do OpenCut” porque ambos usam URL blob.
+
+Código atual conferido:
+- useWorkspaceData.ts:62–66 faz fetch → response.blob() → object URL.
+- local_media_scheme.rs:166–172 lê integralmente no ramo sem Range; Range aberto não tem teto de bytes; múltiplos ranges caem no ramo 200 integral, não são rejeitados.
+- VideoEditor mantém setTime no pai, recalcula captionCue e usa debounce reiniciado de 150 ms.
+- TranscriptPanel e EditorInspector continuam declarados como funções sem memo; verificar renders reais, não comentários.
+Esses fatos não identificam sozinhos a causa restante: precisam entrar na comparação.
+
+2. CONCLUIR O RASTREIO REAL DO OPENCUT
+
+Parta do Classic cf5e79e919144200294fb9fed22a222592a0aeea, correspondente à família indicada pelo README para opencut.app; registre o limite de identificação do deploy.
+
+Siga o consumidor do VideoCache.getFrameAt e a cadeia completa até a tela. O serviço usa Input/BlobSource/CanvasSink, geração de pedidos, serialização e pool. Determine qual caminho efetivamente apresenta vídeo no editor; não presumir que basta atribuir currentTime a um <video>.
+
+Leia integralmente os arquivos alcançáveis de importação, playback, scrub, demux/decode, composição, áudio, timeline, cache e descarte, inclusive implementação herdada e bibliotecas da versão resolvida. Complete o mapa comparativo solicitado anteriormente. Liste lacunas críticas antes de declarar estudo concluído.
+
+3. EXECUTAR UM EXPERIMENTO QUE SEPARE AS CAUSAS
+
+Antes de alterar novamente a lógica de produção, faça baseline e instrumentação leve. Use o mesmo arquivo, alvo e sequência de arrasto, build identificado e condições registradas:
+
+A. OpenCut no navegador: experiência de referência.
+B. Um <video> mínimo no mesmo WebView2 do CutNicePro, com a fonte Blob atual, sem árvore do editor, transcrição, efeitos ou autosave.
+C. Editor CutNicePro completo com essa mesma fonte.
+D. Variação controlada apenas da fonte/transporte no laboratório, se necessária para testar a hipótese de I/O.
+
+O isolamento B é laboratório diagnóstico, não remoção de funcionalidades do produto. Se não puder executar algum caso, documente a limitação. Não concluir pelo resultado de apenas um cenário.
+
+Registre:
+- ponteiro → posição do playhead;
+- alvo solicitado → seek enviado → seeked → frame disponível/apresentado;
+- alvo final e mediaTime observado;
+- renders/long tasks, memória, leituras e requisições.
+Use requestVideoFrameCallback quando disponível para observar o frame e seu mediaTime; identifique a limitação do fallback. seeked isolado não comprova apresentação do frame correto.
+
+Separe preparação fria de uso com cache pronto. Não comparar um editor pronto com outro ainda carregando mídia/modelos.
+
+4. DECIDIR E IMPLEMENTAR COM BASE NA EVIDÊNCIA
+
+Use os resultados para localizar o custo de UI, agendamento, decoder, transporte ou combinação. B versus C ajuda a isolar o editor; diferenças navegador/WebView2 exigem investigação, não uma conclusão automática.
+
+Se o OpenCut usa obtenção/composição de frames diferente, avalie adaptar esse mecanismo. Se o gargalo for React ou tempo solicitado/confirmado, corrija essa camada. Se proxy for necessário, prove o motivo. Não empilhar mais throttles nem substituir dependências sem comparar.
+
+Audite ainda a leitura integral do novo Blob: pico de memória, tempo para podcasts grandes, aborto ao trocar mídia e ciclo de vida das URLs. Não presumir que o Blob inteiro fica em RAM nem que custa zero memória; medir. Preserve originais, projetos, exportação, aparência e alterações preexistentes.
+
+5. ACEITE E ENTREGA
+
+Implemente a fatia completa, testes de regressão pertinentes e runtime com o vídeo de 24 min; adicione vídeo de 2 h se disponível, identificando mídia sintética. Defina critério de fluidez antes da correção e compare com a referência; não aceitar 1–2 s de atraso nem “não crashou” como solução.
+
+Respeite o orçamento do projeto: uma rodada inicial delimitada e no máximo uma repetição justificada, com limite seguro de recursos. Falha do harness exige alternativa mínima dentro do orçamento; sem scrub real, PARTIAL/BLOCKED.
+
+Entregue mapa do caminho dos frames, matriz dos experimentos, métricas antes/depois, diferenças realmente corrigidas e pendências. Atualize documentos canônicos e relatório. Remova instrumentação temporária. Não declarar equivalência ao OpenCut sem comparação executada. Sem commit/push ou bump de versão. VISUAL STATUS: PENDING HUMAN APPROVAL.

@@ -1,0 +1,97 @@
+╔════════════════════════════════════════════╗
+║       CUTNICEPRO — ZCODE REPORT            ║
+╚════════════════════════════════════════════╝
+
+TASK
+  Name: Cortes multimodais pré-editados (goal-cortes-multimodais-2026-10-23)
+  Status: PARTIAL (rodada 3 — M0–M4 concluídos; M5 + matriz A–I e aceite
+    editorial pendentes)
+  Scope: seis marcos do objetivo, sem commit/push/bump, preservando UI/
+    timeline aprovadas e dados do mantenedor. Orçamento acumulado ~8 h
+    ativas: M5 e o laboratório final da matriz precisam de continuidade em
+    rodada própria, SEM renovar o limite automaticamente.
+  Result: M4 concluído no núcleo — tracking controlado (pessoa em
+    movimento; duas pessoas + troca de plano; objeto controlado por cor)
+    com trajetórias/oclusão/reinício por cena, framing suavizado integrado
+    ao contrato existente (enrich → focalPoint → prévia/export; edição
+    manual vence). As três demonstrações obrigatórias executam com FFmpeg
+    real e artefatos persistidos. Demo ponta a ponta em corte REAL da IA +
+    M5 + matriz A–I + aceite editorial permanecem pendentes.
+  FUNCTIONAL STATUS: PARTIAL (escopo comprovado: M0–M4)
+  REGRESSION STATUS: PASS (Rust 152/152, TS 227/227, timeline intacta)
+  VISUAL STATUS: PENDING HUMAN APPROVAL
+  EDITORIAL STATUS: NOT STARTED (amostras ainda não apresentadas)
+
+IMPLEMENTATION
+  Completed nesta rodada (M4):
+  - Estudo de referência em revisão FIXA: ByteTrack d1bf019
+    (byte_tracker.py lido na íntegra). ADOTADA a associação em dois
+    estágios por IoU (alta × ativas+perdidas com fusão de score; baixa ×
+    restantes resgatando oclusão) + buffer + confirmação mínima. REJEITADOS
+    YOLOX e Kalman (dependência/complexidade desnecessárias ao MVP;
+    atribuição ótima por permutação para N≤6, gulosa acima — documentado).
+  - `clips/tracking.rs`: detector por diferença de FUNDO (premissa de
+    câmera estática declarada; diferença entre frames só expõe bordas —
+    descoberto e corrigido na depuração); corte de cena (>45%) reinicia
+    trilhas, rebate o fundo e ARQUIVA as trajetórias do plano anterior
+    (evidência preservada, sem salto indevido); score normalizado por área;
+    caso controlado por COR (pixel mais saturado como semente; centróide
+    com raio; oclusão projetada); framing suavizado (média móvel 5, cauda,
+    clamp [0.12..0.88]; variância <2% = sem framing — fantasmas estáticos
+    nunca enquandram); em ambiguidade, enquadramento amplo/seguro.
+    Associação falante↔pessoa NÃO implementada e nunca fingida.
+  - Integração: `enrich_clip` rastreia a janela a 3 fps e grava
+    `MultimodalEvidence.framing{cx,cy,source:"tracking"}` (serde opcional —
+    coleções antigas seguem válidas); `isolatedClipSettings` aplica o
+    framing como focalPoint APENAS sem edição salva (manual vence = desativa
+    a automação por corte); prévia e exportação consomem o mesmo
+    focalPoint/crop já existentes.
+  Not completed:
+  - Demo ponta a ponta (trajetória → prévia → export num corte REAL gerado
+    pela IA) — fica para o laboratório do aceite A (com M5).
+  - M5: geração automática pós-import, recuperação, cache por mídia.
+  - Matriz A–I (gate A no vídeo inteiro, B ≥3 cortes, C rubrica, D completo,
+    F com IA ativa, G memória, I 2 h) e aceite editorial do mantenedor.
+
+VALIDATION
+  Rust 152/152 (+5 tracking: 3 demos com FFmpeg REAL — pessoa L→R com
+    framing e fantasma rejeitado; duas pessoas com corte duro sem salto e
+    trilhas arquivadas resetByScene; objeto por cor com oclusão 2–3 s e
+    recuperação — + associação ótima com limiar + detector ignora corte).
+  TS 227/227 + tsc (contrato framing com validação runtime). Exe do lab
+    reconstruído (lição da rodada 2 aplicada).
+  Artefatos: `m4-demos/` — 3 MP4s + trajetórias JSON + cor alvo do objeto
+    (categoria "bola laranja", seleção por pixel mais saturado).
+  Bugs reais achados e corrigidos nesta rodada: atribuição minimizava custo
+    PULANDO casamentos (agora maximiza pares, depois custo); score em
+    escala errada (área bruta → normalizada); drawbox com expressão não
+    renderiza neste build (fixtures migradas para overlay); cor dominante
+    por média pegava o fundo (agora semente por saturação); trilhas
+    pré-corte eram descartadas (agora arquivadas como trajetória válida).
+
+FILES
+  Created: app/src-tauri/src/clips/{tracking.rs, tracking_tests.rs};
+    docs/reports/evidence/goal-cortes-multimodais-2026-10-23/{marco4-
+    tracking.md, m4-demos/*}
+  Modified: app/src-tauri/src/clips/{mod.rs, multimodal.rs (framing no
+    enriquecimento), types.rs (Framing)}; app/src/lib/clips.ts (framing no
+    contrato + isolatedClipSettings); docs/engineering/ENGINE-HANDOFF.md
+  Unexpected changes: NONE
+
+LIMITS
+  1. Tracking de pessoas assume CÂMERA ESTÁTICA (diferença de fundo) —
+     declarado; movimento de câmera sairá como "sem framing" (seguro).
+  2. Objeto pequeno não dispara o detector de movimento — o caso
+     controlado usa COR (como projetado; registrado na evidência).
+  3. A demo ponta a ponta em corte real da IA não rodou nesta rodada
+     (orçamento/contexto) — integração ligada no código, validação no lab
+     do aceite.
+  4. Mídia de 2 h: não testada (aceite I).
+
+CONTINUITY
+  ENGINE-HANDOFF ("TAREFA 2026-10-23 — CORTES MULTIMODAIS") com M4 completo
+  e PRÓXIMO PASSO: M5 (auto pós-import + recuperação + cache) e o
+  laboratório final da matriz A–I no vídeo de 24 min inteiro (gate A com
+  multimodal+framing, B/C/D/E/F/G/I), culminando na APRESENTAÇÃO das
+  amostras exportadas para o aceite EDITORIAL do mantenedor. Sem
+  commit/push/bump.

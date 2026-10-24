@@ -1,0 +1,142 @@
+╔════════════════════════════════════════════╗
+║       CUTNICEPRO — ZCODE REPORT            ║
+╚════════════════════════════════════════════╝
+
+TASK
+  Name: Revisão dos relatórios multimodais e prompt ao ZCode.
+  Status: PASS para análise/prompt; produto continua PARTIAL.
+  Scope: Conferência estática, explicação e continuidade.
+  Objective: Decidir o próximo caminho após cancelar multimodal.
+  Result: Recomendo preservar EditPlan/timeline e fechar o caminho textual.
+    Desligar multimodal isoladamente não exige goal; concluir qualidade,
+    recursos e fluxo completo justifica um NOVO goal substitutivo.
+    Goal organiza o trabalho; não garante entrega ou qualidade por si só.
+
+ANÁLISE DOS RELATÓRIOS
+  1. M0/M1 comprovam preparação e experimentos de modalidade,
+     não que os cortes ficaram editorialmente melhores.
+  2. M2 é aproveitável: montagem, undo/redo, salvar/reabrir e exportação
+     tiveram prova delimitada no app. O corte inicial foi semeado:
+     isso não comprova montagem automática produzida pela IA.
+  3. M3: texto levou 11min14s e multimodal 37min56s (3,38× no ensaio).
+     São 9 contra 10 cortes, com executável/server diferentes.
+     O alvo de 6 min recebeu contexto de mais 2 min em cada lado.
+     Não é comparação que isola a modalidade, nem previsão do vídeo todo.
+  4. Código: a seleção inicial precede o enriquecimento visual;
+     o resumo/análise recebe a transcrição. Receber imagens e anexar
+     descrições não demonstra que elas melhoraram escolha ou resumo.
+  5. M4: há demos controladas relatadas; o contrato aplicado guarda
+     um centro cx/cy. Isso não é câmera acompanhando o falante no tempo.
+  6. M5 avançou além dos relatórios: auto-geração já existe, ligada
+     por padrão, pede Gemma e pode escolher multimodal pelos arquivos.
+     A guarda useRef não comprova cancelamento/recuperação duráveis.
+     Reabrir sem reinício inesperado precisa de teste.
+
+IMPLEMENTATION
+  Completed: Análise e prompt de execução preparado.
+  Changes: Somente documentação, prompt e auditoria.
+  Architecture impact: Nenhum nesta tarefa.
+  Not completed: Nenhuma correção ou teste do app executado aqui.
+  Decisões propostas:
+    Preservar Gemma textual como ponto de partida e medir seu custo:
+    retirar imagens não torna automaticamente um modelo 12B leve.
+    Calibrar instruções, exemplos/contexto e avaliação separada antes
+    de considerar treino de pesos. Não treinar com notas não revisadas.
+    Evitar auto-carga durante estabilização; cancelamento não pode
+    recomeçar ao reabrir. Manter os experimentos antigos recuperáveis.
+    Exigir três cortes reais exportados para avaliação do mantenedor.
+    As ~8 h relatadas são acumuladas, não 3 + 7,5 + 8 h.
+    O novo orçamento de 4 h é PROPOSTO no prompt, não renovação automática.
+
+FILES
+  Created:
+    C:/CutNicePro/docs/reports/evidence/goal-cortes-multimodais-2026-10-23/direcionamento-textual-zcode.txt
+    C:/CutNicePro/docs/reports/evidence/goal-cortes-multimodais-2026-10-23/direcionamento-textual-git-pending.txt
+    Histórico indicado em REPORT.
+  Modified: ENGINE-HANDOFF.md (registro canônico); reports/LATEST.txt.
+  Deleted: 0
+  Unexpected changes: Nenhuma nova diferença de status fora desses artefatos.
+
+VALIDATION
+  FUNCTIONAL STATUS: PASS para revisão/prompt; app PARTIAL.
+  REGRESSION STATUS: NOT TESTED
+  VISUAL STATUS: PENDING HUMAN APPROVAL
+  Typecheck / Lint / Unit / Integration / Regression / Visual: SKIP.
+  Runtime verification: SKIP — sem abrir app ou carregar modelo.
+  Total passed / failed: 0 testes do aplicativo executados.
+  Total skipped: Suítes e laboratório não repetidos.
+  Conferência: leitura de fontes/artefatos, cálculo dos tempos,
+    existência do prompt, continuidade e igualdade dos relatórios.
+  Não reutilizar a medição v5 de 5 ms: já foi invalidada no registro.
+
+HOOKS / HARNESS
+  Hooks active: Execução automática não comprovada nesta sessão.
+  PreToolUse / PostToolUse / Stop: Não observados.
+  Baseline / Gate result: SKIP — sem implementação.
+  Evidence: Leitura estática; sem novas medições de desempenho.
+
+MCP / SKILLS
+  Tools used: Arquivos, edição documental e fontes técnicas oficiais.
+  Skills: documentation-and-adrs.
+  Connection status: Arquivo solicitado ao painel; abertura retornou queued.
+  Failures: Nenhum bloqueio para a análise/prompt.
+  Pending activation: Nenhuma meta ou integração criada.
+
+GIT
+  Branch: main
+  HEAD: e22555b682ccad97a68eb356032c245b86b54baf
+  Latest commit: feat(clips): add per-clip fill mode ("fit") persisted from generation options
+  Commits created: 0
+  Push: NOT EXECUTED
+  Remote: origin → https://github.com/FrosttyS18/CutNicePro.git
+  Working tree: MODIFIED / UNTRACKED, com index preexistente preservado.
+  Pending files: 464; havia 461 no snapshot inicial desta revisão.
+    Relação integral em direcionamento-textual-git-pending.txt.
+
+EVIDENCE
+  Commands executed: Leitura de fontes/relatórios, status Git e diff check.
+  Relevant logs: Evidências históricas M0–M4 e comparação M3 consultadas.
+  Screenshots: Prints/artefatos anteriores não constituem nova validação.
+  Test artifacts: Nenhuma nova execução ou MP4.
+  Reproduction details:
+    text_engine.rs:54–57; generation.rs:203/229; semantic.rs:43;
+    tracking.rs:89/107; ProjectWorkspace.tsx:39–50;
+    workspace-store.ts:249. Recorte M3 em multimodal-m3-lab.mjs:75.
+
+ISSUES
+  Bugs found: Preferência multimodal incidental e auto-carga presentes;
+    risco de retomada após cancelamento identificado estaticamente,
+    não reproduzido nesta tarefa.
+  Unresolved failures: Aceite editorial não iniciado; montagem automática
+    e framing em corte real ainda não comprovados pelo material revisado.
+  Regressions: Não avaliadas nesta revisão.
+  Risks: Relatórios não fornecem medição suficiente de pico de RAM/CPU
+    ou temperatura para concluir dano térmico; VRAM não equivale a RAM.
+    Prova de visão não equivale a benefício editorial.
+  Blockers: Nenhum para a análise; implementação depende da execução seguinte.
+
+FINAL
+  Delivery status: Análise e prompt entregues; objetivo antigo permanece parcial.
+  Requirements met: Relatórios reconciliados com código e continuidade;
+    próximo objetivo com aceites, recursos e orçamento explícitos.
+  Remaining work: Implementação textual, medições e avaliação humana.
+  User action required: Decidir encaminhar o prompt como novo goal.
+  Restart required: Não nesta tarefa.
+  Ready for next task: Prompt pronto; nenhum goal iniciado aqui.
+
+REPORT
+  Latest file: C:/CutNicePro/docs/reports/LATEST.txt
+  Historical file: C:/CutNicePro/docs/reports/history/2026-10-23_074019_revisao-goal-cortes-texto.txt
+
+GUIA DO MANTENEDOR — O QUE MUDOU E COMO TESTAR
+  O que mudou: Direcionamento escrito; aplicativo não foi alterado.
+  1. Leia o prompt direcionamento-textual-zcode.txt.
+     Esperado: preservar M2, texto como caminho normal, medição antes
+     de nova carga longa, calibração separada da avaliação e três MP4s reais.
+  2. Se concordar com escopo e novo limite de 4 h, cadastre/encaminhe
+     como novo objetivo ao ZCode. Não apenas retome M5 multimodal.
+     Esperado: nova execução autorizada e meta anterior registrada
+     como parcial/replanejada, sem apagar resultados.
+  Nada para testar manualmente no aplicativo por esta entrega.
+
+END OF REPORT

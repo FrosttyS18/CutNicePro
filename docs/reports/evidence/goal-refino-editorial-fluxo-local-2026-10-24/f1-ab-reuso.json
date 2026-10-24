@@ -1,0 +1,77 @@
+{
+  "window": {
+    "start": 600,
+    "end": 900
+  },
+  "arms": [
+    {
+      "label": "exec",
+      "textServer": false,
+      "elapsedS": 120,
+      "jobState": "completed",
+      "jobError": null,
+      "backend": "experimentalGemma",
+      "clips": [
+        {
+          "start": 640.6,
+          "end": 690,
+          "score": 89,
+          "title": "O erro de seguir checklists em portfólios de design"
+        }
+      ],
+      "ramPeakMB": 10219,
+      "ramBaseMB": 1251,
+      "vramPeakUsedMiB": 8578,
+      "vramBaseUsedMiB": 2637
+    },
+    {
+      "label": "server",
+      "textServer": true,
+      "elapsedS": 843,
+      "jobState": "completed",
+      "jobError": null,
+      "backend": "experimentalGemmaServer",
+      "clips": [
+        {
+          "start": 792.8,
+          "end": 838.9,
+          "score": 91,
+          "title": "Como definir seu papel e responsabilidades em um projeto de "
+        },
+        {
+          "start": 640.6,
+          "end": 690,
+          "score": 90,
+          "title": "O erro de portfólios baseados em checklists de processos"
+        },
+        {
+          "start": 696.6,
+          "end": 730.5,
+          "score": 87,
+          "title": "A importância de ter clareza e propósito ao aplicar técnicas"
+        },
+        {
+          "start": 730.5,
+          "end": 787.1,
+          "score": 70,
+          "title": "Como apresentar resultados e aprendizados em um case"
+        },
+        {
+          "start": 850.1,
+          "end": 886.8,
+          "score": 61,
+          "title": "Como otimizar a leitura e clareza de um website próprio"
+        }
+      ],
+      "ramPeakMB": 17866,
+      "ramBaseMB": 1172,
+      "vramPeakUsedMiB": 2769,
+      "vramBaseUsedMiB": 2727
+    }
+  ],
+  "analise": {
+    "veredito": "GANHO NÃO DEMONSTRADO — server textual foi 7x MAIS LENTO (843s vs 120s) e usou MAIS RAM total (17,9GB vs 10,2GB, pois mantém o modelo carregado no server ~7GB HOST + webview) apesar de MENOS VRAM (2,8 vs 8,6GiB). A hipótese de que a recarga dominava NÃO se confirmou nesta janela: o braço exec fez apenas ~5-6 chamadas (120s) e a recarga do exe é rápida (~10s no Vulkan); o server adicionou latência HTTP + prompt-eval serializada por request (sem batch) e o pipeline do app faz ~10+ chamadas sequenciais no caminho completo desta janela (5 selection + evaluates + analysis), cada uma com prompt grande re-processado SEM cache de KV entre requests distintos.",
+    "decisao": "REJEITADO como default por ora (regra do goal: só adotar com ganho medido). Permanece opt-in CNP_TEXT_SERVER=1 com queda automática implementada e testada (159/159). Reuso só fará sentido com: (a) cache KV/reuso de prompt-prefix entre chamadas do mesmo pipeline, ou (b) batch das chamadas — ambos fora do escopo autorizado desta rodada.",
+    "notaQualidade": "Braço server produziu 5 cortes vs 1 do exec na mesma janela — diferença de amostragem (mesma seed) via transporte diferente; não é evidência de qualidade, janela pequena. Registrar sem concluir qualidade."
+  }
+}

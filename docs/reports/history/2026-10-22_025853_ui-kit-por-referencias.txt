@@ -1,0 +1,108 @@
+╔════════════════════════════════════════════╗
+║       CUTNICEPRO — ZCODE REPORT            ║
+╚════════════════════════════════════════════╝
+
+TASK
+  Name: UI Kit por referências reais
+  Status: PASS
+  Scope: Somente UI Kit e sua biblioteca de apoio no mesmo FigCraft.
+  Objective: Reconstruir componentes a partir dos quatro prints recebidos.
+  Result: UI Kit editável no último slide; demais slides preservados.
+
+IMPLEMENTATION
+  Completed: Cores, Poppins Regular/Bold, espaçamento de base 4,
+    grid de 12 colunas, botões, abas, busca, seletor, switches,
+    sliders e presets de legenda.
+  Not completed: Aprovação estética humana; hover é variante de design.
+  Changes: 22 componentes, cinco conjuntos, 13 variantes,
+    16 instâncias no slide, 23 variáveis e cinco estilos.
+  Architecture impact: Nenhum; código não consultado nem alterado.
+
+FILES
+  Created: design/case-study-v4/ui-kit/ — prévia PNG, tokens,
+    fontes, inspeção, validação e inventário Git; relatório histórico abaixo.
+  Modified: Mesmo FigCraft em design/case-study-v2/;
+    PDF, prévias e registros auxiliares em design/case-study-v4/;
+    ENGINE-HANDOFF.md, CASE-STUDY-LOG.md, PRODUCT-BRAIN.md e LATEST.txt.
+  Deleted: Nenhum arquivo preexistente.
+  Unexpected changes: Nenhuma fora do escopo; pendências anteriores mantidas.
+
+VALIDATION
+  FUNCTIONAL STATUS: PASS — artefato FigCraft.
+  REGRESSION STATUS: NOT TESTED — aplicativo fora do escopo.
+  VISUAL STATUS: PENDING HUMAN APPROVAL.
+  Typecheck: SKIP; Lint: SKIP; Unit tests: SKIP;
+  Integration tests: SKIP; Regression tests: SKIP — sem mudança de código.
+  Visual tests: PASS técnico — geometria, camadas e render do UI Kit.
+  Runtime verification: PASS no FigCraft; estados, texto e ícone verificados.
+  Total passed: 66 critérios de artefato; zero testes do aplicativo.
+  Total failed: 0 finais; gap padrão 10 em dois chips corrigido para 8.
+  Total skipped: Cinco categorias de testes de código.
+
+HOOKS / HARNESS
+  Hooks active: Não verificados.
+  PreToolUse: Sem rejeição observada.
+  PostToolUse: Sem evidência adicional utilizada.
+  Stop: Não usado como prova de conclusão.
+  Baseline: SKIP — tarefa de apresentação.
+  Gate result: 66 PASS / 0 FAIL finais.
+  Evidence: design/case-study-v4/ui-kit/validation.json.
+
+MCP / SKILLS
+  Tools used: FigCraft attached, Node REPL, PDF skill, Poppler e pypdf.
+  Connection status: Conectado; arquivo salvo, dirty=false.
+  Failures: Dois comandos com parâmetros inválidos corrigidos durante
+    a montagem; nenhuma falha pendente de criação ou exportação.
+  Pending activation: Nenhuma.
+
+GIT
+  Branch: main
+  HEAD: e22555b682ccad97a68eb356032c245b86b54baf
+  Latest commit: feat(clips): add per-clip fill mode ("fit") persisted from generation options
+  Commits created: Nenhum.
+  Push: NOT EXECUTED.
+  Remote: origin → https://github.com/FrosttyS18/CutNicePro.git; main.
+  Working tree: MODIFIED / UNTRACKED, incluindo pendências preexistentes.
+  Pending files: Lista integral em design/case-study-v4/ui-kit/git-status.txt;
+    inclui app, assets, design e documentação anteriores, além desta entrega.
+
+EVIDENCE
+  Commands executed: get_node, inspect_document, component/instance/variable,
+    save_file, export, file.exportFramesPdf, pdftoppm, pypdf e git de leitura.
+  Relevant logs: ui-kit/sources.json e ui-kit/validation.json.
+  Screenshots: UI-Kit-CutNicePro.png; render da página 12 do PDF inspecionado.
+  Test artifacts: 49 objetos preexistentes fora do slide preservados;
+    sem overflow, colisão textual ou texto coberto no UI Kit.
+  Reproduction details: Mesmo arquivo, página 05, frame 1072;
+    principais na página 02, frame 1227. PDF mantém 12 páginas 1920×1080
+    e a ordem ajustada pelo mantenedor, com UI Kit no final.
+
+ISSUES
+  Bugs found: Gap residual de auto layout corrigido.
+  Unresolved failures: Nenhuma.
+  Regressions: Aplicativo não testado.
+  Risks: Kit é artefato da apresentação; não altera o design system do app.
+  Blockers: Nenhum.
+
+FINAL
+  Delivery status: PASS no escopo; IN REVIEW.
+  Requirements met: Componentes editáveis, variantes, tokens, grid e Poppins.
+  Remaining work: Revisão estética humana.
+  User action required: Avaliar o slide aberto no FigCraft.
+  Restart required: Não.
+  Ready for next task: Sim.
+
+REPORT
+  Latest file: docs/reports/LATEST.txt
+  Historical file: docs/reports/history/2026-10-22_025853_ui-kit-por-referencias.txt
+
+GUIA DO MANTENEDOR — O QUE MUDOU E COMO TESTAR
+  O que mudou: O UI Kit simples foi substituído por componentes dos prints.
+  Teste 1 — 1. Abra o último slide da página 05. 2. Confira cores,
+    tipografia, botões, abas e ajustes. Esperado: estados e hierarquia visíveis.
+  Teste 2 — 1. Selecione um botão ou aba. 2. Altere Estado, Rótulo e Ícone.
+    Esperado: variante correspondente e conteúdo editável, sem desmontar o grupo.
+  Teste 3 — 1. Confira os demais slides e a ordem do PDF.
+    Esperado: seus ajustes preservados e UI Kit no final.
+
+END OF REPORT

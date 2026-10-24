@@ -1,0 +1,94 @@
+{
+  "emptyState": "C:\\CutNicePro\\docs\\reports\\evidence\\goal-recuperacao-autoclip-2026-10-23\\g3c-projeto-vazio.png",
+  "emptyButtons": [
+    {
+      "text": "Importar vídeo",
+      "x": 1828,
+      "y": 349,
+      "w": 121,
+      "h": 36
+    },
+    {
+      "text": "Excluir projeto",
+      "x": 1819,
+      "y": 401,
+      "w": 139,
+      "h": 34
+    }
+  ],
+  "toolsWithTranscript": "C:\\CutNicePro\\docs\\reports\\evidence\\goal-recuperacao-autoclip-2026-10-23\\g3c-ferramentas-com-transcricao.png",
+  "toolButtons": [
+    {
+      "text": "",
+      "x": 1541,
+      "y": 128,
+      "w": 30,
+      "h": 30
+    },
+    {
+      "text": "Editar vídeo",
+      "x": 2263,
+      "y": 217,
+      "w": 186,
+      "h": 36
+    },
+    {
+      "text": "Transcrever novamente",
+      "x": 2263,
+      "y": 263,
+      "w": 186,
+      "h": 48
+    },
+    {
+      "text": "Gerar cortes",
+      "x": 2263,
+      "y": 321,
+      "w": 186,
+      "h": 34
+    },
+    {
+      "text": "Cortes (12)",
+      "x": 2263,
+      "y": 363,
+      "w": 186,
+      "h": 34
+    },
+    {
+      "text": "Exportar vídeo",
+      "x": 2263,
+      "y": 405,
+      "w": 186,
+      "h": 34
+    },
+    {
+      "text": "Legendas",
+      "x": 2263,
+      "y": 449,
+      "w": 186,
+      "h": 34
+    },
+    {
+      "text": "Enquadramento",
+      "x": 2263,
+      "y": 493,
+      "w": 186,
+      "h": 34
+    },
+    {
+      "text": "Excluir projeto",
+      "x": 2263,
+      "y": 537,
+      "w": 186,
+      "h": 34
+    }
+  ],
+  "generateDialog": "C:\\CutNicePro\\docs\\reports\\evidence\\goal-recuperacao-autoclip-2026-10-23\\g3c-dialogo-gerar-checkbox.png",
+  "dialogCheckbox": {
+    "text": "Gerar automaticamente quando a transcrição terminar",
+    "checked": false,
+    "x": 1485,
+    "y": 889,
+    "w": 364
+  },
+  "narrow": "C:\\CutNicePro\\docs\\reports\\evidence\\goal-recuperacao-autoclip-2026-10-23\\g3c-projeto-vazio-900px.png"
+}

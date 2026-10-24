@@ -4,6 +4,16 @@
 > Priorização MoSCoW justificada por valor/dependência/risco. Sem estimativas de horas
 > inventadas (dependem de avaliação técnica). Há código implementado e itens ainda PLANNED; IN REVIEW não equivale a aceite do mantenedor. Estado operacional e histórico de entregas são distintos.
 
+## Correção da biblioteca — implementação 2026-10-24
+
+Vínculos: JRN-002/008, US-003/014/015, FR-004/010, BR-019/020, AC-006/041/044/045 e responsividade NFR-002. Escopo autorizado: galeria leve, separação vertical por projeto e Novo durante uma hora. Sem alteração da seleção editorial, notas, revisão, mídia original ou edições.
+
+- Implementado: JPEGs locais em cache de até 640 px, produzidos em série, sem players por card; cache em memória limitado a 64 miniaturas e compartilhamento de solicitações; workspace lido uma vez por projeto na galeria.
+- Implementado: seções por projeto com nome/contagem, ordenação Por projeto como padrão global, Mais recentes adicional e filtros/ações existentes preservados. Ordenar clipes mantém as seções.
+- Implementado: Novo expira ao completar 60 minutos da criação persistida, independente de abertura; relógio atualiza com a tela ociosa; nenhum timestamp fabricado para legados. Para futuras gerações, criação marcada após seleção/análise, sem consumir a hora durante a inferência.
+- Aceite automatizado: 27 cards sem video no DOM; fila com no máximo uma leitura ativa; cache reutilizado no retorno; erro de miniatura isolado; grupos por ID/projeto; Novo em 59:59/60:00, após abertura e durante ociosidade. Compatibilidade de editor, download, persistência e demais testes executados permanece documentada no handoff.
+- Aceite manual PENDENTE, a cargo do mantenedor: reiniciar a build padrão se necessário, percorrer a biblioteca para baixo/cima duas vezes, conferir seções e abrir/fechar um corte recente sem perder Novo. Não é necessário esperar uma hora: o limite é verificado com relógio controlado nos testes.
+
 ## Prioridade vigente — revisão documental 03N, 2026-10-19
 
 Esta etapa atualiza documentação; não corrige o código, retira pesos nem muda a UI. As decisões abaixo foram solicitadas pelo mantenedor após testar a 03M e têm implementação pendente.

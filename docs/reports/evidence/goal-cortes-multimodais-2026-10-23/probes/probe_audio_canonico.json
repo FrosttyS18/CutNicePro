@@ -1,0 +1,4 @@
+{
+ "prompt": "<|turn>system\nVocê analisa áudio objetivamente.<turn|\n<|turn>user\n<__media_lrjA26vXDhges5PlOnoXb1k5TSFvwRpd__>Oua este audio e responda: quantos eventos sonoros voce percebe e qual a ordem deles do mais agudo para o mais grave?<turn|\n<|turn>model\n<|channel>thought\n<channel|>",
+ "resp": "O áudio apresenta uma sequência de **três eventos sonoros** distintos.\n\nA ordem deles, do mais **agudo para o mais grave**, é a seguinte:\n\n1.  **O primeiro som** (um toque metálico/cristalino de alta frequência).\n2.  **O segundo som** (um impacto intermediário).\n3.  **O terceiro som** (um impacto profundo e de baixa frequência)."
+}

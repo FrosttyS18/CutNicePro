@@ -1,0 +1,33 @@
+0.00.125.252 I main: loading model: C:\CutNicePro\experiments\clip-selection-ab\models\home-e\gemma-4-12b-it-qat-q4_0.gguf
+0.00.947.487 W load: control-looking token:     50 '<|tool_response>' was not control-type; this is probably a bug in the model. its type will be overridden
+0.00.947.572 W load: control-looking token:    212 '</s>' was not control-type; this is probably a bug in the model. its type will be overridden
+0.00.997.035 W load: '</s>' is a normal token here, removing it from EOG list
+0.04.878.383 I cmn          init: llama threadpool init, n_threads = 8
+0.05.430.312 W init_audio: audio input is in experimental stage and may have reduced quality:
+    https://github.com/ggml-org/llama.cpp/discussions/13759
+0.05.430.333 E ERR: Invalid input specified with --image/--audio
+Internal debugging tool for mtmd; See mtmd-debug.md for the pytorch equivalent code
+Note: we repurpose some args from other examples, they will have different meaning here
+
+Usage: C:\CutNicePro\.tooling\vendor\llamacpp-b11829\llama-mtmd-debug.exe -m <model> --mmproj <mmproj> -p <mode> -n <size> --image <image> --audio <audio>
+
+    -n <size>: number of pixels per edge for image (always square image), or number of samples for audio
+
+    -p "encode" (debugging encode pass, default case):
+        --image can be:
+          "white", "black", "gray": filled 1.0f, 0.0f and 0.5f respectively
+          "red", "green", "blue": filled with respective colors
+          "cb": checkerboard pattern, alternate 1.0f and 0.0f
+          "rainbow": raspberry-pi-like rainbow pattern
+        --audio can be:
+          "one", "zero", "half": filled 1.0f, 0.0f and 0.5f respectively
+          "1010": checkerboard pattern, alternate 1.0f and 0.0f
+
+    -p "preproc" (debugging preprocessing pass):
+        --image can be:
+          "white", "black", "gray": filled image with respective colors
+          "cb": checkerboard pattern
+        --audio can be:
+          "one", "zero", "half": filled 1.0f, 0.0f and 0.5f respectively
+          "440": sine wave with 440 Hz frequency
+

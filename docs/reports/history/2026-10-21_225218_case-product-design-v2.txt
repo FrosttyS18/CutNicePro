@@ -1,0 +1,122 @@
+╔════════════════════════════════════════════╗
+║       CUTNICEPRO — ZCODE REPORT            ║
+╚════════════════════════════════════════════╝
+
+TASK
+  Name: CutNice Pro — apresentação v2 para entrevista
+  Status: PASS no escopo de entrega dos artefatos
+  Scope: apresentação, roteiro, fontes e registros obrigatórios.
+  Objective: executar o plano aprovado de 8 frames principais + 4 apoios.
+  Result: novo FigCraft editável, PDF de 12 páginas e roteiro de fala.
+  FUNCTIONAL STATUS: PASS
+  REGRESSION STATUS: NOT TESTED — aplicativo não alterado
+  VISUAL STATUS: PENDING HUMAN APPROVAL
+
+IMPLEMENTATION
+  Completed: narrativa centrada em decisões, telas reais, pesquisa identificada
+    por proveniência, biblioteca/transcrição, componentes e Social Team VENDE-C.
+  Changes: 12 frames 1920×1080, 20 variáveis, 9 componentes, 4 variantes de botão,
+    11 instâncias e 10 imagens incorporadas. Biblioteca e referências em páginas próprias.
+  Not completed: aprovação estética/narrativa humana; medição de usabilidade.
+  Architecture impact: nenhum. Código, dependências e versão preservados.
+  Decisões técnicas: FigCraft 0.8.0 via MCP attached, sem substituir por Figma.
+    Textos e diagramas editáveis; screenshots permanecem imagens.
+    PDF nativo com texto selecionável. V1 e miniportfólio preservados por SHA-256.
+
+FILES
+  Created: 45 arquivos em C:/CutNicePro/design/case-study-v2/ e este relatório histórico.
+    Relação integral: C:/CutNicePro/design/case-study-v2/files-created.txt
+  Modified: docs/engineering/ENGINE-HANDOFF.md; docs/portfolio/CASE-STUDY-LOG.md;
+    docs/product/PRODUCT-BRAIN.md; docs/reports/LATEST.txt.
+  Deleted: nenhum arquivo preexistente.
+  Unexpected changes: NONE atribuídas à tarefa; alterações anteriores preservadas.
+
+VALIDATION
+  Typecheck: SKIP — sem código alterado
+  Lint: SKIP — sem código alterado
+  Unit tests: SKIP — aplicativo fora do escopo
+  Integration tests: PASS — autoria MCP, salvamento e leitura nativa pela CLI
+  Regression tests: SKIP — aplicativo fora do escopo
+  Visual tests: SKIP para aprovação estética; 12 frames inspecionados
+  Runtime verification: PASS — FigCraft real, salvamento e exportação
+  Total passed: 47 verificações objetivas de artefato
+  Total failed: 0 nas verificações finais
+  Total skipped: 5 categorias acima; nenhum teste do aplicativo reexecutado
+  Conferido: dimensões, limites, texto nativo, fontes, variantes, PDF e preservação.
+    Zero colisões de caixas de texto acima de 3 px ou oclusões por irmãos superiores
+    no escopo geométrico inspecionado. Uma rodada delimitada de correção.
+
+HOOKS / HARNESS
+  Hooks active: configuração existente; execução automática não observada.
+  PreToolUse / PostToolUse / Stop / Baseline: não executados manualmente.
+  Gate result: não utilizado como evidência de aprovação.
+  Evidence: validation.json e document-inspection.json no diretório da entrega.
+
+MCP / SKILLS
+  Tools used: FigCraft MCP por CLI local, arquivos e runtimes incluídos.
+  Skills: apresentações e PDF.
+  Connection status: conectado ao FigCraft 0.8.0 em 127.0.0.1:7979.
+  Failures: duas falhas transitórias de helper corrigidas; dois frames vazios
+    da nova v2 removidos antes da montagem. Sem falha final de exportação.
+  Pending activation: nenhuma.
+
+GIT
+  Branch: main
+  HEAD: e22555b682ccad97a68eb356032c245b86b54baf
+  Latest commit: feat(clips): add per-clip fill mode ("fit") persisted from generation options
+  Commits created: nenhum
+  Push: NOT EXECUTED
+  Remote: origin → https://github.com/FrosttyS18/CutNicePro.git; origin/main
+  Working tree: MODIFIED / UNTRACKED, inclusive pendências preexistentes.
+  Pending files: entrega v2, quatro documentos e relatório histórico desta tarefa.
+    Inventário integral, incluindo pendências anteriores: design/case-study-v2/git-pending.txt
+
+EVIDENCE
+  Commands executed: FigCraft create/set/inspect/save/export; CLI info --json;
+    pypdf e pdftoppm; leitura de fontes; git status/diff/log/remote.
+  Relevant logs: sources.json, validation.json, variables.json, components.json.
+  Screenshots: renders/01.png a 12.png; renders/pdf-01.png a pdf-12.png.
+  Test artifacts: PDF com 12 páginas 1920×1080 e texto selecionável em todas.
+  Reproduction details: abrir a página 01 do arquivo FigCraft abaixo.
+
+ENTREGA
+  FigCraft: C:/CutNicePro/design/case-study-v2/CutNicePro-Product-Design-Case-Study-v2.figcraft
+  PDF: C:/CutNicePro/design/case-study-v2/CutNicePro-Product-Design-Case-Study-v2.pdf
+  Roteiro: C:/CutNicePro/design/case-study-v2/Roteiro-de-fala-v2.txt
+  Fontes: capturas históricas Home/editor, explorações Creative Studio e AI Clip
+    Workspace, três telas do miniportfólio Social Team, documentação, tokens e relatos do autor.
+
+ISSUES
+  Bugs found: nenhum bug do aplicativo investigado nesta tarefa.
+  Unresolved failures: nenhuma na entrega dos artefatos.
+  Regressions: aplicativo não testado.
+  Risks: capturas históricas não comprovam cada interação atual. Relatos de 14 conversas,
+    13 experimentações e 22 ferramentas não vieram acompanhados de registros brutos.
+    Biblioteca usa reconstrução explicativa. Mudanças sem reteste medido.
+    Social Team: 82% refere-se apenas aos custos recorrentes informados.
+  Blockers: nenhum para abrir/editar; aprovação humana pendente.
+
+FINAL
+  Delivery status: v2 entregue, IN REVIEW.
+  Requirements met: 12 frames, PDF, roteiro, fontes, editabilidade e original preservado.
+  Remaining work: avaliação estética/narrativa pelo mantenedor.
+  User action required: revisar e ensaiar. Rota curta: 1, 2, 5 e 8.
+  Restart required: não
+  Ready for next task: sim
+
+REPORT
+  Latest file: C:/CutNicePro/docs/reports/LATEST.txt
+  Historical file: C:/CutNicePro/docs/reports/history/2026-10-21_225218_case-product-design-v2.txt
+
+GUIA DO MANTENEDOR — O QUE MUDOU E COMO TESTAR
+  O que mudou: a v2 explica suas decisões e contribuição, com Social Team no apoio.
+  Teste 1 — Documento:
+    1. Abrir o FigCraft entregue e percorrer os 12 frames da página 01.
+    2. Editar um texto e desfazer. Consultar variantes na página 02.
+    Resultado esperado: conteúdo nativo editável e componentes vinculados.
+  Teste 2 — Apresentação:
+    1. Abrir o PDF e conferir as 12 páginas.
+    2. Ensaiar com o roteiro, começando pela rota 1, 2, 5 e 8.
+    Resultado esperado: narrativa clara; aprovação estética permanece sua.
+
+END OF REPORT

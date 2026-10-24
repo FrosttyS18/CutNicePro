@@ -1,0 +1,134 @@
+╔════════════════════════════════════════════╗
+║       CUTNICEPRO — ZCODE REPORT            ║
+╚════════════════════════════════════════════╝
+
+TASK
+  Name: Case Product Design — CutNice Pro v1
+  Status: PARTIAL — entrega criada; aprovação humana pendente
+  Scope: apresentação, artefatos de apoio e registros obrigatórios.
+  Objective: preparar o case para entrevista de Product Designer Pleno.
+  Result: 12 frames editáveis 1920 × 1080 no FigCraft 0.8.0, via MCP attached.
+  FUNCTIONAL STATUS: PASS — autoria e estrutura verificadas
+  REGRESSION STATUS: NOT TESTED — aplicativo não alterado
+  VISUAL STATUS: PENDING HUMAN APPROVAL
+
+DOCUMENTO ENTREGUE
+  FigCraft: C:/CutNicePro/design/case-study-v1/CutNicePro-Product-Design-Case-Study-v1.figcraft
+  PDF de apoio: C:/CutNicePro/design/case-study-v1/CutNicePro-Product-Design-Case-Study-v1.pdf
+  Página 01: 12 frames, em ordem de leitura; página 02: biblioteca.
+
+IMPLEMENTATION
+  Completed: as 12 seções solicitadas; HMW, benchmark, proto-persona/JTBD,
+    jornada, fluxo ramificado, estratégia, wireframes retrospectivos,
+    propostas A/B históricas, fundações, UI Kit, telas reais e validação.
+  Changes: 21 variáveis, 23 instâncias, quatro variantes de botão,
+    auto layout nos componentes e cinco imagens incorporadas.
+  Artefatos utilizados: três capturas reais (Home, editor13 e editor14),
+    dois exports das propostas Creative Studio e AI Clip Workspace,
+    documentação de produto/marca, tokens e evidência histórica UPD-020.
+  Decisões técnicas: documento nativo separado; sem Figma como substituto.
+    Texto, diagramas e componentes editáveis; screenshots permanecem imagens.
+    PDF rasterizado para apresentação; edição no arquivo FigCraft.
+  Not completed: aprovação estética humana e pesquisa com usuários.
+  Architecture impact: nenhum; código, dependências e versão preservados.
+
+FILES
+  Created: 37 arquivos em C:/CutNicePro/design/case-study-v1/ e este relatório histórico.
+    Relação integral: C:/CutNicePro/design/case-study-v1/files-created.txt
+  Modified: docs/engineering/ENGINE-HANDOFF.md; docs/product/PRODUCT-BRAIN.md;
+    docs/portfolio/CASE-STUDY-LOG.md; docs/reports/LATEST.txt.
+  Deleted: nenhum arquivo preexistente; intermediários próprios removidos.
+  Unexpected changes: nenhuma atribuída à tarefa; alterações anteriores preservadas.
+
+VALIDATION
+  Typecheck: SKIP — sem código alterado
+  Lint: SKIP — sem código alterado
+  Unit tests: SKIP — sem código alterado
+  Integration tests: PASS — MCP attached e arquivo nativo relido pela CLI
+  Regression tests: SKIP — aplicativo fora do escopo
+  Visual tests: SKIP para aprovação estética; 12 renders inspecionados
+  Runtime verification: PASS — criação/salvamento no FigCraft real
+  Total passed: 32 verificações objetivas de artefato
+  Total failed: 0 nessas verificações finais
+  Total skipped: 5 categorias acima; nenhum teste do aplicativo reexecutado
+  Evidência: 12 frames corretos; 433 nodes no arquivo; nenhuma fonte ausente;
+    257 camadas de texto visíveis; nenhum overflow de camada visível encontrado.
+  Limite: a investigação de prévias excedeu o orçamento inicialmente planejado.
+    Foi encerrada; não houve validação de usabilidade ou aprovação estética.
+
+HOOKS / HARNESS
+  Hooks active: configuração existente; execução automática não observada.
+  PreToolUse / PostToolUse / Stop / Baseline: não executados manualmente.
+  Gate result: não usado como evidência de aprovação.
+  Evidence: validation.json e document-inspection.json no diretório da entrega.
+
+MCP / SKILLS
+  Tools used: FigCraft MCP attached por CLI local, GitHub, leitura de arquivos,
+    fontes web oficiais e runtimes incluídos para render/PDF.
+  Skills: apresentações, PDF, planejamento e escrita UX do projeto.
+  Connection status: conectado ao FigCraft real em 127.0.0.1:7979, versão 0.8.0.
+  Failures: parâmetros incompatíveis corrigidos durante a montagem.
+  Pending activation: nenhuma. Sem instalação ou alteração de configuração.
+
+GIT
+  Branch: main
+  HEAD: e22555b682ccad97a68eb356032c245b86b54baf
+  Latest commit: feat(clips): add per-clip fill mode ("fit") persisted from generation options
+  Commits created: nenhum
+  Push: NOT EXECUTED
+  Remote: origin → https://github.com/FrosttyS18/CutNicePro.git; origin/main
+  Working tree: MODIFIED / UNTRACKED, inclusive alterações preexistentes.
+  Pending files: diretório da entrega, quatro documentos modificados e relatório
+    histórico; demais pendências preexistentes preservadas. Inventário integral:
+    C:/CutNicePro/design/case-study-v1/git-pending.txt
+
+EVIDENCE
+  Commands executed: git status/diff/log; figcraft-cli --version e info --json;
+    handshake MCP, criação/inspeção/salvamento/export; conferência de PDF.
+  Relevant logs: sources.json, validation.json, frames.json, components.json,
+    variables.json e document-inspection.json no diretório da entrega.
+  Screenshots: renders/01.png a renders/12.png; fontes originais em sources.json.
+  Test artifacts: 12 SVGs nativos; PDF com 12 páginas 16:9.
+  Reproduction details: abrir o arquivo FigCraft e consultar as duas páginas.
+
+ISSUES / PONTOS DE ATENÇÃO
+  Bugs found: nenhum bug do aplicativo investigado nesta tarefa.
+  Unresolved failures: prévias exibiram diferenças intermitentes, sem causa isolada.
+    Dois PNGs foram comparados byte a byte e são idênticos; regiões de texto
+    contêm pixels visíveis. Não se atribui defeito confirmado ao FigCraft.
+  Regressions: não testadas no aplicativo.
+  Risks: capturas são históricas; não comprovam o estado atual de cada interação.
+    24/27 descreve verificações técnicas existentes, com três não concluídas,
+    e não uma taxa de sucesso em usabilidade. Métricas de impacto não existem.
+  Blockers: nenhum para abrir/editar o documento; aprovação humana pendente.
+
+FINAL
+  Delivery status: apresentação v1 IN REVIEW.
+  Requirements met: 12 frames nativos, identidade oficial, fontes verificáveis,
+    estados de evidência, componentes e narrativa sem pesquisa inventada.
+  Remaining work: avaliação estética/narrativa pelo mantenedor.
+  User action required: revisar a apresentação; nenhuma execução de comando necessária.
+  Restart required: não
+  Ready for next task: sim, com os limites e pendências registrados.
+
+REPORT
+  Latest file: C:/CutNicePro/docs/reports/LATEST.txt
+  Historical file: C:/CutNicePro/docs/reports/history/2026-10-21_211407_case-product-design-figcraft.txt
+
+GUIA DO MANTENEDOR — O QUE MUDOU E COMO TESTAR
+  O que mudou: um documento separado reúne o raciocínio de produto e os
+    artefatos reais do CutNice Pro. O aplicativo não foi modificado.
+  Teste 1 — FigCraft:
+    1. Abrir o arquivo entregue e acessar a página 01.
+    2. Percorrer os 12 frames e editar um texto, desfazendo em seguida.
+    Resultado esperado: frames 16:9 e conteúdo nativo editável.
+  Teste 2 — Componentes:
+    1. Acessar a página 02 e selecionar Button/Primary.
+    2. Conferir State: Default, Hover, Disabled e Loading.
+    Resultado esperado: variantes e instâncias vinculadas aos mestres.
+  Teste 3 — Apresentação:
+    1. Abrir o PDF de apoio e percorrer as 12 páginas.
+    2. Conferir narrativa, capturas, hipóteses e próximos passos.
+    Resultado esperado: mesma apresentação; aprovação estética é sua.
+
+END OF REPORT

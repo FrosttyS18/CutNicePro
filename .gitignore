@@ -48,3 +48,9 @@ __pycache__/
 .tooling/_log_*.txt
 .tooling/_jobs.json
 .tooling/_checks.json
+
+/docs/reports/evidence/**/*.mp4
+/apply_f1.py
+/apply_g3c.py
+/app/src-tauri/apply_mm_helpers.py
+/experiments/clip-selection-ab/scratch/discover-*-result.json

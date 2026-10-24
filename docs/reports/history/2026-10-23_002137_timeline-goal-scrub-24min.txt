@@ -1,0 +1,150 @@
+╔════════════════════════════════════════════╗
+║       CUTNICEPRO — ZCODE REPORT            ║
+╚════════════════════════════════════════════╝
+
+TASK
+  Name: Resolver atraso/travamento da timeline (goal-timeline-2026-10-22)
+  Status: PARTIAL
+  Scope: diagnóstico medido + correção do caminho de frames do scrub no
+    editor, validadas no Tauri REAL com vídeo de 24 min (1476 s / 345 MB /
+    H.264 1080p 1920x1080 — o mesmo arquivo do projeto "UX PORTFÓLIO" do
+    mantenedor, confirmado por dedupe de conteúdo no media store). Sem
+    commit/push/bump de versão; UI, mídia, projetos e exportação
+    preservados. Orçamento: ~120 min de execução ativa, 2 candidatas
+    (1 já presente na working tree; 1 nova implementada), 1 repetição de
+    validação justificada (correção de bug do próprio lab).
+  Objective: playhead acompanhando o ponteiro sem snapback; prévia
+    acompanhando o alvo; memória com limite; regressões pertinentes OK.
+    Metas propostas: playhead p95 <=50 ms; alvo final -> frame
+    apresentado p95 <=250 ms (após preparação identificada).
+  Result: correção implementada e scrub REAL medido no Tauri com o vídeo
+    de 24 min; meta de frame ATINGIDA com folga nos dois braços; meta de
+    playhead p95 NÃO atingida (64,8-67,6 ms vs 50 ms; p50 11-13 ms;
+    justificativa de medida documentada); o atraso de 1-3 s relatado NÃO
+    foi reproduzido no laboratório — requer reteste do mantenedor na
+    condição dele. Detalhes em VALIDATION/LIMITS.
+  FUNCTIONAL STATUS: PARTIAL
+  REGRESSION STATUS: PASS (escopo testado: suíte TS integral + playback
+    pós-scrub no app real; exportação não tocada)
+  VISUAL STATUS: PENDING HUMAN APPROVAL
+
+IMPLEMENTATION
+  Completed:
+  - Diagnóstico comparativo OpenCut Classic (rev cf5e79e) concluído em
+    sessão anterior: o editor de referência apresenta vídeo no scrub por
+    WebCodecs/Mediabunny (VideoCache -> Input/BlobSource/CanvasSink),
+    NÃO por currentTime em <video>; registro canônico em
+    docs/references/OPEN-SOURCE-ENGINE-RESEARCH.md §2 (atualizado com a
+    adoção).
+  - Laboratório de medição no app real (tools/e2e/timeline-lab-24min.mjs):
+    exe target-upd20 reconstruído (26 s incrementais) com a correção de
+    Range do cnplocal; instância WebView2 isolada + CDP; projeto criado por
+    IPC; mídia de 24 min importada por caminho; transcrição SINTÉTICA de
+    296 segmentos com palavras (custo de render do TranscriptPanel +
+    captionCue reproduzido; identificada como sintética, não é conteúdo).
+    Instrumentação no MUNDO PRINCIPAL via sessão CDP (page.evaluate do
+    Playwright roda em mundo isolado — window props não cruzam mundos;
+    causa da 1ª rodada vazia, corrigida na repetição justificada).
+  - Braço A/B com a MESMA sequência (2 drags distantes, sweep contínuo de
+    8 s com botão pressionado, corrida de último alvo) na MESMA sessão:
+    OFF = baseline da working tree (Blob URL + Range por intervalo + seek
+    coalescido + rAF throttle + debounce da transcrição) SEM overlay;
+    ON = candidata 2 (FrameSeeker WebCodecs) ativa; ON executada 2x
+    (frio/quente).
+  - Candidata 2 implementada (menor mudança para o mecanismo de decode do
+    frame de prévia): FrameSeeker (app/src/lib/frame-seeker.ts) adaptado do
+    VideoCache do OpenCut Classic — geração p/ descartar pedido obsoleto,
+    frameChain serializado, frame atual/próximo, avanço sequencial <2 s,
+    reposicionamento de iterator em salto; dependência mediabunny ^1.62.1
+    (MIT, mesma família do OpenCut ^1.29.1). Overlay de canvas na prévia
+    durante scrub pausado; <video> permanece autoridade de
+    playback/áudio/exportação; overlay sai no seeked final, no play e na
+    troca de mídia, com guarda contra resolução tardia (defeito encontrado
+    nos dados — overlayEnd true — e reparado dentro do orçamento).
+    Blob registrado por mediaId (registerMediaBlob em workspace-store;
+    mesma vida útil do object URL).
+  - Limpeza: instrumentação temporária removida do código de produção;
+    projetos do lab e perfil WebView2 apagados (app-data contém somente
+    os projetos do mantenedor; a mídia de 345 MB permanece porque é
+    compartilhada por dedupe com o projeto "UX PORTFÓLIO" — correto).
+  Not completed / limites:
+  - Reprodução do atraso de 1-3 s relatado: NÃO ocorreu no lab (ver
+    LIMITS). Portanto não se afirma "problema do mantenedor resolvido";
+    afirma-se o que foi medido nas condições registradas.
+  - Vídeo de 2 h: não disponível; não testado; nada declarado sobre ele.
+
+FILES
+  Created: app/src/lib/frame-seeker.ts; tools/e2e/timeline-lab-24min.mjs;
+    tools/e2e/timeline-lab-cleanup.mjs;
+    docs/reports/evidence/goal-timeline-2026-10-22/lab-scrub-24min-results.json
+  Modified: app/package.json + package-lock.json (mediabunny ^1.62.1);
+    app/src/components/workspace/VideoPreview.tsx (prop scrubCanvas +
+    overlay de canvas); app/src/components/editor/VideoEditor.tsx
+    (integração FrameSeeker + limpeza do overlay);
+    app/src/hooks/useWorkspaceData.ts (registerMediaBlob);
+    app/src/services/workspace-store.ts (registry de Blobs por mediaId);
+    docs/references/OPEN-SOURCE-ENGINE-RESEARCH.md (adoção registrada §2);
+    docs/engineering/ENGINE-HANDOFF.md (registro da tarefa)
+  Deleted: tools/e2e/timeline-probe.mjs (diagnóstico temporário);
+    projetos "Timeline Lab*" e perfil webview do lab (app-data)
+  Unexpected changes: NONE (demais modificações na working tree — Range
+    no cnplocal, Blob URL, seek coalescido, throttles — são anteriores a
+    esta tarefa e foram preservadas; nenhuma reversão/reset)
+
+VALIDATION
+  Typecheck: PASS (npx tsc --noEmit, app)
+  Lint: PASS nos arquivos tocados (2 erros PRÉ-EXISTENTES permanecem em
+    VideoPreview.tsx linhas 39/55, não tocados por esta tarefa)
+  Unit tests: PASS — vitest 214/214 (30 arquivos), após remoção da
+    instrumentação e após o reparo do overlay tardio
+  Rust: binário target-upd20 reconstruído; nenhum fonte Rust alterado
+    após a última suíte integral (138 PASS, validação anterior da tree);
+    teste de Range (parse_range_fechado_aberto_e_sufixo) incluído nela
+  Real scrub (Tauri, sem HMR interferindo, vídeo 24 min, preparação
+    identificada: Blob carregado, editor montado, vídeo idle, transcrição
+    sintética de 296 segs renderizando):
+    | métrica (meta)                 | OFF base | ON-1     | ON-2     |
+    | playhead p50                   | 13,0 ms  | 11,1 ms  | 11,1 ms  |
+    | playhead p95 (<=50)            | 64,8 ms  | 65,3 ms  | 67,6 ms  |
+    | playhead max                   | 88,7 ms  | 178,1 ms | 208,6 ms |
+    | alvo->frame <video> p95 (<=250)| 59,5 ms  | 179,0 ms | 149,6 ms |
+    | alvo->overlay p95 (<=250)      | —        | 110,4 ms | 102,8 ms |
+    | long tasks >50 ms              | 0        | 0        | 0        |
+    | heap JS pico                   | 58,4 MB  | 88,9 MB  | 82,8 MB  |
+    | mem processo (carga->fim)      | 1788->2172 MB estável (idem braços) |
+    | snapback (tempo final == alvo) | 12/12    | 12/12    | 12/12    |
+    Durante o sweep contínuo de 8 s: OFF apresentou 166 frames no <video>
+    (~20,8 fps); ON apresentou 129-131 frames do <video> + overlay
+    contínuo. Frame apresentado medido por requestVideoFrameCallback
+    (mediaTime) + eventos seeked do app; playhead por MutationObserver no
+    elemento .timeline-playhead.
+  Playback pós-scrub (app real): play inicia, tempo avança (1,5 s),
+    overlay oculto durante reprodução — PASS.
+  Exportação: NÃO tocada por esta tarefa (cobertura das suítes
+    existentes; nenhum caminho de export alterado).
+
+LIMITS (honestidade da medição)
+  1. Playhead p95 64,8-67,6 ms vs meta 50 ms: a medida inclui o despacho
+     do evento pelo CDP (Playwright) e o throttle INTENCIONAL de 1 seek
+     por frame de render (upd 19/20). p50 é 11-13 ms. Não alterei a meta
+     para transformar falha em PASS; solicito revisão do critério OU
+     reteste com ponteiro real do usuário (sem hop CDP).
+  2. O atraso de 1-3 s relatado não foi reproduzido no laboratório (sessão
+     limpa, editor com custo de render real reproduzido sinteticamente).
+     Hipóteses não excluídas: sessão longa/estado da máquina do mantenedor,
+     transcript real de 568 segmentos (lab usou 296 sintéticos), outras
+     ferramentas abertas. "IPC era o gargalo" e "snapback eliminado":
+     o snapback AGORA está demonstrado ausente (12/12); a afirmação sobre
+     IPC segue como hipótese não comprovada.
+  3. Nos condições medidas, a candidata 2 (overlay) não é necessária para
+     as metas de frame (baseline já atinge) e custa ~25 MB de heap +
+     renders extras (playhead max 208 ms). Decisão de mantê-la ATIVA é do
+     mantenedor — recomendo reteste manual no cenário dele antes.
+  4. Lab usou transcrição sintética (identificada) — não valida
+     comportamento editorial de transcrição, só custo de render.
+  5. Vídeo de 2 h não testado (indisponível).
+
+CONTINUITY
+  ENGINE-HANDOFF atualizado ("TAREFA 2026-10-22 — TIMELINE"). Próximos
+  passos propostos: (1) mantenedor retesta o arrasto no cenário dele;
+  (2) decisão sobre manter overlay ativo; (3) julgar meta playhead p95.

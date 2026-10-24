@@ -1,0 +1,105 @@
+╔════════════════════════════════════════════╗
+║       CUTNICEPRO — ZCODE REPORT            ║
+╚════════════════════════════════════════════╝
+
+TASK
+  Name: Exportar transcrição do projeto "UX PORTFÓLIO" para TXT
+  Status: PASS
+  Scope: leitura somente dos dados do app (transcripts/3d4bde24-….json) e
+    gravação de UM arquivo TXT solicitado pelo mantenedor fora do
+    repositório (Área de Trabalho). Nenhuma alteração de código.
+  Objective: entregar o texto da transcrição gerada pelo app em TXT.
+  Result: arquivo gravado e verificado com as 568 falas completas.
+  FUNCTIONAL STATUS: PASS
+  REGRESSION STATUS: NOT TESTED (sem alteração de código; nada a regredir)
+  VISUAL STATUS: N/A (tarefa de dados)
+
+IMPLEMENTATION
+  Completed: leitura do registro de transcrição do projeto "UX PORTFÓLIO"
+    (3d4bde24-37ee-44e9-adda-4d6f6a0c49b7, mídia 33932fbc-…, modelo
+    whisper-large-v3-turbo, idioma pt, 568 segmentos, ~24,6 min de vídeo,
+    1.301,9 s de fala); conversão para TXT com cabeçalho (projeto, modelo,
+    total de segmentos, data) e uma linha por fala no formato
+    [mm:ss – mm:ss] texto; UTF-8 com BOM e fim de linha Windows (abre
+    corretamente em Bloco de Notas/Excel).
+  Not completed: nada.
+  Changes: nenhuma no código/fontes do projeto.
+
+FILES
+  Created: C:\Users\adcka\Desktop\transcricao-UX-PORTFOLIO.txt (34.396 bytes)
+  Modified: NENHUM (app-data lido em modo somente leitura)
+  Deleted: NENHUM
+  Unexpected changes: NONE
+
+VALIDATION
+  Typecheck: SKIP (sem alteração de código)
+  Lint: SKIP (idem)
+  Unit tests: SKIP (idem)
+  Integration tests: SKIP (idem)
+  Regression tests: SKIP (idem)
+  Visual tests: SKIP
+  Runtime verification: PASS — verificação direta do arquivo gerado:
+    568/568 linhas com marcação de tempo; primeira fala
+    "[00:00 – 00:04] Teste rápido. Abre o seu portfólio em 30 segundos."
+    e última "[24:34 – 24:36] …nos comentários. Fui, até a próxima."
+    conferem com o conteúdo do vídeo (mesma fala visível na tela do app).
+  Total passed: 1 (verificação do arquivo) | Total failed: 0 | Total skipped: 6 (não aplicáveis)
+
+HOOKS / HARNESS
+  Hooks active: PreToolUse/PostToolUse/Stop (padrão)
+  PreToolUse: sem bloqueios | PostToolUse: sem falhas
+  Stop: pendente do encerramento da sessão (não é prova de PASS)
+  Baseline: idem | Gate result: N/A | Evidence: audit-log.jsonl
+
+MCP / SKILLS
+  Tools used: nativas (Bash/Read/Write); visão própria para conferir o
+    print do mantenedor contra o conteúdo do registro.
+  Connection status: N/A | Failures: nenhuma | Pending activation: nenhuma
+
+GIT
+  Branch: main
+  HEAD: e22555b682ccad97a68eb356032c245b86b54baf
+  Latest commit: "feat(clips): add per-clip fill mode ("fit") persisted from
+    generation options" (commit do MANTENEDOR)
+  Commits created: NENHUM | Push: NOT EXECUTED
+  Remote: origin → github.com/FrosttyS18/CutNicePro (branch main)
+  Working tree: MODIFIED + UNTRACKED (estado UPD-019/020 preservado; esta
+    tarefa não tocou no repositório, exceto o próprio relatório)
+  Pending files: inalterados da UPD-020 (ver relatório anterior)
+
+EVIDENCE
+  Commands executed: listagem de projetos/transcrições; leitura e
+    verificação do JSON; geração e conferência do TXT (head/tail/contagem).
+  Relevant logs: origem: transcripts/3d4bde24-….json (568 segmentos).
+  Screenshots: NENHUM (verificação direta de conteúdo)
+  Test artifacts: o próprio TXT entregue
+  Reproduction details: regenerável relendo o JSON com o mesmo script.
+
+ISSUES
+  Bugs found: nenhum
+  Unresolved failures: nenhuma
+  Regressions: nenhuma (sem mudança de código)
+  Risks: nenhum (leitura + arquivo novo)
+  Blockers: nenhum
+
+FINAL
+  Delivery status: ENTREGUE
+  Requirements met: transcrição do projeto UX PORTFÓLIO exportada em TXT
+  Remaining work: nenhum
+  User action required: abrir o arquivo na Área de Trabalho
+  Restart required: NÃO
+  Ready for next task: SIM
+
+REPORT
+  Latest file: docs/reports/LATEST.txt
+  Historical file: docs/reports/history/2026-10-21_212700_export-transcricao-ux-portfolio.txt
+
+GUIA DO MANTENEDOR — O QUE MUDOU E COMO TESTAR
+  O que mudou: nada no app; foi apenas exportado um arquivo de texto.
+  Teste 1 — Abrir a transcrição:
+    1. abra "transcricao-UX-PORTFOLIO.txt" na Área de Trabalho.
+    Resultado esperado: texto do vídeo com horários [mm:ss] por fala,
+    começando em "Teste rápido. Abre o seu portfólio em 30 segundos." e
+    terminando em "…até a próxima." (568 falas, ~24,6 min).
+
+END OF REPORT

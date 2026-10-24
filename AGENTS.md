@@ -10,6 +10,7 @@ Plataforma de edição inteligente de vídeos (inspirada no OpusClip).
 - Não realizar refatorações não relacionadas; não substituir bibliotecas funcionais sem justificativa.
 - Reportar limitações reais em vez de inventar soluções. Registrar `FAIL`/`BLOCKED` quando algo não puder ser validado.
 - Não exigir comandos manuais do usuário quando for possível executar e validar a tarefa diretamente.
+- Preferência expressa do mantenedor (2026-10-24): não usar controle interativo da tela/PC nem pedir esse acesso para testes rotineiros. Fazer verificações por código, compilação e testes; entregar roteiro curto para o mantenedor executar a validação manual da interface. Uma solicitação futura explícita pode autorizar automação delimitada. Esta regra não impede as ferramentas normais de edição de código e execução de testes.
 
 ## Continuidade e versionamento entre chats (regra permanente, UPD-020)
 
@@ -41,6 +42,14 @@ Plataforma de edição inteligente de vídeos (inspirada no OpusClip).
 - Criar testes relevantes e verificar os resultados. Nenhum recurso é "concluído" apenas porque o código foi gerado: exigir funcionamento real, testes e critérios de aceite demonstrados.
 - Não realizar commits, pushes, merges ou deploys sem autorização explícita.
 - Não confundir um processo iniciado com um serviço realmente funcional.
+
+## Execução e builds — diretório único (2026-10-24)
+
+- A build de desenvolvimento do aplicativo usa somente `app/src-tauri/target/`. Comando canônico: `npm run tauri dev` em `C:\CutNicePro\app`. Não criar `target-<tarefa>`, duplicar caches ou alternar `CARGO_TARGET_DIR` a cada laboratório para contornar arquivo em uso. Uma exceção exige justificativa concreta e autorização específica do mantenedor, com tamanho estimado e destino de limpeza definidos.
+- Antes de pedir testes ao mantenedor, recompilar o código atual nesse diretório e informar o caminho/build efetivamente executado. Uma correção disponível apenas em executável de laboratório não é uma entrega acessível na instância normal.
+- A entrega de aceite usa a origem e o perfil normais do mantenedor. Perfil WebView isolado pode servir a testes controlados, mas não comprova persistência/disponibilidade dos resultados na sessão normal; não substituir dados do usuário pelo perfil de laboratório.
+- Se o executável estiver em uso, identificar a instância e coordenar o encerramento normal, preservando edições/jobs; não criar outra build apenas para evitar essa coordenação nem encerrar processos alheios.
+- Caches de compilação são recriáveis e não são projetos/modelos/mídia. Antes de uma limpeza, identificar caminhos absolutos dentro do workspace, arquivos versionados, links e processos em uso; cumprir a confirmação exigida em Hooks de proteção. Preferir `cargo clean --target-dir <caminho-exato>` para o cache autorizado. Nunca limpar por varredura genérica, nomes parciais ou datas.
 
 ## Motor de funcionamento — estrutura e prevenção de regressões
 
@@ -205,7 +214,19 @@ Plataforma de edição inteligente de vídeos (inspirada no OpusClip).
 ## Memória e documentação
 
 - Manter decisões importantes registradas no projeto (`docs/`, ADRs).
-- Consultar o Graphify antes de alterações estruturais relevantes e atualizá-lo após modificações significativas; um grafo desatualizado nunca é tratado como verdade absoluta.
+- Usar obrigatoriamente o Graphify remoto para análise de impacto antes das alterações funcionais/estruturais e refatorações, conforme a política abaixo; um grafo desatualizado nunca é tratado como verdade absoluta.
 - **Documentação Markdown ≠ Graphify:** os `.md` são a documentação permanente do projeto (escritos e mantidos deliberadamente); o Graphify é ferramenta complementar de análise que constrói um grafo da base de código — não gera os Markdown e não os substitui (detalhes e estado atual em `docs/TOOLING.md`).
 - A documentação complementa, mas não substitui a verificação do código-fonte atual.
 - Não reescrever documentação inteira sem necessidade; não confiar cegamente em resumos antigos quando for possível consultar a implementação atual.
+
+### Graphify remoto — análise de impacto obrigatória (2026-10-23)
+
+- **Rota oficial:** MCP remoto `graphify`, endpoint `https://api.graphify.com/mcp`, transporte Streamable HTTP, OAuth pelo navegador. Workspace indicado pelo mantenedor: `wesley-s-workspace`; repositório `FrosttyS18/CutNicePro`. Confirmar identificadores pelas ferramentas; não consultar outro workspace/repositório para preencher lacunas.
+- **Configuração:** reutilizar a entrada correta e preservar MCPs/configurações não relacionados; preferir suporte remoto nativo do cliente. Instalação/configuração, handshake ou descoberta de ferramentas não comprovam conexão: exigir consulta real de símbolo conhecido com fonte no repositório indexado. Nunca salvar tokens/senhas em arquivos do projeto ou logs. Configuração fora do workspace só no escopo expressamente autorizado pela tarefa.
+- **Local legado:** `graphify-out`, venv e instruções de servidor local são histórico, não rota oficial nem fallback silencioso. A skill local não se sobrepõe a esta regra. Não reconstruir/reinstalar o grafo local para declarar atendido um requisito de uso remoto.
+- **Antes de alterar funcionalidades, contratos ou refatorar:** consultar símbolos, chamadores, dependências, impacto e testes no Graphify remoto; seguir consumidores relevantes até UI/serviços/IPC/Rust/persistência/render conforme a fatia. Registrar escopo afetado e selecionar testes antes da edição. Descobrir ferramentas/parâmetros reais; não inventar chamadas.
+- **Atualidade e cobertura:** comparar revisão/estado do índice com HEAD e registrar mudanças locais/não rastreadas não cobertas. Resultado vazio não prova ausência de dependência; sugestão semântica não é resolução confirmada. Complementar com fonte/diff local, inclusive chamadas dinâmicas e contratos entre linguagens. Não afirmar que o serviço enxerga alterações ainda não publicadas.
+- **Depois da mudança:** revisar diff, testar consumidores e consultar novamente o impacto. Atualizar índice apenas por mecanismo suportado/autorizado; não fazer commit/push ou upload automático do working tree para alimentar o grafo. Declarar defasagem remanescente e registrar o complemento local no handoff.
+- **Proteção efetiva:** grafo orienta investigação; não executa testes, versiona/restaura arquivos nem garante ausência de regressões. Não criar cópias em lote de fontes como substituto da análise; preservar dados, trabalho local e alterações pequenas/reversíveis.
+- **Indisponibilidade:** registrar o bloqueio concreto e a ação externa necessária (OAuth, acesso, índice ou reinício). Continuar leituras/diagnóstico/testes independentes, sem alterações funcionais/estruturais dependentes do grafo até resolver o bloqueio; não simular uso nem recorrer silenciosamente ao servidor local.
+- **Documentação:** `docs/TOOLING.md` mantém estado e runbook. Fontes oficiais: [MCP remoto](https://graphify.com/mcp) e [configuração/validação](https://github.com/Graphify-Labs/graphify-mcp). Consultar Graphify não substitui documentação permanente nem leitura pertinente da fonte atual.

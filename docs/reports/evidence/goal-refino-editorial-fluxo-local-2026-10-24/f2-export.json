@@ -1,0 +1,29 @@
+{
+  "planRestored": [
+    {
+      "sourceStart": 0,
+      "sourceEnd": 5.649595
+    },
+    {
+      "sourceStart": 13.696,
+      "sourceEnd": 17.12
+    }
+  ],
+  "keptExpected": 9.07,
+  "export": {
+    "via": "pipeline real (render::pipeline)",
+    "blockedUi": "clique+ENTER não publicou (padrão recorrente; foco reforçado também falhou)",
+    "note": "edição/persistência comprovadas na UI na run 9 (persistiu=true, 12 antigos)",
+    "mp4Seconds": 9.12,
+    "expectedKept": 9.07,
+    "delta": 0.05,
+    "file": "C:/CutNicePro/docs/reports/evidence/goal-refino-editorial-fluxo-local-2026-10-24/f2-corte-EDITADO-pipeline.mp4"
+  },
+  "gateD": {
+    "edicaoUI": "OK (run 9: dividir 33%/80% + remover meio; plano salvo 2 segmentos 0-5,65+13,7-17,12 = 9,07s)",
+    "persistenciaUI": "OK (run 9: reabrir manteve o plano EXATAMENTE; 12 cortes antigos preservados)",
+    "exportBotaoDialogo": "BLOCKED-harness recorrente (clique+ENTER+SetForegroundWindow não publicou; sem erro de produto; export por botão JÁ comprovado no G3A ok:true na mesma build de motor)",
+    "exportPipeline": "OK (9,12s vs 9,07s esperado; Δ 0,05s; legendas reais; mesma rota do botão pós-diálogo)",
+    "veredito": "Gate D: PARTIAL — edição/persistência pela UI COMPROVADAS; publicação final do arquivo demonstrada pelo pipeline; clique+diálogo permanece bloqueio de automação específico (não de produto)"
+  }
+}

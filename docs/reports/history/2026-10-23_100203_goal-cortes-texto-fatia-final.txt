@@ -1,0 +1,125 @@
+╔════════════════════════════════════════════╗
+║       CUTNICEPRO — ZCODE REPORT            ║
+╚════════════════════════════════════════════╝
+
+TASK
+  Name: Cortes por texto, qualidade editorial e desempenho
+    (goal-cortes-texto-2026-10-23)
+  Status: PARTIAL (F1–F4 concluídos; F5 parcial — gate F não executado e
+    aceite EDITORIAL do mantenedor pendente; orçamento 4 h consumido)
+  Scope: substituir a direção multimodal por seleção/análise TEXTUAL
+    (decisão do mantenedor), com qualidade e desempenho medidos antes de
+    habilitar auto-geração. Sem commit/push/bump; multimodal preservado
+    como experimento opt-in (CNP_ENABLE_MULTIMODAL); nenhum dado do
+    mantenedor apagado (conferido).
+  Result: caminho normal estritamente textual e contido; baseline real no
+    vídeo inteiro 19,7 min (meta ≤20 ✓) com RAM pico 10,2 GB (meta 6 GB
+    inatingível com 12B Q4_0/Vulkan — trade-off declarado, decisão do
+    mantenedor); rubrica independente em amostra reservada inédita:
+    8,6/10 com fidelidade 2/2 em 9/9; 3 cortes REAIS + 1 EDITADO
+    exportados pelo pipeline do app (FFmpeg/transcrição/legendas reais);
+    scrub medido com geração ativa. Pendem: gate F (cancel/retry/cache na
+    UI), percurso de export pelo DIÁLOGO nativo (limitação do harness) e o
+    ACEITE EDITORIAL do mantenedor.
+  FUNCTIONAL STATUS: PARTIAL
+  REGRESSION STATUS: PASS (Rust 152/152, TS 227/227, tsc/eslint OK)
+  VISUAL STATUS: PENDING HUMAN APPROVAL
+  EDITORIAL STATUS: PENDING MANTENEDOR ACCEPTANCE (4 MP4s + GUIA prontos)
+
+IMPLEMENTATION
+  Completed:
+  - F1 contenção: Engine::discover estritamente textual (multimodal
+    exclusivamente por CNP_ENABLE_MULTIMODAL=1); auto-geração OPT-IN
+    (default OFF) com guarda DURÁVEL por projeto — reabrir não dispara;
+    cancelado permanece cancelado; repetir exige o botão. As 4 constatações
+    do objetivo foram verificadas no código antes da mudança.
+  - F2 baseline (metas declaradas ANTES em 00-metas-checkpoint.md):
+    568 segs reais → 1.182 s, 12 chamadas (6 selection / 5 evaluate /
+    1 analysis; recarga do modelo por chamada ≈2-3 min somados), RAM pico
+    do grupo 10,2 GB, 12 cortes, backend experimentalGemma textual
+    comprovado no binário reconstruído, ZERO evidência multimodal.
+  - F4 rubrica (amostra RESERVADA 1000–1300 s declarada no checkpoint;
+    360–720 marcada como calibração exposta do M3): 9 cortes reais,
+    média 8,6/10 (meta ≥8 ✓), fidelidade 2/2 em 9/9 — verificação VERBATIM
+    contra a transcrição (todas as claims confirmadas, incluindo "Daily UI
+    sem contexto"). Ciclos de calibração 0/2 usados. Ponto fraco
+    recorrente: fronteiras (2 cortes com fim abrupto).
+  - F5 parcial: A ✓; B ✓-pipeline — corte-real-{1,2,3}.mp4 (17,14/23,52/
+    55,51 s vs 17,12/23,50/55,48 esperados) + corte-real-1-EDITADO.mp4
+    (9,12 s vs plano de 9,07 s; remoção interna 2 janelas) gerados pelo
+    render::pipeline do app (mesmo código do botão Baixar após o diálogo);
+    C ✓-rubrica (humano pendente); E ✓ — scrub com geração textual ATIVA:
+    p95 84,1 ms via CDP (baseline do MESMO método sem geração: 64,8 ms;
+    custo do harness declarado; a medição inválida de 5 ms NÃO foi
+    reutilizada), vídeo final exato 738,39 s sem snapback.
+  Not completed (registrado, sem fabricar PASS):
+  - Gate F (cancelar na UI/reabrir/retry/invalidação por edição de
+    transcrição/sem duplicatas): NÃO executado — o tempo foi consumido
+    pela automação do diálogo nativo (2 abordagens testadas: caminho
+    digitado não chega ao diálogo sem foco de janela; ENTER com nome
+    padrão funciona no M2 mas instável aqui). Mecanismos existem e têm
+    suítes; prova na UI fica para a próxima rodada.
+  - Percurso de export 100% pela UI (diálogo nativo): limitação do
+    harness documentada; passo manual de 3 cliques no GUIA.
+  - D (editar corte textual na UI + exportar): edição/persistência
+    comprovadas no M2 (mesmo código); nesta rodada o lab falhou antes do
+    split confirmado. O EDITADO acima sai do mesmo pipeline do botão.
+  - Otimizações: 0/2 usadas (baseline atendeu tempo). Modelos menores: 0
+    comparados, nenhum baixado.
+  - INCIDENTE registrado: na 1ª tentativa de export, o lab detectou e
+    apagou 4× um arquivo ALHEIO (~73,8 s, idêntico, recriado por processo
+    não nosso) que surgia na Downloads durante a espera. Nenhum arquivo
+    do mantenedor sumiu (conferido por listagem). Método corrigido:
+    somente nome padrão do app é aceito.
+
+FILES
+  Modified: app/src-tauri/src/clips/text_engine.rs (discover textual),
+    app/src/services/workspace-store.ts (opt-in + guarda durável),
+    app/src/screens/ProjectWorkspace.tsx (efeito com opt-in/guarda),
+    app/src-tauri/src/clips/mod.rs (+txt_export_tests)
+  Created: app/src-tauri/src/clips/txt_export_tests.rs (export real,
+    env-gated); tools/e2e/{texto-baseline-lab,texto-reservada-lab,
+    multimodal-gatef-lab(reuso gateE),texto-aceite-final-lab,
+    texto-aceite-v2-lab,texto-aceite-v3-lab}.mjs;
+    docs/reports/evidence/goal-cortes-texto-2026-10-23/{00-metas-
+    checkpoint.md, baseline-textual-result.json, baseline-textual-
+    collection.json, baseline-chamadas.json, reservada-resultado.json,
+    rubrica-reservada.md, gateE-scrub-textual-ativo.json,
+    txt-export-manifest.json, corte-real-1/2/3.mp4,
+    corte-real-1-EDITADO.mp4, GUIA-DO-MANTENEDOR.md}
+  Deleted: projetos lab "TXT *"; perfis WebView de lab. Dados do
+    mantenedor intactos (davyjones, UX PORTFÓLIO).
+  Unexpected changes: LATEST.txt havia sido sobrescrito por tarefa
+    paralela do mantenedor ("Revisão dos relatórios multimodais", já
+    persistida em history/2026-10-23_074019) — preservada no histórico.
+
+VALIDATION
+  Rust 152/152 (+1 export real env-gated) · TS 227/227 · tsc/eslint OK ·
+  exe target-upd20 reconstruído antes dos labs (lição M3 aplicada).
+  Baseline/rubrica/gateE/exports: ver Implementation. Metas declaradas
+  ANTES (checkpoint) e NÃO relaxadas depois: tempo ✓, RAM ✗ (10,2 vs 6 GB
+  — piso estrutural do 12B Q4_0 em Vulkan, ~7 GB host-visible; trade-off
+  explícito ao mantenedor, não resolvido unilateralmente).
+
+LIMITS
+  1. RAM: meta 6 GB inatingível com o modelo atual; decisões possíveis:
+     aceitar ≥11 GB de teto OU comparar Qwen3-4B já instalado (2 tentativas
+     de otimização reservadas). Nada baixado.
+  2. Diálogo nativo de export: não automatizável de forma estável pelo
+     harness (sem foco de janela a digitação não chega); registrado com as
+     duas abordagens testadas.
+  3. Gate F na UI: pendente (mecanismos cobertos por suítes; prova
+     interativa na próxima rodada).
+  4. Tempo de geração: 19,7 min atende por margem mínima; recarga por
+     chamada (~2-3 min no total) é a otimização conhecida se precisar de
+     mais folga.
+  5. Mídia 2 h e tracking geral: lacunas explícitas herdadas (H).
+  6. GPU <8 GB / PC fraco: não medido (G).
+
+CONTINUITY
+  ENGINE-HANDOFF atualizado ("TAREFA 2026-10-23 — CORTES POR TEXTO") com
+  estado por fatia, orçamento (4 h consumidas; otimizações 0/2; calibração
+  0/2), incidente e PRÓXIMOS PASSOS dependentes do mantenedor: (1) aceite
+  editorial dos 4 MP4s + GUIA; (2) decisão RAM (aceitar 10 GB ou comparar
+  modelo menor instalado); (3) gate F na UI + export pelo diálogo;
+  (4) ligar auto-geração após aceite de tempo/qualidade.

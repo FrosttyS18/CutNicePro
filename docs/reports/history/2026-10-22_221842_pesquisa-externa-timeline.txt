@@ -1,0 +1,99 @@
+╔════════════════════════════════════════════╗
+║       CUTNICEPRO — ZCODE REPORT            ║
+╚════════════════════════════════════════════╝
+
+TASK
+  Name: Pesquisa externa da timeline e prompt para o ZCode
+  Status: PASS (pesquisa e direcionamento; aplicativo não corrigido)
+  Scope: documentação, evidências e prompt.
+  Objective: estudar implementações externas antes de orientar correções.
+  Result: 17 arquivos de quatro repositórios estudados em revisões fixadas.
+
+IMPLEMENTATION
+  Completed: Tauri (Range); OpenCut Classic (playhead/cache);
+    Kdenlive (proxy/cache); Remotion (Player/licença).
+    Prompt com sequência de implementação e critérios de medição.
+  Not completed: correções e benchmark do aplicativo, fora do escopo.
+  Changes: estudo canônico e continuidade atualizados.
+  Architecture impact: nenhum; proposta mantém a stack existente.
+
+FILES
+  Created: docs/reports/evidence/timeline-research-2026-10-22/
+    {sources.json,prompt-zcode.txt,git-before.txt,git-after.txt,verification.json};
+    relatório histórico abaixo.
+  Modified: docs/references/OPEN-SOURCE-ENGINE-RESEARCH.md;
+    docs/engineering/ENGINE-HANDOFF.md; docs/reports/LATEST.txt.
+  Deleted: nenhum.
+  Unexpected changes: nenhuma no diff de app ou index verificados.
+
+VALIDATION
+  Typecheck / Lint / Unit / Integration / Regression / Visual / Runtime:
+    SKIP — tarefa documental, sem execução de aplicativos.
+  Total passed: 6 verificações documentais/de preservação.
+  Total failed: 0 nessas verificações.
+  Total skipped: 7 categorias acima; 0 testes de aplicativo executados.
+  FUNCTIONAL STATUS: PASS no escopo da pesquisa; bug permanece aberto.
+  REGRESSION STATUS: NOT TESTED.
+  VISUAL STATUS: PENDING HUMAN APPROVAL.
+
+HOOKS / HARNESS
+  Hooks active: não inspecionados nesta tarefa.
+  PreToolUse / PostToolUse / Stop / Baseline: não executados explicitamente.
+  Gate result: sem aceite de correção ou performance.
+  Evidence: verification.json.
+
+MCP / SKILLS
+  Tools used: GitHub, web, terminal e Node.
+  Connection status: fontes individuais acessíveis.
+  Failures: árvore Remotion falhou; arquivos individuais recuperados.
+    Registro inicial excedeu limite de tamanho; refeito em chamadas menores.
+  Pending activation: nenhuma.
+
+GIT
+  Branch: main
+  HEAD: e22555b682ccad97a68eb356032c245b86b54baf
+  Latest commit: feat(clips): add per-clip fill mode ("fit") persisted from generation options
+  Commits created: nenhum.
+  Push: NOT EXECUTED.
+  Remote: origin → FrosttyS18/CutNicePro; main.
+  Working tree: MODIFIED / UNTRACKED, com pendências preexistentes.
+  Pending files: inventário integral de 138 entradas em git-after.txt,
+    antes da gravação deste histórico; inclui documentos e evidências desta
+    tarefa. Relatório histórico e LATEST também permanecem sem commit.
+  Index: hash preservado; nenhuma operação de stage.
+
+EVIDENCE
+  Commands executed: leituras, git status/remote/rev-parse/log/diff.
+  Relevant logs: sources.json, verification.json, git-before/after.txt.
+  Screenshots / Test artifacts: nenhum teste de aplicação ou screenshot.
+  Reproduction details: picos de ~3 GB e atraso de 2–3 s relatados pelo
+    mantenedor; não medidos pelo agente.
+
+ISSUES
+  Bugs found: cruzamento com análise estática anterior; leitura integral
+    antes de Range, disputa de tempo e debounce sem isolamento de renders.
+  Unresolved failures: scrub do aplicativo continua sem correção validada.
+  Regressions: não testadas.
+  Risks: contribuição de cada gargalo ainda exige perfil e mídia real.
+    Licenças distintas; referências não autorizam cópia indiscriminada.
+  Blockers: nenhum para a entrega da pesquisa.
+
+FINAL
+  Delivery status: pesquisa e prompt entregues.
+  Requirements met: estudo externo de módulos e direcionamento acionável.
+  Remaining work: ZCode implementar e medir as correções.
+  User action required: encaminhar o prompt ao ZCode.
+  Restart required: não.
+  Ready for next task: sim, implementação conforme prompt.
+
+REPORT
+  Latest file: docs/reports/LATEST.txt
+  Historical file: docs/reports/history/2026-10-22_221842_pesquisa-externa-timeline.txt
+
+GUIA DO MANTENEDOR — O QUE MUDOU E COMO TESTAR
+  O que mudou: pesquisa técnica e prompt; o aplicativo não foi alterado.
+  1. Encaminhe prompt-zcode.txt ao ZCode.
+  Resultado esperado: correções em fatias, com medição real e relatório.
+  Nada para testar manualmente nesta entrega documental.
+
+END OF REPORT

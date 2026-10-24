@@ -1,0 +1,61 @@
+CUTNICEPRO — ANALISE ESTATICA DA TIMELINE — 2026-10-22
+
+Escopo autorizado: analisar o codigo e explicar diferencas de desempenho;
+nenhuma correcao implementada, nenhum teste do aplicativo executado.
+
+1. LEITURA INTEGRAL EM CADA REQUISICAO DE MIDIA
+app/src-tauri/src/local_media_scheme.rs:105 usa std::fs::read antes de
+interpretar Range. A linha 118 copia o intervalo com to_vec. Assim,
+mesmo um intervalo pequeno exige primeiro a alocacao do arquivo inteiro;
+um Range aberto aceita o restante completo, sem teto por resposta.
+O caminho e usado por ipc.mediaUrl (app/src/lib/ipc.ts:118), reconectado
+em useWorkspaceData.ts e registrado em lib.rs. Defeito estrutural
+confirmado por leitura; contribuicao aos 3 GB exige medicao por processo.
+
+2. ALVO SOLICITADO E TEMPO DO PLAYER COMPARTILHAM O MESMO ESTADO
+VideoEditor.tsx:214 faz setTime(next) para o alvo, enquanto 317 recebe
+setTime(value) de VideoPreview. VideoPreview.tsx:73 publica timeupdate
+sem distinguir arrasto/busca pendente; 43 tambem publica pelo rAF durante
+reproducao. Timeline usa time. Eventos do player podem substituir o alvo
+ainda pendente. E uma explicacao forte para o retorno visual relatado,
+mas sequencia temporal e atraso de 2–3 s nao foram medidos nesta tarefa.
+
+3. DEBOUNCE NAO ISOLA O COMPONENTE
+VideoEditor.tsx:241–245 cancela/reagenda o timeout de 150 ms: debounce,
+nao throttle. Em reproducao com atualizacoes frequentes, pode adiar o
+highlighting ate haver uma pausa de atualizacoes. TranscriptPanel.tsx:20
+e funcao sem memo; callbacks seek e onText sao recriados no pai.
+EditorInspector.tsx:69 tambem e funcao sem memo. TranscriptSentence
+possui memo, o que limita parte do trabalho interno. A reducao de 8,5x
+de custo nao e demonstrada por essa alteracao sem profiling.
+
+4. RAF RETEM A PRIMEIRA COORDENADA DO FRAME
+TimelineSurface.tsx:27–29 captura x do evento que agenda o callback.
+Eventos posteriores no mesmo frame nao atualizam essa coordenada.
+Pointerup envia a coordenada final, mas a promessa de usar sempre a
+ultima posicao durante o arrasto nao corresponde ao codigo atual.
+Isso nao explica isoladamente segundos de atraso.
+
+CONTEXTO DE ESCALA
+media_preview/mod.rs gera 24 miniaturas fixas; a waveform le PCM integral
+temporario em memoria e limita peaks a 300.000. Nao atribuir o pico ao
+carregamento de milhares de thumbnails sem evidencia. O nome
+media_proxy.rs refere-se a protocolo de acesso, nao prova existencia de
+proxy de edicao transcodificado.
+
+PRIORIDADE PARA ZCODE
+1. Leitura parcial com memoria limitada e contrato HTTP correto.
+2. Separar alvo de interacao e tempo confirmado, com prioridade ao alvo
+   ate a conclusao da busca mais recente; sem atrasar o gesto do usuario.
+3. Isolar renderizacoes com callbacks estaveis e medir o painel.
+4. Medir decoder; avaliar proxy de edicao apenas com gargalo residual.
+
+FONTES PUBLICAS
+https://www.opus.pro/pricing — informa filas e servidores de processamento;
+nao descreve a implementacao interna da previa do editor.
+https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/Range_requests
+https://react.dev/reference/react/memo
+https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/timeupdate_event
+
+Sem benchmark do OpusClip, sem medicao real de latencia/memoria do app,
+sem execucao dos 214 testes citados pelo relatorio externo.

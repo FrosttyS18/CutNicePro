@@ -1,0 +1,131 @@
+╔════════════════════════════════════════════╗
+║       CUTNICEPRO — ZCODE REPORT            ║
+╚════════════════════════════════════════════╝
+
+TASK
+  Name: Revisão do encerramento do goal textual.
+  Status: PASS para revisão; entrega do produto PARTIAL.
+  Scope: Relatórios, evidências e código, sem nova execução do app.
+  Objective: Verificar o que terminou e o que depende do mantenedor.
+  Result: A execução terminou; os aceites ainda não foram concluídos.
+
+IMPLEMENTATION
+  Completed: Conferência estática e registro de continuidade.
+  Changes: Somente documentação e auditoria.
+  Architecture impact: Nenhum.
+  Not completed: Correções, novos testes e aprovação dos cortes.
+
+  Achados principais:
+  1. Houve avanço: texto é padrão; auto-geração começa desligada;
+     existem quatro MP4s e evidências de processamento real.
+  2. Gate F não comprova todo o fluxo interativo. O script cancela e
+     repete via comandos diretos, altera a transcrição em arquivo e
+     mantém auto-geração DESLIGADA; o marcador durável registrado é null.
+     Isso não exercita a guarda com opt-in ligado nem todos os botões.
+     A falha de motor testada é instalação ausente antes de abrir o job,
+     não queda do processo durante inferência.
+  3. Os ~10,2 GB vêm da soma de processos por nome, podendo incluir
+     outros WebViews. O campo “pico de VRAM” foi lido no fim da geração.
+     Não há prova de que esse consumo seja um piso inevitável.
+  4. A rubrica foi aplicada pelo agente contra a transcrição.
+     Média 8,6 inclui dois cortes com 6 e 5; 7/9 atingem pelo menos 8.
+     Fidelidade à transcrição não comprova fidelidade ao áudio.
+  5. O MP4 editado usa plano preparado no teste. Ainda falta comprovar
+     editar, salvar/reabrir e exportar pela interface nesta meta.
+  6. Excluir quatro arquivos alheios é um incidente. Scripts posteriores
+     ainda removem arquivos de Downloads pelo nome esperado:
+     nome não comprova propriedade. A segurança não está resolvida.
+  7. Relatório/guia mantêm pendências antigas contraditórias. O handoff
+     registra ~1 h adicional após as 4 h; o consumo precisa ser reconciliado.
+     O opt-in multimodal também aceita variável presente com valor 0.
+
+  Recomendação sobre as quatro decisões:
+  - Editorial: assistir aos arquivos existentes; não gerar tudo novamente.
+  - RAM: corrigir medição e comparar o 4B instalado, se autorizado,
+    antes de aceitar 10 GB como requisito do produto.
+  - Aninhados: agrupar versões do mesmo momento; preservar cortes
+    complementares e edições. Não bloquear toda sobreposição.
+  - Exportação: não mudar a API apenas para contornar a automação.
+    Falta o teste interativo; o bloqueio do harness não prova bug do botão.
+
+FILES
+  Modified: docs/engineering/ENGINE-HANDOFF.md; docs/reports/LATEST.txt.
+  Created: Histórico e snapshot Git indicados abaixo.
+  Deleted: 0
+  Unexpected changes: Nenhuma diferença de status fora desses arquivos.
+
+VALIDATION
+  FUNCTIONAL STATUS: PASS revisão / PARTIAL produto.
+  REGRESSION STATUS: NOT TESTED
+  VISUAL STATUS: PENDING HUMAN APPROVAL
+  Typecheck / Lint / Unit / Integration / Regression / Visual / Runtime:
+    SKIP — revisão estática, sem alterar código do aplicativo.
+  Total passed: 0 testes novos.
+  Total failed: 0 testes executados.
+  Total skipped: 7 categorias não executadas.
+  As contagens 152/227 são do ZCode; não foram repetidas aqui.
+
+HOOKS / HARNESS
+  Hooks active / PreToolUse / PostToolUse / Stop: Não comprovados.
+  Baseline / Gate result: SKIP.
+  Evidence: Leitura dos scripts e artefatos; nenhuma carga longa.
+
+MCP / SKILLS
+  Tools used: Leitura, pesquisa local e edição documental.
+  Skills: documentation-and-adrs.
+  Connection status: Acesso local disponível.
+  Failures: Nenhum bloqueio final.
+  Pending activation: Nenhum goal criado ou renovado.
+
+GIT
+  Branch: main
+  HEAD: e22555b682ccad97a68eb356032c245b86b54baf
+  Latest commit: feat(clips): add per-clip fill mode ("fit") persisted from generation options
+  Commits created: 0
+  Push: NOT EXECUTED
+  Remote: origin → https://github.com/FrosttyS18/CutNicePro.git
+  Working tree: MODIFIED / UNTRACKED; index preexistente preservado.
+  Pending files: 493 (491 anteriores).
+  Lista: C:/CutNicePro/docs/reports/evidence/goal-cortes-texto-2026-10-23/git-status-revisao-codex.txt
+
+EVIDENCE
+  Commands executed: Leituras, buscas locais, Git e diff check.
+  Relevant logs: gateF-ui.json; baseline-textual-result.json;
+    rubrica-reservada.md; GUIA-DO-MANTENEDOR.md.
+  Screenshots / Test artifacts: Nenhum novo.
+  Reproduction details: texto-gatef2-lab.mjs:72/94/113/132;
+    texto-baseline-lab.mjs:42/106; texto-aceite-final-lab.mjs:124/198;
+    texto-aceite-v3-lab.mjs:114; clips/text_engine.rs:63.
+
+ISSUES
+  Bugs found: Divergências de contrato/evidência e limpeza insegura nos labs.
+  Unresolved failures: Memória, aceites interativos e editorial.
+  Regressions: Não avaliadas nesta revisão.
+  Risks: Consumo atribuído indevidamente ao app; perda de arquivo alheio.
+  Blockers: Nenhum para a revisão; nova execução exige escopo/orçamento.
+
+FINAL
+  Delivery status: Revisão entregue; goal técnico continua PARTIAL.
+  Requirements met: Evidências reconciliadas sem declarar novos PASS do app.
+  Remaining work: Conter limpeza dos labs, medir corretamente, fechar
+    interações faltantes e calibrar fronteiras; depois avaliação humana.
+  User action required: Avaliar os MP4s; decidir eventual nova execução.
+  Restart required: Não.
+  Ready for next task: Recomendações registradas, sem novo prompt/goal.
+
+REPORT
+  Latest file: C:/CutNicePro/docs/reports/LATEST.txt
+  Historical file: C:/CutNicePro/docs/reports/history/2026-10-23_111623_revisao-final-goal-texto.txt
+  Relatório ZCode preservado:
+    C:/CutNicePro/docs/reports/history/2026-10-23_110727_goal-cortes-texto-gateF-completo.txt
+
+GUIA DO MANTENEDOR — O QUE MUDOU E COMO TESTAR
+  O que mudou: Apenas revisão/documentação; aplicativo não foi alterado.
+  1. Assista aos três corte-real-N.mp4 e ao corte-real-1-EDITADO.mp4
+     na pasta de evidências do goal textual.
+     Esperado: conferir assunto, legenda, enquadramento e começo/fim.
+  2. Registre quais cortes aceita e onde encontrou problemas.
+     Esperado: aceite humano explícito, sem confundir nota do agente
+     com sua aprovação. Não precisa repetir a geração para assistir.
+
+END OF REPORT

@@ -27,3 +27,5 @@
 *.figcraft binary
 *.pdf binary
 *.wav binary
+docs/reports/evidence/goal-cortes-multimodais-2026-10-23/probes/dbg_encode.txt -whitespace
+docs/reports/evidence/goal-cortes-multimodais-2026-10-23/probes/mtmd_debug_img2.txt -whitespace

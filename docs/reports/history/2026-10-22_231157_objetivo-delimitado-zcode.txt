@@ -1,0 +1,94 @@
+╔════════════════════════════════════════════╗
+║       CUTNICEPRO — ZCODE REPORT            ║
+╚════════════════════════════════════════════╝
+
+TASK
+  Name: Preparar objetivo delimitado para o ZCode
+  Status: PASS (redação; meta não executada)
+  Scope: prompt, continuidade e registros.
+  Objective: estruturar investigação sem loops ou aceite prematuro.
+  Result: objetivo salvo com checkpoints, critérios e limites.
+
+IMPLEMENTATION
+  Completed: diagnóstico → correção → validação; limite de 120 min ativos,
+    duas candidatas, orçamento global de testes e parada sem falso PASS.
+  Not completed: execução de /goal e correção da timeline.
+  Changes: documentação.
+  Architecture impact: nenhum.
+
+FILES
+  Created: docs/reports/evidence/goal-timeline-2026-10-22/
+    {objetivo-zcode.txt,git-status.txt,verification.json};
+    relatório histórico abaixo.
+  Modified: docs/engineering/ENGINE-HANDOFF.md; docs/reports/LATEST.txt.
+  Deleted: nenhum.
+  Unexpected changes: nenhuma no app/index verificados.
+
+VALIDATION
+  Typecheck / Lint / Unit / Integration / Regression / Visual / Runtime:
+    SKIP — tarefa de redação.
+  Total passed: 4 verificações documentais/preservação.
+  Total failed: 0 nessas verificações.
+  Total skipped: 7 categorias; zero testes de aplicativo.
+  FUNCTIONAL STATUS: PASS (artefato).
+  REGRESSION STATUS: NOT TESTED.
+  VISUAL STATUS: PENDING HUMAN APPROVAL.
+
+HOOKS / HARNESS
+  Hooks active: não inspecionados.
+  PreToolUse / PostToolUse / Stop / Baseline: não executados explicitamente.
+  Gate result: sem aceite da timeline.
+  Evidence: verification.json.
+
+MCP / SKILLS
+  Tools used: terminal e Node.
+  Connection status: leituras/gravações concluídas.
+  Failures: nenhuma; busca por /goal sem correspondências locais.
+  Pending activation: sem confirmação documental da sintaxe/capacidade
+    operacional do /goal no ZCode; texto entregue como objetivo.
+
+GIT
+  Branch: main
+  HEAD: e22555b682ccad97a68eb356032c245b86b54baf
+  Latest commit: feat(clips): add per-clip fill mode ("fit") persisted from generation options
+  Commits created: nenhum.
+  Push: NOT EXECUTED.
+  Remote: origin → FrosttyS18/CutNicePro; main.
+  Working tree: MODIFIED / UNTRACKED; index preservado.
+  Pending files: 148 entradas inventariadas em git-status.txt antes deste
+    relatório; histórico e LATEST também pendentes. Preexistentes preservados.
+
+EVIDENCE
+  Commands executed: leitura do texto anexado, busca documental e Git.
+  Relevant logs: git-status.txt; verification.json.
+  Screenshots / Test artifacts: nenhum teste de aplicativo.
+  Reproduction details: não aplicável à redação.
+
+ISSUES
+  Bugs found: nenhum novo diagnóstico.
+  Unresolved failures: timeline continua sem aceite.
+  Regressions: não testadas.
+  Risks: limites textuais não comprovam bloqueio automático da ferramenta;
+    usar controles próprios de orçamento quando disponíveis.
+  Blockers: nenhum para entregar o objetivo.
+
+FINAL
+  Delivery status: objetivo pronto.
+  Requirements met: escopo, checkpoints, aceite e condições de parada.
+  Remaining work: execução pelo ZCode.
+  User action required: cadastrar o objetivo no ZCode.
+  Restart required: não.
+  Ready for next task: sim.
+
+REPORT
+  Latest file: docs/reports/LATEST.txt
+  Historical file: docs/reports/history/2026-10-22_231157_objetivo-delimitado-zcode.txt
+
+GUIA DO MANTENEDOR — O QUE MUDOU E COMO TESTAR
+  O que mudou: objetivo delimitado; aplicativo não alterado.
+  1. Use objetivo-zcode.txt no /goal do ZCode.
+  Resultado esperado: execução com checkpoints e parada no limite,
+    sem marcar a meta concluída quando houver pendências obrigatórias.
+  Nada para testar manualmente no aplicativo nesta entrega.
+
+END OF REPORT

@@ -1,0 +1,118 @@
+╔════════════════════════════════════════════╗
+║       CUTNICEPRO — ZCODE REPORT            ║
+╚════════════════════════════════════════════╝
+
+TASK
+  Name: Cortes multimodais pré-editados (goal-cortes-multimodais-2026-10-23)
+  Status: PARTIAL (rodada 2 — M0–M3 concluídos; M4/M5/aceite pendentes)
+  Scope: seis marcos do objetivo no app existente, sem commit/push/bump,
+    preservando UI/timeline aprovadas e dados do mantenedor. Orçamento 8 h
+    acumuladas (~7,5 h consumidas): M4/M5 na próxima rodada, SEM renovar
+    o limite automaticamente.
+  Objective (fatia): importar → transcrever → analisar texto/imagem/áudio
+    → cortes pré-editados → revisar na timeline → salvar/reabrir →
+    exportar MP4 equivalente à prévia.
+  Result: M0 (mapa/baseline), M1 (multimodalidade provada no runtime),
+    M2 (EditPlan v1 ponta a ponta, MP4 == prévia no app real) e M3
+    (motor multimodal integrado à GERAÇÃO com evidências reais por corte +
+    comparação delimitada na amostra reservada) CONCLUÍDOS com evidência.
+    Pendem M4 (tracking controlado + framing), M5 (auto pós-import +
+    orquestração) e a matriz A–I com aceite editorial — a meta NÃO está
+    concluída e os cortes AINDA não foram apresentados para aceite.
+  FUNCTIONAL STATUS: PARTIAL (escopo comprovado: M0–M3)
+  REGRESSION STATUS: PASS (Rust 146/146, TS 227/227, timeline intacta)
+  VISUAL STATUS: PENDING HUMAN APPROVAL
+  EDITORIAL STATUS: NOT STARTED (matriz final + amostras pendentes)
+
+IMPLEMENTATION
+  Completed nesta rodada (M3):
+  - `clips/multimodal.rs` (novo): adaptador do llama-server multimodal —
+    descoberta (exe oficial + mmproj OFICIAL ao lado do GGUF; `None` =
+    degradação textual DECLARADA; kill-switch CNP_DISABLE_MULTIMODAL),
+    server gerenciado (porta efêmera, /health, kill no Drop — sem órfãos),
+    `completion` (prompt canônico + schema como json_schema com fallback +
+    amostragem Gemma canônica), `vision` (imagens base64 com MIME por magic
+    bytes + `reasoning_effort:"none"` — thinking off obrigatório do MARCO 1),
+    `LazyServer` (server sobe na 1ª chamada e vive pelo job).
+  - Índice temporal REAL: `audio_pauses` (uma passada FFmpeg silencedetect
+    por geração) + `extract_frame` (JPEG ≤512 px por timestamp) +
+    `enrich_clip` (snap de borda para a fala em pausas ≥0,3 s respeitando
+    mínimo; frames início+0,35/meio; pergunta visual com transcrição e
+    eventos como CONTEXTO, não instrução; grava MultimodalEvidence por
+    corte com timestamps).
+  - `text_engine.rs`: Engine::GemmaMultimodal (mesmos prompts; geração via
+    server); degradação preferida→textual com backend distinto no registro.
+  - `generation.rs`: pausas 1×/geração; enriquecimento por candidato
+    best-effort; GATE DE HONESTIDADE — multimodal declarado com tentativas
+    >0 e NENHUMA evidência real = erro explícito (não existe multimodal
+    PASS só com ASR+texto).
+  - Contrato UI: `Clip.multimodal` TS+Rust (opcional, validado no parse) +
+    seção "Evidências recebidas" na inspeção (frames/pausas/ajustes).
+  - reqwest: features blocking+json (mesma crate/versão, HTTP local).
+  Not completed:
+  - M4 (tracking controlado, framing suavizado persistido), M5 (auto
+    pós-import, recuperação, cache/invalidação), matriz A–I e aceite
+    editorial do mantenedor com amostras exportadas.
+
+VALIDATION
+  Unit: Rust 146/146 (novos: base64 RFC4648, degradação com kill-switch,
+    snap de borda com mínimo — este ACHOU bug de sinal real, POST do server
+    contra mock HTTP validando stop/temperatura/seed). TS 227/227 + tsc +
+    eslint OK nos tocados.
+  App REAL (Tauri, vídeo 24,6 min do mantenedor por dedupe, transcrição
+    REAL, geração SEM mocks, dois braços):
+    - Amostra RESERVADA declarada ANTES: 360–720 s + ±2 min (219 segs).
+    - Braço A textual (CNP_DISABLE_MULTIMODAL=1): 674 s, 9 cortes,
+      backend experimentalGemma, 0 evidências.
+    - Braço B multimodal: 2276 s, 10 cortes, backend
+      experimentalGemmaMultimodal, **10/10 com evidência REAL** (frames com
+      timestamp + resumo visual consistente com o vídeo: homem de óculos,
+      camiseta branca, microfone de podcast, estante — só possível com
+      payload visual real).
+    - Pausas ≥0,45 s: nenhuma dentro dos cortes (podcast contínuo) →
+      ajustes de borda 0 (correto: sem pausa não se mexe); mecanismo coberto
+      por teste unitário e log no scratch.
+    - Diferenças de seleção/notas entre braços NÃO atribuíveis só à
+      modalidade (caminho exe×server difere) — registrado com honestidade;
+      o ganho COMPROVADO do B é a evidência fundamentada por corte.
+  Correções de processo: exe do lab estava stale na 1ª execução (cargo
+    build ausente pós-M3) → detectado PELO REGISTRO DE BACKEND (ambos os
+    braços textuais) e reexecutado corretamente; heredoc bash esvaziou
+    multimodal.rs uma vez (módulo vazio compila!) — reescrito; lição
+    registrada.
+
+FILES
+  Created: app/src-tauri/src/clips/multimodal.rs;
+    tools/e2e/multimodal-m3-lab.mjs;
+    docs/reports/evidence/goal-cortes-multimodais-2026-10-23/{marco3-
+    multimodal.md, m3-arm-A-textual.json, m3-arm-B-multimodal.json,
+    m3-comparison.json}
+  Modified: app/src-tauri/src/clips/{mod.rs, text_engine.rs, generation.rs,
+    types.rs (MultimodalEvidence + Clip.multimodal), content.rs,
+    selection.rs, semantic_tests.rs, store.rs, ranking.rs, scene_regions.rs
+    (literais)}; Cargo.toml (features reqwest, justificadas);
+    app/src/lib/clips.ts (tipo + validação runtime); app/src/components/
+    clips/ClipDetails.tsx (Evidências recebidas); docs/engineering/
+    ENGINE-HANDOFF.md (M3 no registro da tarefa)
+  Deleted: 6 projetos de laboratório "MM M3*" + perfil WebView do lab;
+    nenhum dado do mantenedor tocado (restantes: davyjones, UX PORTFÓLIO)
+  Unexpected changes: NONE
+
+LIMITS
+  1. Multimodal via server é LENTO para gerar (2276 s × 674 s textual na
+     janela de 6 min; vídeo cheio no aceite A precisará de orçamento próprio
+     e/ou paralelismo controlado — registrado para o M5).
+  2. Áudio do Gemma permanece experimental (MARCO 1); eventos sonoros da
+     comparação vieram do silencedetect (estruturado), não do LLM.
+  3. A exibição "Evidências recebidas" não foi validada visualmente no app
+     (dados comprovados no store; UI segue PENDING HUMAN APPROVAL).
+  4. Mídia de 2 h: não testada (aceite I).
+  5. Orçamento ~7,5/8 h: M4/M5/matrizes na próxima rodada com continuidade
+     registrada; SEM renovação automática do limite.
+
+CONTINUITY
+  ENGINE-HANDOFF ("TAREFA 2026-10-23 — CORTES MULTIMODAIS") atualizado com
+  M3 completo e PRÓXIMO PASSO (M4: tracking sobre as evidências já
+  coletadas + framing persistido no plano; M5: auto pós-import +
+  recuperação; depois matriz A–I e apresentação das amostras para aceite
+  editorial do mantenedor). Sem commit/push/bump.

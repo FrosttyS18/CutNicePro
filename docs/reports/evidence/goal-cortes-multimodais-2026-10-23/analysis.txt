@@ -1,0 +1,24 @@
+Preparação do Goal para ZCode — 2026-10-23
+
+Escopo: pesquisa, leitura estática e redação. Nenhuma implementação, execução de modelo ou teste do aplicativo nesta tarefa.
+
+Constatações locais:
+1. text_engine.rs: generate_with recebe prompt &str e schema, grava arquivos e executa -f/-jf com -c 8192. Artefato procurado: gemma-4-12b-it-qat-q4_0.gguf. Esse caminho consultado é textual; suporte multimodal do executável instalado não foi verificado em runtime.
+2. Clip em clips/types.rs tem start/end; EditorTimeline usa trimStart/trimEnd. Não foi demonstrado plano de montagem de vários intervalos na fatia lida. O ZCode deve seguir consumidores antes de mudar contratos.
+3. scene_regions.rs usa detecção de transições perto das bordas; não demonstra compreensão de cenas ou tracking.
+4. FrameSeeker existente e teste positivo do mantenedor são baseline a preservar, não motivo para nova reescrita. Não repetimos medições da timeline.
+
+Fontes externas:
+- Model card oficial Gemma 4 descreve entradas visuais e áudio no 12B, mas isso não prova suporte do GGUF/backend instalado. Declara limites de 30 s para áudio e 60 s para vídeo a 1 fps; a arquitetura 12B Unified é encoder-free. O pipeline proposto precisa de janelas e comprovação de entradas nativas. https://ai.google.dev/gemma/docs/core/model_card_4
+- README de llama.cpp/tools/mtmd descreve interface multimodal e componentes específicos por arquitetura; não confirma por si só compatibilidade com nosso artefato. https://github.com/ggml-org/llama.cpp/blob/master/tools/mtmd/README.md
+- Leitura delimitada de byte_tracker.py identifica BYTETracker.update recebendo detecções, associação e Kalman. Não é detector nem associação áudio/falante. LICENSE consultado é MIT; modelos e dependências exigem verificação própria. Sem runtime, sem adaptação proposta como decisão aprovada. https://github.com/FoundationVision/ByteTrack/blob/main/yolox/tracker/byte_tracker.py
+- ClipAnything descreve seleção multimodal e reframing. Página comercial usada como referência funcional, não como prova de arquitetura ou desempenho. https://www.opus.pro/clipanything
+
+Limites: estudo preparatório, não auditoria completa do motor. Referências externas em branches móveis, hashes do conteúdo GitHub consultado no inventário; ZCode deve fixar revisões antes de adotar. Nenhum desempenho ou ganho editorial medido.
+
+Decisões do prompt:
+- Primeira fatia com mídia real, plano de edição compartilhado por UI/preview/render e extensão não destrutiva.
+- Depois, cobertura integral por janelas, seleção global, pré-edição, tracking controlado e orquestração.
+- Escopo editorial inicial em português; rastreamento genérico não prometido.
+- Até 6 h ativas, orçamento global de validação, tentativas/calibrações finitas e PARTIAL/BLOCKED sem falsificar conclusão.
+- Capacidade funcional, aprovação estética e aceite editorial explicitamente separados.

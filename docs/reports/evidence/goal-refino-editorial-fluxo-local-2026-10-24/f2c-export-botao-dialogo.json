@@ -1,0 +1,30 @@
+{
+  "frente": "F2c — fechar o critério 'MP4 publicado pelo BOTÃO real + diálogo nativo'",
+  "data": "2026-10-24T08:16-08:22 (lab)",
+  "bugReal": {
+    "sintoma": "card 'Baixar' → painel 'Não foi possível processar o vídeo. Verifique o espaço disponível' SEM abrir o diálogo; idem com clique REAL (UIA). Reproduzível 3×.",
+    "causaRaiz": "Contrato divergente TS↔Rust: effectiveCaptionStyle (app/src/lib/captions.ts:39) sempre inclui 'wordsPerCaption' no captionStyle enviado ao export; CaptionStyle Rust (render/settings.rs) com deny_unknown_fields espera 'wordsPerLine' → serde rejeita ('unknown field `wordsPerCaption`') → clipMessage cai no fallback genérico. TODO export pela UI com legendas ativas (captionModel>0) falhava ANTES do diálogo — card e inspeção.",
+    "explica": "o erro que o mantenedor viu ao testar 'Baixar' na sessão manual + o padrão 'clique+ENTER não publicou' de todas as goals anteriores (o diálogo nunca chegou a abrir). O G3A ok:true usou payload/estado sem esse campo.",
+    "diagnostico": "invoke direto de export_video no mundo principal (CDP) capturou o erro cru; patch de __TAURI_INTERNALS__.invoke NÃO intercepta (referência capturada no bundle) — usar invoke direto."
+  },
+  "correcao": {
+    "arquivo": "app/src-tauri/src/render/settings.rs",
+    "mudanca": "#[serde(alias = \"wordsPerCaption\")] em words_per_line — aceita o nome da UI e mantém wordsPerLine; rascunhos antigos intactos; sem mudança de contrato TS",
+    "testeRegressao": "render::tests::ui_caption_style_payload_with_words_percaption_deserializes (payload EXATO da UI com y+wordsPerCaption): ANTES do fix FAILED ('unknown field `wordsPerCaption`') → DEPOIS ok; suíte completa 171 testes: 160 passaram, 0 falharam (11 ignored, incl. NVENC real)"
+  },
+  "gateD": {
+    "rota": "Cortes → card 'Como identificar problemas de clareza no portfólio profissional' (0–17,12 s, score 95) → botão Baixar (clique REAL via computer-use/UIA)",
+    "dialogoNativo": "ABRIU (window 'Exportar vídeo', pasta Downloads, nome padrão 'TXT Aceite Manual-Como identificar problemas de clareza no.m…'); 'Salvar' clicado por input real",
+    "resultado": "UI 'Vídeo exportado.' (estado tipado exported); MP4 publicado",
+    "arquivo": {
+      "publicado": "C:/Users/adcka/Downloads/TXT Aceite Manual-Como identificar problemas de clareza no.mp4",
+      "evidencia": "f2c-corte-BOTAO-dialogo-nativo.mp4",
+      "sha256_16": "617ee2ca8b2871b0",
+      "esperadoS": 17.12,
+      "medidoS": 17.142,
+      "deltaS": 0.022
+    },
+    "build": "target-f2c/debug/cutnicepro.exe (com alias serde); perfil WebView próprio webview-f2c; dados do mantenedor intocados; app dele (PID 56308, target-refino ANTIGO) NÃO tem o fix — precisa reabrir com build corrigida"
+  },
+  "veredito": "Gate D: PASS na rota completa botão→diálogo nativo→Salvar→MP4 reproduzível (critério 'F2 com MP4 publicado pelo botão real na UI' ATENDIDO em lab com a build corrigida)"
+}

@@ -1,0 +1,38 @@
+{
+  "casos": [
+    {
+      "label": "davyjones",
+      "clip": {
+        "start": 26.56,
+        "end": 120.88
+      },
+      "raw": {
+        "ok": true
+      }
+    },
+    {
+      "label": "aceite-manual",
+      "clip": {
+        "start": 0,
+        "end": 17.12
+      },
+      "raw": {
+        "ok": true
+      }
+    }
+  ],
+  "manualMediaLinkedBefore": true,
+  "verificacao": {
+    "davyjones": {
+      "file": "C:/Users/adcka/Downloads/davyjones-corte.mp4",
+      "duration": 94.33,
+      "clipWindow": "26.6-120.9 (94.3s)"
+    },
+    "aceiteManual": {
+      "file": "C:/Users/adcka/Downloads/TXT Aceite Manual-corte.mp4",
+      "duration": 17.14,
+      "clipWindow": "0-17.1 (17.1s)"
+    },
+    "conclusao": "export_video OK nos dois projetos com diálogo real completado (ENTER, nome padrão). Causa raiz do erro relatado: projects.json corrompido pela semeadura manual (createdAt ISO vs created_at_ms) fazia Store::load falhar e derrubava projects/clipes/export com erros não mapeados → fallback genérico. Corrigido; vínculo de mídia do projeto manual também corrigido via link_media."
+  }
+}

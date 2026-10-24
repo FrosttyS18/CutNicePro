@@ -1,0 +1,164 @@
+╔════════════════════════════════════════════╗
+║       CUTNICEPRO — ZCODE REPORT            ║
+╚════════════════════════════════════════════╝
+
+TASK
+  Name: Recuperação + estudo AutoClip + proposta IA local
+    (goal-recuperacao-autoclip-2026-10-23)
+  Status: PARTIAL (todas as frentes técnicas executadas; aceite
+    EDITORIAL/visual do mantenedor pendente por definição; rejeição do
+    "EDITADO" registrada como premissa; orçamento ~4 h de 24 h)
+  Scope: recuperar export/baixar e biblioteca global, corrigir UI das
+    ferramentas, estudar integralmente o AutoClip (zhouxiaoka +
+    artbyjazi), comparar comprovadamente com CutNicePro, medir 12B×4B,
+    propor IA local, implementar melhorias incrementais autorizadas e
+    tornar resultados identificáveis na interface. Sem commit/push/bump.
+  Result: app RECUPERADO (export ok:true nos dois projetos reais;
+    biblioteca global corrigida com isolamento por projeto); UI
+    corrigida (checkbox contextual, botões colados corrigidos com
+    medição, alinhamento verificado); AutoClip estudado com cobertura
+    por arquivo; matriz 12B×4B controlada medida; refine de fronteiras
+    frase+pausa IMPLEMENTADO no pipeline; badge "Novo" + tempo relativo
+    + createdAtMs + nomes de arquivo identificáveis implementados;
+    3 cortes REAIS gerados pelo pipeline novo e exportados (rubrica
+    independente 9,7/10, fidelidade 6/6 2/2).
+  FUNCTIONAL STATUS: PARTIAL (tudo demonstrado; aceite humano pendente)
+  REGRESSION STATUS: PASS (Rust 159/159, TS 233/233, tsc/eslint OK)
+  VISUAL STATUS: PENDING HUMAN APPROVAL
+  EDITORIAL STATUS: PENDING MANTENEDOR ACCEPTANCE
+
+O QUE FOI CORRIGIDO E COMO TESTAR (resumo didático)
+  1. "Não foi possível processar o vídeo" ao baixar/exportar: causa raiz
+     era o projects.json que EU corrompi ao semear projeto de teste
+     (datas ISO em vez de ms) + mídia sem vínculo. Corrigido; teste:
+     abra qualquer projeto → Cortes → Baixar → MP4 publicado.
+  2. Biblioteca global zerada: um projeto quebrado derrubava TODA a
+     lista. Agora cada projeto é isolado e os válidos sempre aparecem,
+     com aviso de perda parcial ("Alguns projetos não puderam ser
+     carregados (N)").
+  3. UI: checkbox de auto-geração agora vive no diálogo "Gerar cortes"
+     (contextual); botões colados do projeto vazio corrigidos (gap 16px
+     medido); "Transcrever novamente" verificado alinhado.
+  4. NOVIDADES: badge "Novo" no card até você abrir o clipe; "há N
+     minutos" com data exata no hover; arquivos de export com o título
+     do corte; cortes com bordas em frases completas (refine novo).
+
+GRAPHIFY REMOTO (gate I)
+  Validado com chamadas reais no workspace wesley-s-workspace /
+  FrosttyS18/CutNicePro (commit ab501e2 = HEAD; defasagem do working
+  tree declarada, leitura local complementar por fatia). Análise de
+  impacto antes de cada mudança (export flow; loadClipLibrary
+  callers+tests). AGENTS.md/TOOLING.md já continham a regra permanente
+  — preservada e confirmada.
+
+AUTOCLIP — O QUE FOI ESTUDADO E EXECUTADO (gates G/H)
+  zhouxiaoka @3d3b5ed (MIT): núcleo autoral LIDO integralmente
+  (clip_finder one-pass c/ janelas locais 20min/12k chars; framing
+  YuNet+boca-que-se-move por plano; quality.py refine programático;
+  steps 1-6; orquestrador com falha honesta; boundaries frase+pausa;
+  ASR faster-whisper sob demanda; persistência LenientEnum; jobs com
+  dedupe/cancelamento com limpeza pós-delete; prompts por categoria).
+  artbyjazi @5d0eac3 (MIT): comparação dirigida (boundaries 3-passos
+  com mapa de silêncio; concorrência local=1; reframe
+  landmarks+tracks+diarização "never jarring"). NENHUM código de
+  terceiro EXECUTADO (estudo estático; nenhum instalador rodado).
+
+MODELO TESTADO — 4B vs 12B (gate G)
+  Matriz controlada na janela inédita 1200-1476s (mesma transcrição/
+  pipeline/hardware): Qwen3-4B 93 s × 12 cortes × RAM 1,25 GB × VRAM
+  3,2 GiB; Gemma-12B 286 s × 4 cortes × RAM 1,22 GB × VRAM 3,1 GiB.
+  Fidelidade verbatim OK em ambos; títulos do 4B genéricos. RAM de pico
+  NÃO difere — a RECARGA por chamada domina (2-3 min do total de
+  19,7 min no vídeo inteiro): reuso do modelo é a alavanca, não a
+  troca. RECOMENDAÇÃO: manter Gemma 12B default; reuso via server sem
+  mmproj como próxima otimização (proposta, exige A/B próprio).
+
+ONDE O TEMPO/RECURSOS FORAM (método declarado)
+  Geração 12B vídeo inteiro: 19,7 min (12 chamadas; 6 selection/5
+  evaluate/1 analysis; recarga por chamada). RAM do grupo por
+  PowerShell WorkingSet (cutnicepro+webview+llama); VRAM por
+  nvidia-smi pontual (não por componente — limitação declarada). Scrub
+  com IA ativa: p95 84 ms via CDP (baseline 64,8 mesmo método; custo
+  do harness dominante).
+
+TRÊS CORTES PARA ACEITE EDITORIAL (gate H/B/C)
+  Gerados REALMENTE pelo caminho textual com o pipeline NOVO (refine
+  ativo) — 8 cortes na coleção (notas 41-91, TODOS listados em
+  g8-entrega.json; sem cherry-pick):
+  1. g8-corte-1-Melhores-plataformas-para-criar-um-portfolio.mp4
+     (1239,4-1287,6 s; 48,21 s; nota 91; rubrica 10/10)
+  2. g8-corte-2-Quatro-criterios-para-validar-a-eficacia.mp4
+     (970,0-1009,7 s; 39,71 s; nota 85; rubrica 9/10)
+  3. g8-corte-3-Priorizar-qualidade-em-vez-de-quantidade.mp4
+     (1194,4-1239,4 s; 44,96 s; nota 83; rubrica 10/10)
+  Rubrica independente (contexto/desenvolvimento/fechamento/
+  fidelidade/título 0-2): média 9,7/10; fidelidade 6/6 em 2/2 — meta
+  ≥8 por corte ATENDIDA nos três. Δ MP4 vs janela: 0,00-0,03 s.
+  Fidelidade verbatim confirmada. Rejeição do "EDITADO" anterior
+  REGISTRADA e respeitada (não reutilizado; sem remoção interna
+  fabricada para passar em teste).
+  Caminho: docs/reports/evidence/goal-recuperacao-autoclip-2026-10-23/
+
+GATES TÉCNICOS A-I (estado)
+  A ✓ (binário reconstruído; geração real textual; backend
+    experimentalGemma; export pelo diálogo nativo ok:true — G3A; nesta
+    rodada final os 3 MP4 saíram pelo pipeline real do app
+    (render::pipeline) porque a automação do CLIQUE falhou por timeout
+    de locator — SEM erro de produto; diferença registrada).
+  B ✓ (3+ distintos com tempos/títulos/resumos; rejeitados listados;
+    tabela de tempo/recursos acima).
+  C ✓-rubrica (9,7/10; fidelidade 6/6) — aceite EDITORIAL é seu.
+  D PARCIAL (edição na UI + persistência comprovadas em rodadas
+    anteriores pelo MESMO código; nesta meta o clique do lab falhou
+    antes do split confirmado; percurso completo está no GUIA manual —
+    sem fabricar remoção interna para passar).
+  E ✓ (scrub com geração ativa, eventos reais, método válido, custo de
+    harness declarado; medição v5-5ms não reutilizada).
+  F ✓ (cancel/reopen sem reinício/retry/stale granular nos dois
+    sentidos/dupes-ids/falha do motor em 16 ms — goal-cortes-texto,
+    mesma build de motor).
+  G declarado (tempo ✓ ≤20 min; RAM ✗ 10,2 GB vs meta 6 — piso do
+    12B/Vulkan; trade-off documentado, decisão sua).
+  H ✓ (estudo rastreável + 4B×12B apresentado).
+  I ✓ (Graphify validado; impacto por fatia; defasagem declarada).
+
+LIMITS
+  1. EDITORIAL/VISUAL: seu aceite — nada é aprovação sem você.
+  2. D (editar+exportar pela UI nesta rodada): clique não automatizado
+     (timeout de locator); capacidades comprovadas em rodadas
+     anteriores do mesmo código; GUIA tem os passos manuais.
+  3. Melhorias nº1 (payload compacto) e nº3 (reuso server) ficaram
+     PROPOSTA (exigem A/B próprio; não bloqueiam nada).
+  4. Vídeo 2 h e tracking geral: lacunas explícitas herdadas.
+  5. RAM 10,2 GB: decisão sua (aceitar ou autorizar A/B do reuso).
+
+FILES
+  Created: app/src-tauri/src/clips/{borders.rs, txt_export_tests.rs};
+    app/src/test/clip-freshness.test.ts;
+    docs/reports/evidence/goal-recuperacao-autoclip-2026-10-23/
+    {g1-g3-diagnostico.md, g3a-diagnostico.json, g3a-*-corte.mp4,
+    g4-estudo-autoclip.md, g5-matriz-comparacao.md, g5-comparison.json,
+    g5-arm-*.json, g6-proposta-ia-local.md, g3c-validacao-visual.md +
+    .json + g3c-*.png, g7-resultados-identificaveis.md,
+    g8-entrega.json, g8-export-manifest.json, g8-corte-1/2/3-*.mp4,
+    g8-galeria-badge-novo.png}
+  Modified: clip-library.ts + useClipLibrary.ts (isolamento parcial),
+    ProjectsScreen.tsx (aviso), ClipTools.tsx (checkbox→diálogo),
+    workspace.css (gap vazio + .clip-tools__auto), clips.css (badge),
+    ClipGallery.tsx (badge/tempo/abrir), clips.ts (createdAtMs +
+    relativeTime/isClipNew/markClipOpened + validação), types.rs
+    (created_at_ms), generation.rs (marca criação + hook borders),
+    text_engine.rs (flag="1"), render/commands.rs (nome do arquivo),
+    mod.rs (+borders), ENGINE-HANDOFF,
+    OPEN-SOURCE-ENGINE-RESEARCH (§2b)
+  Unexpected changes: LATEST.txt tinha sido sobrescrito por tarefa
+    paralela ("Goal revisado com Graphify", já em history 13:20:18) —
+    preservada no histórico. Dados do mantenedor intactos (projetos
+    lab removidos; TXT Aceite Manual mantido para você ver o badge).
+
+CONTINUITY
+  ENGINE-HANDOFF atualizado fatia a fatia. Orçamento ~4 h de 24 h.
+  GUIA-DO-MANTENEDOR.md atualizado com passos manuais (abrir TXT Aceite
+  Manual → badge Novo → abrir um clipe → badge some; editar/dividir/
+  salvar/reabrir/exportar com nome novo). Aceite editorial e decisão de
+  RAM aguardando você — sem isso a meta segue PARTIAL por definição.

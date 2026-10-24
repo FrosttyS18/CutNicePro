@@ -1,0 +1,56 @@
+OBJETIVO — Resolver o atraso e o travamento da timeline do CutNicePro, com diagnóstico demonstrado e correção validada no aplicativo real.
+
+AUTORIZAÇÃO
+/start — execute investigação e correções dentro deste escopo. Não iniciar outra meta nem ampliar o projeto. Preserve UI aprovada, mídia original, projetos, transcrição, edição e exportação. Sem commit, push, bump de versão ou serviços pagos.
+
+ESPECIFICAÇÃO TÉCNICA
+Use integralmente docs/reports/evidence/revisao-blob-timeline-2026-10-22/prompt-zcode.txt e o estudo de OpenCut em docs/references/OPEN-SOURCE-ENGINE-RESEARCH.md.
+Leia AGENTS.md, ENGINE-HANDOFF, PRODUCT-BRAIN, BACKLOG e VALIDATION-POLICY antes de agir. Revalide o código atual: há alterações preexistentes. Os relatórios anteriores não demonstram solução do scrub.
+
+RESULTADO EXIGIDO
+Ao arrastar entre pontos distantes do vídeo, o playhead acompanha o ponteiro, não retorna para tempos antigos e a prévia acompanha o alvo sem os atrasos de 1–3 s relatados. Memória tem limite e estabiliza; reprodução, áudio, legendas, salvamento e exportação afetados permanecem corretos.
+
+Metas iniciais de aceite: playhead p95 <=50 ms; alvo final → frame apresentado p95 <=250 ms, após preparação identificada, no hardware registrado. São metas propostas, não resultados existentes. Não modificar critérios após os testes para transformar falha em PASS. Caso sejam inadequados ao contexto medido, apresentar justificativa e solicitar revisão do critério.
+
+EXECUÇÃO EM TRÊS CHECKPOINTS
+
+1. DIAGNÓSTICO
+- Mapear todo o editor OpenCut Classic e ler integralmente as implementações relevantes do caminho importação → leitura → demux/decode → scrub → composição → frame apresentado, incluindo dependências efetivamente executadas.
+- Comparar cada etapa com CutNicePro. Registrar revisão, arquivo/função, estado, fila, cache e liberação de recursos. Estudo anterior é ponto de partida; object URL não prova equivalência de arquitetura.
+- Executar o experimento do prompt técnico: OpenCut, vídeo mínimo no mesmo WebView2 e editor completo com a mesma fonte; variar transporte somente se necessário para isolar a causa.
+- Entregar baseline separando tempo do playhead, frame, trabalho da UI, I/O e memória. Registrar lacunas e hipóteses.
+- Somente avançar para correção com evidência suficiente para escolher a camada afetada. Não exigir certeza absoluta sobre todos os custos; demonstrar o mecanismo que a correção pretende alterar.
+
+2. CORREÇÃO
+- Selecionar a menor mudança capaz de corrigir o mecanismo demonstrado. Registrar efeito esperado antes de editar.
+- Implementar uma candidata por vez, mantendo o experimento comparável e a possibilidade de remover apenas a própria mudança.
+- Não acumular patches especulativos, repetir throttles ou instalar bibliotecas por semelhança de stack.
+- Se a primeira candidata falhar, só propor a segunda com informação nova que explique a falha. Repetir o mesmo experimento sem mudança ou hipótese nova não é progresso.
+- Consultar licenças e justificar dependências/arquitetura quando indispensáveis; respeitar os gates do projeto.
+
+3. VALIDAÇÃO
+- Testes pertinentes de corridas/último alvo, cancelamento, troca de mídia, recursos e contratos afetados.
+- Executar scrub no Tauri real com a mídia de 24 min, build identificado e sem HMR interferindo. Avaliar também mídia de 2 h, se disponível; identificar origem sintética.
+- Comparar antes/depois com a mesma sequência, fonte, hardware e condições de preparação. Medir frame apresentado, não apenas seeked.
+- Verificar regressões pertinentes de transcrição, edição, salvamento e exportação. Não desativar funcionalidades para obter fluidez.
+- Registrar métricas, falhas e limitações. Testes unitários aprovados não substituem o experimento real.
+
+LIMITES CONTRA LOOP E REGRESSÃO
+- Orçamento desta rodada: até 120 minutos de execução ativa, excluindo espera pelo mantenedor. Registrar tempo acumulado entre continuações; não reiniciar o limite ao trocar de contexto.
+- Máximo de duas soluções candidatas. Não há terceira tentativa automática nesta autorização.
+- Validação global conforme política: uma rodada inicial delimitada e no máximo uma repetição justificada; não reiniciar esse orçamento a cada continuação da meta.
+- Definir previamente teto seguro de recursos e interromper antes de esgotar RAM/disco. Falta de mídia, ferramenta ou acesso deve gerar bloqueio identificado, não resultados inventados.
+- Não repetir investigação já registrada sem mudança de código, evidência conflitante ou lacuna específica. Estudar completamente o caminho relevante, sem expandir para funcionalidades alheias.
+- Se orçamento/candidatas acabarem, se não houver hipótese sustentada ou se uma condição essencial impedir a medição, interromper a execução automática, salvar continuidade e aguardar decisão do mantenedor. PARTIAL/BLOCKED não é sucesso.
+- Se encontrar regressão causada pela própria alteração, priorizar reparo dentro do orçamento ou desfazer somente essa alteração identificada; nunca resetar working tree nem apagar mudanças preexistentes.
+- Não converter pendência em “próxima melhoria” para marcar a meta concluída.
+
+CONTINUIDADE
+Nos três checkpoints, registrar resumidamente: evidência nova, hipótese atual, mudança candidata, rodadas/candidatas já consumidas e próximo passo. Atualizar o ENGINE-HANDOFF canônico para sobreviver a troca de contexto. Prosseguir entre checkpoints sem pedir confirmações rotineiras.
+
+DEFINIÇÃO DE CONCLUSÃO
+Concluir somente quando houver correção implementada, critérios de latência e estabilidade demonstrados no vídeo de 24 min e regressões pertinentes aprovadas. O cenário de 2 h tem status próprio; se não testado, não declarar suporte comprovado a vídeos de 2 h ou resolução geral para podcasts longos.
+
+Quando o teste do OpenCut não puder ser executado, não afirmar equivalência ao OpenCut; ainda é possível avaliar critérios absolutos do CutNicePro, declarando a limitação da comparação. Se faltar o teste real do próprio CutNicePro, a meta permanece não concluída.
+
+Entregar relatório CUTNICEPRO — ZCODE REPORT persistido e relido, com baseline, resultados, arquivos alterados, origem das adaptações, regressões e limites. FUNCTIONAL e REGRESSION STATUS refletem somente o escopo comprovado. VISUAL STATUS: PENDING HUMAN APPROVAL.

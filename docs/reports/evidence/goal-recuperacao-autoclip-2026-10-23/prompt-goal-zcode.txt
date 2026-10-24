@@ -1,0 +1,178 @@
+Crie e execute o goal "goal-refino-editorial-fluxo-local-2026-10-24", como continuidade rastreável da recuperação anterior. Se este novo identificador já existir, retome-o sem duplicar. Não execute apenas um diagnóstico: implemente e valide as correções autorizadas abaixo.
+
+/start
+
+OBJETIVO E DECISÕES DO MANTENEDOR
+
+Entregar um fluxo local compreensível e consistente: abrir meu projeto na instância que inicio pelo terminal -> identificar a geração e o modelo -> assistir a cortes com contexto, desenvolvimento e conclusão -> editar, salvar, reabrir e baixar os mesmos resultados.
+
+Os três exemplos G8 foram REPROVADOS editorialmente:
+- Aproximadamente 48 s, "Melhores plataformas para criar um portfólio": termina enquanto a explicação continua.
+- Aproximadamente 40 s, "Quatro critérios para validar a eficácia": começa diretamente na contagem, sem apresentar o assunto/promessa; o final foi considerado bom.
+- Aproximadamente 45 s, "Priorizar qualidade em vez de quantidade": começa sem contexto e o conteúdo percebido fala de quantidade, sem sustentar a promessa de qualidade do título.
+O exemplo "EDITADO" anterior também continua reprovado pela remoção arbitrária.
+
+Esses casos são exemplos de falha para investigação e regressão, não cortes aprovados. A rubrica automática anterior de 9,7/10 não substitui minha avaliação. Preserve as evidências antigas identificadas como REJECTED; não sobrescreva arquivos nem apresente a mesma saída como nova entrega.
+
+A hipótese de que o sistema prioriza duração em vez de conteúdo precisa ser comprovada pelo código e pelos resultados intermediários. Não basta aumentar segundos, trocar o título ou completar pontuação.
+
+Somente inferência local. Não pagarei servidor nem API de IA. Não enviar mídia, transcrição ou áudio para serviços externos; não ativar multimodal como padrão. O Graphify remoto já autorizado é análise de código, separado do processamento dos vídeos. Um llama-server em 127.0.0.1 é processo no meu PC e pode ser avaliado para texto, sem mmproj e sem nuvem.
+
+ORÇAMENTO, ESCOPO E PROTEÇÃO
+
+O teto continua sendo 24 h acumuladas da recuperação e deste refinamento, incluindo pesquisa, inferência, testes e processamento. Reconcilie o consumo real anterior, aproximadamente 4 h relatadas, sem inventar precisão nem conceder outras 24 h automaticamente. Configure este goal somente com o saldo apurado; preserve o histórico de metas antigas. Se houver divergência de contabilização, registre-a antes das cargas. Faça checkpoints por marco ou a cada 2 h; no limite, registre PARTIAL e continuidade exata.
+
+Autorizo as correções incrementais deste texto, evolução compatível dos contratos necessários, identificação dos testes e comparação dos modelos instalados. Preserve stack, timeline aprovada, mídias, projetos, transcrições corrigidas, clipes, EditPlans e edições existentes. Sem commit/push/bump, troca de arquitetura, treinamento de pesos, dependência sem justificativa ou limpeza do trabalho preexistente. Não reintroduzir large-v3 completo nesta tarefa; mantenha o ASR Turbo vigente.
+
+Comece pelos documentos canônicos: AGENTS.md, ENGINE-HANDOFF.md, Product Brain, backlog, TOOLING, VALIDATION-POLICY e REPORTING-STANDARD. Planeje por fatias com contratos, impacto e testes antes da edição. Atualize os existentes, sem planos concorrentes. Inventarie o Git por categoria e origem, distinguindo fontes, testes, documentação, modelos e artefatos; o contador de linhas não autoriza apagar arquivos.
+
+Não criar cópias em lote das fontes para prevenir regressão. Não usar reset/clean/restore destrutivos, stash indiscriminado ou substituir dados por um perfil de laboratório. Cada lab usa diretório exclusivo e manifesto de arquivos próprios. Nunca apagar arquivos encontrados em Downloads por nome, tamanho ou data. Revise scripts de laboratório inseguros antes de reutilizá-los e encerre somente processos comprovadamente próprios.
+
+1. GRAPHIFY REMOTO E FERRAMENTAS REAIS
+
+Use obrigatoriamente o MCP remoto graphify: https://api.graphify.com/mcp, Streamable HTTP, OAuth pelo navegador, workspace wesley-s-workspace, repositório FrosttyS18/CutNicePro. Confirme os identificadores pelas ferramentas. Reutilize a configuração existente; não reinstale o legado local nem duplique entradas.
+
+Valide com consulta real de símbolo conhecido e localização de fonte. Handshake e lista de ferramentas não bastam. Compare revisão/estado do índice com HEAD e mudanças locais/não rastreadas. Antes de cada alteração funcional/estrutural, consulte símbolos, chamadores, dependências, consumidores e testes relevantes, acompanhando UI/serviços/IPC/Rust/persistência/render. Complemente as lacunas com código/diff local; resultado vazio não comprova ausência de impacto.
+
+Depois da alteração, revise diff, consumidores e testes. Não publique o working tree nem faça commit/push para atualizar o índice. O grafo não restaura arquivos, não substitui testes e não garante ausência de regressão. Preserve a política remota existente em AGENTS.md e TOOLING.md; corrija apenas divergências constatadas.
+
+Sem Graphify disponível, registre o bloqueio concreto e a ação necessária, continue diagnóstico/leitura/testes independentes e não faça alterações funcionais dependentes do grafo. OAuth só requer minha participação quando o navegador realmente solicitar. Nunca pedir ou registrar tokens em texto.
+
+Inventarie skills, plugins e MCPs realmente disponíveis e acione os pertinentes: GitHub para fontes/revisões, navegador/DevTools para a instância real, debugging/testes, frontend e refactor guard quando aplicável, revisão de código. Não afirmar uso porque estão instalados. Video Agent Kit não autoriza upload nem API paga. Não exigir todos por formalidade.
+
+Depois de duas abordagens distintas sem diagnóstico novo, pesquise na web a mensagem, versão e componente exatos e consulte documentação oficial, código e issues dos mantenedores antes de tentar novamente. Registre fonte e conclusão aplicável. Não inventar chamadas MCP, parâmetros ou capacidades indisponíveis.
+
+2. PRIMEIRO: A MESMA INSTÂNCIA, OS MESMOS DADOS
+
+Investigue a divergência entre os laboratórios e o app que inicio pelo terminal. Há indícios de perfis webview-g3c/webview-g8 separados, workspace em localStorage isolado e guia apontando TXT Aceite Manual enquanto a geração nova usou G8 Entrega. Confirme a cadeia na sessão real; isso ainda não é diagnóstico completo.
+
+Identifique o comando de inicialização efetivamente usado pelo mantenedor e registre: executável/build e versão, frontend/origem/porta quando aplicável, app identifier, diretórios de dados/perfil WebView e identidade de projeto/mídia/coleção/workspace. Verifique build antiga, frontend novo com backend antigo e processos concorrentes. Não presuma que target-upd20 é o app que estou usando.
+
+Corrija a causa da divergência. O projeto deve abrir seu vídeo, transcrição, cortes e edições no perfil normal; a biblioteca global e o projeto devem apontar para os mesmos registros. Resolver o vínculo ausente por recuperação/migração segura e compatível, com diagnóstico para mídia realmente indisponível. Não semear projects.json/localStorage, inventar datas ou copiar o perfil inteiro do lab para fazer a demonstração passar.
+
+Projetos de teste devem ser explícitos, com mídia vinculada e acessíveis na sessão normal. Não deixar clipes de um "projeto fantasma" como entrega. Não excluir projetos/dados existentes para simplificar o teste.
+
+Gate: iniciar pelo mesmo comando do mantenedor, abrir o projeto correto, conferir os cortes, fechar e reabrir pelo mesmo caminho e reencontrar tudo. Labs isolados continuam úteis para testes, mas não comprovam disponibilidade da entrega no meu app.
+
+3. BIBLIOTECA QUE PERMITA IDENTIFICAR E TESTAR
+
+Na biblioteca global e individual, entregar:
+- Projeto de origem legível e acesso ao projeto; filtro explícito por projeto e agrupamento/ordenação por projeto, preservando as opções úteis existentes.
+- Ordenação por mais recentes e acesso inequívoco à última geração do projeto selecionado, com contagem de resultados novos, preservados e rejeitados.
+- Badge "Novo" durante os primeiros 60 minutos após a publicação inicial bem-sucedida do clipe na biblioteca. Abrir/assistir/editar não remove o badge. Aos 60 minutos ele expira, inclusive sem interação; reabrir não reinicia a hora.
+- Tempo relativo visível, "Agora", "há 1 minuto" etc., atualizado com a tela aberta; data/hora exata acessível. A informação continua depois que Novo expirar.
+- Origem real do modelo e da geração nos testes, com identificação humana consistente com os arquivos.
+
+Use timestamps persistentes e semântica explícita: início do job não é criação/publicação do resultado. Edição, reanálise, abertura, retry sem resultado novo ou dedupe não rejuvenescem clipes antigos. Legados sem data ficam identificados como sem data disponível, sem Date.now inventado. Diferencie criação, atualização e geração.
+
+Não presumir troca de notas entre projetos: investigue identidade e proveniência da nota/análise por clipe. Se for apresentação misturada, corrija a organização; se existir corrupção real, corrija também o vínculo. Invalidar análise/título desatualizados quando necessário, preservando dados compatíveis.
+
+O estado "visto" não governa Novo. Atualize testes que codificam a regra antiga. Verifique 59:59/60:00, abertura, relógio/tela ociosa, reabertura, duplicatas e legado com relógio controlado, sem esperar uma hora real ou adulterar dados do usuário.
+
+Projeto inválido não esconde os válidos; falha parcial é informada. Contagens e filtros global/individual precisam concordar. Não redesenhar a aplicação; respeitar tokens, espaçamento, alinhamento, teclado e estados vazio/loading/erro.
+
+4. DIAGNÓSTICO EDITORIAL E CORREÇÃO DAS DECISÕES
+
+Reproduza os três casos reprovados na mídia e transcrição corretas. Examine contexto antes e depois de cada trecho e o conteúdo audível. Registre o que foi ouvido, o que veio apenas da transcrição e qualquer limitação da ferramenta; não afirmar que assistiu/ouviu se só leu texto.
+
+Rastreie cada transformação: descoberta -> avaliação -> seleção -> regras de duração/quantidade -> cenas/fronteiras -> dedupe -> análise/título -> persistência -> EditPlan/preview/export. Registre janelas propostas e finais, motivo de alteração e trecho consumido por cada etapa. Investigue também truncamento por contexto, limites de tokens, resposta incompleta, restrições entre candidatos e título calculado antes da janela final. Não atribuir causalidade ao tempo sem essa prova.
+
+Pontos de partida incluem generation.rs, borders.rs, selection/ranking, scene_regions, text_engine e consumidores de render; confirme nomes/contratos atuais. Pontuação, gaps entre palavras e fim de frase não comprovam conclusão da ideia. Verifique se o caminho textual recebe pausas de áudio reais ou apenas estimativas; não declarar silencedetect ativo porque existe no experimental multimodal.
+
+Corrija com estas regras:
+- O início apresenta assunto e contexto suficientes para quem não viu o original. Não começar por pronome/referência solta ou no meio de uma enumeração sem a preparação necessária.
+- O gancho deve existir no conteúdo original. Não fabricar frases, fala, voz ou promessa para disfarçar uma seleção ruim.
+- O final encerra a ideia relevante. Ponto final e silêncio ajudam no acabamento, mas não substituem a conclusão semântica.
+- O título/resumo refletem o intervalo FINAL audível. Não prometer quatro critérios ou uma defesa de qualidade quando isso não está compreensível no corte. Não exigir repetição literal do título na primeira frase.
+- A duração decorre do conteúdo coerente. Respeite máximo explícito do usuário; se o contexto/conclusão não couber, selecione outra unidade completa ou rejeite o candidato com motivo. Não exceder o limite silenciosamente, preencher quota com corte ruim nem cortar uma explicação só para atingir duração alvo.
+- Extensões de contexto usam âncoras/timestamps válidos e checagem de sentido, sem anexar segundos fixos indiscriminadamente. Revalidar título e análise se as fronteiras mudarem.
+- Corte contínuo é válido. EditPlan com remoção interna só quando houver motivo editorial demonstrável, preservando sentido e sincronismo; nada de remover trecho avulso para comprovar entrega.
+
+Essas regras devem ser gerais, sem hardcode dos três títulos, frases ou timestamps. Preserve originais reprovados e gere versões novas claramente identificadas para comparação. Trate exemplos já expostos como calibração/regressão; reserve outra amostra antes de ajustar prompts e registre a exposição anterior.
+
+5. CONCLUIR O ESTUDO DO AUTOCLIP E ADAPTAR COM EVIDÊNCIA
+
+Referência principal: https://github.com/zhouxiaoka/autoclip
+Complementar: https://github.com/artbyjazi/autoclip
+
+Audite a cobertura existente de G4. Leitura de cabeçalho, estrutura, docstring ou README não conta como leitura integral/compreensão. O próprio registro lista lacunas de frontend/desktop/API/prompts/testes e nenhum código externo executado; não repetir "estudo completo" enquanto isso permanecer.
+
+Conclua a leitura linha por linha do código autoral versionado principal, com revisão fixa, cobertura por arquivo e distinção LIDO/COMPREENDIDO/EXECUTADO. Separe binários, dependências e gerados; siga contratos críticos. Não gastar tempo relendo arquivos já compreendidos só para aumentar contagem. A comparação do segundo projeto é dirigida, sem confundir autores/revisões/licenças.
+
+Reconstrua entradas/saídas, chamadas, erros e testes dos fluxos de seleção, contexto/janelas, prompts, fronteiras/silêncio, dedupe, títulos, ASR, biblioteca/persistência, jobs, render e enquadramento. Investigue particularmente clip_finder, boundaries, quality e framing ou equivalentes. Estudar tracking não autoriza adicionar um novo motor visual pesado nesta tarefa.
+
+Compare com nosso código em documento existente: comportamento comprovado, diferença, consequência, adaptação, risco e teste. Identifique o que manter, adaptar e rejeitar; não transplantar regras específicas de outro idioma nem a arquitetura inteira.
+
+Execute uma fatia local pertinente do AutoClip, após inspecionar scripts/licenças e isolar dados/provedores, usando modelo local equivalente quando viável. Se não executar, declare estudo estático e ausência de benchmark; não afirmar superioridade prática. Benchmarks do autor com API/hardware/mídia diferentes não valem como resultado do nosso PC.
+
+Para separar algoritmo de modelo, teste uma adaptação delimitada com o mesmo modelo antes/depois. Payload compacto, janelas com cobertura e reutilização local do modelo são hipóteses a medir, não otimizações aprovadas por existência no repositório.
+
+6. COMPARAÇÃO QWEN 4B x GEMMA 12B IDENTIFICADA NOS VÍDEOS
+
+Compare Qwen3-4B instalado e Gemma-4-12B instalado. "Gemma 4" é a família, não um modelo de 4 bilhões. A conclusão anterior de RAM equivalente não é confiável: o script G5 capturou antes/depois da geração, sem amostragem dos picos durante a inferência. Corrija o método, não reutilize esses números como picos.
+
+Use mesma mídia, transcrição corrigida, janela de origem, cobertura, política editorial e hardware. Respeite templates e amostragem adequados a cada família, registrando diferenças; o teste compara configurações completas, não apenas número de parâmetros. Não reduzir contexto/candidatos para favorecer um braço, misturar versões do pipeline ou chamar amostra já exposta de inédita.
+
+Persistir por clipe/geração: projeto/mídia, backend efetivo, arquivo/hash do modelo, configuração, revisão/build, timestamps e janela usada. Não inferir o modelo pelo seletor atual nem pelo nome do arquivo. Fallback precisa ser explícito e rotulado pelo motor real; não chamar Gemma de Qwen se o Qwen falhar.
+
+Entregue pelo menos três cortes coerentes por modelo, seis vídeos de comparação, no mesmo projeto de origem com grupos/gerações identificáveis. Não forçar quota: se um modelo não produzir três aceitáveis, apresente todos os resultados/falhas e registre o critério não atendido. Mostrar a lista completa de candidatos, descartes e motivos, sem escolher apenas exemplos favoráveis.
+
+CADA MP4 DE COMPARAÇÃO deve conter marca d'água QUEIMADA NOS FRAMES:
+- "Qwen 4B" quando gerado pelo Qwen3-4B.
+- "Gemma 12B" quando gerado pelo Gemma-4-12B.
+Mesma posição/estilo legível, dentro da área segura, sem cobrir legendas ou rosto. A marca identifica a IA que selecionou/analisou, não um modelo usado para renderizar. Não entregar apenas nomes de arquivo ou metadados. Verifique frames do começo, meio e fim, junto da proveniência real.
+
+Essa identificação é dos testes autorizados: exportações normais não ganham marca obrigatória. Preserve o fluxo comum e indique no app quais saídas são de comparação. Se houver edição manual, identifique-a e mantenha a versão original; não confundir corte bruto da IA, refinamento automático e edição humana.
+
+Nomes e cards devem permitir conferir projeto, modelo, geração, título, intervalo e duração. O guia deve apontar exatamente para os resultados presentes na minha instância. Não me mandar ao projeto vazio nem aos MP4s de outra rodada.
+
+7. DESEMPENHO LOCAL MEDIDO E IMPLEMENTAÇÃO PROPORCIONAL
+
+Meça fases de carregamento/inferência/validação/render, quantidade de chamadas/recarregamentos, tamanho do contexto/payload e cobertura. Amostre RAM/VRAM durante toda a carga, com intervalo declarado, identificando processos próprios por PID/árvore. Separe baseline, pico absoluto, incremento, RAM compartilhada/privada e VRAM; registre limites do método. Não somar todos os WebViews do computador nem chamar a leitura depois do término de pico.
+
+O ensaio antigo de 93 s contra 286 s foi numa janela curta, com quantidades de cortes diferentes. Não extrapolar para vídeo inteiro nem deduzir qualidade pela quantidade/notas. Reavalie fidelidade contra áudio original e qualidade por corte, não apenas coincidência com ASR.
+
+Avalie incrementalmente payload/contexto e reuso do motor textual local, com A/B delimitado. Recarga de 2–3 min em 19,7 min é parcela do total, não explicação de todo o custo. Não prometer que servidor local reduzirá pico de RAM: medir. Concorrência de inferência local controlada, editor responsivo e liberação em sucesso/falha/cancelamento; sem processos persistentes ociosos por acidente.
+
+Declare metas antes das cargas. Preserve a avaliação herdada de até 20 min no vídeo de aproximadamente 24,6 min e alvo de 6 GB de RAM, com método comparável; se não atender, registrar FAIL da meta e trade-off, sem assumir aceite de 10 GB. Não condicionar correções de UX ou a comparação ao meu aceite desse consumo. Ensaios de 2 h e PCs fracos não realizados continuam lacunas explícitas.
+
+Não baixar modelos, trocar ASR ou ampliar a arquitetura para fugir do problema sem necessidade demonstrada e decisão própria. Use primeiro o instalado e recomende a configuração local com base no conjunto tempo/recursos/qualidade observado.
+
+8. TESTES E GATES DE CONCLUSÃO
+
+Planeje testes pertinentes antes de cada mudança e preserve os aprovados. Uma rodada inicial e uma repetição justificada por alteração/falha, conforme VALIDATION-POLICY; nada de loops estéticos ou testes enfraquecidos para obter PASS.
+
+Gates obrigatórios:
+A. Mesma inicialização/perfil/build do mantenedor; projeto com mídia e resultados acessíveis após reinício real, sem semeadura de JSON/localStorage.
+B. Biblioteca global/individual coerente, filtro e agrupamento por projeto, mais recentes/última geração, modelo e origem identificáveis, falha parcial honesta.
+C. Novo por 1 h independentemente de abrir; tempo relativo/data persistentes, atualizados e corretos no limite e em legados.
+D. Os três defeitos editoriais rastreados e tratados por regras gerais; contexto, promessa e conclusão como critérios eliminatórios.
+E. Estudo AutoClip com cobertura verdadeira, comparação de implementação e execução local delimitada ou bloqueio concreto declarado, sem falso PASS.
+F. Qwen/Gemma comparados de forma controlada, seis saídas identificadas quando qualificadas, marcas nos frames e medição válida de recursos.
+G. Percurso na UI normal: gerar -> abrir -> editar com motivo verificável -> salvar -> reabrir -> exportar pelo botão/diálogo nativo. MP4 reproduzível, áudio/legendas/9:16/enquadramento e janelas equivalentes à prévia; edição manual preservada.
+H. Regressões pertinentes: cancelar durante job e no diálogo, falha do motor/render, retry sem duplicatas, cache invalidado dentro/fora do corte, sem reinício ao reabrir, sem processos órfãos; timeline/undo/redo e ASR corrigido preservados.
+I. Ferramentas/alinhamentos/estado vazio íntegros; rejeitar/excluir têm resposta e persistência coerentes, sem apagar mídia original. Auto-início pós-transcrição permanece opt-in, não dispara ao abrir projeto e não ressuscita cancelamento.
+J. Graphify remoto real por fatia, revisão/defasagem declaradas, diff e testes dos consumidores registrados.
+
+Falha de automação não prova falha do produto nem prova sucesso. Investigue locator/foco/diálogo com ferramenta apropriada e não repita quatro harnesses quebrados. Export por função interna complementa, mas não substitui o botão que vou usar; bloqueio remanescente fica específico e sem PASS herdado de outra build.
+
+Avaliação editorial: contexto, desenvolvimento, fechamento, fidelidade e título/resumo, 0–2 cada; alvo >=8/10 POR CORTE e fidelidade 2/2. Além da nota, início incompreensível, promessa não entregue, ideia cortada e invenção são vetos. Média alta não compensa esses defeitos. Declare método e independência da avaliação automática. Aprovação editorial/visual final continua exclusivamente minha.
+
+9. ENTREGA QUE EU CONSIGA AVALIAR
+
+Antes do relatório obrigatório, explique de forma curta e didática:
+1. Por que os três exemplos falharam e em qual etapa foram alterados.
+2. O que foi corrigido no app que abro, e onde encontro os novos resultados.
+3. O que o AutoClip ensinou e qual adaptação foi realmente testada.
+4. Como Qwen 4B e Gemma 12B diferiram em conteúdo, tempo e recursos; qual recomenda e com quais limites.
+5. Quais gates ainda falharam ou dependem do meu julgamento.
+
+Entregue uma tabela dos vídeos com projeto, geração/modelo, título, intervalo/duração, arquivo, estado (original reprovado, novo automático ou editado) e diferenças verificáveis. Arquivos reproduzíveis, marcas visíveis e os mesmos cards disponíveis no app normal; não exigir nova inferência longa para eu assistir ao que já foi gerado.
+
+Guia curto com caminho exato e resultados esperados, sem misturar TXT Aceite Manual, G8 Entrega e outros labs. Não pedir aprovação editorial enquanto a identificação e o acesso estiverem quebrados.
+
+Atualize o registro canônico de continuidade, documentos afetados, backlog/rastreabilidade e relatórios sem apagar histórico. Registre consumo acumulado e saldo. Informe IMPLEMENTADO, TESTADO, REJEITADO e PENDENTE separadamente; não dizer que só falta meu aceite se existem lacunas técnicas.
+
+Persistir e reler o relatório CUTNICEPRO — ZCODE REPORT em LATEST e history e apresentar integralmente conforme o protocolo. Não declarar a meta concluída por compilar, exportar um arquivo ou autoatribuir nota. Havendo trabalho obrigatório restante, continuar dentro do saldo; no limite ou bloqueio real, registrar PARTIAL/BLOCKED conforme a política.
+
+Comece agora pelo alinhamento da instância/dados e pela identificação da biblioteca, com Graphify e análise local, antes de novas inferências demoradas. Depois conclua estudo, diagnóstico editorial, correções e comparação. Minha participação final será avaliar uma entrega funcional, identificável e coerente.

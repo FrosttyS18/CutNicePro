@@ -1,0 +1,80 @@
+{
+  "date": "2026-10-23",
+  "scope": "research and prompt only; no app implementation",
+  "head": "e22555b682ccad97a68eb356032c245b86b54baf",
+  "local": [
+    {
+      "path": "app/src-tauri/src/clips/text_engine.rs",
+      "sha256": "6cc82641f45815dd1a20034aba1193bd40078bfc66cc8d4a3782abcbbf9751bd",
+      "bytes": 18277
+    },
+    {
+      "path": "app/src-tauri/src/clips/types.rs",
+      "sha256": "34c59b9e0a9811f50cf3b8c67aeb8c8243af575fd9c6d6335dd6cca61162a1b6",
+      "bytes": 12700
+    },
+    {
+      "path": "app/src-tauri/src/clips/scene_regions.rs",
+      "sha256": "3c3ba81df24def33950825ac1c79da3b9dbd582f51fbb9a1e918403acec45c44",
+      "bytes": 5449
+    },
+    {
+      "path": "app/src/components/editor/EditorTimeline.tsx",
+      "sha256": "cba7c677a530689a4eb95758456ef3599f57687976acb9f1f4cf21f129f7c121",
+      "bytes": 3430
+    },
+    {
+      "path": "app/src/lib/workspace-types.ts",
+      "sha256": "6815ec66972183a71d30a4913b9e43b1b6333a368657e09eff8fa6df73eb5e4e",
+      "bytes": 2038
+    },
+    {
+      "path": "app/src/lib/frame-seeker.ts",
+      "sha256": "735adc91ae1ec2783c50fb5f5b551f43052c643a7ca91ba9ab695279edaacf5a",
+      "bytes": 6315
+    }
+  ],
+  "external": [
+    {
+      "url": "https://ai.google.dev/gemma/docs/core/model_card_4",
+      "source": "official web",
+      "revision": null,
+      "scope": "model card; input modalities, context and temporal limits"
+    },
+    {
+      "url": "https://www.opus.pro/clipanything",
+      "source": "official product page",
+      "revision": null,
+      "scope": "public behavior only, no implementation inference"
+    },
+    {
+      "url": "https://github.com/ggml-org/llama.cpp/blob/master/tools/mtmd/README.md",
+      "source": "GitHub connector",
+      "revision": "master (moving)",
+      "scope": "multimodal README",
+      "sha256": "5821ef525780b71085f68da7e4ea1dd9b90241fbba91cb928519b06eb2f76c42",
+      "bytes": 5627
+    },
+    {
+      "url": "https://github.com/FoundationVision/ByteTrack/blob/main/yolox/tracker/byte_tracker.py",
+      "source": "GitHub connector",
+      "revision": "main (moving)",
+      "scope": "limited static reading of tracker contract, association and Kalman calls",
+      "sha256": "7cecdcdd7998103969a4ba1772f4c9fb5560fd5eef05ca03e0d2df28346ca50b",
+      "bytes": 11940
+    },
+    {
+      "url": "https://github.com/FoundationVision/ByteTrack/blob/main/LICENSE",
+      "source": "GitHub connector",
+      "revision": "main (moving)",
+      "scope": "MIT license",
+      "sha256": "e9d83751678cbaba6dfba902ea39215c423d93425e58f8450d6001f7261696f9",
+      "bytes": 1067
+    }
+  ],
+  "limits": [
+    "Runtime do Gemma não executado",
+    "Leitura estática delimitada, não auditoria completa",
+    "Nenhum teste editorial ou de tracking executado"
+  ]
+}

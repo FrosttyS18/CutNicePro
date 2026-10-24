@@ -1,0 +1,950 @@
+{
+  "window": {
+    "start": 1200,
+    "end": 1476
+  },
+  "arms": [
+    {
+      "label": "qwen4b",
+      "quality": "standard",
+      "segments": 135,
+      "elapsedS": 93,
+      "jobState": "completed",
+      "jobError": null,
+      "backend": "standard",
+      "model": "Qwen3-4B-Q4_K_M.gguf",
+      "clips": [
+        {
+          "start": 1334.3,
+          "end": 1354.8,
+          "score": 85,
+          "title": "Definição da estrutura básica para portfólio",
+          "summary": "O falante explica que o vídeo existe para ajudar, responde se um portfólio precisa ser claro e define a estrutura básica como contexto, problema, solução, processo e resultado.",
+          "reasons": [
+            "Avaliação do intervalo efetivo (explicação): O trecho é uma explicação sobre a estrutura básica de um portfólio, com uma conclusão clara e coerente que encerra o assunto.",
+            "A fala inicial estabelece a função do falante e justifica a existência do vídeo, criando um engajamento inicial com uma justificativa clara.",
+            "A fala 1 apresenta uma pergunta direta sobre a clareza do portfólio e a preferência por estruturas básicas, desenvolvendo o tema com uma abordagem questionadora.",
+            "A fala final oferece uma definição clara da estrutura básica, fechando o tema com uma resposta específica e direta."
+          ],
+          "analysisError": null
+        },
+        {
+          "start": 1422.1,
+          "end": 1452.3,
+          "score": 84,
+          "title": "Clareza e eficácia no portfólio",
+          "summary": "O participante destaca a necessidade de ter um propósito claro no texto e sugere um teste prático para avaliar a compreensão do público. O teste envolve mostrar o portfólio em 30 segundos e verificar se o público entende",
+          "reasons": [
+            "Avaliação do intervalo efetivo (explicação): O trecho explica o teste do 30 segundos para avaliar o portfólio e destaca a importância de ter um processo claro e documentado. Isso é uma explicação sobre como melhorar o portfólio e o processo de seleção.",
+            "A fala inicial apresenta uma diretriz clara e direta para o propósito do texto, destacando a importância de ter um 'porquê' real e documentado, o que captura a essência do conteúdo de forma impactante.",
+            "O teste de 30 segundos é uma abordagem prática para avaliar a compreensão do público, mostrando o interesse em validar a eficácia do portfólio em um contexto real e limitado.",
+            "A fala final destaca a necessidade de revisão do portfólio quando não há compreensão do público-alvo, reforçando a importância da clareza e da eficácia na comunicação."
+          ],
+          "analysisError": null
+        },
+        {
+          "start": 1377.1,
+          "end": 1399.7,
+          "score": 83,
+          "title": "Problemas com o ATS e formatos de currículo",
+          "summary": "O participante explica que o ATS lê o currículo de forma linear, ignorando a estrutura e o contexto. O sistema não entende quem o candidato é, independentemente do formato. A recomendação é exportar o currículo em format",
+          "reasons": [
+            "Avaliação do intervalo efetivo (explicação): O trecho explica como o ATS (sistema de seleção de candidatos) lê currículos gerados a partir do Figma e destaca a necessidade de exportar para Word ou Google Docs para que o sistema os entenda corretamente. Isso é uma explicação sobre um processo técnico.",
+            "A fala inicial introduz o problema central: o PDF gerado pelo Figma não segue a estrutura linear, o que pode causar problemas ao ser lido por sistemas automatizados como o ATS.",
+            "O participante explica como o ATS lê o currículo de forma linear, ignorando a estruturação e o contexto, o que mostra a limitação do sistema em compreender a identidade do candidato.",
+            "A fala final ressalta a importância de exportar o currículo em formatos compatíveis com o ATS, destacando a necessidade de seguir regras específicas para que o sistema o leia corretamente."
+          ],
+          "analysisError": null
+        },
+        {
+          "start": 1293.8,
+          "end": 1317.2,
+          "score": 82,
+          "title": "Decisão direta sobre a criação de um site",
+          "summary": "O interlocutor pede explicações sobre um site, e o outro aponta a necessidade de agir com decisão. O outro sugere uma solução prática e direta para o problema apresentado.",
+          "reasons": [
+            "Avaliação do intervalo efetivo (explicação): O trecho é uma explicação sobre as ferramentas para criar um portfólio, com uma conclusão clara e coerente que encerra o assunto.",
+            "A frase inicial cria uma dinâmica de confronto e direta, estabelecendo um tom de urgência e clareza na conversa.",
+            "A reação do interlocutor mostra a intenção de seguir a orientação do autor, indicando um passo inicial na conversa.",
+            "A fala final destaca a proposta prática e direta do autor, enfatizando a simplicidade e a eficiência do site como solução."
+          ],
+          "analysisError": null
+        },
+        {
+          "start": 1399.7,
+          "end": 1421.9,
+          "score": 82,
+          "title": "Critica sobre uso de texto em imagens e necessidade de propósito",
+          "summary": "O participante critica o uso excessivo de texto em imagens e defende a necessidade de um propósito claro para cada imagem. Ele reforça a importância de ter um 'porquê' para cada elemento visual, destacando a necessidade ",
+          "reasons": [
+            "Avaliação do intervalo efetivo (humor/reação): O trecho é uma reação irônica e exausta, com expressões como 'Porra. Foda, velho' e '20 anos essa merda e eu tenho que ficar falando', que refletem frustração e humor. O desfecho não resolve um problema, mas sim reforça a irritação.",
+            "A frase 'disso aqui. Só faz do jeito que eu tô falando. Porra. Foda, velho.' é uma introdução energética e direta, criando um tom de urgência e autoridade no início do trecho.",
+            "A frase 'Faz no Figma. Outro ponto, evita tocar imagem pra caralho. Texto demais.' apresenta uma crítica sobre o uso excessivo de texto em imagens, indicando uma mudança de foco para a qualidade visual e o propósito das imagens.",
+            "A frase 'Toda imagem tem que ter um porquê.' é a conclusão do trecho, reforçando a ideia central de que cada imagem deve ter uma razão ou propósito."
+          ],
+          "analysisError": null
+        },
+        {
+          "start": 1452.7,
+          "end": 1476.3,
+          "score": 81,
+          "title": "Vídeo direto e encerramento amigável",
+          "summary": "O vídeo começa com uma frase direta que não tenta convencer, mas oferece informações claras. Em seguida, o conteúdo se desenvolve com uma promessa de futuros vídeos técnicos e incentiva a interação. O vídeo termina com u",
+          "reasons": [
+            "Avaliação do intervalo efetivo (demonstração): O trecho demonstra como o conteúdo do clipe pode ser usado para engajar o público, como deixar o like, comentar, se inscrever e perguntar dúvidas. O desfecho aponta onde a fala está (no final do clipe) e sugere ações futuras.",
+            "A frase 'Esquece. Nem tenta convencer a pessoa. É, não, mas é porque você não viu aqui.' serve como um hook inicial, indicando que o conteúdo é direto e não tenta convencer, mas oferece informações claras e diretas ao espectador.",
+            "A frase 'Se inscreve pra receber mais conteúdo, direto, sem enrolação. Os próximos conteúdos serão tão técnicos quanto esse ou mais técnicos e comenta.' mostra o desenvolvimento do conteúdo, apresentando a expectativa de futuros vídeos e incentivando a interação do espectador.",
+            "A frase 'Fui, até a próxima.' indica o encerramento do vídeo com um tom amigável e encorajador, sugerindo que o conteúdo foi concluído e que o espectador pode seguir assistindo em futuros vídeos."
+          ],
+          "analysisError": null
+        },
+        {
+          "start": 1198.4,
+          "end": 1223.9,
+          "score": 80,
+          "title": "Preferências claras e regras estabelecidas",
+          "summary": "O participante expõe suas preferências por certos tipos de produtos, defende a qualidade e reforça a necessidade de seguir regras estabelecidas. Ele também reitera a importância de manter a disciplina no uso de recursos ",
+          "reasons": [
+            "Avaliação do intervalo efetivo (explicação): O trecho é uma explicação detalhada sobre a quantidade e qualidade de case em uma aplicação, com uma estrutura clara e uma conclusão natural que encerra o assunto.",
+            "O participante começa com uma afirmação direta e autocrítica, destacando sua experiência e experiência na internet para estabelecer autoridade no tema.",
+            "O participante apresenta uma opinião clara sobre a qualidade dos produtos, comparando diferentes opções e justificando sua preferência por uma delas.",
+            "O participante conclui a discussão com uma reação firme, reiterando a importância de seguir as regras estabelecidas."
+          ],
+          "analysisError": null
+        },
+        {
+          "start": 1248.3,
+          "end": 1272,
+          "score": 80,
+          "title": "Comparação entre Framer e PDF",
+          "summary": "O participante compara Framer e PDF, destacando a facilidade de acesso e a qualidade dos templates. Menciona a preferência por Wix e conclui que PDF é uma boa opção.",
+          "reasons": [
+            "Avaliação do intervalo efetivo (demonstração): O trecho demonstra o uso de Framer e PDF como ferramentas para criar um portfólio, com uma explicação direta sobre como funcionam e o que são, mas o desfecho não é uma conclusão natural do assunto, mas uma referência à imagem do clipe.",
+            "A frase inicial apresenta uma ideia clara e direta sobre o uso de Framer e PDF como cartões de visita, criando um ponto de partida interessante e informativo para o diálogo.",
+            "O participante discute as diferenças entre Framer e PDF, destacando a facilidade de acesso e a qualidade dos templates, mas também menciona a preferência por Wix, indicando uma avaliação comparativa.",
+            "A frase 'PDF é show intel' é uma conclusão direta e positiva sobre o uso do PDF, reforçando a ideia de que é uma boa opção."
+          ],
+          "analysisError": null
+        },
+        {
+          "start": 1224,
+          "end": 1247.7,
+          "score": 79,
+          "title": "Qualidade vs. Quantidade em Trabalhos Bem Feitos",
+          "summary": "Jota defende a qualidade de três trabalhos bem feitos sobre a quantidade de 15 e meia. O outro menciona casos práticos feitos na faculdade. A discussão termina com uma resposta direta sobre plataformas para portfólio.",
+          "reasons": [
+            "Avaliação do intervalo efetivo (explicação): O trecho continua a explicação sobre a qualidade e quantidade de case, reforçando a ideia de que três bem feitos são melhores do que 15 e meia boca, com uma conclusão clara e coerente.",
+            "A primeira fala introduz o tema central do diálogo: a qualidade versus a quantidade de trabalhos bem feitos, criando uma base para a discussão.",
+            "O participante menciona casos feitos na faculdade, mostrando que há um contexto de experiência prática, mas não responde diretamente à pergunta principal.",
+            "O participante resolve a pergunta com uma resposta direta e simples, indicando que a discussão está se encerrando."
+          ],
+          "analysisError": null
+        },
+        {
+          "start": 1354.8,
+          "end": 1376.6,
+          "score": 79,
+          "title": "Currículo simples e escaneável",
+          "summary": "O entrevistado critica o uso de Figma e PDFs no currículo, defendendo a simplicidade e a escaneabilidade. Ele menciona sua participação no time do Figma em 2026, mostrando uma reação direta ao tema. A fala final aponta u",
+          "reasons": [
+            "Avaliação do intervalo efetivo (explicação): O trecho é uma explicação sobre o que deve ser feito em um portfólio, com uma conclusão clara e coerente que encerra o assunto.",
+            "A fala inicial apresenta a ideia central do currículo sendo simples e escaneável, criando um ponto de partida direto para o tema.",
+            "A fala 1 critica o uso de Figma e PDFs, mostrando uma reação clara ao tema central do currículo, o que reflete o desenvolvimento do argumento.",
+            "A fala final menciona a participação no time do Figma em 2026, indicando um fechamento com uma ação específica relacionada ao tema."
+          ],
+          "analysisError": null
+        },
+        {
+          "start": 1317.5,
+          "end": 1333.6,
+          "score": 69,
+          "title": "PDF com detalhes e crítica à falta de clareza",
+          "summary": "O participante pede que o outro explique o que está acontecendo e critica a falta de clareza. Ele também menciona um PDF com detalhes e tenta ajudar, mostrando intenção de resolver o problema.",
+          "reasons": [
+            "Avaliação do intervalo efetivo (explicação): O trecho é uma explicação sobre o que funciona e o que não funciona em um portfólio, com uma conclusão clara e coerente que encerra o assunto.",
+            "O participante menciona um documento com detalhes, criando um ponto de interesse inicial.",
+            "O participante critica a falta de clareza e exige explicação, mostrando o desenvolvimento da situação.",
+            "O participante demonstra tentativa de ajudar, indicando um fechamento com intenção de resolver um problema."
+          ],
+          "analysisError": null
+        },
+        {
+          "start": 1272,
+          "end": 1293.8,
+          "score": 58,
+          "title": "Apresentação e detalhamento de material",
+          "summary": "O participante pede que os dois materiais sejam enviados para a entrevista, destacando a importância do PDF como complemento. A fala final questiona a inclusão do Notion na apresentação, indicando uma ambiguidade sobre o",
+          "reasons": [
+            "Avaliação do intervalo efetivo (demonstração): O trecho continua a demonstração sobre as ferramentas para criar um portfólio, mas o desfecho não é uma conclusão natural do assunto, mas uma referência à imagem do clipe.",
+            "A fala inicial introduz o conceito de 'deck' como uma extensão do slide, sugerindo uma relação entre apresentação e detalhamento.",
+            "A fala central destaca a importância do PDF como complemento da apresentação, mostrando a valorização do material detalhado.",
+            "A fala final questiona a inclusão do Notion na apresentação, indicando uma ambiguidade sobre o conteúdo a ser apresentado."
+          ],
+          "analysisError": null
+        }
+      ],
+      "calls": {
+        "total": 0,
+        "kinds": {},
+        "note": "scratch deste braço não capturado (dir nova já removida antes da leitura)"
+      },
+      "ramPeakMB": 1251,
+      "ramBaseMB": null,
+      "vramPeakUsedMiB": 3182,
+      "vramBaseUsedMiB": null
+    },
+    {
+      "label": "gemma12b",
+      "quality": "experimentalGemma",
+      "segments": 135,
+      "elapsedS": 286,
+      "jobState": "completed",
+      "jobError": null,
+      "backend": "experimentalGemma",
+      "model": "gemma-4-12b-it-qat-q4_0.gguf",
+      "clips": [
+        {
+          "start": 1239.8,
+          "end": 1289.3,
+          "score": 89,
+          "title": "Recomendação de Framer e PDF para criação de portfólio",
+          "summary": "A conversa foca na recomendação das plataformas Framer e PDF para a criação de portfólio. O interlocutor explica que o Framer serve como um cartão de visita online de fácil acesso, enquanto o PDF funciona como um deck de",
+          "reasons": [
+            "Avaliação do intervalo efetivo (explicação): O trecho fornece uma recomendação clara e direta sobre ferramentas para portfólio, concluindo com o porquê de cada uma e a dinâmica de envio.",
+            "O gancho é direto, apresentando uma pergunta específica sobre as melhores plataformas para criação de portfólio.",
+            "O desenvolvimento explica as vantagens práticas do Framer, como facilidade de acesso, templates e funcionalidade em dispositivos móveis.",
+            "O trecho termina com uma validação positiva e um incentivo claro para o uso de ambos os formatos como complemento."
+          ],
+          "analysisError": null
+        },
+        {
+          "start": 1295.8,
+          "end": 1331.1,
+          "score": 52,
+          "title": "Orientações sobre site e PDF para entrevistas de carreira",
+          "summary": "O falante confronta o interlocutor sobre os riscos de não seguir suas orientações, comparando a falta de estratégia a jogar na loteria. Ele sugere a criação de um website simples e funcional acompanhado de um PDF detalha",
+          "reasons": [
+            "Avaliação do intervalo efetivo (opinião): O locutor enfatiza sua postura e reforça a autoridade da recomendação anterior, mas o fechamento é mais um 'ponto final' de autoridade do que uma conclusão de conteúdo novo.",
+            "O gancho é forte e direto ao estabelecer um confronto pessoal e uma autoridade sobre o que funciona para o interlocutor.",
+            "O desenvolvimento perde pontos por apresentar uma mudança brusca de assunto, saindo da metáfora sobre jogos de azar para instruções técnicas sobre criação de websites.",
+            "O fechamento é interrompido abruptamente, pois o falante encerra a fala no meio de uma sentença sem concluir o raciocínio final."
+          ],
+          "analysisError": null
+        },
+        {
+          "start": 1354.8,
+          "end": 1411.2,
+          "score": 52,
+          "title": "Por que evitar o Figma para criar currículos profissionais",
+          "summary": "A discussão foca na recomendação de utilizar Google Docs ou Word para criar currículos, argumentando que arquivos gerados no Figma não possuem estrutura linear para sistemas de leitura automática. O interlocutor enfatiza",
+          "reasons": [
+            "Avaliação do intervalo efetivo (explicação): Explica tecnicamente por que não usar Figma para currículos (leitura do ATS) e encerra com uma conclusão forte e definitiva sobre o que fazer.",
+            "O gancho é forte pois apresenta uma instrução direta e clara sobre como estruturar um currículo de forma escaneável.",
+            "O desenvolvimento é prejudicado porque os participantes mudam o assunto de conselhos sobre currículos para a participação em grupos de ferramentas de design.",
+            "O fechamento é interrompido por uma fala contraditória e sem conclusão lógica ao conselho dado anteriormente."
+          ],
+          "analysisError": null
+        },
+        {
+          "start": 1435.8,
+          "end": 1457.8,
+          "score": 49,
+          "title": "Teste de 30 segundos para validar a clareza do portfólio",
+          "summary": "O falante propõe um teste de 30 segundos para verificar se as pessoas entendem o que é feito e como é feito no portfólio de alguém. Ele orienta que, caso não haja entendimento imediato, o conteúdo deve ser reescrito. O t",
+          "reasons": [
+            "Avaliação do intervalo efetivo (demonstração): Apresenta um método prático (teste dos 30 segundos) para validar o portfólio, com um desfecho claro de ação.",
+            "O início apresenta um desafio claro e direto sobre o teste de 30 segundos para portfólios.",
+            "O desenvolvimento é prejudicado pela interrupção brusca da explicação técnica por uma discordância direta e sem contexto.",
+            "O vídeo termina abruptamente com um pedido de interação, sem uma conclusão lógica ou desfecho para o exercício proposto."
+          ],
+          "analysisError": null
+        }
+      ],
+      "calls": {
+        "total": 0,
+        "kinds": {}
+      },
+      "ramPeakMB": 1218,
+      "ramBaseMB": 1135,
+      "vramPeakUsedMiB": 3067,
+      "vramBaseUsedMiB": 3060
+    }
+  ],
+  "windowTranscript": [
+    {
+      "start": 1198.4,
+      "end": 1200.1,
+      "text": "Não adianta, eu tô aqui, tem 10 anos na internet"
+    },
+    {
+      "start": 1200.1,
+      "end": 1202.1,
+      "text": "falando a mesma coisa. Qual a quantidade"
+    },
+    {
+      "start": 1202.1,
+      "end": 1204,
+      "text": "de case? 3 a 5."
+    },
+    {
+      "start": 1204.4,
+      "end": 1206.2,
+      "text": "Bem feito? 3 a 5."
+    },
+    {
+      "start": 1206.6,
+      "end": 1208,
+      "text": "Meia boca? Uns 8."
+    },
+    {
+      "start": 1208.3,
+      "end": 1210.3,
+      "text": "Uns 8 pra 15. Agora,"
+    },
+    {
+      "start": 1210.9,
+      "end": 1212,
+      "text": "é melhor 8 ou 15,"
+    },
+    {
+      "start": 1212.1,
+      "end": 1213.7,
+      "text": "meia boca ou 3 bem feito?"
+    },
+    {
+      "start": 1214.2,
+      "end": 1215.9,
+      "text": "Sempre 3 bem feito."
+    },
+    {
+      "start": 1216.4,
+      "end": 1217.9,
+      "text": "Eu não vou olhar 15 case"
+    },
+    {
+      "start": 1217.9,
+      "end": 1219.7,
+      "text": "de qualquer maneira. De novo, vamos repetir."
+    },
+    {
+      "start": 1219.9,
+      "end": 1220.9,
+      "text": "Eu tenho 1.000 aplicação."
+    },
+    {
+      "start": 1221.7,
+      "end": 1223.9,
+      "text": "Só com você eu vou perder 20 minutos?"
+    },
+    {
+      "start": 1224,
+      "end": 1225.1,
+      "text": "Impossível, isso não vai acontecer."
+    },
+    {
+      "start": 1225.6,
+      "end": 1228.9,
+      "text": "Três bem feitos é muito melhor do que 15 e meia boca."
+    },
+    {
+      "start": 1229.4,
+      "end": 1231.7,
+      "text": "Ah, Jota, mas eu tenho um monte de cases que eu fiz na faculdade."
+    },
+    {
+      "start": 1231.9,
+      "end": 1233.5,
+      "text": "Esquece. Três bem feitos."
+    },
+    {
+      "start": 1233.9,
+      "end": 1236.9,
+      "text": "E eu tô falando bem feito com todas as regras que eu te passei nesse vídeo."
+    },
+    {
+      "start": 1237.4,
+      "end": 1239.4,
+      "text": "Se tiver bem feito, três bem feitos."
+    },
+    {
+      "start": 1239.8,
+      "end": 1242.8,
+      "text": "Quais as plataformas, Jota, pra criar o meu portfólio?"
+    },
+    {
+      "start": 1243.3,
+      "end": 1246.1,
+      "text": "Eu vou ser talvez o mais direto que eu já fui em relação a essa pergunta"
+    },
+    {
+      "start": 1246.1,
+      "end": 1247.7,
+      "text": "e o mais simples possível."
+    },
+    {
+      "start": 1248.3,
+      "end": 1250.4,
+      "text": "Framer e um PDF. Pronto."
+    },
+    {
+      "start": 1250.9,
+      "end": 1257.1,
+      "text": "como cartão de visita aberto, entendeu? É fácil de acessar, cheio de template legal,"
+    },
+    {
+      "start": 1257.2,
+      "end": 1259.8,
+      "text": "é online, acessa no celular,"
+    },
+    {
+      "start": 1259.9,
+      "end": 1261.5,
+      "text": "tomando link, funciona"
+    },
+    {
+      "start": 1261.5,
+      "end": 1264.4,
+      "text": "não precisa de pate-papo, não precisa de dificuldade"
+    },
+    {
+      "start": 1264.4,
+      "end": 1266,
+      "text": "aí eu vou usar o Wix"
+    },
+    {
+      "start": 1266,
+      "end": 1267.8,
+      "text": "não, Framer, funciona"
+    },
+    {
+      "start": 1267.8,
+      "end": 1269.1,
+      "text": "tem um monte de template legal"
+    },
+    {
+      "start": 1269.1,
+      "end": 1272,
+      "text": "por que PDF, AJ? PDF é show intel"
+    },
+    {
+      "start": 1272,
+      "end": 1274.3,
+      "text": "é um deck, um slide"
+    },
+    {
+      "start": 1274.3,
+      "end": 1275.7,
+      "text": "mais detalhado"
+    },
+    {
+      "start": 1275.7,
+      "end": 1277.6,
+      "text": "com mais sensação de apresentação"
+    },
+    {
+      "start": 1277.6,
+      "end": 1278.9,
+      "text": "pra entrevista"
+    },
+    {
+      "start": 1278.9,
+      "end": 1281.9,
+      "text": "AJ, quando eu for mandar a minha aplicação, manda os dois?"
+    },
+    {
+      "start": 1282,
+      "end": 1283.5,
+      "text": "manda os dois, pô, coisa linda"
+    },
+    {
+      "start": 1283.5,
+      "end": 1285.8,
+      "text": "vou adorar clicar no teu website, ver o PDF"
+    },
+    {
+      "start": 1285.8,
+      "end": 1287.6,
+      "text": "ó, pô, ele fez isso aqui"
+    },
+    {
+      "start": 1287.6,
+      "end": 1289.3,
+      "text": "aqui tem mais detalhe, entendeu?"
+    },
+    {
+      "start": 1289.9,
+      "end": 1290.5,
+      "text": "Ponto final."
+    },
+    {
+      "start": 1291.1,
+      "end": 1293.8,
+      "text": "A Jota, mas e o Notion, a Jota?"
+    },
+    {
+      "start": 1293.8,
+      "end": 1295.3,
+      "text": "O Dribble, o Behance?"
+    },
+    {
+      "start": 1295.8,
+      "end": 1298.2,
+      "text": "Olha, de novo, vou ser direto aqui."
+    },
+    {
+      "start": 1298.6,
+      "end": 1299.9,
+      "text": "É contigo, tá?"
+    },
+    {
+      "start": 1300.3,
+      "end": 1303.3,
+      "text": "Eu tô te apontando e te explicando o que funciona."
+    },
+    {
+      "start": 1303.8,
+      "end": 1304.7,
+      "text": "Tu quer se arriscar?"
+    },
+    {
+      "start": 1304.8,
+      "end": 1305.5,
+      "text": "É um problema teu."
+    },
+    {
+      "start": 1305.8,
+      "end": 1306.7,
+      "text": "Tu quer jogar na loteria?"
+    },
+    {
+      "start": 1307,
+      "end": 1307.6,
+      "text": "Joga na loteria."
+    },
+    {
+      "start": 1308,
+      "end": 1309.8,
+      "text": "Tu quer colocar a tua carreira num bingo?"
+    },
+    {
+      "start": 1310.1,
+      "end": 1311.1,
+      "text": "Joga no bingo, pô."
+    },
+    {
+      "start": 1311.6,
+      "end": 1313.1,
+      "text": "O que eu tô te falando é o que funciona."
+    },
+    {
+      "start": 1313.1,
+      "end": 1317.2,
+      "text": "Um website simples, direto, rápido, fácil acesso,"
+    },
+    {
+      "start": 1317.5,
+      "end": 1318.3,
+      "text": "Que funciona no celular."
+    },
+    {
+      "start": 1318.9,
+      "end": 1320.5,
+      "text": "Um PDF que tem mais detalhes"
+    },
+    {
+      "start": 1320.5,
+      "end": 1322.5,
+      "text": "que eu sei que no dia da entrevista"
+    },
+    {
+      "start": 1322.5,
+      "end": 1323.7,
+      "text": "você vai trazer esse PDF."
+    },
+    {
+      "start": 1324,
+      "end": 1325.4,
+      "text": "Você vai me explicar o que está acontecendo."
+    },
+    {
+      "start": 1326,
+      "end": 1326.7,
+      "text": "Maravilha, ponto."
+    },
+    {
+      "start": 1327.2,
+      "end": 1328.5,
+      "text": "Qualquer outra coisa fora disso,"
+    },
+    {
+      "start": 1328.9,
+      "end": 1330,
+      "text": "vocês estão jogando a loteria."
+    },
+    {
+      "start": 1330.3,
+      "end": 1331.1,
+      "text": "Aí já não é um problema meu."
+    },
+    {
+      "start": 1331.6,
+      "end": 1333.6,
+      "text": "De novo, eu estou tentando te ajudar."
+    },
+    {
+      "start": 1334.3,
+      "end": 1335.9,
+      "text": "O meu papel é te ajudar."
+    },
+    {
+      "start": 1336.3,
+      "end": 1337.8,
+      "text": "Porque se eu quiser te dificultar,"
+    },
+    {
+      "start": 1338,
+      "end": 1338.9,
+      "text": "o vídeo não existia."
+    },
+    {
+      "start": 1339.5,
+      "end": 1340,
+      "text": "Resumindo,"
+    },
+    {
+      "start": 1340.6,
+      "end": 1342.2,
+      "text": "portfólio precisa ter clareza?"
+    },
+    {
+      "start": 1342.5,
+      "end": 1343.4,
+      "text": "Sim, cheque."
+    },
+    {
+      "start": 1343.9,
+      "end": 1346.4,
+      "text": "Estrutura básica é melhor do que a complexa?"
+    },
+    {
+      "start": 1346.7,
+      "end": 1347.2,
+      "text": "Cheque."
+    },
+    {
+      "start": 1347.5,
+      "end": 1348.8,
+      "text": "Qual que é a estrutura básica?"
+    },
+    {
+      "start": 1349.1,
+      "end": 1353.7,
+      "text": "Contexto, problema, solução, processo de trabalho, resultado."
+    },
+    {
+      "start": 1354.3,
+      "end": 1354.6,
+      "text": "Bingo."
+    },
+    {
+      "start": 1355.2,
+      "end": 1355.8,
+      "text": "Seu currículo?"
+    },
+    {
+      "start": 1356.1,
+      "end": 1356.6,
+      "text": "Simples."
+    },
+    {
+      "start": 1356.7,
+      "end": 1359.3,
+      "text": "O mais simples possível, o mais escaneável possível."
+    },
+    {
+      "start": 1359.8,
+      "end": 1361.9,
+      "text": "Se possível, Google Docs ou Word."
+    },
+    {
+      "start": 1362.5,
+      "end": 1363.7,
+      "text": "Esquece fazendo Figma."
+    },
+    {
+      "start": 1363.9,
+      "end": 1366.1,
+      "text": "Esquece fazer esses PDF filha da puta que vocês fazem."
+    },
+    {
+      "start": 1366.7,
+      "end": 1368.3,
+      "text": "Ah, Jota, mas tu já falou de Figma."
+    },
+    {
+      "start": 1368.7,
+      "end": 1369.8,
+      "text": "Sim, e eu errei."
+    },
+    {
+      "start": 1370.4,
+      "end": 1371.9,
+      "text": "Aqui tá o 2026 pra você."
+    },
+    {
+      "start": 1371.9,
+      "end": 1373.6,
+      "text": "O próprio time do Figma."
+    },
+    {
+      "start": 1374,
+      "end": 1376.6,
+      "text": "Sim, eu participo aí de uns grupos aí do Figma."
+    },
+    {
+      "start": 1377.1,
+      "end": 1378.7,
+      "text": "O próprio time do Figma já explicou"
+    },
+    {
+      "start": 1378.7,
+      "end": 1380.5,
+      "text": "que o PDF gerado do Figma,"
+    },
+    {
+      "start": 1381,
+      "end": 1382.4,
+      "text": "ele não segue a estrutura linear."
+    },
+    {
+      "start": 1383.1,
+      "end": 1385.3,
+      "text": "Então, quando o ATS for ler,"
+    },
+    {
+      "start": 1385.4,
+      "end": 1387,
+      "text": "que é um sistema que lê o seu currículo,"
+    },
+    {
+      "start": 1387.1,
+      "end": 1387.9,
+      "text": "ele vai ler uma palavra aqui,"
+    },
+    {
+      "start": 1388,
+      "end": 1389.7,
+      "text": "um aqui, um aqui, um aqui, um aqui, um aqui, um aqui."
+    },
+    {
+      "start": 1390.2,
+      "end": 1391.7,
+      "text": "E ele não vai entender quem você é."
+    },
+    {
+      "start": 1392.3,
+      "end": 1393.9,
+      "text": "Se vir, tem que ser exportado"
+    },
+    {
+      "start": 1393.9,
+      "end": 1395.5,
+      "text": "do Word ou do Google Docs."
+    },
+    {
+      "start": 1395.5,
+      "end": 1398,
+      "text": "Porque o ATS vai ler em linha."
+    },
+    {
+      "start": 1398.5,
+      "end": 1399.7,
+      "text": "Ponto. Não vou entrar em detalhes"
+    },
+    {
+      "start": 1399.7,
+      "end": 1401.5,
+      "text": "disso aqui. Só faz do jeito que eu tô falando."
+    },
+    {
+      "start": 1402,
+      "end": 1403.2,
+      "text": "Porra. Foda, velho."
+    },
+    {
+      "start": 1403.6,
+      "end": 1405.5,
+      "text": "20 anos essa merda e eu tenho que ficar falando."
+    },
+    {
+      "start": 1405.6,
+      "end": 1406.4,
+      "text": "Faz do jeito que eu tô falando."
+    },
+    {
+      "start": 1406.5,
+      "end": 1408.5,
+      "text": "Aí a galera assiste e fala, mas será?"
+    },
+    {
+      "start": 1409.2,
+      "end": 1410.2,
+      "text": "Faz no Figma, então, pô."
+    },
+    {
+      "start": 1410.4,
+      "end": 1410.9,
+      "text": "Faz no Figma."
+    },
+    {
+      "start": 1411.5,
+      "end": 1414.8,
+      "text": "Outro ponto, evita tocar imagem pra caralho."
+    },
+    {
+      "start": 1415.3,
+      "end": 1416.2,
+      "text": "Texto demais."
+    },
+    {
+      "start": 1416.6,
+      "end": 1419.1,
+      "text": "Se não tiver um processo, se não tiver um pensamento por trás,"
+    },
+    {
+      "start": 1419.2,
+      "end": 1420,
+      "text": "se não tiver um porquê."
+    },
+    {
+      "start": 1420.6,
+      "end": 1421.9,
+      "text": "Toda imagem tem que ter um porquê."
+    },
+    {
+      "start": 1422.1,
+      "end": 1423.3,
+      "text": "Todo texto tem que ter um porquê."
+    },
+    {
+      "start": 1423.9,
+      "end": 1424.7,
+      "text": "Próximo passo."
+    },
+    {
+      "start": 1424.7,
+      "end": 1428.6,
+      "text": "Se não tem experiência, projeto acadêmico, pro bono,"
+    },
+    {
+      "start": 1428.9,
+      "end": 1435.2,
+      "text": "bem documentado, com usuário real, pesquisa real, problema real."
+    },
+    {
+      "start": 1435.8,
+      "end": 1437.2,
+      "text": "Teste do 30 segundos."
+    },
+    {
+      "start": 1437.4,
+      "end": 1439.2,
+      "text": "Pede para alguém abrir o seu portfólio."
+    },
+    {
+      "start": 1439.6,
+      "end": 1440.2,
+      "text": "Cronômetro"
+    },
+    {
+      "start": 1440,
+      "end": 1442,
+      "text": "na mão, uba, uba, uba, e"
+    },
+    {
+      "start": 1442,
+      "end": 1443.5,
+      "text": "uba, uba, uba, e"
+    },
+    {
+      "start": 1443.5,
+      "end": 1445.9,
+      "text": "em 30 segundos, o que é que"
+    },
+    {
+      "start": 1445.9,
+      "end": 1448,
+      "text": "essa pessoa entendeu? O que você"
+    },
+    {
+      "start": 1448,
+      "end": 1449.8,
+      "text": "faz e como você faz?"
+    },
+    {
+      "start": 1450,
+      "end": 1452.3,
+      "text": "Não entendeu? Reescreve o seu portfólio."
+    },
+    {
+      "start": 1452.7,
+      "end": 1454,
+      "text": "Esquece. Nem tenta convencer"
+    },
+    {
+      "start": 1454,
+      "end": 1455.8,
+      "text": "a pessoa. É, não, mas é porque você não viu aqui."
+    },
+    {
+      "start": 1456.1,
+      "end": 1457.8,
+      "text": "Tu tá errado. Deixa o like."
+    },
+    {
+      "start": 1458.3,
+      "end": 1459.3,
+      "text": "E se esse vídeo te ajudou,"
+    },
+    {
+      "start": 1459.8,
+      "end": 1462.1,
+      "text": "comenta aqui embaixo. Se inscreve pra receber"
+    },
+    {
+      "start": 1462.1,
+      "end": 1464.2,
+      "text": "mais conteúdo, direto, sem enrolação."
+    },
+    {
+      "start": 1464.6,
+      "end": 1466,
+      "text": "Os próximos conteúdos serão tão"
+    },
+    {
+      "start": 1466,
+      "end": 1468.3,
+      "text": "técnicos quanto esse ou mais técnicos"
+    },
+    {
+      "start": 1468.3,
+      "end": 1470.3,
+      "text": "e comenta. Qual a sua maior"
+    },
+    {
+      "start": 1470.3,
+      "end": 1472.2,
+      "text": "dúvida de portfólio? Se eu não"
+    },
+    {
+      "start": 1472.2,
+      "end": 1474,
+      "text": "respondi nesse vídeo, eu posso te responder"
+    },
+    {
+      "start": 1474,
+      "end": 1476,
+      "text": "nos comentários. Fui, até a próxima."
+    }
+  ]
+}

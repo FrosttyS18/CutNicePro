@@ -1,0 +1,96 @@
+╔════════════════════════════════════════════╗
+║       CUTNICEPRO — ZCODE REPORT            ║
+╚════════════════════════════════════════════╝
+
+TASK
+  Name: Goal revisado com Graphify remoto e política em AGENTS.md.
+  Status: PASS documental; conexão remota NOT VALIDATED.
+  Scope: Instruções, tooling, prompt completo e continuidade.
+  Objective: Exigir grafo remoto na análise de impacto antes das mudanças.
+  Result: Cópias em lote retiradas; escopo anterior preservado.
+
+IMPLEMENTATION
+  Completed: AGENTS.md e TOOLING.md atualizados; prompt revisado.
+  Changes: Remoto obrigatório, OAuth, workspace/repo, revisão do índice,
+    dependências/testes e tratamento de lacunas do working tree.
+  Not completed: Configuração/OAuth/consulta no cliente ZCode.
+  Architecture impact: Nenhum no aplicativo.
+  O grafo orienta impacto; diff e testes permanecem obrigatórios.
+
+FILES
+  Modified: AGENTS.md; docs/TOOLING.md; ENGINE-HANDOFF.md;
+    prompt-goal-zcode.txt; docs/reports/LATEST.txt.
+  Created: Histórico e snapshot Git indicados abaixo.
+  Deleted: 0
+  Unexpected changes: NONE.
+
+VALIDATION
+  FUNCTIONAL STATUS: PASS documentação; app não validado.
+  REGRESSION STATUS: NOT TESTED
+  VISUAL STATUS: PENDING HUMAN APPROVAL
+  Typecheck / Lint / Unit / Integration / Regression / Visual / Runtime:
+    SKIP — nenhum código do app alterado.
+  Total passed / failed: 0 testes do app.
+  Total skipped: 7 categorias.
+  Conferência: regras, releitura, igualdade prompt/relatório e diff check.
+
+HOOKS / HARNESS
+  Hooks active / PreToolUse / PostToolUse / Stop: Não comprovados.
+  Baseline / Gate result: SKIP.
+  Evidence: Inspeção documental.
+
+MCP / SKILLS
+  Tools used: Web oficial, arquivos e edição documental.
+  Skills: Planejamento/documentação; instruções locais Graphify consultadas.
+  Connection status: Nenhuma ferramenta Graphify exposta neste chat.
+  Failures: Nenhuma chamada remota tentada.
+  Pending activation: Configuração, OAuth, índice e consulta real no ZCode.
+  Configurações MCP e credenciais não foram alteradas aqui.
+
+GIT
+  Branch: main
+  HEAD: ab501e26634648a59e005238c2c50b3230b4cac0
+  Latest commit: feat(clips): add multimodal generation with real audio pauses and frame evidence
+  Commits created: 0
+  Push: NOT EXECUTED
+  Remote: origin → https://github.com/FrosttyS18/CutNicePro.git
+  Working tree: MODIFIED / UNTRACKED; index preservado.
+  Pending files: 465 (461 anteriores).
+  Lista: C:/CutNicePro/docs/reports/evidence/goal-recuperacao-autoclip-2026-10-23/git-status-graphify.txt
+
+EVIDENCE
+  Commands executed: Leituras, buscas, Git e diff check.
+  Relevant logs: Continuidade atualizada.
+  Screenshots: Referência do mantenedor; nenhuma nova captura.
+  Test artifacts: Nenhum teste/MP4 ou cópia de fontes.
+  Reproduction details: Endpoint/OAuth confirmados na documentação oficial;
+    consulta autenticada não realizada.
+
+ISSUES
+  Bugs found: Instruções locais legadas conflitavam com a direção remota.
+  Unresolved failures: Defeitos do app permanecem no escopo do goal.
+  Regressions: Não testadas.
+  Risks: Índice remoto pode não cobrir alterações locais não publicadas.
+  Blockers: Nenhum para esta revisão; OAuth/acesso pendem no ZCode.
+
+FINAL
+  Delivery status: Prompt completo e política entregues.
+  Requirements met: Graphify remoto obrigatório e AGENTS.md ajustado.
+  Remaining work: Executar conexão e goal no ZCode.
+  User action required: Enviar o prompt; autorizar OAuth quando solicitado.
+  Restart required: Não nesta edição; depende do cliente ao configurar MCP.
+  Ready for next task: YES.
+
+REPORT
+  Prompt: C:/CutNicePro/docs/reports/evidence/goal-recuperacao-autoclip-2026-10-23/prompt-goal-zcode.txt
+  Latest file: C:/CutNicePro/docs/reports/LATEST.txt
+  Historical file: C:/CutNicePro/docs/reports/history/2026-10-23_132018_goal-graphify-remoto-agents.txt
+
+GUIA DO MANTENEDOR — O QUE MUDOU E COMO TESTAR
+  1. Enviar o prompt completo revisado ao ZCode.
+     Esperado: remoto configurado e validado antes das mudanças dependentes.
+  2. Concluir o OAuth se solicitado pelo cliente.
+     Esperado: consulta real no workspace e repositório corretos.
+  Aplicativo não alterado; nenhum teste manual de vídeo necessário aqui.
+
+END OF REPORT

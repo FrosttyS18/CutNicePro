@@ -1,0 +1,140 @@
+{
+  "schemaVersion": 1,
+  "createdAt": "2026-10-24T08:42:58.8198192-03:00",
+  "scope": "Organização autorizada, sem remover arquivos locais ou ignorar fontes, testes e documentos de decisão.",
+  "artifacts": [
+    {
+      "path": "app/src-tauri/apply_mm_helpers.py",
+      "bytes": 7610,
+      "sha256": "9d9bc02f4522bc8417dab73d38517ca753061c080981c0957836c296cc01f88d",
+      "reason": "Aplicador de patch de uso único; não é parte do aplicativo nem deve ser reexecutado."
+    },
+    {
+      "path": "apply_f1.py",
+      "bytes": 8214,
+      "sha256": "b713d00eb8f071acb674811cbe65492d69153d379e5851e63132b2d822a35a89",
+      "reason": "Aplicador de patch de uso único; não é parte do aplicativo nem deve ser reexecutado."
+    },
+    {
+      "path": "apply_g3c.py",
+      "bytes": 3588,
+      "sha256": "96e0ce03af94814d47e58ffe45fc90766232654c797dff2b028b60ba4ad47697",
+      "reason": "Aplicador de patch de uso único; não é parte do aplicativo nem deve ser reexecutado."
+    },
+    {
+      "path": "docs/reports/evidence/goal-cortes-multimodais-2026-10-23/m4-demos/demo-controlled-object.mp4",
+      "bytes": 4312,
+      "sha256": "29e5a51a65caf7f7298040d044d6dcf64b6e99ea48f27ca9cff381c8338791aa",
+      "reason": "Evidência de mídia local; arquivo preservado, fora do Git para evitar inflar clones."
+    },
+    {
+      "path": "docs/reports/evidence/goal-cortes-multimodais-2026-10-23/m4-demos/demo-person.mp4",
+      "bytes": 4882,
+      "sha256": "2f2d72003965b0f1231a8c4c677b918f96114dcd4c1b36f9cd0fffceae82c63e",
+      "reason": "Evidência de mídia local; arquivo preservado, fora do Git para evitar inflar clones."
+    },
+    {
+      "path": "docs/reports/evidence/goal-cortes-multimodais-2026-10-23/m4-demos/demo-two-people-cut.mp4",
+      "bytes": 6958,
+      "sha256": "41fff40f2f77d508b5fd456239336428fedb00bc512b9ade4f04242ff35a3260",
+      "reason": "Evidência de mídia local; arquivo preservado, fora do Git para evitar inflar clones."
+    },
+    {
+      "path": "docs/reports/evidence/goal-cortes-multimodais-2026-10-23/mm-m2-corte-app-real.mp4",
+      "bytes": 21340406,
+      "sha256": "2db4e40eaccf95e3528378634787f5d3cb2c215d50e614a0b97360a3f4b1105f",
+      "reason": "Evidência de mídia local; arquivo preservado, fora do Git para evitar inflar clones."
+    },
+    {
+      "path": "docs/reports/evidence/goal-cortes-texto-2026-10-23/corte-real-1-EDITADO.mp4",
+      "bytes": 8227910,
+      "sha256": "f25cf1c152307efa0a02838b0369e1baa4d891a37363814608d6e6025d050391",
+      "reason": "Evidência de mídia local; arquivo preservado, fora do Git para evitar inflar clones."
+    },
+    {
+      "path": "docs/reports/evidence/goal-cortes-texto-2026-10-23/corte-real-1.mp4",
+      "bytes": 15698829,
+      "sha256": "786a3c3d02515d3b4f5acb4a6c0e25d953c902d795e6edcc5089fe76022a7fb6",
+      "reason": "Evidência de mídia local; arquivo preservado, fora do Git para evitar inflar clones."
+    },
+    {
+      "path": "docs/reports/evidence/goal-cortes-texto-2026-10-23/corte-real-2.mp4",
+      "bytes": 34481578,
+      "sha256": "f74513726da39ab51a14959bcbb90422f02f3229f8daa7103c10f10749274b8c",
+      "reason": "Evidência de mídia local; arquivo preservado, fora do Git para evitar inflar clones."
+    },
+    {
+      "path": "docs/reports/evidence/goal-cortes-texto-2026-10-23/corte-real-3.mp4",
+      "bytes": 43127514,
+      "sha256": "8720dbd3c06a380b3da9dd337c46cca1a761b165f9e2110d32262177a6b49477",
+      "reason": "Evidência de mídia local; arquivo preservado, fora do Git para evitar inflar clones."
+    },
+    {
+      "path": "docs/reports/evidence/goal-recuperacao-autoclip-2026-10-23/g3a-aceite-manual-corte.mp4",
+      "bytes": 15697850,
+      "sha256": "617ee2ca8b2871b07a91430b5278f62e0a66505a9ed64f19c445ba0eb14755d0",
+      "reason": "Evidência de mídia local; arquivo preservado, fora do Git para evitar inflar clones."
+    },
+    {
+      "path": "docs/reports/evidence/goal-recuperacao-autoclip-2026-10-23/g3a-davyjones-corte.mp4",
+      "bytes": 62591720,
+      "sha256": "a223186bc21f2b742ff9c33f3d448da521fac462a48128bbfa4b89d7ee382662",
+      "reason": "Evidência de mídia local; arquivo preservado, fora do Git para evitar inflar clones."
+    },
+    {
+      "path": "docs/reports/evidence/goal-recuperacao-autoclip-2026-10-23/g8-corte-1-Melhores-plataformas-para-criar-um-portfolio.mp4",
+      "bytes": 47994746,
+      "sha256": "5fed9148d0ceae096bf68675cd820603abc81a9152089294858604b4f6a0ae35",
+      "reason": "Evidência de mídia local; arquivo preservado, fora do Git para evitar inflar clones."
+    },
+    {
+      "path": "docs/reports/evidence/goal-recuperacao-autoclip-2026-10-23/g8-corte-2-Quatro-criterios-para-validar-a-eficacia.mp4",
+      "bytes": 34481578,
+      "sha256": "f74513726da39ab51a14959bcbb90422f02f3229f8daa7103c10f10749274b8c",
+      "reason": "Evidência de mídia local; arquivo preservado, fora do Git para evitar inflar clones."
+    },
+    {
+      "path": "docs/reports/evidence/goal-recuperacao-autoclip-2026-10-23/g8-corte-3-Priorizar-qualidade-em-vez-de-quantidade.mp4",
+      "bytes": 43127514,
+      "sha256": "8720dbd3c06a380b3da9dd337c46cca1a761b165f9e2110d32262177a6b49477",
+      "reason": "Evidência de mídia local; arquivo preservado, fora do Git para evitar inflar clones."
+    },
+    {
+      "path": "docs/reports/evidence/goal-refino-editorial-fluxo-local-2026-10-24/f2-corte-EDITADO-pipeline.mp4",
+      "bytes": 8227910,
+      "sha256": "f25cf1c152307efa0a02838b0369e1baa4d891a37363814608d6e6025d050391",
+      "reason": "Evidência de mídia local; arquivo preservado, fora do Git para evitar inflar clones."
+    },
+    {
+      "path": "docs/reports/evidence/goal-refino-editorial-fluxo-local-2026-10-24/f2c-corte-BOTAO-dialogo-nativo.mp4",
+      "bytes": 15697850,
+      "sha256": "617ee2ca8b2871b07a91430b5278f62e0a66505a9ed64f19c445ba0eb14755d0",
+      "reason": "Evidência de mídia local; arquivo preservado, fora do Git para evitar inflar clones."
+    },
+    {
+      "path": "experiments/clip-selection-ab/scratch/discover-a-result.json",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "reason": "Resultado vazio de scratch; preservado localmente."
+    },
+    {
+      "path": "experiments/clip-selection-ab/scratch/discover-b-result.json",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "reason": "Resultado vazio de scratch; preservado localmente."
+    },
+    {
+      "path": "experiments/clip-selection-ab/scratch/discover-c-result.json",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "reason": "Resultado vazio de scratch; preservado localmente."
+    },
+    {
+      "path": "experiments/clip-selection-ab/scratch/discover-d-result.json",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "reason": "Resultado vazio de scratch; preservado localmente."
+    }
+  ],
+  "totalBytes": 350730969.0
+}

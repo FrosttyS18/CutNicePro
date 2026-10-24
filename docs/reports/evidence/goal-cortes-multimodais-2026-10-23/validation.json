@@ -1,0 +1,13 @@
+{
+  "promptExact": true,
+  "milestones": 6,
+  "sourceFiles": 6,
+  "externalSources": 5,
+  "appPreserved": true,
+  "indexPreserved": true,
+  "headPreserved": true,
+  "handoffPreserved": true,
+  "referencesPreserved": true,
+  "status": "PASS for prompt preparation only",
+  "appTestsRun": 0
+}

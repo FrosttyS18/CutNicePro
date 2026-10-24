@@ -1,0 +1,590 @@
+{
+  "version": 1,
+  "mediaId": "33932fbc-5a4d-42a6-8784-f7c1f0231129",
+  "transcriptHash": "b992c6306d4b2079e56adee099da32cb5fadab9f0622fd439bf493d1d62c6059",
+  "clips": [
+    {
+      "id": "9425bb8dd41f71a49314595c759c165cb794a05909fc3ff8e9645a8265a31685",
+      "start": 1334.34,
+      "end": 1354.7700829999999,
+      "title": "Definição da estrutura básica para portfólio",
+      "score": 85,
+      "reasons": [
+        "Avaliação do intervalo efetivo (explicação): O trecho é uma explicação sobre a estrutura básica de um portfólio, com uma conclusão clara e coerente que encerra o assunto.",
+        "A fala inicial estabelece a função do falante e justifica a existência do vídeo, criando um engajamento inicial com uma justificativa clara.",
+        "A fala 1 apresenta uma pergunta direta sobre a clareza do portfólio e a preferência por estruturas básicas, desenvolvendo o tema com uma abordagem questionadora.",
+        "A fala final oferece uma definição clara da estrutura básica, fechando o tema com uma resposta específica e direta."
+      ],
+      "review": "pending",
+      "format": "9:16",
+      "fit": "cover",
+      "analysis": {
+        "title": "Definição da estrutura básica para portfólio",
+        "summary": "O falante explica que o vídeo existe para ajudar, responde se um portfólio precisa ser claro e define a estrutura básica como contexto, problema, solução, processo e resultado.",
+        "criteria": [
+          {
+            "label": "Gancho",
+            "score": 85,
+            "explanation": "A fala inicial estabelece a função do falante e justifica a existência do vídeo, criando um engajamento inicial com uma justificativa clara.",
+            "evidence": "O meu papel é te ajudar. Porque se eu quiser te dificultar, o vídeo não existia."
+          },
+          {
+            "label": "Desenvolvimento",
+            "score": 80,
+            "explanation": "A fala 1 apresenta uma pergunta direta sobre a clareza do portfólio e a preferência por estruturas básicas, desenvolvendo o tema com uma abordagem questionadora.",
+            "evidence": "Resumindo, portfólio precisa ter clareza? Sim, cheque. Estrutura básica é melhor do que a complexa?"
+          },
+          {
+            "label": "Fechamento",
+            "score": 90,
+            "explanation": "A fala final oferece uma definição clara da estrutura básica, fechando o tema com uma resposta específica e direta.",
+            "evidence": "Cheque. Qual que é a estrutura básica? Contexto, problema, solução, processo de trabalho, resultado. Bingo."
+          }
+        ]
+      },
+      "analysisSignature": "bfa06edc7a6354a98027a5bd62af3e865250a5d95ba323b1715df5f16e9f925c",
+      "engine": {
+        "backend": "standard",
+        "model": "Qwen3-4B-Q4_K_M.gguf",
+        "template": "chatml-nothink",
+        "sampling": "temp 0 (greedy), seed 42",
+        "seed": 42
+      }
+    },
+    {
+      "id": "b5728a75b6db14a64122ca98f521e5747a253aa2549f92960eb45019a8f3dfda",
+      "start": 1422.14,
+      "end": 1452.28,
+      "title": "Clareza e eficácia no portfólio",
+      "score": 84,
+      "reasons": [
+        "Avaliação do intervalo efetivo (explicação): O trecho explica o teste do 30 segundos para avaliar o portfólio e destaca a importância de ter um processo claro e documentado. Isso é uma explicação sobre como melhorar o portfólio e o processo de seleção.",
+        "A fala inicial apresenta uma diretriz clara e direta para o propósito do texto, destacando a importância de ter um 'porquê' real e documentado, o que captura a essência do conteúdo de forma impactante.",
+        "O teste de 30 segundos é uma abordagem prática para avaliar a compreensão do público, mostrando o interesse em validar a eficácia do portfólio em um contexto real e limitado.",
+        "A fala final destaca a necessidade de revisão do portfólio quando não há compreensão do público-alvo, reforçando a importância da clareza e da eficácia na comunicação."
+      ],
+      "review": "pending",
+      "format": "9:16",
+      "fit": "cover",
+      "analysis": {
+        "title": "Clareza e eficácia no portfólio",
+        "summary": "O participante destaca a necessidade de ter um propósito claro no texto e sugere um teste prático para avaliar a compreensão do público. O teste envolve mostrar o portfólio em 30 segundos e verificar se o público entende o conteúdo. Se não houver compreensão, o portfólio deve ser reescrito.",
+        "criteria": [
+          {
+            "label": "Gancho",
+            "score": 90,
+            "explanation": "A fala inicial apresenta uma diretriz clara e direta para o propósito do texto, destacando a importância de ter um 'porquê' real e documentado, o que captura a essência do conteúdo de forma impactante.",
+            "evidence": "Todo texto tem que ter um porquê. Próximo passo. Se não tem experiência, projeto acadêmico, pro bono, bem documentado, com usuário real, pesquisa real, problema real."
+          },
+          {
+            "label": "Desenvolvimento",
+            "score": 75,
+            "explanation": "O teste de 30 segundos é uma abordagem prática para avaliar a compreensão do público, mostrando o interesse em validar a eficácia do portfólio em um contexto real e limitado.",
+            "evidence": "Teste do 30 segundos. Pede para alguém abrir o seu portfólio. Cronômetro na mão, uba, uba, uba, e uba, uba, uba, e em 30 segundos, o que é"
+          },
+          {
+            "label": "Fechamento",
+            "score": 85,
+            "explanation": "A fala final destaca a necessidade de revisão do portfólio quando não há compreensão do público-alvo, reforçando a importância da clareza e da eficácia na comunicação.",
+            "evidence": "Não entendeu? Reescreve o seu portfólio."
+          }
+        ]
+      },
+      "analysisSignature": "6363a40460b867f4de0a13afade1f8c8d84b93e05db86c0c52c984b1503f2038",
+      "engine": {
+        "backend": "standard",
+        "model": "Qwen3-4B-Q4_K_M.gguf",
+        "template": "chatml-nothink",
+        "sampling": "temp 0 (greedy), seed 42",
+        "seed": 42
+      }
+    },
+    {
+      "id": "c6c83063d6e2f82e9af1d28049ca5794fcec1073a90f526f1bbb47866ffddbed",
+      "start": 1377.06,
+      "end": 1399.68,
+      "title": "Problemas com o ATS e formatos de currículo",
+      "score": 83,
+      "reasons": [
+        "Avaliação do intervalo efetivo (explicação): O trecho explica como o ATS (sistema de seleção de candidatos) lê currículos gerados a partir do Figma e destaca a necessidade de exportar para Word ou Google Docs para que o sistema os entenda corretamente. Isso é uma explicação sobre um processo técnico.",
+        "A fala inicial introduz o problema central: o PDF gerado pelo Figma não segue a estrutura linear, o que pode causar problemas ao ser lido por sistemas automatizados como o ATS.",
+        "O participante explica como o ATS lê o currículo de forma linear, ignorando a estruturação e o contexto, o que mostra a limitação do sistema em compreender a identidade do candidato.",
+        "A fala final ressalta a importância de exportar o currículo em formatos compatíveis com o ATS, destacando a necessidade de seguir regras específicas para que o sistema o leia corretamente."
+      ],
+      "review": "pending",
+      "format": "9:16",
+      "fit": "cover",
+      "analysis": {
+        "title": "Problemas com o ATS e formatos de currículo",
+        "summary": "O participante explica que o ATS lê o currículo de forma linear, ignorando a estrutura e o contexto. O sistema não entende quem o candidato é, independentemente do formato. A recomendação é exportar o currículo em formatos compatíveis como Word ou Google Docs para garantir que o ATS o leia corretamente.",
+        "criteria": [
+          {
+            "label": "Gancho",
+            "score": 85,
+            "explanation": "A fala inicial introduz o problema central: o PDF gerado pelo Figma não segue a estrutura linear, o que pode causar problemas ao ser lido por sistemas automatizados como o ATS.",
+            "evidence": "O próprio time do Figma já explicou que o PDF gerado do Figma, ele não segue a estrutura linear."
+          },
+          {
+            "label": "Desenvolvimento",
+            "score": 80,
+            "explanation": "O participante explica como o ATS lê o currículo de forma linear, ignorando a estruturação e o contexto, o que mostra a limitação do sistema em compreender a identidade do candidato.",
+            "evidence": "Então, quando o ATS for ler, que é um sistema que lê o seu currículo, ele vai ler uma palavra aqui, um aqui, um aqui, um aqui, um"
+          },
+          {
+            "label": "Fechamento",
+            "score": 85,
+            "explanation": "A fala final ressalta a importância de exportar o currículo em formatos compatíveis com o ATS, destacando a necessidade de seguir regras específicas para que o sistema o leia corretamente.",
+            "evidence": "Porque o ATS vai ler em linha. Ponto. Não vou entrar em detalhes"
+          }
+        ]
+      },
+      "analysisSignature": "1c8a09f02c2ce2c5e63599ea496e4115e2ea5f512dc2018db39ae4012dd05d6e",
+      "engine": {
+        "backend": "standard",
+        "model": "Qwen3-4B-Q4_K_M.gguf",
+        "template": "chatml-nothink",
+        "sampling": "temp 0 (greedy), seed 42",
+        "seed": 42
+      }
+    },
+    {
+      "id": "de9a4aa21f06b225c34e493c7e7886bd3a40a1717c7d3f7d6585193a28de711b",
+      "start": 1293.84,
+      "end": 1317.2,
+      "title": "Decisão direta sobre a criação de um site",
+      "score": 82,
+      "reasons": [
+        "Avaliação do intervalo efetivo (explicação): O trecho é uma explicação sobre as ferramentas para criar um portfólio, com uma conclusão clara e coerente que encerra o assunto.",
+        "A frase inicial cria uma dinâmica de confronto e direta, estabelecendo um tom de urgência e clareza na conversa.",
+        "A reação do interlocutor mostra a intenção de seguir a orientação do autor, indicando um passo inicial na conversa.",
+        "A fala final destaca a proposta prática e direta do autor, enfatizando a simplicidade e a eficiência do site como solução."
+      ],
+      "review": "pending",
+      "format": "9:16",
+      "fit": "cover",
+      "analysis": {
+        "title": "Decisão direta sobre a criação de um site",
+        "summary": "O interlocutor pede explicações sobre um site, e o outro aponta a necessidade de agir com decisão. O outro sugere uma solução prática e direta para o problema apresentado.",
+        "criteria": [
+          {
+            "label": "Gancho",
+            "score": 90,
+            "explanation": "A frase inicial cria uma dinâmica de confronto e direta, estabelecendo um tom de urgência e clareza na conversa.",
+            "evidence": "O Dribble, o Behance? Olha, de novo, vou ser direto aqui. É contigo, tá?"
+          },
+          {
+            "label": "Desenvolvimento",
+            "score": 70,
+            "explanation": "A reação do interlocutor mostra a intenção de seguir a orientação do autor, indicando um passo inicial na conversa.",
+            "evidence": "Eu tô te apontando e te explicando o que funciona. Tu quer se arriscar?"
+          },
+          {
+            "label": "Fechamento",
+            "score": 85,
+            "explanation": "A fala final destaca a proposta prática e direta do autor, enfatizando a simplicidade e a eficiência do site como solução.",
+            "evidence": "O que eu tô te falando é o que funciona. Um website simples, direto, rápido, fácil acesso,"
+          }
+        ]
+      },
+      "analysisSignature": "7fd4bef3a0164c047a182268e397dfc392d09cd4081ea36e147bc1cd27e615ec",
+      "engine": {
+        "backend": "standard",
+        "model": "Qwen3-4B-Q4_K_M.gguf",
+        "template": "chatml-nothink",
+        "sampling": "temp 0 (greedy), seed 42",
+        "seed": 42
+      }
+    },
+    {
+      "id": "b9e8b42b6e3bd4540a5cde352a149b9385250043128fd61df7fe55b134e97942",
+      "start": 1399.68,
+      "end": 1421.94,
+      "title": "Critica sobre uso de texto em imagens e necessidade de propósito",
+      "score": 82,
+      "reasons": [
+        "Avaliação do intervalo efetivo (humor/reação): O trecho é uma reação irônica e exausta, com expressões como 'Porra. Foda, velho' e '20 anos essa merda e eu tenho que ficar falando', que refletem frustração e humor. O desfecho não resolve um problema, mas sim reforça a irritação.",
+        "A frase 'disso aqui. Só faz do jeito que eu tô falando. Porra. Foda, velho.' é uma introdução energética e direta, criando um tom de urgência e autoridade no início do trecho.",
+        "A frase 'Faz no Figma. Outro ponto, evita tocar imagem pra caralho. Texto demais.' apresenta uma crítica sobre o uso excessivo de texto em imagens, indicando uma mudança de foco para a qualidade visual e o propósito das imagens.",
+        "A frase 'Toda imagem tem que ter um porquê.' é a conclusão do trecho, reforçando a ideia central de que cada imagem deve ter uma razão ou propósito."
+      ],
+      "review": "pending",
+      "format": "9:16",
+      "fit": "cover",
+      "analysis": {
+        "title": "Critica sobre uso de texto em imagens e necessidade de propósito",
+        "summary": "O participante critica o uso excessivo de texto em imagens e defende a necessidade de um propósito claro para cada imagem. Ele reforça a importância de ter um 'porquê' para cada elemento visual, destacando a necessidade de um processo e pensamento por trás de cada criação.",
+        "criteria": [
+          {
+            "label": "Gancho",
+            "score": 90,
+            "explanation": "A frase 'disso aqui. Só faz do jeito que eu tô falando. Porra. Foda, velho.' é uma introdução energética e direta, criando um tom de urgência e autoridade no início do trecho.",
+            "evidence": "disso aqui. Só faz do jeito que eu tô falando. Porra. Foda, velho."
+          },
+          {
+            "label": "Desenvolvimento",
+            "score": 70,
+            "explanation": "A frase 'Faz no Figma. Outro ponto, evita tocar imagem pra caralho. Texto demais.' apresenta uma crítica sobre o uso excessivo de texto em imagens, indicando uma mudança de foco para a qualidade visual e o propósito das imagens.",
+            "evidence": "Faz no Figma. Outro ponto, evita tocar imagem pra caralho. Texto demais."
+          },
+          {
+            "label": "Fechamento",
+            "score": 85,
+            "explanation": "A frase 'Toda imagem tem que ter um porquê.' é a conclusão do trecho, reforçando a ideia central de que cada imagem deve ter uma razão ou propósito.",
+            "evidence": "Toda imagem tem que ter um porquê."
+          }
+        ]
+      },
+      "analysisSignature": "72e9232bbdbee45a006b980a150da4b8f2b5ece9e13a0b72fe3b2a792ed85d0d",
+      "engine": {
+        "backend": "standard",
+        "model": "Qwen3-4B-Q4_K_M.gguf",
+        "template": "chatml-nothink",
+        "sampling": "temp 0 (greedy), seed 42",
+        "seed": 42
+      }
+    },
+    {
+      "id": "05e08c372a0180c28b767e5ff6d414a13b6f1e46ce8b02b489a869e2859f36a7",
+      "start": 1452.74,
+      "end": 1476.3498749999999,
+      "title": "Vídeo direto e encerramento amigável",
+      "score": 81,
+      "reasons": [
+        "Avaliação do intervalo efetivo (demonstração): O trecho demonstra como o conteúdo do clipe pode ser usado para engajar o público, como deixar o like, comentar, se inscrever e perguntar dúvidas. O desfecho aponta onde a fala está (no final do clipe) e sugere ações futuras.",
+        "A frase 'Esquece. Nem tenta convencer a pessoa. É, não, mas é porque você não viu aqui.' serve como um hook inicial, indicando que o conteúdo é direto e não tenta convencer, mas oferece informações claras e diretas ao espectador.",
+        "A frase 'Se inscreve pra receber mais conteúdo, direto, sem enrolação. Os próximos conteúdos serão tão técnicos quanto esse ou mais técnicos e comenta.' mostra o desenvolvimento do conteúdo, apresentando a expectativa de futuros vídeos e incentivando a interação do espectador.",
+        "A frase 'Fui, até a próxima.' indica o encerramento do vídeo com um tom amigável e encorajador, sugerindo que o conteúdo foi concluído e que o espectador pode seguir assistindo em futuros vídeos."
+      ],
+      "review": "pending",
+      "format": "9:16",
+      "fit": "cover",
+      "analysis": {
+        "title": "Vídeo direto e encerramento amigável",
+        "summary": "O vídeo começa com uma frase direta que não tenta convencer, mas oferece informações claras. Em seguida, o conteúdo se desenvolve com uma promessa de futuros vídeos técnicos e incentiva a interação. O vídeo termina com uma frase amigável que encerra o conteúdo com um tom encorajador.",
+        "criteria": [
+          {
+            "label": "Gancho",
+            "score": 80,
+            "explanation": "A frase 'Esquece. Nem tenta convencer a pessoa. É, não, mas é porque você não viu aqui.' serve como um hook inicial, indicando que o conteúdo é direto e não tenta convencer, mas oferece informações claras e diretas ao espectador.",
+            "evidence": "Esquece. Nem tenta convencer a pessoa. É, não, mas é porque você não viu aqui."
+          },
+          {
+            "label": "Desenvolvimento",
+            "score": 80,
+            "explanation": "A frase 'Se inscreve pra receber mais conteúdo, direto, sem enrolação. Os próximos conteúdos serão tão técnicos quanto esse ou mais técnicos e comenta.' mostra o desenvolvimento do conteúdo, apresentando a expectativa de futuros vídeos e incentivando a interação do espectador.",
+            "evidence": "Se inscreve pra receber mais conteúdo, direto, sem enrolação. Os próximos conteúdos serão tão técnicos quanto esse ou mais técnicos e comenta."
+          },
+          {
+            "label": "Fechamento",
+            "score": 85,
+            "explanation": "A frase 'Fui, até a próxima.' indica o encerramento do vídeo com um tom amigável e encorajador, sugerindo que o conteúdo foi concluído e que o espectador pode seguir assistindo em futuros vídeos.",
+            "evidence": "Fui, até a próxima."
+          }
+        ]
+      },
+      "analysisSignature": "650665287022b7943961258b235e500e754b257151dcef31bdbe346484583275",
+      "engine": {
+        "backend": "standard",
+        "model": "Qwen3-4B-Q4_K_M.gguf",
+        "template": "chatml-nothink",
+        "sampling": "temp 0 (greedy), seed 42",
+        "seed": 42
+      }
+    },
+    {
+      "id": "d353b3671c88f01a9a529ed0371d5d73d16f7fe05901d0011c5fc0a5e312eacd",
+      "start": 1198.38,
+      "end": 1223.86,
+      "title": "Preferências claras e regras estabelecidas",
+      "score": 80,
+      "reasons": [
+        "Avaliação do intervalo efetivo (explicação): O trecho é uma explicação detalhada sobre a quantidade e qualidade de case em uma aplicação, com uma estrutura clara e uma conclusão natural que encerra o assunto.",
+        "O participante começa com uma afirmação direta e autocrítica, destacando sua experiência e experiência na internet para estabelecer autoridade no tema.",
+        "O participante apresenta uma opinião clara sobre a qualidade dos produtos, comparando diferentes opções e justificando sua preferência por uma delas.",
+        "O participante conclui a discussão com uma reação firme, reiterando a importância de seguir as regras estabelecidas."
+      ],
+      "review": "pending",
+      "format": "9:16",
+      "fit": "cover",
+      "analysis": {
+        "title": "Preferências claras e regras estabelecidas",
+        "summary": "O participante expõe suas preferências por certos tipos de produtos, defende a qualidade e reforça a necessidade de seguir regras estabelecidas. Ele também reitera a importância de manter a disciplina no uso de recursos limitados.",
+        "criteria": [
+          {
+            "label": "Gancho",
+            "score": 80,
+            "explanation": "O participante começa com uma afirmação direta e autocrítica, destacando sua experiência e experiência na internet para estabelecer autoridade no tema.",
+            "evidence": "Não adianta, eu tô aqui, tem 10 anos na internet falando a mesma coisa."
+          },
+          {
+            "label": "Desenvolvimento",
+            "score": 75,
+            "explanation": "O participante apresenta uma opinião clara sobre a qualidade dos produtos, comparando diferentes opções e justificando sua preferência por uma delas.",
+            "evidence": "Meia boca? Uns 8. Uns 8 pra 15. Agora, é melhor 8 ou 15, meia boca ou 3 bem feito?"
+          },
+          {
+            "label": "Fechamento",
+            "score": 85,
+            "explanation": "O participante conclui a discussão com uma reação firme, reiterando a importância de seguir as regras estabelecidas.",
+            "evidence": "De novo, vamos repetir. Eu tenho 1.000 aplicação. Só com você eu vou perder 20 minutos?"
+          }
+        ]
+      },
+      "analysisSignature": "ba48825db6c7a7fc72b1d7ee9019359d36ed35dfa5c8d8b8e2d0688d18d2dbb0",
+      "engine": {
+        "backend": "standard",
+        "model": "Qwen3-4B-Q4_K_M.gguf",
+        "template": "chatml-nothink",
+        "sampling": "temp 0 (greedy), seed 42",
+        "seed": 42
+      }
+    },
+    {
+      "id": "0d1083773c52bd4618b0069a23dddfd5a3887bc03311514be2cd82c93487faa0",
+      "start": 1248.28,
+      "end": 1272.04,
+      "title": "Comparação entre Framer e PDF",
+      "score": 80,
+      "reasons": [
+        "Avaliação do intervalo efetivo (demonstração): O trecho demonstra o uso de Framer e PDF como ferramentas para criar um portfólio, com uma explicação direta sobre como funcionam e o que são, mas o desfecho não é uma conclusão natural do assunto, mas uma referência à imagem do clipe.",
+        "A frase inicial apresenta uma ideia clara e direta sobre o uso de Framer e PDF como cartões de visita, criando um ponto de partida interessante e informativo para o diálogo.",
+        "O participante discute as diferenças entre Framer e PDF, destacando a facilidade de acesso e a qualidade dos templates, mas também menciona a preferência por Wix, indicando uma avaliação comparativa.",
+        "A frase 'PDF é show intel' é uma conclusão direta e positiva sobre o uso do PDF, reforçando a ideia de que é uma boa opção."
+      ],
+      "review": "pending",
+      "format": "9:16",
+      "fit": "cover",
+      "analysis": {
+        "title": "Comparação entre Framer e PDF",
+        "summary": "O participante compara Framer e PDF, destacando a facilidade de acesso e a qualidade dos templates. Menciona a preferência por Wix e conclui que PDF é uma boa opção.",
+        "criteria": [
+          {
+            "label": "Gancho",
+            "score": 80,
+            "explanation": "A frase inicial apresenta uma ideia clara e direta sobre o uso de Framer e PDF como cartões de visita, criando um ponto de partida interessante e informativo para o diálogo.",
+            "evidence": "Framer e um PDF. Pronto. como cartão de visita aberto, entendeu? É fácil de acessar, cheio de template legal, é online, acessa no celular, tomando link, funciona não"
+          },
+          {
+            "label": "Desenvolvimento",
+            "score": 75,
+            "explanation": "O participante discute as diferenças entre Framer e PDF, destacando a facilidade de acesso e a qualidade dos templates, mas também menciona a preferência por Wix, indicando uma avaliação comparativa.",
+            "evidence": "precisa de pate-papo, não precisa de dificuldade aí eu vou usar o Wix não, Framer, funciona tem um monte de template legal por que PDF, AJ?"
+          },
+          {
+            "label": "Fechamento",
+            "score": 85,
+            "explanation": "A frase 'PDF é show intel' é uma conclusão direta e positiva sobre o uso do PDF, reforçando a ideia de que é uma boa opção.",
+            "evidence": "PDF é show intel"
+          }
+        ]
+      },
+      "analysisSignature": "65fd4f80baa62660bb8a3a161371f87c1c0dd313d01b01ec6804b78b01fb1f49",
+      "engine": {
+        "backend": "standard",
+        "model": "Qwen3-4B-Q4_K_M.gguf",
+        "template": "chatml-nothink",
+        "sampling": "temp 0 (greedy), seed 42",
+        "seed": 42
+      }
+    },
+    {
+      "id": "612996c2233b3eb5036622edb5a54a47e81b74ce311fa3e80fc0c3c6e83abd17",
+      "start": 1224.02,
+      "end": 1247.72,
+      "title": "Qualidade vs. Quantidade em Trabalhos Bem Feitos",
+      "score": 79,
+      "reasons": [
+        "Avaliação do intervalo efetivo (explicação): O trecho continua a explicação sobre a qualidade e quantidade de case, reforçando a ideia de que três bem feitos são melhores do que 15 e meia boca, com uma conclusão clara e coerente.",
+        "A primeira fala introduz o tema central do diálogo: a qualidade versus a quantidade de trabalhos bem feitos, criando uma base para a discussão.",
+        "O participante menciona casos feitos na faculdade, mostrando que há um contexto de experiência prática, mas não responde diretamente à pergunta principal.",
+        "O participante resolve a pergunta com uma resposta direta e simples, indicando que a discussão está se encerrando."
+      ],
+      "review": "pending",
+      "format": "9:16",
+      "fit": "cover",
+      "analysis": {
+        "title": "Qualidade vs. Quantidade em Trabalhos Bem Feitos",
+        "summary": "Jota defende a qualidade de três trabalhos bem feitos sobre a quantidade de 15 e meia. O outro menciona casos práticos feitos na faculdade. A discussão termina com uma resposta direta sobre plataformas para portfólio.",
+        "criteria": [
+          {
+            "label": "Gancho",
+            "score": 90,
+            "explanation": "A primeira fala introduz o tema central do diálogo: a qualidade versus a quantidade de trabalhos bem feitos, criando uma base para a discussão.",
+            "evidence": "Impossível, isso não vai acontecer. Três bem feitos é muito melhor do que 15 e meia boca."
+          },
+          {
+            "label": "Desenvolvimento",
+            "score": 60,
+            "explanation": "O participante menciona casos feitos na faculdade, mostrando que há um contexto de experiência prática, mas não responde diretamente à pergunta principal.",
+            "evidence": "Esquece. Três bem feitos. E eu tô falando bem feito com todas as regras que eu te passei nesse vídeo."
+          },
+          {
+            "label": "Fechamento",
+            "score": 85,
+            "explanation": "O participante resolve a pergunta com uma resposta direta e simples, indicando que a discussão está se encerrando.",
+            "evidence": "Eu vou ser talvez o mais direto que eu já fui em relação a essa pergunta e o mais simples possível."
+          }
+        ]
+      },
+      "analysisSignature": "08557bf32056a799dd220d9a087da9dd527ba9d6630ef03619990a816826fda5",
+      "engine": {
+        "backend": "standard",
+        "model": "Qwen3-4B-Q4_K_M.gguf",
+        "template": "chatml-nothink",
+        "sampling": "temp 0 (greedy), seed 42",
+        "seed": 42
+      }
+    },
+    {
+      "id": "bcdc706dd523e2149140372410d96aeb9a0ce8a3971d2ad7409ac08d2ca0d4a9",
+      "start": 1354.7700829999999,
+      "end": 1376.64,
+      "title": "Currículo simples e escaneável",
+      "score": 79,
+      "reasons": [
+        "Avaliação do intervalo efetivo (explicação): O trecho é uma explicação sobre o que deve ser feito em um portfólio, com uma conclusão clara e coerente que encerra o assunto.",
+        "A fala inicial apresenta a ideia central do currículo sendo simples e escaneável, criando um ponto de partida direto para o tema.",
+        "A fala 1 critica o uso de Figma e PDFs, mostrando uma reação clara ao tema central do currículo, o que reflete o desenvolvimento do argumento.",
+        "A fala final menciona a participação no time do Figma em 2026, indicando um fechamento com uma ação específica relacionada ao tema."
+      ],
+      "review": "pending",
+      "format": "9:16",
+      "fit": "cover",
+      "analysis": {
+        "title": "Currículo simples e escaneável",
+        "summary": "O entrevistado critica o uso de Figma e PDFs no currículo, defendendo a simplicidade e a escaneabilidade. Ele menciona sua participação no time do Figma em 2026, mostrando uma reação direta ao tema. A fala final aponta uma ação específica relacionada ao assunto.",
+        "criteria": [
+          {
+            "label": "Gancho",
+            "score": 85,
+            "explanation": "A fala inicial apresenta a ideia central do currículo sendo simples e escaneável, criando um ponto de partida direto para o tema.",
+            "evidence": "Seu currículo? Simples. O mais simples possível, o mais escaneável possível. Se possível, Google Docs ou Word."
+          },
+          {
+            "label": "Desenvolvimento",
+            "score": 80,
+            "explanation": "A fala 1 critica o uso de Figma e PDFs, mostrando uma reação clara ao tema central do currículo, o que reflete o desenvolvimento do argumento.",
+            "evidence": "Esquece fazendo Figma. Esquece fazer esses PDF filha da puta que vocês fazem."
+          },
+          {
+            "label": "Fechamento",
+            "score": 70,
+            "explanation": "A fala final menciona a participação no time do Figma em 2026, indicando um fechamento com uma ação específica relacionada ao tema.",
+            "evidence": "Aqui tá o 2026 pra você. O próprio time do Figma. Sim, eu participo aí de uns grupos aí do Figma."
+          }
+        ]
+      },
+      "analysisSignature": "0b215b55e0ee9bd52b6c62a1847fcbcea130c785518330cd35db8fe9e9ed5a38",
+      "engine": {
+        "backend": "standard",
+        "model": "Qwen3-4B-Q4_K_M.gguf",
+        "template": "chatml-nothink",
+        "sampling": "temp 0 (greedy), seed 42",
+        "seed": 42
+      }
+    },
+    {
+      "id": "4736eefe7440c347116f286b5c444c9f202e4daf74102bd90c42e32a27910d6a",
+      "start": 1317.54,
+      "end": 1333.62,
+      "title": "PDF com detalhes e crítica à falta de clareza",
+      "score": 69,
+      "reasons": [
+        "Avaliação do intervalo efetivo (explicação): O trecho é uma explicação sobre o que funciona e o que não funciona em um portfólio, com uma conclusão clara e coerente que encerra o assunto.",
+        "O participante menciona um documento com detalhes, criando um ponto de interesse inicial.",
+        "O participante critica a falta de clareza e exige explicação, mostrando o desenvolvimento da situação.",
+        "O participante demonstra tentativa de ajudar, indicando um fechamento com intenção de resolver um problema."
+      ],
+      "review": "pending",
+      "format": "9:16",
+      "fit": "cover",
+      "analysis": {
+        "title": "PDF com detalhes e crítica à falta de clareza",
+        "summary": "O participante pede que o outro explique o que está acontecendo e critica a falta de clareza. Ele também menciona um PDF com detalhes e tenta ajudar, mostrando intenção de resolver o problema.",
+        "criteria": [
+          {
+            "label": "Gancho",
+            "score": 60,
+            "explanation": "O participante menciona um documento com detalhes, criando um ponto de interesse inicial.",
+            "evidence": "Que funciona no celular. Um PDF que tem mais detalhes que eu sei que no dia da entrevista você vai trazer esse PDF."
+          },
+          {
+            "label": "Desenvolvimento",
+            "score": 80,
+            "explanation": "O participante critica a falta de clareza e exige explicação, mostrando o desenvolvimento da situação.",
+            "evidence": "Você vai me explicar o que está acontecendo. Maravilha, ponto. Qualquer outra coisa fora disso, vocês estão jogando a loteria."
+          },
+          {
+            "label": "Fechamento",
+            "score": 70,
+            "explanation": "O participante demonstra tentativa de ajudar, indicando um fechamento com intenção de resolver um problema.",
+            "evidence": "Aí já não é um problema meu. De novo, eu estou tentando te ajudar."
+          }
+        ]
+      },
+      "analysisSignature": "8843cbed36d4dadd44b86c7dfe633045f27d9991adb55d2c351352a9a08ca6ad",
+      "engine": {
+        "backend": "standard",
+        "model": "Qwen3-4B-Q4_K_M.gguf",
+        "template": "chatml-nothink",
+        "sampling": "temp 0 (greedy), seed 42",
+        "seed": 42
+      }
+    },
+    {
+      "id": "45ed756f381b5d5f0cdde0b4fa9e64684b1c062896eb3501e4433e1dbbd1236a",
+      "start": 1272.04,
+      "end": 1293.8,
+      "title": "Apresentação e detalhamento de material",
+      "score": 58,
+      "reasons": [
+        "Avaliação do intervalo efetivo (demonstração): O trecho continua a demonstração sobre as ferramentas para criar um portfólio, mas o desfecho não é uma conclusão natural do assunto, mas uma referência à imagem do clipe.",
+        "A fala inicial introduz o conceito de 'deck' como uma extensão do slide, sugerindo uma relação entre apresentação e detalhamento.",
+        "A fala central destaca a importância do PDF como complemento da apresentação, mostrando a valorização do material detalhado.",
+        "A fala final questiona a inclusão do Notion na apresentação, indicando uma ambiguidade sobre o conteúdo a ser apresentado."
+      ],
+      "review": "pending",
+      "format": "9:16",
+      "fit": "cover",
+      "analysis": {
+        "title": "Apresentação e detalhamento de material",
+        "summary": "O participante pede que os dois materiais sejam enviados para a entrevista, destacando a importância do PDF como complemento. A fala final questiona a inclusão do Notion na apresentação, indicando uma ambiguidade sobre o conteúdo a ser apresentado.",
+        "criteria": [
+          {
+            "label": "Gancho",
+            "score": 60,
+            "explanation": "A fala inicial introduz o conceito de 'deck' como uma extensão do slide, sugerindo uma relação entre apresentação e detalhamento.",
+            "evidence": "é um deck, um slide mais detalhado com mais sensação de apresentação pra entrevista AJ, quando eu for mandar a minha aplicação, manda os dois?"
+          },
+          {
+            "label": "Desenvolvimento",
+            "score": 70,
+            "explanation": "A fala central destaca a importância do PDF como complemento da apresentação, mostrando a valorização do material detalhado.",
+            "evidence": "manda os dois, pô, coisa linda vou adorar clicar no teu website, ver o PDF ó, pô, ele fez isso aqui aqui tem mais detalhe, entendeu?"
+          },
+          {
+            "label": "Fechamento",
+            "score": 45,
+            "explanation": "A fala final questiona a inclusão do Notion na apresentação, indicando uma ambiguidade sobre o conteúdo a ser apresentado.",
+            "evidence": "Ponto final. A Jota, mas e o Notion, a Jota?"
+          }
+        ]
+      },
+      "analysisSignature": "92d078e69f64a5e70a4278357d98aeda463f627b77daf50d9e6e6c57252de571",
+      "engine": {
+        "backend": "standard",
+        "model": "Qwen3-4B-Q4_K_M.gguf",
+        "template": "chatml-nothink",
+        "sampling": "temp 0 (greedy), seed 42",
+        "seed": 42
+      }
+    }
+  ],
+  "engine": {
+    "backend": "standard",
+    "model": "Qwen3-4B-Q4_K_M.gguf",
+    "template": "chatml-nothink",
+    "sampling": "temp 0 (greedy), seed 42",
+    "seed": 42
+  }
+}

@@ -1,0 +1,14 @@
+[
+  {
+    "url": "https://raw.githubusercontent.com/OpenCut-app/OpenCut/e668010778568641babef2cc40be4703ae6916d6/README.md",
+    "sha256": "95ccfeb63ebca77afdde080e2923b5f29b680db6b42a9be8b9098ea7ba25c050",
+    "lines": 79,
+    "scope": "Conferência de versão e dependências; não auditoria completa do editor"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/OpenCut-app/opencut-classic/cf5e79e919144200294fb9fed22a222592a0aeea/apps/web/package.json",
+    "sha256": "29bdaa4e14c580af0eaf5f7dd6807288ffb532b87906f9c1c7e2a41b75e8e271",
+    "lines": 103,
+    "scope": "Conferência de versão e dependências; não auditoria completa do editor"
+  }
+]

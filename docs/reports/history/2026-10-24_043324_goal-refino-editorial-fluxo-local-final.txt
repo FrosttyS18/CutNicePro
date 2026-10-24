@@ -1,0 +1,209 @@
+╔════════════════════════════════════════════╗
+║       CUTNICEPRO — ZCODE REPORT            ║
+╚════════════════════════════════════════════╝
+
+TASK
+  Name: Refino editorial + fluxo local (goal-refino-editorial-fluxo-local-2026-10-24)
+  Status: PARTIAL
+  Scope: F1 reuso do motor textual via server sem mmproj com A/B medido;
+    F2 gate D completo pela UI (editar→salvar→reabrir→exportar pelo
+    botão/diálogo nativo); F3 rubrica por corte dos 8 do G8 + 1 ciclo de
+    calibração se aplicável; F4 entrega avaliável (tabela + guia curto).
+    Herda regras do goal-recuperacao-autoclip-2026-10-23. Sem commit/push/
+    bump; dados do mantenedor preservados; Graphify remoto por fatia.
+  Objective: fechar as lacunas técnicas que impedem o aceite editorial.
+  Result: F1 REJEITADO POR NÚMEROS (decisão exigida cumprida); F2 bug real
+    de UI corrigido + edição/persistência COMPROVADAS na UI + MP4 real pelo
+    pipeline (Δ 0,05 s), MAS publicação pelo clique do botão + diálogo
+    nativo permanece bloqueio de automação (sem erro de produto); F3 rubrica
+    documentada sem média escondendo corte ruim (6/8 ≥8; 2 abaixo; fid 8/8;
+    divergência com o aceite humano registrada); F4 entregue (tabela + guia
+    + app aberto com build nova).
+  Orçamento: ~3,5 h próprias consumidas de 8 h (saldo ~4,5 h não usado).
+  FUNCTIONAL STATUS: PARTIAL
+  REGRESSION STATUS: PASS (Rust 159/159; TS 233/233; tsc/eslint OK)
+  VISUAL STATUS: PENDING HUMAN APPROVAL
+  EDITORIAL STATUS: PENDING MANTENEDOR ACCEPTANCE
+
+IMPLEMENTATION
+  Completed:
+    F1 — Engine::GemmaTextServer (llama-server sem mmproj, opt-in
+      CNP_TEXT_SERVER=1) com queda automática por chamada para o executável
+      em erro; A/B medido na janela inédita 600–900 s (transcrição real):
+      exec 120 s × server 843 s (7× mais lento); RAM pico 10,2 GB × 17,9 GB;
+      VRAM 8,6 GiB × 2,8 GiB. DECISÃO: rejeitado como padrão (a hipótese de
+      recarga dominante não se confirmou; sem cache KV/batch entre requests
+      o server soma latência). Permanece opt-in experimental documentado.
+    F2 — Bug REAL corrigido: "Editar clipe" dentro do projeto não entrava
+      no modo corte (ProjectWorkspace não remonta com a mesma key e o estado
+      local de view ficava em "clips"/"overview"); useEffect agora sincroniza
+      initialView==="editor". Comprovado pré/post-fix por probes de DOM
+      (activeClipId nunca setado antes; setado após).
+    F2 — Gate D na UI (run 9, válida): dividir em 33%/80% + remover o meio
+      → plano salvo 2 segmentos (0–5,65 + 13,70–17,12 = 9,07 s);
+      reabertura manteve o plano EXATAMENTE; 12 cortes antigos preservados;
+      MP4 real pelo pipeline do app: 9,157 s (Δ 0,05 s), legendas reais.
+    F3 — Rubrica por corte dos 8 do G8 (avaliação manual do agente contra a
+      transcrição, gerador não se autoavaliou): 6/8 ≥8/10 (fid 2/2);
+      1085,7–1127,6 = 7/10; 900,9–938,2 = 6/10; fidelidade 8/8 (sem
+      invenção); sem vetos da rubrica. REGISTRADO: os 3 exportados foram
+      REPROVADOS editorialmente pelo mantenedor apesar de rubrica 10/9/10 —
+      a rubrica 0–2 não capturou a severidade (fim durante explicação,
+      início sem contexto). Causa diagnosticada: PROMPT de seleção/título,
+      não thresholds do borders.rs — calibração de borders não corrige;
+      ciclo registrado PENDENTE de autorização de rodada própria.
+    F4 — Tabela dos vídeos (4 MP4s + 8 do G8 com estados e rubrica),
+      guia curto do mantenedor (sem misturar labs) e app ABERTO com a
+      build nova (PID 56308, perfil padrão do mantenedor).
+  Not completed:
+    Publicação do MP4 pelo CLIQUE do botão Baixar + diálogo nativo nesta
+      rodada: clique + SendKeys ENTER + AppActivate + SetForegroundWindow
+      (user32) não publicaram (padrão recorrente das goals; sem erro de
+      produto no app). Export pelo botão já comprovado no G3A (ok:true) na
+      mesma build de motor; o pipeline real publica o mesmo artefato.
+    Ciclo de calibração editorial (prompt/título) — PENDENTE de autorização.
+  Changes:
+    app/src-tauri/src/clips/text_engine.rs — variante GemmaTextServer no
+      enum Engine, braço discover opt-in, generate com queda automática,
+      count_tokens/prompt estendidos, backend "experimentalGemmaServer".
+    app/src-tauri/src/clips/multimodal.rs — ServerTools.mmproj opcional
+      (Option<PathBuf>); Server::start só passa -mm se Some; nova
+      text_server_tools(base) sem mmproj (kill-switch respeitado).
+    app/src/screens/ProjectWorkspace.tsx — useEffect sincroniza
+      initialView==="editor" (fix do fluxo Editar clipe).
+  Architecture impact: sem mudança de contrato IPC/persistência; novo
+    caminho de transporte de inferência isolado por env var com fallback;
+    correção de estado local em tela existente (único chamador externo é
+    App(), confirmado no Graphify).
+
+FILES
+  Created:
+    tools/e2e/f1-ab-reuso-lab.mjs; tools/e2e/f2probe.mjs; f2probe2.mjs;
+    f2probe3.mjs; f2-gate-d-ui-lab.mjs; f2-export-lab.mjs;
+    docs/reports/evidence/goal-refino-editorial-fluxo-local-2026-10-24/
+      prompt-goal-zcode.txt (registro do /goal), f1-ab-reuso.json,
+      f2-export.json, f2-corte-EDITADO-pipeline.mp4,
+      f3-rubrica-por-corte.md, f4-tabela-de-videos.md,
+      GUIA-DO-MANTENEDOR.md
+  Modified: text_engine.rs; multimodal.rs; ProjectWorkspace.tsx;
+    ENGINE-HANDOFF.md e memória do projeto (ao fim desta tarefa).
+  Deleted: NENHUM.
+  Unexpected changes: NONE (demais itens untracked do working tree são
+    pré-existentes: design/, ícones, fontes etc. — não tocados).
+
+VALIDATION
+  Typecheck: PASS (tsc)
+  Lint: PASS (eslint)
+  Unit tests: PASS — Rust 159/159 (inclui testes do braço server e da
+    queda automática); TS 233/233
+  Integration tests: PASS — labs reais via CDP com o exe target-refino:
+    edição/persistência na UI (run 9), A/B F1 com transcrição real
+  Regression tests: PASS (suítes completas após as mudanças; build final
+    target-refino OK — build isolado, app antigo do mantenedor não travado)
+  Visual tests: SKIP (aprovação estética é do mantenedor por política)
+  Runtime verification: PASS nos labs (mesma build); instância aberta para
+    o mantenedor (PID 56308) não inspecionada por CDP — sessão dele
+  Total passed: 392+  Total failed: 0  Total skipped: visual (política)
+
+HOOKS / HARNESS
+  Hooks active: PreToolUse (comandos destrutivos bloqueados), validação
+    Write/Edit, baseline no Stop
+  PreToolUse: sem bloqueios nesta tarefa
+  PostToolUse: validações de arquivo OK
+  Stop: baseline registrada (não é gate)
+  Baseline: registrada no audit-log
+  Gate result: n/a (tarefa de goal; gates F1–F4 relatados acima)
+  Evidence: .zcode/hooks/audit/audit-log.jsonl
+
+MCP / SKILLS
+  Tools used: Graphify remoto (graphify_impact ProjectWorkspace — único
+    chamador externo App() L368; graphify_callers text_server_tools →
+    UNRESOLVED = defasagem comprovada: índice em ab501e2 (= HEAD) não
+    contém as mudanças locais, como declarado; complemento por leitura
+    local); Playwright via CDP (labs F1/F2); ffprobe (durações reais)
+  Connection status: Graphify conectado (workspace wesley-s-workspace,
+    repo FrosttyS18/CutNicePro, índice 2026-10-23T14:52Z, 16 h)
+  Failures: nenhum bloqueio
+  Pending activation: nenhum
+
+GIT
+  Branch: main
+  HEAD: ab501e26634648a59e005238c2c50b3230b4cac0
+  Latest commit: feat(clips): add multimodal generation with real audio pauses and frame evidence
+  Commits created: NENHUM (não autorizado)
+  Push: NOT EXECUTED (não autorizado)
+  Remote: origin → FrosttyS18/CutNicePro; branch remota main
+  Working tree: MODIFIED + UNTRACKED (196 caminhos pendentes, maioria
+    pré-existente: design/, ícones, fontes, evidências; alterações desta
+    tarefa listadas em FILES)
+  Pending files: os desta tarefa (3 fontes + labs + evidências) permanecem
+    não commitados aguardando autorização
+
+EVIDENCE
+  Commands executed: cargo test (159/159); npm test/vitest (233/233);
+    tsc; eslint; labs node (f1-ab-reuso-lab.mjs, f2-gate-d-ui-lab.mjs,
+    f2-export-lab.mjs, probes); ffprobe nos 4 MP4s (48,21/39,71/44,96/9,16 s)
+  Relevant logs: f2-run.log (.tooling/vendor/mm-lab/) com timeouts das
+    runs inválidas registrados; f1/f2 JSONs de evidência
+  Screenshots: nenhuma nova (verificação por estado direto, por política)
+  Test artifacts: docs/reports/evidence/goal-refino-editorial-fluxo-local-2026-10-24/
+  Reproduction details: abrir o app (target-refino), projeto → Cortes →
+    Editar clipe → modo corte; ffprobe nos MP4s da tabela F4
+
+ISSUES
+  Bugs found: (corrigido) view-sync do ProjectWorkspace impedia o modo
+    corte via "Editar clipe" interno; (artefato de harness) split disabled
+    em time=0 é COMPORTAMENTO CORRETO (segmento < 0,05 s) — harness agora
+    confirma modo corte por VISIBILIDADE do botão e seek antes de clicar
+  Unresolved failures: automação do clique no botão + diálogo nativo
+    (todas as abordagens autorizadas esgotadas; sem erro de produto;
+    export pelo botão comprovado no G3A anterior)
+  Regressions: nenhuma observada nas suítes/runtime dos labs
+  Risks: rubrica automática divergiu do aceite humano nos 3 exportados —
+    não usar rubrica como preditor de aceite; editor textual do app do
+    mantenedor era build antiga (target-upd20) — RESOLVIDO: app agora aberto
+    com build nova (PID 56308)
+  Blockers: nenhum técnico novo; calibração editorial aguarda autorização
+
+FINAL
+  Delivery status: PARTIAL (F2 exige MP4 pelo clique do botão real como
+    critério de conclusão; aceite editorial pendente por definição)
+  Requirements met: F1 (rejeitado com números — forma válida de conclusão);
+    F3 (rubrica documentada sem média); F4 (entregue)
+  Remaining work: rodada de calibração de prompt/título + re-geração da
+    amostra reprovada (se autorizada); publicação por clique se uma nova
+    abordagem de automação for autorizada ou validação manual do mantenedor
+    no app aberto suprir o gate
+  User action required: testes 1–2 do GUIA; decisões 1–4 do GUIA (aceite
+    do EDITADO; autorizar calibração; ratificar rejeição do server e piso
+    de RAM ~10,2 GB; Qwen 4B modo rápido?)
+  Restart required: NÃO — app já aberto com a build nova (PID 56308)
+  Ready for next task: SIM (após decisões do mantenedor)
+
+REPORT
+  Latest file: docs/reports/LATEST.txt
+  Historical file: docs/reports/history/2026-10-24_043324_goal-refino-editorial-fluxo-local-final.txt
+
+GUIA DO MANTENEDOR — O QUE MUDOU E COMO TESTAR
+  O que mudou: o app que está aberto na sua tela é uma build NOVA que
+    corrige o "Editar clipe" (antes: clicar não entrava no modo de corte);
+    o motor ganhou um caminho alternativo de server que foi MEDIDO e
+    REJEITADO (7× mais lento; fica desligado por padrão); os 8 cortes do
+    G8 foram avaliados um a um e a causa dos que você reprovou é o prompt
+    de seleção/título, não o ajuste de fronteiras.
+  Teste 1 — Editar clipe entra no modo corte:
+    1. Projeto → Cortes → card → "Editar clipe";
+    2. Resultado esperado: editor abre em modo corte com "Dividir no
+       playhead" e "Remover trecho do playhead" visíveis.
+  Teste 2 — corte EDITADO deste goal (9 s):
+    1. Abra docs/reports/evidence/goal-refino-editorial-fluxo-local-2026-10-24/f2-corte-EDITADO-pipeline.mp4;
+    2. Resultado esperado: corte real com o meio removido (0–5,6 + 13,7–17,1 s) —
+       julgue se a junção ficou limpa.
+  Decisões: (1) aceitar/rejeitar o EDITADO; (2) autorizar a calibração de
+    prompt + re-geração SÓ da amostra reprovada; (3) ratificar a rejeição
+    do server textual (piso de RAM do caminho padrão: ~10,2 GB);
+    (4) Qwen 4B como modo rápido, ou 12B único?
+  Guia completo: docs/reports/evidence/goal-refino-editorial-fluxo-local-2026-10-24/GUIA-DO-MANTENEDOR.md
+  Tabela dos vídeos: docs/reports/evidence/goal-refino-editorial-fluxo-local-2026-10-24/f4-tabela-de-videos.md
+
+END OF REPORT

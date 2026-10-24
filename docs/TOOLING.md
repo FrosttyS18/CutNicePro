@@ -6,6 +6,41 @@ expressa de 2026-10-17) e invocam scripts versionados neste repositório; fora d
 `C:\CutNicePro` eles são no-op e podem ser desativados pelo toggle de hooks. Fora isso,
 o setup original não fez instalação global de npm/uv nem alteração de PATH/config globais. Posteriormente, ENGINE-DECISIONS.md §1 registrou instalação autorizada de FFmpeg via WinGet fora do workspace; esse é histórico específico, não autorização geral para novas instalações. A revisão documental 03N não instala ou modifica ferramentas.
 
+## Abrir o aplicativo e controlar espaço — 2026-10-24
+
+O caminho de desenvolvimento é único: `C:\CutNicePro\app\src-tauri\target\debug\cutnicepro.exe`. Para abrir a interface e o motor juntos, use PowerShell:
+
+```powershell
+Set-Location C:\CutNicePro\app
+npm run tauri dev
+```
+
+Esse comando utiliza a configuração existente: frontend em `http://localhost:1420`, identificador `com.cutnicepro.app` e perfil normal, sem `WEBVIEW2_USER_DATA_FOLDER` de laboratório. O executável de debug depende do frontend de desenvolvimento; não usar um exe histórico isoladamente como alternativa ao comando. Não definir `CARGO_TARGET_DIR` para uma pasta de tarefa.
+
+Nesta manutenção, o código atual foi recompilado em `target` e o teste específico do contrato `wordsPerCaption` passou (1/1). O executável padrão anterior era de 2026-10-23; o novo inclui a fonte com alias compatível. Isso não equivale a um novo teste de export pela UI ou aceite editorial.
+
+Com autorização explícita do mantenedor, foram removidos apenas os caches `target-f2c`, `target-refino` e `target-upd20`, com Cargo e caminhos absolutos previamente verificados. Somavam 21,40 GiB de tamanhos lógicos; a variação medida do espaço livre durante a limpeza foi +15,386 GiB. A build canônica permaneceu com SHA-256 `16F56F000A3253EDC069A492C9A9B8369C65981E72D0C69FCA292584AF9C1F30`. Fontes, modelos, mídias, relatórios e projetos não foram removidos. Caminhos de builds antigas nos relatórios/labs são históricos, não instruções atuais para abrir o app.
+
+Inventário adicional, sem autorização de exclusão: `.tooling` 33,65 GiB, `experiments` 20,78 GiB, `app/node_modules` 0,27 GiB e `docs/reports` 0,48 GiB. Essas pastas misturam motores/modelos, ferramentas, fontes e evidências; não tratá-las integralmente como descartáveis. Os valores são tamanhos lógicos observados nesta tarefa, não garantia de espaço recuperável.
+
+Após a limpeza, a primeira abertura detectou um Vite antigo ocupando a porta 1420. O servidor foi identificado pelo caminho exato do Vite deste repositório e encerrado; a tentativa de abertura desta tarefa também foi encerrada. A segunda abertura pelo comando canônico iniciou Vite e Tauri normalmente. Verificação: uma janela CutNicePro responsiva, exe no caminho padrão/hash acima e frontend HTTP 200 em localhost:1420. Nenhum processo de outro projeto foi encerrado. A sessão de desenvolvimento desta tarefa ficou aberta para o mantenedor testar.
+
+Após a limpeza, a primeira abertura detectou um Vite antigo ocupando a porta 1420. O servidor foi identificado pelo caminho exato do Vite deste repositório e encerrado; a tentativa de abertura desta tarefa também foi encerrada. A segunda abertura pelo comando canônico iniciou Vite e Tauri normalmente. Verificação: uma janela CutNicePro responsiva, exe no caminho padrão/hash acima e frontend HTTP 200 em localhost:1420. Nenhum processo de outro projeto foi encerrado. A sessão de desenvolvimento desta tarefa ficou aberta para o mantenedor testar.
+
+Política permanente de build único em AGENTS.md. Diagnóstico e manifesto da limpeza em `docs/reports/evidence/build-unico-2026-10-24/diagnostico.json`.
+
+## Organização do Git e artefatos locais — 2026-10-24
+
+Fontes React/Rust, testes, locks, ícones, posters e fontes Poppins reais devem estar versionados. O CI passa a usar esses recursos diretamente, sem executar `tools/ci/stub-assets.mjs`; o script permanece como histórico, sem chamada no workflow. A licença OFL acompanha os TTF em `app/src-tauri/resources/fonts/OFL.txt`. Versão mantida em 0.19.0, sem release ou publicação automática.
+
+MP4s de laboratório em `docs/reports/evidence/` ficam locais e ignorados pelo Git; nenhum vídeo foi apagado ou movido. O manifesto `docs/reports/evidence/organizacao-git-2026-10-24/artefatos-locais.json` registra caminho, tamanho, motivo e SHA-256 dos 15 MP4s, dos três aplicadores de patch de uso único e de quatro resultados vazios de scratch. São 22 arquivos, aproximadamente 334,48 MiB, preservados no disco. O manifesto permite conferir identidade, mas não contém nem recupera os vídeos: um clone novo não os terá. A fixture MP4 pequena já versionada anteriormente continua no Git. Documentos de design e evidências textuais não foram ignorados em bloco.
+
+`apply_f1.py`, `apply_g3c.py` e `app/src-tauri/apply_mm_helpers.py` são históricos locais, não comandos de manutenção. Os laboratórios em `tools/e2e/` também registram procedimentos antigos: alguns semeiam dados, encerram processos e removem arquivos. Não fazem parte das suítes automáticas nem devem ser executados indiscriminadamente no perfil do mantenedor. Para testes da interface, seguir a preferência vigente de validação manual, sem controlar a tela.
+
+Um commit local não atualiza o Graphify remoto. A conexão desta tarefa consulta o índice promovido ab501e26634648a59e005238c2c50b3230b4cac0. Não há ferramenta de reindexação entre as operações MCP expostas; após publicação autorizada no GitHub, conferir no painel a atualização do repositório e consultar novamente `graph_stats`. Só declarar atualizado quando o commit retornado corresponder à revisão publicada. Não prometer gatilho automático nem enviar arquivos locais ao serviço. Referências oficiais: [MCP remoto](https://graphify.com/mcp) e [configuração e consultas](https://github.com/Graphify-Labs/graphify-mcp).
+
+O ajuste de navegação em `ProjectWorkspace` conserva a entrada no editor quando a rota muda e permite voltar ao projeto com a rota inalterada. A sincronização ocorre antes de renderizar os filhos, sem `setState` síncrono em effect, conforme a [orientação do React](https://react.dev/learn/you-might-not-need-an-effect#adjusting-some-state-when-a-prop-changes). Teste com hooks simulados cobre abrir, voltar e abrir novamente; não é prova de navegação no Tauri real.
+
 ## Estado atual da aplicação — 2026-10-19, revisão 03N
 
 O ambiente de 2026-10-17 abaixo é histórico de instalação; a aplicação já possui código e processamento real. Stack conferida em `app/package.json`, `app/src-tauri/Cargo.toml` e fontes: React/TypeScript/Vite, Tauri v2/Rust, CSS/tokens próprios e ícones Phosphor. Zustand/GSAP/Motion/Three constam nas dependências; Vitest e Happy DOM nos testes. Tailwind, shadcn/ui, dnd-kit e Supabase não constam como dependências da aplicação atual; não presumir sua integração nem migrar a arquitetura por esta atualização documental.
@@ -26,9 +61,10 @@ Decisão vigente do mantenedor: manter Turbo e retirar Large completo do produto
 |---|---|---|
 | Skills do projeto | `.zcode/skills/` | 16 arquivos SKILL.md na última baseline 03M; disponibilidade depende do agente/sessão |
 | Referências compartilhadas | `.zcode/references/` | 5 checklists usados pelas skills Addy Osmani |
-| MCP do workspace | `.zcode/config.json` | Configuração local de FigCraft/Graphify; registro não garante exposição/conexão no agente atual |
+| MCP do workspace | `.zcode/config.json` | FigCraft e Graphify local legado; o remoto Graphify deve ser configurado no cliente. Registro não garante exposição/conexão |
 | Playwright CLI | `.tooling/playwright/` | `@playwright/cli` 0.1.22 local |
-| Graphify (venv) | `.tooling/venvs/graphify/` | `graphifyy` 0.9.92 + extra `[mcp]` |
+| Graphify remoto (oficial) | `https://api.graphify.com/mcp` | Validado no Codex em 2026-10-24: OAuth e consultas reais em wesley-s-workspace/FrosttyS18/CutNicePro; índice em ab501e2, complemento local obrigatório |
+| Graphify local (histórico) | `.tooling/venvs/graphify/` | `graphifyy` 0.9.92 + extra `[mcp]`; não é rota oficial nem fallback |
 | Clones e runtimes locais | `.tooling/vendor/` | Clones históricos e motores/modelos adicionados; hashes por entrega em reports/evidence |
 | Artefatos do FigCraft | `design/` | Pasta de saída para exports do MCP |
 
@@ -49,8 +85,9 @@ SPEC → PLAN → BUILD → TEST → REVIEW:
 `source-driven-development`, `code-review-and-quality`, `security-and-hardening`,
 `documentation-and-adrs`.
 
-**Conhecimento — Graphify**: `graphify` (gerada pelo pacote `graphifyy` 0.9.92, com nota de
-instalação local adicionada).
+**Conhecimento — Graphify**: `graphify` (gerada pelo pacote local `graphifyy` 0.9.92).
+Os procedimentos locais dessa skill são históricos e ficam subordinados à política
+de Graphify remoto em AGENTS.md; não executá-los como fallback para o novo gate.
 
 As demais skills do repositório do Addy Osmani **não** foram instaladas (orçamento de contexto);
 os clones completos ficam em `.tooling/vendor/` para instalação futura se necessário.
@@ -84,7 +121,20 @@ headless — o startup do ZCode nunca quebra. Validação real completa (handsha
 ferramentas, criação/modificação/leitura/captura/export em aba descartável, documento do
 usuário preservado): **`docs/FIGCRAFT-ATTACHED.md`**. Ativação/desativação pelo marker.
 
-### `graphify` — stdio (VALIDADO como servidor; consultas dependem do grafo)
+### Graphify remoto — rota oficial (decisão do mantenedor, 2026-10-23)
+
+- Endpoint: `https://api.graphify.com/mcp`; transporte Streamable HTTP; autenticação OAuth pelo navegador.
+- Nome do servidor no cliente: `graphify`. Workspace indicado: `wesley-s-workspace`; repositório `FrosttyS18/CutNicePro`. Confirmar IDs/acesso/índice pelas ferramentas, sem trocar o alvo para obter resultados.
+- **Estado atual (2026-10-24):** Graphify remoto configurado e autenticado no Codex com autorização expressa do mantenedor para a entrada em sua configuração de usuário. Nesta correção da biblioteca, list_workspaces/list_repositories confirmaram wesley-s-workspace e FrosttyS18/CutNicePro; consulta de ClipPoster resolveu símbolo exato e fonte. Impacto/testes/consumidores consultados antes da edição e impacto revisto depois. Índice: ab501e26634648a59e005238c2c50b3230b4cac0, 2026-10-23T14:52:12Z; igual ao HEAD, mas sem o working tree posterior. isClipNew não estava no índice (retorno semântico incorreto não foi tratado como definição); referências locais supriram a lacuna. O stdio local em .zcode/config.json continua legado, sem uso como fallback. Não houve upload, commit/push ou publicação automática do working tree.
+- Configurar no formato da versão real do cliente e reutilizar a entrada correta; preservar MCPs não relacionados. Preferir suporte HTTP/OAuth nativo. Ponte para o mesmo serviço remoto somente se necessária e documentada; não confundir ponte de transporte com servidor de grafo local. Não pedir chave de API em texto nem persistir tokens no projeto.
+- Validação mínima: ferramentas expostas -> workspace/repositório autorizados -> índice pronto -> símbolo conhecido com localização de fonte e relações. Handshake ou descoberta não comprovam acesso ao grafo.
+- Antes da fatia, consultar símbolos/chamadores/dependências/impacto/testes e registrar consumidores e contratos afetados. Confirmar cobertura e resolução da fonte; resultados vazios/semânticos não provam ausência de relações.
+- Conferir revisão indexada contra HEAD e alterações locais/não rastreadas. Índice remoto não é prova de cobertura do working tree. Complementar por leitura/diff local, incluindo IPC/contratos entre linguagens. Depois da mudança, revisar diff, testar e verificar relações afetadas.
+- Atualizar índice somente por mecanismo suportado/autorizado; não publicar commits/push nem enviar código local automaticamente para sincronizá-lo. Registrar defasagem remanescente.
+- Sem serviço/acesso/índice: registrar a etapa bloqueada e continuar somente atividades independentes. Não usar o servidor local como fallback silencioso. Regra permanente em `AGENTS.md`.
+- Fontes oficiais: [MCP remoto](https://graphify.com/mcp), [setup e verificação](https://github.com/Graphify-Labs/graphify-mcp). O grafo ajuda a escolher o alcance/testes; não executa os testes nem restaura arquivos.
+
+### Histórico — `graphify` local stdio (handshake antigo; não é rota oficial)
 - Comando: `C:\CutNicePro\.tooling\venvs\graphify\Scripts\python.exe -m graphify.serve --graph C:\CutNicePro\graphify-out\graph.json`
 - Handshake testado (inicia mesmo sem grafo ainda). 10 ferramentas: `query_graph`, `get_node`,
   `get_neighbors`, `get_community`, `god_nodes`, `graph_stats`, `shortest_path`, `list_prs`,
@@ -102,7 +152,7 @@ usuário preservado): **`docs/FIGCRAFT-ATTACHED.md`**. Ativação/desativação 
   `playwright-cli install-browser` (artefatos ficam no cache do usuário; alternativa local:
   `PLAYWRIGHT_BROWSERS_PATH=C:\CutNicePro\.tooling\pw-browsers`).
 
-## Graphify (CLI)
+## Histórico — Graphify CLI local (não é rota oficial)
 
 - Executável: `C:\CutNicePro\.tooling\venvs\graphify\Scripts\graphify.exe` (NÃO está no PATH).
 - venv Python 3.12 isolado em `.tooling/venvs/graphify` (criado com `python -m venv` + pip; `uv`
@@ -134,8 +184,12 @@ para consulta durante alterações estruturais. Ele NÃO gera os Markdown, NÃO 
 documentação, testes ou leitura do código, e não recebe módulos artificiais para "alimentar"
 o grafo.
 
-Estado atual: `GRAPHIFY: INSTALLED — INITIAL INDEX PENDING`
-(instalação/handshake documentados historicamente; `graphify-out/graph.json` ainda ausente na revisão 03N. Há código-fonte em `app/src/` e `app/src-tauri/src/`; o índice inicial e sua atualização permanecem pendentes. Ler o código atual quando o grafo estiver indisponível ou defasado.)
+Estado vigente: `GRAPHIFY REMOTE REQUIRED — CONNECTION / OAUTH / INDEX QUERY NOT VALIDATED HERE`.
+Configuração e consulta real ficam para o cliente ZCode, conforme runbook acima.
+Estado local histórico: `INSTALLED — INITIAL INDEX PENDING` na revisão 03N;
+handshake antigo e ausência de `graphify-out/graph.json` não comprovam uso de grafo.
+O remoto é a rota oficial; conferir fonte/diff local para lacunas do índice e respeitar
+o gate de indisponibilidade de AGENTS.md, sem fallback local silencioso.
 
 ## Reinício do ZCode
 

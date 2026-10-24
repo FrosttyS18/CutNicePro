@@ -1,0 +1,21 @@
+Revisão estática do relatório Blob URL — 2026-10-22
+
+Escopo: conferir implementação atual e criar prompt ao ZCode. Nenhuma implementação ou runtime pelo Codex.
+Observação de atraso/travamento: mantenedor. Duração da tarefa anterior não permite inferir esforço ou qualidade.
+
+Fatos conferidos:
+1. useWorkspaceData.ts:62–66 faz fetch(schemeUrl), response.blob(), createObjectURL(blob). Cleanup altera disposed, sem AbortController nesse efeito. Não há conclusão de vazamento nem do backing store usado pelo navegador.
+2. local_media_scheme.rs:148 aloca todo intervalo; 166–172 sem Range lê todo arquivo. Múltiplos ranges retornam None e seguem 200 integral. Essa política pode ignorar Range, mas não é a rejeição descrita no relatório. Não há teto por resposta nesse ramo/intervalo aberto.
+3. VideoEditor.tsx:108 mantém time no pai; :233 calcula captionCue; :243 reinicia timer de 150 ms (debounce); :321 filtra seeking; coalescência espera seeked e aplica último pending. Latências/resultados não medidos.
+4. TranscriptPanel.tsx:20 e EditorInspector.tsx:69 são funções sem React.memo; isso não quantifica custo. Renders efetivos dependem também da configuração/build e props.
+5. workspace-store.ts possui revokeObjectURL em substituição, remoção e releaseSessionMedia; não alegar ausência total de cleanup.
+6. OpenCut Classic, cf5e79e919144200294fb9fed22a222592a0aeea, services/video-cache/service.ts: Input/BlobSource/CanvasSink, frameChain, seekGenerations e poolSize 3. É necessário seguir seus consumidores até a apresentação; não concluir que esse módulo é todo o fluxo ou que objectURL reproduz a arquitetura.
+7. URL.createObjectURL referencia o objeto fornecido; File é um tipo de Blob; Response.blob lê o corpo até o fim. Documentação não promete custo de decode eliminado nem residência integral em RAM.
+
+Fontes:
+https://developer.mozilla.org/en-US/docs/Web/API/URL/createObjectURL_static
+https://developer.mozilla.org/en-US/docs/Web/API/File
+https://developer.mozilla.org/en-US/docs/Web/API/Response/blob
+https://github.com/OpenCut-app/opencut-classic/blob/cf5e79e919144200294fb9fed22a222592a0aeea/apps/web/src/services/video-cache/service.ts
+
+Conclusão: o relatório não fornece medições para afirmar IPC como gargalo dominante. Troca de fonte isolada não demonstra equivalência do caminho de frames. Próximo passo: experimento comparativo do OpenCut, vídeo mínimo no WebView2 e editor completo; seguir o caminho de render e implementar conforme dados. Sem nova correção/aceite nesta tarefa.

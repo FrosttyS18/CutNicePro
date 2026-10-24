@@ -1,0 +1,97 @@
+╔════════════════════════════════════════════╗
+║       CUTNICEPRO — ZCODE REPORT            ║
+╚════════════════════════════════════════════╝
+
+TASK
+  Name: Direcionamento ao ZCode — fluxo completo do editor OpenCut
+  Status: PASS (prompt; não aceite da timeline)
+  Scope: fontes, prompt e documentação.
+  Objective: exigir investigação completa do caminho de mídia e comparação.
+  Result: prompt entregue; estudo profundo e correções atribuídos ao ZCode.
+
+IMPLEMENTATION
+  Completed: conferência do README OpenCut e package.json Classic;
+    prompt cobrindo importação, eventos, relógios, decode, render, cache,
+    recursos, comparação, implementação e validação real.
+  Not completed: auditoria completa e execução dos editores nesta tarefa.
+  Changes: documentação e evidências; nenhum código do aplicativo.
+  Architecture impact: nenhum.
+
+FILES
+  Created: docs/reports/evidence/opencut-fluxo-completo-2026-10-22/
+    {prompt-zcode.txt,sources.json,git-status.txt,verification.json};
+    relatório histórico abaixo.
+  Modified: docs/references/OPEN-SOURCE-ENGINE-RESEARCH.md;
+    docs/engineering/ENGINE-HANDOFF.md; docs/reports/LATEST.txt.
+  Deleted: nenhum.
+  Unexpected changes: nenhuma no aplicativo/index verificados.
+
+VALIDATION
+  Typecheck / Lint / Unit / Integration / Regression / Visual / Runtime:
+    SKIP — autoria documental, sem execução dos aplicativos.
+  Total passed: 5 verificações documentais e de preservação.
+  Total failed: 0 nessas verificações.
+  Total skipped: 7 categorias acima; zero testes do aplicativo executados.
+  FUNCTIONAL STATUS: PASS (prompt).
+  REGRESSION STATUS: NOT TESTED.
+  VISUAL STATUS: PENDING HUMAN APPROVAL.
+
+HOOKS / HARNESS
+  Hooks active: não inspecionados.
+  PreToolUse / PostToolUse / Stop / Baseline: não executados explicitamente.
+  Gate result: sem aceite de performance.
+  Evidence: verification.json.
+
+MCP / SKILLS
+  Tools used: GitHub, web, terminal e Node.
+  Connection status: leituras concluídas.
+  Failures: nenhuma nesta tarefa.
+  Pending activation: nenhuma.
+
+GIT
+  Branch: main
+  HEAD: e22555b682ccad97a68eb356032c245b86b54baf
+  Latest commit: feat(clips): add per-clip fill mode ("fit") persisted from generation options
+  Commits created: nenhum.
+  Push: NOT EXECUTED.
+  Remote: origin → FrosttyS18/CutNicePro; main.
+  Working tree: MODIFIED / UNTRACKED; index preservado.
+  Pending files: 142 entradas inventariadas em git-status.txt antes deste
+    relatório; histórico abaixo e LATEST também ficam pendentes.
+    Alterações preexistentes preservadas.
+
+EVIDENCE
+  Commands executed: leitura de continuidade, git status/rev-parse/diff.
+  Relevant logs: sources.json, git-status.txt, verification.json.
+  Screenshots: imagem recebida do mantenedor; não é benchmark.
+  Test artifacts: nenhum teste de aplicativo.
+  Reproduction details: lentidão CutNicePro e fluidez OpenCut relatadas
+    pelo mantenedor; sem nova medição pelo agente.
+
+ISSUES
+  Bugs found: nenhum novo diagnóstico técnico confirmado nesta tarefa.
+  Unresolved failures: timeline permanece sem aceite real.
+  Regressions: não testadas.
+  Risks: README indica Classic no site, mas SHA do deploy não confirmado;
+    dependências listadas não comprovam caminho de execução.
+  Blockers: nenhum para entregar o prompt.
+
+FINAL
+  Delivery status: prompt pronto para encaminhar.
+  Requirements met: direcionamento para rastreio completo e correção.
+  Remaining work: ZCode estudar, comparar, implementar e medir.
+  User action required: encaminhar o prompt ao ZCode.
+  Restart required: não.
+  Ready for next task: sim.
+
+REPORT
+  Latest file: docs/reports/LATEST.txt
+  Historical file: docs/reports/history/2026-10-22_224429_prompt-opencut-fluxo-completo.txt
+
+GUIA DO MANTENEDOR — O QUE MUDOU E COMO TESTAR
+  O que mudou: prompt aprofundado; aplicativo não alterado.
+  1. Encaminhe prompt-zcode.txt ao ZCode.
+  Resultado esperado: rastreio completo, comparação e correção validada.
+  Nada para testar manualmente nesta entrega documental.
+
+END OF REPORT

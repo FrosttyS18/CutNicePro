@@ -1,0 +1,60 @@
+OBJETIVO NOVO — CORTES POR TEXTO, QUALIDADE EDITORIAL E DESEMPENHO
+
+Substitua a direção do goal-cortes-multimodais-2026-10-23. O mantenedor cancelou a geração multimodal e escolheu seleção/análise por texto. Não retome o laboratório multimodal nem considere o objetivo anterior concluído. Registre a mudança de escopo e o orçamento antigo consumido (~8 h acumuladas), preservando suas evidências.
+
+Entrega desejada: vídeo local → Whisper Turbo/transcrição vigente → seleção editorial por texto → cortes realmente gerados pela IA → revisão e montagem no EditPlan existente → salvar/reabrir → MP4 coerente com a prévia. Qualidade e tempo de espera devem ser avaliados antes de habilitar processamento automático para o usuário.
+
+ORÇAMENTO DESTE OBJETIVO
+Até 4 horas ativas acumuladas, somente se este texto for cadastrado/autorizado como novo goal. Não renovar por rodada, contexto ou chat. No máximo duas abordagens de otimização e dois ciclos de calibração. Uma rodada inicial de validação por fatia; uma repetição somente por falha ou mudança pertinente. Não repetir aprovados para melhorar apresentação. Ao atingir limite/bloqueio, registrar PARTIAL/BLOCKED com o próximo passo exato; não fabricar PASS. Este limite novo não apaga as horas da meta anterior.
+
+1. CONFERIR ESTADO E CONTER O PROCESSAMENTO INDESEJADO
+Leia AGENTS.md, o REGISTRO DE CONTINUIDADE da entrega 0.19.0 e a seção da meta multimodal em ENGINE-HANDOFF.md; confira backlog, código, working tree e orçamento antes de editar. Preserve alterações de outros chats, dados do mantenedor e timeline aprovada.
+Constatações a verificar no código atual:
+- Engine::discover escolhe GemmaMultimodal ao encontrar server/mmproj.
+- Options e a auto-geração usam o perfil Gemma; "texto" não significa automaticamente modelo pequeno.
+- ProjectWorkspace dispara geração após encontrar transcrição real; autoGenerateEnabled começa ligado e useRef não é guarda durável.
+- generation::run seleciona candidatos antes de enrich_clip; semantic::run recebe quotes da transcrição, não as descrições visuais.
+Torne o caminho normal estritamente textual: nenhum mmproj, pergunta de visão/áudio ou tracking acionado incidentalmente pela presença de arquivos. Preserve compatibilidade e evidências antigas; não apague modelos, análises, planos ou módulos só para reduzir escopo.
+Preserve Gemma textual como ponto de partida; não volte automaticamente a Qwen por um comentário antigo de "Standard". Caso comparar um modelo menor já instalado seja necessário, limite a duas opções, mesma tarefa e avaliação independente, com custo/qualidade apresentados e justificativa de escolha. Não baixar um novo catálogo.
+Durante estabilização, auto-geração deve exigir opt-in explícito. Abrir/reabrir projeto ou transcrição antiga não pode disparar carga inesperada. Cancelamento deve permanecer cancelado ao reabrir, sem retry automático; repetir exige ação do usuário.
+Texto pode usar server local sem mmproj se isso trouxer ganho medido. Não confundir transporte server com modalidade visual.
+
+2. DIAGNOSTICAR E OTIMIZAR O TEXTO ANTES DE "TREINAR"
+Não iniciar fine-tuning, LoRA, treinamento de pesos, novos serviços ou troca de ASR. Nesta etapa, refinar significa melhorar instruções, exemplos editoriais, segmentação, contexto e avaliação do pipeline existente.
+Meça por etapa e pelo grupo de processos do app: partida/carregamento, preparação do contexto, descoberta, avaliação, análise final, gravação e limpeza. Registre chamadas/tokens/recarregamentos, RAM, CPU, VRAM e offload efetivo; separe memória do editor, RAM e VRAM, e declare limitações do medidor.
+Use baseline textual real com transcrição pronta, mesma configuração e entrada, distinguindo partida fria, reutilização do modelo e cache de resultados. Não extrapole linearmente o ensaio M3 de uma janela para o vídeo inteiro.
+Declare metas numéricas de tempo e recursos ANTES da calibração e da execução longa, fundamentadas no baseline e na experiência desejada; não escolher limites apenas para aprovar o resultado nem relaxá-los depois. Faça checkpoint com os valores e justificativa. Se a meta exigir concessão de qualidade ou não couber no hardware, informe esse trade-off.
+Procure custo redundante antes de trocar modelos: recarga por chamada, avaliações repetidas, janelas exageradas, saída excessiva, análise repetida de cortes antigos e cache sem versão. Aproveite batch, reutilização e cache quando justificáveis, com invalidação por mídia, transcrição editada, modelo, versão das instruções e opções.
+Não limitar silenciosamente candidatos ou cobertura para "ficar rápido". Falhas/cancelamento não publicam saída parcial como sucesso; processos próprios devem encerrar. Preserve exclusividade de jobs pesados e capacidade de usar o editor.
+
+3. CALIBRAR QUALIDADE EDITORIAL SEM MEMORIZAR O VÍDEO
+Reutilize estudos e calibrações existentes em experiments/clip-selection-ab e AUTOMATIC-MODE.md. Antes de adaptar uma solução open-source, leia os módulos pertinentes na revisão fixada e registre contratos/licença/testes; README e estrelas não são estudo do funcionamento.
+Separe exemplos de calibração e avaliação. A janela M3 360–720 s já foi inspecionada, com contexto 240–840 s; não chamá-la de teste cego após usá-la para ajustar instruções. Reserve outra amostra antes do novo ciclo e registre exposição anterior conhecida.
+Não codifique frases, nomes ou tempos do vídeo na lógica. Use transcrição vigente/corrigida pelo usuário; não invente palavras, fatos, imagens ou intenções para encobrir erro ASR.
+Seleção deve produzir unidades narrativas compreensíveis: contexto suficiente, acontecimento/ideia concreta, progressão e encerramento adequado à natureza do trecho, sem publicidade indevida, duplicatas ou cortes sobrepostos.
+Título específico e resumo natural: contar o que aconteceu/foi explicado, sem "o falante introduz o tema" e sem linguagem de avaliação técnica. Notas e citações não comprovam, sozinhas, qualidade.
+Rubrica independente do próprio gerador: contexto, desenvolvimento, fechamento, fidelidade e título/resumo (0–2 cada). Alvo por amostra: ≥8/10 e fidelidade obrigatória 2/2. Se a revisão for por outro modelo, declare que ainda falta aceite humano. Não inventar que o mantenedor aprovou. Se faltar exemplo validado para calibrar, explicitar a lacuna, sem inventar anotação humana.
+Treino de pesos só poderá ser proposto depois, com exemplos revisados, conjunto separado de avaliação, ganho esperado, custo e autorização própria; melhorar prompt não deve ser reportado como treinamento.
+
+4. FECHAR A FATIA REAL PRESERVANDO O QUE JÁ FUNCIONA
+Preserve M2: EditPlan, dividir/remover, undo/redo, persistência, montagem e exportação multi-janela. Não substituir a timeline aprovada, nem refazer sua arbitragem/FrameSeeker sem defeito demonstrado.
+Não apresentar o M4 como tracking geral ou crop que acompanha o falante: o contrato atual persiste um centro cx/cy, não uma trajetória de câmera por tempo. Deixe o experimento visual fora do caminho padrão. Corte textual 9:16 continua precisando de composição adequada, ajuste manual e correspondência preview/export, sem deformar nem modificar a origem.
+O modelo não pode afirmar ter visto o vídeo no modo textual. Preencher o quadro não significa garantir que detectou o rosto.
+Faça a prova final com clipes REALMENTE gerados pelo caminho textual, nunca semeados no store. Verifique se a pré-edição é produzida automaticamente ou somente pelo editor; não declarar montagem automática por IA com base no laboratório manual M2. Não fabricar uma remoção interna desnecessária apenas para passar no teste.
+
+ACEITE FINAL
+A. Na cópia de trabalho do vídeo de ~24,6 min, gerar por texto sem visão/tracking automáticos; backend e configuração efetivamente usados comprovados no binário reconstruído.
+B. Apresentar pelo menos três cortes reais exportados, com tempos, títulos e resumos, origem das avaliações e tabela de tempo/recursos. Não escolher apenas exemplos bonitos omitindo rejeitados.
+C. Executar a rubrica na amostra separada; pedir o aceite editorial do mantenedor pelos arquivos reproduzíveis, com um roteiro simples. Não concluir qualidade por notas dadas pelo próprio gerador.
+D. Editar um corte real na timeline, salvar/reabrir e exportar; plano, conteúdo removido, duração, legendas e áudio coerentes com a prévia. Preservar cortes antigos e correções manuais.
+E. Com geração textual ativa, validar scrub/play usando eventos reais e medição que comprove evento recebido, mudança efetiva do alvo e apresentação. A medição v5 de 5 ms era inválida: não reutilizá-la. Comparar com baseline válido pelo mesmo método, declarando custo de harness.
+F. Cancelar durante inferência; reabrir sem reinício automático; testar retry explícito, falha do motor, invalidação do cache após editar transcrição e ausência de duplicação. Verificar liberação/limites de recursos em ciclos curtos, sem repetir gerações integrais desnecessárias.
+G. A geração deve satisfazer as metas previamente declaradas ou ficar explicitamente FAIL/PARTIAL. Não prometer funcionamento em GPU <8 GB/PC fraco sem medir esse perfil.
+H. Mídia de 2 h e tracking geral ficam como lacunas explícitas do objetivo anterior; não declarar suporte validado nem consumir carga longa nesta etapa sem orçamento específico.
+
+ENTREGA E CONTINUIDADE
+Não fazer commit, push, bump, migração de stack ou limpar dados do mantenedor. Atualizar os documentos canônicos existentes e o REGISTRO DE CONTINUIDADE, sem inventar versão/UPD ou release. Registrar o que herdou, o que mudou e o que ainda falhou, orçamento consumido e próximo passo.
+Entregar relatório obrigatório, os três MP4s reproduzíveis, caminhos diretos, comparação de custo/qualidade e GUIA DO MANTENEDOR com passos e resultados esperados. Se funções não foram validadas ou o mantenedor ainda não aprovou o conteúdo, explicitar isso e aguardar sua avaliação, sem loops de autoavaliação.
+Goal organiza a execução, mas não autoriza marcar como concluído o que ficou pendente.
+
+/start

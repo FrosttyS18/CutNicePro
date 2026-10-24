@@ -1,0 +1,45 @@
+{
+  "lab": "gateF-ia-ativa",
+  "duration": 1476.789,
+  "counts": {
+    "ptr": 184,
+    "ph": 90,
+    "rvfc": 42,
+    "ups": 3
+  },
+  "playhead": {
+    "n": 90,
+    "p50": 25.800000071525574,
+    "p95": 96.60000002384186,
+    "max": 196.5
+  },
+  "videoFinal": {
+    "t": 738.394558,
+    "seeking": false,
+    "paused": true
+  },
+  "frames": [
+    {
+      "upT": 17323,
+      "lastSeekT": 17246.099999904633,
+      "lastPaintT": 17288,
+      "firstRvfcAfter": 16106.1,
+      "mediaTime": 147.6475
+    },
+    {
+      "upT": 21259,
+      "lastSeekT": 21207.599999904633,
+      "lastPaintT": 21246.5,
+      "firstRvfcAfter": 19913.3,
+      "mediaTime": 1255.254
+    },
+    {
+      "upT": 35256.799999952316,
+      "lastSeekT": 35083.09999990463,
+      "lastPaintT": 35093.799999952316,
+      "firstRvfcAfter": 34360.4,
+      "mediaTime": 73.82375
+    }
+  ],
+  "iaAtiva": true
+}

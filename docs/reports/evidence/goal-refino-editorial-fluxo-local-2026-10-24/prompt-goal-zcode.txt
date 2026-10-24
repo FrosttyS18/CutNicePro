@@ -1,0 +1,48 @@
+GOAL — goal-refino-editorial-fluxo-local-2026-10-24
+Continuidade rastreável de goal-recuperacao-autoclip-2026-10-23 (prompt integral
+em ../goal-recuperacao-autoclip-2026-10-23/prompt-goal-zcode.txt, 220 linhas —
+este goal HERDA todas as regras, orçamentos parciais e proteções dele).
+
+OBJETIVO
+Implementar e validar as correções autorizadas que PERMANECEM do goal pai,
+sem repetir o que já foi demonstrado, e fechar as lacunas técnicas que
+impeDEM o aceite editorial:
+
+F1 — REUSO DO MOTOR (pai §2/§6: "Texto pode usar server local sem mmproj se
+isso trouxer ganho medido"; proposta g6 nº3). Implementar o caminho textual
+via llama-server SEM mmproj com queda para o executável por chamada; medir
+A/B na janela reservada (ganho esperado: eliminar ~2-3 min de recarga por
+chamada do total de 19,7 min no vídeo inteiro). Só adotar com ganho medido.
+
+F2 — GATE D COMPLETO NA UI (pai §8-G): gerar → abrir → editar com motivo
+verificável → salvar → reabrir → exportar PELO BOTÃO/DIÁLOGO NATIVO, MP4
+reproduzível equivalente à prévia. A automação do clique falhou no goal pai
+(timeout de locator); usar ferramenta apropriada (não repetir quatro
+harnesses quebrados — pai §8-J). Export por função interna COMPLEMENTA mas
+não substitui o botão.
+
+F3 — CALIBRAÇÃO EDITORIAL DO REFINE (pai §6: melhorias incrementais
+autorizadas de contexto/prompts/fronteiras): avaliar os 8 cortes do G8 com
+a rubrica por-corTE (pai §8: >=8/10 POR corte, fidelidade 2/2, vetos de
+início incompreensível/promessa não entregue/ideia cortada/invenção);
+1 ciclo de calibração dos thresholds do borders.rs se houver corte com
+vetor ou <8; re-executar UMA vez na amostra se calibrar.
+
+F4 — ENTREGA AVALIÁVEL (pai §9): tabela dos vídeos (projeto, geração/
+modelo, título, intervalo/duração, arquivo, estado, diferenças
+verificáveis); guia curto SEM misturar labs; alinhamento da instância/
+dados e identificação da biblioteca ANTES de novas inferências.
+
+ORÇAMENTO
+Herda o REGISTRO do pai (consumo registrado lá); este goal tem até 8 h
+próprias. Máx. 2 abordagens por decisão (F1 já tem 1 implementação prévia
+do server no modo multimodal — reusar o código existente é a 1ª abordagem
+aqui; queda para executável é o fallback, não abordagem nova). 1 ciclo de
+calibração editorial (F3). Sem commit/push/bump; dados do mantenedor
+intocados; Graphify remoto por fatia com defasagem declarada.
+
+DEFINIÇÃO DE CONCLUSÃO
+F1 com ganho MEDIDO (adotado ou rejeitado com números); F2 com MP4
+publicado pelo botão real na UI; F3 com rubrica por corte documentada
+(sem média escondendo corte ruim); F4 entregue. Aceite editorial/visual
+continua EXCLUSIVO do mantenedor — sem isso: PARTIAL por definição.

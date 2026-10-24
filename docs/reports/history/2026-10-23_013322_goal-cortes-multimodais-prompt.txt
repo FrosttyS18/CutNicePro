@@ -1,0 +1,108 @@
+╔════════════════════════════════════════════╗
+║       CUTNICEPRO — ZCODE REPORT            ║
+╚════════════════════════════════════════════╝
+
+TASK
+  Name: Preparar Goal de cortes multimodais para o ZCode
+  Status: PASS — somente pesquisa e preparação do prompt.
+  Scope: documentação; nenhuma implementação ou meta iniciada.
+  Objective: orientar uma entrega mínima de ponta a ponta.
+  Result: objetivo de seis marcos, com aceite e limites de execução.
+
+IMPLEMENTATION
+  Completed: leitura estática, pesquisa oficial, roadmap e prompt.
+  Changes: instruções para análise multimodal, plano de edição comum,
+    ajustes manuais, tracking controlado, persistência e exportação.
+  Not completed: implementação e validação do motor cabem ao ZCode.
+  Architecture impact: nenhum aplicado; propostas exigem verificação.
+  Limites: até 6 h ativas, tentativas finitas e validação delimitada.
+    Sem conclusão completa antes dos gates e do aceite editorial.
+
+FILES
+  Created, em docs/reports/evidence/goal-cortes-multimodais-2026-10-23/:
+    objetivo-zcode.txt, analysis.txt, sources.json,
+    git-status-before.txt, git-status-after.txt, validation.json.
+  Created: relatório histórico indicado abaixo.
+  Modified: docs/engineering/ENGINE-HANDOFF.md;
+    docs/references/OPEN-SOURCE-ENGINE-RESEARCH.md;
+    docs/reports/LATEST.txt.
+  Deleted: nenhum.
+  Unexpected changes: nenhuma identificada nas verificações realizadas.
+
+VALIDATION
+  Artefatos: prompt gravado e relido; seis marcos conferidos;
+    inventário com seis arquivos de código e cinco fontes externas.
+  Preservação: conteúdo anterior dos documentos mantido; HEAD,
+    index e diff de app idênticos à baseline desta tarefa.
+  Typecheck / Lint / Unit / Integration / Regression / Runtime:
+    SKIP — somente documentação; zero testes do aplicativo executados.
+  Visual tests: SKIP — nenhuma interface alterada.
+  FUNCTIONAL STATUS: PASS para preparação do prompt.
+  REGRESSION STATUS: NOT TESTED.
+  VISUAL STATUS: PENDING HUMAN APPROVAL.
+  Capacidade multimodal do aplicativo: NÃO VALIDADA nesta tarefa.
+
+HOOKS / HARNESS
+  Execução de hooks e baseline do ZCode: não verificada.
+  Nenhum PASS atribuído a hooks ou harness do aplicativo.
+
+MCP / SKILLS
+  Tools used: leitura local, Git somente leitura, pesquisa web oficial,
+    conector GitHub e escrita documental.
+  Connection status: consultas utilizadas concluídas.
+  Failures: saída extensa truncada; leituras específicas complementares.
+  Pending activation: nenhuma para entregar o prompt.
+
+GIT
+  Branch: main
+  HEAD: e22555b682ccad97a68eb356032c245b86b54baf
+  Latest commit: feat(clips): add per-clip fill mode ("fit") persisted from generation options
+  Commits created: nenhum.
+  Push: NOT EXECUTED.
+  Remote: origin → https://github.com/FrosttyS18/CutNicePro.git
+  Working tree: MODIFIED / UNTRACKED, já estava assim antes.
+  Pending files: inventários completos em git-status-before.txt e
+    git-status-after.txt na pasta de evidências; alterações anteriores
+    preservadas. Arquivos desta tarefa listados em FILES.
+  Versão, dependências e código do aplicativo: inalterados.
+
+EVIDENCE
+  Leitura: ENGINE-HANDOFF, PRODUCT-BRAIN, política de validação,
+    protocolo de relatórios, pesquisa existente e caminho de clipes.
+  Fontes externas: Gemma model card, llama.cpp/mtmd, ByteTrack e
+    ClipAnything. URLs, escopo e hashes disponíveis em sources.json.
+  Verificação: leitura dos artefatos e comparação de hashes.
+  Screenshots / testes do app: nenhum produzido nesta tarefa.
+
+ISSUES
+  O adaptador Gemma consultado recebe texto; entrada visual/sonora
+    precisa ser demonstrada no runtime pelo ZCode.
+  Leitura de tipos/trim não demonstrou montagem com vários intervalos.
+  Detecção de transição não comprova tracking.
+  Fontes GitHub consultadas em branches móveis; fixar revisões antes
+    de adaptar código. Pesquisa preparatória não é auditoria completa.
+  Regressões: não testadas; nenhum código alterado.
+  Blockers: nenhum para a preparação; execução futura não iniciada.
+
+FINAL
+  Delivery status: prompt pronto para encaminhar ao ZCode.
+  Requirements met: roadmap, gates end to end, proteção da timeline,
+    critérios editoriais e limites contra loop.
+  Remaining work: ZCode implementar e demonstrar o objetivo.
+  User action required: cadastrar o prompt no Goal do ZCode.
+  Restart required: não.
+  Ready for next task: sim, no escopo documental.
+
+REPORT
+  Latest file: docs/reports/LATEST.txt
+  Historical file: docs/reports/history/2026-10-23_013322_goal-cortes-multimodais-prompt.txt
+
+GUIA DO MANTENEDOR — O QUE MUDOU E COMO TESTAR
+  O que mudou: foi preparado o direcionamento para o ZCode.
+  1. Abra objetivo-zcode.txt na pasta de evidências acima.
+  2. Use seu conteúdo como objetivo no ZCode.
+  Esperado: execução pelos seis marcos, com demonstração no aplicativo
+    e MP4s reais antes de declarar a entrega concluída.
+  Nada para testar no aplicativo agora: seu código não foi alterado.
+
+END OF REPORT

@@ -1,0 +1,366 @@
+{
+  "reserved": {
+    "start": 360,
+    "end": 720
+  },
+  "arms": [
+    {
+      "label": "A-textual",
+      "disableMultimodal": true,
+      "elapsed": 674,
+      "engine": {
+        "backend": "experimentalGemma",
+        "model": "gemma-4-12b-it-qat-q4_0.gguf",
+        "template": "gemma4-canonical-nothink",
+        "sampling": "temp 1.0, top_k 64, top_p 0.95, min_p 0, seed 42",
+        "seed": 42
+      },
+      "jobError": null,
+      "count": 9,
+      "multimodalEvidence": 0,
+      "clips": [
+        {
+          "id": "0e70313679",
+          "start": 354.14,
+          "end": 405.66,
+          "score": 91,
+          "title": "Equilíbrio entre necessidades do usuário e do negócio na apresentação de problemas",
+          "multimodal": null,
+          "analysisSummary": "A apresentação de um problema deve equilibrar os pontos de dor e objetivos tanto do usuário quanto do negócio. O foco exclusivo na empatia com o usuário pode inviabilizar o projeto por falta de invest",
+          "inReserved": true
+        },
+        {
+          "id": "1d0a67f6ab",
+          "start": 793.3,
+          "end": 838.92,
+          "score": 91,
+          "title": "Como descrever seu papel e responsabilidades em projetos de equipe",
+          "multimodal": null,
+          "analysisSummary": "O falante explica como descrever responsabilidades individuais dentro de projetos de equipe, citando exemplos como pesquisa e design. Ele destaca que os detalhes do trabalho ajudam a demonstrar compet",
+          "inReserved": false
+        },
+        {
+          "id": "1b06f4a1b3",
+          "start": 517.22,
+          "end": 532.2,
+          "score": 84,
+          "title": "O impacto do tamanho do portfólio no processo de recrutamento",
+          "multimodal": null,
+          "analysisSummary": "O recrutador explica a dificuldade de selecionar candidatos devido ao alto volume de portfólios enviados. Ele aponta que um texto muito longo impede a seleção rápida e afirma que o portfólio não será ",
+          "inReserved": true
+        },
+        {
+          "id": "9cce724255",
+          "start": 689.96,
+          "end": 730.77,
+          "score": 82,
+          "title": "A importância de ter clareza e propósito ao estudar técnicas de UX",
+          "multimodal": null,
+          "analysisSummary": "O falante afirma que o interlocutor será derrotado em uma entrevista de trabalho por não saber responder perguntas técnicas. Ele explica que toda técnica de UX deve ter um propósito claro e um resulta",
+          "inReserved": true
+        },
+        {
+          "id": "b35410ab00",
+          "start": 245.58,
+          "end": 289.06,
+          "score": 70,
+          "title": "Estrutura básica e contextualização de cases para portfólio",
+          "multimodal": null,
+          "analysisSummary": "A estrutura básica de um case para portfólio é apresentada, destacando que excesso de informações pode ser desnecessário. O foco deve estar no contexto do que foi resolvido e não apenas no nome da mar",
+          "inReserved": false
+        },
+        {
+          "id": "10dc85ea43",
+          "start": 641.08,
+          "end": 678.62,
+          "score": 70,
+          "title": "O erro de criar portfólios baseados em checklists de processos",
+          "multimodal": null,
+          "analysisSummary": "Um erro comum no portfólio de profissionais é a criação de estudos de caso baseados apenas em uma checklist de processos. Quando os detalhes são analisados profundamente, percebem-se falhas em etapas ",
+          "inReserved": true
+        },
+        {
+          "id": "84cb7e6492",
+          "start": 557.35,
+          "end": 611.68,
+          "score": 64,
+          "title": "A importância do wireframe no processo de design de pensamento",
+          "multimodal": null,
+          "analysisSummary": "Um diálogo ocorre sobre o hábito de utilizar wireframes no processo de design. O interlocutor questiona a ausência dessa etapa, enquanto o outro defende que o rabisco é essencial para mostrar o proces",
+          "inReserved": true
+        },
+        {
+          "id": "5a8437ab61",
+          "start": 752.14,
+          "end": 787.14,
+          "score": 51,
+          "title": "Como apresentar um projeto sem métricas usando aprendizados",
+          "multimodal": null,
+          "analysisSummary": "O falante orienta a apresentar um projeto como uma descrição de aprendizado quando não há métricas disponíveis. Ele sugere destacar que a simplicidade é preferível a novas funcionalidades e que é impo",
+          "inReserved": false
+        },
+        {
+          "id": "7a59d42eac",
+          "start": 422.3,
+          "end": 509.98,
+          "score": 37,
+          "title": "Orientações sobre mockups e demonstração de telas de projetos",
+          "multimodal": null,
+          "analysisSummary": "O falante orienta sobre a importância de usar linguagem simples e demonstrar rapidamente as telas de um projeto, criticando o uso de mockups visualmente ruins. Ele sugere o uso de mockups unbranded em",
+          "inReserved": true
+        }
+      ]
+    },
+    {
+      "label": "B-multimodal",
+      "disableMultimodal": false,
+      "elapsed": 2276,
+      "engine": {
+        "backend": "experimentalGemmaMultimodal",
+        "model": "gemma-4-12b-it-qat-q4_0.gguf + mmproj",
+        "template": "gemma4-canonical-nothink (llama-server)",
+        "sampling": "temp 1.0, top_k 64, top_p 0.95, min_p 0, seed 42",
+        "seed": 42
+      },
+      "jobError": null,
+      "count": 10,
+      "multimodalEvidence": 10,
+      "clips": [
+        {
+          "id": "a038dff74e",
+          "start": 586,
+          "end": 613.68,
+          "score": 98,
+          "title": "A importância do wireframe para mostrar o processo de pensamento",
+          "multimodal": {
+            "frames": [
+              586.35,
+              599.84
+            ],
+            "visual": "Um homem jovem de óculos e camiseta branca está sentado em frente a um microfone de podcast, segurando e lendo um papel. O cenário ao fundo mostra uma estante com equipamentos e uma porta de madeira.",
+            "audioEvents": [],
+            "boundaryAdjustments": [
+              0,
+              0
+            ]
+          },
+          "analysisSummary": "Um falante questiona a opinião de um mentor que afirma ser desnecessário fazer wireframes. Ele defende que o processo é rápido, barato e essencial para mostrar o pensamento e as decisões tomadas. O ob",
+          "inReserved": true
+        },
+        {
+          "id": "1d0a67f6ab",
+          "start": 793.3,
+          "end": 838.92,
+          "score": 91,
+          "title": "Como definir seu papel e responsabilidades em um projeto de equipe",
+          "multimodal": {
+            "frames": [
+              793.65,
+              816.11
+            ],
+            "visual": "Um homem jovem de óculos e camiseta branca fala em frente a um microfone de podcast. Ele está em um ambiente interno com prateleiras ao fundo e uma porta de madeira à direita.",
+            "audioEvents": [],
+            "boundaryAdjustments": [
+              0,
+              0
+            ]
+          },
+          "analysisSummary": "O falante explica a importância de identificar e comunicar claramente quais responsabilidades foram assumidas em um projeto de equipe. Ele utiliza exemplos como pesquisa, wireframe e design para mostr",
+          "inReserved": false
+        },
+        {
+          "id": "9cce724255",
+          "start": 689.96,
+          "end": 730.77,
+          "score": 90,
+          "title": "A importância de entender o porquê das técnicas de UX antes da prática",
+          "multimodal": {
+            "frames": [
+              690.31,
+              710.37
+            ],
+            "visual": "Um homem jovem de óculos e camiseta branca fala em frente a um microfone de mesa em um ambiente interno com prateleiras ao fundo. Ele está com uma expressão de surpresa ou dúvida, com a boca aberta e a mão direita levantada.",
+            "audioEvents": [],
+            "boundaryAdjustments": [
+              0,
+              0
+            ]
+          },
+          "analysisSummary": "O falante afirma que o entrevistado terá dificuldade em responder perguntas técnicas se não tiver clareza sobre o propósito de cada técnica de UX. Ele orienta que o estudante deve definir como os estu",
+          "inReserved": true
+        },
+        {
+          "id": "de9a827b41",
+          "start": 455.4,
+          "end": 474.02,
+          "score": 87,
+          "title": "Dicas para criar mockups unbranded usando o Clay Mockup",
+          "multimodal": {
+            "frames": [
+              455.75,
+              464.71
+            ],
+            "visual": "Um homem jovem de óculos e barba curta, vestindo uma camiseta branca, fala em frente a um microfone de podcast. Ele está em um ambiente interno com prateleiras ao fundo e uma porta de madeira à direita.",
+            "audioEvents": [],
+            "boundaryAdjustments": [
+              0,
+              0
+            ]
+          },
+          "analysisSummary": "Uma recomendação de uso do Clay Mockup para criação de mockups unbranded em 3D. A ideia é utilizar modelos limpos e sem cores definidas para que o foco permaneça totalmente no conteúdo da tela.",
+          "inReserved": true
+        },
+        {
+          "id": "48e7e8232f",
+          "start": 427.1,
+          "end": 443.38,
+          "score": 84,
+          "title": "Dicas para apresentar telas e soluções de problemas em highlights",
+          "multimodal": {
+            "frames": [
+              427.45,
+              435.24
+            ],
+            "visual": "Um homem jovem de óculos e camiseta branca fala em frente a um microfone, com uma mão estendida em um gesto explicativo. O fundo mostra um ambiente interno com prateleiras e uma porta de madeira.",
+            "audioEvents": [],
+            "boundaryAdjustments": [
+              0,
+              0
+            ]
+          },
+          "analysisSummary": "A fala enfatiza a importância de mostrar rapidamente quais telas foram criadas e como elas resolvem problemas reais. É recomendada a criação de highlights e o uso de menos mockups na apresentação.",
+          "inReserved": true
+        },
+        {
+          "id": "5a8437ab61",
+          "start": 752.14,
+          "end": 787.14,
+          "score": 76,
+          "title": "Apresentação de projeto focada em aprendizados e práticas reais",
+          "multimodal": {
+            "frames": [
+              752.49,
+              769.64
+            ],
+            "visual": "Um homem jovem de óculos e barba curta, vestindo uma camiseta branca, fala para a câmera em um ambiente interno. Ao fundo, vê-se uma estante com objetos e uma porta de madeira. Um microfone de lapela está posicionado à sua frente.",
+            "audioEvents": [],
+            "boundaryAdjustments": [
+              0,
+              0
+            ]
+          },
+          "analysisSummary": "O falante sugere apresentar um projeto como uma descrição de aprendizado em vez de usar métricas. É mencionado o aprendizado de que a simplicidade é preferível a novas funcionalidades e a necessidade ",
+          "inReserved": false
+        },
+        {
+          "id": "e71396c858",
+          "start": 520.34,
+          "end": 558.1,
+          "score": 64,
+          "title": "Como estruturar portfólios para passar pelo filtro de seleção",
+          "multimodal": {
+            "frames": [
+              520.69,
+              539.22
+            ],
+            "visual": "Um homem jovem de óculos e camiseta branca fala para a câmera em um ambiente interno. Ele está em frente a uma estante com equipamentos e uma porta de madeira à direita, gesticulando com a mão esquerda enquanto mantém uma expressão de surpresa ou ênfase.",
+            "audioEvents": [],
+            "boundaryAdjustments": [
+              0,
+              0
+            ]
+          },
+          "analysisSummary": "Um avaliador explica que portfólios com textos muito longos são descartados por não serem práticos para quem analisa centenas de projetos. Ele orienta que o foco deve ser no processo, nas pesquisas re",
+          "inReserved": true
+        },
+        {
+          "id": "6d92ae98ff",
+          "start": 264.42,
+          "end": 289.06,
+          "score": 58,
+          "title": "Como criar títulos com contexto em vez de focar em marcas",
+          "multimodal": {
+            "frames": [
+              264.77,
+              276.74
+            ],
+            "visual": "Um homem jovem de óculos e camiseta branca fala em frente a um microfone de podcast. Ele está em um ambiente interno com prateleiras ao fundo e uma porta de madeira à direita.",
+            "audioEvents": [],
+            "boundaryAdjustments": [
+              0,
+              0
+            ]
+          },
+          "analysisSummary": "A fala aborda a importância de dar contexto aos títulos em vez de focar apenas em nomes de marcas. É sugerido o uso de perguntas, afirmações ou frases com ponto final para gerar entendimento imediato ",
+          "inReserved": false
+        },
+        {
+          "id": "10dc85ea43",
+          "start": 641.08,
+          "end": 678.62,
+          "score": 58,
+          "title": "O erro de fazer portfólio como uma checklist de processos",
+          "multimodal": {
+            "frames": [
+              641.43,
+              659.85
+            ],
+            "visual": "Um homem jovem de óculos e camiseta branca fala para a câmera em um ambiente interno. Ao fundo, há uma estante com equipamentos e uma porta de madeira. Ele gesticula com a mão esquerda enquanto mantém uma expressão séria.",
+            "audioEvents": [],
+            "boundaryAdjustments": [
+              0,
+              0
+            ]
+          },
+          "analysisSummary": "O falante aponta que muitos portfólios são feitos como checklists de processos, como aplicar o Double Diamond ou realizar testes de usabilidade sem profundidade real. Ele argumenta que essa abordagem ",
+          "inReserved": true
+        },
+        {
+          "id": "0e70313679",
+          "start": 354.14,
+          "end": 405.66,
+          "score": 49,
+          "title": "Equilíbrio entre necessidades do usuário e do negócio em projetos",
+          "multimodal": {
+            "frames": [
+              354.49,
+              379.9
+            ],
+            "visual": "Um homem de óculos e camiseta branca fala para a câmera em um cenário de estúdio com prateleiras ao fundo. Ele faz um gesto com a mão direita enquanto fala. Há um microfone de lapela e um logotipo 'DeepCrack' na parte inferior.",
+            "audioEvents": [],
+            "boundaryAdjustments": [
+              0,
+              0
+            ]
+          },
+          "analysisSummary": "O locutor explica que apresentações de problemas devem incluir tanto os pontos de dor do usuário quanto as necessidades do negócio. Ele alerta que focar apenas na empatia pelo usuário pode impedir que",
+          "inReserved": true
+        }
+      ]
+    }
+  ],
+  "comparison": {
+    "reservedWindow": {
+      "start": 360,
+      "end": 720
+    },
+    "A": {
+      "total": 9,
+      "naJanela": 6,
+      "evidencia": [
+        "texto",
+        "texto",
+        "texto",
+        "texto",
+        "texto",
+        "texto"
+      ]
+    },
+    "B": {
+      "total": 10,
+      "naJanela": 7,
+      "comFrames": 7
+    },
+    "boundaryChangesB": 0
+  }
+}

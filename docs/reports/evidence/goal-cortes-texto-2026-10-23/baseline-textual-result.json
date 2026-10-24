@@ -1,0 +1,411 @@
+{
+  "samples": [
+    {
+      "t": 15,
+      "ramMB": 6397
+    },
+    {
+      "t": 31,
+      "ramMB": 10147
+    },
+    {
+      "t": 47,
+      "ramMB": 10167
+    },
+    {
+      "t": 62,
+      "ramMB": 1895
+    },
+    {
+      "t": 77,
+      "ramMB": 10054
+    },
+    {
+      "t": 92,
+      "ramMB": 10099
+    },
+    {
+      "t": 108,
+      "ramMB": 10058
+    },
+    {
+      "t": 123,
+      "ramMB": 10092
+    },
+    {
+      "t": 138,
+      "ramMB": 7619
+    },
+    {
+      "t": 154,
+      "ramMB": 10069
+    },
+    {
+      "t": 169,
+      "ramMB": 10132
+    },
+    {
+      "t": 184,
+      "ramMB": 10136
+    },
+    {
+      "t": 200,
+      "ramMB": 10150
+    },
+    {
+      "t": 215,
+      "ramMB": 3285
+    },
+    {
+      "t": 230,
+      "ramMB": 10159
+    },
+    {
+      "t": 246,
+      "ramMB": 6728
+    },
+    {
+      "t": 261,
+      "ramMB": 10085
+    },
+    {
+      "t": 277,
+      "ramMB": 10102
+    },
+    {
+      "t": 292,
+      "ramMB": 10129
+    },
+    {
+      "t": 307,
+      "ramMB": 10083
+    },
+    {
+      "t": 322,
+      "ramMB": 10103
+    },
+    {
+      "t": 338,
+      "ramMB": 10064
+    },
+    {
+      "t": 353,
+      "ramMB": 10066
+    },
+    {
+      "t": 368,
+      "ramMB": 10044
+    },
+    {
+      "t": 384,
+      "ramMB": 10038
+    },
+    {
+      "t": 399,
+      "ramMB": 10133
+    },
+    {
+      "t": 414,
+      "ramMB": 10133
+    },
+    {
+      "t": 430,
+      "ramMB": 10155
+    },
+    {
+      "t": 445,
+      "ramMB": 10125
+    },
+    {
+      "t": 460,
+      "ramMB": 10098
+    },
+    {
+      "t": 475,
+      "ramMB": 10153
+    },
+    {
+      "t": 491,
+      "ramMB": 10107
+    },
+    {
+      "t": 506,
+      "ramMB": 10154
+    },
+    {
+      "t": 521,
+      "ramMB": 1247
+    },
+    {
+      "t": 537,
+      "ramMB": 10113
+    },
+    {
+      "t": 552,
+      "ramMB": 10105
+    },
+    {
+      "t": 567,
+      "ramMB": 10017
+    },
+    {
+      "t": 582,
+      "ramMB": 9967
+    },
+    {
+      "t": 598,
+      "ramMB": 10157
+    },
+    {
+      "t": 613,
+      "ramMB": 10088
+    },
+    {
+      "t": 628,
+      "ramMB": 7251
+    },
+    {
+      "t": 644,
+      "ramMB": 9992
+    },
+    {
+      "t": 662,
+      "ramMB": 10123
+    },
+    {
+      "t": 677,
+      "ramMB": 10074
+    },
+    {
+      "t": 692,
+      "ramMB": 1162
+    },
+    {
+      "t": 708,
+      "ramMB": 10022
+    },
+    {
+      "t": 723,
+      "ramMB": 10010
+    },
+    {
+      "t": 738,
+      "ramMB": 10007
+    },
+    {
+      "t": 753,
+      "ramMB": 10010
+    },
+    {
+      "t": 769,
+      "ramMB": 10009
+    },
+    {
+      "t": 784,
+      "ramMB": 10008
+    },
+    {
+      "t": 799,
+      "ramMB": 10008
+    },
+    {
+      "t": 815,
+      "ramMB": 1141
+    },
+    {
+      "t": 830,
+      "ramMB": 10006
+    },
+    {
+      "t": 845,
+      "ramMB": 10008
+    },
+    {
+      "t": 860,
+      "ramMB": 10006
+    },
+    {
+      "t": 876,
+      "ramMB": 10005
+    },
+    {
+      "t": 891,
+      "ramMB": 10005
+    },
+    {
+      "t": 906,
+      "ramMB": 10007
+    },
+    {
+      "t": 922,
+      "ramMB": 10012
+    },
+    {
+      "t": 937,
+      "ramMB": 10003
+    },
+    {
+      "t": 952,
+      "ramMB": 10007
+    },
+    {
+      "t": 968,
+      "ramMB": 10007
+    },
+    {
+      "t": 983,
+      "ramMB": 10009
+    },
+    {
+      "t": 998,
+      "ramMB": 9989
+    },
+    {
+      "t": 1013,
+      "ramMB": 9974
+    },
+    {
+      "t": 1029,
+      "ramMB": 9991
+    },
+    {
+      "t": 1044,
+      "ramMB": 9991
+    },
+    {
+      "t": 1059,
+      "ramMB": 1242
+    },
+    {
+      "t": 1075,
+      "ramMB": 9989
+    },
+    {
+      "t": 1090,
+      "ramMB": 9990
+    },
+    {
+      "t": 1105,
+      "ramMB": 9985
+    },
+    {
+      "t": 1120,
+      "ramMB": 9988
+    },
+    {
+      "t": 1136,
+      "ramMB": 9989
+    },
+    {
+      "t": 1151,
+      "ramMB": 9989
+    },
+    {
+      "t": 1166,
+      "ramMB": 9988
+    },
+    {
+      "t": 1182,
+      "ramMB": 1056
+    }
+  ],
+  "meta": {
+    "elapsedS": 1182,
+    "jobError": null,
+    "jobState": "completed",
+    "vramBaseUsedMiB": 2742,
+    "vramPeakUsedMiB": 2275,
+    "ramPeakMB": 10167,
+    "backend": "experimentalGemma",
+    "clips": 12,
+    "clipsDetail": [
+      {
+        "start": 0,
+        "end": 17.1,
+        "score": 95,
+        "title": "Como identificar problemas de clareza no portfólio profissio",
+        "multimodal": false
+      },
+      {
+        "start": 1194.4,
+        "end": 1217.9,
+        "score": 95,
+        "title": "A preferência por qualidade em vez de quantidade em itens de",
+        "multimodal": false
+      },
+      {
+        "start": 641.1,
+        "end": 696.6,
+        "score": 92,
+        "title": "O erro de portfólio baseado em checklist que reprova candida",
+        "multimodal": false
+      },
+      {
+        "start": 180.1,
+        "end": 245.2,
+        "score": 87,
+        "title": "Como evitar portfólios confusos e excesso de mock-ups inútei",
+        "multimodal": false
+      },
+      {
+        "start": 947.8,
+        "end": 1009.7,
+        "score": 87,
+        "title": "Quatro perguntas para validar a estrutura de um portfólio",
+        "multimodal": false
+      },
+      {
+        "start": 1339.5,
+        "end": 1401.5,
+        "score": 84,
+        "title": "Por que evitar o Figma para criar currículos e portfólios",
+        "multimodal": false
+      },
+      {
+        "start": 1132.4,
+        "end": 1194.4,
+        "score": 71,
+        "title": "A impossibilidade de aprender UX e UI em bootcamps de fim de",
+        "multimodal": false
+      },
+      {
+        "start": 730.8,
+        "end": 787.1,
+        "score": 70,
+        "title": "Como apresentar resultados e aprendizados em um case",
+        "multimodal": false
+      },
+      {
+        "start": 513,
+        "end": 532.2,
+        "score": 63,
+        "title": "O impacto de textos longos e desnecessários em processos sel",
+        "multimodal": false
+      },
+      {
+        "start": 405.9,
+        "end": 474,
+        "score": 55,
+        "title": "Dicas para apresentar interfaces e evitar mockups ruins",
+        "multimodal": false
+      },
+      {
+        "start": 860.2,
+        "end": 892.2,
+        "score": 52,
+        "title": "Teste de cinco segundos para avaliar a clareza de um website",
+        "multimodal": false
+      },
+      {
+        "start": 1411.2,
+        "end": 1457.8,
+        "score": 27,
+        "title": "Critérios para validação de portfólio e clareza de conteúdo",
+        "multimodal": false
+      }
+    ],
+    "calls": [],
+    "callCount": 0,
+    "scratch": "C:\\Users\\adcka\\AppData\\Roaming\\com.cutnicepro.app\\cutnicepro\\render-temp\\4acb8112-9b80-49bb-94dd-15d38d6f64d8"
+  }
+}

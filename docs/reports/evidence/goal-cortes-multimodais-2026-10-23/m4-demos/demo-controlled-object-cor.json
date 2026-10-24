@@ -1,0 +1,10 @@
+{
+  "categoria": "bola laranja 18x18",
+  "corAlvo": [
+    250,
+    116,
+    3
+  ],
+  "occlusionFrames": 5,
+  "selecaoDoAlvo": "cor dominante (pixel mais saturado) da região do primeiro frame"
+}

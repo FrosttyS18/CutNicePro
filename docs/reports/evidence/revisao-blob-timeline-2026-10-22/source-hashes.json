@@ -1,0 +1,30 @@
+[
+  {
+    "path": "app/src/hooks/useWorkspaceData.ts",
+    "sha256": "65426ddfdc338df82d27cb4d3e505e4888ec61b7788f3faa495f292b026b02b2"
+  },
+  {
+    "path": "app/src/components/editor/VideoEditor.tsx",
+    "sha256": "91a0f55c83a729f728abd827e17a3f2de3617be823738ece511957cf70083688"
+  },
+  {
+    "path": "app/src/components/workspace/VideoPreview.tsx",
+    "sha256": "200df7d2f444642725cef3e92bcf11a44530ef75d403907dce8fe16de6a3515c"
+  },
+  {
+    "path": "app/src-tauri/src/local_media_scheme.rs",
+    "sha256": "7c7f2bd479f78da50c7e6e185698bad43b38bbe4b0dd03e384882dae487f56cf"
+  },
+  {
+    "path": "app/src/components/workspace/TranscriptPanel.tsx",
+    "sha256": "5931b7156955efffcb7d81e685b43704027c7c1625ca4dfca253009cca9c92c3"
+  },
+  {
+    "path": "app/src/components/editor/EditorInspector.tsx",
+    "sha256": "2a741a9cdcd1cdd3d41d12e8e196a059947c9e4000cbbf3f81259cfb4c18cba7"
+  },
+  {
+    "path": "app/src/services/workspace-store.ts",
+    "sha256": "b134bc153c11d867cbec16c630d39adba82cecc7e7e5cb12a720a34f3ac33158"
+  }
+]

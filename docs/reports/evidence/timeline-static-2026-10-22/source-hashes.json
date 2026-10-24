@@ -1,0 +1,26 @@
+[
+  {
+    "Path": "C:\\CutNicePro\\app\\src-tauri\\src\\local_media_scheme.rs",
+    "Hash": "13D7EFF78DF924252F484D10E6D82EB9CE073E4EB7ABDC444509BF8BF581FEDE"
+  },
+  {
+    "Path": "C:\\CutNicePro\\app\\src\\components\\editor\\VideoEditor.tsx",
+    "Hash": "B94C1C1C5E8CDED8BBC38DE5D2338EBA93B3AB8A37484CFCDED549A30DB2DD81"
+  },
+  {
+    "Path": "C:\\CutNicePro\\app\\src\\components\\editor\\TimelineSurface.tsx",
+    "Hash": "7A18642375E01F0B175DEC2C53895795DF1A0CABFD95D075901724639C657BAD"
+  },
+  {
+    "Path": "C:\\CutNicePro\\app\\src\\components\\workspace\\VideoPreview.tsx",
+    "Hash": "200DF7D2F444642725CEF3E92BCF11A44530EF75D403907DCE8FE16DE6A3515C"
+  },
+  {
+    "Path": "C:\\CutNicePro\\app\\src\\components\\workspace\\TranscriptPanel.tsx",
+    "Hash": "5931B7156955EFFFCB7D81E685B43704027C7C1625CA4DFCA253009CCA9C92C3"
+  },
+  {
+    "Path": "C:\\CutNicePro\\app\\src\\components\\editor\\EditorInspector.tsx",
+    "Hash": "2A741A9CDCD1CDD3D41D12E8E196A059947C9E4000CBBF3F81259CFB4C18CBA7"
+  }
+]

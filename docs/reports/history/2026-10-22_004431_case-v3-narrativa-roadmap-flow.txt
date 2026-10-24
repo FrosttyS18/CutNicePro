@@ -1,0 +1,101 @@
+CUTNICEPRO — ZCODE REPORT
+
+TASK
+  Name: Case v3 — contexto, decisões e resultado
+  Status: PASS no escopo da entrega
+  Scope: apresentação, PDF, roteiro e registros.
+  Objective: revisar a narrativa e separar roadmap, modelo comercial e user flow.
+  Result: 16 slides na página 04 do mesmo FigCraft; V2 preservada.
+  FUNCTIONAL STATUS: PASS
+  REGRESSION STATUS: NOT TESTED
+  VISUAL STATUS: PENDING HUMAN APPROVAL
+
+IMPLEMENTATION
+  Completed: abertura contextualizada, títulos com achados/soluções, roadmap
+    de cinco semanas, grupos comerciais 5/5, user flow e transcrição antes/depois.
+  Changes: 12 slides principais + 4 apoios; temas preto/branco com variáveis próprias.
+  Not completed: aprovação estética/narrativa humana.
+  Architecture impact: nenhum. Aplicativo, dependências e versão preservados.
+
+FILES
+  Created: 44 arquivos em design/case-study-v3/ e este relatório histórico.
+    Lista integral: design/case-study-v3/files-created.txt.
+  Modified: mesmo FigCraft v2; ENGINE-HANDOFF.md; CASE-STUDY-LOG.md;
+    PRODUCT-BRAIN.md; LATEST.txt.
+  Deleted: nenhum arquivo preexistente.
+  Unexpected changes: NONE. Três páginas anteriores preservadas integralmente.
+
+VALIDATION
+  Typecheck: SKIP — apresentação
+  Lint: SKIP — apresentação
+  Unit tests: SKIP — aplicativo fora do escopo
+  Integration tests: PASS — MCP, arquivo nativo e PDF relidos
+  Regression tests: SKIP — aplicativo fora do escopo
+  Visual tests: SKIP para aprovação estética; 16 frames/PDF inspecionados
+  Runtime verification: PASS — FigCraft real
+  Total passed: 63 critérios objetivos de artefato
+  Total failed: 0 finais
+  Total skipped: 5 categorias acima
+  Conferido: 16 frames 1920×1080, grade, limites, fontes, texto editável,
+    colisões, ordem de camadas, fontes de conteúdo e páginas anteriores intactas.
+
+HOOKS / HARNESS
+  Hooks active: execução automática não observada.
+  PreToolUse / PostToolUse / Stop / Baseline: não executados manualmente.
+  Gate result: não utilizado.
+  Evidence: design/case-study-v3/validation.json.
+
+MCP / SKILLS
+  Tools used: FigCraft MCP attached, arquivos, pypdf e pdftoppm.
+  Connection status: FigCraft 0.8.0 conectado; sem Figma como substituto.
+  Failures: erro de variável na preparação do fluxo corrigido antes da criação.
+  Pending activation: nenhuma. Skills de apresentações/PDF consultadas.
+
+GIT
+  Branch: main
+  HEAD: e22555b682ccad97a68eb356032c245b86b54baf
+  Latest commit: feat(clips): add per-clip fill mode ("fit") persisted from generation options
+  Commits created: nenhum
+  Push: NOT EXECUTED
+  Remote: origin → https://github.com/FrosttyS18/CutNicePro.git; origin/main
+  Working tree: MODIFIED / UNTRACKED; pendências anteriores preservadas.
+  Pending files: inventário integral em design/case-study-v3/git-pending.txt.
+
+EVIDENCE
+  Commands executed: FigCraft copiar/colar/criar/inspecionar/salvar/exportar;
+    CLI info; pypdf; pdftoppm; git status/log.
+  Relevant logs: sources.json, validation.json e document-inspection.json.
+  Screenshots: renders/01.png a 16.png e renders/pdf-01.png a pdf-16.png.
+  Test artifacts: PDF de 16 páginas 16:9, texto selecionável.
+  Reproduction details: abrir a página 04 do mesmo arquivo FigCraft v2.
+
+ISSUES
+  Bugs found: títulos longos e contraste nos exemplos corrigidos na V3.
+  Unresolved failures: nenhuma no escopo.
+  Regressions: aplicativo não testado.
+  Risks: divisão semanal aproximada conforme orientação do mantenedor;
+    avaliação comercial qualitativa, sem inferir pagamento ou conversão.
+  Blockers: nenhum.
+
+FINAL
+  Delivery status: V3 entregue, IN REVIEW.
+  Requirements met: nova narrativa, roadmap, grupos 5/5, user flow e alternância visual.
+  Remaining work: revisão humana.
+  User action required: conferir a V3 e ensaiar com o roteiro.
+  Restart required: não
+  Ready for next task: sim
+
+REPORT
+  Latest file: C:/CutNicePro/docs/reports/LATEST.txt
+  Historical file: C:/CutNicePro/docs/reports/history/2026-10-22_004431_case-v3-narrativa-roadmap-flow.txt
+
+GUIA DO MANTENEDOR — O QUE MUDOU E COMO TESTAR
+  O que mudou: cada slide agora apresenta contexto, achado ou decisão específica.
+  1. Abrir “04 · Case v3 · Contexto, decisões e resultado” no FigCraft.
+     Esperado: 16 frames; roadmap no 4, grupos no 6 e user flow no 7.
+  2. Conferir as páginas anteriores.
+     Esperado: V2 e seus ajustes preservados.
+  3. Abrir o PDF e o roteiro em design/case-study-v3/.
+     Esperado: narrativa completa de 16 páginas e falas correspondentes.
+
+END OF REPORT

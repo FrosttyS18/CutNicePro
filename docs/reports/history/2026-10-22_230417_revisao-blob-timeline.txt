@@ -1,0 +1,97 @@
+╔════════════════════════════════════════════╗
+║       CUTNICEPRO — ZCODE REPORT            ║
+╚════════════════════════════════════════════╝
+
+TASK
+  Name: Revisão do Blob URL e direcionamento por diagnóstico medido
+  Status: PASS (revisão/prompt; timeline sem aceite)
+  Scope: leitura de código, fontes e documentação.
+  Objective: revisar conclusões e orientar isolamento do atraso.
+  Result: fatos registrados e prompt entregue.
+
+IMPLEMENTATION
+  Completed: conferência de sete arquivos locais, VideoCache OpenCut
+    fixado e documentação File/Blob; proposta de experimento controlado.
+  Not completed: runtime e correções do aplicativo, fora deste escopo.
+  Changes: documentação e evidências.
+  Architecture impact: nenhum.
+
+FILES
+  Created: docs/reports/evidence/revisao-blob-timeline-2026-10-22/
+    {prompt-zcode.txt,analysis.txt,source-hashes.json,git-status.txt,
+    verification.json}; relatório histórico abaixo.
+  Modified: docs/engineering/ENGINE-HANDOFF.md;
+    docs/references/OPEN-SOURCE-ENGINE-RESEARCH.md; docs/reports/LATEST.txt.
+  Deleted: nenhum.
+  Unexpected changes: nenhuma no app/index verificados.
+
+VALIDATION
+  Typecheck / Lint / Unit / Integration / Regression / Visual / Runtime:
+    SKIP — tarefa de revisão estática e prompt.
+  Total passed: 6 verificações documentais/preservação.
+  Total failed: 0 nessas verificações.
+  Total skipped: 7 categorias; zero testes de aplicativo executados.
+  FUNCTIONAL STATUS: PASS para revisão/prompt.
+  REGRESSION STATUS: NOT TESTED.
+  VISUAL STATUS: PENDING HUMAN APPROVAL.
+
+HOOKS / HARNESS
+  Hooks active: não inspecionados.
+  PreToolUse / PostToolUse / Stop / Baseline: não executados explicitamente.
+  Gate result: sem aceite da correção de timeline.
+  Evidence: verification.json.
+
+MCP / SKILLS
+  Tools used: terminal, GitHub, web e Node.
+  Connection status: consultas concluídas.
+  Failures: saída inicial truncada; trechos relevantes relidos.
+  Pending activation: nenhuma.
+
+GIT
+  Branch: main
+  HEAD: e22555b682ccad97a68eb356032c245b86b54baf
+  Latest commit: feat(clips): add per-clip fill mode ("fit") persisted from generation options
+  Commits created: nenhum.
+  Push: NOT EXECUTED.
+  Remote: origin → FrosttyS18/CutNicePro; main.
+  Working tree: MODIFIED / UNTRACKED; index preservado.
+  Pending files: inventário de 146 entradas em git-status.txt antes deste
+    relatório; histórico e LATEST também permanecem pendentes.
+    Alterações anteriores preservadas.
+
+EVIDENCE
+  Commands executed: leituras e buscas de código, git status/diff/rev-parse.
+  Relevant logs: analysis.txt, source-hashes.json, verification.json.
+  Screenshots: nenhuma nova.
+  Test artifacts: nenhum teste do aplicativo.
+  Reproduction details: atraso/travamento relatados pelo mantenedor.
+
+ISSUES
+  Bugs found: Blob adquirido por leitura integral; sem Range continua
+    integral; múltiplos ranges seguem 200 completo; debounce e estado no
+    pai permanecem. Contribuição à latência não quantificada.
+  Unresolved failures: atraso e travamento sem nova validação runtime.
+  Regressions: não testadas.
+  Risks: object URL não comprova equivalência de decode/render;
+    IPC como gargalo dominante não demonstrado.
+  Blockers: nenhum para entregar a revisão/prompt.
+
+FINAL
+  Delivery status: revisão e prompt prontos.
+  Requirements met: direcionamento concreto para diagnóstico e correção.
+  Remaining work: ZCode medir, concluir rastreio e implementar.
+  User action required: encaminhar o prompt ao ZCode.
+  Restart required: não.
+  Ready for next task: sim.
+
+REPORT
+  Latest file: docs/reports/LATEST.txt
+  Historical file: docs/reports/history/2026-10-22_230417_revisao-blob-timeline.txt
+
+GUIA DO MANTENEDOR — O QUE MUDOU E COMO TESTAR
+  O que mudou: revisão técnica e prompt; aplicativo não alterado.
+  1. Encaminhe prompt-zcode.txt ao ZCode.
+  Resultado esperado: comparação medida antes de outra correção.
+  Nada para testar manualmente nesta entrega documental.
+
+END OF REPORT

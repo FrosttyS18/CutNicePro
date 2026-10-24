@@ -1,0 +1,17 @@
+{
+ "B": {
+  "content": "Uma imagem retangular em orientação paisagem, com fundo cinza claro, apresenta os seguintes elementos:\n\n*   **Texto:** No topo, centralizado, está a palavra \"GATO\" em letras maiúsculas pretas.\n*   **Formas:**\n    *   No centro, há um grande quadrado de cor verde sólida.\n    *   No canto inferior esquerdo, há um grande \"X\" preto, composto por duas linhas diagonais que se cruzam.\n*   **Cores:** Predominam o cinza claro (fundo), o verde (quadrado central) e o preto (texto e \"X\").\n*   **Texturas:** Existem áreas com padrões de ruído ou \"chuvisco\" digital em tons de cinza, localizadas acima e abaixo do quadrado verde, e na parte inferior da imagem.",
+  "s": 25.0,
+  "finish": "stop"
+ },
+ "seq": {
+  "content": "Entre a primeira e a segunda imagem, a bola mudou de posição lateralmente.\n\n*   **Na primeira imagem:** A bola está no lado **esquerdo** da tela.\n*   **Na segunda imagem:** A bola está no lado **direito** da tela.",
+  "s": 15.8,
+  "finish": "stop"
+ },
+ "audio": {
+  "content": "Para que eu possa descrever objetivamente o que ouço, você precisa **anexar ou enviar o arquivo de áudio** (ou um link para ele) na sua mensagem.\n\nAssim que você enviar o áudio, farei a análise seguindo sua solicitação:\n\n1.  **Identificação dos eventos sonoros:** Listarei cada som distinto (ex: fala, música, ruído ambiente, batidas, etc.).\n2.  **Ordem relativa de agudos/graves:** Descreverei a predominância tonal de cada evento (se é um som mais agudo, como um apito ou voz fina, ou mais grave, como um trovão ou baixo).\n\n**Estou aguardando o arquivo!**",
+  "s": 23.0,
+  "finish": "stop"
+ }
+}

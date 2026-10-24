@@ -1,5 +1,7 @@
 # CutNicePro — Product Brain (índice permanente)
 
+Atualização operacional 2026-10-24: biblioteca leve, seções por projeto e Novo por 60 min implementados, aguardando teste manual do mantenedor. Regras complementares em BUSINESS-RULES (Cortes), aceites no BACKLOG e rastreabilidade em TRACEABILITY; evidências/limites no registro canônico do ENGINE-HANDOFF. Não altera o aceite editorial ou o estado das jornadas históricas.
+
 > Ponto de entrada da inteligência de produto. **Não duplica especificações**: indexa os
 > documentos canônicos e suas relações. Regra permanente de atualização incremental:
 > toda mudança relevante em funcionalidade, fluxo, regra ou prioridade atualiza o documento
@@ -122,6 +124,7 @@ entre decisões aprovadas → BLOCKED para resolução humana.
 | ART-007 | Proposta B — AI Clip Workspace | Proposta de UI | Fase 01 | UI - designer / frame 154 | n/a | — | — | UX-FOUNDATION §8 | Não (REFERENCE) |
 | ART-008 | Home Galaxy CutNicePro | UI implementada | 03B | Home atual no app; origem UI - designer | Ver relatórios 03B | APPROVED em 2026-10-19 | — | JRN-001/002; FR-001/002 | Sim, Home aprovada pelo mantenedor |
 | ART-009 | Entrada, projeto e editor | v1 REJECTED pelo mantenedor; correção v2 IN REVIEW | 03E v2 | Fonte própria: frames 2262/2440/2391; design/handoff/03d/flow-ui-v1.figcraft (rascunhos) | Build, 15 Rust e 13 runtime PASS (escopo) | PENDING HUMAN APPROVAL | — | UPLOAD-SCREEN.md; JRN-003/004/006/008/009 | Escopo de implementação autorizado; estética IN REVIEW |
+| ART-010 | CutNice Pro — Product Design Case Study | Apresentação de portfólio | v4 + revisão UI Kit (2026-10-22), IN REVIEW | Mesmo design/case-study-v2/CutNicePro-Product-Design-Case-Study-v2.figcraft, página 05; UI Kit frame 1072 no final; outros slides preservados | UI Kit: 66 critérios; design/case-study-v4/ui-kit/validation.json | PENDING HUMAN APPROVAL | — | Roteiro e screenshots do mantenedor; sources.json | Não (apresentação, não especificação de produto) |
 
 \* Journey Map (ART-001) e Product Flow Overview (ART-004) são artefatos
 metodologicamente DISTINTOS (jornada × fluxo): um não supersede o outro. A

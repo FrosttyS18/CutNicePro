@@ -6,6 +6,8 @@
 
 ## 1. Matriz por jornada
 
+Atualização de implementação 2026-10-24: JRN-002/008 → FR-004/010 → BR-019/020 → US-003/014/015 → AC-006/041/044/045. Complementos aprovados no pedido: biblioteca em seções por projeto, miniaturas sem players persistentes e Novo por 60 min independentemente de abertura. Testes em clip-gallery-behavior, clip-poster, clip-thumbnails e clip-freshness; miniatura FFmpeg real em media_preview/thumbnail.rs. Validação manual da interface/scroll permanece com o mantenedor, conforme sua preferência. Detalhes no BACKLOG e no registro canônico do ENGINE-HANDOFF; não implica aprovação editorial dos cortes.
+
 Leitura da revisão 03N: PROPOSED nas matrizes descreve estado de aprovação do produto/jornada, não ausência de código. Estado operacional em ENGINE-HANDOFF.md; evidências por entrega abaixo permanecem históricas. Relato atual do mantenedor reabre análise e preenchimento como defeitos, apesar dos testes da 03M.
 
 | Mudança documentada na 03N | Jornada/requisito/regra | Fonte e critério pendente |

@@ -1,0 +1,206 @@
+{
+  "version": 1,
+  "mediaId": "33932fbc-5a4d-42a6-8784-f7c1f0231129",
+  "transcriptHash": "b992c6306d4b2079e56adee099da32cb5fadab9f0622fd439bf493d1d62c6059",
+  "clips": [
+    {
+      "id": "6d21e0a0e446139d3643cbd7819c6b8dee1b6d1f00df33d6342b651f8509f7e5",
+      "start": 1239.78,
+      "end": 1289.26,
+      "title": "Recomendação de Framer e PDF para criação de portfólio",
+      "score": 89,
+      "reasons": [
+        "Avaliação do intervalo efetivo (explicação): O trecho fornece uma recomendação clara e direta sobre ferramentas para portfólio, concluindo com o porquê de cada uma e a dinâmica de envio.",
+        "O gancho é direto, apresentando uma pergunta específica sobre as melhores plataformas para criação de portfólio.",
+        "O desenvolvimento explica as vantagens práticas do Framer, como facilidade de acesso, templates e funcionalidade em dispositivos móveis.",
+        "O trecho termina com uma validação positiva e um incentivo claro para o uso de ambos os formatos como complemento."
+      ],
+      "review": "pending",
+      "format": "9:16",
+      "fit": "cover",
+      "analysis": {
+        "title": "Recomendação de Framer e PDF para criação de portfólio",
+        "summary": "A conversa foca na recomendação das plataformas Framer e PDF para a criação de portfólio. O interlocutor explica que o Framer serve como um cartão de visita online de fácil acesso, enquanto o PDF funciona como um deck detalhado para apresentações. A recomendação final é enviar os dois formatos juntos para dar mais profundidade ao trabalho.",
+        "criteria": [
+          {
+            "label": "Gancho",
+            "score": 85,
+            "explanation": "O gancho é direto, apresentando uma pergunta específica sobre as melhores plataformas para criação de portfólio.",
+            "evidence": "Quais as plataformas, Jota, pra criar o meu portfólio? Eu vou ser talvez o mais direto que eu já fui em relação a essa pergunta e o mais"
+          },
+          {
+            "label": "Desenvolvimento",
+            "score": 90,
+            "explanation": "O desenvolvimento explica as vantagens práticas do Framer, como facilidade de acesso, templates e funcionalidade em dispositivos móveis.",
+            "evidence": "É fácil de acessar, cheio de template legal, é online, acessa no celular, tomando link, funciona não precisa de pate-papo, não precisa de dificuldade aí eu vou usar"
+          },
+          {
+            "label": "Fechamento",
+            "score": 95,
+            "explanation": "O trecho termina com uma validação positiva e um incentivo claro para o uso de ambos os formatos como complemento.",
+            "evidence": "dois? manda os dois, pô, coisa linda vou adorar clicar no teu website, ver o PDF ó, pô, ele fez isso aqui aqui tem mais detalhe, entendeu?"
+          }
+        ]
+      },
+      "analysisSignature": "cc6ed71d3f40b3760c169a395e1bf5392918045bcb160f5591f28df7a83d9cbc",
+      "engine": {
+        "backend": "experimentalGemma",
+        "model": "gemma-4-12b-it-qat-q4_0.gguf",
+        "template": "gemma4-canonical-nothink",
+        "sampling": "temp 1.0, top_k 64, top_p 0.95, min_p 0, seed 42",
+        "seed": 42
+      }
+    },
+    {
+      "id": "0f9245473da47bbc103e25425dd534e04304aec83586f6acc2fc683a43d9be27",
+      "start": 1295.78,
+      "end": 1331.12,
+      "title": "Orientações sobre site e PDF para entrevistas de carreira",
+      "score": 52,
+      "reasons": [
+        "Avaliação do intervalo efetivo (opinião): O locutor enfatiza sua postura e reforça a autoridade da recomendação anterior, mas o fechamento é mais um 'ponto final' de autoridade do que uma conclusão de conteúdo novo.",
+        "O gancho é forte e direto ao estabelecer um confronto pessoal e uma autoridade sobre o que funciona para o interlocutor.",
+        "O desenvolvimento perde pontos por apresentar uma mudança brusca de assunto, saindo da metáfora sobre jogos de azar para instruções técnicas sobre criação de websites.",
+        "O fechamento é interrompido abruptamente, pois o falante encerra a fala no meio de uma sentença sem concluir o raciocínio final."
+      ],
+      "review": "pending",
+      "format": "9:16",
+      "fit": "cover",
+      "analysis": {
+        "title": "Orientações sobre site e PDF para entrevistas de carreira",
+        "summary": "O falante confronta o interlocutor sobre os riscos de não seguir suas orientações, comparando a falta de estratégia a jogar na loteria. Ele sugere a criação de um website simples e funcional acompanhado de um PDF detalhado para uma entrevista. O falante afirma que qualquer escolha fora desse plano é responsabilidade do outro.",
+        "criteria": [
+          {
+            "label": "Gancho",
+            "score": 85,
+            "explanation": "O gancho é forte e direto ao estabelecer um confronto pessoal e uma autoridade sobre o que funciona para o interlocutor.",
+            "evidence": "Olha, de novo, vou ser direto aqui. É contigo, tá? Eu tô te apontando e te explicando o que funciona."
+          },
+          {
+            "label": "Desenvolvimento",
+            "score": 40,
+            "explanation": "O desenvolvimento perde pontos por apresentar uma mudança brusca de assunto, saindo da metáfora sobre jogos de azar para instruções técnicas sobre criação de websites.",
+            "evidence": "O que eu tô te falando é o que funciona. Um website simples, direto, rápido, fácil acesso, Que funciona no celular."
+          },
+          {
+            "label": "Fechamento",
+            "score": 20,
+            "explanation": "O fechamento é interrompido abruptamente, pois o falante encerra a fala no meio de uma sentença sem concluir o raciocínio final.",
+            "evidence": "Aí já não é um problema meu."
+          }
+        ]
+      },
+      "analysisSignature": "d392e5d73e347bfa3906a315e9f5b9625bf956ec75d076bd7b4d7716503ace7a",
+      "engine": {
+        "backend": "experimentalGemma",
+        "model": "gemma-4-12b-it-qat-q4_0.gguf",
+        "template": "gemma4-canonical-nothink",
+        "sampling": "temp 1.0, top_k 64, top_p 0.95, min_p 0, seed 42",
+        "seed": 42
+      }
+    },
+    {
+      "id": "51c6401bd140377df9f61ee5f9e7737dfd78e7bf3451e8db34d348fa5ea1d8e9",
+      "start": 1354.770083,
+      "end": 1411.15975,
+      "title": "Por que evitar o Figma para criar currículos profissionais",
+      "score": 52,
+      "reasons": [
+        "Avaliação do intervalo efetivo (explicação): Explica tecnicamente por que não usar Figma para currículos (leitura do ATS) e encerra com uma conclusão forte e definitiva sobre o que fazer.",
+        "O gancho é forte pois apresenta uma instrução direta e clara sobre como estruturar um currículo de forma escaneável.",
+        "O desenvolvimento é prejudicado porque os participantes mudam o assunto de conselhos sobre currículos para a participação em grupos de ferramentas de design.",
+        "O fechamento é interrompido por uma fala contraditória e sem conclusão lógica ao conselho dado anteriormente."
+      ],
+      "review": "pending",
+      "format": "9:16",
+      "fit": "cover",
+      "analysis": {
+        "title": "Por que evitar o Figma para criar currículos profissionais",
+        "summary": "A discussão foca na recomendação de utilizar Google Docs ou Word para criar currículos, argumentando que arquivos gerados no Figma não possuem estrutura linear para sistemas de leitura automática. O interlocutor enfatiza que o sistema de leitura pode não identificar as informações corretamente se o arquivo não for linear. A conversa muda para a participação em grupos de design e termina com uma instrução contraditória sobre o uso do Figma.",
+        "criteria": [
+          {
+            "label": "Gancho",
+            "score": 85,
+            "explanation": "O gancho é forte pois apresenta uma instrução direta e clara sobre como estruturar um currículo de forma escaneável.",
+            "evidence": "Seu currículo? Simples. O mais simples possível, o mais escaneável possível. Se possível, Google Docs ou Word."
+          },
+          {
+            "label": "Desenvolvimento",
+            "score": 40,
+            "explanation": "O desenvolvimento é prejudicado porque os participantes mudam o assunto de conselhos sobre currículos para a participação em grupos de ferramentas de design.",
+            "evidence": "O próprio time do Figma já explicou que o PDF gerado do Figma, ele não segue a estrutura linear."
+          },
+          {
+            "label": "Fechamento",
+            "score": 20,
+            "explanation": "O fechamento é interrompido por uma fala contraditória e sem conclusão lógica ao conselho dado anteriormente.",
+            "evidence": "Faz no Figma, então, pô. Faz no Figma."
+          }
+        ]
+      },
+      "analysisSignature": "7ee5a2dbcd7eb616994230b907c291693a428d7c0742a8df67d788d8c6417b6a",
+      "engine": {
+        "backend": "experimentalGemma",
+        "model": "gemma-4-12b-it-qat-q4_0.gguf",
+        "template": "gemma4-canonical-nothink",
+        "sampling": "temp 1.0, top_k 64, top_p 0.95, min_p 0, seed 42",
+        "seed": 42
+      }
+    },
+    {
+      "id": "191eccb811a5b494ba360c00249a3e847a1dd5aaf94e095a043f8323eaeefa13",
+      "start": 1435.82,
+      "end": 1457.82,
+      "title": "Teste de 30 segundos para validar a clareza do portfólio",
+      "score": 49,
+      "reasons": [
+        "Avaliação do intervalo efetivo (demonstração): Apresenta um método prático (teste dos 30 segundos) para validar o portfólio, com um desfecho claro de ação.",
+        "O início apresenta um desafio claro e direto sobre o teste de 30 segundos para portfólios.",
+        "O desenvolvimento é prejudicado pela interrupção brusca da explicação técnica por uma discordância direta e sem contexto.",
+        "O vídeo termina abruptamente com um pedido de interação, sem uma conclusão lógica ou desfecho para o exercício proposto."
+      ],
+      "review": "pending",
+      "format": "9:16",
+      "fit": "cover",
+      "analysis": {
+        "title": "Teste de 30 segundos para validar a clareza do portfólio",
+        "summary": "O falante propõe um teste de 30 segundos para verificar se as pessoas entendem o que é feito e como é feito no portfólio de alguém. Ele orienta que, caso não haja entendimento imediato, o conteúdo deve ser reescrito. O trecho é interrompido por uma discussão sobre um erro não detalhado.",
+        "criteria": [
+          {
+            "label": "Gancho",
+            "score": 85,
+            "explanation": "O início apresenta um desafio claro e direto sobre o teste de 30 segundos para portfólios.",
+            "evidence": "Teste do 30 segundos. Pede para alguém abrir o seu portfólio. Cronômetro na mão, uba, uba, uba, e uba, uba, uba, e em 30 segundos, o que é"
+          },
+          {
+            "label": "Desenvolvimento",
+            "score": 30,
+            "explanation": "O desenvolvimento é prejudicado pela interrupção brusca da explicação técnica por uma discordância direta e sem contexto.",
+            "evidence": "É, não, mas é porque você não viu aqui. Tu tá errado."
+          },
+          {
+            "label": "Fechamento",
+            "score": 20,
+            "explanation": "O vídeo termina abruptamente com um pedido de interação, sem uma conclusão lógica ou desfecho para o exercício proposto.",
+            "evidence": "Deixa o like."
+          }
+        ]
+      },
+      "analysisSignature": "2fd0db4ffd322791c11757c0172bd2532af89beaae9c47889573b47dbc36e39a",
+      "engine": {
+        "backend": "experimentalGemma",
+        "model": "gemma-4-12b-it-qat-q4_0.gguf",
+        "template": "gemma4-canonical-nothink",
+        "sampling": "temp 1.0, top_k 64, top_p 0.95, min_p 0, seed 42",
+        "seed": 42
+      }
+    }
+  ],
+  "engine": {
+    "backend": "experimentalGemma",
+    "model": "gemma-4-12b-it-qat-q4_0.gguf",
+    "template": "gemma4-canonical-nothink",
+    "sampling": "temp 1.0, top_k 64, top_p 0.95, min_p 0, seed 42",
+    "seed": 42
+  }
+}

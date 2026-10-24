@@ -1,0 +1,109 @@
+╔════════════════════════════════════════════╗
+║       CUTNICEPRO — ZCODE REPORT            ║
+╚════════════════════════════════════════════╝
+
+TASK
+  Name: Case v4 — narrativa final e placeholders
+  Status: PASS
+  Scope: Apresentação no mesmo FigCraft; aplicativo fora do escopo.
+  Objective: Executar o roteiro final de 12 slides.
+  Result: Página 05 / V4, 12 frames editáveis, PDF e guia de imagens.
+
+IMPLEMENTATION
+  Completed: Narrativa, user flow, diagramas, temas claros/escuros,
+    Poppins, tokens, quatro variantes de botão e 12 placeholders.
+  Not completed: Imagens finais serão inseridas pelo mantenedor, como solicitado.
+  Changes: Nova página 867; quatro páginas anteriores preservadas.
+  Architecture impact: Nenhum; versão do aplicativo inalterada.
+
+FILES
+  Created: design/case-study-v4/ — PDF, guia, README, fontes,
+    validações, inspeção, inventário Git, contact sheet e 24 renders.
+    Histórico: docs/reports/history/2026-10-22_012613_case-v4-narrativa-placeholders.txt
+  Modified: FigCraft existente em design/case-study-v2/;
+    docs/engineering/ENGINE-HANDOFF.md; docs/portfolio/CASE-STUDY-LOG.md;
+    docs/product/PRODUCT-BRAIN.md; docs/reports/LATEST.txt.
+  Deleted: Nenhum.
+  Unexpected changes: Nenhuma operação desta tarefa no código do aplicativo.
+
+VALIDATION
+  FUNCTIONAL STATUS: PASS — autoria da apresentação.
+  REGRESSION STATUS: NOT TESTED — aplicativo não alterado.
+  VISUAL STATUS: PENDING HUMAN APPROVAL.
+  Typecheck: SKIP; Lint: SKIP; Unit tests: SKIP;
+  Integration tests: SKIP; Regression tests: SKIP — fora do escopo.
+  Visual tests: PASS técnico — limites, textos, camadas e renders.
+  Runtime verification: PASS no FigCraft — salvar/exportar; aplicativo SKIP.
+  Total passed: 64 critérios de artefato; 0 testes do aplicativo executados.
+  Total failed: 0.
+  Total skipped: 5 categorias de testes de código.
+
+HOOKS / HARNESS
+  Hooks active: Não verificados nesta tarefa.
+  PreToolUse: Sem rejeição observada.
+  PostToolUse: Sem resultado adicional utilizado.
+  Stop: Não executado como evidência de conclusão.
+  Baseline: SKIP — sem mudança funcional.
+  Gate result: 64 PASS / 0 FAIL no artefato.
+  Evidence: design/case-study-v4/validation.json.
+
+MCP / SKILLS
+  Tools used: FigCraft attached, Node REPL, PDF skill e Poppler.
+  Connection status: Conectado; arquivo salvo, dirty=false.
+  Failures: Nenhuma falha de autoria/exportação.
+  Pending activation: Nenhuma.
+
+GIT
+  Branch: main
+  HEAD: e22555b682ccad97a68eb356032c245b86b54baf
+  Latest commit: feat(clips): add per-clip fill mode ("fit") persisted from generation options
+  Commits created: Nenhum.
+  Push: NOT EXECUTED.
+  Remote: origin → https://github.com/FrosttyS18/CutNicePro.git; main.
+  Working tree: MODIFIED / UNTRACKED; pendências anteriores preservadas.
+  Pending files: Inventário integral em design/case-study-v4/git-status.txt;
+    inclui alterações preexistentes de app, assets, documentação e design.
+    Este relatório histórico também permanece sem commit.
+
+EVIDENCE
+  Commands executed: inspect_document, get_node, screenshot, save_file,
+    file.exportFramesPdf, export PNG, pdftoppm, pypdf e git somente leitura.
+  Relevant logs: sources.json, validation.json e pdf-validation.json na V4.
+  Screenshots: 12 renders nativos + 12 páginas do PDF renderizadas.
+  Test artifacts: 12 páginas 1920×1080 com texto selecionável;
+    182 camadas de texto; 12 placeholders; zero bitmaps adicionados na V4.
+  Reproduction details: Página 05, id 867; frames 868 a 1107;
+    PDF exportado somente dessa página. Comparação das quatro páginas
+    anteriores sem diferenças estruturais, inclusive após salvar.
+
+ISSUES
+  Bugs found: Nenhum nos critérios verificados.
+  Unresolved failures: Nenhuma.
+  Regressions: Aplicativo não testado nesta tarefa.
+  Risks: O PDF atual contém placeholders, conforme solicitado.
+  Blockers: Nenhum.
+
+FINAL
+  Delivery status: PASS no escopo autorizado; IN REVIEW.
+  Requirements met: 12 frames no mesmo FigCraft, editáveis, PDF e guia.
+  Remaining work: Inserção das imagens e aprovação humana.
+  User action required: Substituir as molduras conforme o guia.
+  Restart required: Não.
+  Ready for next task: Sim.
+
+REPORT
+  Latest file: docs/reports/LATEST.txt
+  Historical file: docs/reports/history/2026-10-22_012613_case-v4-narrativa-placeholders.txt
+
+GUIA DO MANTENEDOR — O QUE MUDOU E COMO TESTAR
+  O que mudou: Nova narrativa na página 05 do arquivo existente.
+  Teste 1 — 1. Abra a página 05 / V4. 2. Percorra os slides 01–12.
+    Esperado: textos do novo roteiro, fundos claros/escuros e áreas de imagem.
+  Teste 2 — 1. Consulte Guia-de-imagens-v4.txt. 2. Substitua o conteúdo
+    das molduras, mantendo tamanho e posição. 3. Remova os textos-guia.
+    Esperado: imagens nos espaços reservados e anotações externas preservadas.
+  Teste 3 — 1. Confira as páginas 01–04. 2. Após inserir as imagens,
+    exporte somente a página V4. Esperado: versões anteriores preservadas
+    e PDF final de exatamente 12 páginas. Aprovação estética é sua.
+
+END OF REPORT

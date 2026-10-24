@@ -1,0 +1,86 @@
+╔════════════════════════════════════════════╗
+║       CUTNICEPRO — ZCODE REPORT            ║
+╚════════════════════════════════════════════╝
+
+TASK
+  Name: Build única e limpeza autorizada.
+  Status: PASS nesta manutenção; goal editorial não retomado.
+  Scope/Objective: liberar espaço e eliminar builds concorrentes.
+  Result: uma build corrigida, recompilada e aberta no perfil normal.
+  FUNCTIONAL STATUS: PASS no escopo.
+  REGRESSION STATUS: PASS apenas no teste específico (1/1).
+  VISUAL STATUS: PENDING HUMAN APPROVAL.
+
+IMPLEMENTATION
+  Completed: removidos três caches autorizados; target preservado;
+    regra de build única registrada; conflito de porta resolvido.
+  Changes: código existente recompilado, sem alteração de fontes.
+  Architecture impact: nenhum. Editorial/refino: continua pendente.
+
+FILES
+  Modified: C:/CutNicePro/AGENTS.md; C:/CutNicePro/docs/TOOLING.md;
+    C:/CutNicePro/docs/engineering/ENGINE-HANDOFF.md;
+    C:/CutNicePro/docs/reports/LATEST.txt.
+  Created: diagnóstico e histórico abaixo.
+  Deleted: target-f2c, target-refino e target-upd20, somente em
+    C:/CutNicePro/app/src-tauri (16.302 arquivos gerados).
+  Unexpected changes: nenhuma desta tarefa.
+
+VALIDATION
+  Build: PASS, offline/locked no target padrão.
+  Unit/Regression: 1 PASS, 0 FAIL, 170 filtrados; contrato de legendas.
+  Typecheck/Lint/Integration: SKIP; nenhuma fonte alterada.
+  Runtime: PASS de abertura — uma janela responsiva, frontend HTTP 200,
+    exe padrão e hash conferidos. Export/IA não retestados.
+  Visual tests: SKIP; aprovação humana.
+  Disk: +15,386 GiB medidos; 91,26 GiB livres na verificação posterior.
+  Modelos, mídias, projetos e fontes não foram removidos.
+
+HOOKS / HARNESS
+  Hooks/Stop: não usados como prova.
+  Stop-Process falhou; encerramento dos dois PIDs confirmados do
+    projeto concluiu com taskkill. Nenhum processo alheio encerrado.
+
+MCP / SKILLS
+  Tools: Git, Cargo, PowerShell, documentação oficial na web.
+  Skills: source-driven-development e documentation-and-adrs.
+  Graphify: não exposto; nenhuma edição funcional/refatoração realizada.
+
+GIT
+  Branch: main.
+  HEAD: ab501e26634648a59e005238c2c50b3230b4cac0
+  Latest commit: feat(clips): add multimodal generation with real audio pauses and frame evidence
+  Commits created: 0. Push: NOT EXECUTED. Remote: origin/main.
+  Working tree: MODIFIED/UNTRACKED, trabalho anterior preservado.
+  Pending files: 532; lista integral no diagnóstico.
+
+EVIDENCE
+  Commands/logs/inventário/hashes/processos:
+    C:/CutNicePro/docs/reports/evidence/build-unico-2026-10-24/diagnostico.json
+  Antes: 8.598 caminhos pendentes, incluindo caches não ignorados.
+  Limpeza aprovada pelo mantenedor; destinos/links/Git verificados.
+
+ISSUES
+  Resolved: exe padrão antigo, três caches extras e Vite antigo.
+  Limits: não comprova entrega editorial, badges ou comparação marcada.
+  Regressions fora do teste específico: NOT TESTED. Blockers: nenhum.
+
+FINAL
+  Delivery status: manutenção concluída; app correto aberto.
+  Remaining work: avaliar separadamente as lacunas reais do goal.
+  User action required: usar a janela aberta.
+  Restart required: não agora. Ready for next task: sim.
+
+REPORT
+  Latest file: C:/CutNicePro/docs/reports/LATEST.txt
+  Historical file: C:/CutNicePro/docs/reports/history/2026-10-24_060642_build-unico-limpeza.txt
+
+GUIA DO MANTENEDOR — O QUE MUDOU E COMO TESTAR
+  O que mudou: uma build, três caches removidos, 15,4 GiB recuperados.
+  Teste 1: conferir a pasta app/src-tauri: resta somente target.
+  Teste 2: usar a janela aberta; para próximas aberturas, executar
+    npm run tauri dev em C:/CutNicePro/app.
+  Esperado: build padrão atual; sem escolher executáveis de laboratório.
+  Esta tarefa não gerou nem aprovou novos cortes.
+
+END OF REPORT

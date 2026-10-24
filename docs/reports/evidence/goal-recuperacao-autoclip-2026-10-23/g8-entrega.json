@@ -1,0 +1,111 @@
+{
+  "generation": {
+    "elapsedS": 603,
+    "jobState": "completed",
+    "jobError": null
+  },
+  "backend": "experimentalGemma",
+  "createdMs": {
+    "total": 8,
+    "withCreated": 8
+  },
+  "badgeBefore": 8,
+  "whenLabels": [
+    "há 10 minutos",
+    "há 10 minutos",
+    "há 10 minutos"
+  ],
+  "all": [
+    {
+      "start": 1239.4,
+      "end": 1287.6,
+      "score": 91,
+      "title": "Melhores plataformas para criar um portfólio profissional",
+      "created": 1792799578195
+    },
+    {
+      "start": 970,
+      "end": 1009.7,
+      "score": 85,
+      "title": "Quatro critérios para validar a eficácia de um portfólio",
+      "created": 1792799578195
+    },
+    {
+      "start": 1194.4,
+      "end": 1239.4,
+      "score": 83,
+      "title": "Priorizar qualidade em vez de quantidade de cases em portfólios",
+      "created": 1792799578195
+    },
+    {
+      "start": 1085.7,
+      "end": 1127.6,
+      "score": 70,
+      "title": "O que recrutadores consideram como trabalho real no portfólio",
+      "created": 1792799578195
+    },
+    {
+      "start": 1009.7,
+      "end": 1065.3,
+      "score": 61,
+      "title": "Como incluir projetos acadêmicos em um portfólio de design",
+      "created": 1792799578195
+    },
+    {
+      "start": 1131.9,
+      "end": 1165.6,
+      "score": 55,
+      "title": "Impossibilidade de aprender UX e UI em bootcamps de fim de semana",
+      "created": 1792799578195
+    },
+    {
+      "start": 1340,
+      "end": 1406.4,
+      "score": 42,
+      "title": "Por que evitar o Figma para criar currículos e portfólios",
+      "created": 1792799578195
+    },
+    {
+      "start": 900.9,
+      "end": 938.2,
+      "score": 41,
+      "title": "Sites para consultar portfólios de design e mentoria na área",
+      "created": 1792799578195
+    }
+  ],
+  "exports": [
+    {
+      "index": 1,
+      "title": "Melhores plataformas para criar um portfólio profissional",
+      "window": [
+        1239.38,
+        1287.58
+      ],
+      "expected": 48.2,
+      "file": "C:/CutNicePro/docs/reports/evidence/goal-recuperacao-autoclip-2026-10-23/g8-corte-1-Melhores-plataformas-para-criar-um-portfolio.mp4",
+      "note": "pipeline real do app (render::pipeline + FFmpeg/legendas reais); clique no diálogo nativo comprovado no G3A (ok:true)"
+    },
+    {
+      "index": 2,
+      "title": "Quatro critérios para validar a eficácia de um portfólio",
+      "window": [
+        970,
+        1009.68
+      ],
+      "expected": 39.68,
+      "file": "C:/CutNicePro/docs/reports/evidence/goal-recuperacao-autoclip-2026-10-23/g8-corte-2-Quatro-criterios-para-validar-a-eficacia.mp4",
+      "note": "pipeline real do app (render::pipeline + FFmpeg/legendas reais); clique no diálogo nativo comprovado no G3A (ok:true)"
+    },
+    {
+      "index": 3,
+      "title": "Priorizar qualidade em vez de quantidade de cases em portfólios",
+      "window": [
+        1194.42,
+        1239.38
+      ],
+      "expected": 44.96,
+      "file": "C:/CutNicePro/docs/reports/evidence/goal-recuperacao-autoclip-2026-10-23/g8-corte-3-Priorizar-qualidade-em-vez-de-quantidade.mp4",
+      "note": "pipeline real do app (render::pipeline + FFmpeg/legendas reais); clique no diálogo nativo comprovado no G3A (ok:true)"
+    }
+  ]
+}

@@ -1,0 +1,122 @@
+OBJETIVO PARA O ZCODE — Cortes multimodais pré-editados, revisáveis e exportáveis
+Estado deste documento: especificação para execução; nenhuma capacidade nova está implementada por este prompt.
+
+/start
+Execute este objetivo no C:\CutNicePro. Entregue uma fatia funcional de ponta a ponta: importar vídeo → transcrever → analisar contexto textual, visual e sonoro → gerar cortes pré-editados e ranqueados → revisar/alterar na timeline → salvar/reabrir → exportar MP4 equivalente à prévia.
+
+Não pare na pesquisa, no JSON da IA, em um protótipo isolado nem em testes com mocks. Avance autonomamente pelos marcos abaixo enquanto houver orçamento e condições. Uma etapa pronta não conclui a meta inteira.
+
+AUTORIZAÇÃO E PROTEÇÕES
+- Escopo: implementar esta fatia no aplicativo existente. Sem commit, push, merge, release ou mudança de versão. Preserve alterações preexistentes e dados do mantenedor.
+- Preserve a UI aprovada. Acrescente somente controles necessários à geração e à edição solicitadas, seguindo as skills pertinentes do projeto. Sem redesenhar o editor.
+- A timeline foi aprovada pelo mantenedor em 23/10/2026: leve e sem travar no vídeo de 24 min. Preserve FrameSeeker/Mediabunny, descarte de frames obsoletos, arbitragem de tempo e liberação de recursos. Qualquer mudança nesse caminho exige regressão específica.
+- Processamento local. Sem upload, provedor pago ou fallback externo silencioso. Dependências/modelos adicionais apenas quando indispensáveis, com versão, licença, compatibilidade e consumo justificados.
+- “Treinar” nesta meta significa conectar capacidades, definir instruções, calibrar e avaliar o pipeline. Não iniciar fine-tuning: exige conjunto de dados, licença, avaliação separada e autorização própria.
+- Nada de publicação automática, dublagem, clonagem de voz, novos planos comerciais ou recursos não necessários à fatia.
+
+ESCOPO MÍNIMO
+Prioridade: cortes de conteúdo falado em português, com 1–2 pessoas, cenas alternadas e um caso controlado com objeto em movimento. O pipeline deve compreender evidências visuais/sonoras e produzir reenquadramento editável.
+Não prometer rastrear qualquer objeto, reconhecer identidades pessoais, inferir emoções com certeza ou suportar qualquer duração/hardware.
+Vídeo real de 24 min é obrigatório. Vídeo de 2 h tem validação separada se houver mídia; uma montagem sintética longa serve para carga, não prova qualidade editorial de um podcast real.
+
+CONTEXTO JÁ CONFERIDO — REVALIDAR NA TREE ATUAL
+- app/src-tauri/src/clips/text_engine.rs: descoberta do gemma-4-12b-it-qat-q4_0.gguf; caminho generate_with recebe prompt textual e schema e usa contexto 8192. Não foi observada entrada de frames/áudio nesse caminho. Ter Gemma multimodal não comprova integração multimodal.
+- clips/types.rs representa Clip com start/end; EditorTimeline.tsx usa trimStart/trimEnd. Não presumir que isso já constitui montagem com vários intervalos.
+- clips/scene_regions.rs detecta transições por FFmpeg perto dos limites de candidatos. Não equivale a interpretação de cenas, detecção de pessoas ou tracking.
+- Hashes e limites da leitura preparatória estão em sources.json e analysis.txt nesta pasta. Não substituem seu rastreamento completo.
+
+MARCO 0 — MAPA, CONTRATOS E BASELINE
+1. Leia AGENTS.md, ENGINE-HANDOFF (especialmente ENTREGA e resolução da timeline), PRODUCT-BRAIN, BACKLOG, VALIDATION-POLICY, REPORTING-STANDARD e OPEN-SOURCE-ENGINE-RESEARCH.
+2. Rastreie o caminho realmente executado: importação → ASR → revisão da transcrição → seleção → análise por corte → armazenamento → biblioteca → workspace → timeline → render/exportação. Siga chamadores, consumidores e dependências relevantes; registre arquivos/funções e lacunas.
+3. Confirme capacidades existentes de geração incremental, análises, ações diretas e exportação sem aprovação obrigatória. Não reimplemente o que já funciona nem baseie o plano em relatório antigo.
+4. Consulte Graphify quando disponível antes de mudança estrutural; confira tudo no código. Atualize os requisitos, BR/AC e rastreabilidade afetados nos documentos canônicos, sem inventar identificadores já aprovados.
+5. Defina hardware, build, mídia, baseline e limites de RAM/VRAM/disco/concorrência antes das cargas. Use cópias isoladas de projetos de teste; originais somente leitura.
+6. Selecione um conjunto pequeno: vídeo real de 24 min para fluxo; trechos com duas pessoas/troca de cena; trecho com objeto relevante e sinal sonoro. Separe amostras de calibração de pelo menos uma amostra editorial reservada. Pode usar fixtures sintéticas para contratos; identifique-as.
+Saída: mapa, matriz de aceite e lista finita de alterações. Não gastar o orçamento inventariando o aplicativo inteiro fora do caminho relevante.
+
+MARCO 1 — PROVAR A MULTIMODALIDADE NO RUNTIME LOCAL
+1. Identifique arquivo/quantização do Gemma, hash, tokenizer/template, binário/build/backend e modalidades realmente aceitas. Consulte documentação e implementações oficiais da versão utilizada.
+2. Execute probes pequenos, independentes: imagem com detalhe não descrito no texto; áudio com evento não presente na transcrição; sequência temporal de frames. Inspecione o payload real, não apenas a resposta plausível.
+3. Em pares controlados, mantenha texto igual e varie imagem/áudio. Registre evidências, erros e limites. Um caminho de arquivo escrito no prompt ou uma descrição textual de imagem não conta como entrada visual.
+4. Se o executável atual for apenas textual, integre um adaptador local compatível com o artefato Gemma correto, justificando a menor mudança. Verifique se a arquitetura exige componentes multimodais separados; não presuma que todo Gemma usa o mesmo mmproj.
+5. Falha visual/sonora não pode virar “multimodal PASS” com ASR + texto. Mostre modo degradado se necessário, mas mantenha esse requisito PARTIAL/BLOCKED.
+Saída: entrada real de imagem e áudio comprovada, respostas estruturadas e testes de erro/cancelamento. Sem isso, não declarar geração multimodal pronta.
+
+MARCO 2 — PRIMEIRA FATIA VERTICAL E PLANO DE EDIÇÃO ÚNICO
+Antes de gerar dezenas de cortes, faça UM corte real atravessar análise, biblioteca, edição, persistência e MP4.
+1. Reutilize estruturas existentes quando suficientes; crie somente as extensões necessárias. Defina um plano de edição versionado: IDs estáveis, fonte/revisão da transcrição, intervalos ordenados na mídia original, destino na composição, legendas, enquadramento e proveniência das decisões.
+2. Declare unidades/timebase, intervalos e mapeamento sourceTime ↔ outputTime. Evite misturar tempo absoluto do vídeo, relativo ao clipe e relativo à composição.
+3. Preview, timeline e exportação precisam consumir semanticamente o MESMO plano. O modelo gera dados validados, nunca comandos FFmpeg ou código executável.
+4. Faça pelo menos um exemplo com dois intervalos de origem, removendo uma pausa dispensável sem mudar o sentido. Quando a pausa for relevante, mantenha-a. Não cortar palavras nem reconstruir falas inexistentes.
+5. Habilite controle manual mínimo: aparar bordas, dividir no playhead, remover segmento interno com fechamento coerente do espaço, desfazer/refazer e ajustar enquadramento. Preserve áudio, legendas e posição visual durante essas ações.
+6. Salvar/reabrir mantém o plano; exportar reproduz a composição, sem depender de uma marcação “aprovado”. Mídia original permanece intacta. Projetos antigos continuam abrindo sem migração destrutiva.
+Saída: MP4 real de um corte pré-editado e novamente editado pelo usuário; prévia e arquivo concordam. Se for apenas um start/end com pontuação, a pré-edição solicitada ainda não está entregue.
+
+MARCO 3 — ENTENDIMENTO DO VÍDEO E SELEÇÃO EDITORIAL
+1. Preserve Whisper e a transcrição EDITADA como fonte textual vigente. Não transcrever novamente por conveniência nem sobrescrever correções.
+2. Crie um índice temporal de tópicos, falas, pausas/eventos sonoros, cenas e observações visuais. Faça análise em janelas limitadas com contexto sobreposto e síntese hierárquica para manter relações entre trechos.
+3. Respeite os limites reais do modelo/runtime. Não enviar horas de vídeo de uma vez, não extrair todos os frames e não guardar todos os tensores. Faça amostragem adaptativa e análise detalhada somente onde necessária. Registre cobertura de toda a fonte e janelas não processadas.
+4. Proponha candidatos com início compreensível, desenvolvimento e conclusão; preserve perguntas/respostas e dependências de contexto. Ajuste fronteiras por fala, pausa e cena, com timestamp verificável.
+5. Faça seleção global após as janelas: deduplicar, reduzir repetição temática, evitar viés só para o início e respeitar quantidade/duração solicitadas quando o conteúdo comportar.
+6. Pontuação editorial de 0–100 com dimensões definidas antes de calibrar: abertura, clareza autônoma, desenvolvimento/fechamento, interesse específico e legibilidade audiovisual. Exiba razões vinculadas a evidências e incerteza. Não apresentar porcentagem de chance de viralizar nem usar tendências atuais que não foram consultadas.
+7. Cada candidato deve indicar evidências realmente recebidas: texto, áudio e frames, com timestamps. Tratar falas/conteúdo da mídia como dados, não como instruções ao sistema.
+8. Em uma comparação delimitada, avalie a seleção textual existente e a candidata multimodal na mesma amostra reservada, com parâmetros documentados. Use a rubrica editorial e evidências para identificar benefício ou prejuízo; não presuma ganho só porque há mais modalidades. Não repetir o comparativo sem mudança relevante.
+9. Título/hook pode ser sugestão editorial separada; legendas e áudio não podem inventar falas. Nada de garantir viralização.
+Saída: candidatos diversos, justificáveis e editáveis, com cobertura do vídeo e comparação na amostra reservada.
+
+MARCO 4 — PRÉ-EDIÇÃO VISUAL E TRACKING CONTROLADO
+1. Diferencie detecção, associação temporal, diarização e associação de quem fala à pessoa visível. Gemma pode orientar relevância; não assuma que ele entrega tracking contínuo preciso.
+2. Estude o código das referências pertinentes, com revisão fixa, licença e dependências. ByteTrack é candidato de associação temporal, não detector nem reconhecedor de falante. Escolha detector/tracker local adequado ao hardware; registre por que adotar ou rejeitar. Não instalar múltiplos motores “para experimentar” sem hipótese.
+3. Implemente trajetória temporal com IDs locais, confiança, tratamento de oclusão e reinício em mudança de cena. Transforme essa trajetória em enquadramento suavizado dentro dos limites da imagem.
+4. MVP obrigatório: acompanhar uma pessoa em movimento; lidar com duas pessoas e troca de plano sem saltos indevidos; acompanhar um objeto suportado em um caso controlado. No caso de objeto, registre categoria e como o alvo foi selecionado. Não chamar uma caixa em um frame de tracking.
+5. Em ambiguidade, preserve enquadramento amplo/seguro e permita escolher outro alvo. Nunca fingir associação de falante se ela não foi demonstrada.
+6. Framing automático, intervenções manuais e legendas devem persistir e ser reproduzidos na exportação. Permita corrigir/desativar a automação por corte/segmento sem perder a montagem.
+Saída: três demonstrações temporais curtas, além de um corte completo, com trajetórias, preview e export equivalentes. Rastreamento universal de objetos fica fora do MVP; o caso controlado não pode ser omitido como se estivesse concluído.
+
+MARCO 5 — ORQUESTRAÇÃO E EXPERIÊNCIA COMPLETA
+1. Integrar “gerar automaticamente após importar”, com opção de desativar e sem iniciar jobs duplicados. Pipeline recuperável: importação → ASR → evidências → seleção → pré-edição → persistência → biblioteca.
+2. Estados e progresso reais por etapa, cancelamento, timeout, retry idempotente e recuperação após fechar/reabrir. Resposta antiga de job cancelado não pode publicar cortes.
+3. Cache com chave de mídia, transcrição, modelo, instruções e parâmetros relevantes. Invalidar só o afetado. Novas gerações acrescentam candidatos identificados e preservam cortes editados/excluídos e alterações manuais; não resetar a biblioteca.
+4. Processamento pesado fora da UI, filas limitadas e prioridade para interação. Suspenda/reduza trabalhos concorrentes se necessário para manter editor responsivo.
+5. Separe na medição memória do editor/WebView2, processo de IA, ASR, FFmpeg e VRAM. O “cerca de 1 GB” observado pelo mantenedor no editor não é teto para um modelo 12B carregado.
+6. Mantenha contratos tipados, validação runtime, adaptadores específicos, publicação atômica e limpeza de recursos. Sem módulos gigantes ou regras do motor dentro de componentes React.
+Saída: um único caminho real e coerente no Tauri; nada de scripts experimentais necessários ao usuário para produzir o corte.
+
+ACEITE FINAL — EVIDÊNCIAS, NÃO PROMESSAS
+Planejar uma matriz única, executada incrementalmente conforme as capacidades existirem:
+A. No Tauri real, build identificado: importar a mídia de 24 min; gerar automaticamente; revisar candidatos; ajustar transcrição/corte; salvar/reabrir; exportar e reproduzir MP4. Não usar mocks nesse percurso.
+B. Apresentar pelo menos três cortes distintos, completos e revisáveis de uma fonte previamente verificada como tendo material suficiente. Não gerar cortes ruins só para cumprir quantidade; fonte sem trechos adequados deve informar esse resultado.
+C. Avaliar os três por rubrica separada da nota do modelo: contexto autônomo, começo/fim íntegros, fidelidade à fonte, edição audiovisual coerente, utilidade do trecho. Cada item 0/1/2; meta 8/10 e fidelidade obrigatoriamente 2/2. Entregar timestamps e MP4s para avaliação do mantenedor. Autoavaliação do próprio Gemma não é validação independente.
+D. Demonstrar multimodalidade, casos de tracking e pelo menos uma montagem com remoção interna, posterior ajuste manual e undo/redo. Reabrir deve preservar exatamente as decisões.
+E. Conferir duração e correspondência temporal do MP4 com o plano, junções, legendas, enquadramento e áudio. Para fixtures CFR, limites em até um frame; para VFR, tolerância baseada nos timestamps reais, declarada antes do teste. Inspecionar sincronização em eventos conhecidos, não só existência do arquivo.
+F. Regressão da timeline com o editor completo: playhead p95 <=50 ms e alvo final → frame apresentado p95 <=250 ms, após preparação identificada, no hardware registrado. Medir com análise de IA ativa e o escalonamento previsto; não desabilitar recursos silenciosamente. Medir frame apresentado, não só seeked ou mudança de estado.
+G. Sem crescimento contínuo de memória em ciclos delimitados; uso dentro do orçamento previamente definido. Sem exaustão de RAM/VRAM ou leitura repetida integral da mídia durante scrub.
+H. Testes pertinentes: transcrição editada no mesmo tick, tempos inválidos, fonte ausente, saída inválida da IA, cancelamento, timeout, retry, troca de mídia, reabertura, migração e proteção de edições. Testar consumidores dos contratos alterados. Mocks servem para falhas controladas, não para provar integração.
+I. Vídeo de 2 h: testar separadamente quando disponível. Sem teste, manter limitação explícita; não afirmar suporte validado. O fluxo não deve truncar silenciosamente o vídeo por limites de janela/contexto.
+
+CONCLUSÃO E QUALIDADE
+- Só declarar o MVP funcional concluído com A, B, D, E, F, G e H demonstrados, e avaliação editorial C documentada. Requisitos obrigatórios não podem virar “próxima melhoria” para produzir PASS.
+- A qualidade percebida dos MP4s exige aceite do mantenedor. Ao alcançar os gates técnicos, apresente as amostras para essa avaliação; não faça ciclos estéticos autônomos nem declare aprovação humana inexistente.
+- A meta só recebe conclusão completa após os gates técnicos e o aceite editorial do mantenedor. A execução técnica pode terminar antes; nesse caso, apresente amostras e aguarde, sem continuar calibrando por conta própria.
+- Se aguardar avaliação humana, registrar “aceite editorial pendente”; isso não equivale a falha técnica nem a produto aprovado. Visual permanece PENDING HUMAN APPROVAL até manifestação do mantenedor.
+- Não chamar essa entrega de equivalente ao OpusClip. Referência de produto não comprova arquitetura interna nem resultados iguais.
+
+LIMITES CONTRA LOOP
+- Orçamento proposto desta rodada: até 6 horas de execução ativa acumulada, excluindo espera pelo mantenedor. Usar limite nativo do Goal se disponível; se não houver, registrar/checkar o acumulado. Não presumir que este texto cria um bloqueio automático.
+- Máximo de duas candidatas para a mesma decisão de integração e dois ciclos totais de calibração editorial. Segunda tentativa precisa de hipótese nova sustentada por resultado anterior. Sem terceira tentativa automática.
+- Validação: uma rodada inicial da matriz e no máximo uma repetição justificada dos casos afetados. Testes de capacidades novas não autorizam repetir tudo; não reiniciar orçamento ao trocar de contexto ou marco.
+- Após cada marco, registrar evidência nova, arquivos/contratos alterados, tempo/rodadas consumidos, pendências e próximo passo no ENGINE-HANDOFF canônico. Continuar sem pedir confirmação rotineira.
+- Bloqueio externo: tentar alternativa local compatível e delimitada, se existir dentro do escopo; caso contrário, registrar exatamente o que falta. Não simular conclusão. Continuar frentes independentes úteis.
+- Orçamento esgotado, regressão sem reparo ou requisito essencial bloqueado: encerrar a rodada automática como PARTIAL/BLOCKED, preservar trabalho, registrar continuidade e solicitar somente a decisão necessária. Não marcar a meta concluída e não renovar o limite por conta própria.
+- Regressão própria: reparar dentro do orçamento ou remover somente a alteração responsável. Proibidos reset geral, descarte de trabalho anterior ou enfraquecimento de testes.
+- Todos os critérios cumpridos: encerrar. Sem “melhorar evidência” indefinidamente.
+
+ENTREGA
+Código integrado, testes pertinentes, amostras MP4, avaliação por rubrica, medições e documentos canônicos atualizados. Relatório integral CUTNICEPRO — ZCODE REPORT em LATEST e history, relido e apresentado no chat, distinguindo FUNCTIONAL / REGRESSION / VISUAL / EDITORIAL STATUS. Listar o que realmente funciona, limitações e nenhum resultado inventado. Registrar origem/revisão/licença de adaptações. Sem commit/push/bump.
+
+REFERÊNCIAS INICIAIS — VALIDAR A VERSÃO DO RUNTIME
+Gemma: https://ai.google.dev/gemma/docs/core/model_card_4
+llama.cpp: https://github.com/ggml-org/llama.cpp/tree/master/tools/mtmd
+ByteTrack: https://github.com/FoundationVision/ByteTrack/blob/main/yolox/tracker/byte_tracker.py
+OpusClip (referência funcional, não arquitetura): https://www.opus.pro/clipanything
+OpenCut/FrameSeeker: estudo e revisão já registrados em docs/references/OPEN-SOURCE-ENGINE-RESEARCH.md.

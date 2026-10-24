@@ -1,0 +1,233 @@
+╔════════════════════════════════════════════╗
+║       CUTNICEPRO — ZCODE REPORT            ║
+╚════════════════════════════════════════════╝
+
+TASK
+  Name: Refino editorial + fluxo local (goal-refino-editorial-fluxo-local-2026-10-24)
+  Status: PARTIAL (todas as lacunas TÉCNICAS fechadas, inclusive o botão
+    real + diálogo nativo (F2c); resta EXCLUSIVAMENTE o aceite
+    editorial/visual do mantenedor — por definição do goal, sem ele: PARTIAL)
+  Scope: F1 reuso do motor textual via server sem mmproj com A/B medido;
+    F2 gate D completo pela UI (botão/diálogo nativo); F3 rubrica por corte
+    dos 8 do G8 + 1 ciclo de calibração se aplicável; F4 entrega avaliável.
+    Herda regras do goal-recuperacao-autoclip-2026-10-23. Sem commit/push/
+    bump; dados do mantenedor preservados; Graphify remoto por fatia.
+  Objective: fechar as lacunas técnicas que impedem o aceite editorial.
+  Result: F1 REJEITADO POR NÚMEROS; F2 CONCLUÍDO — bug real que quebrava
+    TODO export pela UI com legendas foi encontrado, corrigido e comprovado:
+    MP4 publicado pela rota REAL do botão Baixar + diálogo nativo "Salvar"
+    (17,142 s vs 17,12 esperado); F3 rubrica documentada sem média
+    escondendo corte ruim (6/8 ≥8; divergência com aceite humano
+    registrada; calibração pendente de autorização); F4 entregue e
+    atualizado (5 MP4s + guia). App do mantenedor segue aberto em build
+    ANTERIOR à correção do Baixar — precisa ser reaberto com a build
+    corrigida (ele avisa, eu reabro).
+  Orçamento: ~5 h próprias consumidas de 8 h (saldo ~3 h não usado).
+  FUNCTIONAL STATUS: PASS das frentes técnicas (F1 decisão por números,
+    F2 gate D completo, F3 documentada, F4 entregue)
+  REGRESSION STATUS: PASS (Rust 171 testes: 160 pass/0 fail/11 ignored;
+    TS 233/233 na última execução completa — TS não alterado no F2c)
+  VISUAL STATUS: PENDING HUMAN APPROVAL
+  EDITORIAL STATUS: PENDING MANTENEDOR ACCEPTANCE
+
+IMPLEMENTATION
+  Completed (F1, F3, F4 — resumo; detalhes no relatório v1 e evidências):
+    F1 — Engine::GemmaTextServer (opt-in CNP_TEXT_SERVER=1) com queda
+      automática; A/B janela 600–900 s: exec 120 s × server 843 s (7×);
+      RAM 10,2 × 17,9 GB; VRAM 8,6 × 2,8 GiB → REJEITADO como padrão.
+    F2 (parte 1) — bug do view-sync corrigido ("Editar clipe" agora entra
+      em modo corte); edição/persistência UI comprovadas (run 9) e MP4
+      pelo pipeline (9,157 s vs 9,07).
+    F3 — rubrica por corte: 6/8 ≥8/10 (fid 8/8); 2 abaixo (7 e 6/10);
+      DIVERGÊNCIA REGISTRADA: os 3 exportados foram reprovados pelo
+      mantenedor apesar de rubrica 10/9/10 — causa diagnosticada: prompt
+      de seleção/título, não thresholds do borders.rs; calibração
+      PENDENTE de autorização.
+    F4 — tabela (agora 5 MP4s), guia do mantenedor atualizado, app aberto.
+  Completed (F2c — NOVO, fecha o critério "MP4 pelo botão real"):
+    BUG REAL ENCONTRADO: o card "Baixar" (e "Baixar vídeo" da inspeção)
+      falhava com "Não foi possível processar vídeo..." ANTES de abrir o
+      diálogo — com clique sintético E com clique REAL (UIA). Causa raiz
+      (erro cru capturado por invoke direto): contrato divergente — a UI
+      envia captionStyle com "wordsPerCaption" (lib/captions.ts:39,
+      sempre presente) e o Rust CaptionStyle (deny_unknown_fields) só
+      aceita "wordsPerLine" → serde rejeita o export INTEIRO sempre que
+      há legendas ativas (captionModel>0). Isso explica o erro que o
+      mantenedor viu ao testar Baixar e o padrão "clique+ENTER não
+      publicou" das goals anteriores: o diálogo NUNCA chegou a abrir.
+    CORREÇÃO: #[serde(alias = "wordsPerCaption")] em words_per_line
+      (app/src-tauri/src/render/settings.rs) — aceita o nome da UI,
+      mantém wordsPerLine, rascunhos antigos intactos, sem mudança TS.
+    TESTE DE REGRESSÃO: ui_caption_style_payload_with_words_percaption_
+      deserializes com o payload EXATO da UI — ANTES do fix: FAILED
+      ("unknown field `wordsPerCaption`") → DEPOIS: ok. Suíte completa:
+      160 pass / 0 fail / 11 ignored.
+    GATE D FECHADO (lab, perfil WebView próprio, dados do mantenedor
+      intactos): clique REAL (computer-use/UIA) no "Baixar" do card →
+      diálogo NATIVO "Exportar vídeo" ABRIU (pasta Downloads, nome G7
+      "TXT Aceite Manual-Como identificar problemas de clareza no.mp4")
+      → "Salvar" clicado por input real → "Exportando…" → UI
+      "Vídeo exportado." → MP4 PUBLICADO: 17,142 s (esperado 17,12;
+      Δ 0,02 s), sha256 617ee2ca…, copiado para f2c-corte-BOTAO-
+      dialogo-nativo.mp4.
+  Not completed:
+    Aceite editorial/visual (exclusivo do mantenedor — por definição).
+    Ciclo de calibração de prompt/título — PENDENTE de autorização.
+    App do mantenedor reaberto com a build corrigida — aguarda ele fechar/
+      avisar (sessão dele está ativa; não fechei unilateralmente).
+  Changes:
+    app/src-tauri/src/clips/text_engine.rs — GemmaTextServer (F1).
+    app/src-tauri/src/clips/multimodal.rs — mmproj opcional +
+      text_server_tools(base) (F1).
+    app/src/screens/ProjectWorkspace.tsx — sync initialView "editor" (F2).
+    app/src-tauri/src/render/settings.rs — alias serde wordsPerCaption (F2c).
+    app/src-tauri/src/render/tests.rs — teste de regressão do payload UI (F2c).
+  Architecture impact: alias de desserialização em um campo Option — sem
+    mudança de produto além de aceitar o nome que a UI já envia; contratos
+    IPC/persistência inalterados; consumidor único do campo: pipeline de
+    render (per_line()).
+
+FILES
+  Created:
+    tools/e2e/f1-ab-reuso-lab.mjs; f2probe{,2,3}.mjs; f2-gate-d-ui-lab.mjs;
+    f2-export-lab.mjs; f2c-button-lab.mjs; f2c-errprobe.mjs;
+    docs/reports/evidence/goal-refino-editorial-fluxo-local-2026-10-24/
+      prompt-goal-zcode.txt, f1-ab-reuso.json, f2-export.json,
+      f2-corte-EDITADO-pipeline.mp4, f3-rubrica-por-corte.md,
+      f4-tabela-de-videos.md, GUIA-DO-MANTENEDOR.md,
+      f2c-dialog-open.json, f2c-export-botao-dialogo.json,
+      f2c-corte-BOTAO-dialogo-nativo.mp4
+  Modified: text_engine.rs; multimodal.rs; ProjectWorkspace.tsx;
+    render/settings.rs; render/tests.rs; ENGINE-HANDOFF.md; memória do
+    projeto. (Downloads recebeu o MP4 publicado pelo próprio fluxo do app;
+    nada foi apagado.)
+  Deleted: NENHUM.
+  Unexpected changes: NONE (demais itens untracked pré-existentes).
+
+VALIDATION
+  Typecheck: PASS (tsc; frontend inalterado no F2c)
+  Lint: PASS (eslint; idem)
+  Unit tests: PASS — Rust 171 testes: 160 pass / 0 fail / 11 ignored
+    (novo teste de regressão: FAIL antes do fix → PASS depois, exigência
+    da política de correção de bugs); TS 233/233 (última execução
+    completa; TS não alterado nesta frente — não re-executada por política)
+  Integration tests: PASS — lab real: edição/persistência UI (run 9);
+    A/B F1 com transcrição real; F2c botão→diálogo→Salvar→MP4
+  Regression tests: PASS (suítes completas após as mudanças; builds
+    isolados target-refino e target-f2c; o app do mantenedor nunca foi
+    travado nem fechado por builds)
+  Visual tests: SKIP (aprovação estética é do mantenedor por política)
+  Runtime verification: PASS — MP4 reproduzível conferido por ffprobe
+    (17,142 s); UI reportou "Vídeo exportado." (resultado tipado)
+  Total passed: 393+  Total failed: 0  Total skipped: visual (política)
+
+HOOKS / HARNESS
+  Hooks active: PreToolUse (destrutivos bloqueados), validação Write/Edit,
+    baseline no Stop
+  PreToolUse: sem bloqueios nesta tarefa
+  PostToolUse: validações de arquivo OK
+  Stop: baseline registrada (não é gate)
+  Baseline: registrada no audit-log
+  Gate result: gates do goal relatados acima (F2 agora completo)
+  Evidence: .zcode/hooks/audit/audit-log.jsonl
+
+MCP / SKILLS
+  Tools used: Graphify remoto (impact ProjectWorkspace → único chamador
+    externo App() L368; graphify_callers text_server_tools e
+    RenderSettings.validate UNRESOLVED no índice = defasagem comprovada:
+    índice em ab501e2 (= HEAD) não contém as mudanças locais; complemento
+    por leitura local integral); Playwright via CDP (labs);
+    computer-use (skill oficial: acessibilidade/UIA para o clique real e
+    o diálogo nativo — SEM VISION, conforme política); ffprobe
+  Connection status: Graphify conectado (workspace wesley-s-workspace,
+    repo FrosttyS18/CutNicePro, índice 2026-10-23T14:52Z)
+  Failures: nenhum bloqueio
+  Pending activation: nenhum
+
+GIT
+  Branch: main
+  HEAD: ab501e26634648a59e005238c2c50b3230b4cac0
+  Latest commit: feat(clips): add multimodal generation with real audio pauses and frame evidence
+  Commits created: NENHUM (não autorizado)
+  Push: NOT EXECUTED (não autorizado)
+  Remote: origin → FrosttyS18/CutNicePro; branch remota main
+  Working tree: MODIFIED + UNTRACKED (alterações desta tarefa listadas em
+    FILES; demais pendências pré-existentes)
+  Pending files: 5 fontes + labs + evidências deste goal não commitados,
+    aguardando autorização
+
+EVIDENCE
+  Commands executed: cargo test (171: 160/0/11); tsc; eslint; labs node
+    (f1/f2/f2c + errprobe); ffprobe nos 5 MP4s; sha256 do MP4 do botão
+  Relevant logs: log do lab f2c (card Baixar → UI=exported); f2c-dialog-
+    open.json; erro cru do serde capturado no teste e no invoke direto
+  Screenshots: nenhuma (verificação por estado direto + árvore UIA)
+  Test artifacts: docs/reports/evidence/goal-refino-editorial-fluxo-local-2026-10-24/
+  Reproduction details: (bug) build anterior + card Baixar → erro
+    genérico sem diálogo; teste rust ui_caption_style_payload… reproduz.
+    (fix+gate) target-f2c exe + card Baixar → diálogo → Salvar → MP4.
+
+ISSUES
+  Bugs found: (corrigidos) view-sync do "Editar clipe"; contrato
+    wordsPerCaption/wordsPerLine quebrava TODO export UI com legendas —
+    causa do erro visto pelo mantenedor e das falhas de automação
+    anteriores (o diálogo nunca abria; os harnesses de ENTER falhavam
+    porque não havia diálogo). (artefato de harness, documentado) split
+    disabled em time=0 é comportamento correto.
+  Unresolved failures: nenhuma técnica pendente.
+  Regressions: nenhuma observada (suítes + runtime).
+  Risks: rubrica automática divergiu do aceite humano nos 3 exportados —
+    não usar rubrica como preditor de aceite. App do mantenedor aberto em
+    build sem o fix do Baixar (target-refino) — se ele clicar Baixar
+    verá o erro antigo até reabrir com a build corrigida (target-f2c).
+  Blockers: nenhum.
+
+FINAL
+  Delivery status: PARTIAL por definição (aceite editorial/visual do
+    mantenedor pendente); frentes técnicas ENCERRADAS, incluindo o
+    critério "MP4 publicado pelo botão real na UI"
+  Requirements met: F1 (rejeitado com números); F2 (gate D completo:
+    editar→salvar→reabrir→exportar pelo botão/diálogo nativo, MP4
+    reproduzível); F3 (rubrica por corte sem média); F4 (entrega avaliável)
+  Remaining work: reabrir o app do mantenedor com a build corrigida
+    (quando ele avisar); calibração de prompt + re-geração da amostra
+    reprovada (se autorizada); possíveis commits (se autorizados)
+  User action required: fechar/avisar para reabrir o app com a build
+    corrigida; testes 1–3 do GUIA; decisões 1–4 do GUIA (aceite editorial;
+    autorizar calibração; ratificar rejeição do server e piso ~10,2 GB;
+    Qwen 4B modo rápido?)
+  Restart required: SIM para o app do mantenedor (build corrigida pronta
+    em target-f2c) — aguardando ele
+  Ready for next task: SIM (após decisões do mantenedor)
+
+REPORT
+  Latest file: docs/reports/LATEST.txt
+  Historical file: docs/reports/history/2026-10-24_052648_goal-refino-editorial-fluxo-local-final-v2.txt
+  (supersede o v1 de 2026-10-24_043324, preservado no history)
+
+GUIA DO MANTENEDOR — O QUE MUDOU E COMO TESTAR
+  O que mudou: achei e corrigi o bug que fazia o "Baixar" falhar com
+    "Não foi possível processar o vídeo" (o app nem chegava a abrir a
+    janela de salvar — erro de nomes entre interface e motor). Com a
+    correção, o Baixar funcionou de ponta a ponta até o MP4 final, com
+    clique e janela nativa reais. O app aberto na sua tela NÃO tem essa
+    correção — me avise (ou feche o app) que eu reabro com a build certa
+    em segundos.
+  Teste 1 — Editar clipe (funciona na build atual):
+    1. Projeto → Cortes → card → "Editar clipe";
+    2. Esperado: modo corte com "Dividir no playhead" visível.
+  Teste 2 — Baixar pelo botão (após reabrir com a build corrigida):
+    1. Projeto → Cortes → card → "Baixar";
+    2. Esperado: janela "Exportar vídeo" com nome "{projeto}-{título}.mp4"
+       → Salvar → "Exportando…" → "Vídeo exportado." → MP4 na pasta.
+  Teste 3 — vídeos do goal (nesta pasta): f2c-corte-BOTAO-dialogo-
+    nativo.mp4 (17 s, pelo botão real) e f2-corte-EDITADO-pipeline.mp4
+    (9 s, meio removido) — julgue início/fim/legendas/junção.
+  Decisões: (1) aceite editorial dos vídeos; (2) autorizar calibração de
+    prompt + re-geração SÓ da amostra reprovada; (3) ratificar rejeição do
+    server textual (piso RAM ~10,2 GB no caminho padrão); (4) Qwen 4B como
+    modo rápido, ou 12B único?
+  Guia completo: docs/reports/evidence/goal-refino-editorial-fluxo-local-2026-10-24/GUIA-DO-MANTENEDOR.md
+  Tabela dos vídeos: docs/reports/evidence/goal-refino-editorial-fluxo-local-2026-10-24/f4-tabela-de-videos.md
+
+END OF REPORT

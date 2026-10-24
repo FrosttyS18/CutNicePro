@@ -1,0 +1,142 @@
+{
+  "consultedAt": "2026-10-23T01:16:40.035Z",
+  "scope": "Leitura de 17 arquivos em quatro repositórios. Nenhum app externo instalado ou testado.",
+  "sources": [
+    {
+      "repo": "tauri-apps/tauri",
+      "revision": "ba1e205f3bfba19a9cbe6032bb4ece3068429d04",
+      "path": "examples/streaming/main.rs",
+      "url": "https://raw.githubusercontent.com/tauri-apps/tauri/ba1e205f3bfba19a9cbe6032bb4ece3068429d04/examples/streaming/main.rs",
+      "lineCount": 214,
+      "sha256": "88c3cf15116a2a61619514d452b564b3353284122c7273869e1b4a1c302e0dba"
+    },
+    {
+      "repo": "tauri-apps/tauri",
+      "revision": "ba1e205f3bfba19a9cbe6032bb4ece3068429d04",
+      "path": "crates/tauri/src/protocol/asset.rs",
+      "url": "https://raw.githubusercontent.com/tauri-apps/tauri/ba1e205f3bfba19a9cbe6032bb4ece3068429d04/crates/tauri/src/protocol/asset.rs",
+      "lineCount": 331,
+      "sha256": "14a045e4d5d6eebaa9a334bca08726d078db13cea547bfc06676832c30a48bc2"
+    },
+    {
+      "repo": "OpenCut-app/opencut-classic",
+      "revision": "cf5e79e919144200294fb9fed22a222592a0aeea",
+      "path": "apps/web/src/core/managers/playback-manager.ts",
+      "url": "https://raw.githubusercontent.com/OpenCut-app/opencut-classic/cf5e79e919144200294fb9fed22a222592a0aeea/apps/web/src/core/managers/playback-manager.ts",
+      "lineCount": 258,
+      "sha256": "64024433fff85e99cbc84322cdf09b9d7f44b95f3765aa24f260df43471ae72b"
+    },
+    {
+      "repo": "OpenCut-app/opencut-classic",
+      "revision": "cf5e79e919144200294fb9fed22a222592a0aeea",
+      "path": "apps/web/src/timeline/controllers/playhead-controller.ts",
+      "url": "https://raw.githubusercontent.com/OpenCut-app/opencut-classic/cf5e79e919144200294fb9fed22a222592a0aeea/apps/web/src/timeline/controllers/playhead-controller.ts",
+      "lineCount": 319,
+      "sha256": "39e58ceb93c215425733d391df0b95844cfad5109b5bad3e7060fa236403fc16"
+    },
+    {
+      "repo": "OpenCut-app/opencut-classic",
+      "revision": "cf5e79e919144200294fb9fed22a222592a0aeea",
+      "path": "apps/web/src/services/video-cache/service.ts",
+      "url": "https://raw.githubusercontent.com/OpenCut-app/opencut-classic/cf5e79e919144200294fb9fed22a222592a0aeea/apps/web/src/services/video-cache/service.ts",
+      "lineCount": 338,
+      "sha256": "a8f0375ed19f1c184f51befe6178f2583d5da29ea9a7598fbdd97733747b7e3f"
+    },
+    {
+      "repo": "OpenCut-app/opencut-classic",
+      "revision": "cf5e79e919144200294fb9fed22a222592a0aeea",
+      "path": "apps/web/src/timeline/hooks/use-timeline-playhead.ts",
+      "url": "https://raw.githubusercontent.com/OpenCut-app/opencut-classic/cf5e79e919144200294fb9fed22a222592a0aeea/apps/web/src/timeline/hooks/use-timeline-playhead.ts",
+      "lineCount": 101,
+      "sha256": "9fb2ec4f31444a11d6addc6f1eeedc70e149419b74c804fa7df5480b2faf36b7"
+    },
+    {
+      "repo": "OpenCut-app/opencut-classic",
+      "revision": "cf5e79e919144200294fb9fed22a222592a0aeea",
+      "path": "apps/web/src/timeline/components/timeline-playhead.tsx",
+      "url": "https://raw.githubusercontent.com/OpenCut-app/opencut-classic/cf5e79e919144200294fb9fed22a222592a0aeea/apps/web/src/timeline/components/timeline-playhead.tsx",
+      "lineCount": 136,
+      "sha256": "e7c240ed3f22c2fd87a41ffa68247c05b5027a2a547615d15d4014f7540be7df"
+    },
+    {
+      "repo": "OpenCut-app/opencut-classic",
+      "revision": "cf5e79e919144200294fb9fed22a222592a0aeea",
+      "path": "LICENSE",
+      "url": "https://raw.githubusercontent.com/OpenCut-app/opencut-classic/cf5e79e919144200294fb9fed22a222592a0aeea/LICENSE",
+      "lineCount": 8,
+      "sha256": "8117f9bb64534f7530fc6139b014fd1c1465f7981f93d1871789150fa3f59d3d"
+    },
+    {
+      "repo": "OpenCut-app/opencut-classic",
+      "revision": "cf5e79e919144200294fb9fed22a222592a0aeea",
+      "path": "apps/web/src/services/renderer/nodes/video-node.ts",
+      "url": "https://raw.githubusercontent.com/OpenCut-app/opencut-classic/cf5e79e919144200294fb9fed22a222592a0aeea/apps/web/src/services/renderer/nodes/video-node.ts",
+      "lineCount": 17,
+      "sha256": "6bba0d17855280f0bf8fa4f0fc625a14c439f142054e5346a2719649bc40c1b1"
+    },
+    {
+      "repo": "OpenCut-app/opencut-classic",
+      "revision": "cf5e79e919144200294fb9fed22a222592a0aeea",
+      "path": "apps/web/package.json",
+      "url": "https://raw.githubusercontent.com/OpenCut-app/opencut-classic/cf5e79e919144200294fb9fed22a222592a0aeea/apps/web/package.json",
+      "lineCount": 103,
+      "sha256": "29bdaa4e14c580af0eaf5f7dd6807288ffb532b87906f9c1c7e2a41b75e8e271"
+    },
+    {
+      "repo": "KDE/kdenlive",
+      "revision": "80b74ffa95390f4cc8d75a4e886e7ff47373583e",
+      "path": "src/utils/thumbnailcache.cpp",
+      "url": "https://raw.githubusercontent.com/KDE/kdenlive/80b74ffa95390f4cc8d75a4e886e7ff47373583e/src/utils/thumbnailcache.cpp",
+      "lineCount": 425,
+      "sha256": "08f52c8ff2dd330fc58950fe6aa2f0fc1823240bfbb3b6d12184089121889810"
+    },
+    {
+      "repo": "KDE/kdenlive",
+      "revision": "80b74ffa95390f4cc8d75a4e886e7ff47373583e",
+      "path": "src/jobs/proxytask.cpp",
+      "url": "https://raw.githubusercontent.com/KDE/kdenlive/80b74ffa95390f4cc8d75a4e886e7ff47373583e/src/jobs/proxytask.cpp",
+      "lineCount": 509,
+      "sha256": "c7ecc3e338b4388721f930f61e28bb6d9639195e1bf2a4877cc1f3858f45733b"
+    },
+    {
+      "repo": "KDE/kdenlive",
+      "revision": "80b74ffa95390f4cc8d75a4e886e7ff47373583e",
+      "path": "src/monitor/monitorproxy.cpp",
+      "url": "https://raw.githubusercontent.com/KDE/kdenlive/80b74ffa95390f4cc8d75a4e886e7ff47373583e/src/monitor/monitorproxy.cpp",
+      "lineCount": 861,
+      "sha256": "3c4d93e5eded623355bac972b4955448282126435324d116591efd6bf973bc65"
+    },
+    {
+      "repo": "KDE/kdenlive",
+      "revision": "80b74ffa95390f4cc8d75a4e886e7ff47373583e",
+      "path": "src/jobs/proxytask.h",
+      "url": "https://raw.githubusercontent.com/KDE/kdenlive/80b74ffa95390f4cc8d75a4e886e7ff47373583e/src/jobs/proxytask.h",
+      "lineCount": 32,
+      "sha256": "69a6849d3bf611c835fdc435610ef4157b5df89108e56ce2132bbfb870058784"
+    },
+    {
+      "repo": "KDE/kdenlive",
+      "revision": "80b74ffa95390f4cc8d75a4e886e7ff47373583e",
+      "path": "src/monitor/monitorproxy.h",
+      "url": "https://raw.githubusercontent.com/KDE/kdenlive/80b74ffa95390f4cc8d75a4e886e7ff47373583e/src/monitor/monitorproxy.h",
+      "lineCount": 294,
+      "sha256": "038e798b516da10ff2e2d601f5f07638460ce850561993cfbd881e7660351186"
+    },
+    {
+      "repo": "remotion-dev/remotion",
+      "revision": "3ab34665c49279cc35820275380983068bb1bbf9",
+      "path": "LICENSE.md",
+      "url": "https://raw.githubusercontent.com/remotion-dev/remotion/3ab34665c49279cc35820275380983068bb1bbf9/LICENSE.md",
+      "lineCount": 50,
+      "sha256": "bd65083b940f61904f6ef298aade918a7cad72a3e35bc406e36fab365844b673"
+    },
+    {
+      "repo": "remotion-dev/remotion",
+      "revision": "3ab34665c49279cc35820275380983068bb1bbf9",
+      "path": "packages/player/src/Player.tsx",
+      "url": "https://raw.githubusercontent.com/remotion-dev/remotion/3ab34665c49279cc35820275380983068bb1bbf9/packages/player/src/Player.tsx",
+      "lineCount": 639,
+      "sha256": "9cbdee7b982f5919ed37d4c9f8de84baf0baa539ab24afbb2cad2ff1339b50af"
+    }
+  ]
+}

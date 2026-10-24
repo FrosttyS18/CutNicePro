@@ -1,0 +1,55 @@
+{
+  "cancel": {
+    "engineRunningBeforeCancel": true,
+    "cancelRaw": "true",
+    "resultIsError": true,
+    "resultDetail": "{\"error\":\"Error: page.evaluate: Transcrição cancelada.\"}",
+    "partialPublished": false,
+    "engineStopped": true,
+    "engineProcsAfter": 0
+  },
+  "reopen": {
+    "jobState": "cancelled",
+    "engineProcs": 0,
+    "marker": null
+  },
+  "retry": {
+    "elapsedS": 389,
+    "error": null,
+    "clips": 5,
+    "engineProcsAfter": 0,
+    "ramAfter": 1008
+  },
+  "stale": {
+    "markedStale": 0,
+    "total": 5
+  },
+  "dupes": {
+    "clipsAfterRegen": 7,
+    "uniqueIds": true,
+    "contentOverlaps": 2,
+    "regenError": null,
+    "engineProcsAfter": 0
+  },
+  "staleInsideClip": {
+    "editedSegment": {
+      "start": 376.44,
+      "end": 383.62
+    },
+    "clipWindow": {
+      "start": 376.44,
+      "end": 405.66
+    },
+    "total": 7,
+    "staleMarked": 1
+  },
+  "engineFailure": {
+    "failedFast": true,
+    "elapsedMs": 16,
+    "error": "Error: page.evaluate: O recurso de análise está indisponível. Repare a instalação do aplicativo e tente novamente.",
+    "jobState": "nenhum",
+    "publishedPartial": false,
+    "engineProcs": 0,
+    "appAlive": true
+  }
+}

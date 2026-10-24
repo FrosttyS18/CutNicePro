@@ -56,6 +56,8 @@
 
 ## Cortes
 
+Complemento solicitado pelo mantenedor em 2026-10-24 (BR-019/020, JRN-002/008): a biblioteca global apresenta seções verticais por projeto, identificadas pelo ID de origem; ordenar clipes não mistura projetos. Miniaturas são imagens, sem um player persistente por card. O badge Novo depende somente da criação registrada e dura menos de 60 minutos completos; abrir, assistir, editar ou reanalisar não o remove nem reinicia a hora. Novos cortes recebem a criação após seleção/análise, antes da gravação; datas antigas/legadas são preservadas e não são inventadas. Tempo relativo continua visível após a expiração. Critérios e estado de validação em BACKLOG e ENGINE-HANDOFF; aprovação visual/manual pendente.
+
 - **BR-019 Identificação estável** — cada corte tem ID persistente vinculado à mídia de
   origem; referências não se quebram entre sessões. Estado: PROPOSED.
 - **BR-020 Timestamps gerados são imutáveis** — editar in/out cria nova versão (BR-022);
