@@ -225,6 +225,7 @@ fn clip_for(media: &str, start: f64, end: f64, score: u8, format: Option<&str>) 
         analysis_signature: None,
         analysis_stale: None,
         multimodal: None,
+        face_framing: None,
         created_at_ms: None,
         deleted: None,
         engine: None,
@@ -382,6 +383,8 @@ pub(crate) struct Evaluation {
     /// Publicidade reconhecida (leitura de patrocínio, cupom, CTA de marca).
     #[serde(default)]
     pub(crate) advertising: bool,
+    pub(crate) standalone: bool,
+    pub(crate) complete: bool,
 }
 #[derive(Clone, Copy, Debug, Default, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "lowercase")]
@@ -410,6 +413,17 @@ pub(crate) struct EvaluationReply {
     pub(crate) items: Vec<Evaluation>,
 }
 
+#[cfg(test)]
+mod editorial_contract_tests {
+    use super::Evaluation;
+
+    #[test]
+    fn new_evaluations_require_explicit_context_and_completion_checks() {
+        let old = serde_json::json!({"id":"E1","score":95,"reason":"Boa explicação", "nature":"explicacao","advertising":false});
+        assert!(serde_json::from_value::<Evaluation>(old).is_err());
+    }
+}
+
 /// Avaliação em LOTE dos candidatos pendentes: conteúdo integral, sem nota
 /// antiga na entrada, IDs estáveis E1.., contexto externo separado. Uma
 /// tentativa; falha deixa os pendentes fora da disputa com registro —
@@ -435,20 +449,23 @@ pub(crate) fn evaluate_batch_with(
             .iter()
             .enumerate()
             .map(|(i, clip)| {
-                let text = segments
-                    .iter()
-                    .filter(|s| s.start < clip.end && s.end > clip.start)
-                    .map(|s| s.text.as_str())
-                    .collect::<Vec<_>>()
-                    .join(" ");
-                let before = segments
-                    .iter()
-                    .rfind(|s| s.end <= clip.start + 1e-9)
-                    .map(|s| s.text.clone());
-                let after = segments
-                    .iter()
-                    .find(|s| s.start >= clip.end - 1e-9)
-                    .map(|s| s.text.clone());
+                let text = super::semantic::source(clip, segments);
+                let before = super::semantic::source(
+                    &Clip {
+                        start: (clip.start - 30.0).max(0.0),
+                        end: clip.start,
+                        ..clip.clone()
+                    },
+                    segments,
+                );
+                let after = super::semantic::source(
+                    &Clip {
+                        start: clip.end,
+                        end: clip.end + 30.0,
+                        ..clip.clone()
+                    },
+                    segments,
+                );
                 serde_json::json!({
                     "id": labels[i],
                     "start": (clip.start * 1000.0).round() / 1000.0,
@@ -461,10 +478,10 @@ pub(crate) fn evaluate_batch_with(
             .collect();
         let data = serde_json::json!({"candidates": items});
         let schema = serde_json::json!({"type":"object","additionalProperties":false,"required":["items"],"properties":{"items":{"type":"array","maxItems":chunk.len(),"items":{
-            "type":"object","additionalProperties":false,"required":["id","score","reason","nature","advertising"],"properties":{
+            "type":"object","additionalProperties":false,"required":["id","score","reason","nature","advertising","standalone","complete"],"properties":{
                 "id":{"type":"string","enum":labels},"score":{"type":"integer","minimum":0,"maximum":100},"reason":{"type":"string"},
                 "nature":{"type":"string","enum":["relato","humor","explicacao","opiniao","demonstracao"]},
-                "advertising":{"type":"boolean"}}}}}});
+                "advertising":{"type":"boolean"},"standalone":{"type":"boolean"},"complete":{"type":"boolean"}}}}}});
         let prompt = engine.prompt(include_str!("evaluate-prompt.txt"), &data)?;
         let output = engine.generate(
             scratch,
@@ -653,7 +670,14 @@ pub(crate) fn resolve(
                         judgment.reason
                     ));
                     contender.clip.score = judgment.score;
-                    contender.valid_score = Some(judgment.score);
+                    contender.valid_score =
+                        (judgment.standalone && judgment.complete).then_some(judgment.score);
+                    if !judgment.standalone || !judgment.complete {
+                        eprintln!(
+                            "[clips] {} recusado: abertura autônoma={}, ideia completa={}",
+                            judgment.id, judgment.standalone, judgment.complete
+                        );
+                    }
                     contender.nature = Some(judgment.nature);
                     contender.advertising = judgment.advertising;
                     evaluated += 1;
@@ -823,6 +847,8 @@ mod tests {
             reason: reason.into(),
             nature: Nature::Relato,
             advertising: false,
+            standalone: true,
+            complete: true,
         }
     }
 
@@ -844,6 +870,49 @@ mod tests {
             last_id: last,
             score,
         }
+    }
+
+    #[test]
+    fn incomplete_or_context_dependent_candidates_cannot_win_with_high_scores() {
+        let segments = (0..60)
+            .map(|id| Segment {
+                id: id.to_string(),
+                start: id as f64 * 4.0,
+                end: id as f64 * 4.0 + 3.9,
+                text: "Uma conversa completa.".into(),
+                words: vec![],
+            })
+            .collect::<Vec<_>>();
+        let proposals = vec![(
+            0..60,
+            vec![
+                candidate(2, 5, 99),
+                candidate(10, 13, 98),
+                candidate(20, 23, 70),
+            ],
+        )];
+        let evaluate = |_clips: &[Clip], _speech: &[Segment]| {
+            let mut context = judgment("E1", 99, "Contagem sem apresentar a lista");
+            context.standalone = false;
+            let mut unfinished = judgment("E2", 98, "Resposta continua depois do corte");
+            unfinished.complete = false;
+            Ok(vec![
+                context,
+                unfinished,
+                judgment("E3", 70, "Ideia completa"),
+            ])
+        };
+        let selected = resolve(
+            &proposals,
+            &segments,
+            "media",
+            240.0,
+            &options(3, 10.0, 120.0),
+            &evaluate,
+        )
+        .unwrap();
+        assert_eq!(selected.len(), 1);
+        assert_eq!(selected[0].start, segments[20].start);
     }
 
     #[test]
@@ -963,6 +1032,7 @@ mod tests {
             analysis_signature: None,
             analysis_stale: None,
             multimodal: None,
+            face_framing: None,
             created_at_ms: None,
             deleted: None,
             engine: None,
@@ -1556,6 +1626,8 @@ mod automatic_tests {
             reason: reason.into(),
             nature,
             advertising,
+            standalone: true,
+            complete: true,
         }
     }
     fn candidate(first: usize, last: usize, score: u8) -> Candidate {
@@ -1746,21 +1818,18 @@ mod automatic_tests {
     #[test]
     fn avaliacao_parseia_natureza_e_publicidade() {
         let reply = serde_json::from_str::<EvaluationReply>(
-            r#"{"items":[{"id":"E1","score":70,"reason":"punchline fecha","nature":"humor","advertising":false},
-                {"id":"E2","score":55,"reason":"cupom","nature":"explicacao","advertising":true}]}"#,
+            r#"{"items":[{"id":"E1","score":70,"reason":"punchline fecha","nature":"humor","advertising":false,"standalone":true,"complete":true},
+                {"id":"E2","score":55,"reason":"cupom","nature":"explicacao","advertising":true,"standalone":true,"complete":true}]}"#,
         )
         .unwrap();
         assert_eq!(reply.items[0].nature, Nature::Humor);
         assert!(!reply.items[0].advertising);
         assert_eq!(reply.items[1].nature, Nature::Explicacao);
         assert!(reply.items[1].advertising);
-        // saída antiga sem os campos ainda parseia (defaults seguros)
         let legacy = serde_json::from_str::<EvaluationReply>(
             r#"{"items":[{"id":"E3","score":60,"reason":"ok"}]}"#,
-        )
-        .unwrap();
-        assert_eq!(legacy.items[0].nature, Nature::Relato);
-        assert!(!legacy.items[0].advertising);
+        );
+        assert!(legacy.is_err());
     }
 
     // ── Atualização 16: invariável GLOBAL de não-sobreposição ────────────
@@ -1769,7 +1838,7 @@ mod automatic_tests {
     }
 
     #[test]
-    fn REPRODUCAO_promocional_sobreposto_a_editorial_nao_pode_entrar() {
+    fn reproducao_promocional_sobreposto_a_editorial_nao_pode_entrar() {
         // Cenário do ofício 16: editorial A 20–60 (85), promocional B 40–70
         // (75), promocional C 75–95 (65). Segmentos de 10s: A=(2,5) B=(4,6)
         // C=(7,9). Esperado: A + C (B conflita com A temporalmente).

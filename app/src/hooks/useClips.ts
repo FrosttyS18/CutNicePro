@@ -37,9 +37,10 @@ export function useClips(projectId: string, mediaId?: string) {
     setLoading(true);
     void (async () => {
       const stop = await listen<unknown>("clips://job", event => {
-        if (disposed || !api.isClipJob(event.payload) || event.payload.projectId !== projectId) return;
-        setJob(event.payload);
-        if (event.payload.state === "completed" && event.payload.stage === "analyzing") {
+        const snapshot = event.payload;
+        if (disposed || !api.isClipJob(snapshot) || snapshot.projectId !== projectId) return;
+        setJob(current => current?.jobId === snapshot.jobId && current.state === "failed" ? current : snapshot);
+        if (snapshot.state === "completed" && snapshot.stage === "analyzing") {
           void api.getClips(projectId, mediaId).then(value => { if (!disposed) setCollection(value); }).catch(e => { if (!disposed) setError(api.clipMessage(e)); });
         }
       });
@@ -73,7 +74,7 @@ export function useClips(projectId: string, mediaId?: string) {
           const total = result.clips.filter(clip => !clip.deleted).length;
           const base = added
             ? `${added} ${added === 1 ? "novo corte adicionado" : "novos cortes adicionados"} — ${total} ${total === 1 ? "corte no total" : "cortes no total"}.`
-            : `Nenhum corte novo encontrado — sua biblioteca está mantida com ${total} ${total === 1 ? "corte" : "cortes"}.`;
+            : `Nenhum corte novo foi aprovado nesta rodada. As sugestões se repetiram ou não passaram nos critérios de contexto e conclusão. Seus ${total} ${total === 1 ? "corte salvo foi mantido" : "cortes salvos foram mantidos"}.`;
           const failed = result.clips.filter(clip => clip.analysisError).length;
           setNotice(failed ? `${base} ${failed} ${failed === 1 ? "precisa" : "precisam"} de nova análise.` : base);
         } else {
@@ -91,10 +92,13 @@ export function useClips(projectId: string, mediaId?: string) {
       const latest = await api.getClipJob().catch(() => null);
       if (version !== epoch.current) return { status: "abandoned" };
       const snapshot = api.isClipJob(latest) && latest.jobId === jobId ? latest : null;
-      if (snapshot) setJob(snapshot);
-      else setJob({ jobId, projectId, stage, operation:kind, state: "failed", progress: 0, error: String(e) });
-      if (snapshot?.state === "cancelled") return { status: "cancelled" };
-      return { status: "failed", error: snapshot?.error ?? String(e) };
+      if (snapshot?.state === "cancelled") {
+        setJob(snapshot);
+        return { status: "cancelled" };
+      }
+      const failure = snapshot?.state === "failed" && snapshot.error ? snapshot.error : String(e);
+      setJob({ jobId, projectId, stage, operation:kind, state: "failed", progress: snapshot?.progress ?? 0, error: failure });
+      return { status: "failed", error: failure };
     } finally { pending.current = false; }
   }
   function generate(options: api.ClipOptions) {

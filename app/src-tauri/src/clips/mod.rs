@@ -1,8 +1,12 @@
 mod analysis_types;
+#[cfg(test)]
+mod autoclip_runtime_tests;
 pub mod borders;
 pub mod commands;
 mod content;
+mod editorial;
 mod evidence;
+mod face_framing;
 mod generation;
 pub mod multimodal;
 #[cfg(test)]

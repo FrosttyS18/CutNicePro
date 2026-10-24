@@ -1,9 +1,9 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useLayoutEffect, useRef } from "react";
 import { shouldTogglePlayback } from "../lib/playback";
 
 export function usePlaybackShortcut(enabled:boolean,toggle:()=>void) {
   const latest=useRef(toggle);
-  latest.current=toggle;
+  useLayoutEffect(()=>{latest.current=toggle;},[toggle]);
   useEffect(()=>{
     if(!enabled) return;
     function handle(event:KeyboardEvent) {

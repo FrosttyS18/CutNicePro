@@ -15,11 +15,15 @@ function load(mediaId: string) {
 export function useTimelinePreview(mediaId: string | undefined) {
   const [data,setData] = useState<{id:string;frames:string[];peaks:number[];hasAudio:boolean}|null>(null);
   const [error,setError] = useState<string|null>(null);
+  const [requestedMedia,setRequestedMedia] = useState(mediaId);
+  if (requestedMedia !== mediaId) {
+    setRequestedMedia(mediaId);
+    setData(null); setError(null);
+  }
   useEffect(() => {
     if (!mediaId) return;
     let disposed = false;
     const urls: string[] = [];
-    setError(null);
     void load(mediaId).then(result => {
       if (disposed) return;
       if (result.version !== 2 || !Array.isArray(result.frames) || !result.frames.every(f => Array.isArray(f) && f.every(b => Number.isInteger(b) && b>=0 && b<=255))

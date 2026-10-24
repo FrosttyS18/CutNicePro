@@ -33,10 +33,13 @@ describe("transcrição, tempo e navegação",()=>{
     expect(parseTranscript({...record,segments:[{id:"old",start:0,end:1,text:"Legado"}]}).segments).toHaveLength(1);
   });
   it("recolhe as seções em região própria e destaca uma única palavra quando abertas",()=>{
-    const html=renderToStaticMarkup(<TranscriptPanel segments={[segment]} demo={false} generated currentTime={1.3} canSeek onSeek={noop} onText={noop}/>);
+    const html=renderToStaticMarkup(<TranscriptPanel segments={[segment]} demo={false} generated currentTime={0} canSeek onSeek={noop} onText={noop}/>);
     expect(html).toContain('class="transcript-scroll"');
     expect(html).toContain('aria-label="Texto da transcrição"');
     expect(html).toContain('aria-expanded="false"');
+    const playing=renderToStaticMarkup(<TranscriptPanel segments={[segment]} demo={false} generated currentTime={1.3} canSeek onSeek={noop} onText={noop}/>);
+    expect(playing).toContain('aria-expanded="true"');
+    expect(playing.match(/aria-current="true"/g)).toHaveLength(1);
     const sentence=renderToStaticMarkup(<TranscriptSentence segment={segment} activeIndex={1} canSeek readOnly={false} editing={false} onSeek={noop} onEdit={noop} onText={noop}/>);
     expect(sentence.match(/aria-current="true"/g)).toHaveLength(1);
     expect(html).not.toContain("-Olá");

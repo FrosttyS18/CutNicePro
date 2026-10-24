@@ -18,6 +18,12 @@ export function ClipDetails({clip,transcript,time,loading,analyzing,error,onSeek
   return <section className="clip-inspection__details" aria-label="Detalhes do clipe">
     <header><h3>{clip.title}</h3><p>{formatPlaybackTime(from)} — {formatPlaybackTime(to)} · {Math.round(to-from)} s</p>
       {valid && <strong className="clip-inspection__score">{clip.score}<small>/100</small></strong>}
+      {clip.faceFraming && <p className="flow-muted">{
+        clip.faceFraming.status === "stable" ? "Rosto detectado para o enquadramento inicial."
+          : clip.faceFraming.status === "ambiguous" ? "Quadro inteiro recomendado para manter as pessoas visíveis."
+          : clip.faceFraming.status === "noFaces" ? "Nenhum rosto seguro para ajustar; enquadramento original mantido."
+          : "Detecção de rostos indisponível; enquadramento original mantido."
+      }</p>}
     </header>
     <div className="clip-details__views" role="group" aria-label="Conteúdo do clipe">
       <button type="button" aria-pressed={view === "analysis"} onClick={() => setView("analysis")}>Análise do trecho</button>

@@ -114,6 +114,7 @@ pub fn select(
                 analysis_signature: None,
                 analysis_stale: None,
                 multimodal: None,
+                face_framing: None,
                 created_at_ms: None,
                 deleted: None,
                 engine: None,

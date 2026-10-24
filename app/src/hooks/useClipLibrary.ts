@@ -9,9 +9,13 @@ export function useClipLibrary(projects: ProjectMeta[]) {
   const [error,setError] = useState<string | null>(null);
   const [partial,setPartial] = useState<string | null>(null);
   const [revision,setRevision] = useState(0);
+  const [request,setRequest] = useState({projects,revision});
+  if (request.projects !== projects || request.revision !== revision) {
+    setRequest({projects,revision});
+    setLoading(true); setError(null); setPartial(null);
+  }
   useEffect(() => {
     let disposed = false;
-    setLoading(true); setError(null); setPartial(null);
     void loadClipLibrary(projects).then(({ entries: found, failed }) => {
         if (disposed) return;
         setEntries(found);

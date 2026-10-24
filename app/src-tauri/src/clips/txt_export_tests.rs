@@ -77,7 +77,7 @@ fn export_real_txt_clips_when_requested() {
             "volume":1,"muted":false,"background":"#000000","text":"","trimStart":trim[0].as_f64().unwrap(),"trimEnd":trim[1].as_f64().unwrap(),
             "segments": edited
         })).unwrap();
-        let (scratch, output) = crate::render::pipeline::run(
+        let (_scratch, output) = crate::render::pipeline::run(
             &base,
             &media,
             &transcript.segments,

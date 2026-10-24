@@ -1,0 +1,3111 @@
+[
+  {
+    "id": "chunk-6-38",
+    "start": 1170.08,
+    "end": 1172.04,
+    "text": "que é UX e UI, e aí tu consegue",
+    "words": [
+      {
+        "text": "que",
+        "start": 1170.2,
+        "end": 1170.21
+      },
+      {
+        "text": "é",
+        "start": 1170.28,
+        "end": 1170.4
+      },
+      {
+        "text": "UX",
+        "start": 1170.44,
+        "end": 1170.56
+      },
+      {
+        "text": "e",
+        "start": 1170.64,
+        "end": 1170.78
+      },
+      {
+        "text": "UI,",
+        "start": 1170.78,
+        "end": 1171.1
+      },
+      {
+        "text": "e",
+        "start": 1171.46,
+        "end": 1171.58
+      },
+      {
+        "text": "aí",
+        "start": 1171.58,
+        "end": 1171.7
+      },
+      {
+        "text": "tu",
+        "start": 1171.7,
+        "end": 1171.74
+      }
+    ]
+  },
+  {
+    "id": "chunk-6-39",
+    "start": 1172.04,
+    "end": 1174.02,
+    "text": "fazer um case em 4 horas",
+    "words": [
+      {
+        "text": "fazer",
+        "start": 1172.24,
+        "end": 1172.36
+      },
+      {
+        "text": "um",
+        "start": 1172.36,
+        "end": 1172.64
+      },
+      {
+        "text": "case",
+        "start": 1172.64,
+        "end": 1172.94
+      },
+      {
+        "text": "em",
+        "start": 1172.94,
+        "end": 1173.23
+      },
+      {
+        "text": "4",
+        "start": 1173.56,
+        "end": 1174.0
+      },
+      {
+        "text": "horas",
+        "start": 1174.0,
+        "end": 1174.01
+      }
+    ]
+  },
+  {
+    "id": "chunk-6-40",
+    "start": 1174.02,
+    "end": 1176.2,
+    "text": "porra, não me ajuda né gente",
+    "words": [
+      {
+        "text": "porra,",
+        "start": 1174.6,
+        "end": 1175.28
+      },
+      {
+        "text": "não",
+        "start": 1175.28,
+        "end": 1175.42
+      },
+      {
+        "text": "me",
+        "start": 1175.42,
+        "end": 1175.76
+      },
+      {
+        "text": "ajuda",
+        "start": 1175.76,
+        "end": 1175.9
+      },
+      {
+        "text": "né",
+        "start": 1175.9,
+        "end": 1175.94
+      },
+      {
+        "text": "gente",
+        "start": 1176.14,
+        "end": 1176.2
+      }
+    ]
+  },
+  {
+    "id": "chunk-6-41",
+    "start": 1176.2,
+    "end": 1177.12,
+    "text": "pô, cês tão querendo",
+    "words": [
+      {
+        "text": "pô,",
+        "start": 1176.34,
+        "end": 1176.58
+      },
+      {
+        "text": "cês",
+        "start": 1176.58,
+        "end": 1176.8
+      },
+      {
+        "text": "tão",
+        "start": 1176.8,
+        "end": 1176.98
+      },
+      {
+        "text": "querendo",
+        "start": 1176.98,
+        "end": 1177.12
+      }
+    ]
+  },
+  {
+    "id": "chunk-6-42",
+    "start": 1177.12,
+    "end": 1180.12,
+    "text": "cês tão querendo enganar quem trabalha com isso há muito tempo",
+    "words": [
+      {
+        "text": "cês",
+        "start": 1177.76,
+        "end": 1177.98
+      },
+      {
+        "text": "tão",
+        "start": 1177.98,
+        "end": 1178.16
+      },
+      {
+        "text": "querendo",
+        "start": 1178.16,
+        "end": 1178.42
+      },
+      {
+        "text": "enganar",
+        "start": 1178.42,
+        "end": 1178.86
+      },
+      {
+        "text": "quem",
+        "start": 1178.86,
+        "end": 1179.14
+      },
+      {
+        "text": "trabalha",
+        "start": 1179.14,
+        "end": 1179.36
+      },
+      {
+        "text": "com",
+        "start": 1179.36,
+        "end": 1179.5
+      },
+      {
+        "text": "isso",
+        "start": 1179.5,
+        "end": 1179.54
+      },
+      {
+        "text": "há",
+        "start": 1179.62,
+        "end": 1179.63
+      },
+      {
+        "text": "muito",
+        "start": 1179.76,
+        "end": 1179.87
+      },
+      {
+        "text": "tempo",
+        "start": 1180.1,
+        "end": 1180.12
+      }
+    ]
+  },
+  {
+    "id": "chunk-6-43",
+    "start": 1180.12,
+    "end": 1181.94,
+    "text": "é besteira, cê vai aplicar",
+    "words": [
+      {
+        "text": "é",
+        "start": 1180.42,
+        "end": 1180.72
+      },
+      {
+        "text": "besteira,",
+        "start": 1180.72,
+        "end": 1181.34
+      },
+      {
+        "text": "cê",
+        "start": 1181.34,
+        "end": 1181.46
+      },
+      {
+        "text": "vai",
+        "start": 1181.46,
+        "end": 1181.78
+      },
+      {
+        "text": "aplicar",
+        "start": 1181.78,
+        "end": 1181.94
+      }
+    ]
+  },
+  {
+    "id": "chunk-6-44",
+    "start": 1181.94,
+    "end": 1184.48,
+    "text": "aí, sabe o que vai acontecer? cê vai aplicar em 100 vaga",
+    "words": [
+      {
+        "text": "aí,",
+        "start": 1182.44,
+        "end": 1182.74
+      },
+      {
+        "text": "sabe",
+        "start": 1182.74,
+        "end": 1182.82
+      },
+      {
+        "text": "o",
+        "start": 1182.82,
+        "end": 1182.84
+      },
+      {
+        "text": "que",
+        "start": 1182.84,
+        "end": 1182.94
+      },
+      {
+        "text": "vai",
+        "start": 1182.94,
+        "end": 1183.22
+      },
+      {
+        "text": "acontecer?",
+        "start": 1183.22,
+        "end": 1183.4
+      },
+      {
+        "text": "cê",
+        "start": 1183.4,
+        "end": 1183.5
+      },
+      {
+        "text": "vai",
+        "start": 1183.5,
+        "end": 1183.74
+      },
+      {
+        "text": "aplicar",
+        "start": 1183.74,
+        "end": 1183.82
+      },
+      {
+        "text": "em",
+        "start": 1183.92,
+        "end": 1183.93
+      },
+      {
+        "text": "100",
+        "start": 1184.1,
+        "end": 1184.28
+      },
+      {
+        "text": "vaga",
+        "start": 1184.28,
+        "end": 1184.48
+      }
+    ]
+  },
+  {
+    "id": "chunk-6-45",
+    "start": 1184.48,
+    "end": 1186.18,
+    "text": "cê vai receber 100 negativa",
+    "words": [
+      {
+        "text": "cê",
+        "start": 1184.94,
+        "end": 1185.06
+      },
+      {
+        "text": "vai",
+        "start": 1185.06,
+        "end": 1185.4
+      },
+      {
+        "text": "receber",
+        "start": 1185.4,
+        "end": 1185.6
+      },
+      {
+        "text": "100",
+        "start": 1185.6,
+        "end": 1185.67
+      },
+      {
+        "text": "negativa",
+        "start": 1185.8,
+        "end": 1186.18
+      }
+    ]
+  },
+  {
+    "id": "chunk-6-46",
+    "start": 1186.18,
+    "end": 1187.68,
+    "text": "cê vai lá pro LinkedIn chorar",
+    "words": [
+      {
+        "text": "cê",
+        "start": 1186.56,
+        "end": 1186.66
+      },
+      {
+        "text": "vai",
+        "start": 1186.66,
+        "end": 1186.76
+      },
+      {
+        "text": "lá",
+        "start": 1186.76,
+        "end": 1186.88
+      },
+      {
+        "text": "pro",
+        "start": 1186.88,
+        "end": 1187.18
+      },
+      {
+        "text": "LinkedIn",
+        "start": 1187.18,
+        "end": 1187.27
+      },
+      {
+        "text": "chorar",
+        "start": 1187.46,
+        "end": 1187.68
+      }
+    ]
+  },
+  {
+    "id": "chunk-6-47",
+    "start": 1187.68,
+    "end": 1190.28,
+    "text": "mas é porque você tá se expondo do jeito errado",
+    "words": [
+      {
+        "text": "mas",
+        "start": 1188.34,
+        "end": 1188.44
+      },
+      {
+        "text": "é",
+        "start": 1188.44,
+        "end": 1188.58
+      },
+      {
+        "text": "porque",
+        "start": 1188.58,
+        "end": 1188.96
+      },
+      {
+        "text": "você",
+        "start": 1188.96,
+        "end": 1189.14
+      },
+      {
+        "text": "tá",
+        "start": 1189.14,
+        "end": 1189.3
+      },
+      {
+        "text": "se",
+        "start": 1189.3,
+        "end": 1189.5
+      },
+      {
+        "text": "expondo",
+        "start": 1189.5,
+        "end": 1189.76
+      },
+      {
+        "text": "do",
+        "start": 1189.76,
+        "end": 1189.88
+      },
+      {
+        "text": "jeito",
+        "start": 1189.88,
+        "end": 1190.22
+      },
+      {
+        "text": "errado",
+        "start": 1190.22,
+        "end": 1190.28
+      }
+    ]
+  },
+  {
+    "id": "chunk-6-48",
+    "start": 1190.28,
+    "end": 1192.42,
+    "text": "você não tá seguindo os passos que deveria",
+    "words": [
+      {
+        "text": "você",
+        "start": 1190.86,
+        "end": 1191.04
+      },
+      {
+        "text": "não",
+        "start": 1191.04,
+        "end": 1191.16
+      },
+      {
+        "text": "tá",
+        "start": 1191.16,
+        "end": 1191.38
+      },
+      {
+        "text": "seguindo",
+        "start": 1191.38,
+        "end": 1191.6
+      },
+      {
+        "text": "os",
+        "start": 1191.6,
+        "end": 1191.78
+      },
+      {
+        "text": "passos",
+        "start": 1191.78,
+        "end": 1191.94
+      },
+      {
+        "text": "que",
+        "start": 1191.94,
+        "end": 1191.96
+      },
+      {
+        "text": "deveria",
+        "start": 1192.14,
+        "end": 1192.42
+      }
+    ]
+  },
+  {
+    "id": "chunk-6-49",
+    "start": 1192.42,
+    "end": 1194.42,
+    "text": "então, vamos falar agora",
+    "words": [
+      {
+        "text": "então,",
+        "start": 1193.28,
+        "end": 1193.9
+      },
+      {
+        "text": "vamos",
+        "start": 1193.9,
+        "end": 1194.16
+      },
+      {
+        "text": "falar",
+        "start": 1194.16,
+        "end": 1194.18
+      },
+      {
+        "text": "agora",
+        "start": 1194.4,
+        "end": 1194.42
+      }
+    ]
+  },
+  {
+    "id": "chunk-6-50",
+    "start": 1194.42,
+    "end": 1196.12,
+    "text": "de quantidade, porque foda-se",
+    "words": [
+      {
+        "text": "de",
+        "start": 1194.54,
+        "end": 1194.96
+      },
+      {
+        "text": "quantidade,",
+        "start": 1194.96,
+        "end": 1195.38
+      },
+      {
+        "text": "porque",
+        "start": 1195.38,
+        "end": 1195.47
+      },
+      {
+        "text": "foda-se",
+        "start": 1195.84,
+        "end": 1196.12
+      }
+    ]
+  },
+  {
+    "id": "chunk-6-51",
+    "start": 1196.12,
+    "end": 1198.18,
+    "text": "com os colachos. Vocês não escutam mesmo?",
+    "words": [
+      {
+        "text": "com",
+        "start": 1196.26,
+        "end": 1196.4
+      },
+      {
+        "text": "os",
+        "start": 1196.4,
+        "end": 1196.58
+      },
+      {
+        "text": "colachos.",
+        "start": 1196.58,
+        "end": 1197.4
+      },
+      {
+        "text": "Vocês",
+        "start": 1197.4,
+        "end": 1197.54
+      },
+      {
+        "text": "não",
+        "start": 1197.54,
+        "end": 1197.72
+      },
+      {
+        "text": "escutam",
+        "start": 1197.72,
+        "end": 1197.9
+      },
+      {
+        "text": "mesmo?",
+        "start": 1198.16,
+        "end": 1198.18
+      }
+    ]
+  },
+  {
+    "id": "chunk-6-52",
+    "start": 1198.38,
+    "end": 1200.12,
+    "text": "Não adianta, eu tô aqui, tem 10 anos na internet",
+    "words": [
+      {
+        "text": "Não",
+        "start": 1198.5,
+        "end": 1198.64
+      },
+      {
+        "text": "adianta,",
+        "start": 1198.64,
+        "end": 1199.06
+      },
+      {
+        "text": "eu",
+        "start": 1198.96,
+        "end": 1199.06
+      },
+      {
+        "text": "tô",
+        "start": 1199.06,
+        "end": 1199.22
+      },
+      {
+        "text": "aqui,",
+        "start": 1199.22,
+        "end": 1199.36
+      },
+      {
+        "text": "tem",
+        "start": 1199.36,
+        "end": 1199.6
+      },
+      {
+        "text": "10",
+        "start": 1199.6,
+        "end": 1199.76
+      },
+      {
+        "text": "anos",
+        "start": 1199.76,
+        "end": 1199.77
+      },
+      {
+        "text": "na",
+        "start": 1199.84,
+        "end": 1200.12
+      }
+    ]
+  },
+  {
+    "id": "chunk-6-53",
+    "start": 1200.12,
+    "end": 1202.1,
+    "text": "falando a mesma coisa. Qual a quantidade",
+    "words": [
+      {
+        "text": "falando",
+        "start": 1200.36,
+        "end": 1200.48
+      },
+      {
+        "text": "a",
+        "start": 1200.48,
+        "end": 1200.55
+      },
+      {
+        "text": "mesma",
+        "start": 1200.6,
+        "end": 1200.82
+      },
+      {
+        "text": "coisa.",
+        "start": 1200.9,
+        "end": 1201.56
+      },
+      {
+        "text": "Qual",
+        "start": 1201.56,
+        "end": 1201.68
+      },
+      {
+        "text": "a",
+        "start": 1201.68,
+        "end": 1202.08
+      },
+      {
+        "text": "quantidade",
+        "start": 1202.08,
+        "end": 1202.09
+      }
+    ]
+  },
+  {
+    "id": "chunk-6-54",
+    "start": 1202.1,
+    "end": 1203.98,
+    "text": "de case? 3 a 5.",
+    "words": [
+      {
+        "text": "de",
+        "start": 1202.4,
+        "end": 1202.76
+      },
+      {
+        "text": "case?",
+        "start": 1202.76,
+        "end": 1203.46
+      },
+      {
+        "text": "3",
+        "start": 1203.46,
+        "end": 1203.64
+      },
+      {
+        "text": "a",
+        "start": 1203.64,
+        "end": 1203.96
+      },
+      {
+        "text": "5.",
+        "start": 1203.96,
+        "end": 1203.98
+      }
+    ]
+  },
+  {
+    "id": "chunk-6-55",
+    "start": 1204.44,
+    "end": 1206.18,
+    "text": "Bem feito? 3 a 5.",
+    "words": [
+      {
+        "text": "Bem",
+        "start": 1204.6,
+        "end": 1205.0
+      },
+      {
+        "text": "feito?",
+        "start": 1205.0,
+        "end": 1205.58
+      },
+      {
+        "text": "3",
+        "start": 1205.58,
+        "end": 1205.82
+      },
+      {
+        "text": "a",
+        "start": 1205.82,
+        "end": 1206.12
+      },
+      {
+        "text": "5.",
+        "start": 1206.12,
+        "end": 1206.18
+      }
+    ]
+  },
+  {
+    "id": "chunk-6-56",
+    "start": 1206.62,
+    "end": 1208.02,
+    "text": "Meia boca? Uns 8.",
+    "words": [
+      {
+        "text": "Meia",
+        "start": 1206.74,
+        "end": 1207.22
+      },
+      {
+        "text": "boca?",
+        "start": 1207.22,
+        "end": 1207.74
+      },
+      {
+        "text": "Uns",
+        "start": 1207.74,
+        "end": 1207.98
+      },
+      {
+        "text": "8.",
+        "start": 1207.98,
+        "end": 1208.02
+      }
+    ]
+  },
+  {
+    "id": "chunk-6-57",
+    "start": 1208.34,
+    "end": 1210.26,
+    "text": "Uns 8 pra 15. Agora,",
+    "words": [
+      {
+        "text": "Uns",
+        "start": 1208.54,
+        "end": 1208.72
+      },
+      {
+        "text": "8",
+        "start": 1208.72,
+        "end": 1208.88
+      },
+      {
+        "text": "pra",
+        "start": 1208.88,
+        "end": 1209.24
+      },
+      {
+        "text": "15.",
+        "start": 1209.24,
+        "end": 1210.24
+      },
+      {
+        "text": "Agora,",
+        "start": 1210.24,
+        "end": 1210.26
+      }
+    ]
+  },
+  {
+    "id": "chunk-6-58",
+    "start": 1210.9,
+    "end": 1212.04,
+    "text": "é melhor 8 ou 15,",
+    "words": [
+      {
+        "text": "é",
+        "start": 1211.02,
+        "end": 1211.28
+      },
+      {
+        "text": "melhor",
+        "start": 1211.28,
+        "end": 1211.62
+      },
+      {
+        "text": "8",
+        "start": 1211.62,
+        "end": 1211.76
+      },
+      {
+        "text": "ou",
+        "start": 1211.76,
+        "end": 1212.0
+      },
+      {
+        "text": "15,",
+        "start": 1212.0,
+        "end": 1212.04
+      }
+    ]
+  },
+  {
+    "id": "chunk-6-59",
+    "start": 1212.14,
+    "end": 1213.68,
+    "text": "meia boca ou 3 bem feito?",
+    "words": [
+      {
+        "text": "meia",
+        "start": 1212.2,
+        "end": 1212.64
+      },
+      {
+        "text": "boca",
+        "start": 1212.64,
+        "end": 1212.9
+      },
+      {
+        "text": "ou",
+        "start": 1212.9,
+        "end": 1213.16
+      },
+      {
+        "text": "3",
+        "start": 1213.16,
+        "end": 1213.38
+      },
+      {
+        "text": "bem",
+        "start": 1213.38,
+        "end": 1213.66
+      },
+      {
+        "text": "feito?",
+        "start": 1213.66,
+        "end": 1213.68
+      }
+    ]
+  },
+  {
+    "id": "chunk-6-60",
+    "start": 1214.16,
+    "end": 1215.94,
+    "text": "Sempre 3 bem feito.",
+    "words": [
+      {
+        "text": "Sempre",
+        "start": 1214.62,
+        "end": 1214.67
+      },
+      {
+        "text": "3",
+        "start": 1214.98,
+        "end": 1215.17
+      },
+      {
+        "text": "bem",
+        "start": 1215.66,
+        "end": 1215.68
+      },
+      {
+        "text": "feito.",
+        "start": 1215.9,
+        "end": 1215.94
+      }
+    ]
+  },
+  {
+    "id": "chunk-6-61",
+    "start": 1216.42,
+    "end": 1217.92,
+    "text": "Eu não vou olhar 15 case",
+    "words": [
+      {
+        "text": "Eu",
+        "start": 1216.62,
+        "end": 1216.76
+      },
+      {
+        "text": "não",
+        "start": 1216.76,
+        "end": 1216.98
+      },
+      {
+        "text": "vou",
+        "start": 1216.98,
+        "end": 1217.22
+      },
+      {
+        "text": "olhar",
+        "start": 1217.22,
+        "end": 1217.6
+      },
+      {
+        "text": "15",
+        "start": 1217.6,
+        "end": 1217.9
+      },
+      {
+        "text": "case",
+        "start": 1217.9,
+        "end": 1217.92
+      }
+    ]
+  },
+  {
+    "id": "chunk-6-62",
+    "start": 1217.92,
+    "end": 1219.72,
+    "text": "de qualquer maneira. De novo, vamos repetir.",
+    "words": [
+      {
+        "text": "de",
+        "start": 1218.08,
+        "end": 1218.32
+      },
+      {
+        "text": "qualquer",
+        "start": 1218.32,
+        "end": 1218.68
+      },
+      {
+        "text": "maneira.",
+        "start": 1218.68,
+        "end": 1218.96
+      },
+      {
+        "text": "De",
+        "start": 1218.96,
+        "end": 1219.1
+      },
+      {
+        "text": "novo,",
+        "start": 1219.1,
+        "end": 1219.32
+      },
+      {
+        "text": "vamos",
+        "start": 1219.32,
+        "end": 1219.56
+      },
+      {
+        "text": "repetir.",
+        "start": 1219.56,
+        "end": 1219.72
+      }
+    ]
+  },
+  {
+    "id": "chunk-6-63",
+    "start": 1219.86,
+    "end": 1220.88,
+    "text": "Eu tenho 1.000 aplicação.",
+    "words": [
+      {
+        "text": "Eu",
+        "start": 1219.96,
+        "end": 1220.1
+      },
+      {
+        "text": "tenho",
+        "start": 1220.1,
+        "end": 1220.28
+      },
+      {
+        "text": "1.000",
+        "start": 1220.28,
+        "end": 1220.45
+      },
+      {
+        "text": "aplicação.",
+        "start": 1220.52,
+        "end": 1220.88
+      }
+    ]
+  },
+  {
+    "id": "chunk-6-64",
+    "start": 1221.66,
+    "end": 1223.86,
+    "text": "Só com você eu vou perder 20 minutos?",
+    "words": [
+      {
+        "text": "Só",
+        "start": 1221.84,
+        "end": 1222.5
+      },
+      {
+        "text": "com",
+        "start": 1222.5,
+        "end": 1222.8
+      },
+      {
+        "text": "você",
+        "start": 1222.8,
+        "end": 1222.92
+      },
+      {
+        "text": "eu",
+        "start": 1222.92,
+        "end": 1223.0
+      },
+      {
+        "text": "vou",
+        "start": 1223.0,
+        "end": 1223.24
+      },
+      {
+        "text": "perder",
+        "start": 1223.24,
+        "end": 1223.48
+      },
+      {
+        "text": "20",
+        "start": 1223.48,
+        "end": 1223.84
+      },
+      {
+        "text": "minutos?",
+        "start": 1223.84,
+        "end": 1223.86
+      }
+    ]
+  },
+  {
+    "id": "chunk-6-65",
+    "start": 1224.02,
+    "end": 1225.12,
+    "text": "Impossível, isso não vai acontecer.",
+    "words": [
+      {
+        "text": "Impossível,",
+        "start": 1224.18,
+        "end": 1224.56
+      },
+      {
+        "text": "isso",
+        "start": 1224.56,
+        "end": 1224.66
+      },
+      {
+        "text": "não",
+        "start": 1224.66,
+        "end": 1224.76
+      },
+      {
+        "text": "vai",
+        "start": 1224.76,
+        "end": 1225.12
+      }
+    ]
+  },
+  {
+    "id": "chunk-6-66",
+    "start": 1225.62,
+    "end": 1228.92,
+    "text": "Três bem feitos é muito melhor do que 15 e meia boca.",
+    "words": [
+      {
+        "text": "Três",
+        "start": 1225.74,
+        "end": 1226.06
+      },
+      {
+        "text": "bem",
+        "start": 1226.06,
+        "end": 1226.28
+      },
+      {
+        "text": "feitos",
+        "start": 1226.28,
+        "end": 1226.54
+      },
+      {
+        "text": "é",
+        "start": 1227.1,
+        "end": 1227.48
+      },
+      {
+        "text": "muito",
+        "start": 1227.48,
+        "end": 1227.5
+      },
+      {
+        "text": "melhor",
+        "start": 1227.74,
+        "end": 1227.88
+      },
+      {
+        "text": "do",
+        "start": 1227.88,
+        "end": 1227.98
+      },
+      {
+        "text": "que",
+        "start": 1227.98,
+        "end": 1228.36
+      },
+      {
+        "text": "15",
+        "start": 1228.36,
+        "end": 1228.5
+      },
+      {
+        "text": "e",
+        "start": 1228.5,
+        "end": 1228.52
+      },
+      {
+        "text": "meia",
+        "start": 1228.52,
+        "end": 1228.88
+      },
+      {
+        "text": "boca.",
+        "start": 1228.88,
+        "end": 1228.92
+      }
+    ]
+  },
+  {
+    "id": "chunk-6-67",
+    "start": 1229.38,
+    "end": 1231.66,
+    "text": "Ah, Jota, mas eu tenho um monte de cases que eu fiz na faculdade.",
+    "words": [
+      {
+        "text": "Ah,",
+        "start": 1229.5,
+        "end": 1229.64
+      },
+      {
+        "text": "Jota,",
+        "start": 1229.64,
+        "end": 1229.84
+      },
+      {
+        "text": "mas",
+        "start": 1229.84,
+        "end": 1229.94
+      },
+      {
+        "text": "eu",
+        "start": 1229.94,
+        "end": 1230.06
+      },
+      {
+        "text": "tenho",
+        "start": 1230.06,
+        "end": 1230.26
+      },
+      {
+        "text": "um",
+        "start": 1230.26,
+        "end": 1230.44
+      },
+      {
+        "text": "monte",
+        "start": 1230.44,
+        "end": 1230.6
+      },
+      {
+        "text": "de",
+        "start": 1230.6,
+        "end": 1230.84
+      },
+      {
+        "text": "cases",
+        "start": 1230.84,
+        "end": 1230.86
+      },
+      {
+        "text": "que",
+        "start": 1230.96,
+        "end": 1231.02
+      },
+      {
+        "text": "eu",
+        "start": 1231.02,
+        "end": 1231.03
+      },
+      {
+        "text": "fiz",
+        "start": 1231.14,
+        "end": 1231.24
+      },
+      {
+        "text": "na",
+        "start": 1231.24,
+        "end": 1231.46
+      },
+      {
+        "text": "faculdade.",
+        "start": 1231.46,
+        "end": 1231.66
+      }
+    ]
+  },
+  {
+    "id": "chunk-6-68",
+    "start": 1231.88,
+    "end": 1233.52,
+    "text": "Esquece. Três bem feitos.",
+    "words": [
+      {
+        "text": "Esquece.",
+        "start": 1231.98,
+        "end": 1232.72
+      },
+      {
+        "text": "Três",
+        "start": 1232.72,
+        "end": 1233.08
+      },
+      {
+        "text": "bem",
+        "start": 1233.08,
+        "end": 1233.32
+      },
+      {
+        "text": "feitos.",
+        "start": 1233.32,
+        "end": 1233.52
+      }
+    ]
+  },
+  {
+    "id": "chunk-6-69",
+    "start": 1233.92,
+    "end": 1236.88,
+    "text": "E eu tô falando bem feito com todas as regras que eu te passei nesse vídeo.",
+    "words": [
+      {
+        "text": "E",
+        "start": 1234.0,
+        "end": 1234.08
+      },
+      {
+        "text": "eu",
+        "start": 1234.08,
+        "end": 1234.18
+      },
+      {
+        "text": "tô",
+        "start": 1234.18,
+        "end": 1234.42
+      },
+      {
+        "text": "falando",
+        "start": 1234.42,
+        "end": 1234.6
+      },
+      {
+        "text": "bem",
+        "start": 1234.6,
+        "end": 1234.86
+      },
+      {
+        "text": "feito",
+        "start": 1234.86,
+        "end": 1235.02
+      },
+      {
+        "text": "com",
+        "start": 1235.02,
+        "end": 1235.24
+      },
+      {
+        "text": "todas",
+        "start": 1235.24,
+        "end": 1235.29
+      },
+      {
+        "text": "as",
+        "start": 1235.48,
+        "end": 1235.7
+      },
+      {
+        "text": "regras",
+        "start": 1235.7,
+        "end": 1235.86
+      },
+      {
+        "text": "que",
+        "start": 1235.98,
+        "end": 1236.04
+      },
+      {
+        "text": "eu",
+        "start": 1236.04,
+        "end": 1236.1
+      },
+      {
+        "text": "te",
+        "start": 1236.1,
+        "end": 1236.11
+      },
+      {
+        "text": "passei",
+        "start": 1236.3,
+        "end": 1236.52
+      },
+      {
+        "text": "nesse",
+        "start": 1236.52,
+        "end": 1236.86
+      },
+      {
+        "text": "vídeo.",
+        "start": 1236.86,
+        "end": 1236.88
+      }
+    ]
+  },
+  {
+    "id": "chunk-6-70",
+    "start": 1237.36,
+    "end": 1239.38,
+    "text": "Se tiver bem feito, três bem feitos.",
+    "words": [
+      {
+        "text": "Se",
+        "start": 1237.52,
+        "end": 1237.76
+      },
+      {
+        "text": "tiver",
+        "start": 1237.76,
+        "end": 1237.98
+      },
+      {
+        "text": "bem",
+        "start": 1237.98,
+        "end": 1238.34
+      },
+      {
+        "text": "feito,",
+        "start": 1238.34,
+        "end": 1238.86
+      },
+      {
+        "text": "três",
+        "start": 1238.86,
+        "end": 1239.06
+      },
+      {
+        "text": "bem",
+        "start": 1239.06,
+        "end": 1239.22
+      },
+      {
+        "text": "feitos.",
+        "start": 1239.22,
+        "end": 1239.38
+      }
+    ]
+  },
+  {
+    "id": "chunk-6-71",
+    "start": 1239.78,
+    "end": 1242.78,
+    "text": "Quais as plataformas, Jota, pra criar o meu portfólio?",
+    "words": [
+      {
+        "text": "Quais",
+        "start": 1239.86,
+        "end": 1240.12
+      },
+      {
+        "text": "as",
+        "start": 1240.12,
+        "end": 1240.64
+      },
+      {
+        "text": "plataformas,",
+        "start": 1240.64,
+        "end": 1241.22
+      },
+      {
+        "text": "Jota,",
+        "start": 1241.22,
+        "end": 1241.56
+      },
+      {
+        "text": "pra",
+        "start": 1241.56,
+        "end": 1241.9
+      },
+      {
+        "text": "criar",
+        "start": 1241.9,
+        "end": 1242.06
+      },
+      {
+        "text": "o",
+        "start": 1242.06,
+        "end": 1242.18
+      },
+      {
+        "text": "meu",
+        "start": 1242.18,
+        "end": 1242.44
+      },
+      {
+        "text": "portfólio?",
+        "start": 1242.44,
+        "end": 1242.78
+      }
+    ]
+  },
+  {
+    "id": "chunk-6-72",
+    "start": 1243.26,
+    "end": 1246.08,
+    "text": "Eu vou ser talvez o mais direto que eu já fui em relação a essa pergunta",
+    "words": [
+      {
+        "text": "Eu",
+        "start": 1243.38,
+        "end": 1243.54
+      },
+      {
+        "text": "vou",
+        "start": 1243.54,
+        "end": 1243.64
+      },
+      {
+        "text": "ser",
+        "start": 1243.64,
+        "end": 1243.9
+      },
+      {
+        "text": "talvez",
+        "start": 1243.9,
+        "end": 1244.12
+      },
+      {
+        "text": "o",
+        "start": 1244.12,
+        "end": 1244.3
+      },
+      {
+        "text": "mais",
+        "start": 1244.3,
+        "end": 1244.5
+      },
+      {
+        "text": "direto",
+        "start": 1244.5,
+        "end": 1244.72
+      },
+      {
+        "text": "que",
+        "start": 1244.72,
+        "end": 1244.78
+      },
+      {
+        "text": "eu",
+        "start": 1244.78,
+        "end": 1244.88
+      },
+      {
+        "text": "já",
+        "start": 1244.88,
+        "end": 1245.08
+      },
+      {
+        "text": "fui",
+        "start": 1245.08,
+        "end": 1245.2
+      },
+      {
+        "text": "em",
+        "start": 1245.2,
+        "end": 1245.42
+      },
+      {
+        "text": "relação",
+        "start": 1245.42,
+        "end": 1245.52
+      },
+      {
+        "text": "a",
+        "start": 1245.52,
+        "end": 1245.62
+      },
+      {
+        "text": "essa",
+        "start": 1245.62,
+        "end": 1246.08
+      }
+    ]
+  },
+  {
+    "id": "chunk-6-73",
+    "start": 1246.08,
+    "end": 1247.72,
+    "text": "e o mais simples possível.",
+    "words": [
+      {
+        "text": "e",
+        "start": 1246.62,
+        "end": 1246.7
+      },
+      {
+        "text": "o",
+        "start": 1246.7,
+        "end": 1246.88
+      },
+      {
+        "text": "mais",
+        "start": 1246.88,
+        "end": 1247.2
+      },
+      {
+        "text": "simples",
+        "start": 1247.2,
+        "end": 1247.72
+      }
+    ]
+  },
+  {
+    "id": "chunk-6-74",
+    "start": 1248.28,
+    "end": 1250.36,
+    "text": "Framer e um PDF. Pronto.",
+    "words": [
+      {
+        "text": "Framer",
+        "start": 1248.4,
+        "end": 1249.22
+      },
+      {
+        "text": "e",
+        "start": 1249.22,
+        "end": 1249.32
+      },
+      {
+        "text": "um",
+        "start": 1249.32,
+        "end": 1249.62
+      },
+      {
+        "text": "PDF.",
+        "start": 1249.62,
+        "end": 1250.16
+      },
+      {
+        "text": "Pronto.",
+        "start": 1250.16,
+        "end": 1250.36
+      }
+    ]
+  },
+  {
+    "id": "chunk-6-75",
+    "start": 1250.86,
+    "end": 1257.08,
+    "text": "como cartão de visita aberto, entendeu? É fácil de acessar, cheio de template legal,",
+    "words": [
+      {
+        "text": "como",
+        "start": 1251.92,
+        "end": 1251.96
+      },
+      {
+        "text": "cartão",
+        "start": 1252.88,
+        "end": 1253.1
+      },
+      {
+        "text": "de",
+        "start": 1253.1,
+        "end": 1253.36
+      },
+      {
+        "text": "visita",
+        "start": 1253.36,
+        "end": 1253.74
+      },
+      {
+        "text": "aberto,",
+        "start": 1253.74,
+        "end": 1254.28
+      },
+      {
+        "text": "entendeu?",
+        "start": 1254.28,
+        "end": 1254.72
+      },
+      {
+        "text": "É",
+        "start": 1254.72,
+        "end": 1255.0
+      },
+      {
+        "text": "fácil",
+        "start": 1255.0,
+        "end": 1255.08
+      },
+      {
+        "text": "de",
+        "start": 1255.08,
+        "end": 1255.2
+      },
+      {
+        "text": "acessar,",
+        "start": 1255.2,
+        "end": 1255.86
+      },
+      {
+        "text": "cheio",
+        "start": 1255.86,
+        "end": 1256.04
+      },
+      {
+        "text": "de",
+        "start": 1256.04,
+        "end": 1256.32
+      },
+      {
+        "text": "template",
+        "start": 1256.32,
+        "end": 1256.7
+      },
+      {
+        "text": "legal,",
+        "start": 1256.7,
+        "end": 1257.08
+      }
+    ]
+  },
+  {
+    "id": "chunk-6-76",
+    "start": 1257.2,
+    "end": 1259.82,
+    "text": "é online, acessa no celular,",
+    "words": [
+      {
+        "text": "é",
+        "start": 1257.2,
+        "end": 1257.66
+      },
+      {
+        "text": "online,",
+        "start": 1257.66,
+        "end": 1258.46
+      },
+      {
+        "text": "acessa",
+        "start": 1258.46,
+        "end": 1258.72
+      },
+      {
+        "text": "no",
+        "start": 1258.72,
+        "end": 1259.08
+      },
+      {
+        "text": "celular,",
+        "start": 1259.08,
+        "end": 1259.82
+      }
+    ]
+  },
+  {
+    "id": "chunk-7-1",
+    "start": 1259.86,
+    "end": 1261.5,
+    "text": "tomando link, funciona",
+    "words": [
+      {
+        "text": "tomando",
+        "start": 1260.42,
+        "end": 1260.88
+      },
+      {
+        "text": "link,",
+        "start": 1260.88,
+        "end": 1261.48
+      },
+      {
+        "text": "funciona",
+        "start": 1261.48,
+        "end": 1261.5
+      }
+    ]
+  },
+  {
+    "id": "chunk-7-2",
+    "start": 1261.5,
+    "end": 1264.38,
+    "text": "não precisa de pate-papo, não precisa de dificuldade",
+    "words": [
+      {
+        "text": "não",
+        "start": 1261.94,
+        "end": 1262.16
+      },
+      {
+        "text": "precisa",
+        "start": 1262.16,
+        "end": 1262.22
+      },
+      {
+        "text": "de",
+        "start": 1262.34,
+        "end": 1262.39
+      },
+      {
+        "text": "pate-papo,",
+        "start": 1262.5,
+        "end": 1263.22
+      },
+      {
+        "text": "não",
+        "start": 1263.22,
+        "end": 1263.23
+      },
+      {
+        "text": "precisa",
+        "start": 1263.46,
+        "end": 1263.6
+      },
+      {
+        "text": "de",
+        "start": 1263.6,
+        "end": 1263.62
+      },
+      {
+        "text": "dificuldade",
+        "start": 1263.84,
+        "end": 1264.38
+      }
+    ]
+  },
+  {
+    "id": "chunk-7-3",
+    "start": 1264.38,
+    "end": 1265.96,
+    "text": "aí eu vou usar o Wix",
+    "words": [
+      {
+        "text": "aí",
+        "start": 1264.86,
+        "end": 1265.2
+      },
+      {
+        "text": "eu",
+        "start": 1265.2,
+        "end": 1265.32
+      },
+      {
+        "text": "vou",
+        "start": 1265.32,
+        "end": 1265.54
+      },
+      {
+        "text": "usar",
+        "start": 1265.54,
+        "end": 1265.68
+      },
+      {
+        "text": "o",
+        "start": 1265.68,
+        "end": 1265.76
+      },
+      {
+        "text": "Wix",
+        "start": 1265.76,
+        "end": 1265.96
+      }
+    ]
+  },
+  {
+    "id": "chunk-7-4",
+    "start": 1265.96,
+    "end": 1267.8,
+    "text": "não, Framer, funciona",
+    "words": [
+      {
+        "text": "não,",
+        "start": 1266.18,
+        "end": 1266.64
+      },
+      {
+        "text": "Framer,",
+        "start": 1266.64,
+        "end": 1267.7
+      },
+      {
+        "text": "funciona",
+        "start": 1267.7,
+        "end": 1267.8
+      }
+    ]
+  },
+  {
+    "id": "chunk-7-5",
+    "start": 1267.8,
+    "end": 1269.06,
+    "text": "tem um monte de template legal",
+    "words": [
+      {
+        "text": "tem",
+        "start": 1267.98,
+        "end": 1268.08
+      },
+      {
+        "text": "um",
+        "start": 1268.08,
+        "end": 1268.28
+      },
+      {
+        "text": "monte",
+        "start": 1268.28,
+        "end": 1268.3
+      },
+      {
+        "text": "de",
+        "start": 1268.4,
+        "end": 1268.66
+      },
+      {
+        "text": "template",
+        "start": 1268.66,
+        "end": 1268.8
+      },
+      {
+        "text": "legal",
+        "start": 1269.0,
+        "end": 1269.06
+      }
+    ]
+  },
+  {
+    "id": "chunk-7-6",
+    "start": 1269.06,
+    "end": 1272.04,
+    "text": "por que PDF, AJ? PDF é show intel",
+    "words": [
+      {
+        "text": "por",
+        "start": 1269.76,
+        "end": 1269.84
+      },
+      {
+        "text": "que",
+        "start": 1269.84,
+        "end": 1270.24
+      },
+      {
+        "text": "PDF,",
+        "start": 1270.24,
+        "end": 1270.7
+      },
+      {
+        "text": "AJ?",
+        "start": 1270.7,
+        "end": 1271.26
+      },
+      {
+        "text": "PDF",
+        "start": 1271.26,
+        "end": 1271.58
+      },
+      {
+        "text": "é",
+        "start": 1271.58,
+        "end": 1271.72
+      },
+      {
+        "text": "show",
+        "start": 1271.72,
+        "end": 1271.98
+      },
+      {
+        "text": "intel",
+        "start": 1271.98,
+        "end": 1272.04
+      }
+    ]
+  },
+  {
+    "id": "chunk-7-7",
+    "start": 1272.04,
+    "end": 1274.32,
+    "text": "é um deck, um slide",
+    "words": [
+      {
+        "text": "é",
+        "start": 1272.74,
+        "end": 1272.86
+      },
+      {
+        "text": "um",
+        "start": 1272.86,
+        "end": 1273.26
+      },
+      {
+        "text": "deck,",
+        "start": 1273.26,
+        "end": 1273.74
+      },
+      {
+        "text": "um",
+        "start": 1273.74,
+        "end": 1273.76
+      },
+      {
+        "text": "slide",
+        "start": 1274.26,
+        "end": 1274.32
+      }
+    ]
+  },
+  {
+    "id": "chunk-7-8",
+    "start": 1274.32,
+    "end": 1275.72,
+    "text": "mais detalhado",
+    "words": [
+      {
+        "text": "mais",
+        "start": 1274.92,
+        "end": 1275.22
+      },
+      {
+        "text": "detalhado",
+        "start": 1275.22,
+        "end": 1275.72
+      }
+    ]
+  },
+  {
+    "id": "chunk-7-9",
+    "start": 1275.72,
+    "end": 1277.64,
+    "text": "com mais sensação de apresentação",
+    "words": [
+      {
+        "text": "com",
+        "start": 1275.92,
+        "end": 1276.2
+      },
+      {
+        "text": "mais",
+        "start": 1276.2,
+        "end": 1276.44
+      },
+      {
+        "text": "sensação",
+        "start": 1276.44,
+        "end": 1276.69
+      },
+      {
+        "text": "de",
+        "start": 1276.78,
+        "end": 1276.82
+      },
+      {
+        "text": "apresentação",
+        "start": 1277.1,
+        "end": 1277.64
+      }
+    ]
+  },
+  {
+    "id": "chunk-7-10",
+    "start": 1277.64,
+    "end": 1278.92,
+    "text": "pra entrevista",
+    "words": [
+      {
+        "text": "pra",
+        "start": 1278.22,
+        "end": 1278.54
+      },
+      {
+        "text": "entrevista",
+        "start": 1278.54,
+        "end": 1278.92
+      }
+    ]
+  },
+  {
+    "id": "chunk-7-11",
+    "start": 1278.92,
+    "end": 1281.88,
+    "text": "AJ, quando eu for mandar a minha aplicação, manda os dois?",
+    "words": [
+      {
+        "text": "AJ,",
+        "start": 1279.52,
+        "end": 1279.94
+      },
+      {
+        "text": "quando",
+        "start": 1279.94,
+        "end": 1280.06
+      },
+      {
+        "text": "eu",
+        "start": 1280.06,
+        "end": 1280.3
+      },
+      {
+        "text": "for",
+        "start": 1280.3,
+        "end": 1280.68
+      },
+      {
+        "text": "mandar",
+        "start": 1280.68,
+        "end": 1280.82
+      },
+      {
+        "text": "a",
+        "start": 1280.82,
+        "end": 1280.88
+      },
+      {
+        "text": "minha",
+        "start": 1280.88,
+        "end": 1281.02
+      },
+      {
+        "text": "aplicação,",
+        "start": 1281.02,
+        "end": 1281.46
+      },
+      {
+        "text": "manda",
+        "start": 1281.46,
+        "end": 1281.59
+      },
+      {
+        "text": "os",
+        "start": 1281.64,
+        "end": 1281.68
+      },
+      {
+        "text": "dois?",
+        "start": 1281.86,
+        "end": 1281.88
+      }
+    ]
+  },
+  {
+    "id": "chunk-7-12",
+    "start": 1282.04,
+    "end": 1283.5,
+    "text": "manda os dois, pô, coisa linda",
+    "words": [
+      {
+        "text": "manda",
+        "start": 1282.12,
+        "end": 1282.3
+      },
+      {
+        "text": "os",
+        "start": 1282.3,
+        "end": 1282.5
+      },
+      {
+        "text": "dois,",
+        "start": 1282.5,
+        "end": 1282.64
+      },
+      {
+        "text": "pô,",
+        "start": 1282.66,
+        "end": 1283.08
+      },
+      {
+        "text": "coisa",
+        "start": 1283.08,
+        "end": 1283.15
+      },
+      {
+        "text": "linda",
+        "start": 1283.3,
+        "end": 1283.5
+      }
+    ]
+  },
+  {
+    "id": "chunk-7-13",
+    "start": 1283.5,
+    "end": 1285.8,
+    "text": "vou adorar clicar no teu website, ver o PDF",
+    "words": [
+      {
+        "text": "vou",
+        "start": 1283.98,
+        "end": 1284.12
+      },
+      {
+        "text": "adorar",
+        "start": 1284.12,
+        "end": 1284.44
+      },
+      {
+        "text": "clicar",
+        "start": 1284.44,
+        "end": 1284.7
+      },
+      {
+        "text": "no",
+        "start": 1284.7,
+        "end": 1284.82
+      },
+      {
+        "text": "teu",
+        "start": 1284.82,
+        "end": 1285.2
+      },
+      {
+        "text": "website,",
+        "start": 1285.2,
+        "end": 1285.36
+      },
+      {
+        "text": "ver",
+        "start": 1285.44,
+        "end": 1285.54
+      },
+      {
+        "text": "o",
+        "start": 1285.54,
+        "end": 1285.57
+      }
+    ]
+  },
+  {
+    "id": "chunk-7-14",
+    "start": 1285.8,
+    "end": 1287.58,
+    "text": "ó, pô, ele fez isso aqui",
+    "words": [
+      {
+        "text": "ó,",
+        "start": 1286.44,
+        "end": 1286.82
+      },
+      {
+        "text": "pô,",
+        "start": 1286.82,
+        "end": 1287.02
+      },
+      {
+        "text": "ele",
+        "start": 1287.02,
+        "end": 1287.2
+      },
+      {
+        "text": "fez",
+        "start": 1287.2,
+        "end": 1287.34
+      },
+      {
+        "text": "isso",
+        "start": 1287.34,
+        "end": 1287.56
+      },
+      {
+        "text": "aqui",
+        "start": 1287.56,
+        "end": 1287.58
+      }
+    ]
+  },
+  {
+    "id": "chunk-7-15",
+    "start": 1287.58,
+    "end": 1289.26,
+    "text": "aqui tem mais detalhe, entendeu?",
+    "words": [
+      {
+        "text": "aqui",
+        "start": 1288.0,
+        "end": 1288.14
+      },
+      {
+        "text": "tem",
+        "start": 1288.14,
+        "end": 1288.32
+      },
+      {
+        "text": "mais",
+        "start": 1288.32,
+        "end": 1288.43
+      },
+      {
+        "text": "detalhe,",
+        "start": 1288.62,
+        "end": 1289.03
+      },
+      {
+        "text": "entendeu?",
+        "start": 1289.24,
+        "end": 1289.26
+      }
+    ]
+  },
+  {
+    "id": "chunk-7-16",
+    "start": 1289.88,
+    "end": 1290.46,
+    "text": "Ponto final.",
+    "words": [
+      {
+        "text": "Ponto",
+        "start": 1290.0,
+        "end": 1290.44
+      },
+      {
+        "text": "final.",
+        "start": 1290.44,
+        "end": 1290.46
+      }
+    ]
+  },
+  {
+    "id": "chunk-7-17",
+    "start": 1291.12,
+    "end": 1293.8,
+    "text": "A Jota, mas e o Notion, a Jota?",
+    "words": [
+      {
+        "text": "A",
+        "start": 1291.24,
+        "end": 1291.6
+      },
+      {
+        "text": "Jota,",
+        "start": 1291.6,
+        "end": 1292.38
+      },
+      {
+        "text": "mas",
+        "start": 1292.38,
+        "end": 1292.56
+      },
+      {
+        "text": "e",
+        "start": 1292.56,
+        "end": 1292.7
+      },
+      {
+        "text": "o",
+        "start": 1292.7,
+        "end": 1293.02
+      },
+      {
+        "text": "Notion,",
+        "start": 1293.02,
+        "end": 1293.6
+      },
+      {
+        "text": "a",
+        "start": 1293.48,
+        "end": 1293.6
+      },
+      {
+        "text": "Jota?",
+        "start": 1293.6,
+        "end": 1293.8
+      }
+    ]
+  },
+  {
+    "id": "chunk-7-18",
+    "start": 1293.84,
+    "end": 1295.26,
+    "text": "O Dribble, o Behance?",
+    "words": [
+      {
+        "text": "O",
+        "start": 1293.98,
+        "end": 1294.1
+      },
+      {
+        "text": "Dribble,",
+        "start": 1294.1,
+        "end": 1294.6
+      },
+      {
+        "text": "o",
+        "start": 1294.6,
+        "end": 1294.76
+      },
+      {
+        "text": "Behance?",
+        "start": 1294.76,
+        "end": 1295.26
+      }
+    ]
+  },
+  {
+    "id": "chunk-7-19",
+    "start": 1295.78,
+    "end": 1298.24,
+    "text": "Olha, de novo, vou ser direto aqui.",
+    "words": [
+      {
+        "text": "Olha,",
+        "start": 1296.0,
+        "end": 1296.66
+      },
+      {
+        "text": "de",
+        "start": 1296.66,
+        "end": 1296.86
+      },
+      {
+        "text": "novo,",
+        "start": 1296.86,
+        "end": 1297.58
+      },
+      {
+        "text": "vou",
+        "start": 1297.58,
+        "end": 1297.68
+      },
+      {
+        "text": "ser",
+        "start": 1297.68,
+        "end": 1297.9
+      },
+      {
+        "text": "direto",
+        "start": 1297.9,
+        "end": 1298.22
+      },
+      {
+        "text": "aqui.",
+        "start": 1298.22,
+        "end": 1298.24
+      }
+    ]
+  },
+  {
+    "id": "chunk-7-20",
+    "start": 1298.58,
+    "end": 1299.88,
+    "text": "É contigo, tá?",
+    "words": [
+      {
+        "text": "É",
+        "start": 1298.68,
+        "end": 1298.98
+      },
+      {
+        "text": "contigo,",
+        "start": 1298.98,
+        "end": 1299.84
+      },
+      {
+        "text": "tá?",
+        "start": 1299.84,
+        "end": 1299.88
+      }
+    ]
+  },
+  {
+    "id": "chunk-7-21",
+    "start": 1300.26,
+    "end": 1303.32,
+    "text": "Eu tô te apontando e te explicando o que funciona.",
+    "words": [
+      {
+        "text": "Eu",
+        "start": 1300.48,
+        "end": 1300.66
+      },
+      {
+        "text": "tô",
+        "start": 1300.66,
+        "end": 1300.84
+      },
+      {
+        "text": "te",
+        "start": 1300.84,
+        "end": 1301.1
+      },
+      {
+        "text": "apontando",
+        "start": 1301.1,
+        "end": 1301.84
+      },
+      {
+        "text": "e",
+        "start": 1301.84,
+        "end": 1301.98
+      },
+      {
+        "text": "te",
+        "start": 1301.98,
+        "end": 1302.02
+      },
+      {
+        "text": "explicando",
+        "start": 1302.3,
+        "end": 1302.68
+      },
+      {
+        "text": "o",
+        "start": 1302.68,
+        "end": 1302.76
+      },
+      {
+        "text": "que",
+        "start": 1302.76,
+        "end": 1303.3
+      },
+      {
+        "text": "funciona.",
+        "start": 1303.3,
+        "end": 1303.32
+      }
+    ]
+  },
+  {
+    "id": "chunk-7-22",
+    "start": 1303.82,
+    "end": 1304.72,
+    "text": "Tu quer se arriscar?",
+    "words": [
+      {
+        "text": "Tu",
+        "start": 1303.92,
+        "end": 1304.06
+      },
+      {
+        "text": "quer",
+        "start": 1304.06,
+        "end": 1304.2
+      },
+      {
+        "text": "se",
+        "start": 1304.2,
+        "end": 1304.32
+      },
+      {
+        "text": "arriscar?",
+        "start": 1304.32,
+        "end": 1304.72
+      }
+    ]
+  },
+  {
+    "id": "chunk-7-23",
+    "start": 1304.82,
+    "end": 1305.5,
+    "text": "É um problema teu.",
+    "words": [
+      {
+        "text": "É",
+        "start": 1304.9,
+        "end": 1304.96
+      },
+      {
+        "text": "um",
+        "start": 1304.96,
+        "end": 1305.16
+      },
+      {
+        "text": "problema",
+        "start": 1305.16,
+        "end": 1305.21
+      },
+      {
+        "text": "teu.",
+        "start": 1305.48,
+        "end": 1305.5
+      }
+    ]
+  },
+  {
+    "id": "chunk-7-24",
+    "start": 1305.84,
+    "end": 1306.74,
+    "text": "Tu quer jogar na loteria?",
+    "words": [
+      {
+        "text": "Tu",
+        "start": 1305.94,
+        "end": 1306.06
+      },
+      {
+        "text": "quer",
+        "start": 1306.06,
+        "end": 1306.26
+      },
+      {
+        "text": "jogar",
+        "start": 1306.26,
+        "end": 1306.38
+      },
+      {
+        "text": "na",
+        "start": 1306.38,
+        "end": 1306.54
+      },
+      {
+        "text": "loteria?",
+        "start": 1306.54,
+        "end": 1306.74
+      }
+    ]
+  },
+  {
+    "id": "chunk-7-25",
+    "start": 1306.96,
+    "end": 1307.64,
+    "text": "Joga na loteria.",
+    "words": [
+      {
+        "text": "Joga",
+        "start": 1307.06,
+        "end": 1307.24
+      },
+      {
+        "text": "na",
+        "start": 1307.24,
+        "end": 1307.42
+      },
+      {
+        "text": "loteria.",
+        "start": 1307.42,
+        "end": 1307.64
+      }
+    ]
+  },
+  {
+    "id": "chunk-7-26",
+    "start": 1307.96,
+    "end": 1309.76,
+    "text": "Tu quer colocar a tua carreira num bingo?",
+    "words": [
+      {
+        "text": "Tu",
+        "start": 1308.06,
+        "end": 1308.18
+      },
+      {
+        "text": "quer",
+        "start": 1308.18,
+        "end": 1308.5
+      },
+      {
+        "text": "colocar",
+        "start": 1308.5,
+        "end": 1308.72
+      },
+      {
+        "text": "a",
+        "start": 1308.72,
+        "end": 1308.76
+      },
+      {
+        "text": "tua",
+        "start": 1308.76,
+        "end": 1309.02
+      },
+      {
+        "text": "carreira",
+        "start": 1309.02,
+        "end": 1309.32
+      },
+      {
+        "text": "num",
+        "start": 1309.32,
+        "end": 1309.54
+      },
+      {
+        "text": "bingo?",
+        "start": 1309.54,
+        "end": 1309.76
+      }
+    ]
+  },
+  {
+    "id": "chunk-7-27",
+    "start": 1310.12,
+    "end": 1311.06,
+    "text": "Joga no bingo, pô.",
+    "words": [
+      {
+        "text": "Joga",
+        "start": 1310.28,
+        "end": 1310.52
+      },
+      {
+        "text": "no",
+        "start": 1310.52,
+        "end": 1310.64
+      },
+      {
+        "text": "bingo,",
+        "start": 1310.64,
+        "end": 1311.02
+      },
+      {
+        "text": "pô.",
+        "start": 1311.02,
+        "end": 1311.06
+      }
+    ]
+  },
+  {
+    "id": "chunk-7-28",
+    "start": 1311.6,
+    "end": 1313.14,
+    "text": "O que eu tô te falando é o que funciona.",
+    "words": [
+      {
+        "text": "O",
+        "start": 1311.74,
+        "end": 1311.84
+      },
+      {
+        "text": "que",
+        "start": 1311.84,
+        "end": 1311.92
+      },
+      {
+        "text": "eu",
+        "start": 1311.92,
+        "end": 1312.04
+      },
+      {
+        "text": "tô",
+        "start": 1312.04,
+        "end": 1312.16
+      },
+      {
+        "text": "te",
+        "start": 1312.16,
+        "end": 1312.4
+      },
+      {
+        "text": "falando",
+        "start": 1312.4,
+        "end": 1312.5
+      },
+      {
+        "text": "é",
+        "start": 1312.5,
+        "end": 1312.56
+      },
+      {
+        "text": "o",
+        "start": 1312.56,
+        "end": 1312.64
+      },
+      {
+        "text": "que",
+        "start": 1312.64,
+        "end": 1313.14
+      }
+    ]
+  },
+  {
+    "id": "chunk-7-29",
+    "start": 1313.14,
+    "end": 1317.2,
+    "text": "Um website simples, direto, rápido, fácil acesso,",
+    "words": [
+      {
+        "text": "Um",
+        "start": 1313.78,
+        "end": 1314.16
+      },
+      {
+        "text": "website",
+        "start": 1314.16,
+        "end": 1314.68
+      },
+      {
+        "text": "simples,",
+        "start": 1314.68,
+        "end": 1315.28
+      },
+      {
+        "text": "direto,",
+        "start": 1315.28,
+        "end": 1316.12
+      },
+      {
+        "text": "rápido,",
+        "start": 1316.12,
+        "end": 1316.8
+      },
+      {
+        "text": "fácil",
+        "start": 1316.8,
+        "end": 1317.14
+      },
+      {
+        "text": "acesso,",
+        "start": 1317.14,
+        "end": 1317.2
+      }
+    ]
+  },
+  {
+    "id": "chunk-7-30",
+    "start": 1317.54,
+    "end": 1318.28,
+    "text": "Que funciona no celular.",
+    "words": [
+      {
+        "text": "Que",
+        "start": 1317.62,
+        "end": 1317.63
+      },
+      {
+        "text": "funciona",
+        "start": 1317.94,
+        "end": 1318.04
+      },
+      {
+        "text": "no",
+        "start": 1318.04,
+        "end": 1318.26
+      },
+      {
+        "text": "celular.",
+        "start": 1318.26,
+        "end": 1318.28
+      }
+    ]
+  },
+  {
+    "id": "chunk-7-31",
+    "start": 1318.9,
+    "end": 1320.5,
+    "text": "Um PDF que tem mais detalhes",
+    "words": [
+      {
+        "text": "Um",
+        "start": 1319.0,
+        "end": 1319.3
+      },
+      {
+        "text": "PDF",
+        "start": 1319.3,
+        "end": 1319.66
+      },
+      {
+        "text": "que",
+        "start": 1319.66,
+        "end": 1319.8
+      },
+      {
+        "text": "tem",
+        "start": 1319.8,
+        "end": 1320.02
+      },
+      {
+        "text": "mais",
+        "start": 1320.02,
+        "end": 1320.26
+      },
+      {
+        "text": "detalhes",
+        "start": 1320.26,
+        "end": 1320.5
+      }
+    ]
+  },
+  {
+    "id": "chunk-7-32",
+    "start": 1320.5,
+    "end": 1322.5,
+    "text": "que eu sei que no dia da entrevista",
+    "words": [
+      {
+        "text": "que",
+        "start": 1320.98,
+        "end": 1321.08
+      },
+      {
+        "text": "eu",
+        "start": 1321.08,
+        "end": 1321.34
+      },
+      {
+        "text": "sei",
+        "start": 1321.34,
+        "end": 1321.36
+      },
+      {
+        "text": "que",
+        "start": 1321.6,
+        "end": 1321.72
+      },
+      {
+        "text": "no",
+        "start": 1321.72,
+        "end": 1321.86
+      },
+      {
+        "text": "dia",
+        "start": 1321.86,
+        "end": 1322.02
+      },
+      {
+        "text": "da",
+        "start": 1322.02,
+        "end": 1322.28
+      },
+      {
+        "text": "entrevista",
+        "start": 1322.28,
+        "end": 1322.5
+      }
+    ]
+  },
+  {
+    "id": "chunk-7-33",
+    "start": 1322.5,
+    "end": 1323.66,
+    "text": "você vai trazer esse PDF.",
+    "words": [
+      {
+        "text": "você",
+        "start": 1322.8,
+        "end": 1323.0
+      },
+      {
+        "text": "vai",
+        "start": 1323.0,
+        "end": 1323.26
+      },
+      {
+        "text": "trazer",
+        "start": 1323.26,
+        "end": 1323.38
+      },
+      {
+        "text": "esse",
+        "start": 1323.38,
+        "end": 1323.47
+      }
+    ]
+  },
+  {
+    "id": "chunk-7-34",
+    "start": 1324.04,
+    "end": 1325.38,
+    "text": "Você vai me explicar o que está acontecendo.",
+    "words": [
+      {
+        "text": "Você",
+        "start": 1324.22,
+        "end": 1324.34
+      },
+      {
+        "text": "vai",
+        "start": 1324.34,
+        "end": 1324.46
+      },
+      {
+        "text": "me",
+        "start": 1324.46,
+        "end": 1324.72
+      },
+      {
+        "text": "explicar",
+        "start": 1324.72,
+        "end": 1324.84
+      },
+      {
+        "text": "o",
+        "start": 1324.84,
+        "end": 1324.88
+      },
+      {
+        "text": "que",
+        "start": 1324.88,
+        "end": 1324.96
+      },
+      {
+        "text": "está",
+        "start": 1324.96,
+        "end": 1325.36
+      },
+      {
+        "text": "acontecendo.",
+        "start": 1325.36,
+        "end": 1325.38
+      }
+    ]
+  },
+  {
+    "id": "chunk-7-35",
+    "start": 1325.96,
+    "end": 1326.68,
+    "text": "Maravilha, ponto.",
+    "words": [
+      {
+        "text": "Maravilha,",
+        "start": 1326.12,
+        "end": 1326.62
+      },
+      {
+        "text": "ponto.",
+        "start": 1326.62,
+        "end": 1326.68
+      }
+    ]
+  },
+  {
+    "id": "chunk-7-36",
+    "start": 1327.18,
+    "end": 1328.46,
+    "text": "Qualquer outra coisa fora disso,",
+    "words": [
+      {
+        "text": "Qualquer",
+        "start": 1327.38,
+        "end": 1327.66
+      },
+      {
+        "text": "outra",
+        "start": 1327.66,
+        "end": 1327.9
+      },
+      {
+        "text": "coisa",
+        "start": 1327.9,
+        "end": 1328.14
+      },
+      {
+        "text": "fora",
+        "start": 1328.14,
+        "end": 1328.46
+      }
+    ]
+  },
+  {
+    "id": "chunk-7-37",
+    "start": 1328.88,
+    "end": 1330.04,
+    "text": "vocês estão jogando a loteria.",
+    "words": [
+      {
+        "text": "vocês",
+        "start": 1329.14,
+        "end": 1329.36
+      },
+      {
+        "text": "estão",
+        "start": 1329.36,
+        "end": 1329.52
+      },
+      {
+        "text": "jogando",
+        "start": 1329.52,
+        "end": 1329.7
+      },
+      {
+        "text": "a",
+        "start": 1329.7,
+        "end": 1329.82
+      },
+      {
+        "text": "loteria.",
+        "start": 1329.82,
+        "end": 1330.04
+      }
+    ]
+  },
+  {
+    "id": "chunk-7-38",
+    "start": 1330.28,
+    "end": 1331.12,
+    "text": "Aí já não é um problema meu.",
+    "words": [
+      {
+        "text": "Aí",
+        "start": 1330.38,
+        "end": 1330.48
+      },
+      {
+        "text": "já",
+        "start": 1330.48,
+        "end": 1330.6
+      },
+      {
+        "text": "não",
+        "start": 1330.6,
+        "end": 1330.66
+      },
+      {
+        "text": "é",
+        "start": 1330.66,
+        "end": 1330.68
+      },
+      {
+        "text": "um",
+        "start": 1330.68,
+        "end": 1330.86
+      },
+      {
+        "text": "problema",
+        "start": 1330.86,
+        "end": 1331.1
+      },
+      {
+        "text": "meu.",
+        "start": 1331.1,
+        "end": 1331.12
+      }
+    ]
+  },
+  {
+    "id": "chunk-7-39",
+    "start": 1331.64,
+    "end": 1333.62,
+    "text": "De novo, eu estou tentando te ajudar.",
+    "words": [
+      {
+        "text": "De",
+        "start": 1331.74,
+        "end": 1331.98
+      },
+      {
+        "text": "novo,",
+        "start": 1331.98,
+        "end": 1332.58
+      },
+      {
+        "text": "eu",
+        "start": 1332.58,
+        "end": 1332.74
+      },
+      {
+        "text": "estou",
+        "start": 1332.74,
+        "end": 1332.98
+      },
+      {
+        "text": "tentando",
+        "start": 1332.98,
+        "end": 1333.28
+      },
+      {
+        "text": "te",
+        "start": 1333.28,
+        "end": 1333.6
+      },
+      {
+        "text": "ajudar.",
+        "start": 1333.6,
+        "end": 1333.62
+      }
+    ]
+  }
+]

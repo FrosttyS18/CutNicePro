@@ -56,6 +56,10 @@
 
 ## Cortes
 
+Complemento de implementação autorizado em 2026-10-24 (BR-019/020/023, FR-010/013/014): novas sugestões devem ter abertura autônoma e conclusão dentro do intervalo. Quantidade e duração são tetos; nota alta não anula a recusa explícita por contexto/conclusão. A análise final não publica sugestão nova com Gancho ou Fechamento abaixo do piso editorial existente de 50; falha de análise continua identificada, sem nota falsa. Se cenas/bordas alterarem o intervalo, a avaliação anterior não é reutilizada como prova de completude. Frases podem atravessar várias linhas do ASR; perguntas retóricas respondidas não são automaticamente o próximo assunto.
+
+Detecção local de rostos é independente do modelo textual. Só cortes novos 9:16 em cover recebem enquadramento inicial por YuNet; a posição persistida é uma âncora estática, não identidade nem trajetória. Ambiguidade incompatível com esse crop recomenda quadro inteiro; ausência/falha preserva a escolha de enquadramento e é informada. Edição salva prevalece sobre automação. Não reprocessar cortes históricos nem executar detector ao rolar a biblioteca. Estado editorial/visual segue pendente de avaliação humana dos novos resultados.
+
 Complemento solicitado pelo mantenedor em 2026-10-24 (BR-019/020, JRN-002/008): a biblioteca global apresenta seções verticais por projeto, identificadas pelo ID de origem; ordenar clipes não mistura projetos. Miniaturas são imagens, sem um player persistente por card. O badge Novo depende somente da criação registrada e dura menos de 60 minutos completos; abrir, assistir, editar ou reanalisar não o remove nem reinicia a hora. Novos cortes recebem a criação após seleção/análise, antes da gravação; datas antigas/legadas são preservadas e não são inventadas. Tempo relativo continua visível após a expiração. Critérios e estado de validação em BACKLOG e ENGINE-HANDOFF; aprovação visual/manual pendente.
 
 - **BR-019 Identificação estável** — cada corte tem ID persistente vinculado à mídia de

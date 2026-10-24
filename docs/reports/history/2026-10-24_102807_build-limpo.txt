@@ -1,0 +1,76 @@
+╔════════════════════════════════════════════╗
+║       CUTNICEPRO — ZCODE REPORT            ║
+╚════════════════════════════════════════════╝
+
+TASK
+  Name: Build limpo
+  Status: PASS no escopo solicitado.
+  Objective/Result: builds e lint sem erros ou avisos.
+  FUNCTIONAL STATUS: PASS
+  REGRESSION STATUS: PASS nos testes executados.
+  VISUAL STATUS: PENDING HUMAN APPROVAL
+
+IMPLEMENTATION
+  Corrigidos seis motivos de warnings Rust e 19 erros/1 aviso ESLint.
+  Ajustados estados e callbacks de carregamento, transcrição e prévia.
+  Bundle dividido sem elevar limites: maior pacote de 416,77 kB.
+  Corrigido também o ciclo de imports encontrado na primeira divisão.
+  CI agora exige zero erros e zero avisos no lint.
+  Sem novas dependências ou mudança dos prompts nesta tarefa.
+
+FILES
+  Modified: 27 arquivos de fontes/configuração/testes/documentação.
+  Created: 2 suítes, teste do splash convertido para TSX, manifesto
+    e histórico deste relatório.
+  Deleted: splash-phase.test.ts, substituído pelo teste TSX.
+  Lista exata: docs/reports/evidence/build-limpo-2026-10-24.json.
+  Unexpected changes: NONE; alterações anteriores preservadas.
+
+VALIDATION
+  Typecheck/build Vite, ESLint estrito e gate CI: PASS, zero avisos.
+  cargo check --all-targets, fmt e build padrão: PASS, zero avisos.
+  Frontend: 253/253, em 39 arquivos.
+  Rust: 172 PASS, 0 FAIL, 14 ignored.
+  Total: 425 testes aprovados; 14 opt-in não executados.
+  Testes novos: mídia/projeto, respostas antigas, recuperação de erro,
+    URLs, callbacks, transcrição e splash.
+  Falhas intermediárias dos testes foram corrigidas; nenhuma desativação.
+  Runtime desktop, release e Clippy opcional: não executados.
+
+HOOKS / HARNESS
+  Hooks ZCode não executados neste cliente; verificações explícitas acima.
+  Gate result: PASS. Sem automação do seu desktop.
+
+MCP / SKILLS
+  Graphify remoto consultado antes/depois; índice corresponde ao HEAD.
+  Mudanças locais ainda não indexadas; fonte/diff local complementados.
+  Skills: revisão de código, implementação incremental e frontend.
+
+GIT
+  Branch: main
+  HEAD: 8a635b5c36b93a4a6f4ac0ddf0bb657510096be5
+  Latest commit: chore(repo): organiza evidências e governança do projeto
+  Commits created: nenhum. Push: NOT EXECUTED.
+  Remote: origin → FrosttyS18/CutNicePro, main.
+  Working tree: MODIFIED/UNTRACKED; 78 arquivos pendentes, incluindo
+    trabalho anterior. Não houve autorização de commit/push nesta tarefa.
+
+EVIDENCE / ISSUES
+  Manifesto: docs/reports/evidence/build-limpo-2026-10-24.json.
+  Logs: .tooling/test-output/warnings-*.
+  Só existe target; executável padrão recompilado.
+  Qualidade dos cortes e aprovação visual continuam dependendo do
+    seu teste manual. Projetos, mídias e modelos foram preservados.
+
+FINAL
+  Build limpo entregue. Nenhuma build paralela criada.
+
+REPORT
+  Latest: docs/reports/LATEST.txt
+  History: docs/reports/history/2026-10-24_102807_build-limpo.txt
+
+GUIA DO MANTENEDOR — O QUE MUDOU E COMO TESTAR
+  1. Abra pelo comando habitual: npm run tauri dev, na pasta app.
+     Esperado: usar a única build padrão.
+  2. Troque entre projetos/clipes e teste os novos cortes.
+     Esperado: carregamento correto, reprodução e exportação.

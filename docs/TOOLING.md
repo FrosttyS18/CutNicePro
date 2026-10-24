@@ -8,6 +8,26 @@ o setup original não fez instalação global de npm/uv nem alteração de PATH/
 
 ## Abrir o aplicativo e controlar espaço — 2026-10-24
 
+### Build e lint sem avisos — 2026-10-24
+
+O build padrão e o lint foram limpos sem desabilitar regras ou aumentar limites. `npm run build` valida TypeScript e Vite; `npx eslint src --max-warnings 0` verifica o frontend. O gate tools/ci/lint-budget.mjs agora aceita zero erros e zero avisos. No backend, cargo check --all-targets, cargo fmt --all -- --check e cargo build foram executados no target padrão, sem warnings; os testes Rust passaram. Isso não representa execução de todos os lints opcionais, empacotamento release nem aceite visual/editorial.
+
+As bibliotecas React, motion, Three e mediabunny permanecem nas versões existentes, separadas em chunks menores que 500 kB; o maior tem 416.769 bytes. O carregamento das rotas e os algoritmos de geração/timeline não foram trocados. Referências técnicas: [ajuste de estado no React](https://react.dev/learn/you-might-not-need-an-effect#adjusting-some-state-when-a-prop-changes), [sincronização antes da pintura](https://react.dev/reference/react/useLayoutEffect) e [manualChunks do Rollup](https://rollupjs.org/configuration-options/#output-manualchunks). A divisão do bundle não constitui benchmark de desempenho no app real.
+
+Testes desta manutenção: frontend 253/253; Rust 172/172 executados, 14 casos opt-in ignorados. Evidência resumida e lista de arquivos em docs/reports/evidence/build-limpo-2026-10-24.json. A próxima execução manual usa o mesmo comando e perfil descritos abaixo.
+
+### Detector local de rostos — 2026-10-24
+
+YuNet 2023mar (232.589 bytes, MIT) está em `app/src-tauri/resources/models/` e é incorporado ao backend. O worker próprio usa Python/OpenCV headless em `.tooling/venvs/face-framing`, separado do ASR, com requisitos fixados em `tools/face-framing/requirements.txt`. Esse ambiente foi instalado nesta tarefa; não é necessário reinstalá-lo para testar. Não há serviço, porta HTTP, modelo multimodal, envio de mídia ou download durante a geração.
+
+Para preparar outro checkout, crie o venv dentro do workspace com o Python disponível e instale somente o requirements desse componente. Em debug, a descoberta usa esse venv; `CNP_FACE_PYTHON` permite indicar um Python já preparado. Para release, o caminho previsto é `cutnicepro/engine/face-framing/python.exe` no app-data (ou `bin/python` em Unix): o instalador desse componente ainda não é entregue por esta tarefa. Ausência/falha é registrada como unavailable, preservando geração textual e enquadramento escolhido, sem tentar instalar silenciosamente.
+
+O módulo processa apenas novos cortes 9:16 em cover, até 12 pares de imagens por corte, CPU/uma thread, sem paralelismo com o LLM. O worker tem orçamento interno de 120 s e timeouts de abertura/leitura de 5 s; cancelamento usa ProcessControl existente. Centro seguro é convertido para a âncora de crop consumida pela prévia/editor/export; ambiguidade recomenda contain; edição salva prevalece. Não confundir isso com trilha de câmera animada. Exibição de evidência técnica permanece distinta da análise textual.
+
+No Windows, o executável do venv é um launcher que pode criar outro PID. A integração resolve o Python real pelo home do pyvenv.cfg e acrescenta somente os pacotes do venv em bootstrap isolado (-I/-S). Assim ProcessControl possui diretamente o PID que executa o detector. O teste worker_pid_is_the_direct_owned_process comprovou a igualdade; não usar o WorkingSet do launcher como consumo do detector. Medida válida vem de PeakWorkingSetSize no próprio worker: 101,53 MiB nas duas janelas testadas (9,34 s de processamento). O venv ocupa 167,90 MiB no disco; nenhum target adicional foi criado.
+
+Teste de matemática/segurança sem inferência: `.tooling/venvs/face-framing/Scripts/python.exe -B tools/face-framing/test_worker.py`. Teste nativo real é separado e ignored por padrão, `autoclip_editorial_runtime_probe`, exigindo `CNP_EDITORIAL_EVIDENCE` e `CNP_EDITORIAL_SOURCE`; escreve apenas em pasta exclusiva de evidências, não semeia projetos no perfil do mantenedor.
+
 O caminho de desenvolvimento é único: `C:\CutNicePro\app\src-tauri\target\debug\cutnicepro.exe`. Para abrir a interface e o motor juntos, use PowerShell:
 
 ```powershell

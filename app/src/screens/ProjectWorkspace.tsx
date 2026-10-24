@@ -13,6 +13,7 @@ import "./workspace.css";
 import "./editor-refinement.css";
 import { useClips } from "../hooks/useClips";
 import { ClipTools } from "../components/clips/ClipTools";
+import { ClipFeedback } from "../components/clips/ClipFeedback";
 import { ClipDownload } from "../components/clips/ClipDownload";
 import { type Clip } from "../lib/clips";
 import { fullVideoWorkspace, openClipWorkspace } from "../lib/clip-workspace";
@@ -109,6 +110,7 @@ export function ProjectWorkspace({ project, initialView = "overview", onRename, 
       </> : <VideoEditor key={`${workspace.data.tool}:${activeClip ?? "video"}`} title={project.name} activeClip={activeClip ? clips.collection?.clips.find(clip => clip.id === activeClip) : undefined} data={workspace.data} localUrl={workspace.localUrl} dirty={workspace.dirty}
         onChange={workspace.change} onSave={workspace.save} onBack={() => setView("overview")} transcriptionControls={<>{transcriptionControls}{clipTools}</>}transcribing={transcription.busy || clips.busy}
         allClips={clips.collection?.clips} />}
+      <ClipFeedback job={clips.job} ownedJob={clips.ownedJob} notice={clips.notice}/>
       {workspace.notice && <p className={workspace.notice.error ? "workspace-notice workspace-notice--error" : "workspace-notice"}
         role={workspace.notice.error ? "alert" : "status"}>{workspace.notice.text}</p>}
       {inspecting && <ClipInspection entry={inspecting} onClose={() => setInspecting(null)} onChanged={notice=>{setClipNotice(notice ?? null);clips.reload();}}

@@ -71,6 +71,7 @@ fn changed_transcript_invalidates_analysis_and_review_without_changing_clip_form
             analysis_signature: None,
             analysis_stale: None,
             multimodal: None,
+            face_framing: None,
             created_at_ms: None,
             deleted: None,
             engine: None,

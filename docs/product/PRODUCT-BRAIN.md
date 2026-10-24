@@ -1,6 +1,6 @@
 # CutNicePro — Product Brain (índice permanente)
 
-Atualização operacional 2026-10-24: biblioteca leve, seções por projeto e Novo por 60 min implementados, aguardando teste manual do mantenedor. Regras complementares em BUSINESS-RULES (Cortes), aceites no BACKLOG e rastreabilidade em TRACEABILITY; evidências/limites no registro canônico do ENGINE-HANDOFF. Não altera o aceite editorial ou o estado das jornadas históricas.
+Atualização operacional 2026-10-24: mantenedor testou a biblioteca e relatou funcionamento mais leve e organizado. Próxima adaptação autorizada: prompts editoriais e detecção local de rostos do AutoClip, com escopo/aceites no BACKLOG e estudo em OPEN-SOURCE-ENGINE-RESEARCH. Isso não equivale a aceite editorial dos novos cortes ou tracking animado. Regras complementares em BUSINESS-RULES (Cortes), rastreabilidade em TRACEABILITY e evidências/limites no ENGINE-HANDOFF.
 
 > Ponto de entrada da inteligência de produto. **Não duplica especificações**: indexa os
 > documentos canônicos e suas relações. Regra permanente de atualização incremental:

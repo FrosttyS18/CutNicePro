@@ -70,45 +70,47 @@ export default function App() {
   const [expanded, setExpanded] = useState(() => loadSidebarExpanded());
   useEffect(() => () => releaseSessionMedia(), []);
 
-  const refreshProjects = useCallback(async () => {
-    setLoad((s) => ({ ...s, status: "loading", error: null }));
-    try {
-      const projects = (await ipc.listProjects()).map((project) => ({ ...project,
+  const loadProjects = useCallback(() => ipc.listProjects().then(result => {
+      const projects = result.map((project) => ({ ...project,
         name: importedProjectDisplayName(project.name, readWorkspace(project.id).media?.name) }));
       setLoad({ status: "ready", projects, error: null });
-    } catch (e) {
+    }).catch((e: unknown) => {
       setLoad({
         status: "error",
         projects: [],
         error: e instanceof Error ? e.message : String(e),
       });
-    }
-  }, []);
+    }), []);
 
-  const refreshCollections = useCallback(async () => {
-    setCollectionsLoad((s) => ({ ...s, status: "loading", error: null }));
-    try {
-      const collections = await ipc.listCollections();
+  const loadCollections = useCallback(() => ipc.listCollections().then(collections => {
       setCollectionsLoad({ status: "ready", collections, error: null });
-    } catch (e) {
+    }).catch((e: unknown) => {
       setCollectionsLoad({
         status: "error",
         collections: [],
         error: e instanceof Error ? e.message : String(e),
       });
-    }
-  }, []);
+    }), []);
+
+  const refreshProjects = useCallback(() => {
+    setLoad(current => ({ ...current, status: "loading", error: null }));
+    return loadProjects();
+  }, [loadProjects]);
+  const refreshCollections = useCallback(() => {
+    setCollectionsLoad(current => ({ ...current, status: "loading", error: null }));
+    return loadCollections();
+  }, [loadCollections]);
 
   useEffect(() => {
     let cancelled = false;
-    void Promise.all([refreshProjects(), refreshCollections()]).finally(() => {
+    void Promise.all([loadProjects(), loadCollections()]).finally(() => {
       if (cancelled) return;
       setBootReady(true);
     });
     return () => {
       cancelled = true;
     };
-  }, [refreshProjects, refreshCollections]);
+  }, [loadProjects, loadCollections]);
 
   function toggleExpanded() {
     const next = !expanded;

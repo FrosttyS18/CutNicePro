@@ -48,6 +48,7 @@ pub fn validate(value: &ClipCollection, duration: f64) -> Result<(), String> {
                 || c.end <= c.start
                 || c.end > duration
                 || c.score > 100
+                || c.face_framing.as_ref().is_some_and(|value| !value.valid())
                 || c.title.is_empty()
                 || c.title.len() > 1000
                 || c.reasons.len() > 8
@@ -174,6 +175,7 @@ mod tests {
                 analysis_signature: None,
                 analysis_stale: None,
                 multimodal: None,
+                face_framing: None,
                 created_at_ms: None,
                 deleted: None,
                 engine: None,

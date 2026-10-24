@@ -563,6 +563,7 @@ pub fn motion_tracks(frames: &[(f64, Vec<u8>)], width: usize, height: usize) -> 
  *  amostrada no primeiro frame (categoria declarada pelo chamador). Centróide
  *  do pixel mais próximo da cor alvo dentro do raio da última posição;
  *  fora do raio = oclusão (projeta última posição conhecida). */
+#[cfg(test)]
 pub fn color_track(
     frames: &[(f64, Vec<u8>)],
     width: usize,
@@ -642,6 +643,7 @@ pub fn color_track(
 /** Cor alvo de uma região do primeiro frame (seleção do alvo controlado):
  *  semente = pixel de MAIOR saturação da região (fundo neutro tem saturação
  *  ~0); resultado = média dos pixels próximos da semente. */
+#[cfg(test)]
 pub fn dominant_color(
     data: &[u8],
     width: usize,

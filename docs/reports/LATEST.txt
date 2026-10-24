@@ -3,84 +3,72 @@
 ╚════════════════════════════════════════════╝
 
 TASK
-  Name: Biblioteca leve, projetos e Novo por uma hora.
-  Status: PARTIAL — implementado/testado; validação manual pendente.
-  Scope: três correções solicitadas; sem retomar o goal editorial.
-  Result: build padrão compilada; nenhum vídeo/projeto excluído.
-  FUNCTIONAL STATUS: PARTIAL (teste real de scroll pelo mantenedor).
-  REGRESSION STATUS: PASS nas suítes automáticas.
-  VISUAL STATUS: PENDING HUMAN APPROVAL.
+  Name: Resultado silencioso da geração
+  Status: PASS no tratamento de resultado/erro.
+  FUNCTIONAL STATUS: PASS nos cenários automatizados.
+  REGRESSION STATUS: PASS no frontend executado.
+  VISUAL STATUS: PENDING HUMAN APPROVAL
 
 IMPLEMENTATION
-  Miniaturas: imagens em cache, até 640 px, uma geração por vez;
-    zero players nos cards; workspace lido uma vez por projeto.
-  Biblioteca global: seções verticais por projeto, nome/contagem,
-    Por projeto e Mais recentes; filtros/ações preservados.
-  Novo: expira em 60 min, independente de abrir; relógio atualiza
-    ocioso; datas antigas preservadas. Futuras gerações recebem
-    criação após análise, antes de salvar.
-  Architecture impact: novo IPC local de miniatura; sem dependências.
+  Log do mantenedor: 13 propostas recusadas; a única selecionada
+    também foi recusada na análise final. Zero cortes novos aprovados.
+  Corrigido: toast persistente para resultado, zero novos ou erro.
+  Corrigido: retorno inválido não vira sucesso; evento tardio não apaga falha.
+  Mensagens explicam o motivo, sem atribuir qualquer falha ao disco.
+  Critérios editoriais, prompts, modelos e backend preservados.
 
 FILES
-  Fontes afetadas: ClipGallery, ClipCard, ClipPoster, clip-library.css,
-    lib/clip-library.ts, lib/clips.ts, services/clip-thumbnails.ts;
-    Rust lib.rs, media_preview/mod.rs, media_preview/thumbnail.rs,
-    clips/generation.rs; testes relacionados.
-  Docs: AGENTS, TOOLING, ENGINE-HANDOFF, Brain, backlog, regras e
-    rastreabilidade. Lista completa de criados/modificados no diagnóstico.
-  Deleted: nenhum. Unexpected changes: nenhuma desta tarefa.
+  Modified: useClips.ts, clips.ts, ProjectWorkspace.tsx, clips.css,
+    ENGINE-HANDOFF.md, BACKLOG.md e LATEST.txt.
+  Created: ClipFeedback.tsx, clip-generation-feedback.test.tsx,
+    manifesto e histórico deste relatório.
+  Deleted: nenhum. Unexpected changes: NONE.
+  Lista: docs/reports/evidence/geracao-feedback-2026-10-24.json.
 
 VALIDATION
-  Typecheck/Lint dos tocados: PASS.
-  Frontend: 241 PASS; 7 testes relacionados retestados após ajuste final.
-  Rust: 162 PASS, 0 FAIL, 11 ignored preexistentes; inclui FFmpeg real.
-  Total final: 403 testes aprovados, 0 falhas atuais.
-  Reprodução anterior: 6 falhas esperadas; corrigidas.
-  Build padrão e diff --check: PASS.
-  Runtime/Visual: scroll real não executado, conforme preferência humana.
+  Frontend: 258 PASS, 0 FAIL, 40 arquivos.
+  Cinco cenários: zero novos, resposta inválida/evento tardio,
+    erro persistente, cancelamento e novos realmente adicionados.
+  Regressões reproduzidas antes das correções.
+  Typecheck/build e ESLint estrito: PASS, zero warnings.
+  Rust não alterado/reexecutado; IPC dos testes é simulado.
+  Sem teste de desktop ou nova inferência de IA.
 
 HOOKS / HARNESS
-  Hooks/Stop não usados como prova. Erro de import no teste novo
-    corrigido antes do PASS; nenhum teste enfraquecido.
+  Verificações explícitas; hooks ZCode não executados neste cliente.
+  Testes de React corrigidos para progresso animado/nome acessível.
 
 MCP / SKILLS
-  Graphify remoto validado: wesley-s-workspace/FrosttyS18/CutNicePro.
-  Índice = HEAD; mudanças locais conferidas separadamente.
-  Impacto/consumidores/testes consultados antes e depois.
-  Skills: frontend, minimalist-ui, testes e revisão do projeto.
-  Computer Use não autorizado; mantenedor escolheu teste manual.
+  Graphify remoto antes/depois; índice corresponde ao HEAD.
+  Working tree ainda não indexado; fonte local complementada.
+  Diagnóstico sistemático, TDD, frontend e verificação de conclusão.
 
 GIT
-  Branch: main.
-  HEAD: ab501e26634648a59e005238c2c50b3230b4cac0
-  Latest commit: feat(clips): add multimodal generation with real audio pauses and frame evidence
-  Commits: 0. Push: NOT EXECUTED. Remote: origin/main.
-  Working tree: MODIFIED/UNTRACKED; 548 pendentes, listados no diagnóstico.
+  Branch: main
+  HEAD: 8a635b5c36b93a4a6f4ac0ddf0bb657510096be5
+  Latest commit: chore(repo): organiza evidências e governança do projeto
+  Commits created: nenhum. Push: NOT EXECUTED.
+  Remote: origin → FrosttyS18/CutNicePro, main.
+  Working tree: MODIFIED/UNTRACKED; 85 arquivos pendentes,
+    incluindo trabalho anterior.
 
 EVIDENCE
-  Arquivos, contratos, logs, Graphify, hashes e inventário:
-    C:/CutNicePro/docs/reports/evidence/biblioteca-estavel-2026-10-24/diagnostico.json
+  Manifesto: docs/reports/evidence/geracao-feedback-2026-10-24.json.
+  Logs: .tooling/test-output/silent-generation-*.
 
-ISSUES
-  Limites: fechamento/memória da sessão real não medidos; teste
-    manual necessário. Qualidade editorial não alterada nesta tarefa.
-  Sem garantia de ausência de regressões além das verificações acima.
-
-FINAL
-  Delivery: pronto para teste manual na build única.
-  Remaining work: confirmação dos três comportamentos no seu app.
-  User action: seguir o guia abaixo. Restart: reabrir pelo comando normal.
+ISSUES / FINAL
+  Comunicação corrigida; isto não comprova melhora editorial.
+  A IA ainda pode aprovar zero cortes. Nada foi liberado à força.
+  Dados preservados; nenhuma build paralela ou rebuild do motor.
 
 REPORT
-  Latest: C:/CutNicePro/docs/reports/LATEST.txt
-  History: C:/CutNicePro/docs/reports/history/2026-10-24_075610_biblioteca-miniaturas-projetos-novo.txt
+  Latest: docs/reports/LATEST.txt
+  History: docs/reports/history/2026-10-24_110257_geracao-feedback.txt
 
 GUIA DO MANTENEDOR — O QUE MUDOU E COMO TESTAR
-  1. Reabrir com npm run tauri dev em C:/CutNicePro/app.
-  2. Meus Projetos → Clipes: rolar até o fim e voltar duas vezes.
-     Esperado: miniaturas progressivas/reutilizadas, sem travar/fechar.
-  3. Conferir seções por projeto e suas contagens, inclusive ao ordenar.
-  4. Abrir/fechar corte recente: Novo permanece dentro da primeira hora.
-     Não é necessário esperar uma hora; expiração testada automaticamente.
-
-END OF REPORT
+  1. Reabra pelo comando habitual se a interface não tiver atualizado.
+  2. Gere novamente: deve aparecer quantidade adicionada, aviso de
+     zero novos ou erro explicado. O aviso fica até Fechar aviso.
+  3. A caixa do print inclui todas as alterações unstaged no commit.
+     Não precisa desmarcar para o Graphify: as mudanças precisam
+     estar no commit enviado ao GitHub e o índice precisa atualizar.

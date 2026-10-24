@@ -6,7 +6,7 @@ interface Props { anchor: HTMLButtonElement; onClose: () => void; children: Reac
 export function TranscriptWordPopover({ anchor, onClose, children }: Props) {
   const ref = useRef<HTMLDivElement>(null);
   const close = useRef(onClose);
-  close.current = onClose;
+  useLayoutEffect(() => { close.current = onClose; }, [onClose]);
   const [position, setPosition] = useState({ left: 12, top: 12 });
   useLayoutEffect(() => {
     function place() {

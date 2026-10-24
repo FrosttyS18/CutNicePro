@@ -1,0 +1,79 @@
+{
+  "task": "geracao-feedback-2026-10-24",
+  "observed": {
+    "source": "Log enviado pelo mantenedor nesta conversa.",
+    "proposals_rejected_for_context_and_completeness": 13,
+    "selected_editorial": 1,
+    "final_analysis_rejected": 1,
+    "newly_approved": 0,
+    "exception_in_log": false,
+    "result_with_existing_library": "Coleção anterior preservada; mensagem não era exibida em toast persistente."
+  },
+  "fixes": [
+    "Toast no espaço de trabalho preservado ao trocar de visão, com fechamento explícito.",
+    "Zero novos distinguido de novos adicionados; nenhum sucesso editorial fabricado.",
+    "Mensagem de abertura/fechamento e retorno inválido; espaço em disco somente quando identificado.",
+    "Falha de consumo do retorno não é mascarada por snapshot completed; evento tardio não remove erro.",
+    "Cancelamento permanece separado de falha e sucesso."
+  ],
+  "changed": [
+    "app/src/hooks/useClips.ts",
+    "app/src/lib/clips.ts",
+    "app/src/screens/ProjectWorkspace.tsx",
+    "app/src/components/clips/clips.css",
+    "docs/engineering/ENGINE-HANDOFF.md",
+    "docs/product/BACKLOG.md",
+    "docs/reports/LATEST.txt"
+  ],
+  "created": [
+    "app/src/components/clips/ClipFeedback.tsx",
+    "app/src/test/clip-generation-feedback.test.tsx",
+    "docs/reports/evidence/geracao-feedback-2026-10-24.json",
+    "docs/reports/history/2026-10-24_110257_geracao-feedback.txt"
+  ],
+  "validation": {
+    "frontend": {
+      "passed": 258,
+      "failed": 0,
+      "files": 40
+    },
+    "new_scenarios": 5,
+    "red_before_fix": {
+      "missing_toast": true,
+      "invalid_reply_masked_as_completed": true,
+      "wrong_disk_message": true,
+      "late_completion_hides_failure": true
+    },
+    "build": {
+      "command": "npm run build",
+      "exit": 0,
+      "warnings": 0
+    },
+    "lint": {
+      "command": "npx eslint src --max-warnings 0",
+      "errors": 0,
+      "warnings": 0
+    },
+    "rust": "Não alterado nem reexecutado.",
+    "ipc": "Simulado; execução real de geração não repetida nesta tarefa.",
+    "desktop": "Não operado; aceite visual/manual pendente.",
+    "logs": ".tooling/test-output/silent-generation-*"
+  },
+  "graphify": {
+    "repo": "FrosttyS18/CutNicePro",
+    "workspace": "wesley-s-workspace",
+    "indexedCommit": "8a635b5c36b93a4a6f4ac0ddf0bb657510096be5",
+    "localChangesIndexed": false
+  },
+  "data": "Somente leitura de metadados de coleções para diagnóstico; nenhum vídeo/projeto/modelo/edição alterado.",
+  "nativeBuild": "Sem rebuild do motor e sem target adicional; frontend validado.",
+  "git": {
+    "commit": false,
+    "push": false
+  },
+  "limits": [
+    "A seleção pode continuar retornando zero novos quando os critérios não são atendidos ou o conteúdo é repetido.",
+    "Nenhuma nova qualidade editorial ou geração real foi validada por esta correção."
+  ],
+  "checkbox": "Inclui alterações unstaged no próximo commit, inclusive trabalho anterior. Não é uma seleção de alterações recentes; commit e push são etapas distintas."
+}

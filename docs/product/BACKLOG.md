@@ -4,6 +4,22 @@
 > Priorização MoSCoW justificada por valor/dependência/risco. Sem estimativas de horas
 > inventadas (dependem de avaliação técnica). Há código implementado e itens ainda PLANNED; IN REVIEW não equivale a aceite do mantenedor. Estado operacional e histórico de entregas são distintos.
 
+## Adaptação AutoClip — prompts e rostos — 2026-10-24
+
+Escopo autorizado pelo mantenedor: estudar os módulos pertinentes e aplicar melhorias no caminho local. Biblioteca leve e organização testadas e aprovadas funcionalmente pelo mantenedor; não reabrir esse redesenho. Graphify em 8a635b5 confirmado nesta tarefa.
+
+Plano incremental: (1) seleção orientada a pergunta/resposta ou argumento completo, com avaliação explícita de autonomia e conclusão; título fiel ao conteúdo realmente incluído; (2) corrigir refino que recua a conclusão e remover alocação permanente de operações; (3) detectar rostos por YuNet local e estimar fala por movimento da boca, aplicando centro estável ao corte sem sobrepor edição manual. Quando as posições forem incompatíveis com um recorte estático seguro, preservar o quadro amplo. Não anunciar acompanhamento por tempo, diarização ou reconhecimento de identidade: esta fatia identifica posição de rostos e um centro seguro, não implementa câmera animada.
+
+Contratos: booleans de autonomia/conclusão são obrigatórios nas respostas novas do avaliador, sem alterar coleções históricas. Novo metadado opcional faceFraming valida valores em Rust/TS; não será rotulado como evidência multimodal do LLM. Somente cortes novos recebem o trabalho; sem reanálise de biblioteca. Nenhuma mídia é enviada para nuvem.
+
+Aceites antes da implementação: candidato incompleto/contextual não ganha vaga por nota alta; refino não retira a frase conclusiva; títulos não prometem lista ou contraste ausente; teste real do YuNet com mídia local e consumo delimitado; no máximo um worker de rostos, uma thread, amostragem limitada, cancelamento/timeout e fallback isolado; paridade do centro estático entre prévia/editor/export; edições salvas vencem; teste manual do resultado editorial pelo mantenedor. Python/OpenCV ficam isolados em .tooling, com versões fixadas e sem instalar nada automaticamente durante geração.
+
+Estado de entrega: contratos/prompts/gates, correções de bordas e YuNet implementados. Regressões automatizadas/nativas PASS; ensaios intermediários de IA não produziram amostra editorial aprovada (detalhes no ENGINE-HANDOFF), e não houve terceira inferência depois das últimas correções. Teste manual da geração final permanece pendente, sem declarar qualidade comprovada por testes de contrato. Câmera animada e instalador do runtime para release fora desta fatia.
+
+## Resultado visível da geração — 2026-10-24
+
+Correção de FR-010/AC-041 e estados de erro/resultado existentes: quando a seleção/análise não aprova cortes novos, informar explicitamente em toast persistente que os cortes anteriores foram mantidos. Falha de validação do retorno não pode virar sucesso pela conclusão do processo nativo, nem desaparecer por evento tardio. Implementado e verificado em React com IPC simulado (cinco cenários); teste manual do mantenedor pendente. Não altera os critérios de qualidade nem constitui melhora editorial comprovada.
+
 ## Correção da biblioteca — implementação 2026-10-24
 
 Vínculos: JRN-002/008, US-003/014/015, FR-004/010, BR-019/020, AC-006/041/044/045 e responsividade NFR-002. Escopo autorizado: galeria leve, separação vertical por projeto e Novo durante uma hora. Sem alteração da seleção editorial, notas, revisão, mídia original ou edições.

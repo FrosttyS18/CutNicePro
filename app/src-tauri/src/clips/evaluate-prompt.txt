@@ -7,3 +7,8 @@ Para CADA candidato, avalie de forma independente dos demais:
 4. advertising — marque true quando o trecho for leitura de patrocínio, cupom, sorteio ou chamada para comprar, visitar site ou seguir.
 A nota (0 a 100) é EDITORIAL deste intervalo como clipe: assunto claro e força do momento para quem não viu o resto do vídeo. Não é validade técnica (limites e sobreposição são verificados por código) nem probabilidade de viralização: não avalie tendências externas nem prometa métricas. A nota deve refletir o intervalo efetivamente apresentado.
 Retorne somente JSON conforme o esquema, com uma avaliação por id.
+
+Antes de atribuir a nota, responda os dois campos booleanos obrigatórios:
+- standalone: true somente se a fala dentro do corte apresenta o assunto e os referentes necessários. Uma contagem iniciada em "um" sem explicar o que está sendo contado, um pronome sem referente ou uma comparação cuja primeira parte ficou em contextBefore exigem false. Não considere o título ou o contexto externo como se fossem falados dentro do corte.
+- complete: true somente se a unidade iniciada termina dentro do corte. Se contextAfter ainda desenvolve a mesma resposta, se uma lista anunciada fica incompleta ou se o argumento para antes da conclusão, use false. Uma frase pontuada não prova conclusão da ideia. Humor pode terminar na reação/punchline, sem resolver um problema.
+A nota alta não anula false em nenhum desses campos. reason deve explicar qual abertura ou conclusão falta, citando o conteúdo, sem propor fatos novos. Leia contexto apenas para identificar o que ficou fora; não avalie a versão que você gostaria de editar.

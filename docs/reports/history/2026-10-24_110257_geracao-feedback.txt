@@ -1,0 +1,74 @@
+╔════════════════════════════════════════════╗
+║       CUTNICEPRO — ZCODE REPORT            ║
+╚════════════════════════════════════════════╝
+
+TASK
+  Name: Resultado silencioso da geração
+  Status: PASS no tratamento de resultado/erro.
+  FUNCTIONAL STATUS: PASS nos cenários automatizados.
+  REGRESSION STATUS: PASS no frontend executado.
+  VISUAL STATUS: PENDING HUMAN APPROVAL
+
+IMPLEMENTATION
+  Log do mantenedor: 13 propostas recusadas; a única selecionada
+    também foi recusada na análise final. Zero cortes novos aprovados.
+  Corrigido: toast persistente para resultado, zero novos ou erro.
+  Corrigido: retorno inválido não vira sucesso; evento tardio não apaga falha.
+  Mensagens explicam o motivo, sem atribuir qualquer falha ao disco.
+  Critérios editoriais, prompts, modelos e backend preservados.
+
+FILES
+  Modified: useClips.ts, clips.ts, ProjectWorkspace.tsx, clips.css,
+    ENGINE-HANDOFF.md, BACKLOG.md e LATEST.txt.
+  Created: ClipFeedback.tsx, clip-generation-feedback.test.tsx,
+    manifesto e histórico deste relatório.
+  Deleted: nenhum. Unexpected changes: NONE.
+  Lista: docs/reports/evidence/geracao-feedback-2026-10-24.json.
+
+VALIDATION
+  Frontend: 258 PASS, 0 FAIL, 40 arquivos.
+  Cinco cenários: zero novos, resposta inválida/evento tardio,
+    erro persistente, cancelamento e novos realmente adicionados.
+  Regressões reproduzidas antes das correções.
+  Typecheck/build e ESLint estrito: PASS, zero warnings.
+  Rust não alterado/reexecutado; IPC dos testes é simulado.
+  Sem teste de desktop ou nova inferência de IA.
+
+HOOKS / HARNESS
+  Verificações explícitas; hooks ZCode não executados neste cliente.
+  Testes de React corrigidos para progresso animado/nome acessível.
+
+MCP / SKILLS
+  Graphify remoto antes/depois; índice corresponde ao HEAD.
+  Working tree ainda não indexado; fonte local complementada.
+  Diagnóstico sistemático, TDD, frontend e verificação de conclusão.
+
+GIT
+  Branch: main
+  HEAD: 8a635b5c36b93a4a6f4ac0ddf0bb657510096be5
+  Latest commit: chore(repo): organiza evidências e governança do projeto
+  Commits created: nenhum. Push: NOT EXECUTED.
+  Remote: origin → FrosttyS18/CutNicePro, main.
+  Working tree: MODIFIED/UNTRACKED; 85 arquivos pendentes,
+    incluindo trabalho anterior.
+
+EVIDENCE
+  Manifesto: docs/reports/evidence/geracao-feedback-2026-10-24.json.
+  Logs: .tooling/test-output/silent-generation-*.
+
+ISSUES / FINAL
+  Comunicação corrigida; isto não comprova melhora editorial.
+  A IA ainda pode aprovar zero cortes. Nada foi liberado à força.
+  Dados preservados; nenhuma build paralela ou rebuild do motor.
+
+REPORT
+  Latest: docs/reports/LATEST.txt
+  History: docs/reports/history/2026-10-24_110257_geracao-feedback.txt
+
+GUIA DO MANTENEDOR — O QUE MUDOU E COMO TESTAR
+  1. Reabra pelo comando habitual se a interface não tiver atualizado.
+  2. Gere novamente: deve aparecer quantidade adicionada, aviso de
+     zero novos ou erro explicado. O aviso fica até Fechar aviso.
+  3. A caixa do print inclui todas as alterações unstaged no commit.
+     Não precisa desmarcar para o Graphify: as mudanças precisam
+     estar no commit enviado ao GitHub e o índice precisa atualizar.

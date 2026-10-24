@@ -1,0 +1,119 @@
+{
+  "task": "build-limpo-2026-10-24",
+  "scope": "Warnings de compilação e lint; sem teste de desktop ou inferência.",
+  "before": {
+    "rust_warning_causes": 6,
+    "eslint_errors": 19,
+    "eslint_warnings": 1,
+    "bundle": "Pacote principal único de aproximadamente 2 MB; aviso Vite >500 kB no build anterior."
+  },
+  "after": {
+    "rust_check": {
+      "command": "cargo check --all-targets --offline --locked",
+      "warnings": 0,
+      "exit": 0
+    },
+    "rust_fmt": {
+      "command": "cargo fmt --all -- --check",
+      "exit": 0
+    },
+    "rust_tests": {
+      "command": "cargo test --lib --offline --locked",
+      "passed": 172,
+      "failed": 0,
+      "ignored": 14
+    },
+    "rust_build": {
+      "command": "cargo build --offline --locked",
+      "warnings": 0,
+      "exit": 0
+    },
+    "frontend_tests": {
+      "command": "npx vitest run",
+      "files": 39,
+      "passed": 253,
+      "failed": 0
+    },
+    "frontend_build": {
+      "command": "npm run build",
+      "warnings": 0,
+      "exit": 0,
+      "max_js_bytes": 416769,
+      "chunks": 9
+    },
+    "lint": {
+      "command": "npx eslint src --max-warnings 0",
+      "errors": 0,
+      "warnings": 0,
+      "ci_budget_errors": 0,
+      "ci_budget_warnings": 0
+    }
+  },
+  "review": {
+    "graph": {
+      "repository": "FrosttyS18/CutNicePro",
+      "workspace": "wesley-s-workspace",
+      "commit": "8a635b5c36b93a4a6f4ac0ddf0bb657510096be5",
+      "current_local_changes_indexed": false
+    },
+    "regressions": "Troca de mídia/projeto, resposta antiga, erro/retry, URLs revogadas, callback atual, transcrição durante playback, splash com cancelamento e movimento reduzido.",
+    "intermediate_failures": "Harness de temporizadores e teardown corrigido. Teste SSR passou a cobrir tempo zero fechado e reprodução aberta, equivalente ao estado confirmado no cliente; teste montado adicional cobre recolhimento manual. Agrupamento inicial de pacotes capturava @animate-ui/react como React, causando aviso de ciclo motion/React: seletor corrigido e build final sem ciclo/aviso.",
+    "desktop": false,
+    "model_inference": false,
+    "release_packaging": false,
+    "optional_clippy": false,
+    "editorial_acceptance": "Continua pendente do mantenedor."
+  },
+  "files": {
+    "modified": [
+      ".github/workflows/ci.yml",
+      "app/vite.config.ts",
+      "tools/ci/lint-budget.mjs",
+      "app/src-tauri/src/clips/borders.rs",
+      "app/src-tauri/src/clips/multimodal.rs",
+      "app/src-tauri/src/clips/selection.rs",
+      "app/src-tauri/src/clips/tracking.rs",
+      "app/src-tauri/src/clips/txt_export_tests.rs",
+      "app/src/App.tsx",
+      "app/src/components/HalftoneWordmarkFooter.tsx",
+      "app/src/components/galaxy/hero-galaxy.tsx",
+      "app/src/components/upload/SourceForm.tsx",
+      "app/src/components/upload/ToolDialog.tsx",
+      "app/src/components/workspace/ProjectContextMenu.tsx",
+      "app/src/components/workspace/TranscriptPanel.tsx",
+      "app/src/components/workspace/TranscriptWordPopover.tsx",
+      "app/src/components/workspace/VideoPreview.tsx",
+      "app/src/hooks/useClipLibrary.ts",
+      "app/src/hooks/useClipMedia.ts",
+      "app/src/hooks/usePlaybackShortcut.ts",
+      "app/src/hooks/useSplashPhase.ts",
+      "app/src/hooks/useTimelinePreview.ts",
+      "app/src/hooks/useTranscription.ts",
+      "app/src/test/react-host.tsx",
+      "app/src/test/editor-timing.test.tsx",
+      "docs/TOOLING.md",
+      "docs/engineering/ENGINE-HANDOFF.md"
+    ],
+    "created": [
+      "app/src/test/async-view-state.test.tsx",
+      "app/src/test/committed-callbacks.test.tsx",
+      "app/src/test/splash-phase.test.tsx",
+      "docs/reports/evidence/build-limpo-2026-10-24.json"
+    ],
+    "deleted": [
+      "app/src/test/splash-phase.test.ts"
+    ],
+    "reports": [
+      "docs/reports/LATEST.txt",
+      "docs/reports/history/2026-10-24_102807_build-limpo.txt"
+    ]
+  },
+  "binary": {
+    "path": "app/src-tauri/target/debug/cutnicepro.exe",
+    "sha256": "8B1C6B8547AAD160B9E30D24168953E909736D12D947EE07181247387C41CA10"
+  },
+  "logs": ".tooling/test-output/warnings-*",
+  "commits": 0,
+  "push": false,
+  "data_changed": false
+}

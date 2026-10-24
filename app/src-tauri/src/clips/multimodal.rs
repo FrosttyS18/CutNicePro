@@ -308,10 +308,6 @@ impl LazyServer {
         }
     }
 
-    pub fn tools(&self) -> &ServerTools {
-        &self.tools
-    }
-
     /// Geração textual pelo server (subindo-o se for a primeira chamada).
     pub fn completion(
         &self,

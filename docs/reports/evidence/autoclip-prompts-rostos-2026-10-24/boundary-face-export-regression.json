@@ -1,0 +1,22 @@
+{
+  "actualDurationMs": 42376,
+  "afterEnd": 1228.92,
+  "afterStart": 1186.56,
+  "beforeFixEnd": 1220.88,
+  "faceFraming": {
+    "samples": 12,
+    "status": "ambiguous"
+  },
+  "filename": "referencia-TECNICA-bordas-YuNet.mp4",
+  "fit": "contain",
+  "focalPoint": null,
+  "height": 1920,
+  "operations": [
+    "start_sentence",
+    "end_pause"
+  ],
+  "rawEnd": 1228.92,
+  "rawStart": 1194.42,
+  "scope": "Regressão do intervalo observado, SEM nova inferência de seleção e SEM aceite editorial. Não é corte novo entregue pela IA.",
+  "width": 1080
+}

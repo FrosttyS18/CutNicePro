@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useId, useMemo, useRef, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useId, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { displayWords } from "../../lib/transcript-text";
 import { transcriptSections } from "../../lib/transcript-sections";
 import { formatMediaTime } from "../../lib/workspace";
@@ -20,7 +20,6 @@ interface Props {
 export function TranscriptPanel({ segments, demo, onSeek, onText, currentTime, canSeek, actions, generated, readOnly }: Props) {
   const [query, setQuery] = useState("");
   const [editing, setEditing] = useState<string | null>(null);
-  const [expanded, setExpanded] = useState<Set<string>>(new Set());
   const id = useId();
   const scroll = useRef<HTMLDivElement>(null);
   const manualUntil = useRef(0);
@@ -30,9 +29,12 @@ export function TranscriptPanel({ segments, demo, onSeek, onText, currentTime, c
   const activeIndex = current ? displayWords(current).findIndex(word => word.start !== null && word.end !== null && currentTime >= word.start && currentTime < word.end) : -1;
   const activeKey = `${current?.id}:${activeIndex}`;
   const started = currentTime > 0;
-  useEffect(() => {
+  const [expanded, setExpanded] = useState<Set<string>>(() => new Set(currentSection && started ? [currentSection] : []));
+  const [followed,setFollowed] = useState({currentSection,started});
+  if (followed.currentSection !== currentSection || followed.started !== started) {
+    setFollowed({currentSection,started});
     if (currentSection && started) setExpanded(new Set([currentSection]));
-  }, [currentSection, started]);
+  }
   useEffect(() => {
     const box = scroll.current;
     const active = box?.querySelector<HTMLElement>('[aria-current="true"]');
@@ -42,7 +44,7 @@ export function TranscriptPanel({ segments, demo, onSeek, onText, currentTime, c
     if (child.bottom > parent.bottom || child.top < parent.top) box.scrollTop += child.top - parent.top - 30;
   }, [activeKey]);
   const callbacks = useRef({ onSeek, onText });
-  callbacks.current = { onSeek, onText };
+  useLayoutEffect(() => { callbacks.current = { onSeek, onText }; }, [onSeek,onText]);
   const seek = useCallback((time: number) => callbacks.current.onSeek(time), []);
   const text = useCallback((key: string, value: string, words?: TranscriptWord[]) => callbacks.current.onText(key, value, words), []);
   const edit = useCallback((key: string) => setEditing(current => current === key ? null : key), []);

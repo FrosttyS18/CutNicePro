@@ -1,0 +1,120 @@
+╔════════════════════════════════════════════╗
+║       CUTNICEPRO — ZCODE REPORT            ║
+╚════════════════════════════════════════════╝
+
+TASK
+  Name: Adaptação AutoClip — prompts, bordas e rostos locais
+  Status: PARTIAL — implementação compilada; qualidade editorial final não comprovada.
+  Scope/Objective: aplicar o estudo ao processamento local, preservando a biblioteca.
+  Result: prompts e verificações editoriais atualizados; bugs de bordas corrigidos;
+    YuNet integrado à geração de novos cortes verticais.
+  FUNCTIONAL STATUS: PARTIAL; detecção e regressão nativa PASS.
+  REGRESSION STATUS: PASS nos cenários executados.
+  VISUAL STATUS: PENDING HUMAN APPROVAL.
+
+IMPLEMENTATION
+  Completed: pergunta/apresentação até conclusão; avaliação explícita de
+    autonomia/completude; nota alta não contorna recusa; intervalo alterado
+    é reavaliado; análise final fraca de Gancho/Fechamento impede nova sugestão.
+    Frases atravessam linhas ASR; início não salta para o fim da frase;
+    pergunta retórica respondida preserva conclusão; Box::leak removido.
+    YuNet + movimento da boca estimam um centro estático seguro.
+    Ambiguidade mantém quadro amplo; edição salva prevalece.
+  Not completed: tracking animado, instalador do runtime para release,
+    nova amostra editorial aprovada após as últimas correções.
+  Architecture impact: worker Python isolado; nenhum servidor/nuvem/mmproj.
+    Nenhuma detecção durante scroll; somente novos 9:16 em Preencher.
+
+FILES
+  Created: editorial.rs, face_framing.rs, autoclip_runtime_tests.rs,
+    face-framing.test.ts; tools/face-framing; modelo YuNet/licenças; evidências.
+  Modified: prompts, seleção, bordas, geração, contratos Rust/TS, inspeção
+    e documentos canônicos. Lista em diagnostico.json.
+  Deleted: nenhum ativo do mantenedor. Unexpected changes: NONE.
+  Artefatos temporários movidos para .tooling/test-output; sem cópias de fontes.
+
+VALIDATION
+  Typecheck/build: PASS — Vite e target canônico Rust.
+  Lint: PASS nos tocados e orçamento; dívida anterior preservada.
+  Unit/Integration: frontend 246/246; Rust 172 PASS, 14 ignored;
+    Python 4/4; PID direto e regressão nativa executados separadamente: 2 PASS.
+  Regression: borda real antes 1220,88 s → depois 1228,92 s;
+    render 1080×1920, 42,376 s, com rosto/enquadramento seguro.
+  Runtime: detector em duas janelas, 9,34 s, pico próprio 101,53 MiB.
+    Venv ocupa 167,90 MiB; modelo 232.589 bytes. Sem novo target.
+  Visual/UI: SKIP — testes manuais do mantenedor.
+  Total passed: 424 nos conjuntos finais citados, sem somar repetições.
+  Total failed: 2 execuções do ensaio editorial intermediário.
+    Primeira: sugestão com fechamento fraco; export do harness sem captionStyle.
+    Segunda: nenhuma proposta completa após ajuste. Revelaram bugs corrigidos
+    depois; não houve terceira inferência nem aprovação editorial fabricada.
+  Total skipped: 14 na suíte Rust rápida; dois rodados explicitamente.
+    Falhas iniciais de fixture/compilação dos testes foram corrigidas.
+
+HOOKS / HARNESS
+  Hooks active/PreToolUse/PostToolUse/Stop/Baseline: hooks ZCode não executados.
+  Gate result: regressões técnicas PASS; eficácia editorial final PENDING.
+  Evidence: docs/reports/evidence/autoclip-prompts-rostos-2026-10-24/.
+
+MCP / SKILLS
+  Tools used: Graphify remoto; spec/planning/source-driven e frontend.
+  Connection status: índice 8a635b5 confirmado; impacto antes/depois consultado.
+  Failures/Pending activation: nenhuma de conexão; working tree novo não indexado.
+  Estudo: clip_finder/framing relidos; demais módulos pertinentes consultados;
+    revisões 3d3b5edf e 5d0eac36. Não alegada leitura integral dos repositórios.
+
+GIT
+  Branch: main
+  HEAD: 8a635b5c36b93a4a6f4ac0ddf0bb657510096be5
+  Latest commit: chore(repo): organiza evidências e governança do projeto
+  Commits created: nenhum nesta tarefa.
+  Push: NOT EXECUTED nesta tarefa.
+  Remote: origin → FrosttyS18/CutNicePro; main.
+  Working tree: MODIFIED/UNTRACKED.
+  Pending files: 49 caminhos, incluindo auditorias anteriores; inventário
+    em diagnostico.json, mais o próprio diagnóstico e este histórico.
+
+EVIDENCE
+  Commands executed: cargo test/build/fmt; npm test/build; eslint;
+    testes Python; ensaios locais e ffprobe; consultas Graphify.
+  Relevant logs: .tooling/test-output/autoclip-*.log.
+  Screenshots: nenhuma.
+  Test artifacts: diagnostico.json, resultados editoriais/rostos e
+    boundary-face-export-regression.json.
+  Reproduction details: referencia-TECNICA-bordas-YuNet.mp4 comprova
+    somente regressão do render/bordas; NÃO é corte novo aprovado da IA.
+
+ISSUES
+  Bugs found: recuo da conclusão, pergunta retórica, fragmentação ASR,
+    snap do gancho e vazamento de operações; corrigidos e testados.
+  Unresolved failures: eficácia editorial da versão final ainda sem nova inferência.
+  Regressions: nenhuma nos testes finais citados; sessão real não operada.
+  Risks: pode gerar menos sugestões; reavaliação acrescenta custo.
+    Enquadramento é estático; componente release não empacotado.
+    Primeira medição observava launcher; corrigida para pico do worker.
+  Blockers: nenhum para testar a build padrão.
+
+FINAL
+  Delivery status: pronto para teste manual; sem declarar qualidade aprovada.
+  Requirements met: adaptação local de prompts, bordas e detecção de rostos.
+  Remaining work/User action required: avaliar novos cortes no app.
+  Restart required: abrir pelo comando normal; usuário salvou/fechou o app.
+  Ready for next task: após retorno do teste.
+  Build: app/src-tauri/target/debug/cutnicepro.exe
+  SHA-256: B11A397E0460AFBED708A8FA6F96564A20053CF4F846924FD79DCAD72A166924
+
+REPORT
+  Latest file: C:/CutNicePro/docs/reports/LATEST.txt
+  Historical file: C:/CutNicePro/docs/reports/history/2026-10-24_100259_autoclip-prompts-rostos.txt
+
+GUIA DO MANTENEDOR — O QUE MUDOU E COMO TESTAR
+  1. Abra normalmente: em C:/CutNicePro/app, npm run tauri dev.
+  2. No projeto, gere novos cortes em 9:16 e Preencher vídeo.
+     Os antigos não são reprocessados. Quantidade escolhida é teto.
+  3. Confira abertura compreensível, conclusão e título fiel; na inspeção,
+     veja o estado do rosto. Quadro amplo pode ser a escolha segura.
+  4. Edite o enquadramento, salve/reabra e baixe: ajuste manual deve prevalecer.
+  A biblioteca leve/organizada já foi confirmada pelo mantenedor;
+  esta confirmação não aprova a qualidade editorial nova.
+
+END OF REPORT

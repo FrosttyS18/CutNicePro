@@ -1,5 +1,6 @@
 use super::{
-    borders, multimodal, scene_regions, selection, semantic, store, text_engine,
+    borders, editorial, face_framing, multimodal, scene_regions, selection, semantic, store,
+    text_engine,
     types::{Clip, ClipCollection, Options},
 };
 use crate::transcription::{process::ProcessControl, types::Segment};
@@ -216,6 +217,10 @@ pub fn run(
             &evaluator,
             |percent| progress(percent / 2),
         )?;
+        let original_bounds = clips
+            .iter()
+            .map(|clip| (clip.id.clone(), (clip.start, clip.end)))
+            .collect();
         scene_regions::refine(
             base,
             request.source,
@@ -239,7 +244,7 @@ pub fn run(
             sorted.sort_by(|a, b| a.start.total_cmp(&b.start));
             for index in 0..sorted.len() {
                 let prev_end = if index > 0 {
-                    Some(sorted[index - 1].start)
+                    Some(sorted[index - 1].end)
                 } else {
                     None
                 };
@@ -259,6 +264,9 @@ pub fn run(
                 sorted[index].end = refined.end;
             }
         }
+        clips.retain(|clip| clip.end - clip.start <= request.options.max_seconds + 1e-6);
+        editorial::recheck_adjusted(&mut clips, &original_bounds, speech, &evaluator)?;
+        control.check()?;
         if let (Some(server), Some(pauses), Some(ffmpeg)) = (&multimodal, &pauses, &ffmpeg) {
             for clip in &mut clips {
                 multimodal_attempts.set(multimodal_attempts.get() + 1);
@@ -337,6 +345,11 @@ pub fn run(
         |clip| semantic::run(&engine, scratch, clip, request.speech, control),
         progress,
     )?;
+    editorial::retain_analyzed_complete(&mut fresh);
+    if fresh.is_empty() && previous.is_none() {
+        return Err("Não encontramos cortes com abertura e fechamento completos nesta rodada. Tente outra faixa ou amplie a duração máxima.".into());
+    }
+    face_framing::enrich(base, request.source, scratch, &mut fresh, control)?;
     let published_at_ms = std::time::SystemTime::now()
         .duration_since(std::time::UNIX_EPOCH)
         .map(|d| d.as_millis() as u64)
@@ -388,6 +401,7 @@ mod tests {
             analysis_signature: None,
             analysis_stale: None,
             multimodal: None,
+            face_framing: None,
             created_at_ms: None,
             deleted: None,
             engine: None,
@@ -468,6 +482,7 @@ mod incremental_tests {
             analysis_signature: None,
             analysis_stale: None,
             multimodal: None,
+            face_framing: None,
             created_at_ms: None,
             deleted: None,
             engine: None,

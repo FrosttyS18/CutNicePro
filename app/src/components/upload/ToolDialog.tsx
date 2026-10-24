@@ -28,7 +28,11 @@ export function ToolDialog({ tool, video, youtube, loading, error, model, ratio,
   const ref = useRef<HTMLDialogElement>(null);
   const id = useId();
   const [previewError, setPreviewError] = useState(false);
-  useEffect(() => setPreviewError(false), [video?.url]);
+  const [previewSource, setPreviewSource] = useState(video?.url);
+  if (previewSource !== video?.url) {
+    setPreviewSource(video?.url);
+    setPreviewError(false);
+  }
   useEffect(() => {
     const dialog = ref.current;
     if (!tool || !dialog) return;

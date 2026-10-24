@@ -3,10 +3,6 @@
 # runtimes locais: testes com mídia real continuam LOCAIS (cargo --ignored,
 # e2e Tauri via CDP), documentados em docs/engineering/VALIDATION-POLICY.
 #
-# ESLint roda com orçamento versionado (tools/ci/lint-budget.mjs): a dívida
-# técnica conhecida não cresce nem mascara erros novos. clippy permanece
-# verificação LOCAL (5 avisos too-many-args de API estável, dívida
-# registrada); um -D warnings aqui quebraria falsamente.
 name: CI
 on:
   push:
@@ -17,7 +13,7 @@ permissions:
   contents: read
 jobs:
   frontend:
-    name: Frontend (typecheck + build + vitest + lint orçado)
+    name: Frontend (typecheck + build + vitest + lint sem avisos)
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -32,7 +28,7 @@ jobs:
       - run: npm ci
       - run: npm run build
       - run: npx vitest run
-      - name: ESLint com orçamento de dívida
+      - name: ESLint sem erros ou avisos
         run: npx eslint src --format json | node ../tools/ci/lint-budget.mjs
   rust:
     name: Rust (fmt + check + testes unitários/integração da lib)

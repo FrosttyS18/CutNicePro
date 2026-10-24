@@ -1,4 +1,4 @@
-import { useEffect, useId, useRef, useState } from "react";
+import { useEffect, useId, useLayoutEffect, useRef, useState } from "react";
 import { open as openFileDialog } from "@tauri-apps/plugin-dialog";
 import { listen } from "@tauri-apps/api/event";
 import { youtubeVideoId } from "../../lib/video-source";
@@ -57,7 +57,7 @@ export function SourceForm({ loading, onFilePath, compact = false }: Props) {
   // Drop REAL com paths: eventos nativos do Tauri (dragDropEnabled), com
   // cleanup simétrico no unmount (sem listeners duplicados).
   const pathsRef = useRef(handlePaths);
-  pathsRef.current = handlePaths;
+  useLayoutEffect(() => { pathsRef.current = handlePaths; });
   useEffect(() => {
     let disposed = false;
     const offs: Array<() => void> = [];

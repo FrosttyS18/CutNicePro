@@ -13,6 +13,8 @@ pub fn identity(media: &str, start: f64, end: f64, format: Option<&str>) -> Stri
 #[derive(Clone, Debug, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase", deny_unknown_fields)]
 pub struct Clip {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub face_framing: Option<super::face_framing::FaceFraming>,
     pub id: String,
     pub start: f64,
     pub end: f64,

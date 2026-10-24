@@ -1,0 +1,171 @@
+{
+  "schemaVersion": 1,
+  "timestamp": "2026-10-24T10:02:59.2680413-03:00",
+  "head": "8a635b5c36b93a4a6f4ac0ddf0bb657510096be5",
+  "branch": "main",
+  "newCommits": 0,
+  "push": "NOT EXECUTED",
+  "pending": [
+    " M .gitattributes",
+    " M app/src-tauri/src/clips/analysis-prompt.txt",
+    " M app/src-tauri/src/clips/borders.rs",
+    " M app/src-tauri/src/clips/content.rs",
+    " M app/src-tauri/src/clips/discover-auto-prompt.txt",
+    " M app/src-tauri/src/clips/discover-prompt.txt",
+    " M app/src-tauri/src/clips/evaluate-prompt.txt",
+    " M app/src-tauri/src/clips/generation.rs",
+    " M app/src-tauri/src/clips/mod.rs",
+    " M app/src-tauri/src/clips/ranking.rs",
+    " M app/src-tauri/src/clips/scene_regions.rs",
+    " M app/src-tauri/src/clips/selection.rs",
+    " M app/src-tauri/src/clips/semantic_tests.rs",
+    " M app/src-tauri/src/clips/store.rs",
+    " M app/src-tauri/src/clips/types.rs",
+    " M app/src/components/clips/ClipDetails.tsx",
+    " M app/src/lib/clips.ts",
+    " M docs/TOOLING.md",
+    " M docs/engineering/ENGINE-HANDOFF.md",
+    " M docs/product/BACKLOG.md",
+    " M docs/product/BUSINESS-RULES.md",
+    " M docs/product/PRODUCT-BRAIN.md",
+    " M docs/product/TRACEABILITY.md",
+    " M docs/references/OPEN-SOURCE-ENGINE-RESEARCH.md",
+    " M docs/reports/LATEST.txt",
+    "?? app/src-tauri/resources/models/YUNET-LICENSE.txt",
+    "?? app/src-tauri/resources/models/face_detection_yunet_2023mar.onnx",
+    "?? app/src-tauri/src/clips/autoclip_runtime_tests.rs",
+    "?? app/src-tauri/src/clips/editorial.rs",
+    "?? app/src-tauri/src/clips/face_framing.rs",
+    "?? app/src/test/face-framing.test.ts",
+    "?? docs/reports/evidence/autoclip-prompts-rostos-2026-10-24/boundary-face-export-regression.json",
+    "?? docs/reports/evidence/autoclip-prompts-rostos-2026-10-24/editorial-result.json",
+    "?? docs/reports/evidence/autoclip-prompts-rostos-2026-10-24/editorial-run1-result.json",
+    "?? docs/reports/evidence/autoclip-prompts-rostos-2026-10-24/editorial-run1-speech.json",
+    "?? docs/reports/evidence/autoclip-prompts-rostos-2026-10-24/editorial-speech.json",
+    "?? docs/reports/evidence/autoclip-prompts-rostos-2026-10-24/face-request.json",
+    "?? docs/reports/evidence/autoclip-prompts-rostos-2026-10-24/face-resources.json",
+    "?? docs/reports/evidence/autoclip-prompts-rostos-2026-10-24/face-result-measured.json",
+    "?? docs/reports/evidence/autoclip-prompts-rostos-2026-10-24/face-result.json",
+    "?? docs/reports/evidence/autoclip-prompts-rostos-2026-10-24/face-worker.log",
+    "?? docs/reports/history/2026-10-24_085323_organizacao-commits.txt",
+    "?? docs/reports/history/2026-10-24_090216_push-main.txt",
+    "?? tools/face-framing/AUTOCLIP-LICENSE.txt",
+    "?? tools/face-framing/requirements.txt",
+    "?? tools/face-framing/test_worker.py",
+    "?? tools/face-framing/worker.py"
+  ],
+  "files": [
+    ".gitattributes",
+    "app/src-tauri/resources/models/face_detection_yunet_2023mar.onnx",
+    "app/src-tauri/resources/models/YUNET-LICENSE.txt",
+    "app/src-tauri/src/clips/analysis-prompt.txt",
+    "app/src-tauri/src/clips/autoclip_runtime_tests.rs",
+    "app/src-tauri/src/clips/borders.rs",
+    "app/src-tauri/src/clips/content.rs",
+    "app/src-tauri/src/clips/discover-auto-prompt.txt",
+    "app/src-tauri/src/clips/discover-prompt.txt",
+    "app/src-tauri/src/clips/editorial.rs",
+    "app/src-tauri/src/clips/evaluate-prompt.txt",
+    "app/src-tauri/src/clips/face_framing.rs",
+    "app/src-tauri/src/clips/generation.rs",
+    "app/src-tauri/src/clips/mod.rs",
+    "app/src-tauri/src/clips/ranking.rs",
+    "app/src-tauri/src/clips/scene_regions.rs",
+    "app/src-tauri/src/clips/selection.rs",
+    "app/src-tauri/src/clips/semantic_tests.rs",
+    "app/src-tauri/src/clips/store.rs",
+    "app/src-tauri/src/clips/types.rs",
+    "app/src/components/clips/ClipDetails.tsx",
+    "app/src/lib/clips.ts",
+    "app/src/test/face-framing.test.ts",
+    "docs/engineering/ENGINE-HANDOFF.md",
+    "docs/product/BACKLOG.md",
+    "docs/product/BUSINESS-RULES.md",
+    "docs/product/PRODUCT-BRAIN.md",
+    "docs/product/TRACEABILITY.md",
+    "docs/references/OPEN-SOURCE-ENGINE-RESEARCH.md",
+    "docs/reports/evidence/autoclip-prompts-rostos-2026-10-24/boundary-face-export-regression.json",
+    "docs/reports/evidence/autoclip-prompts-rostos-2026-10-24/editorial-result.json",
+    "docs/reports/evidence/autoclip-prompts-rostos-2026-10-24/editorial-run1-result.json",
+    "docs/reports/evidence/autoclip-prompts-rostos-2026-10-24/editorial-run1-speech.json",
+    "docs/reports/evidence/autoclip-prompts-rostos-2026-10-24/editorial-speech.json",
+    "docs/reports/evidence/autoclip-prompts-rostos-2026-10-24/face-request.json",
+    "docs/reports/evidence/autoclip-prompts-rostos-2026-10-24/face-resources.json",
+    "docs/reports/evidence/autoclip-prompts-rostos-2026-10-24/face-result-measured.json",
+    "docs/reports/evidence/autoclip-prompts-rostos-2026-10-24/face-result.json",
+    "docs/reports/evidence/autoclip-prompts-rostos-2026-10-24/face-worker.log",
+    "docs/reports/history/2026-10-24_085323_organizacao-commits.txt",
+    "docs/reports/history/2026-10-24_090216_push-main.txt",
+    "docs/reports/LATEST.txt",
+    "docs/TOOLING.md",
+    "tools/face-framing/AUTOCLIP-LICENSE.txt",
+    "tools/face-framing/requirements.txt",
+    "tools/face-framing/test_worker.py",
+    "tools/face-framing/worker.py"
+  ],
+  "graphify": {
+    "newWorkingTreeNotIndexed": true,
+    "commit": "8a635b5c36b93a4a6f4ac0ddf0bb657510096be5",
+    "indexedAt": "2026-10-24T12:11:03.341835Z"
+  },
+  "tests": {
+    "python": {
+      "fail": 0,
+      "pass": 4
+    },
+    "frontend": {
+      "fail": 0,
+      "pass": 246
+    },
+    "nativeBoundaryExport": {
+      "fail": 0,
+      "pass": 1
+    },
+    "finalEditorialInference": "NOT RUN: limite de duas rodadas respeitado",
+    "lint": "PASS nos tocados e orçamento; dívida conhecida 19 erros/1 aviso",
+    "rustFast": {
+      "fail": 0,
+      "ignored": 14,
+      "pass": 172
+    },
+    "nativePid": {
+      "fail": 0,
+      "pass": 1
+    },
+    "diff": "PASS",
+    "llmProbes": [
+      {
+        "generationSeconds": 205.689,
+        "run": 1,
+        "result": "Uma sugestão com fechamento insuficiente; export do harness falhou por captionStyle ausente."
+      },
+      {
+        "generationSeconds": 77.259,
+        "run": 2,
+        "result": "Nenhuma proposta completa após reavaliação, antes das correções finais de fronteira."
+      }
+    ],
+    "format": "PASS",
+    "build": "PASS"
+  },
+  "resources": {
+    "vram": "Não usada pelo detector; não medida para o LLM nesta tarefa.",
+    "faceRuntimeDiskMiB": 167.9,
+    "faceElapsedMs": 9344,
+    "facePeakWorkingSetBytes": 106459136
+  },
+  "binary": {
+    "targetDirectories": [
+      "target"
+    ],
+    "path": "C:/CutNicePro/app/src-tauri/target/debug/cutnicepro.exe",
+    "sha256": "B11A397E0460AFBED708A8FA6F96564A20053CF4F846924FD79DCAD72A166924"
+  },
+  "limits": [
+    "Sem controle da interface nem operação dos projetos do mantenedor.",
+    "Não há nova amostra editorial aprovada.",
+    "Enquadramento é estático; ambiguidade preserva quadro amplo.",
+    "Runtime de desenvolvimento instalado; empacotamento release pendente.",
+    "Referência técnica exportada não é uma entrega editorial da IA."
+  ]
+}

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type RefObject, type CSSProperties } from "react";
+import { useEffect, useLayoutEffect, useRef, useState, type RefObject, type CSSProperties } from "react";
 import type { EditorSettings, SourceDescriptor } from "../../lib/workspace-types";
 import { effectiveCaptionStyle, type CaptionCue } from "../../lib/captions";
 import { CaptionVisual } from "../editor/CaptionVisual";
@@ -35,8 +35,13 @@ export function VideoPreview({ media, localUrl, settings, videoRef, onTime, onDu
   const fallback = useRef<HTMLVideoElement>(null);
   const ref = videoRef ?? fallback;
   const [error, setError] = useState(false);
+  const [source, setSource] = useState({localUrl,videoId:media?.videoId});
+  if (source.localUrl !== localUrl || source.videoId !== media?.videoId) {
+    setSource({localUrl,videoId:media?.videoId});
+    setError(false);
+  }
   const timeHandler = useRef(onTime);
-  timeHandler.current = onTime;
+  useLayoutEffect(() => { timeHandler.current = onTime; }, [onTime]);
   useEffect(() => {
     const element = ref.current;
     if (!element) return;
@@ -52,7 +57,6 @@ export function VideoPreview({ media, localUrl, settings, videoRef, onTime, onDu
     if (!element.paused) start();
     return () => { cancelAnimationFrame(frame); element.removeEventListener("play",start); element.removeEventListener("pause",stop); };
   },[ref,localUrl]);
-  useEffect(() => setError(false), [localUrl, media?.videoId]);
   useEffect(() => {
     if (ref.current) { ref.current.volume = original ? 1 : Math.min(1, settings.volume); ref.current.muted = original ? false : settings.muted; }
   }, [settings.volume, settings.muted, ref, localUrl,original]);

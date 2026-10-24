@@ -1,0 +1,72 @@
+{
+  "collection": {
+    "clips": [
+      {
+        "analysis": {
+          "criteria": [
+            {
+              "evidence": "A Jota, mas e o Notion, a Jota? O Dribble, o Behance?",
+              "explanation": "O início apresenta uma pergunta sobre plataformas específicas de design como Notion, Dribbble e Behance.",
+              "label": "Gancho",
+              "score": 70
+            },
+            {
+              "evidence": "O que eu tô te falando é o que funciona. Um website simples, direto, rápido, fácil acesso, Que funciona no celular.",
+              "explanation": "O desenvolvimento foca na recomendação técnica de um website simples e funcional para a carreira, contrastando com opções de risco.",
+              "label": "Desenvolvimento",
+              "score": 85
+            },
+            {
+              "evidence": "Aí já não é um problema meu. De novo, eu estou tentando te ajudar.",
+              "explanation": "O trecho termina abruptamente com o falante reafirmando sua intenção de ajudar, sem concluir o raciocínio ou dar um desfecho final.",
+              "label": "Fechamento",
+              "score": 30
+            }
+          ],
+          "summary": "O falante orienta sobre como apresentar o portfólio e a carreira, enfatizando a necessidade de um site simples e funcional em vez de arriscar em plataformas aleatórias. Ele sugere o uso de um PDF detalhado para momentos de entrevista como suporte para a explicação do trabalho.",
+          "title": "Recomendações para portfólio e apresentação de carreira profissional"
+        },
+        "analysisSignature": "1257894180cf3eeb3194f0889514b7dc65a64356f8e115d5e03e7906003934e5",
+        "createdAtMs": 1792845524109,
+        "end": 1333.62,
+        "engine": {
+          "backend": "experimentalGemma",
+          "model": "gemma-4-12b-it-qat-q4_0.gguf",
+          "sampling": "temp 1.0, top_k 64, top_p 0.95, min_p 0, seed 42",
+          "seed": 42,
+          "template": "gemma4-canonical-nothink"
+        },
+        "faceFraming": {
+          "samples": 12,
+          "status": "ambiguous"
+        },
+        "fit": "cover",
+        "format": "9:16",
+        "id": "d8ecdae962a5688d7b6f3367f2a86d1742297b356f6a63d223ec4df9dce202db",
+        "reasons": [
+          "Avaliação do intervalo efetivo (opinião): O trecho é uma réplica direta a alternativas comuns, reforçando a recomendação do autor e encerrando o assunto com um desfecho firme.",
+          "O início apresenta uma pergunta sobre plataformas específicas de design como Notion, Dribbble e Behance.",
+          "O desenvolvimento foca na recomendação técnica de um website simples e funcional para a carreira, contrastando com opções de risco.",
+          "O trecho termina abruptamente com o falante reafirmando sua intenção de ajudar, sem concluir o raciocínio ou dar um desfecho final."
+        ],
+        "review": "pending",
+        "score": 62,
+        "start": 1290.46,
+        "title": "Recomendações para portfólio e apresentação de carreira profissional"
+      }
+    ],
+    "engine": {
+      "backend": "experimentalGemma",
+      "model": "gemma-4-12b-it-qat-q4_0.gguf",
+      "sampling": "temp 1.0, top_k 64, top_p 0.95, min_p 0, seed 42",
+      "seed": 42,
+      "template": "gemma4-canonical-nothink"
+    },
+    "mediaId": "autoclip-editorial-probe",
+    "transcriptHash": "9ecaf269a7356783271df4584952484551de7331bcae8301f50214b85aa19d3a",
+    "version": 1
+  },
+  "elapsedSeconds": 205.6885326,
+  "scope": "Amostra textual 1170–1335 s; pipeline nativo real, sem UI nem gravação em projeto do mantenedor.",
+  "status": "completed"
+}

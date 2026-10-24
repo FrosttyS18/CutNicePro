@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { listen } from "@tauri-apps/api/event";
 import { getMedia } from "../lib/ipc";
 import * as engine from "../lib/transcription";
@@ -15,9 +15,13 @@ export function useTranscription(projectId: string, mediaId: string | undefined,
   const epoch = useRef(0);
   const appliedJob = useRef<string | null>(null);
   const receiver = useRef(onRecord);
-  receiver.current = onRecord;
   const identity = useRef({ projectId, mediaId });
-  identity.current = { projectId, mediaId };
+  useLayoutEffect(() => { receiver.current = onRecord; identity.current = { projectId, mediaId }; }, [onRecord,projectId,mediaId]);
+  const [request,setRequest] = useState({projectId,mediaId,revision});
+  if (request.projectId !== projectId || request.mediaId !== mediaId || request.revision !== revision) {
+    setRequest({projectId,mediaId,revision});
+    setReady(false); setError(null); setLoaded(false); setJob(null);
+  }
 
   useEffect(() => {
     epoch.current += 1;
@@ -31,7 +35,6 @@ export function useTranscription(projectId: string, mediaId: string | undefined,
         receiver.current(record);
       }
     };
-    setReady(false); setError(null); setLoaded(false); setJob(null);
     void (async () => {
       const stop = await listen<unknown>("transcription://job", event => {
         if (disposed || !engine.isTranscriptionJob(event.payload) || event.payload.projectId !== projectId) return;

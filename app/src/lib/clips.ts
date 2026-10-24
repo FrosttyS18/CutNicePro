@@ -10,8 +10,10 @@ export type ClipQuality = "standard" | "experimentalGemma";
 export interface ClipEngine { backend: string; model: string; template: string; sampling: string; seed: number }
 export interface ClipAnalysis { title: string; summary: string; criteria: {label: string; score: number; explanation: string; evidence: string}[] }
 export type ClipFit = "cover" | "contain";
+export interface FaceFraming { status: "stable" | "ambiguous" | "noFaces" | "unavailable"; samples: number; x?: number; y?: number; confidence?: number }
 export interface MultimodalEvidence { frames: number[]; visual: string; audioEvents: string[]; boundaryAdjustments: [number, number]; backend: string; framing?: { cx: number; cy: number; source: string } }
 export interface Clip { id: string; start: number; end: number; title: string; score: number; reasons: string[]; review: ClipReview; format?: AspectRatio; fit?: ClipFit; analysis?: ClipAnalysis; analysisError?: string;
+  faceFraming?: FaceFraming;
   /** Evidências multimodais realmente recebidas (M3): frames/áudio com timestamps. */
   multimodal?: MultimodalEvidence;
   /** Criação real (ms-epoch); ausente em legados = nunca inventado. */
@@ -40,6 +42,7 @@ export function parseClips(value: unknown): ClipCollection {
       && Number.isInteger(c.score) && c.score >= 0 && c.score <= 100 && Array.isArray(c.reasons) && c.reasons.every(r => typeof r === "string")
       && (c.format === undefined || ["16:9","9:16","1:1","4:5"].includes(c.format))
       && (c.fit === undefined || ["cover","contain"].includes(c.fit))
+      && (c.faceFraming === undefined || validFaceFraming(c.faceFraming))
       && (c.analysis === undefined || validAnalysis(c.analysis))
       && (c.analysisError === undefined || typeof c.analysisError === "string")
       && (c.analysisSignature === undefined || typeof c.analysisSignature === "string")
@@ -60,6 +63,13 @@ export function parseClips(value: unknown): ClipCollection {
 function validEngine(value: ClipEngine): boolean {
   return Boolean(value && typeof value.backend === "string" && typeof value.model === "string"
     && typeof value.template === "string" && typeof value.sampling === "string" && Number.isInteger(value.seed));
+}
+function validFaceFraming(value: FaceFraming): boolean {
+  if (!value || !["stable", "ambiguous", "noFaces", "unavailable"].includes(value.status)
+    || !Number.isInteger(value.samples) || value.samples < 0 || value.samples > 12) return false;
+  const unit = (v: number | undefined) => typeof v === "number" && Number.isFinite(v) && v >= 0 && v <= 1;
+  return value.status === "stable" ? value.samples > 0 && unit(value.x) && unit(value.y) && unit(value.confidence)
+    : value.x === undefined && value.y === undefined && value.confidence === undefined;
 }
 function validAnalysis(value: ClipAnalysis): boolean {
   return Boolean(value && typeof value.title === "string" && typeof value.summary === "string" && Array.isArray(value.criteria)
@@ -103,6 +113,14 @@ export function isolatedClipSettings(clip: Clip, saved?: EditorSettings, media?:
   // vence e desativa a automação para este corte.
   if (saved) return clipSettings(saved, clip);
   const fresh = { ...defaults, ratio: clip.format ?? fallback, fit: clip.fit ?? "contain", captionModel: 2 } as EditorSettings;
+  if (clip.faceFraming?.status === "stable" && validFaceFraming(clip.faceFraming) && fresh.fit === "cover") {
+    fresh.focalPoint = { x: clip.faceFraming.x! * 100, y: clip.faceFraming.y! * 100 };
+    return clipSettings(fresh, clip);
+  }
+  if (clip.faceFraming?.status === "ambiguous" && fresh.fit === "cover") {
+    fresh.fit = "contain";
+    return clipSettings(fresh, clip);
+  }
   const framing = clip.multimodal?.framing;
   if (framing && Number.isFinite(framing.cx) && Number.isFinite(framing.cy)) {
     fresh.focalPoint = { x: Math.round(framing.cx * 100), y: Math.round(framing.cy * 100) };
@@ -119,6 +137,9 @@ export function renderSettings(settings: EditorSettings): EditorSettings & { seg
 }
 export function clipMessage(error: unknown): string {
   const text = String(error);
+  if (/cortes inválidos/i.test(text)) return "O aplicativo recebeu cortes em um formato inválido. Seus cortes salvos foram mantidos. Tente novamente.";
+  if (/abertura.*fechamento/i.test(text)) return "Não foram aprovados cortes com abertura e fechamento completos nesta rodada. Seus cortes salvos foram mantidos. Tente outra faixa ou amplie a duração máxima.";
+  if (/avaliar os trechos propostos/i.test(text)) return "Não foi possível aprovar os trechos propostos nesta rodada. Tente novamente ou escolha outra faixa do vídeo.";
   if (/motor experimental|gemma|modelo de análise/i.test(text)) return "A IA local (Gemma 4) está indisponível neste dispositivo. Verifique o modelo em .tooling/vendor (o arquivo do modelo e os binários precisam estar presentes) e tente novamente.";
   if (/trechos completos|selecionar os momentos/i.test(text)) return "Não encontramos trechos completos nesta duração. Aumente a duração dos cortes e tente novamente.";
   if (/transcrição mudou/i.test(text)) return "A transcrição mudou. Atualize os cortes do projeto para analisar novamente.";
@@ -131,7 +152,8 @@ export function clipMessage(error: unknown): string {
   if (/FFmpeg/i.test(text)) return "Um recurso de vídeo está indisponível. Repare a instalação do aplicativo e tente novamente.";
   if (/intervalo|proporção|configurações/i.test(text)) return "Revise o intervalo e o enquadramento do vídeo e tente novamente.";
   if (/disponível|disponibilidade|reconecte|encontrado/i.test(text)) return "O vídeo está indisponível. Reconecte o arquivo original e tente novamente.";
-  return "Não foi possível processar o vídeo. Verifique o espaço disponível e tente novamente.";
+  if (/espaço|disk full|os error 112|no space left/i.test(text)) return "Não há espaço suficiente para concluir. Libere espaço no disco e tente novamente.";
+  return "Não foi possível concluir o processamento. Tente novamente.";
 }
 export async function getClips(projectId: string, mediaId: string) {
   const value = await invoke<unknown>("get_clips", { projectId, mediaId });

@@ -1,0 +1,10 @@
+{
+  "firstRunLauncher": {
+    "exitCode": 0,
+    "elapsedSeconds": 9.135,
+    "peakWorkingSetMiB": 9.78,
+    "samplingMs": 100,
+    "processId": 55040
+  },
+  "limitation": "A primeira amostragem observou o launcher Python, não o worker; não representa o pico de memória do detector. O segundo resultado usa PeakWorkingSetSize do próprio worker."
+}

@@ -1,19 +1,10 @@
 /**
- * Orçamento de lint (atualização 16): o ESLint tem dívida técnica conhecida
- * e VERSIONADA abaixo. O CI falha se: (a) surgir erro em regra fora da
- * dívida, (b) a contagem de uma regra da dívida aumentar, ou (c) o total
- * de avisos crescer. Reduzir a dívida atualiza o orçamento para baixo —
- * nunca para cima sem revisão.
  * Uso: npx eslint src --format json | node ../tools/ci/lint-budget.mjs
  */
 import { readFileSync } from "node:fs";
 
-const DEBT = {
-  "react-hooks/set-state-in-effect": 9,
-  "react-hooks/refs": 9,
-  "react-hooks/immutability": 1,
-};
-const WARNINGS_BUDGET = 1;
+const DEBT = {};
+const WARNINGS_BUDGET = 0;
 
 let files;
 try {

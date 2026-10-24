@@ -369,7 +369,6 @@ function GalaxyScene({
         t.colorSpace = THREE.SRGBColorSpace;
         return t;
       }),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     [posterReady],
   );
   // Um <video> por mídia (pool único por URL), criado uma única vez; o
@@ -1613,16 +1612,18 @@ function GalaxyScene({
 // Perspective camera fitted so 1 world unit == 1 CSS pixel on the z=0 plane:
 // layout math runs in pixels.
 function FittedCamera() {
-  const camera = useThree((s) => s.camera) as THREE.PerspectiveCamera;
+  const get = useThree((s) => s.get);
   const size = useThree((s) => s.size);
   useEffect(() => {
+    const camera = get().camera;
+    if (!(camera instanceof THREE.PerspectiveCamera)) return;
     const dist = size.height / 2 / Math.tan(THREE.MathUtils.degToRad(FOV / 2));
     camera.fov = FOV;
     camera.position.set(0, 0, dist);
     camera.near = Math.max(1, dist - 1200);
     camera.far = dist + 1200;
     camera.updateProjectionMatrix();
-  }, [camera, size.height]);
+  }, [get, size.height]);
   return null;
 }
 

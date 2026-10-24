@@ -6,7 +6,8 @@ interface Props {x:number;y:number;items:ProjectMenuItem[];onSelect:(id:ProjectM
 export function ProjectContextMenu({x,y,items,onSelect,onClose}:Props) {
   const ref=useRef<HTMLDivElement>(null);
   const [position,setPosition]=useState({left:x,top:y});
-  const close=useRef(onClose);close.current=onClose;
+  const close=useRef(onClose);
+  useLayoutEffect(()=>{close.current=onClose;},[onClose]);
   useLayoutEffect(()=>{
     const rect=ref.current?.getBoundingClientRect();
     if(rect)setPosition(menuPosition(x,y,rect.width,rect.height,window.innerWidth,window.innerHeight));

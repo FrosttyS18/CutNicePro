@@ -1,0 +1,1 @@
+{"version": 1, "backend": "yunet-mouth-motion-static-v1", "items": [{"id": "portfolio-48s", "status": "ambiguous", "samples": 12}, {"id": "portfolio-45s", "status": "stable", "x": 0.4482108415876116, "y": 0.5, "confidence": 0.9111083745956421, "samples": 12}], "elapsedMs": 8672}

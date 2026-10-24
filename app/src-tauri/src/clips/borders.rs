@@ -8,9 +8,8 @@
 //! silencedetect). Regras:
 //! 1) início sobe para o começo da primeira frase completa no/ligeiramente
 //!    antes do alvo (ou desce para dentro da linha no fim de frase interno);
-//! 2) fim desce para o fim da frase que contém o alvo; se a linha contém
-//!    mais de uma frase, corta no fim da PRIMEIRA que cobre o alvo;
-//! 3) pergunta final do entrevistador (seguida de resposta curta) é devolvida
+//! 2) fim acompanha a frase conclusiva sem recuar à frase anterior;
+//! 3) pergunta final sem uma resposta concluída é devolvida
 //!    ao próximo tópico — corta ANTES dela, sem jamais remover >40% do clipe;
 //! 4) bordas deslizam para a pausa de áudio real mais próxima (≤1,2 s).
 //! Nenhuma correção pode: encolher abaixo do mínimo da Options, colidir com
@@ -19,11 +18,11 @@
 
 use crate::transcription::types::Segment;
 
-#[derive(Debug, Clone, Copy, PartialEq)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct Refined {
     pub start: f64,
     pub end: f64,
-    pub ops: &'static [&'static str],
+    pub ops: Vec<&'static str>,
 }
 
 const PAUSE_SEC: f64 = 0.55; // pausa ≥ isto conta como fim de frase sem pontuação
@@ -40,14 +39,6 @@ fn ends_sentence(text: &str) -> bool {
     }
 }
 
-fn has_punctuation(words: &[crate::transcription::types::Word]) -> bool {
-    let punct = words
-        .iter()
-        .filter(|w| w.text.chars().any(|c| ",.?!;:".contains(c)))
-        .count();
-    punct * 10 >= words.len() * 3 // ~30% das palavras com pontuação
-}
-
 /** Frases como (início_palavra, fim_palavra, texto) em [from, to] da mídia. */
 fn sentence_units(speech: &[Segment], from: f64, to: f64) -> Vec<(f64, f64, String)> {
     let punctuated = speech
@@ -55,44 +46,49 @@ fn sentence_units(speech: &[Segment], from: f64, to: f64) -> Vec<(f64, f64, Stri
         .flat_map(|s| s.words.iter())
         .any(|w| w.text.chars().any(|c| ",.?!;:".contains(c)));
     let mut units = Vec::new();
+    let mut current: Vec<&crate::transcription::types::Word> = Vec::new();
+    let flush = |current: &mut Vec<&crate::transcription::types::Word>,
+                 units: &mut Vec<(f64, f64, String)>| {
+        if !current.is_empty() {
+            units.push((
+                current[0].start,
+                current.last().unwrap().end,
+                current
+                    .iter()
+                    .map(|word| word.text.as_str())
+                    .collect::<Vec<_>>()
+                    .join(" "),
+            ));
+            current.clear();
+        }
+    };
     for segment in speech {
         if segment.end <= from || segment.start >= to {
             continue;
         }
         if segment.words.is_empty() {
+            flush(&mut current, &mut units);
             // sem word-level: o segmento inteiro é a unidade
             if !segment.text.trim().is_empty() {
                 units.push((segment.start, segment.end, segment.text.clone()));
             }
             continue;
         }
-        let words = &segment.words;
-        let mut current: Vec<&crate::transcription::types::Word> = Vec::new();
-        let mut flush = |current: &mut Vec<&crate::transcription::types::Word>,
-                         units: &mut Vec<(f64, f64, String)>| {
-            if current.is_empty() {
-                return;
+        for word in &segment.words {
+            if !punctuated
+                && current
+                    .last()
+                    .is_some_and(|last| word.start - last.end >= PAUSE_SEC)
+            {
+                flush(&mut current, &mut units);
             }
-            let text = current
-                .iter()
-                .map(|w| w.text.as_str())
-                .collect::<Vec<_>>()
-                .join(" ");
-            units.push((current[0].start, current.last().unwrap().end, text));
-            current.clear();
-        };
-        for (index, word) in words.iter().enumerate() {
             current.push(word);
-            let ends_here = ends_sentence(&word.text)
-                || (!punctuated
-                    && index + 1 < words.len()
-                    && words[index + 1].start - word.end >= PAUSE_SEC);
-            if ends_here {
+            if ends_sentence(&word.text) {
                 flush(&mut current, &mut units);
             }
         }
-        flush(&mut current, &mut units);
     }
+    flush(&mut current, &mut units);
     units
 }
 
@@ -124,7 +120,7 @@ pub fn refine_boundaries(
         return Refined {
             start: clip_start,
             end: clip_end,
-            ops: &[],
+            ops: Vec::new(),
         };
     }
     let has_words = speech.iter().any(|s| !s.words.is_empty());
@@ -132,7 +128,7 @@ pub fn refine_boundaries(
         return Refined {
             start: clip_start,
             end: clip_end,
-            ops: &[],
+            ops: Vec::new(),
         }; // sem word-level: conservador
     }
     let units = sentence_units(speech, clip_start - 8.0, clip_end + 8.0);
@@ -140,7 +136,7 @@ pub fn refine_boundaries(
         return Refined {
             start: clip_start,
             end: clip_end,
-            ops: &[],
+            ops: Vec::new(),
         };
     }
     let mut ops: Vec<&'static str> = Vec::new();
@@ -164,18 +160,10 @@ pub fn refine_boundaries(
         .filter(|u| u.0 < clip_end && u.1 >= clip_end - 0.05)
         .collect();
     if let Some(unit) = covering.first() {
-        // a unidade passa do alvo: vê se há fim de frase INTERNO antes do alvo
-        let inner: Vec<_> = units
-            .iter()
-            .filter(|u| u.1 > clip_start && u.1 <= clip_end && ends_sentence(&u.2))
-            .collect();
-        if let Some(last_inner) = inner.last() {
-            if last_inner.1 >= clip_start + min_seconds {
-                end = last_inner.1;
-                ops.push("end_sentence");
-            }
+        if ends_sentence(&unit.2) && unit.1 > clip_end {
+            end = unit.1;
+            ops.push("end_sentence");
         }
-        let _ = unit;
     } else if let Some(last) = units
         .iter()
         .filter(|u| u.0 < clip_end && u.1 < clip_end)
@@ -200,7 +188,8 @@ pub fn refine_boundaries(
             .collect();
         let answer: f64 = after.iter().map(|u| u.1 - u.0).sum();
         let cut = q.0;
-        if answer <= TRAILING_Q_SEC
+        if !after.iter().any(|unit| ends_sentence(&unit.2))
+            && answer <= TRAILING_Q_SEC
             && cut - start >= min_seconds
             && (end - cut) <= original * MAX_SHRINK
         {
@@ -211,6 +200,13 @@ pub fn refine_boundaries(
 
     // --- limites duros: mídia, vizinhos, mínimo ---
     start = start.clamp(0.0, media_end);
+    if start + min_seconds > media_end {
+        return Refined {
+            start: clip_start,
+            end: clip_end,
+            ops: Vec::new(),
+        };
+    }
     end = end.clamp(start + min_seconds, media_end);
     if let Some(prev) = prev_end {
         start = start.max(prev);
@@ -218,7 +214,7 @@ pub fn refine_boundaries(
             return Refined {
                 start: clip_start,
                 end: clip_end,
-                ops: &[],
+                ops: Vec::new(),
             }; // conflito: mantém original
         }
     }
@@ -228,21 +224,23 @@ pub fn refine_boundaries(
             return Refined {
                 start: clip_start,
                 end: clip_end,
-                ops: &[],
+                ops: Vec::new(),
             };
         }
     }
 
     // --- snap para pausa real de áudio (não cria sobreposição) ---
     let mut bounds: Vec<f64> = units.iter().map(|u| u.1).collect();
+    let mut starts: Vec<f64> = units.iter().map(|u| u.0).collect();
     for &(ps, pe) in pauses {
         if pe > start && ps < end + SNAP_SEC {
             bounds.push(pe);
+            starts.push(pe);
         }
     }
     bounds.sort_by(|a, b| a.partial_cmp(b).unwrap_or(std::cmp::Ordering::Equal));
     bounds.dedup_by(|a, b| (*a - *b).abs() < 1e-9);
-    if let Some(p) = nearest_pause(&bounds, start, SNAP_SEC) {
+    if let Some(p) = nearest_pause(&starts, start, SNAP_SEC) {
         let lower = prev_end.unwrap_or(0.0);
         if p >= lower && end - p >= min_seconds && p > start {
             start = p;
@@ -264,15 +262,10 @@ pub fn refine_boundaries(
         return Refined {
             start: clip_start,
             end: clip_end,
-            ops: &[],
+            ops: Vec::new(),
         };
     }
-    let static_ops: &[&'static str] = Box::leak(ops.into_boxed_slice());
-    Refined {
-        start,
-        end,
-        ops: static_ops,
-    }
+    Refined { start, end, ops }
 }
 
 #[cfg(test)]
@@ -295,6 +288,105 @@ mod tests {
                 })
                 .collect(),
         }
+    }
+
+    #[test]
+    fn preserves_the_concluding_sentence_instead_of_retreating_to_previous_one() {
+        let speech = vec![seg(
+            0.0,
+            18.0,
+            "Contexto. Explicação com conclusão.",
+            vec![
+                ("Contexto.", 0.0, 10.0),
+                ("Explicação", 10.1, 13.0),
+                ("com", 13.0, 15.0),
+                ("conclusão.", 15.0, 18.0),
+            ],
+        )];
+        let refined = refine_boundaries(0.0, 15.0, &speech, &[], 3.0, None, None, 25.0);
+        assert_eq!(refined.end, 18.0);
+    }
+
+    #[test]
+    fn rhetorical_question_with_a_finished_answer_keeps_its_conclusion() {
+        let speech = vec![
+            seg(
+                0.0,
+                20.0,
+                "Contexto completo.",
+                vec![("Contexto", 0.0, 10.0), ("completo.", 10.0, 20.0)],
+            ),
+            seg(
+                20.1,
+                22.0,
+                "Vou perder tempo?",
+                vec![
+                    ("Vou", 20.1, 20.5),
+                    ("perder", 20.5, 21.0),
+                    ("tempo?", 21.0, 22.0),
+                ],
+            ),
+            seg(
+                22.1,
+                30.0,
+                "Não. Qualidade importa.",
+                vec![
+                    ("Não.", 22.1, 23.0),
+                    ("Qualidade", 23.0, 27.0),
+                    ("importa.", 27.0, 30.0),
+                ],
+            ),
+        ];
+        let refined = refine_boundaries(0.0, 30.0, &speech, &[], 3.0, None, None, 35.0);
+        assert_eq!(refined.end, 30.0);
+        assert!(!refined.ops.contains(&"drop_trailing_question"));
+    }
+
+    #[test]
+    fn a_sentence_end_is_not_a_valid_start_snap_that_removes_the_hook() {
+        let speech = vec![
+            seg(
+                0.0,
+                0.6,
+                "Olá pessoal.",
+                vec![("Olá", 0.0, 0.2), ("pessoal.", 0.2, 0.6)],
+            ),
+            seg(
+                0.7,
+                15.0,
+                "Tema completo.",
+                vec![("Tema", 0.7, 9.0), ("completo.", 9.0, 15.0)],
+            ),
+        ];
+        let refined = refine_boundaries(0.0, 15.0, &speech, &[], 3.0, None, None, 20.0);
+        assert_eq!(refined.start, 0.0);
+    }
+
+    #[test]
+    fn speech_rows_do_not_split_a_sentence_into_unrelated_units() {
+        let speech = vec![
+            seg(
+                0.0,
+                2.0,
+                "Vamos falar",
+                vec![("Vamos", 0.0, 1.0), ("falar", 1.0, 2.0)],
+            ),
+            seg(
+                2.0,
+                5.0,
+                "de quantidade.",
+                vec![("de", 2.0, 2.5), ("quantidade.", 2.5, 5.0)],
+            ),
+            seg(
+                5.1,
+                15.0,
+                "A conclusão.",
+                vec![("A", 5.1, 7.0), ("conclusão.", 7.0, 15.0)],
+            ),
+        ];
+        let refined = refine_boundaries(2.0, 15.0, &speech, &[], 3.0, None, None, 20.0);
+        assert_eq!(refined.start, 0.0);
+        assert_eq!(refined.end, 15.0);
     }
 
     #[test]

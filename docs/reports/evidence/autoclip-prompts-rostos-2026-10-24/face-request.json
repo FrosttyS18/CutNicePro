@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "source": "C:\\Users\\adcka\\AppData\\Roaming/com.cutnicepro.app/cutnicepro/media/files/60432dc0adde6f8d929838849f77f828312c1a1766f5dc51db23899d072eacf5.mp4",
+  "model": "C:/CutNicePro/app/src-tauri/resources/models/face_detection_yunet_2023mar.onnx",
+  "clips": [
+    {
+      "ratio": "9:16",
+      "start": 1239.38,
+      "end": 1287.58,
+      "id": "portfolio-48s"
+    },
+    {
+      "ratio": "9:16",
+      "start": 1194.42,
+      "end": 1239.38,
+      "id": "portfolio-45s"
+    }
+  ]
+}
