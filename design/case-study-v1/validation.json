@@ -1,0 +1,175 @@
+{
+  "functionalStatus": "PASS",
+  "regressionStatus": "NOT TESTED",
+  "visualStatus": "PENDING HUMAN APPROVAL",
+  "date": "2026-10-21",
+  "scope": "Autoria da apresentação. Nenhum teste do aplicativo reexecutado.",
+  "cases": [
+    {
+      "name": "Frame 1 com 1920 × 1080",
+      "pass": true
+    },
+    {
+      "name": "Frame 2 com 1920 × 1080",
+      "pass": true
+    },
+    {
+      "name": "Frame 3 com 1920 × 1080",
+      "pass": true
+    },
+    {
+      "name": "Frame 4 com 1920 × 1080",
+      "pass": true
+    },
+    {
+      "name": "Frame 5 com 1920 × 1080",
+      "pass": true
+    },
+    {
+      "name": "Frame 6 com 1920 × 1080",
+      "pass": true
+    },
+    {
+      "name": "Frame 7 com 1920 × 1080",
+      "pass": true
+    },
+    {
+      "name": "Frame 8 com 1920 × 1080",
+      "pass": true
+    },
+    {
+      "name": "Frame 9 com 1920 × 1080",
+      "pass": true
+    },
+    {
+      "name": "Frame 10 com 1920 × 1080",
+      "pass": true
+    },
+    {
+      "name": "Frame 11 com 1920 × 1080",
+      "pass": true
+    },
+    {
+      "name": "Frame 12 com 1920 × 1080",
+      "pass": true
+    },
+    {
+      "name": "12 frames na página de apresentação",
+      "pass": true
+    },
+    {
+      "name": "Poppins nos textos nativos",
+      "pass": true
+    },
+    {
+      "name": "5 imagens reais incorporadas",
+      "pass": true
+    },
+    {
+      "name": "23 instâncias nativas",
+      "pass": true
+    },
+    {
+      "name": "4 variantes de botão",
+      "pass": true
+    },
+    {
+      "name": "21 variáveis no documento",
+      "pass": true
+    },
+    {
+      "name": "Nenhum overflow de camada visível na inspeção",
+      "pass": true
+    },
+    {
+      "name": "Arquivo FigCraft gravado",
+      "pass": true
+    },
+    {
+      "name": "Render 1 com 1920 × 1080",
+      "pass": true
+    },
+    {
+      "name": "Render 2 com 1920 × 1080",
+      "pass": true
+    },
+    {
+      "name": "Render 3 com 1920 × 1080",
+      "pass": true
+    },
+    {
+      "name": "Render 4 com 1920 × 1080",
+      "pass": true
+    },
+    {
+      "name": "Render 5 com 1920 × 1080",
+      "pass": true
+    },
+    {
+      "name": "Render 6 com 1920 × 1080",
+      "pass": true
+    },
+    {
+      "name": "Render 7 com 1920 × 1080",
+      "pass": true
+    },
+    {
+      "name": "Render 8 com 1920 × 1080",
+      "pass": true
+    },
+    {
+      "name": "Render 9 com 1920 × 1080",
+      "pass": true
+    },
+    {
+      "name": "Render 10 com 1920 × 1080",
+      "pass": true
+    },
+    {
+      "name": "Render 11 com 1920 × 1080",
+      "pass": true
+    },
+    {
+      "name": "Render 12 com 1920 × 1080",
+      "pass": true
+    }
+  ],
+  "passed": 32,
+  "failed": 0,
+  "reviewedFrames": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12
+  ],
+  "visibleNodes": 385,
+  "nativeTextLayers": 257,
+  "instances": 23,
+  "variables": 21,
+  "embeddedImages": 5,
+  "notes": [
+    "A revisão dos renders não constitui aprovação estética.",
+    "Exibição de prévias inconsistente, causa não isolada; dois PNGs comparados byte a byte são iguais, com pixels de texto nas áreas inspecionadas.",
+    "O orçamento original de revisão foi excedido na investigação de prévia; investigação encerrada."
+  ],
+  "nativeFileReopened": {
+    "tool": "figcraft-cli info --json",
+    "nodes": 433,
+    "missingFonts": [],
+    "pages": 2,
+    "presentationFrames": 12
+  },
+  "pdf": {
+    "pages": 12,
+    "aspectRatio": "16:9",
+    "rasterSupportCopy": true
+  }
+}

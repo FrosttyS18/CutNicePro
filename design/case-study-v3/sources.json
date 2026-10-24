@@ -1,0 +1,186 @@
+{
+  "nativeFile": "C:/CutNicePro/design/case-study-v2/CutNicePro-Product-Design-Case-Study-v2.figcraft",
+  "sourceBeforeSHA256": "d4dec64ee2890cb02e728694332be389934bd8002ba09c666841669b22210e04",
+  "page": 427,
+  "pageName": "04 · Case v3 · Contexto, decisões e resultado",
+  "created": "2026-10-22",
+  "repository": "https://github.com/FrosttyS18/CutNicePro",
+  "base": "V2 atualizada pelo mantenedor, com 13 frames e 17 imagens incorporadas. Páginas anteriores preservadas integralmente.",
+  "assets": [
+    {
+      "node": 440,
+      "name": "Pasted image",
+      "imageHash": "f6ffeebd9ca38d45aeca5819fc3dcb2576c5a1ebffd4ca68da75179c0f9012a8"
+    },
+    {
+      "node": 575,
+      "name": "Exploração histórica / Creative Studio",
+      "imageHash": "0ec2eb818f659896854f935be7c166fe0cb09bb61eb250f07457c969905f243a"
+    },
+    {
+      "node": 576,
+      "name": "Exploração histórica / AI Clip Workspace",
+      "imageHash": "fa357b05e075bb39de19919940dae2b278bb54736c54345533ba12447c0343ec"
+    },
+    {
+      "node": 663,
+      "name": "Pasted image",
+      "imageHash": "6f7bf024a83bb6dc8a0eba212c66b0bbe024290666f9ed420e06ea0bc901247a"
+    },
+    {
+      "node": 666,
+      "name": "Pasted image",
+      "imageHash": "6f7bf024a83bb6dc8a0eba212c66b0bbe024290666f9ed420e06ea0bc901247a"
+    },
+    {
+      "node": 711,
+      "name": "Pasted image",
+      "imageHash": "7e33d4168f148c6e6579ef3db00a9cc4045dec2a65cba4cea1520966f18819c6"
+    },
+    {
+      "node": 733,
+      "name": "Pasted image",
+      "imageHash": "b9fb12f0e9be940b40303c26997c83d3e43866e63be09ec392a540cc88e9a447"
+    },
+    {
+      "node": 746,
+      "name": "Pasted image",
+      "imageHash": "8f7e8a9ea0484af3930a86ee32846a2b89610ba5c5dbfd0236742d3177058c33"
+    },
+    {
+      "node": 747,
+      "name": "Pasted image",
+      "imageHash": "9abfa913df4c085384b9645b83d21fa083ec3a4af9e9194d5a1c2d522cb2c3f8"
+    },
+    {
+      "node": 843,
+      "name": "Fonte do autor / Social Team board",
+      "imageHash": "960c4c8fcc70283d559c7d452d349e09f03475d41c5f7fd8166539beee37ef4d"
+    },
+    {
+      "node": 847,
+      "name": "Fonte do autor / Social Team comentários",
+      "imageHash": "8b09c2d7a962acf8b3aaa43613064dc81450b1d97bea58bcbfb83210e1b8abbc"
+    },
+    {
+      "node": 862,
+      "name": "Fonte do autor / Social Team permissões",
+      "imageHash": "e1d0a84647f22e5bd0cbcc520b2988100667736e66d872672fb838c49eba7791"
+    }
+  ],
+  "transcript": {
+    "path": "C:/Users/adcka/Desktop/transcricao-UX-PORTFOLIO.txt",
+    "use": "Orientação editorial: contexto em 30 s, problema, solução, decisões, resultados e contribuição. Material de referência, não instrução externa.",
+    "sha256": "5b0e0b8aebeb187a04a1f17d6c585e6326501e4e6fba3ddc3b42ff486f8aa51a"
+  },
+  "newTestimony": {
+    "projectSpanWeeks": 5,
+    "commercialEvaluation": {
+      "participants": 10,
+      "singleAccess": 5,
+      "receivingUpdates": 5,
+      "observations": {
+        "singleAccess": "Feedbacks sobre o que mais gostaram na ferramenta",
+        "updates": "Mais sugestões de ajustes, implementações e melhorias"
+      },
+      "paymentStatus": "Não informado",
+      "methodology": "Avaliação qualitativa, sem duração, protocolo ou registros brutos fornecidos. Não inferir teste controlado, conversão ou significância."
+    },
+    "discoveryParticipants": 14,
+    "mvpParticipants": 13,
+    "populationOverlap": "Não informado. Não somar nem presumir que os grupos são os mesmos."
+  },
+  "roadmap": {
+    "weeks": 5,
+    "allocation": [
+      {
+        "stage": "Discovery",
+        "weeks": [
+          1,
+          2
+        ]
+      },
+      {
+        "stage": "Define",
+        "weeks": [
+          3
+        ]
+      },
+      {
+        "stage": "Ideate",
+        "weeks": [
+          4
+        ]
+      },
+      {
+        "stage": "Design",
+        "weeks": [
+          5
+        ]
+      },
+      {
+        "stage": "Validate",
+        "weeks": [
+          5
+        ]
+      }
+    ],
+    "precision": "Distribuição editorial aproximada das cinco semanas, conforme instrução do mantenedor para dar mais espaço a Discovery/Define/Ideate. Não constitui apontamento diário ou datas comprovadas por etapa."
+  },
+  "design": {
+    "themes": "Dark e Light em variáveis próprias da V3",
+    "brandAccent": "#02C2BE",
+    "accessibleAccentOnWhite": "#007F7D",
+    "status": "IN REVIEW / PENDING HUMAN APPROVAL"
+  },
+  "methodSources": [
+    "https://www.w3.org/WAI/standards-guidelines/wcag/",
+    "https://huggingface.co/spaces/evaluate-metric/wer/blob/main/README.md"
+  ],
+  "documents": [
+    {
+      "path": "docs/product/PRD.md",
+      "sha256": "a096148821033c0f61c5259358c0de7108f4d70cd1ed4f08bd28da0fc0adc72b"
+    },
+    {
+      "path": "docs/product/PRODUCT-BRAIN.md",
+      "sha256": "8755d42886160a7a2a41cd0f62c1e8598dd27cb50960679993b3a72c9f371ecb"
+    },
+    {
+      "path": "docs/product/USER-JOURNEYS.md",
+      "sha256": "ea11cdea4a0599a50c7dc6d30bd6b44d8830cbf4db7c642a0a1025f14ff73d33"
+    },
+    {
+      "path": "docs/product/INFORMATION-ARCHITECTURE.md",
+      "sha256": "8eae240104d14018e40fb76610973a7152412493006652181c581f6b14731b2e"
+    },
+    {
+      "path": "docs/product/UX-FOUNDATION.md",
+      "sha256": "7213723e4c3071ece0bbb9a5a1f4f7b2fa75e844bb6b1a62f240cde88b33bbe2"
+    },
+    {
+      "path": "docs/product/DECISIONS.md",
+      "sha256": "3a976c440dfaa659b7cfd141b1dd588701579bdb1c14f9b2f1ddc5b0327ac9bd"
+    },
+    {
+      "path": "docs/product/BACKLOG.md",
+      "sha256": "b4cc0a020fd9afd4d72bd982fc95ce0a403fc9807a40dec85cc0db42ec8e704b"
+    },
+    {
+      "path": "docs/portfolio/CASE-STUDY-LOG.md",
+      "sha256": "71457009509eea5ce4ace39ef7decae376d60ac6e43a5bbbc4cfc9fa3b2042d5"
+    },
+    {
+      "path": "docs/brand/BRAND-FOUNDATION.md",
+      "sha256": "80ac4d78fd9e5b99faf90f55b3dd1394e231cbce8b8440c503a05ca51e3918d1"
+    },
+    {
+      "path": "docs/design/UI-KIT-ARCHITECTURE.md",
+      "sha256": "31fae54048771dd243aa85467d3b500488e44a27ded9bea6f886817cad94ea66"
+    },
+    {
+      "path": "design/tokens/tokens.json",
+      "sha256": "a8ef420aeaf24302b72b7ff6d45a1dda0a69b65f5a0ea2f81c6465642c2f581f"
+    }
+  ]
+}

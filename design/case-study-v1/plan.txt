@@ -1,0 +1,7 @@
+CUTNICE PRO — PRODUCT DESIGN CASE STUDY v1 — IN REVIEW
+Escopo: 12 frames 1920 × 1080 via MCP FigCraft attached. Sem alterações no aplicativo ou commits.
+SPEC: briefing aprovado pelo /start.
+PLAN: fontes → narrativa → construção incremental → inspeção estrutural e 12 renders → relatório.
+BUILD: diagramas, wireframes, UI kit, tabelas e texto nativos; capturas originais incorporadas.
+TEST: dimensões, conteúdo, fontes, limites, z-order e 12 renders. Uma rodada + correção justificada. Estética: PENDING HUMAN APPROVAL.
+Timeline = representação de processo, sem duração histórica. Wireframes = reconstrução retrospectiva explicativa.

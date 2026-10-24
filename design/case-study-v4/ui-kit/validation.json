@@ -1,0 +1,376 @@
+{
+  "scope": "Somente UI Kit, componentes de apoio e exportações. Código não consultado nem alterado.",
+  "functionalStatus": "PASS",
+  "regressionStatus": "NOT TESTED",
+  "visualStatus": "PENDING HUMAN APPROVAL",
+  "initialRound": 1,
+  "correctionRound": 1,
+  "checks": [
+    {
+      "name": "Preservação de 24",
+      "pass": true
+    },
+    {
+      "name": "Preservação de 37",
+      "pass": true
+    },
+    {
+      "name": "Preservação de 66",
+      "pass": true
+    },
+    {
+      "name": "Preservação de 93",
+      "pass": true
+    },
+    {
+      "name": "Preservação de 137",
+      "pass": true
+    },
+    {
+      "name": "Preservação de 165",
+      "pass": true
+    },
+    {
+      "name": "Preservação de 390",
+      "pass": true
+    },
+    {
+      "name": "Preservação de 186",
+      "pass": true
+    },
+    {
+      "name": "Preservação de 200",
+      "pass": true
+    },
+    {
+      "name": "Preservação de 220",
+      "pass": true
+    },
+    {
+      "name": "Preservação de 250",
+      "pass": true
+    },
+    {
+      "name": "Preservação de 289",
+      "pass": true
+    },
+    {
+      "name": "Preservação de 301",
+      "pass": true
+    },
+    {
+      "name": "Preservação de 3",
+      "pass": true
+    },
+    {
+      "name": "Preservação de 5",
+      "pass": true
+    },
+    {
+      "name": "Preservação de 7",
+      "pass": true
+    },
+    {
+      "name": "Preservação de 9",
+      "pass": true
+    },
+    {
+      "name": "Preservação de 11",
+      "pass": true
+    },
+    {
+      "name": "Preservação de 12",
+      "pass": true
+    },
+    {
+      "name": "Preservação de 21",
+      "pass": true
+    },
+    {
+      "name": "Preservação de 319",
+      "pass": true
+    },
+    {
+      "name": "Preservação de 324",
+      "pass": true
+    },
+    {
+      "name": "Preservação de 428",
+      "pass": true
+    },
+    {
+      "name": "Preservação de 450",
+      "pass": true
+    },
+    {
+      "name": "Preservação de 479",
+      "pass": true
+    },
+    {
+      "name": "Preservação de 507",
+      "pass": true
+    },
+    {
+      "name": "Preservação de 541",
+      "pass": true
+    },
+    {
+      "name": "Preservação de 585",
+      "pass": true
+    },
+    {
+      "name": "Preservação de 604",
+      "pass": true
+    },
+    {
+      "name": "Preservação de 639",
+      "pass": true
+    },
+    {
+      "name": "Preservação de 693",
+      "pass": true
+    },
+    {
+      "name": "Preservação de 715",
+      "pass": true
+    },
+    {
+      "name": "Preservação de 734",
+      "pass": true
+    },
+    {
+      "name": "Preservação de 748",
+      "pass": true
+    },
+    {
+      "name": "Preservação de 768",
+      "pass": true
+    },
+    {
+      "name": "Preservação de 798",
+      "pass": true
+    },
+    {
+      "name": "Preservação de 837",
+      "pass": true
+    },
+    {
+      "name": "Preservação de 849",
+      "pass": true
+    },
+    {
+      "name": "Preservação de 868",
+      "pass": true
+    },
+    {
+      "name": "Preservação de 880",
+      "pass": true
+    },
+    {
+      "name": "Preservação de 911",
+      "pass": true
+    },
+    {
+      "name": "Preservação de 937",
+      "pass": true
+    },
+    {
+      "name": "Preservação de 954",
+      "pass": true
+    },
+    {
+      "name": "Preservação de 988",
+      "pass": true
+    },
+    {
+      "name": "Preservação de 1005",
+      "pass": true
+    },
+    {
+      "name": "Preservação de 1022",
+      "pass": true
+    },
+    {
+      "name": "Preservação de 1038",
+      "pass": true
+    },
+    {
+      "name": "Preservação de 1054",
+      "pass": true
+    },
+    {
+      "name": "Preservação de 1107",
+      "pass": true
+    },
+    {
+      "name": "1920x1080",
+      "pass": true
+    },
+    {
+      "name": "Sem overflow ou colisões textuais",
+      "pass": true
+    },
+    {
+      "name": "Z-order sem texto coberto",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "Poppins em todas as camadas de texto",
+      "pass": true
+    },
+    {
+      "name": "Cinco conjuntos de variantes",
+      "pass": true
+    },
+    {
+      "name": "22 componentes principais",
+      "pass": true
+    },
+    {
+      "name": "16 instâncias no slide",
+      "pass": true
+    },
+    {
+      "name": "Espaçamento e padding múltiplos de 4",
+      "pass": true
+    },
+    {
+      "name": "Grid 12 / 16 / 104",
+      "pass": true
+    },
+    {
+      "name": "Troca de variante: Padrão",
+      "pass": true,
+      "details": {
+        "state": "Padrão",
+        "fill": "#FFFFFF",
+        "text": "#080808",
+        "pass": true
+      }
+    },
+    {
+      "name": "Troca de variante: Hover",
+      "pass": true,
+      "details": {
+        "state": "Hover",
+        "fill": "#282828",
+        "text": "#FFFFFF",
+        "pass": true
+      }
+    },
+    {
+      "name": "Troca de variante: Desativado",
+      "pass": true,
+      "details": {
+        "state": "Desativado",
+        "fill": "#303030",
+        "text": "#707070",
+        "pass": true
+      }
+    },
+    {
+      "name": "Troca de ícone e rótulo",
+      "pass": true
+    },
+    {
+      "name": "Sem bitmap no UI Kit",
+      "pass": true
+    },
+    {
+      "name": "PDF com 12 páginas",
+      "pass": true
+    },
+    {
+      "name": "UI Kit no final da ordem atual",
+      "pass": true
+    },
+    {
+      "name": "Todas as páginas em 1920x1080",
+      "pass": true
+    }
+  ],
+  "passed": 66,
+  "failed": 0,
+  "masterComponents": 22,
+  "componentSets": 5,
+  "variants": 13,
+  "topLevelInstances": 16,
+  "textStyles": 4,
+  "gridStyles": 1,
+  "variables": 23,
+  "pdf": {
+    "pages": 12,
+    "dimensions": [
+      [
+        1920,
+        1080
+      ],
+      [
+        1920,
+        1080
+      ],
+      [
+        1920,
+        1080
+      ],
+      [
+        1920,
+        1080
+      ],
+      [
+        1920,
+        1080
+      ],
+      [
+        1920,
+        1080
+      ],
+      [
+        1920,
+        1080
+      ],
+      [
+        1920,
+        1080
+      ],
+      [
+        1920,
+        1080
+      ],
+      [
+        1920,
+        1080
+      ],
+      [
+        1920,
+        1080
+      ],
+      [
+        1920,
+        1080
+      ]
+    ],
+    "textChars": [
+      433,
+      417,
+      542,
+      473,
+      342,
+      117,
+      360,
+      488,
+      267,
+      510,
+      610,
+      866
+    ]
+  },
+  "initialFailures": [
+    {
+      "criterion": "Espaçamento e padding múltiplos de 4",
+      "cause": "Gap padrão 10 em dois chips de valor, com filho único.",
+      "correction": "Gap 8; crossGap 8 nos auto layouts novos."
+    }
+  ]
+}

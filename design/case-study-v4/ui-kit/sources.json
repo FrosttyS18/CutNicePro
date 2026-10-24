@@ -1,0 +1,113 @@
+{
+  "date": "2026-10-22",
+  "scope": "Somente UI Kit da apresentação existente. Referência visual: quatro screenshots fornecidos pelo mantenedor. Sem consulta ao código do aplicativo.",
+  "nativeFile": "C:/CutNicePro/design/case-study-v2/CutNicePro-Product-Design-Case-Study-v2.figcraft",
+  "page": 867,
+  "frame": 1072,
+  "readingOrder": 12,
+  "libraryPage": 2,
+  "libraryFrame": 1227,
+  "sourceBeforeSHA256": "47d14dbbb1bbce7dee2f79c4f2d8e9f552515270ca037fcb45d96ed4c4e89cf8",
+  "savedSHA256": "eab93954d5501c2d986469000d2d1652073bf4321b0fe6267879a5b09fd29694",
+  "references": [
+    {
+      "path": "C:/Users/adcka/AppData/Local/Temp/codex-clipboard-8154bb34-b48a-4302-8418-b7af9ac78626.png",
+      "sha256": "d4dcbb1decedfe1b6830b4525304e25f15130bde4abcb2bed050f71c6625d1ee"
+    },
+    {
+      "path": "C:/Users/adcka/AppData/Local/Temp/codex-clipboard-7f46c346-14b6-4122-9c43-4dfa36c028c9.png",
+      "sha256": "31648a2a3fde8562dfd755f9c26f3b6eb61ed32acadb90aef8b3c35f4e913c82"
+    },
+    {
+      "path": "C:/Users/adcka/AppData/Local/Temp/codex-clipboard-94e4de64-bfe0-464f-9396-27f259126e38.png",
+      "sha256": "63e8389a835e0a66ee3c9d93bc7a4ef77d1ba4e08666da4fbbf26fc290f1b7ea"
+    },
+    {
+      "path": "C:/Users/adcka/AppData/Local/Temp/codex-clipboard-6ed21678-5ccb-4add-b2b9-d54637059077.png",
+      "sha256": "5553e1d32e324ea65116e263ad3e9426927accaafeb2168dfcd8387332feffb8"
+    }
+  ],
+  "components": {
+    "families": [
+      "Botão",
+      "Aba de ferramenta",
+      "Busca",
+      "Seleção de fonte",
+      "Switch",
+      "Slider",
+      "Preset de legenda"
+    ],
+    "mainComponents": 22,
+    "sets": 5,
+    "variants": 13,
+    "slideInstances": 16,
+    "icons": 7
+  },
+  "variables": {
+    "collection": "VariableCollectionId:3",
+    "count": 23,
+    "export": "tokens-figcraft.json"
+  },
+  "styles": {
+    "text": 4,
+    "grid": 1
+  },
+  "grid": {
+    "columns": 12,
+    "columnWidth": 128,
+    "gutter": 16,
+    "margin": 104
+  },
+  "spacing": {
+    "base": 4,
+    "scale": [
+      4,
+      8,
+      12,
+      16,
+      24,
+      32
+    ],
+    "button": {
+      "height": 56,
+      "paddingVertical": 12,
+      "paddingHorizontal": 16,
+      "gap": 8,
+      "icon": 24
+    }
+  },
+  "typography": {
+    "family": "Poppins",
+    "weights": [
+      "Regular",
+      "Bold"
+    ],
+    "samples": [
+      32,
+      24,
+      20
+    ]
+  },
+  "colors": {
+    "bg": "#080808",
+    "surface": "#131313",
+    "control": "#232323",
+    "text": "#FFFFFF",
+    "muted": "#989898",
+    "accent": "#02C2BE",
+    "hover": "#282828",
+    "disabled": "#303030",
+    "disabledText": "#707070",
+    "line": "#303030",
+    "yellow": "#FFE600",
+    "lime": "#A4FF24"
+  },
+  "notes": [
+    "Paleta de apoio e anatomia reconstruídas a partir dos prints; não altera tokens canônicos do aplicativo.",
+    "Os controles estão ampliados para leitura no slide.",
+    "Estados hover são variantes de design selecionáveis, sem simulação automática de interação.",
+    "49 objetos preexistentes fora do slide preservados; uma nova moldura de componentes adicionada à biblioteca existente.",
+    "Ordem e conteúdo dos outros 11 slides preservados, incluindo as alterações do mantenedor."
+  ],
+  "status": "IN REVIEW / PENDING HUMAN APPROVAL"
+}

@@ -1,0 +1,82 @@
+GUIA DE IMAGENS — CUTNICE PRO / V4
+
+Arquivo: C:/CutNicePro/design/case-study-v2/CutNicePro-Product-Design-Case-Study-v2.figcraft
+Página: 05 · Case v4 · Nova narrativa · 12 slides (id 867)
+12 slides de 1920 × 1080. As versões anteriores foram preservadas.
+
+Substitua o conteúdo de cada moldura PLACEHOLDER pela imagem correspondente, mantendo sua posição e dimensões. Remova os dois textos-guia ao inserir a captura. Preserve os títulos e as anotações externas.
+
+01 · Contexto | EDITOR DO CUTNICE PRO
+Camada 877 | 1174 × 660 px
+Captura real em grande destaque.
+Mostrar preview, transcrição, ferramentas e timeline.
+
+06 · Exploração e wireframes | AI CLIP WORKSPACE
+Camada 994 | 800 × 400 px
+Proposta B real do repositório.
+Mostrar comparação de sugestões e revisão rápida.
+
+06 · Exploração e wireframes | CREATIVE STUDIO
+Camada 997 | 800 × 400 px
+Proposta A real do repositório.
+Mostrar timeline, preview e ferramentas de ajuste.
+
+07 · Interface e revisão | BIBLIOTECA DE CORTES
+Camada 1012 | 1190 × 420 px
+Captura real ampliada. Mostrar os cards de sugestões,
+com prévia, duração, pontuação estimada e ações de revisão.
+
+08 · Refinamento da experiência | EDITOR / TRANSCRIÇÃO
+Camada 1028 | 1120 × 450 px
+Captura real com a transcrição em destaque.
+Mostrar o painel separado, a busca por palavras
+e os blocos recolhíveis.
+
+09 · UI final e MVP | EDITOR / UI FINAL
+Camada 1044 | 1190 × 460 px
+Captura real ampliada do editor.
+Mostrar o corte selecionado no preview,
+a timeline e os controles de edição.
+
+09 · UI final e MVP | BIBLIOTECA
+Camada 1047 | 494 × 215 px
+Captura real das sugestões
+geradas no mesmo projeto.
+
+09 · UI final e MVP | EXPORTAÇÃO MP4
+Camada 1050 | 494 × 215 px
+Evidência real da exportação
+e do arquivo MP4 gerado.
+
+12 · Processo e evidências | PRD + JORNADAS
+Camada 1113 | 528 × 280 px
+Amostras reais do PRD e das jornadas.
+Destacar necessidades, requisitos
+e critérios de aceite.
+
+12 · Processo e evidências | ARQUITETURA + EXPLORAÇÕES
+Camada 1118 | 528 × 280 px
+Amostras reais do fluxo e das
+alternativas visuais. Mostrar como
+as tarefas orientaram a organização.
+
+12 · Processo e evidências | TOKENS + TESTES TÉCNICOS
+Camada 1123 | 528 × 280 px
+Amostras reais dos tokens e de
+um relatório de teste técnico.
+Conectar padrões à implementação.
+
+FONTES PARA OS RECORTES DE DOCUMENTAÇÃO
+PRD: docs/product/PRD.md
+Jornadas: docs/product/USER-JOURNEYS.md
+Arquitetura: docs/product/INFORMATION-ARCHITECTURE.md
+Explorações: design/exports/ e propostas A/B das páginas anteriores
+Tokens: design/tokens/tokens.json
+Testes técnicos históricos: docs/reports/evidence/
+
+As propostas A/B são explorações de referência. Identifique como reconstrução qualquer wireframe criado retrospectivamente. Não use resultados técnicos para afirmar melhoria de usabilidade sem medição.
+
+O PDF atual contém os placeholders. Depois de inserir as imagens, exporte somente os 12 frames da página V4.
+
+REVISÃO UI KIT — 22/10/2026
+O UI Kit é agora o último slide, com componentes nativos reconstruídos dos prints. Não há placeholder nessa área. A ordem atual dos demais slides segue os ajustes do mantenedor.

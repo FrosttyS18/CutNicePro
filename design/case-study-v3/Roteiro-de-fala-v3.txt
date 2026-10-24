@@ -1,0 +1,59 @@
+CUTNICE PRO — ROTEIRO V3
+Wesley Lima / Product Designer Pleno
+
+ROTA DE APRESENTAÇÃO
+Principais: 1–12, aproximadamente 10–12 minutos com pausas para mostrar os artefatos.
+Conversa curta: 1, 2, 3, 6, 8 e 12, aproximadamente 5 minutos.
+Apoios: 13–16. Usar Social Team quando perguntarem sobre colaboração, adoção ou impacto empresarial.
+O roteiro orienta a fala. Os títulos carregam o argumento principal e as imagens ajudam a demonstrá-lo.
+
+01 / O PRODUTO, O PÚBLICO E A PROPOSTA
+O CutNice Pro é um editor desktop que criei para quem transforma podcasts e entrevistas em cortes para as redes sociais. O problema era começar o trabalho administrando créditos e dividindo vídeos para caber nas ferramentas. A proposta é reunir geração local, revisão e exportação no mesmo aplicativo. Estou há cinco semanas nesse projeto autoral e cuidei de produto, UX/UI e implementação, com apoio de IA. O MVP já foi experimentado por 13 pessoas. Aqui mostro o editor para conectar a proposta à solução: transcrição, preview e ferramentas fazem parte da mesma tarefa de escolher e preparar um corte.
+
+02 / O CENÁRIO INICIAL
+O criador precisava assistir ao podcast, selecionar o que parecia útil e dividir o arquivo antes de a IA analisar. Os créditos e os limites de envio interferiam no ritmo de publicação. Além do custo, havia o esforço de preparar o vídeo e o risco de separar uma fala do seu contexto. Minha pergunta foi como analisar o material completo e devolver ao criador o controle da seleção. Esse cenário orientou a escolha de processamento local e uma experiência em que a automação ajuda, mas não elimina a revisão humana.
+
+03 / O QUE AS CONVERSAS REVELARAM
+Ouvi 14 pessoas que produziam cortes de podcasts, entrevistas e vídeos populares. Queria entender por que o trabalho travava antes de publicar. Três barreiras se repetiram: créditos esgotados cedo, limites para enviar a fonte completa e seleção manual do que subir. Isso ajudou a definir o problema com mais clareza. A tarefa central não era apenas gerar um vídeo curto: era manter uma produção de cortes sem interromper o trabalho para administrar limites. Separei esses achados do roadmap para que a decisão de produto apareça antes da sequência das etapas.
+
+04 / COMO ORGANIZEI AS CINCO SEMANAS
+O projeto está em sua quinta semana. Neste roadmap, organizei uma visão aproximada da distribuição do foco: duas semanas para Discovery, uma para Define, uma para Ideate e a quinta concentrando Design e Validate. A descoberta reuniu conversas e exploração de ferramentas. A definição ajudou a escolher o problema e o escopo do MVP. Na ideação, organizei fluxos e alternativas de workspace. Design e validação entraram em ciclos mais curtos de construção, uso e feedback. O ponto principal é mostrar a prioridade dada ao entendimento e às escolhas antes de expandir a solução.
+
+05 / AS DECISÕES QUE RESPONDERAM AO PROBLEMA
+A arquitetura local responde à dependência de créditos por geração. Trabalhar com a fonte completa preserva o contexto disponível para a análise. Manter revisão e ajuste dá autonomia editorial a quem vai publicar. Essas escolhas têm consequências: o processamento depende do hardware e vídeos longos exigem mais tempo. Eu quis assumir essas trocas de forma coerente com a proposta do produto. As explorações Creative Studio e AI Clip Workspace mostram alternativas de organização de preview, texto e ferramentas que considerei nesse processo. A avaliação do modelo comercial fica no próximo slide porque responde a outra pergunta.
+
+06 / O QUE OS DOIS GRUPOS ENSINARAM SOBRE O MODELO
+Avaliei duas modalidades com 10 usuários, divididos em grupos de cinco. Um grupo tinha acesso único às funcionalidades disponíveis. O outro recebia novas funcionalidades, representando a proposta de assinatura com atualizações. Os feedbacks vieram com focos diferentes. Quem usava a versão fixa falava principalmente sobre o que mais gostava na ferramenta. O grupo que recebia atualizações trazia mais sugestões de ajustes, implementações e melhorias. Meu aprendizado foi que a atualização contínua também abria uma conversa mais ativa sobre a evolução do produto. Isso ajuda a pensar como manter o feedback próximo do desenvolvimento.
+
+07 / COMO O USER FLOW ORGANIZA AS DECISÕES
+O fluxo começa em criar o projeto e importar a mídia. A transcrição prepara a fonte, a geração sugere cortes e a biblioteca permite revisá-los. A decisão seguinte é se o corte precisa de ajuste. Quando precisa, a pessoa entra no editor e retorna à revisão. Quando está pronto para ela, pode exportar. Esse desenho torna explícito onde a automação atua e onde o usuário decide. Assim, a pessoa sabe onde pode voltar e ajustar o trecho antes de exportar.
+
+08 / POR QUE DESTACAR OS CORTES NOVOS
+Quando outra rodada era gerada, os resultados recentes passavam a dividir espaço com os cortes anteriores. A nota destacava a avaliação do conteúdo, mas a data ainda exigia comparação entre os cards para reconhecer a última geração. Na minha revisão da biblioteca, decidi acrescentar sinais de recência: o selo “Novo” e o tempo relativo. Assim, a novidade fica explícita sem tirar a nota usada para comparar cortes. Os exemplos mostram essa mudança de hierarquia. A intenção é tornar mais direta a tarefa de encontrar os resultados da geração que acabou de terminar.
+
+09 / ONDE A REVISÃO DA TRANSCRIÇÃO TRAVAVA
+O problema da referência analisada era a competição entre texto e ferramentas. Localizar uma fala exigia percorrer a transcrição, e relacionar texto, legenda e preview também era trabalhoso. Antes de discutir a solução visual, eu quis explicar esse esforço: a pessoa precisava encontrar o trecho antes de começar a corrigi-lo. A referência ajuda a mostrar o conflito de organização. O próximo slide apresenta como reorganizei a interface do CutNice Pro para responder a ele, com uma área própria de texto e formas mais diretas de navegação.
+
+10 / COMO A INTERFACE RESPONDEU
+A solução separa a transcrição das ferramentas e mantém o texto próximo do preview. A busca por palavras ou trechos cria um caminho direto para localizar uma fala. Os blocos recolhíveis permitem abrir o conteúdo necessário sem manter toda a transcrição expandida. Minha decisão foi dar controle sobre a revisão de um material longo, combinando localização e leitura progressiva. A tela mostra essa organização no aplicativo. Quero observar como as pessoas encontram e corrigem trechos para medir o efeito dessas escolhas no esforço e no tempo de revisão.
+
+11 / O QUE O MVP CONECTOU
+O MVP reuniu criação de projeto, importação, transcrição, geração, ajuste e exportação. A Home organiza a entrada e o editor concentra as decisões sobre o corte. Percorri esse fluxo no aplicativo, exportei cortes e os publiquei nas redes sociais. A proximidade entre transcrição, preview e timeline ajuda a revisar o mesmo material por caminhos diferentes. Esse foi o resultado de construção que já consegui demonstrar. O desenvolvimento continua, com atenção à qualidade do conteúdo selecionado e ao trabalho que ainda precisa ser feito antes da publicação.
+
+12 / O QUE APRENDI E O QUE VOU MEDIR
+Treze pessoas experimentaram o MVP, com vídeos usados nos testes entre 10 minutos e três horas. Um aprendizado importante foi perceber que gerar cortes é apenas parte da tarefa. Encontrar um resultado útil, reconhecer o que é novo e revisar o texto também exigem atenção. Por isso, minha próxima rodada vai observar essas tarefas, acompanhar correções de transcrição e registrar retrabalho antes de exportar. Quero medir o tempo para encontrar um corte útil e entender onde a interface ainda exige esforço desnecessário. Essas medidas vão ajudar a priorizar a evolução do produto.
+
+13 / APOIO: COMPARAÇÃO E AVALIAÇÃO
+Explorei 22 ferramentas de transcrição, sendo 15 pagas e sete gratuitas. Essa exploração e as conversas com criadores ajudaram a formular perguntas. Para a próxima avaliação, quero medir precisão e tempo usando a mesma amostra de áudio. Vou revisar uma referência humana e calcular os erros por palavra com WER, considerando substituições, exclusões e inserções. Para velocidade, vou repetir a tarefa, registrar a configuração e comparar a mediana dos tempos. Isso permite relacionar a conclusão ao material e às condições avaliadas.
+
+14 / APOIO: CONSISTÊNCIA E ACESSIBILIDADE
+Defini tipografia, cores, espaçamento e estados para manter a mesma linguagem entre biblioteca, editor e ferramentas. Considerei rótulos claros, foco por teclado e feedback de carregamento, erro e vazio. As variantes de botão mostram como o controle muda conforme o estado. Usei IA para apoiar revisões de fluxo, identificar problemas e criar testes funcionais. A próxima avaliação também precisa observar navegação e compreensão das tarefas. O objetivo é manter uma ferramenta densa organizada para quem precisa trabalhar nela repetidamente.
+
+15 / APOIO: COLABORAÇÃO NA VENDE-C
+No Social Team Kanban, o desafio era de uma equipe. Na VENDE-C, poucas contas do Trello eram compartilhadas, gerando conflitos de sessão e dependência de códigos 2FA. Os ajustes entre social media e design também saíam da tarefa e iam para WhatsApp ou conversas presenciais. Ouvi os colaboradores e desenvolvi uma solução com contas corporativas individuais, permissões e comentários nas tarefas. A resposta conectou acesso, organização do trabalho e comunicação no mesmo lugar. Esse projeto complementa o CutNice Pro com uma experiência de necessidades de equipe e adoção empresarial.
+
+16 / APOIO: ADOÇÃO E IMPACTO
+Entreguei o MVP do Social Team em duas semanas, e a empresa concluiu a adoção em dois meses. A solução substituiu o Trello na operação. Comparei R$ 8 mil anuais de assinatura com R$ 120 mensais de infraestrutura própria, equivalentes a R$ 1.440 por ano. A diferença é R$ 6.560 anuais, uma redução estimada de 82% nesses custos recorrentes. Desenvolvimento e manutenção ficam fora dessa comparação. Esse case mostra como transformei uma necessidade interna em uma ferramenta adotada no trabalho real, com um efeito concreto nos custos comparados.
+
+FECHAMENTO
+No CutNice Pro, conectei um problema de produção de conteúdo a decisões de produto, fluxo e interface. O MVP permite demonstrar a construção e já aponta o que preciso medir para evoluir. No Social Team, apliquei esse raciocínio a uma operação de equipe, com adoção e redução de custos recorrentes.

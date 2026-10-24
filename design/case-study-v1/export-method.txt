@@ -1,0 +1,5 @@
+Principal: .figcraft nativo editável, criado via MCP attached FigCraft 0.8.0.
+Renders: SVG nativo com texto em contornos → Sharp, sem redesenho.
+PDF de apoio: páginas rasterizadas desses renders, 16:9.
+Editabilidade: texto, diagramas, wireframes e componentes no arquivo .figcraft; as cinco capturas são imagens incorporadas.
+Durante a inspeção ocorreram exibições inconsistentes de prévias. Duas renderizações do frame 01 foram comparadas byte a byte e são idênticas. O arquivo PNG contém pixels de texto nas regiões de cabeçalho, título e subtítulo, e os SVGs contêm os contornos completos. A origem da inconsistência de exibição não foi isolada; não se atribui um defeito confirmado ao FigCraft.

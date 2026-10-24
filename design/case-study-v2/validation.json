@@ -1,0 +1,452 @@
+{
+  "presentationFrames": [
+    {
+      "id": 24,
+      "name": "01 · Contexto e atuação",
+      "x": 0,
+      "y": 0,
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "id": 37,
+      "name": "02 · Problema",
+      "x": 2040,
+      "y": 0,
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "id": 66,
+      "name": "03 · Descoberta",
+      "x": 4080,
+      "y": 0,
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "id": 93,
+      "name": "04 · Decisões de produto",
+      "x": 6120,
+      "y": 0,
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "id": 137,
+      "name": "05 · UX / Biblioteca",
+      "x": 0,
+      "y": 1200,
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "id": 165,
+      "name": "06 · UX / Transcrição",
+      "x": 2040,
+      "y": 1200,
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "id": 186,
+      "name": "07 · Solução em uso",
+      "x": 4080,
+      "y": 1200,
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "id": 200,
+      "name": "08 · Resultados e aprendizados",
+      "x": 6120,
+      "y": 1200,
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "id": 220,
+      "name": "09 · Pesquisa e avaliação",
+      "x": 0,
+      "y": 2400,
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "id": 250,
+      "name": "10 · Consistência e acessibilidade",
+      "x": 2040,
+      "y": 2400,
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "id": 289,
+      "name": "11 · Social Team / Problema e solução",
+      "x": 4080,
+      "y": 2400,
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "id": 301,
+      "name": "12 · Social Team / Impacto",
+      "x": 6120,
+      "y": 2400,
+      "width": 1920,
+      "height": 1080
+    }
+  ],
+  "nodes": 331,
+  "presentationTextNodes": 217,
+  "totalTextNodes": 239,
+  "instances": 11,
+  "variableBindings": 316,
+  "autoLayoutNodes": 20,
+  "boundsProblems": [],
+  "review": {
+    "initialFrames": 12,
+    "correctionRound": 1,
+    "corrected": [
+      "Frame 2: título da segunda etapa",
+      "Frame 11: respiro entre captura e legenda",
+      "Frame 12: respiro entre captura e marcos",
+      "Frames 3, 8 e 12: respiro após números grandes",
+      "Frame 6: largura da legenda da captura"
+    ],
+    "humanApproval": "PENDING HUMAN APPROVAL"
+  },
+  "originalSHA256": "41b71141e2123f1a7d246b9eb6df1dd2921b099d8d242f3d832bd1c5949232ea",
+  "originalPreserved": true,
+  "fonts": {
+    "families": []
+  },
+  "components": [
+    {
+      "folder": [
+        "02 · Biblioteca v2 · componentes explicativos",
+        "Evidência"
+      ],
+      "id": 3,
+      "instances": 2,
+      "label": "Implementado",
+      "name": "Evidência / Implementado",
+      "page": 2,
+      "type": "COMPONENT"
+    },
+    {
+      "folder": [
+        "02 · Biblioteca v2 · componentes explicativos",
+        "Evidência"
+      ],
+      "id": 5,
+      "instances": 1,
+      "label": "Proposta de design",
+      "name": "Evidência / Proposta de design",
+      "page": 2,
+      "type": "COMPONENT"
+    },
+    {
+      "folder": [
+        "02 · Biblioteca v2 · componentes explicativos",
+        "Evidência"
+      ],
+      "id": 7,
+      "instances": 1,
+      "label": "Hipótese de produto",
+      "name": "Evidência / Hipótese de produto",
+      "page": 2,
+      "type": "COMPONENT"
+    },
+    {
+      "folder": [
+        "02 · Biblioteca v2 · componentes explicativos",
+        "Evidência"
+      ],
+      "id": 9,
+      "instances": 2,
+      "label": "Planejado",
+      "name": "Evidência / Planejado",
+      "page": 2,
+      "type": "COMPONENT"
+    },
+    {
+      "folder": [
+        "02 · Biblioteca v2 · componentes explicativos",
+        "Botão / Gerar cortes"
+      ],
+      "id": 13,
+      "instances": 1,
+      "label": "Estado=Padrão",
+      "name": "Estado=Padrão",
+      "page": 2,
+      "type": "COMPONENT"
+    },
+    {
+      "folder": [
+        "02 · Biblioteca v2 · componentes explicativos",
+        "Botão / Gerar cortes"
+      ],
+      "id": 15,
+      "instances": 1,
+      "label": "Estado=Hover",
+      "name": "Estado=Hover",
+      "page": 2,
+      "type": "COMPONENT"
+    },
+    {
+      "folder": [
+        "02 · Biblioteca v2 · componentes explicativos",
+        "Botão / Gerar cortes"
+      ],
+      "id": 17,
+      "instances": 1,
+      "label": "Estado=Foco",
+      "name": "Estado=Foco",
+      "page": 2,
+      "type": "COMPONENT"
+    },
+    {
+      "folder": [
+        "02 · Biblioteca v2 · componentes explicativos",
+        "Botão / Gerar cortes"
+      ],
+      "id": 19,
+      "instances": 1,
+      "label": "Estado=Desabilitado",
+      "name": "Estado=Desabilitado",
+      "page": 2,
+      "type": "COMPONENT"
+    },
+    {
+      "folder": [
+        "02 · Biblioteca v2 · componentes explicativos",
+        "Botão"
+      ],
+      "id": 21,
+      "instances": 0,
+      "label": "Gerar cortes",
+      "name": "Botão / Gerar cortes",
+      "page": 2,
+      "type": "COMPONENT_SET"
+    },
+    {
+      "folder": [
+        "02 · Biblioteca v2 · componentes explicativos",
+        "Input"
+      ],
+      "id": 319,
+      "instances": 1,
+      "label": "Busca explicativa",
+      "name": "Input / Busca explicativa",
+      "page": 2,
+      "type": "COMPONENT"
+    }
+  ],
+  "pdf": {
+    "pages": 12,
+    "width": 1920,
+    "height": 1080,
+    "selectableText": true,
+    "renderedPages": 12,
+    "reviewedContactSheet": true
+  },
+  "zOrderTextOcclusion": [],
+  "textOverlaps": [],
+  "checks": [
+    {
+      "name": "01 · Contexto e atuação / dimensão",
+      "pass": true
+    },
+    {
+      "name": "01 · Contexto e atuação / limites",
+      "pass": true
+    },
+    {
+      "name": "01 · Contexto e atuação / texto nativo",
+      "pass": true
+    },
+    {
+      "name": "02 · Problema / dimensão",
+      "pass": true
+    },
+    {
+      "name": "02 · Problema / limites",
+      "pass": true
+    },
+    {
+      "name": "02 · Problema / texto nativo",
+      "pass": true
+    },
+    {
+      "name": "03 · Descoberta / dimensão",
+      "pass": true
+    },
+    {
+      "name": "03 · Descoberta / limites",
+      "pass": true
+    },
+    {
+      "name": "03 · Descoberta / texto nativo",
+      "pass": true
+    },
+    {
+      "name": "04 · Decisões de produto / dimensão",
+      "pass": true
+    },
+    {
+      "name": "04 · Decisões de produto / limites",
+      "pass": true
+    },
+    {
+      "name": "04 · Decisões de produto / texto nativo",
+      "pass": true
+    },
+    {
+      "name": "05 · UX / Biblioteca / dimensão",
+      "pass": true
+    },
+    {
+      "name": "05 · UX / Biblioteca / limites",
+      "pass": true
+    },
+    {
+      "name": "05 · UX / Biblioteca / texto nativo",
+      "pass": true
+    },
+    {
+      "name": "06 · UX / Transcrição / dimensão",
+      "pass": true
+    },
+    {
+      "name": "06 · UX / Transcrição / limites",
+      "pass": true
+    },
+    {
+      "name": "06 · UX / Transcrição / texto nativo",
+      "pass": true
+    },
+    {
+      "name": "07 · Solução em uso / dimensão",
+      "pass": true
+    },
+    {
+      "name": "07 · Solução em uso / limites",
+      "pass": true
+    },
+    {
+      "name": "07 · Solução em uso / texto nativo",
+      "pass": true
+    },
+    {
+      "name": "08 · Resultados e aprendizados / dimensão",
+      "pass": true
+    },
+    {
+      "name": "08 · Resultados e aprendizados / limites",
+      "pass": true
+    },
+    {
+      "name": "08 · Resultados e aprendizados / texto nativo",
+      "pass": true
+    },
+    {
+      "name": "09 · Pesquisa e avaliação / dimensão",
+      "pass": true
+    },
+    {
+      "name": "09 · Pesquisa e avaliação / limites",
+      "pass": true
+    },
+    {
+      "name": "09 · Pesquisa e avaliação / texto nativo",
+      "pass": true
+    },
+    {
+      "name": "10 · Consistência e acessibilidade / dimensão",
+      "pass": true
+    },
+    {
+      "name": "10 · Consistência e acessibilidade / limites",
+      "pass": true
+    },
+    {
+      "name": "10 · Consistência e acessibilidade / texto nativo",
+      "pass": true
+    },
+    {
+      "name": "11 · Social Team / Problema e solução / dimensão",
+      "pass": true
+    },
+    {
+      "name": "11 · Social Team / Problema e solução / limites",
+      "pass": true
+    },
+    {
+      "name": "11 · Social Team / Problema e solução / texto nativo",
+      "pass": true
+    },
+    {
+      "name": "12 · Social Team / Impacto / dimensão",
+      "pass": true
+    },
+    {
+      "name": "12 · Social Team / Impacto / limites",
+      "pass": true
+    },
+    {
+      "name": "12 · Social Team / Impacto / texto nativo",
+      "pass": true
+    },
+    {
+      "name": "layout 3 × 4",
+      "pass": true
+    },
+    {
+      "name": "PDF 12 páginas",
+      "pass": true
+    },
+    {
+      "name": "PDF 1920 × 1080",
+      "pass": true
+    },
+    {
+      "name": "fontes disponíveis",
+      "pass": true
+    },
+    {
+      "name": "4 variantes de botão",
+      "pass": true
+    },
+    {
+      "name": "variáveis oficiais",
+      "pass": true
+    },
+    {
+      "name": "arquivo nativo relido por CLI",
+      "pass": true
+    },
+    {
+      "name": "original preservado",
+      "pass": true
+    },
+    {
+      "name": "texto sem oclusão por irmão superior",
+      "pass": true
+    },
+    {
+      "name": "sem colisões de caixas de texto acima de 3 px",
+      "pass": true
+    },
+    {
+      "name": "roteiro de fala presente",
+      "pass": true
+    }
+  ],
+  "passed": 47,
+  "failed": 0,
+  "mcpAuthoringNotes": "2 falhas transitórias de helper na abertura da autoria, resolvidas. Dois frames vazios criados na v2 foram removidos antes da montagem. Sem gravação na v1.",
+  "nativeImages": 10,
+  "latestTextRevision": "validation-revisao-textual.json",
+  "note": "Os números da montagem original são históricos. O documento atual preserva 13 frames na página 01, incluindo um adicional do usuário. O PDF contém os 12 frames da apresentação."
+}

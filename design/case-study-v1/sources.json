@@ -1,0 +1,150 @@
+{
+  "repository": "https://github.com/FrosttyS18/CutNicePro",
+  "remotePRD": "https://api.github.com/repos/FrosttyS18/CutNicePro/contents/docs/product/PRD.md",
+  "accessed": "2026-10-21",
+  "documents": [
+    {
+      "path": "docs/product/PRD.md",
+      "sha256": "a096148821033c0f61c5259358c0de7108f4d70cd1ed4f08bd28da0fc0adc72b",
+      "bytes": 18153
+    },
+    {
+      "path": "docs/product/PRODUCT-BRAIN.md",
+      "sha256": "9d5cd291d2c9306b7a354f449745189908cd8f32bf6b94052480c11cd95a0645",
+      "bytes": 22137
+    },
+    {
+      "path": "docs/product/USER-JOURNEYS.md",
+      "sha256": "ea11cdea4a0599a50c7dc6d30bd6b44d8830cbf4db7c642a0a1025f14ff73d33",
+      "bytes": 13276
+    },
+    {
+      "path": "docs/product/INFORMATION-ARCHITECTURE.md",
+      "sha256": "8eae240104d14018e40fb76610973a7152412493006652181c581f6b14731b2e",
+      "bytes": 4588
+    },
+    {
+      "path": "docs/product/UX-FOUNDATION.md",
+      "sha256": "7213723e4c3071ece0bbb9a5a1f4f7b2fa75e844bb6b1a62f240cde88b33bbe2",
+      "bytes": 7250
+    },
+    {
+      "path": "docs/product/DECISIONS.md",
+      "sha256": "3a976c440dfaa659b7cfd141b1dd588701579bdb1c14f9b2f1ddc5b0327ac9bd",
+      "bytes": 9718
+    },
+    {
+      "path": "docs/product/BACKLOG.md",
+      "sha256": "b4cc0a020fd9afd4d72bd982fc95ce0a403fc9807a40dec85cc0db42ec8e704b",
+      "bytes": 21611
+    },
+    {
+      "path": "docs/portfolio/CASE-STUDY-LOG.md",
+      "sha256": "712d9fccf65780d5b3e023e9cba102eebefbce60ebd663be7d60d5b7e68fe72b",
+      "bytes": 6366
+    },
+    {
+      "path": "docs/brand/BRAND-FOUNDATION.md",
+      "sha256": "80ac4d78fd9e5b99faf90f55b3dd1394e231cbce8b8440c503a05ca51e3918d1",
+      "bytes": 4850
+    },
+    {
+      "path": "docs/design/UI-KIT-ARCHITECTURE.md",
+      "sha256": "31fae54048771dd243aa85467d3b500488e44a27ded9bea6f886817cad94ea66",
+      "bytes": 5142
+    },
+    {
+      "path": "design/tokens/tokens.json",
+      "sha256": "a8ef420aeaf24302b72b7ff6d45a1dda0a69b65f5a0ea2f81c6465642c2f581f",
+      "bytes": 2303
+    },
+    {
+      "path": "docs/engineering/ENGINE-HANDOFF.md",
+      "sha256": "fedab6a9096f0f6938f0033a30b9f07ea3a328a49cfb1817abe7d55995153d11",
+      "bytes": 22934
+    },
+    {
+      "path": "docs/reports/history/2026-10-21_173413_upd020-correcoes-auditoria.txt",
+      "sha256": "bc189a3e838b95f14c74c19a17a52eebb9375cc51539981b0b002584de431daa",
+      "bytes": 20242
+    },
+    {
+      "path": ".tooling/vendor/upd20-lab/upd20-ui-lab-result.json",
+      "sha256": "a120a8ea7fe3ff81d57be63354550cec4df4d2c0be0a5aba7c2672b13df3b868",
+      "bytes": 3143
+    },
+    {
+      "path": "app/src/screens/ProjectWorkspace.tsx",
+      "sha256": "3dc6d3db4ddfef21aa8a5876a0cbb26674c3d970efa7dff0cdf0c6d8f40999ac",
+      "bytes": 7482
+    },
+    {
+      "path": "app/src/components/clips/ClipTools.tsx",
+      "sha256": "d4f091561562768ef5ddcb03c323a9cd9b9df5193b37245ade9ed9299e986c87",
+      "bytes": 7600
+    }
+  ],
+  "assets": [
+    {
+      "path": "docs/reports/evidence/editor13/editor13-final.png",
+      "frame": "01",
+      "status": "Captura real do editor, histórica",
+      "width": 3440,
+      "height": 1392,
+      "sha256": "089516c098cfaca35ef16f4a585a89eebff68c0d68994881671bc2bc81103bce"
+    },
+    {
+      "path": "design/exports/proposta-b-ai-clip-workspace.png",
+      "frame": "08",
+      "status": "Proposta B, Fase 01, REFERENCE",
+      "width": 1440,
+      "height": 900,
+      "sha256": "fa357b05e075bb39de19919940dae2b278bb54736c54345533ba12447c0343ec"
+    },
+    {
+      "path": "design/exports/proposta-a-creative-studio.png",
+      "frame": "08",
+      "status": "Proposta A, Fase 01, REFERENCE",
+      "width": 1440,
+      "height": 900,
+      "sha256": "0ec2eb818f659896854f935be7c166fe0cb09bb61eb250f07457c969905f243a"
+    },
+    {
+      "path": "docs/reports/evidence/editor14/depois-1280.png",
+      "frame": "11",
+      "status": "Captura real do editor, histórica",
+      "width": 3440,
+      "height": 1392,
+      "sha256": "8144a09f7a93c181f17f77eafb15c8ad468e89cb79d39559ac0c0d7a870ac38f"
+    },
+    {
+      "path": "docs/reports/evidence/03b3/home-1920x1080.png",
+      "frame": "11",
+      "status": "Captura real da Home aprovada",
+      "width": 1920,
+      "height": 1080,
+      "sha256": "99eb9e91b440c8db2ba1ad24f9c0e6fcbf9ecc16e6b35b8170a169e5ce2a3fd0"
+    }
+  ],
+  "benchmark": [
+    {
+      "url": "https://www.opus.pro/",
+      "used": "clipping, legendas, reframe"
+    },
+    {
+      "url": "https://www.capcut.com/tools/auto-caption-generator",
+      "used": "legendas automáticas e estilo"
+    },
+    {
+      "url": "https://www.descript.com/video-editing",
+      "used": "edição por transcrição"
+    }
+  ],
+  "limits": [
+    "Capturas são históricas, não execução atual do app",
+    "Nenhuma pesquisa primária ou métrica de UX inventada",
+    "24/27 é evidência técnica histórica, não taxa de usabilidade",
+    "Wireframes explicativos retrospectivos; timeline sem duração comprovada"
+  ],
+  "hashNote": "Hashes dos documentos na versão consultada, antes dos acréscimos de governança desta apresentação."
+}

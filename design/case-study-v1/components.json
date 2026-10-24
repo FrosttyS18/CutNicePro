@@ -1,0 +1,194 @@
+[
+  {
+    "folder": [
+      "02 · Componentes · proposta explicativa",
+      "EvidenceLabel"
+    ],
+    "id": 4,
+    "instances": 4,
+    "label": "implemented",
+    "name": "EvidenceLabel/implemented",
+    "page": 3,
+    "type": "COMPONENT"
+  },
+  {
+    "folder": [
+      "02 · Componentes · proposta explicativa",
+      "EvidenceLabel"
+    ],
+    "id": 6,
+    "instances": 2,
+    "label": "proposal",
+    "name": "EvidenceLabel/proposal",
+    "page": 3,
+    "type": "COMPONENT"
+  },
+  {
+    "folder": [
+      "02 · Componentes · proposta explicativa",
+      "EvidenceLabel"
+    ],
+    "id": 8,
+    "instances": 4,
+    "label": "hypothesis",
+    "name": "EvidenceLabel/hypothesis",
+    "page": 3,
+    "type": "COMPONENT"
+  },
+  {
+    "folder": [
+      "02 · Componentes · proposta explicativa",
+      "EvidenceLabel"
+    ],
+    "id": 10,
+    "instances": 2,
+    "label": "planned",
+    "name": "EvidenceLabel/planned",
+    "page": 3,
+    "type": "COMPONENT"
+  },
+  {
+    "folder": [
+      "02 · Componentes · proposta explicativa",
+      "Button/Primary"
+    ],
+    "id": 12,
+    "instances": 1,
+    "label": "State=Default",
+    "name": "State=Default",
+    "page": 3,
+    "type": "COMPONENT"
+  },
+  {
+    "folder": [
+      "02 · Componentes · proposta explicativa",
+      "Button/Primary"
+    ],
+    "id": 14,
+    "instances": 1,
+    "label": "State=Hover",
+    "name": "State=Hover",
+    "page": 3,
+    "type": "COMPONENT"
+  },
+  {
+    "folder": [
+      "02 · Componentes · proposta explicativa",
+      "Button/Primary"
+    ],
+    "id": 16,
+    "instances": 1,
+    "label": "State=Disabled",
+    "name": "State=Disabled",
+    "page": 3,
+    "type": "COMPONENT"
+  },
+  {
+    "folder": [
+      "02 · Componentes · proposta explicativa",
+      "Button/Primary"
+    ],
+    "id": 18,
+    "instances": 1,
+    "label": "State=Loading",
+    "name": "State=Loading",
+    "page": 3,
+    "type": "COMPONENT"
+  },
+  {
+    "folder": [
+      "02 · Componentes · proposta explicativa",
+      "Button"
+    ],
+    "id": 20,
+    "instances": 0,
+    "label": "Primary",
+    "name": "Button/Primary",
+    "page": 3,
+    "type": "COMPONENT_SET"
+  },
+  {
+    "folder": [
+      "02 · Componentes · proposta explicativa",
+      "Input"
+    ],
+    "id": 21,
+    "instances": 1,
+    "label": "Search",
+    "name": "Input/Search",
+    "page": 3,
+    "type": "COMPONENT"
+  },
+  {
+    "folder": [
+      "02 · Componentes · proposta explicativa",
+      "ClipCard"
+    ],
+    "id": 25,
+    "instances": 1,
+    "label": "Default",
+    "name": "ClipCard/Default",
+    "page": 3,
+    "type": "COMPONENT"
+  },
+  {
+    "folder": [
+      "02 · Componentes · proposta explicativa",
+      "VideoPreview"
+    ],
+    "id": 29,
+    "instances": 1,
+    "label": "Empty",
+    "name": "VideoPreview/Empty",
+    "page": 3,
+    "type": "COMPONENT"
+  },
+  {
+    "folder": [
+      "02 · Componentes · proposta explicativa",
+      "Timeline"
+    ],
+    "id": 33,
+    "instances": 1,
+    "label": "Trim",
+    "name": "Timeline/Trim",
+    "page": 3,
+    "type": "COMPONENT"
+  },
+  {
+    "folder": [
+      "02 · Componentes · proposta explicativa",
+      "StatusBadge"
+    ],
+    "id": 371,
+    "instances": 1,
+    "label": "Pronto",
+    "name": "StatusBadge/Pronto",
+    "page": 3,
+    "type": "COMPONENT"
+  },
+  {
+    "folder": [
+      "02 · Componentes · proposta explicativa",
+      "StatusBadge"
+    ],
+    "id": 373,
+    "instances": 1,
+    "label": "Processando",
+    "name": "StatusBadge/Processando",
+    "page": 3,
+    "type": "COMPONENT"
+  },
+  {
+    "folder": [
+      "02 · Componentes · proposta explicativa",
+      "StatusBadge"
+    ],
+    "id": 375,
+    "instances": 1,
+    "label": "Erro",
+    "name": "StatusBadge/Erro",
+    "page": 3,
+    "type": "COMPONENT"
+  }
+]

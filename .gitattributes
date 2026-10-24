@@ -25,3 +25,5 @@
 *.icns binary
 *.ttf binary
 *.figcraft binary
+*.pdf binary
+*.wav binary

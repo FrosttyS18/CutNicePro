@@ -1,0 +1,225 @@
+{
+  "preservedOriginal": {
+    "path": "C:/CutNicePro/design/case-study-v1/CutNicePro-Product-Design-Case-Study-v1.figcraft",
+    "sha256": "41b71141e2123f1a7d246b9eb6df1dd2921b099d8d242f3d832bd1c5949232ea",
+    "bytes": 11242741
+  },
+  "created": "2026-10-21",
+  "status": "IN REVIEW",
+  "testimony": "Informações fornecidas por Wesley Lima nesta conversa. Não foram recebidos registros brutos das conversas/testes ou uma base de benchmark dos 22 apps.",
+  "transcript": "C:/Users/adcka/Desktop/transcricao-UX-PORTFOLIO.txt",
+  "assets": [
+    {
+      "key": "home",
+      "path": "docs/reports/evidence/03b3/home-1920x1080.png",
+      "sha256": "99eb9e91b440c8db2ba1ad24f9c0e6fcbf9ecc16e6b35b8170a169e5ce2a3fd0",
+      "width": 1920,
+      "height": 1080,
+      "status": "Captura real histórica do aplicativo"
+    },
+    {
+      "key": "editor",
+      "path": "docs/reports/evidence/editor14/depois-1280.png",
+      "sha256": "8144a09f7a93c181f17f77eafb15c8ad468e89cb79d39559ac0c0d7a870ac38f",
+      "width": 3440,
+      "height": 1392,
+      "status": "Captura real histórica do aplicativo"
+    },
+    {
+      "key": "editor13",
+      "path": "docs/reports/evidence/editor13/editor13-final.png",
+      "sha256": "089516c098cfaca35ef16f4a585a89eebff68c0d68994881671bc2bc81103bce",
+      "width": 3440,
+      "height": 1392,
+      "status": "Captura real histórica do aplicativo"
+    },
+    {
+      "key": "proposalA",
+      "path": "design/exports/proposta-a-creative-studio.png",
+      "sha256": "0ec2eb818f659896854f935be7c166fe0cb09bb61eb250f07457c969905f243a",
+      "width": 1440,
+      "height": 900,
+      "status": "Exploração histórica REFERENCE"
+    },
+    {
+      "key": "proposalB",
+      "path": "design/exports/proposta-b-ai-clip-workspace.png",
+      "sha256": "fa357b05e075bb39de19919940dae2b278bb54736c54345533ba12447c0343ec",
+      "width": 1440,
+      "height": 900,
+      "status": "Exploração histórica REFERENCE"
+    },
+    {
+      "key": "social-board",
+      "source": "C:/CutNicePro/design/case-study-v1/CutNicePro-Product-Design-Case-Study-v1.figcraft",
+      "node": 532,
+      "path": "assets/social-board.png",
+      "status": "Tela real fornecida no miniportfólio do autor",
+      "sha256": "960c4c8fcc70283d559c7d452d349e09f03475d41c5f7fd8166539beee37ef4d"
+    },
+    {
+      "key": "social-comments",
+      "source": "C:/CutNicePro/design/case-study-v1/CutNicePro-Product-Design-Case-Study-v1.figcraft",
+      "node": 465,
+      "path": "assets/social-comments.png",
+      "status": "Tela real fornecida no miniportfólio do autor",
+      "sha256": "8b09c2d7a962acf8b3aaa43613064dc81450b1d97bea58bcbfb83210e1b8abbc"
+    },
+    {
+      "key": "social-access",
+      "source": "C:/CutNicePro/design/case-study-v1/CutNicePro-Product-Design-Case-Study-v1.figcraft",
+      "node": 580,
+      "path": "assets/social-access.png",
+      "status": "Tela real fornecida no miniportfólio do autor",
+      "sha256": "e1d0a84647f22e5bd0cbcc520b2988100667736e66d872672fb838c49eba7791"
+    },
+    {
+      "key": "transcript-detail",
+      "path": "assets/transcript-detail.png",
+      "source": "docs/reports/evidence/editor14/depois-1280.png",
+      "crop": {
+        "left": 120,
+        "top": 170,
+        "width": 275,
+        "height": 880
+      },
+      "status": "Recorte de captura real, sem reconstrução de conteúdo",
+      "sha256": "e663bc0210b26541ca61174106c51e4cb6e19a822e6ccb8294d9a5327ffcad0d"
+    },
+    {
+      "key": "tools-detail",
+      "path": "assets/tools-detail.png",
+      "source": "docs/reports/evidence/editor14/depois-1280.png",
+      "crop": {
+        "left": 2890,
+        "top": 160,
+        "width": 510,
+        "height": 900
+      },
+      "status": "Recorte de captura real, sem reconstrução de conteúdo",
+      "sha256": "0e2a10cd45161f46df5610410b62a41f43715995201c70bae4b5a5269c04218f"
+    },
+    {
+      "key": "preview-detail",
+      "path": "assets/preview-detail.png",
+      "source": "docs/reports/evidence/editor14/depois-1280.png",
+      "crop": {
+        "left": 1215,
+        "top": 200,
+        "width": 865,
+        "height": 870
+      },
+      "status": "Recorte de captura real, sem reconstrução de conteúdo",
+      "sha256": "0127bb7905347926036a08855b2f133227d775d40d0631efcaea520f9c1c427f"
+    },
+    {
+      "key": "timeline-detail",
+      "path": "assets/timeline-detail.png",
+      "source": "docs/reports/evidence/editor13/editor13-final.png",
+      "crop": {
+        "left": 120,
+        "top": 1220,
+        "width": 3270,
+        "height": 150
+      },
+      "status": "Recorte de captura real, sem reconstrução de conteúdo",
+      "sha256": "992dd5761d901dbe4cb5c17b110731b7a33b9a9f2296353c70b6b00bd3cb8019"
+    },
+    {
+      "key": "transcript-focus",
+      "path": "assets/transcript-focus.png",
+      "status": "Recorte de detalhe de captura real",
+      "sha256": "6e2bbb857e048465482a31d20f7fd891b48b1c5f95601c8d53d6f53ec6846361"
+    },
+    {
+      "key": "tools-focus",
+      "path": "assets/tools-focus.png",
+      "status": "Recorte de detalhe de captura real",
+      "sha256": "a78f31bda6961ca778857d23e0781135d2d8ff01591df7e9602868acac8fdbcd"
+    }
+  ],
+  "documents": [
+    {
+      "path": "docs/product/PRD.md",
+      "sha256": "a096148821033c0f61c5259358c0de7108f4d70cd1ed4f08bd28da0fc0adc72b"
+    },
+    {
+      "path": "docs/product/PRODUCT-BRAIN.md",
+      "sha256": "3a9ad9429ec5206e4698e9bcb71b0c44be4227095974d1384840348602ce20fa"
+    },
+    {
+      "path": "docs/product/USER-JOURNEYS.md",
+      "sha256": "ea11cdea4a0599a50c7dc6d30bd6b44d8830cbf4db7c642a0a1025f14ff73d33"
+    },
+    {
+      "path": "docs/product/INFORMATION-ARCHITECTURE.md",
+      "sha256": "8eae240104d14018e40fb76610973a7152412493006652181c581f6b14731b2e"
+    },
+    {
+      "path": "docs/product/UX-FOUNDATION.md",
+      "sha256": "7213723e4c3071ece0bbb9a5a1f4f7b2fa75e844bb6b1a62f240cde88b33bbe2"
+    },
+    {
+      "path": "docs/product/DECISIONS.md",
+      "sha256": "3a976c440dfaa659b7cfd141b1dd588701579bdb1c14f9b2f1ddc5b0327ac9bd"
+    },
+    {
+      "path": "docs/product/BACKLOG.md",
+      "sha256": "b4cc0a020fd9afd4d72bd982fc95ce0a403fc9807a40dec85cc0db42ec8e704b"
+    },
+    {
+      "path": "docs/portfolio/CASE-STUDY-LOG.md",
+      "sha256": "615fac9d33850a4dcd8024b9c895f453105b84bc1c3bacfd208bf1a5c23d6454"
+    },
+    {
+      "path": "docs/brand/BRAND-FOUNDATION.md",
+      "sha256": "80ac4d78fd9e5b99faf90f55b3dd1394e231cbce8b8440c503a05ca51e3918d1"
+    },
+    {
+      "path": "docs/design/UI-KIT-ARCHITECTURE.md",
+      "sha256": "31fae54048771dd243aa85467d3b500488e44a27ded9bea6f886817cad94ea66"
+    },
+    {
+      "path": "design/tokens/tokens.json",
+      "sha256": "a8ef420aeaf24302b72b7ff6d45a1dda0a69b65f5a0ea2f81c6465642c2f581f"
+    },
+    {
+      "path": "docs/engineering/ENGINE-HANDOFF.md",
+      "sha256": "7d8be5e4e13f2900da7eefd56bbe4bb78bc51c16282eec23c4d2a6ccffe7edb4"
+    }
+  ],
+  "methods": [
+    "https://www.w3.org/WAI/standards-guidelines/wcag/",
+    "https://www.w3.org/WAI/test-evaluate/tools/selecting/",
+    "https://huggingface.co/spaces/evaluate-metric/wer/blob/main/README.md"
+  ],
+  "evidencePolicy": {
+    "research": "Relato do autor, sem base bruta recebida",
+    "library": "Esquemas retrospectivos explicativos, não capturas nem certificação de implementação",
+    "commercial": "Propostas relatadas para o case, sem alterar decisões canônicas",
+    "excludedMetrics": [
+      "97% de precisão",
+      "55% do mercado",
+      "70%/30% de preferência"
+    ],
+    "socialCosts": {
+      "oldYear": 8000,
+      "newMonth": 120,
+      "newYear": 1440,
+      "annualDifference": 6560,
+      "estimatedReduction": 0.82,
+      "excludes": "desenvolvimento e manutenção",
+      "aiToolCashOutlay": 100
+    },
+    "processTimeline": "Representação das etapas, sem duração histórica"
+  },
+  "editorialRevision": {
+    "date": "2026-10-22",
+    "sameFile": true,
+    "voice": "Primeira pessoa. Observações de auditoria fora dos slides.",
+    "userEditsPreserved": true,
+    "extraFramePreserved": 390,
+    "sourceBeforeSHA256": "e2a4ab1bcf1a39a8e71b1aee19408798bea0d61903bc1452e8c59a0a65b1422b",
+    "copyLog": "revisao-textual.json"
+  }
+}

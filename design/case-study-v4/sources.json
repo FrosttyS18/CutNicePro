@@ -1,0 +1,159 @@
+{
+  "created": "2026-10-22",
+  "nativeFile": "C:/CutNicePro/design/case-study-v2/CutNicePro-Product-Design-Case-Study-v2.figcraft",
+  "page": 867,
+  "pageName": "05 · Case v4 · Nova narrativa · 12 slides",
+  "sourceBeforeSHA256": "9a9bca3bcf2d07440243cd6ccac9cfb446975941d5f6142f64403532bfde68fc",
+  "savedSHA256": "1b7325e99a216a161bed11886af9a34c6c7f2029a71a3dcc3cdfd085644e9f2b",
+  "contentAuthority": "Roteiro de 12 slides fornecido na última mensagem do mantenedor, com /start. Substitui a seleção narrativa anterior nesta nova página.",
+  "scope": "Nova página V4 no mesmo FigCraft; placeholders editáveis nas áreas de imagens, sem buscar prints do app.",
+  "preservation": {
+    "previousPages": [
+      {
+        "id": 1,
+        "name": "01 · Apresentação v2 · 8 principais + 4 apoios"
+      },
+      {
+        "id": 2,
+        "name": "02 · Biblioteca v2 · componentes explicativos"
+      },
+      {
+        "id": 323,
+        "name": "03 · Referências e proveniência · fora da apresentação"
+      },
+      {
+        "id": 427,
+        "name": "04 · Case v3 · Contexto, decisões e resultado"
+      }
+    ],
+    "structuralIdentity": true
+  },
+  "artifactsUsed": [
+    "Fluxos e diagramas nativos criados para os slides 2, 3, 4, 5 e 12.",
+    "Instâncias dos quatro estados do botão Gerar cortes da biblioteca existente.",
+    "Variáveis semânticas Dark/Light existentes e Poppins, sem alterar os valores globais.",
+    "12 molduras editáveis com instruções de imagem. Nenhuma captura real incorporada na V4."
+  ],
+  "historicalSources": [
+    "design/case-study-v1/sources.json",
+    "design/case-study-v2/sources.json",
+    "design/case-study-v3/sources.json"
+  ],
+  "benchmarkReferences": [
+    {
+      "name": "OpusClip",
+      "url": "https://www.opus.pro/"
+    },
+    {
+      "name": "CapCut",
+      "url": "https://www.capcut.com/tools/auto-caption-generator"
+    },
+    {
+      "name": "Descript",
+      "url": "https://www.descript.com/video-editing"
+    }
+  ],
+  "benchmarkScope": "Síntese exploratória conforme roteiro. Referências oficiais já registradas na V1, sem nova medição comparativa ou afirmação percentual nesta tarefa.",
+  "documents": [
+    {
+      "path": "docs/product/PRD.md",
+      "sha256": "a096148821033c0f61c5259358c0de7108f4d70cd1ed4f08bd28da0fc0adc72b",
+      "role": "Referência existente; hash antes do registro final desta tarefa."
+    },
+    {
+      "path": "docs/product/PRODUCT-BRAIN.md",
+      "sha256": "57339dd340c6eeffd7bde4e83fb9da1ebf2adf27e7ce173b01f38f54d34c1c02",
+      "role": "Referência existente; hash antes do registro final desta tarefa."
+    },
+    {
+      "path": "docs/product/USER-JOURNEYS.md",
+      "sha256": "ea11cdea4a0599a50c7dc6d30bd6b44d8830cbf4db7c642a0a1025f14ff73d33",
+      "role": "Referência existente; hash antes do registro final desta tarefa."
+    },
+    {
+      "path": "docs/product/INFORMATION-ARCHITECTURE.md",
+      "sha256": "8eae240104d14018e40fb76610973a7152412493006652181c581f6b14731b2e",
+      "role": "Referência existente; hash antes do registro final desta tarefa."
+    },
+    {
+      "path": "docs/product/UX-FOUNDATION.md",
+      "sha256": "7213723e4c3071ece0bbb9a5a1f4f7b2fa75e844bb6b1a62f240cde88b33bbe2",
+      "role": "Referência existente; hash antes do registro final desta tarefa."
+    },
+    {
+      "path": "docs/product/DECISIONS.md",
+      "sha256": "3a976c440dfaa659b7cfd141b1dd588701579bdb1c14f9b2f1ddc5b0327ac9bd",
+      "role": "Referência existente; hash antes do registro final desta tarefa."
+    },
+    {
+      "path": "docs/portfolio/CASE-STUDY-LOG.md",
+      "sha256": "b39f9e5a59f41df1a86e47ad8c523ba1837f0aa4a92d0c4d4ffd46eda35192d2",
+      "role": "Referência existente; hash antes do registro final desta tarefa."
+    },
+    {
+      "path": "docs/brand/BRAND-FOUNDATION.md",
+      "sha256": "80ac4d78fd9e5b99faf90f55b3dd1394e231cbce8b8440c503a05ca51e3918d1",
+      "role": "Referência existente; hash antes do registro final desta tarefa."
+    },
+    {
+      "path": "docs/design/UI-KIT-ARCHITECTURE.md",
+      "sha256": "31fae54048771dd243aa85467d3b500488e44a27ded9bea6f886817cad94ea66",
+      "role": "Referência existente; hash antes do registro final desta tarefa."
+    },
+    {
+      "path": "design/tokens/tokens.json",
+      "sha256": "a8ef420aeaf24302b72b7ff6d45a1dda0a69b65f5a0ea2f81c6465642c2f581f",
+      "role": "Referência existente; hash antes do registro final desta tarefa."
+    },
+    {
+      "path": "docs/engineering/ENGINE-HANDOFF.md",
+      "sha256": "37a7d07f2a7d7b951bfbb50b6514a175beabf62085fcb9bedfcbd7b1522495ca",
+      "role": "Referência existente; hash antes do registro final desta tarefa."
+    }
+  ],
+  "assetLocations": [
+    "design/exports/",
+    "docs/reports/evidence/"
+  ],
+  "visual": {
+    "darkSlides": [
+      1,
+      2,
+      4,
+      7,
+      9,
+      10
+    ],
+    "lightSlides": [
+      3,
+      5,
+      6,
+      8,
+      11,
+      12
+    ],
+    "font": "Poppins",
+    "brand": [
+      "#000000",
+      "#231F20",
+      "#02C2BE",
+      "#E6E7E8"
+    ],
+    "accentOnWhite": "#007F7D",
+    "state": "IN REVIEW / PENDING HUMAN APPROVAL"
+  },
+  "limitations": [
+    "Placeholders aguardam as imagens que o mantenedor adicionará, conforme pedido.",
+    "Não foram executadas entrevistas, sessões de usabilidade, benchmarks de desempenho ou testes do aplicativo nesta tarefa.",
+    "Não há valores fictícios de métricas. Medidas de eficiência editorial aparecem como avaliação futura.",
+    "As propostas A/B são explorações históricas de referência; se wireframes retrospectivos forem inseridos, identificá-los como reconstruções.",
+    "Esta apresentação não aprova requisitos nem uma especificação visual de produto."
+  ],
+  "uiKitRevision": {
+    "reference": "ui-kit/sources.json",
+    "date": "2026-10-22",
+    "frame": 1072,
+    "readingOrder": 12,
+    "source": "Quatro prints fornecidos pelo mantenedor; componentes reconstruídos sem ler código."
+  }
+}

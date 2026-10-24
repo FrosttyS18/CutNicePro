@@ -1,0 +1,301 @@
+{
+  "checks": [
+    {
+      "name": "Slide 1 / 1920×1080",
+      "pass": true
+    },
+    {
+      "name": "Slide 1 / limites",
+      "pass": true
+    },
+    {
+      "name": "Slide 1 / texto editável",
+      "pass": true
+    },
+    {
+      "name": "Slide 2 / 1920×1080",
+      "pass": true
+    },
+    {
+      "name": "Slide 2 / limites",
+      "pass": true
+    },
+    {
+      "name": "Slide 2 / texto editável",
+      "pass": true
+    },
+    {
+      "name": "Slide 3 / 1920×1080",
+      "pass": true
+    },
+    {
+      "name": "Slide 3 / limites",
+      "pass": true
+    },
+    {
+      "name": "Slide 3 / texto editável",
+      "pass": true
+    },
+    {
+      "name": "Slide 4 / 1920×1080",
+      "pass": true
+    },
+    {
+      "name": "Slide 4 / limites",
+      "pass": true
+    },
+    {
+      "name": "Slide 4 / texto editável",
+      "pass": true
+    },
+    {
+      "name": "Slide 5 / 1920×1080",
+      "pass": true
+    },
+    {
+      "name": "Slide 5 / limites",
+      "pass": true
+    },
+    {
+      "name": "Slide 5 / texto editável",
+      "pass": true
+    },
+    {
+      "name": "Slide 6 / 1920×1080",
+      "pass": true
+    },
+    {
+      "name": "Slide 6 / limites",
+      "pass": true
+    },
+    {
+      "name": "Slide 6 / texto editável",
+      "pass": true
+    },
+    {
+      "name": "Slide 7 / 1920×1080",
+      "pass": true
+    },
+    {
+      "name": "Slide 7 / limites",
+      "pass": true
+    },
+    {
+      "name": "Slide 7 / texto editável",
+      "pass": true
+    },
+    {
+      "name": "Slide 8 / 1920×1080",
+      "pass": true
+    },
+    {
+      "name": "Slide 8 / limites",
+      "pass": true
+    },
+    {
+      "name": "Slide 8 / texto editável",
+      "pass": true
+    },
+    {
+      "name": "Slide 9 / 1920×1080",
+      "pass": true
+    },
+    {
+      "name": "Slide 9 / limites",
+      "pass": true
+    },
+    {
+      "name": "Slide 9 / texto editável",
+      "pass": true
+    },
+    {
+      "name": "Slide 10 / 1920×1080",
+      "pass": true
+    },
+    {
+      "name": "Slide 10 / limites",
+      "pass": true
+    },
+    {
+      "name": "Slide 10 / texto editável",
+      "pass": true
+    },
+    {
+      "name": "Slide 11 / 1920×1080",
+      "pass": true
+    },
+    {
+      "name": "Slide 11 / limites",
+      "pass": true
+    },
+    {
+      "name": "Slide 11 / texto editável",
+      "pass": true
+    },
+    {
+      "name": "Slide 12 / 1920×1080",
+      "pass": true
+    },
+    {
+      "name": "Slide 12 / limites",
+      "pass": true
+    },
+    {
+      "name": "Slide 12 / texto editável",
+      "pass": true
+    },
+    {
+      "name": "Slide 13 / 1920×1080",
+      "pass": true
+    },
+    {
+      "name": "Slide 13 / limites",
+      "pass": true
+    },
+    {
+      "name": "Slide 13 / texto editável",
+      "pass": true
+    },
+    {
+      "name": "Slide 14 / 1920×1080",
+      "pass": true
+    },
+    {
+      "name": "Slide 14 / limites",
+      "pass": true
+    },
+    {
+      "name": "Slide 14 / texto editável",
+      "pass": true
+    },
+    {
+      "name": "Slide 15 / 1920×1080",
+      "pass": true
+    },
+    {
+      "name": "Slide 15 / limites",
+      "pass": true
+    },
+    {
+      "name": "Slide 15 / texto editável",
+      "pass": true
+    },
+    {
+      "name": "Slide 16 / 1920×1080",
+      "pass": true
+    },
+    {
+      "name": "Slide 16 / limites",
+      "pass": true
+    },
+    {
+      "name": "Slide 16 / texto editável",
+      "pass": true
+    },
+    {
+      "name": "páginas anteriores intactas",
+      "pass": true
+    },
+    {
+      "name": "mesmo arquivo FigCraft",
+      "pass": true
+    },
+    {
+      "name": "16 frames em 4 × 4",
+      "pass": true
+    },
+    {
+      "name": "sem colisões textuais",
+      "pass": true
+    },
+    {
+      "name": "fontes disponíveis",
+      "pass": true
+    },
+    {
+      "name": "roadmap com cinco semanas",
+      "pass": true
+    },
+    {
+      "name": "grupos de cinco em dez usuários",
+      "pass": true
+    },
+    {
+      "name": "fluxo com decisão e retorno",
+      "pass": true
+    },
+    {
+      "name": "fundos claros e escuros",
+      "pass": true
+    },
+    {
+      "name": "sem linguagem interna",
+      "pass": true
+    },
+    {
+      "name": "sem Lorem Ipsum",
+      "pass": true
+    },
+    {
+      "name": "PDF com 16 páginas 16:9",
+      "pass": true
+    },
+    {
+      "name": "PDF com texto selecionável",
+      "pass": true
+    },
+    {
+      "name": "roteiro presente",
+      "pass": true
+    },
+    {
+      "name": "texto sem oclusão por irmão superior",
+      "pass": true
+    }
+  ],
+  "passed": 63,
+  "failed": 0,
+  "sourcePagesPreserved": true,
+  "textNodes": 278,
+  "nativeNodes": 401,
+  "frames": [
+    428,
+    450,
+    479,
+    507,
+    541,
+    585,
+    604,
+    639,
+    693,
+    715,
+    734,
+    748,
+    768,
+    798,
+    837,
+    849
+  ],
+  "themes": {
+    "428": "Dark",
+    "450": "Dark",
+    "479": "Light",
+    "507": "Dark",
+    "541": "Dark",
+    "585": "Light",
+    "604": "Light",
+    "639": "Dark",
+    "693": "Light",
+    "715": "Dark",
+    "734": "Dark",
+    "748": "Dark",
+    "768": "Light",
+    "798": "Light",
+    "837": "Dark",
+    "849": "Dark"
+  },
+  "geometryIssues": [],
+  "zOrderIssues": [],
+  "review": "16 frames inspecionados incrementalmente + uma rodada delimitada de correção; PDF renderizado e conferido",
+  "visualStatus": "PENDING HUMAN APPROVAL"
+}

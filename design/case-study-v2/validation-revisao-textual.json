@@ -1,0 +1,64 @@
+{
+  "sameFile": "C:/CutNicePro/design/case-study-v2/CutNicePro-Product-Design-Case-Study-v2.figcraft",
+  "textEdits": 61,
+  "framesPreserved": 13,
+  "pdfPages": 12,
+  "checks": [
+    {
+      "name": "mesmo caminho",
+      "pass": true
+    },
+    {
+      "name": "todos os IDs preservados",
+      "pass": true
+    },
+    {
+      "name": "estilos e posições preservados",
+      "pass": true
+    },
+    {
+      "name": "frame adicional preservado",
+      "pass": true
+    },
+    {
+      "name": "texto removido pelo usuário preservado",
+      "pass": true
+    },
+    {
+      "name": "sem overflow",
+      "pass": true
+    },
+    {
+      "name": "sem colisão textual",
+      "pass": true
+    },
+    {
+      "name": "sem linguagem interna nos slides",
+      "pass": true
+    },
+    {
+      "name": "12 páginas PDF 1920x1080",
+      "pass": true
+    },
+    {
+      "name": "PDF com texto selecionável",
+      "pass": true
+    },
+    {
+      "name": "roteiro atualizado",
+      "pass": true
+    },
+    {
+      "name": "arquivo nativo relido pela CLI",
+      "pass": true
+    }
+  ],
+  "passed": 12,
+  "failed": 0,
+  "styleAndPositionDifferences": [],
+  "overflow": [],
+  "textOverlaps": [],
+  "internalLanguage": [],
+  "status": "PENDING HUMAN APPROVAL",
+  "sourceBeforeSHA256": "e2a4ab1bcf1a39a8e71b1aee19408798bea0d61903bc1452e8c59a0a65b1422b"
+}

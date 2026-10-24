@@ -1,0 +1,367 @@
+{
+  "currentRevision": "UI Kit por prints / 2026-10-22",
+  "scope": "UI Kit; outros slides preservados e não reavaliados esteticamente.",
+  "evidence": "ui-kit/validation.json",
+  "functionalStatus": "PASS",
+  "regressionStatus": "NOT TESTED",
+  "visualStatus": "PENDING HUMAN APPROVAL",
+  "passed": 66,
+  "failed": 0,
+  "previousValidation": {
+    "functionalStatus": "PASS",
+    "regressionStatus": "NOT TESTED",
+    "visualStatus": "PENDING HUMAN APPROVAL",
+    "scope": "Autoria da apresentação; aplicativo fora do escopo.",
+    "rounds": {
+      "initial": 1,
+      "corrections": 0
+    },
+    "checks": [
+      {
+        "name": "12 frames",
+        "status": "PASS"
+      },
+      {
+        "name": "Dimensões slide 1",
+        "status": "PASS"
+      },
+      {
+        "name": "Limites slide 1",
+        "status": "PASS"
+      },
+      {
+        "name": "Sobreposição textual slide 1",
+        "status": "PASS"
+      },
+      {
+        "name": "Fundo vinculado slide 1",
+        "status": "PASS"
+      },
+      {
+        "name": "Dimensões slide 2",
+        "status": "PASS"
+      },
+      {
+        "name": "Limites slide 2",
+        "status": "PASS"
+      },
+      {
+        "name": "Sobreposição textual slide 2",
+        "status": "PASS"
+      },
+      {
+        "name": "Fundo vinculado slide 2",
+        "status": "PASS"
+      },
+      {
+        "name": "Dimensões slide 3",
+        "status": "PASS"
+      },
+      {
+        "name": "Limites slide 3",
+        "status": "PASS"
+      },
+      {
+        "name": "Sobreposição textual slide 3",
+        "status": "PASS"
+      },
+      {
+        "name": "Fundo vinculado slide 3",
+        "status": "PASS"
+      },
+      {
+        "name": "Dimensões slide 4",
+        "status": "PASS"
+      },
+      {
+        "name": "Limites slide 4",
+        "status": "PASS"
+      },
+      {
+        "name": "Sobreposição textual slide 4",
+        "status": "PASS"
+      },
+      {
+        "name": "Fundo vinculado slide 4",
+        "status": "PASS"
+      },
+      {
+        "name": "Dimensões slide 5",
+        "status": "PASS"
+      },
+      {
+        "name": "Limites slide 5",
+        "status": "PASS"
+      },
+      {
+        "name": "Sobreposição textual slide 5",
+        "status": "PASS"
+      },
+      {
+        "name": "Fundo vinculado slide 5",
+        "status": "PASS"
+      },
+      {
+        "name": "Dimensões slide 6",
+        "status": "PASS"
+      },
+      {
+        "name": "Limites slide 6",
+        "status": "PASS"
+      },
+      {
+        "name": "Sobreposição textual slide 6",
+        "status": "PASS"
+      },
+      {
+        "name": "Fundo vinculado slide 6",
+        "status": "PASS"
+      },
+      {
+        "name": "Dimensões slide 7",
+        "status": "PASS"
+      },
+      {
+        "name": "Limites slide 7",
+        "status": "PASS"
+      },
+      {
+        "name": "Sobreposição textual slide 7",
+        "status": "PASS"
+      },
+      {
+        "name": "Fundo vinculado slide 7",
+        "status": "PASS"
+      },
+      {
+        "name": "Dimensões slide 8",
+        "status": "PASS"
+      },
+      {
+        "name": "Limites slide 8",
+        "status": "PASS"
+      },
+      {
+        "name": "Sobreposição textual slide 8",
+        "status": "PASS"
+      },
+      {
+        "name": "Fundo vinculado slide 8",
+        "status": "PASS"
+      },
+      {
+        "name": "Dimensões slide 9",
+        "status": "PASS"
+      },
+      {
+        "name": "Limites slide 9",
+        "status": "PASS"
+      },
+      {
+        "name": "Sobreposição textual slide 9",
+        "status": "PASS"
+      },
+      {
+        "name": "Fundo vinculado slide 9",
+        "status": "PASS"
+      },
+      {
+        "name": "Dimensões slide 10",
+        "status": "PASS"
+      },
+      {
+        "name": "Limites slide 10",
+        "status": "PASS"
+      },
+      {
+        "name": "Sobreposição textual slide 10",
+        "status": "PASS"
+      },
+      {
+        "name": "Fundo vinculado slide 10",
+        "status": "PASS"
+      },
+      {
+        "name": "Dimensões slide 11",
+        "status": "PASS"
+      },
+      {
+        "name": "Limites slide 11",
+        "status": "PASS"
+      },
+      {
+        "name": "Sobreposição textual slide 11",
+        "status": "PASS"
+      },
+      {
+        "name": "Fundo vinculado slide 11",
+        "status": "PASS"
+      },
+      {
+        "name": "Dimensões slide 12",
+        "status": "PASS"
+      },
+      {
+        "name": "Limites slide 12",
+        "status": "PASS"
+      },
+      {
+        "name": "Sobreposição textual slide 12",
+        "status": "PASS"
+      },
+      {
+        "name": "Fundo vinculado slide 12",
+        "status": "PASS"
+      },
+      {
+        "name": "Preservação página 1",
+        "status": "PASS"
+      },
+      {
+        "name": "Preservação página 2",
+        "status": "PASS"
+      },
+      {
+        "name": "Preservação página 323",
+        "status": "PASS"
+      },
+      {
+        "name": "Preservação página 427",
+        "status": "PASS"
+      },
+      {
+        "name": "Tipografia Poppins",
+        "status": "PASS"
+      },
+      {
+        "name": "12 placeholders nativos",
+        "status": "PASS"
+      },
+      {
+        "name": "Auto layout dos placeholders",
+        "status": "PASS"
+      },
+      {
+        "name": "Sem novas capturas ou bitmaps",
+        "status": "PASS"
+      },
+      {
+        "name": "4 variantes como instâncias",
+        "status": "PASS"
+      },
+      {
+        "name": "Sem linguagem de auditoria na apresentação",
+        "status": "PASS"
+      },
+      {
+        "name": "PDF com 12 páginas",
+        "status": "PASS"
+      },
+      {
+        "name": "PDF em 1920x1080",
+        "status": "PASS"
+      },
+      {
+        "name": "Texto selecionável nas 12 páginas",
+        "status": "PASS"
+      },
+      {
+        "name": "12 renders exportados e inspecionados",
+        "status": "PASS"
+      },
+      {
+        "name": "Z-order: sem texto coberto por formas posteriores",
+        "status": "PASS",
+        "details": []
+      }
+    ],
+    "passed": 64,
+    "failed": 0,
+    "geometryFindings": [],
+    "imagesAdded": 0,
+    "placeholders": 12,
+    "frames": [
+      868,
+      880,
+      911,
+      937,
+      954,
+      988,
+      1005,
+      1022,
+      1038,
+      1054,
+      1072,
+      1107
+    ],
+    "previousPagesUnchanged": true,
+    "pdf": {
+      "pages": 12,
+      "dimensions": [
+        [
+          1920,
+          1080
+        ],
+        [
+          1920,
+          1080
+        ],
+        [
+          1920,
+          1080
+        ],
+        [
+          1920,
+          1080
+        ],
+        [
+          1920,
+          1080
+        ],
+        [
+          1920,
+          1080
+        ],
+        [
+          1920,
+          1080
+        ],
+        [
+          1920,
+          1080
+        ],
+        [
+          1920,
+          1080
+        ],
+        [
+          1920,
+          1080
+        ],
+        [
+          1920,
+          1080
+        ],
+        [
+          1920,
+          1080
+        ]
+      ],
+      "textChars": [
+        437,
+        392,
+        541,
+        404,
+        305,
+        565,
+        621,
+        515,
+        552,
+        545,
+        534,
+        759
+      ]
+    },
+    "zFindings": []
+  }
+}

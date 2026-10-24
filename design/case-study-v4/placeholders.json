@@ -1,0 +1,90 @@
+[
+  {
+    "frame": 868,
+    "node": 877,
+    "title": "EDITOR DO CUTNICE PRO",
+    "instructions": "Captura real em grande destaque.\nMostrar preview, transcrição, ferramentas e timeline.",
+    "width": 1174,
+    "height": 660
+  },
+  {
+    "frame": 988,
+    "node": 994,
+    "title": "AI CLIP WORKSPACE",
+    "instructions": "Proposta B real do repositório.\nMostrar comparação de sugestões e revisão rápida.",
+    "width": 800,
+    "height": 400
+  },
+  {
+    "frame": 988,
+    "node": 997,
+    "title": "CREATIVE STUDIO",
+    "instructions": "Proposta A real do repositório.\nMostrar timeline, preview e ferramentas de ajuste.",
+    "width": 800,
+    "height": 400
+  },
+  {
+    "frame": 1005,
+    "node": 1012,
+    "title": "BIBLIOTECA DE CORTES",
+    "instructions": "Captura real ampliada. Mostrar os cards de sugestões,\ncom prévia, duração, pontuação estimada e ações de revisão.",
+    "width": 1190,
+    "height": 420
+  },
+  {
+    "frame": 1022,
+    "node": 1028,
+    "title": "EDITOR / TRANSCRIÇÃO",
+    "instructions": "Captura real com a transcrição em destaque.\nMostrar o painel separado, a busca por palavras\ne os blocos recolhíveis.",
+    "width": 1120,
+    "height": 450
+  },
+  {
+    "frame": 1038,
+    "node": 1044,
+    "title": "EDITOR / UI FINAL",
+    "instructions": "Captura real ampliada do editor.\nMostrar o corte selecionado no preview,\na timeline e os controles de edição.",
+    "width": 1190,
+    "height": 460
+  },
+  {
+    "frame": 1038,
+    "node": 1047,
+    "title": "BIBLIOTECA",
+    "instructions": "Captura real das sugestões\ngeradas no mesmo projeto.",
+    "width": 494,
+    "height": 215
+  },
+  {
+    "frame": 1038,
+    "node": 1050,
+    "title": "EXPORTAÇÃO MP4",
+    "instructions": "Evidência real da exportação\ne do arquivo MP4 gerado.",
+    "width": 494,
+    "height": 215
+  },
+  {
+    "frame": 1107,
+    "node": 1113,
+    "title": "PRD + JORNADAS",
+    "instructions": "Amostras reais do PRD e das jornadas.\nDestacar necessidades, requisitos\ne critérios de aceite.",
+    "width": 528,
+    "height": 280
+  },
+  {
+    "frame": 1107,
+    "node": 1118,
+    "title": "ARQUITETURA + EXPLORAÇÕES",
+    "instructions": "Amostras reais do fluxo e das\nalternativas visuais. Mostrar como\nas tarefas orientaram a organização.",
+    "width": 528,
+    "height": 280
+  },
+  {
+    "frame": 1107,
+    "node": 1123,
+    "title": "TOKENS + TESTES TÉCNICOS",
+    "instructions": "Amostras reais dos tokens e de\num relatório de teste técnico.\nConectar padrões à implementação.",
+    "width": 528,
+    "height": 280
+  }
+]

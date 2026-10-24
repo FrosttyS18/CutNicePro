@@ -1,0 +1,296 @@
+{
+  "file": "C:/CutNicePro/design/case-study-v2/CutNicePro-Product-Design-Case-Study-v2.figcraft",
+  "images": 17,
+  "missingFonts": [],
+  "name": "CutNice Pro · Case de Product Design · v2 · IN REVIEW",
+  "nodes": 779,
+  "notes": [],
+  "pages": [
+    {
+      "frames": [
+        {
+          "height": 1080.0,
+          "id": 24,
+          "name": "01 · Contexto e atuação",
+          "type": "FRAME",
+          "width": 1920.0
+        },
+        {
+          "height": 1080.0,
+          "id": 37,
+          "name": "02 · Problema",
+          "type": "FRAME",
+          "width": 1920.0
+        },
+        {
+          "height": 1080.0,
+          "id": 66,
+          "name": "03 · Descoberta",
+          "type": "FRAME",
+          "width": 1920.0
+        },
+        {
+          "height": 1080.0,
+          "id": 93,
+          "name": "04 · Decisões de produto",
+          "type": "FRAME",
+          "width": 1920.0
+        },
+        {
+          "height": 1080.0,
+          "id": 137,
+          "name": "05 · UX / Biblioteca",
+          "type": "FRAME",
+          "width": 1920.0
+        },
+        {
+          "height": 1080.0,
+          "id": 165,
+          "name": "06 · UX / Transcrição",
+          "type": "FRAME",
+          "width": 1920.0
+        },
+        {
+          "height": 1080.0,
+          "id": 390,
+          "name": "06 · UX / Transcrição",
+          "type": "FRAME",
+          "width": 1920.0
+        },
+        {
+          "height": 1080.0,
+          "id": 186,
+          "name": "07 · Solução em uso",
+          "type": "FRAME",
+          "width": 1920.0
+        },
+        {
+          "height": 1080.0,
+          "id": 200,
+          "name": "08 · Resultados e aprendizados",
+          "type": "FRAME",
+          "width": 1920.0
+        },
+        {
+          "height": 1080.0,
+          "id": 220,
+          "name": "09 · Pesquisa e avaliação",
+          "type": "FRAME",
+          "width": 1920.0
+        },
+        {
+          "height": 1080.0,
+          "id": 250,
+          "name": "10 · Consistência e acessibilidade",
+          "type": "FRAME",
+          "width": 1920.0
+        },
+        {
+          "height": 1080.0,
+          "id": 289,
+          "name": "11 · Social Team / Problema e solução",
+          "type": "FRAME",
+          "width": 1920.0
+        },
+        {
+          "height": 1080.0,
+          "id": 301,
+          "name": "12 · Social Team / Impacto",
+          "type": "FRAME",
+          "width": 1920.0
+        }
+      ],
+      "id": 1,
+      "name": "01 · Apresentação v2 · 8 principais + 4 apoios",
+      "nodes": 342,
+      "topLevel": 13
+    },
+    {
+      "frames": [
+        {
+          "height": 47.0,
+          "id": 3,
+          "name": "Evidência / Implementado",
+          "type": "COMPONENT",
+          "width": 256.0
+        },
+        {
+          "height": 47.0,
+          "id": 5,
+          "name": "Evidência / Proposta de design",
+          "type": "COMPONENT",
+          "width": 256.0
+        },
+        {
+          "height": 47.0,
+          "id": 7,
+          "name": "Evidência / Hipótese de produto",
+          "type": "COMPONENT",
+          "width": 256.0
+        },
+        {
+          "height": 47.0,
+          "id": 9,
+          "name": "Evidência / Planejado",
+          "type": "COMPONENT",
+          "width": 256.0
+        },
+        {
+          "height": 460.0,
+          "id": 21,
+          "name": "Botão / Gerar cortes",
+          "type": "COMPONENT_SET",
+          "width": 310.0
+        },
+        {
+          "height": 66.0,
+          "id": 319,
+          "name": "Input / Busca explicativa",
+          "type": "COMPONENT",
+          "width": 740.0
+        }
+      ],
+      "id": 2,
+      "name": "02 · Biblioteca v2 · componentes explicativos",
+      "nodes": 21,
+      "topLevel": 8
+    },
+    {
+      "frames": [
+        {
+          "height": 1640.0,
+          "id": 324,
+          "name": "Referências / fontes e limites",
+          "type": "FRAME",
+          "width": 1920.0
+        }
+      ],
+      "id": 323,
+      "name": "03 · Referências e proveniência · fora da apresentação",
+      "nodes": 12,
+      "topLevel": 1
+    },
+    {
+      "frames": [
+        {
+          "height": 1080.0,
+          "id": 428,
+          "name": "01 · Contexto e atuação",
+          "type": "FRAME",
+          "width": 1920.0
+        },
+        {
+          "height": 1080.0,
+          "id": 450,
+          "name": "02 · Problema",
+          "type": "FRAME",
+          "width": 1920.0
+        },
+        {
+          "height": 1080.0,
+          "id": 479,
+          "name": "03 · Descoberta",
+          "type": "FRAME",
+          "width": 1920.0
+        },
+        {
+          "height": 1080.0,
+          "id": 507,
+          "name": "04 · Roadmap / cinco semanas",
+          "type": "FRAME",
+          "width": 1920.0
+        },
+        {
+          "height": 1080.0,
+          "id": 541,
+          "name": "05 · Decisões de produto",
+          "type": "FRAME",
+          "width": 1920.0
+        },
+        {
+          "height": 1080.0,
+          "id": 585,
+          "name": "06 · Modelo comercial / avaliação",
+          "type": "FRAME",
+          "width": 1920.0
+        },
+        {
+          "height": 1080.0,
+          "id": 604,
+          "name": "07 · User flow",
+          "type": "FRAME",
+          "width": 1920.0
+        },
+        {
+          "height": 1080.0,
+          "id": 639,
+          "name": "08 · UX / Biblioteca",
+          "type": "FRAME",
+          "width": 1920.0
+        },
+        {
+          "height": 1080.0,
+          "id": 693,
+          "name": "09 · UX / Transcrição",
+          "type": "FRAME",
+          "width": 1920.0
+        },
+        {
+          "height": 1080.0,
+          "id": 715,
+          "name": "10 · UX / Transcrição",
+          "type": "FRAME",
+          "width": 1920.0
+        },
+        {
+          "height": 1080.0,
+          "id": 734,
+          "name": "11 · Solução em uso",
+          "type": "FRAME",
+          "width": 1920.0
+        },
+        {
+          "height": 1080.0,
+          "id": 748,
+          "name": "12 · Resultados e aprendizados",
+          "type": "FRAME",
+          "width": 1920.0
+        },
+        {
+          "height": 1080.0,
+          "id": 768,
+          "name": "13 · Pesquisa e avaliação",
+          "type": "FRAME",
+          "width": 1920.0
+        },
+        {
+          "height": 1080.0,
+          "id": 798,
+          "name": "14 · Consistência e acessibilidade",
+          "type": "FRAME",
+          "width": 1920.0
+        },
+        {
+          "height": 1080.0,
+          "id": 837,
+          "name": "15 · Social Team / Problema e solução",
+          "type": "FRAME",
+          "width": 1920.0
+        },
+        {
+          "height": 1080.0,
+          "id": 849,
+          "name": "16 · Social Team / Impacto",
+          "type": "FRAME",
+          "width": 1920.0
+        }
+      ],
+      "id": 427,
+      "name": "04 · Case v3 · Contexto, decisões e resultado",
+      "nodes": 400,
+      "topLevel": 16
+    }
+  ],
+  "styles": 0,
+  "variables": 26
+}

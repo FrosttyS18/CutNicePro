@@ -1,0 +1,122 @@
+[
+  {
+    "folder": [
+      "02 · Biblioteca v2 · componentes explicativos",
+      "Evidência"
+    ],
+    "id": 3,
+    "instances": 2,
+    "label": "Implementado",
+    "name": "Evidência / Implementado",
+    "page": 2,
+    "type": "COMPONENT"
+  },
+  {
+    "folder": [
+      "02 · Biblioteca v2 · componentes explicativos",
+      "Evidência"
+    ],
+    "id": 5,
+    "instances": 1,
+    "label": "Proposta de design",
+    "name": "Evidência / Proposta de design",
+    "page": 2,
+    "type": "COMPONENT"
+  },
+  {
+    "folder": [
+      "02 · Biblioteca v2 · componentes explicativos",
+      "Evidência"
+    ],
+    "id": 7,
+    "instances": 1,
+    "label": "Hipótese de produto",
+    "name": "Evidência / Hipótese de produto",
+    "page": 2,
+    "type": "COMPONENT"
+  },
+  {
+    "folder": [
+      "02 · Biblioteca v2 · componentes explicativos",
+      "Evidência"
+    ],
+    "id": 9,
+    "instances": 2,
+    "label": "Planejado",
+    "name": "Evidência / Planejado",
+    "page": 2,
+    "type": "COMPONENT"
+  },
+  {
+    "folder": [
+      "02 · Biblioteca v2 · componentes explicativos",
+      "Botão / Gerar cortes"
+    ],
+    "id": 13,
+    "instances": 1,
+    "label": "Estado=Padrão",
+    "name": "Estado=Padrão",
+    "page": 2,
+    "type": "COMPONENT"
+  },
+  {
+    "folder": [
+      "02 · Biblioteca v2 · componentes explicativos",
+      "Botão / Gerar cortes"
+    ],
+    "id": 15,
+    "instances": 1,
+    "label": "Estado=Hover",
+    "name": "Estado=Hover",
+    "page": 2,
+    "type": "COMPONENT"
+  },
+  {
+    "folder": [
+      "02 · Biblioteca v2 · componentes explicativos",
+      "Botão / Gerar cortes"
+    ],
+    "id": 17,
+    "instances": 1,
+    "label": "Estado=Foco",
+    "name": "Estado=Foco",
+    "page": 2,
+    "type": "COMPONENT"
+  },
+  {
+    "folder": [
+      "02 · Biblioteca v2 · componentes explicativos",
+      "Botão / Gerar cortes"
+    ],
+    "id": 19,
+    "instances": 1,
+    "label": "Estado=Desabilitado",
+    "name": "Estado=Desabilitado",
+    "page": 2,
+    "type": "COMPONENT"
+  },
+  {
+    "folder": [
+      "02 · Biblioteca v2 · componentes explicativos",
+      "Botão"
+    ],
+    "id": 21,
+    "instances": 0,
+    "label": "Gerar cortes",
+    "name": "Botão / Gerar cortes",
+    "page": 2,
+    "type": "COMPONENT_SET"
+  },
+  {
+    "folder": [
+      "02 · Biblioteca v2 · componentes explicativos",
+      "Input"
+    ],
+    "id": 319,
+    "instances": 1,
+    "label": "Busca explicativa",
+    "name": "Input / Busca explicativa",
+    "page": 2,
+    "type": "COMPONENT"
+  }
+]

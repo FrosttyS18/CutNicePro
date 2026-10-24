@@ -1,0 +1,44 @@
+CUTNICE PRO — MEU ROTEIRO DE APRESENTAÇÃO
+Wesley Lima / Product Designer Pleno
+
+Apresentação principal: frames 1 a 8. Reservar 8–10 minutos, incluindo as pausas para mostrar a interface.
+Rota curta para o recrutador: 1, 2, 5 e 8. Apoios: 9 a 12.
+
+01 / O QUE CRIEI E QUAL FOI MEU PAPEL
+Eu criei o CutNice Pro para ajudar criadores a transformar vídeos longos em cortes que possam revisar, ajustar e exportar. É um projeto autoral em desenvolvimento. Meu papel começou na definição do problema e passou pelas conversas com criadores, pela jornada, pelos wireframes, pela interface e pela implementação. Usei IA como apoio para organizar informações, revisar alternativas e programar. Eu tomei as decisões sobre o produto e sobre a experiência. Aqui está o editor que desenvolvi: a transcrição ajuda a encontrar o trecho, o preview mostra o resultado e as ferramentas permitem ajustar o corte antes de exportar.
+
+02 / O PROBLEMA QUE ME MOTIVOU
+Ao produzir cortes, percebi que boa parte do trabalho acontecia antes da automação. Os créditos acabavam rápido e os limites de envio me obrigavam a assistir, escolher e fragmentar o vídeo antes de subir o conteúdo. Isso custava tempo e podia separar uma fala do contexto. Nas conversas com outros criadores, encontrei dificuldades parecidas. Por isso, meu desafio foi permitir que o criador trabalhasse com a fonte completa e mantivesse o controle da seleção, sem depender de créditos para cada nova geração. Esse fluxo mostra onde o esforço se acumulava e por que decidi começar pelo processamento e pela revisão dos cortes.
+
+03 / COMO INVESTIGUEI
+Conversei com 14 pessoas que produziam cortes de podcasts, entrevistas e vídeos populares. Eu queria entender onde o fluxo travava. Três pontos se repetiram: os créditos acabavam cedo, os limites de envio impediam trabalhar com o vídeo completo e a seleção ainda exigia assistir e escolher manualmente o que enviar. A partir dessas conversas, organizei o objetivo do produto: transformar conteúdo longo em cortes publicáveis sem interromper a produção para administrar limites. Depois compartilhei o MVP com 13 pessoas. A linha na parte inferior mostra como organizei as etapas do meu processo, da descoberta à validação, sem representar a duração do projeto.
+
+04 / O QUE PRIORIZEI E QUAIS TROCAS ACEITEI
+Priorizei o caminho entre importar, transcrever, gerar, revisar, ajustar e exportar. Escolhi processamento local para diminuir a dependência de créditos. Essa decisão também exige considerar o hardware disponível e o tempo de processamento. Mantive a fonte completa para preservar o contexto e deixei a revisão humana como parte central: a IA sugere, mas quem cria decide o que vale publicar. Explorei duas organizações do workspace, Creative Studio e AI Clip Workspace, antes de evoluir a interface. Para o modelo comercial, quero avaliar compra única da versão atual e assinatura com atualizações. Minha prioridade é entender qual modalidade faz sentido para cada perfil de uso.
+
+05 / MINHA DECISÃO NA BIBLIOTECA
+Ao revisar a biblioteca, percebi que a nota ajudava a destacar os cortes com melhor avaliação, mas não deixava claro o que tinha acabado de ser gerado. Quando a lista crescia, a pessoa precisava interpretar datas para reconhecer os resultados recentes. Minha decisão foi acrescentar o sinal “Novo” e o tempo relativo, como “há 10 min”. Assim, a informação de recência aparece diretamente no card. Reconstruí esses exemplos para mostrar a mudança de hierarquia. Quero observar como as pessoas localizam um corte recém-gerado e medir se esses sinais ajudam nessa tarefa. Essa é uma decisão que nasceu da minha própria revisão da interface.
+
+06 / COMO REORGANIZEI A TRANSCRIÇÃO
+Também percebi que a leitura da transcrição e as ferramentas competiam por espaço. O texto extenso exigia muita rolagem para localizar uma fala. Reorganizei o editor, separando transcrição, preview e ferramentas. Acrescentei busca por palavras ou trechos e seções recolhíveis, para que a pessoa possa encontrar e abrir o conteúdo de que precisa. Minha intenção foi dar mais controle sobre a navegação pelo texto e manter a atenção no trecho em revisão. Esses detalhes mostram o editor que desenvolvi. O próximo passo é observar a execução de uma tarefa de busca e correção e medir o esforço necessário para concluí-la.
+
+07 / COMO CONECTEI A SOLUÇÃO
+Desenhei e implementei o caminho de criar um projeto, importar a mídia, transcrever, gerar cortes, revisar, ajustar e exportar. Eu percorri esse fluxo no aplicativo e publiquei cortes que exportei. A Home organiza a entrada e o editor concentra as decisões sobre o conteúdo. Mantive preview, transcrição e timeline próximos porque cada um ajuda a revisar o mesmo trecho por um caminho diferente. Minha intenção foi conectar a automação ao trabalho de quem precisa conferir o resultado antes de publicar. O produto continua em desenvolvimento, e eu sigo refinando a qualidade dos cortes e a experiência de revisão.
+
+08 / O QUE APRENDI E O QUE VOU MEDIR
+Compartilhei o MVP com 13 pessoas e usei vídeos de 10 minutos a 3 horas nos testes. Completei o fluxo de importar, transcrever, gerar, ajustar e exportar. Um aprendizado foi perceber que gerar cortes é só uma parte do problema: reconhecer um resultado novo, encontrar uma fala e revisar o conteúdo também fazem parte da experiência. A reação à possibilidade de trabalhar sem administrar créditos foi positiva nas conversas. Agora quero transformar essas observações em medidas de tarefa. Vou observar como cada pessoa revisa e exporta, medir o tempo para encontrar um corte útil e acompanhar correções e retrabalho editorial. Isso vai orientar minhas próximas melhorias.
+
+09 / COMO QUERO APROFUNDAR A AVALIAÇÃO
+Combinei conversas, experimentação do MVP e exploração de 22 ferramentas de transcrição, sendo 15 pagas e 7 gratuitas. Para a próxima etapa, quero comparar precisão e tempo com um método consistente. Vou revisar uma transcrição de referência e calcular WER, considerando substituições, exclusões e inserções em relação ao total de palavras da referência. Para velocidade, vou repetir a tarefa com o mesmo áudio, registrar a configuração e comparar a mediana dos tempos. Também quero ampliar os testes com diferentes durações e tipos de conteúdo, para entender onde preciso melhorar o produto.
+
+10 / COMO TRABALHEI CONSISTÊNCIA E ACESSIBILIDADE
+Defini Poppins, as cores da marca, a escala de espaçamento e os estados dos controles para dar consistência à interface. Considerei rótulos claros, navegação por teclado e feedback de carregamento, erro e vazio. Usei IA para apoiar a revisão de fluxos, identificar problemas e criar testes funcionais. Para acessibilidade, minha referência são as WCAG, as diretrizes de acessibilidade para conteúdo web. Quero complementar as verificações automáticas com avaliação por teclado e observação das tarefas. O objetivo é que uma ferramenta com bastante informação continue clara para quem precisa trabalhar nela todos os dias.
+
+11 / COMO RESPONDI A UM PROBLEMA DA EQUIPE
+Na VENDE-C, ouvi os colaboradores e identifiquei dificuldades ligadas ao compartilhamento de contas e à aprovação de demandas. Poucas contas do Trello eram divididas entre várias pessoas. Isso gerava conflitos de sessão e dependência de códigos 2FA. Os ajustes entre social media e design também saíam da tarefa e iam para o WhatsApp ou para conversas presenciais. Apresentei e desenvolvi o Social Team Kanban, com acesso corporativo individual, permissões e comentários dentro das tarefas. Minha resposta foi organizar a colaboração no mesmo lugar em que a demanda já estava sendo acompanhada.
+
+12 / O RESULTADO NA VENDE-C
+Entreguei o MVP em duas semanas, e a empresa concluiu a adoção em dois meses, substituindo o Trello na operação. Comparei R$ 8 mil anuais de assinatura com R$ 120 mensais de infraestrutura própria, equivalentes a R$ 1.440 por ano. A diferença é R$ 6.560 anuais, ou uma redução estimada de 82% nesses custos recorrentes. Desenvolvimento e manutenção ficam fora dessa comparação. Durante a construção, usei uma assinatura de IA de R$ 100 e meu próprio trabalho de design e programação. Esse projeto me deu experiência em ouvir uma equipe, transformar suas necessidades em uma solução e acompanhar a adoção no trabalho real.
+
+FECHAMENTO
+Esses projetos mostram como conecto entendimento do problema, decisões de produto, interface e viabilidade técnica. No CutNice Pro, estou evoluindo um produto próprio. No Social Team, transformei uma necessidade da equipe em uma ferramenta adotada pela empresa.

@@ -1,0 +1,391 @@
+{
+  "sameFile": "C:/CutNicePro/design/case-study-v2/CutNicePro-Product-Design-Case-Study-v2.figcraft",
+  "diskSHA256Before": "e2a4ab1bcf1a39a8e71b1aee19408798bea0d61903bc1452e8c59a0a65b1422b",
+  "changedTexts": [
+    {
+      "id": 30,
+      "frame": 24,
+      "before": "Um aplicativo desktop para encontrar, revisar e exportar cortes de conteúdo longo.",
+      "after": "Criei um app para encontrar,\nrevisar e exportar cortes\nde vídeos longos."
+    },
+    {
+      "id": 34,
+      "frame": 24,
+      "before": "Projeto autoral em desenvolvimento.\nIA como apoio à análise\ne programação.",
+      "after": "Planejei, desenhei e desenvolvi\no produto com apoio de IA."
+    },
+    {
+      "id": 36,
+      "frame": 24,
+      "before": "Captura real do editor. Evidência histórica da interface.",
+      "after": "Meu editor: transcrição, preview e ferramentas."
+    },
+    {
+      "id": 40,
+      "frame": 37,
+      "before": "Limites de envio e créditos criavam trabalho manual antes da análise.",
+      "after": "Ao produzir cortes, percebi que o trabalho manual começava antes da IA."
+    },
+    {
+      "id": 69,
+      "frame": 66,
+      "before": "Conversas exploratórias com pessoas que mantinham canais de cortes.",
+      "after": "Conversei com criadores para entender o que dificultava a produção de cortes."
+    },
+    {
+      "id": 73,
+      "frame": 66,
+      "before": "pessoas ouvidas",
+      "after": "criadores com quem\nconversei"
+    },
+    {
+      "id": 74,
+      "frame": 66,
+      "before": "Usuários que recortavam podcasts, entrevistas e vídeos populares.",
+      "after": "Ouvi pessoas que produziam\ncortes de podcasts, entrevistas\ne vídeos populares."
+    },
+    {
+      "id": 92,
+      "frame": 66,
+      "before": "Representação do processo, sem duração histórica. Relato do autor, sem registros brutos anexados.",
+      "after": "Meu processo: da descoberta à validação. Representação das etapas, sem escala de tempo."
+    },
+    {
+      "id": 95,
+      "frame": 93,
+      "before": "Automatizar a seleção, preservar a autonomia",
+      "after": "Decidi automatizar sem tirar o controle"
+    },
+    {
+      "id": 96,
+      "frame": 93,
+      "before": "O MVP concentra o esforço entre importar, revisar e exportar.",
+      "after": "Priorizei o caminho entre importar, revisar e exportar."
+    },
+    {
+      "id": 131,
+      "frame": 93,
+      "before": "Explorações históricas da Fase 01 / REFERENCE",
+      "after": "Minhas explorações iniciais de layout"
+    },
+    {
+      "id": 136,
+      "frame": 93,
+      "before": "Modalidades em avaliação.\nSem preferência quantitativa comprovada.",
+      "after": "Quero avaliar qual modalidade faz sentido\npara cada perfil de uso."
+    },
+    {
+      "id": 139,
+      "frame": 137,
+      "before": "Reconhecer o que acabou de ser gerado",
+      "after": "Minha decisão: destacar os cortes novos"
+    },
+    {
+      "id": 140,
+      "frame": 137,
+      "before": "Problema que identifiquei ao revisar a biblioteca de cortes.",
+      "after": "Percebi que a biblioteca precisava mostrar melhor o que acabava de chegar."
+    },
+    {
+      "id": 145,
+      "frame": 137,
+      "before": "ANTES / esquema explicativo",
+      "after": "ANTES"
+    },
+    {
+      "id": 146,
+      "frame": 137,
+      "before": "DEPOIS / reconstrução da decisão",
+      "after": "MINHA PROPOSTA"
+    },
+    {
+      "id": 161,
+      "frame": 137,
+      "before": "A nota respondia “qual parece melhor?”.\nA recência ainda exigia interpretação.",
+      "after": "Percebi que a nota destacava a qualidade,\nmas a recência ainda exigia interpretação."
+    },
+    {
+      "id": 162,
+      "frame": 137,
+      "before": "“Novo” comunica novidade.\nTempo relativo aproxima a informação da tarefa.",
+      "after": "Acrescentei “Novo” e tempo relativo\npara deixar a recência visível."
+    },
+    {
+      "id": 164,
+      "frame": 137,
+      "before": "Decisão relatada pelo autor. Esquemas retrospectivos, sem captura histórica ou reteste de usabilidade.",
+      "after": "Reconstruí estes cards para mostrar a mudança de hierarquia."
+    },
+    {
+      "id": 167,
+      "frame": 165,
+      "before": "Revisar o texto sem disputar espaço",
+      "after": "Separei a leitura das ferramentas"
+    },
+    {
+      "id": 168,
+      "frame": 165,
+      "before": "Problema identificado por mim: leitura e ferramentas competiam pela atenção.",
+      "after": "Reorganizei o editor para facilitar a leitura e a localização dos trechos."
+    },
+    {
+      "id": 185,
+      "frame": 165,
+      "before": "Aumento desnecessario de scroll.\nPouco aproveitamento da interface.",
+      "after": "Minha intenção: localizar trechos\nsem depender de longas rolagens."
+    },
+    {
+      "id": 392,
+      "frame": 390,
+      "before": "Revisar o texto sem disputar espaço",
+      "after": "Separei a leitura das ferramentas"
+    },
+    {
+      "id": 393,
+      "frame": 390,
+      "before": "Problema identificado por mim: leitura e ferramentas competiam pela atenção.",
+      "after": "Reorganizei o editor para facilitar a leitura e a localização dos trechos."
+    },
+    {
+      "id": 188,
+      "frame": 186,
+      "before": "Do projeto à exportação, em um fluxo",
+      "after": "Conectei o projeto à exportação"
+    },
+    {
+      "id": 189,
+      "frame": 186,
+      "before": "Caminho realizado pelos usuários. Capturas históricas do usuário na interface.",
+      "after": "Desenhei e implementei o fluxo de criar, revisar e exportar cortes."
+    },
+    {
+      "id": 199,
+      "frame": 186,
+      "before": "IA local sugere trechos. Preview, transcrição e timeline apoiam a decisão final do criador.",
+      "after": "Mantive preview, transcrição e timeline juntos para apoiar a escolha dos cortes."
+    },
+    {
+      "id": 202,
+      "frame": 200,
+      "before": "Construir o fluxo foi o primeiro resultado",
+      "after": "Coloquei o MVP nas mãos de criadores"
+    },
+    {
+      "id": 203,
+      "frame": 200,
+      "before": "O próximo passo é medir a experiência e a qualidade dos cortes.",
+      "after": "Agora quero medir a experiência de revisão e a qualidade dos cortes."
+    },
+    {
+      "id": 208,
+      "frame": 200,
+      "before": "Vídeos de 10 min a 3 h.\nInformações relatadas pelo autor.",
+      "after": "Usei vídeos de 10 min a 3 h."
+    },
+    {
+      "id": 210,
+      "frame": 200,
+      "before": "Consegui importar, transcrever, gerar, ajustar\ne exportar cortes no aplicativo.",
+      "after": "Completei o fluxo: importar, transcrever,\ngerar, ajustar e exportar."
+    },
+    {
+      "id": 217,
+      "frame": 200,
+      "before": "Próxima prioridade",
+      "after": "Meu próximo passo"
+    },
+    {
+      "id": 218,
+      "frame": 200,
+      "before": "Observar tarefas de revisão e exportação,\nregistrar fricções e iterar com critérios.",
+      "after": "Vou observar como cada pessoa revisa e exporta,\nmedir o esforço e ajustar o fluxo."
+    },
+    {
+      "id": 219,
+      "frame": 200,
+      "before": "Mudanças de UI ainda sem medição posterior. Experimentação relatada não equivale a estudo de usabilidade documentado.",
+      "after": "Quero medir o impacto das mudanças em tarefas reais de revisão e exportação."
+    },
+    {
+      "id": 222,
+      "frame": 220,
+      "before": "Evidências que sustentam as decisões",
+      "after": "Como investiguei o problema"
+    },
+    {
+      "id": 223,
+      "frame": 220,
+      "before": "Separar relatos, exploração e medição evita conclusões maiores que os dados.",
+      "after": "Combinei conversas, experimentação do MVP e exploração de outras ferramentas."
+    },
+    {
+      "id": 229,
+      "frame": 220,
+      "before": "BASE",
+      "after": "O QUE FIZ"
+    },
+    {
+      "id": 230,
+      "frame": 220,
+      "before": "O QUE SEI",
+      "after": "POR QUÊ"
+    },
+    {
+      "id": 231,
+      "frame": 220,
+      "before": "LIMITE",
+      "after": "FOCO"
+    },
+    {
+      "id": 233,
+      "frame": 220,
+      "before": "Dores recorrentes relatadas",
+      "after": "Entender as dores dos criadores"
+    },
+    {
+      "id": 234,
+      "frame": 220,
+      "before": "Sem gravações ou notas anexadas",
+      "after": "Créditos, envio e seleção manual"
+    },
+    {
+      "id": 235,
+      "frame": 220,
+      "before": "13 experimentações",
+      "after": "13 pessoas no MVP"
+    },
+    {
+      "id": 236,
+      "frame": 220,
+      "before": "Uso direto do MVP relatado",
+      "after": "Explorar o uso do fluxo"
+    },
+    {
+      "id": 237,
+      "frame": 220,
+      "before": "Sem protocolo de usabilidade",
+      "after": "Importação, revisão e exportação"
+    },
+    {
+      "id": 240,
+      "frame": 220,
+      "before": "Comparação exploratória do autor",
+      "after": "Explorei alternativas de transcrição"
+    },
+    {
+      "id": 244,
+      "frame": 220,
+      "before": "Precisão / referência humana",
+      "after": "Como vou medir a precisão"
+    },
+    {
+      "id": 245,
+      "frame": 220,
+      "before": "WER = (substituições + exclusões + inserções)\n÷ palavras da referência. Mesma amostra de áudio.",
+      "after": "Vou revisar uma referência humana e calcular\nos erros por palavra com WER."
+    },
+    {
+      "id": 246,
+      "frame": 220,
+      "before": "Velocidade / comparação controlada",
+      "after": "Como vou medir o tempo"
+    },
+    {
+      "id": 247,
+      "frame": 220,
+      "before": "Mesmo áudio e configuração. Registrar hardware,\nrepetir medições e comparar a mediana dos tempos.",
+      "after": "Vou repetir a tarefa com o mesmo áudio\ne comparar o tempo até a transcrição ficar pronta."
+    },
+    {
+      "id": 248,
+      "frame": 220,
+      "before": "Ainda não há base para afirmar precisão ou superioridade percentual.",
+      "after": "Meu próximo passo é transformar essas observações em medidas comparáveis."
+    },
+    {
+      "id": 249,
+      "frame": 220,
+      "before": "Cenário de evolução: vídeos de 4 h e até 100 cortes relevantes. Objetivo futuro, sem execução comprovada neste case.",
+      "after": "Quero ampliar os testes com vídeos mais longos e diferentes tipos de conteúdo."
+    },
+    {
+      "id": 252,
+      "frame": 250,
+      "before": "Uma linguagem visual para tarefas densas",
+      "after": "Padronizei a interface para tarefas densas"
+    },
+    {
+      "id": 253,
+      "frame": 250,
+      "before": "Componentes do case editáveis. Referência visual alinhada aos tokens oficiais.",
+      "after": "Defini tipografia, cores e estados para dar consistência à experiência."
+    },
+    {
+      "id": 271,
+      "frame": 250,
+      "before": "Labels, teclado e estados legíveis",
+      "after": "Clareza, teclado e feedback"
+    },
+    {
+      "id": 272,
+      "frame": 250,
+      "before": "Busca nomeada e seções com aria-expanded.\nEstados de erro, carregamento e vazio previstos.",
+      "after": "Considerei rótulos claros e foco por teclado.\nPrevi feedback de carregamento, erro e vazio."
+    },
+    {
+      "id": 288,
+      "frame": 250,
+      "before": "Revisões de fluxo e testes funcionais.\nNão substituem avaliação de usabilidade\nou auditoria completa de acessibilidade.",
+      "after": "Usei IA para revisar fluxos,\nidentificar problemas e apoiar\na criação de testes funcionais."
+    },
+    {
+      "id": 292,
+      "frame": 289,
+      "before": "VENDE-C / Projeto interno criado a partir de conversas com os colaboradores e Líderes",
+      "after": "Na VENDE-C, ouvi os colaboradores e criei uma ferramenta para organizar o trabalho."
+    },
+    {
+      "id": 300,
+      "frame": 289,
+      "before": "Login corporativo, permissões e colaboração no contexto da demanda.",
+      "after": "Centralizei acessos, permissões e comentários na mesma ferramenta."
+    },
+    {
+      "id": 304,
+      "frame": 301,
+      "before": "Custos recorrentes informados pelo autor. Comparação anualizada.",
+      "after": "Criei a solução que substituiu o Trello na operação da VENDE-C."
+    },
+    {
+      "id": 318,
+      "frame": 301,
+      "before": "Desenvolvimento e manutenção fora da comparação. R$ 100 em ferramenta de IA informados, além do trabalho próprio.",
+      "after": "Comparei assinatura e infraestrutura. Desenvolvimento e manutenção não entram nesse cálculo."
+    },
+    {
+      "id": 73,
+      "frame": 66,
+      "before": "criadores com quem\nconversei",
+      "after": "criadores ouvidos"
+    }
+  ],
+  "preservedDeletedTextIds": [
+    175
+  ],
+  "preservedFrameIds": [
+    24,
+    37,
+    66,
+    93,
+    137,
+    165,
+    390,
+    186,
+    200,
+    220,
+    250,
+    289,
+    301
+  ],
+  "note": "Revisão de voz no mesmo documento. Posições, larguras, preenchimentos, fontes, assets, componentes e frame adicional do usuário preservados."
+}
