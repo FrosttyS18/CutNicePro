@@ -65,7 +65,9 @@ pub fn run(
         .reasons
         .iter()
         .filter(|reason| {
-            reason.contains("proveniência") || reason.contains("Avaliação do intervalo")
+            reason.to_lowercase().contains("proveniência")
+                || reason.contains("Avaliação do intervalo")
+                || reason.contains("Conteúdo promocional")
         })
         .cloned()
         .collect();

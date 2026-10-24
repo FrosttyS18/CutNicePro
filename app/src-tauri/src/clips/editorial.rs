@@ -2,15 +2,43 @@ use super::{selection::Evaluate, types::Clip};
 use crate::transcription::types::Segment;
 use std::collections::{HashMap, HashSet};
 
+pub fn is_complete(clip: &Clip) -> bool {
+    clip.analysis.as_ref().is_none_or(|analysis| {
+        analysis
+            .criteria
+            .iter()
+            .filter(|criterion| ["Gancho", "Fechamento"].contains(&criterion.label.as_str()))
+            .all(|criterion| criterion.score >= super::types::AUTOMATIC_RELEVANCE_FLOOR)
+    })
+}
+
 pub fn retain_analyzed_complete(clips: &mut Vec<Clip>) {
     let before = clips.len();
     clips.retain(|clip| {
         clip.analysis.as_ref().is_none_or(|analysis| {
-            analysis
-                .criteria
-                .iter()
-                .filter(|criterion| ["Gancho", "Fechamento"].contains(&criterion.label.as_str()))
-                .all(|criterion| criterion.score >= super::types::AUTOMATIC_RELEVANCE_FLOOR)
+            let complete = is_complete(clip);
+            if !complete {
+                for criterion in &analysis.criteria {
+                    if ["Gancho", "Fechamento"].contains(&criterion.label.as_str())
+                        && criterion.score < super::types::AUTOMATIC_RELEVANCE_FLOOR
+                    {
+                        eprintln!(
+                            "[clips] [{:.2}-{:.2}] recusado na análise final: {}={}; {}",
+                            clip.start,
+                            clip.end,
+                            criterion.label,
+                            criterion.score,
+                            criterion
+                                .explanation
+                                .replace(['\r', '\n'], " ")
+                                .chars()
+                                .take(350)
+                                .collect::<String>()
+                        );
+                    }
+                }
+            }
+            complete
         })
     });
     eprintln!(
@@ -48,7 +76,11 @@ pub fn recheck_adjusted(
             .and_then(|n| n.checked_sub(1));
         if let Some(index) = index.filter(|&index| index < adjusted.len()) {
             if seen.insert(index) && judgment.standalone && judgment.complete {
-                approved.insert(adjusted[index].id.as_str());
+                let id = adjusted[index].id.as_str();
+                if let Some(clip) = clips.iter_mut().find(|clip| clip.id == id) {
+                    super::assessment::apply(clip, &judgment);
+                }
+                approved.insert(id);
             }
         }
     }

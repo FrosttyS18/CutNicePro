@@ -106,7 +106,8 @@ fn real_local_analysis_has_grounded_content() {
     let mut collection: super::types::ClipCollection =
         serde_json::from_slice(&std::fs::read(base.join("clips.json")).unwrap()).unwrap();
     let clip = &mut collection.clips[0];
-    let engine = super::text_engine::Engine::Standard(super::text_engine::discover(&base).unwrap());
+    let engine =
+        super::text_engine::Engine::discover(&base, super::types::Quality::Qwen35).unwrap();
     semantic::run(
         &engine,
         &base,

@@ -104,27 +104,28 @@ describe("geração incremental e mensagens do diálogo (atualização 19)",()=>
     await clickDialogGenerate();
     // atualização 17: Gemma 4 é o único motor (sempre no payload) + ajuste
     // de preenchimento (fit) escolhido no modal; sem duração/quantidade
-    expect(c.generate).toHaveBeenCalledWith({automatic:true,format:"9:16",fit:"cover",quality:"experimentalGemma"});
+    expect(c.generate).toHaveBeenCalledWith({automatic:true,format:"9:16",fit:"cover",quality:"qwen35"});
     // personalizada: duração/quantidade explícitas; mínima técnica (10), sem vínculo com a máxima
     const c2=controller(existing);
     await openDialog(c2);
     await mounted!.chooseOption("Geração","Personalizada");
     await clickDialogGenerate();
-    expect(c2.generate).toHaveBeenCalledWith({minSeconds:10,maxSeconds:60,count:3,format:"9:16",fit:"cover",quality:"experimentalGemma"});
+    expect(c2.generate).toHaveBeenCalledWith({minSeconds:10,maxSeconds:60,count:3,format:"9:16",fit:"cover",quality:"qwen35"});
     // manter vídeo inteiro propaga fit=contain em qualquer modo; selo Gemma 4
     // e ausência do seletor "Análise" conferidos com o diálogo ABERTO
     const c3=controller(existing);
     await openDialog(c3);
-    expect(mounted!.host.textContent).toContain("IA local: Gemma 4");
+    expect(mounted!.host.textContent).toContain("IA local: Qwen3.5-4B");
     expect(mounted!.host.querySelector('[aria-label="Análise"]')).toBeNull();
     await mounted!.chooseOption("Ajuste do vídeo","Manter vídeo inteiro (admite espaços)");
     await clickDialogGenerate();
-    expect(c3.generate).toHaveBeenCalledWith({automatic:true,format:"9:16",fit:"contain",quality:"experimentalGemma"});
+    expect(c3.generate).toHaveBeenCalledWith({automatic:true,format:"9:16",fit:"contain",quality:"qwen35"});
   });
-  it("seletor de motor não existe; selo IA local: Gemma 4 no modal",async()=>{
+  it("novas gerações usam Qwen3.5 sem alterar a origem dos clipes antigos",async()=>{
     const c=controller({version:1,mediaId:"m",transcriptHash:"h",clips:[entry.clip],engine:{backend:"experimentalGemma",model:"gemma-4-12b-it-qat-q4_0.gguf",template:"gemma4-canonical-nothink",sampling:"temp 1.0, top_k 64, top_p 0.95, min_p 0, seed 42",seed:42}});
     await openDialog(c);
-    expect(mounted!.host.textContent).toContain("IA local: Gemma 4");
+    expect(mounted!.host.textContent).toContain("IA local: Qwen3.5-4B");
+    expect(c.collection?.engine?.backend).toBe("experimentalGemma");
     expect(mounted!.host.querySelector('[aria-label="Análise"]')).toBeNull();
   });
 });

@@ -207,22 +207,7 @@ pub async fn analyze_clip(
         .iter()
         .position(|c| c.id == clip_id)
         .ok_or("Corte não encontrado.")?;
-    // Reanálise usa o motor de origem DO PRÓPRIO CLIPE (biblioteca
-    // cumulativa mistura resultados históricos); sem metadado vale o da
-    // coleção e, em último caso, o motor padrão.
-    let quality = match collection.clips[index]
-        .engine
-        .as_ref()
-        .map(|record| record.backend.as_str())
-        .or_else(|| {
-            collection
-                .engine
-                .as_ref()
-                .map(|record| record.backend.as_str())
-        }) {
-        Some("experimentalGemma") => Quality::ExperimentalGemma,
-        _ => Quality::Standard,
-    };
+    let quality = Quality::Qwen35;
     let engine = text_engine::Engine::discover(&base, quality)?;
     let jobs = app.state::<ClipJobs>().0.clone();
     let control = jobs.start_operation(job_id.clone(), project_id.clone(), Some("analyze"))?;

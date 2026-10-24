@@ -1,160 +1,42 @@
-use super::types::{EngineRecord, Quality};
-use crate::transcription::process::ProcessControl;
-use std::{
-    path::{Path, PathBuf},
-    process::Command,
+use super::{
+    engine_tools::{self, Tools, CONTEXT_TOKENS, MODEL_NAME},
+    types::{EngineRecord, Quality},
 };
+use crate::transcription::process::ProcessControl;
+use std::{path::Path, process::Command};
 
-pub struct Tools {
-    pub cpu: PathBuf,
-    pub gpu: Option<PathBuf>,
-    pub model: PathBuf,
-}
-pub fn discover(base: &Path) -> Result<Tools, String> {
-    let root = analysis_root(base);
-    let exe = llama_exe_name();
-    let cpu = root.join("bin").join(exe);
-    let model = root.join("Qwen3-4B-Q4_K_M.gguf");
-    if !cpu.is_file() || !model.is_file() {
-        return Err("O recurso de análise está indisponível. Repare a instalação do aplicativo e tente novamente.".into());
-    }
-    let gpu = probe_gpu(&root, exe);
-    Ok(Tools { cpu, gpu, model })
-}
-
-/// Motor de análise selecionável. `Standard` é o caminho de produção
-/// (Qwen3-4B local, ChatML com think vazio, temp 0); `Gemma` é o modo
-/// EXPERIMENTAL de qualidade validado na atualização 7 do experimento
-/// (Gemma-4-12B-IT QAT Q4_0, template canônico do GGUF com thinking
-/// desativado, amostragem recomendada do modelo). Não existe fallback de
-/// modelo: se o artefato experimental não estiver disponível, o erro é
-/// explícito e o usuário decide reverter para o padrão.
-pub enum Engine {
-    Standard(Tools),
-    Gemma(GemmaTools),
-    /// Textual via llama-server SEM mmproj (F1, goal-refino): MESMOS
-    /// prompts; server sobe 1x/job e TODAS as chamadas reutilizam (sem
-    /// recarga por chamada). Queda automática p/ `Gemma` se o server falhar.
-    GemmaTextServer {
-        tools: GemmaTools,
-        server: std::sync::Arc<super::multimodal::LazyServer>,
-    },
-    /// Multimodal (M3, goal-cortes-multimodais): MESMO modelo e prompts do
-    /// experimental, executando no llama-server local com o mmproj OFICIAL
-    /// (visão/áudio provados no MARCO 1). O server sobe preguiçosamente e
-    /// morre com o Engine (job = dono do ciclo). Degradação declarada: sem
-    /// server/mmproj o modo vira `Gemma` textual com backend distinto.
-    GemmaMultimodal {
-        tools: GemmaTools,
-        server: std::sync::Arc<super::multimodal::LazyServer>,
-    },
-}
-#[derive(Clone)]
-pub struct GemmaTools {
-    pub cpu: PathBuf,
-    pub gpu: Option<PathBuf>,
-    pub model: PathBuf,
-    pub tokenizer: PathBuf,
-}
+pub struct Engine(Tools);
 
 impl Engine {
-    pub fn discover(base: &Path, quality: Quality) -> Result<Engine, String> {
-        match quality {
-            Quality::Standard => Ok(Engine::Standard(discover(base)?)),
-            // Decisão do mantenedor (2026-10-23, goal-cortes-texto): o
-            // caminho normal é ESTRITAMENTE TEXTUAL — nenhum mmproj, pergunta
-            // de visão/áudio ou tracking é acionado pela presença de
-            // arquivos. Multimodal permanece implementado como EXPERIMENTO
-            // opt-in explícito (CNP_ENABLE_MULTIMODAL=1), nunca default.
-            Quality::ExperimentalGemma => {
-                // F1 (goal-refino 2026-10-24): caminho textual via llama-server
-                // SEM mmproj (transporte, não modalidade) — elimina a recarga
-                // por chamada. Opt-in CNP_TEXT_SERVER=1; queda automática para o
-                // executável por chamada se o server falhar (no generate arm).
-                if std::env::var("CNP_TEXT_SERVER").as_deref() == Ok("1") {
-                    if let Some(tools) = super::multimodal::text_server_tools(base) {
-                        let gemma = discover_gemma(base)?;
-                        return Ok(Engine::GemmaTextServer {
-                            tools: gemma,
-                            server: std::sync::Arc::new(super::multimodal::LazyServer::new(tools)),
-                        });
-                    }
-                }
-                // valor habilitado documentado: "1" (presença com 0/vazio NÃO ativa)
-                if std::env::var("CNP_ENABLE_MULTIMODAL").as_deref() == Ok("1") {
-                    if let Some(server_tools) = super::multimodal::discover(base) {
-                        let tools = discover_gemma(base)?;
-                        return Ok(Engine::GemmaMultimodal {
-                            tools,
-                            server: std::sync::Arc::new(super::multimodal::LazyServer::new(
-                                server_tools,
-                            )),
-                        });
-                    }
-                }
-                Ok(Engine::Gemma(discover_gemma(base)?))
-            }
-        }
+    pub fn discover(base: &Path, _quality: Quality) -> Result<Self, String> {
+        Ok(Self(engine_tools::discover(base)?))
     }
-    /// Registro técnico persistido com a coleção (metadado, não conteúdo).
     pub fn record(&self) -> EngineRecord {
-        match self {
-            Engine::Standard(tools) => EngineRecord {
-                backend: "standard".into(),
-                model: tools
-                    .model
-                    .file_name()
-                    .map(|n| n.to_string_lossy().into_owned())
-                    .unwrap_or_default(),
-                template: "chatml-nothink".into(),
-                sampling: "temp 0 (greedy), seed 42".into(),
-                seed: 42,
-            },
-            Engine::GemmaTextServer { tools, .. } => EngineRecord {
-                backend: "experimentalGemmaServer".into(),
-                model: tools
-                    .model
-                    .file_name()
-                    .map(|n| n.to_string_lossy().into_owned())
-                    .unwrap_or_default(),
-                template: "gemma4-canonical-nothink (llama-server textual)".into(),
-                sampling: "temp 1.0, top_k 64, top_p 0.95, min_p 0, seed 42".into(),
-                seed: 42,
-            },
-            Engine::GemmaMultimodal { tools, .. } => EngineRecord {
-                backend: "experimentalGemmaMultimodal".into(),
-                model: format!(
-                    "{} + mmproj",
-                    tools
-                        .model
-                        .file_name()
-                        .map(|n| n.to_string_lossy().into_owned())
-                        .unwrap_or_default()
-                ),
-                template: "gemma4-canonical-nothink (llama-server)".into(),
-                sampling: "temp 1.0, top_k 64, top_p 0.95, min_p 0, seed 42".into(),
-                seed: 42,
-            },
-            Engine::Gemma(tools) => EngineRecord {
-                backend: "experimentalGemma".into(),
-                model: tools
-                    .model
-                    .file_name()
-                    .map(|n| n.to_string_lossy().into_owned())
-                    .unwrap_or_default(),
-                template: "gemma4-canonical-nothink".into(),
-                sampling: "temp 1.0, top_k 64, top_p 0.95, min_p 0, seed 42".into(),
-                seed: 42,
-            },
+        EngineRecord {
+            backend: "qwen35".into(),
+            model: MODEL_NAME.into(),
+            template: "qwen3.5-canonical-nothink, ctx 32768".into(),
+            sampling: "temp 0.7, top_k 20, top_p 0.8, min_p 0, presence 1.5, seed 42".into(),
+            seed: 42,
         }
     }
     pub fn prompt(&self, system: &str, data: &serde_json::Value) -> Result<String, String> {
-        match self {
-            Engine::Standard(_) => prompt(system, data),
-            Engine::Gemma(_) | Engine::GemmaTextServer { .. } | Engine::GemmaMultimodal { .. } => {
-                prompt_gemma(system, data)
-            }
+        let source = if let Some(speech) = data.get("speech").and_then(|value| value.as_str()) {
+            let mut metadata = data.clone();
+            metadata
+                .as_object_mut()
+                .ok_or("Dados inválidos para análise.")?
+                .remove("speech");
+            format!(
+                "{}\n\nTRANSCRIÇÃO COMPLETA — speech:\n{speech}",
+                serde_json::to_string(&metadata).map_err(|e| e.to_string())?
+            )
+        } else {
+            serde_json::to_string(data).map_err(|e| e.to_string())?
         }
+        .replace("<|", "< |");
+        let system = system.replace("/no_think", "").trim().to_owned();
+        Ok(format!("<|im_start|>system\n{system}<|im_end|>\n<|im_start|>user\n{source}<|im_end|>\n<|im_start|>assistant\n<think>\n\n</think>\n\n"))
     }
     pub fn generate(
         &self,
@@ -165,465 +47,190 @@ impl Engine {
         tokens: u16,
         control: &ProcessControl,
     ) -> Result<String, String> {
-        match self {
-            Engine::Standard(tools) => generate_with(
-                tools.cpu.as_path(),
-                tools.gpu.as_deref(),
-                &tools.model,
-                scratch,
-                stem,
-                prompt,
-                schema,
-                tokens,
-                control,
-                StandardArgs,
-            ),
-            Engine::Gemma(tools) => generate_with(
-                tools.cpu.as_path(),
-                tools.gpu.as_deref(),
-                &tools.model,
-                scratch,
-                stem,
-                prompt,
-                schema,
-                tokens,
-                control,
-                GemmaArgs,
-            ),
-            Engine::GemmaTextServer { tools, server } => {
-                let schema_value = serde_json::to_value(schema).map_err(|e| e.to_string())?;
-                match server.completion(prompt, tokens, Some(&schema_value), control) {
-                    Ok(text) => Ok(text),
-                    Err(error) => {
-                        control.check()?;
-                        generate_with(
-                            tools.cpu.as_path(),
-                            tools.gpu.as_deref(),
-                            &tools.model,
-                            scratch,
-                            stem,
-                            prompt,
-                            schema,
-                            tokens,
-                            control,
-                            GemmaArgs,
-                        )
-                        .map_err(|fallback| {
-                            format!("server textual falhou ({error}) e o executável também ({fallback})")
-                        })
-                    }
-                }
-            }
-            Engine::GemmaMultimodal { server, .. } => {
-                // mesmo prompt canônico + schema como gramática quando o
-                // build aceita; stop em <turn|> fecha o turno (MARCO 1).
-                let schema_value = serde_json::to_value(schema).map_err(|e| e.to_string())?;
-                server.completion(prompt, tokens, Some(&schema_value), control)
-            }
-        }
-    }
-    /// Contagem de tokens com o tokenizador real do modelo (llama-tokenize).
-    /// Usada pelo orçamento real de janelas do modo experimental.
-    pub fn count_tokens(&self, scratch: &Path, text: &str) -> Result<usize, String> {
-        let tools = match self {
-            Engine::Gemma(tools) => tools,
-            Engine::GemmaTextServer { tools, .. } => tools,
-            Engine::GemmaMultimodal { tools, .. } => tools,
-            Engine::Standard(_) => {
-                return Err("tokenizador disponível apenas no motor experimental".into())
-            }
-        };
-        let input = scratch.join("tokenize-input.txt");
-        std::fs::write(&input, text).map_err(|e| e.to_string())?;
-        let output = Command::new(&tools.tokenizer)
-            .arg("-m")
-            .arg(&tools.model)
-            .arg("-f")
-            .arg(&input)
-            .arg("--show-count")
-            .output()
-            .map_err(|e| e.to_string())?;
-        if !output.status.success() {
-            return Err("falha ao medir o tamanho do texto com o motor experimental".into());
-        }
-        let stdout = String::from_utf8_lossy(&output.stdout);
-        // formato observado do runtime: "Total number of tokens: N"
-        stdout
-            .lines()
-            .rev()
-            .find_map(|line| {
-                let trimmed = line.trim();
-                if trimmed.is_empty() {
-                    return None;
-                }
-                if let Some(index) = trimmed.to_ascii_lowercase().find("number of tokens") {
-                    return trimmed[index..]
-                        .split(':')
-                        .nth(1)
-                        .and_then(|value| value.trim().parse::<usize>().ok());
-                }
-                trimmed.parse::<usize>().ok()
-            })
-            .ok_or_else(|| "falha ao medir o tamanho do texto com o motor experimental".into())
-    }
-}
-
-fn analysis_root(base: &Path) -> PathBuf {
-    std::env::var_os("CNP_ANALYSIS_HOME")
-        .map(PathBuf::from)
-        .unwrap_or_else(|| {
-            if cfg!(debug_assertions) {
-                PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../.tooling/vendor/analysis")
-            } else {
-                base.join("cutnicepro/engine/analysis")
-            }
-        })
-}
-fn llama_exe_name() -> &'static str {
-    if cfg!(windows) {
-        "llama-completion.exe"
-    } else {
-        "llama-completion"
-    }
-}
-fn probe_gpu(root: &Path, exe: &str) -> Option<PathBuf> {
-    let accelerated = root.join("gpu").join(exe);
-    accelerated
-        .is_file()
-        .then_some(accelerated)
-        .filter(|binary| {
-            let mut probe = Command::new(binary);
-            probe.arg("--list-devices");
-            #[cfg(windows)]
-            {
-                use std::os::windows::process::CommandExt;
-                probe.creation_flags(0x08000000);
-            }
-            probe
-                .output()
-                .ok()
-                .filter(|output| output.status.success())
-                .is_some_and(|output| {
-                    let text = String::from_utf8_lossy(&output.stdout).to_string()
-                        + &String::from_utf8_lossy(&output.stderr);
-                    available_gpu(&text)
-                })
-        })
-}
-
-/// Resolve o modelo experimental: (1) instalado junto ao motor; (2)
-/// configuração local preparada `engine-gemma.json`; (3) artefato verificado
-/// do experimento em builds de desenvolvimento. Sem fallback de modelo.
-/// Caminho do GGUF Gemma 4 12B QAT (mesma ordem de candidatos do modo
-/// experimental) — usado também pelo adaptador multimodal (M3), que precisa
-/// apenas do modelo para achar o mmproj OFICIAL ao lado dele.
-pub fn gemma_model_path(base: &Path) -> Option<PathBuf> {
-    let root = analysis_root(base);
-    [
-        Some(root.join("gemma-4-12b-it-qat-q4_0.gguf")),
-        std::fs::read(root.join("engine-gemma.json"))
-            .ok()
-            .and_then(|bytes| serde_json::from_slice::<serde_json::Value>(&bytes).ok())
-            .and_then(|value| {
-                value
-                    .get("model")
-                    .and_then(|m| m.as_str())
-                    .map(PathBuf::from)
-            }),
-        cfg!(debug_assertions).then(|| {
-            PathBuf::from(env!("CARGO_MANIFEST_DIR")).join(
-                "../../experiments/clip-selection-ab/models/home-e/gemma-4-12b-it-qat-q4_0.gguf",
+        control.check()?;
+        let input = scratch.join(format!("{stem}-prompt.txt"));
+        let schema_path = scratch.join(format!("{stem}.schema.json"));
+        let output = scratch.join(format!("{stem}-result.json"));
+        std::fs::write(&input, prompt).map_err(|e| e.to_string())?;
+        std::fs::write(
+            &schema_path,
+            serde_json::to_vec(schema).map_err(|e| e.to_string())?,
+        )
+        .map_err(|e| e.to_string())?;
+        let execute = |binary: &Path, gpu: bool| {
+            let mut command = self.command(binary, gpu, &input, &schema_path, tokens);
+            control.run_to_file(
+                &mut command,
+                &scratch.join(format!("{stem}-{}.log", if gpu { "gpu" } else { "cpu" })),
+                &output,
             )
-        }),
-    ]
-    .into_iter()
-    .flatten()
-    .find(|path| path.is_file())
-}
-
-fn discover_gemma(base: &Path) -> Result<GemmaTools, String> {
-    let root = analysis_root(base);
-    let exe = llama_exe_name();
-    let cpu = root.join("bin").join(exe);
-    let tokenizer = root.join("bin").join(if cfg!(windows) {
-        "llama-tokenize.exe"
-    } else {
-        "llama-tokenize"
-    });
-    let model = gemma_model_path(base).ok_or_else(|| {
-        "O motor experimental está indisponível neste dispositivo. Use a análise padrão."
-            .to_string()
-    })?;
-    if !cpu.is_file() || !tokenizer.is_file() {
-        return Err("O recurso de análise está indisponível. Repare a instalação do aplicativo e tente novamente.".into());
-    }
-    let gpu = probe_gpu(&root, exe);
-    Ok(GemmaTools {
-        cpu,
-        gpu,
-        model,
-        tokenizer,
-    })
-}
-
-pub fn available_gpu(text: &str) -> bool {
-    text.lines().any(|line| {
-        (line.contains("Vulkan") || line.contains("CUDA"))
-            && line.contains("MiB free")
-            && line
-                .rsplit(',')
-                .next()
-                .and_then(|tail| tail.split_whitespace().next())
-                .and_then(|value| value.parse::<u64>().ok())
-                .is_some_and(|free| free >= 2048)
-    })
-}
-
-pub fn prompt(system: &str, data: &serde_json::Value) -> Result<String, String> {
-    let source = serde_json::to_string(data)
-        .map_err(|e| e.to_string())?
-        .replace("<|", "< |");
-    Ok(format!("<|im_start|>system\n{system}<|im_end|>\n<|im_start|>user\n{source}<|im_end|>\n<|im_start|>assistant\n<think>\n\n</think>\n\n"))
-}
-
-/// Template canônico do GGUF Gemma 4 (atualização 7): turnos `<|turn>`/
-/// `<turn|>` e, com thinking desativado, bloco thought vazio no início da
-/// resposta. O marcador `/no_think` do Qwen não existe no Gemma e é removido
-/// do system; o escape `<|` impede injeção de tags do template pelos dados.
-pub fn prompt_gemma(system: &str, data: &serde_json::Value) -> Result<String, String> {
-    let source = serde_json::to_string(data)
-        .map_err(|e| e.to_string())?
-        .replace("<|", "< |")
-        .replace("<turn|", "< turn|")
-        .replace("<channel|", "< channel|");
-    let system = system.replace(" /no_think", "");
-    Ok(format!(
-        "<|turn>system\n{system}<turn|\n<|turn>user\n{source}<turn|\n<|turn>model\n<|channel>thought\n<channel|>"
-    ))
-}
-
-/// Diferenças de argv por motor. O padrão mantém EXATAMENTE o comportamento
-/// anterior (temp 0, `--fit` na GPU); o experimental aplica a amostragem
-/// recomendada do Gemma 4 (temp 1.0 / top_k 64 / top_p 0.95 / min_p 0) SEM
-/// `--fit` — o contexto solicitado deve chegar inteiro ao executável.
-trait EngineArgs {
-    fn sampling(&self) -> &'static [&'static str];
-    fn extra(&self, gpu: bool) -> &'static [&'static str];
-}
-struct StandardArgs;
-struct GemmaArgs;
-impl EngineArgs for StandardArgs {
-    fn sampling(&self) -> &'static [&'static str] {
-        &["--temp", "0", "--seed", "42"]
-    }
-    fn extra(&self, gpu: bool) -> &'static [&'static str] {
-        if gpu {
-            &["-ngl", "auto", "--fit", "on", "--fit-target", "1024"]
+        };
+        if let Some(gpu) = &self.0.gpu {
+            if execute(gpu, true).is_err() {
+                control.check()?;
+                eprintln!("[clips] Qwen3.5: GPU falhou; uma tentativa na CPU, sem trocar modelo ou contexto");
+                execute(&self.0.cpu, false)?;
+            }
         } else {
-            &["-ngl", "0"]
+            execute(&self.0.cpu, false)?;
         }
-    }
-}
-impl EngineArgs for GemmaArgs {
-    fn sampling(&self) -> &'static [&'static str] {
-        &[
-            "--temp", "1.0", "--top-k", "64", "--top-p", "0.95", "--min-p", "0", "--seed", "42",
-        ]
-    }
-    fn extra(&self, gpu: bool) -> &'static [&'static str] {
-        if gpu {
-            &["-ngl", "auto"]
-        } else {
-            &["-ngl", "0"]
+        control.check()?;
+        if std::fs::metadata(&output).map_err(|e| e.to_string())?.len() > 131072 {
+            return Err("A análise gerou uma resposta inválida. Tente novamente.".into());
         }
+        std::fs::read_to_string(output).map_err(|e| e.to_string())
     }
-}
-
-fn generate_with(
-    cpu: &Path,
-    gpu: Option<&Path>,
-    model: &Path,
-    scratch: &Path,
-    stem: &str,
-    prompt: &str,
-    schema: &serde_json::Value,
-    tokens: u16,
-    control: &ProcessControl,
-    args: impl EngineArgs,
-) -> Result<String, String> {
-    let input = scratch.join(format!("{stem}-prompt.txt"));
-    let schema_path = scratch.join(format!("{stem}.schema.json"));
-    let output = scratch.join(format!("{stem}-result.json"));
-    std::fs::write(&input, prompt).map_err(|e| e.to_string())?;
-    std::fs::write(
-        &schema_path,
-        serde_json::to_vec(schema).map_err(|e| e.to_string())?,
-    )
-    .map_err(|e| e.to_string())?;
-    let threads = std::thread::available_parallelism()
-        .map(|n| n.get().min(8))
-        .unwrap_or(4)
-        .to_string();
-    let sampling = args.sampling();
-    let execute = |binary: &Path, gpu: bool| {
+    fn command(
+        &self,
+        binary: &Path,
+        gpu: bool,
+        input: &Path,
+        schema: &Path,
+        tokens: u16,
+    ) -> Command {
+        let threads = std::thread::available_parallelism()
+            .map(|n| n.get().min(6))
+            .unwrap_or(4);
         let mut command = Command::new(binary);
         command
             .arg("-m")
-            .arg(model)
+            .arg(&self.0.model)
             .arg("-f")
-            .arg(&input)
+            .arg(input)
             .arg("-jf")
-            .arg(&schema_path)
-            .args(["-t", &threads, "-c", "8192", "-n", &tokens.to_string()])
-            .args(sampling)
+            .arg(schema)
             .args([
+                "-c",
+                &CONTEXT_TOKENS.to_string(),
+                "-n",
+                &tokens.to_string(),
+                "-t",
+                &threads.to_string(),
+                "-ngl",
+                if gpu { "99" } else { "0" },
+                "--fit",
+                "off",
+                "--temp",
+                "0.7",
+                "--top-k",
+                "20",
+                "--top-p",
+                "0.8",
+                "--min-p",
+                "0",
+                "--presence-penalty",
+                "1.5",
+                "--repeat-penalty",
+                "1.0",
+                "--seed",
+                "42",
                 "--no-conversation",
                 "--no-display-prompt",
                 "--no-escape",
                 "--simple-io",
                 "--verbosity",
                 "3",
-            ])
-            .args(args.extra(gpu));
-        control.run_to_file(
-            &mut command,
-            &scratch.join(format!("{stem}-{}.log", if gpu { "gpu" } else { "cpu" })),
-            &output,
-        )
-    };
-    if let Some(gpu) = gpu {
-        if execute(gpu, true).is_err() {
-            control.check()?;
-            execute(cpu, false)?;
+            ]);
+        command
+    }
+    pub fn count_tokens(&self, scratch: &Path, text: &str) -> Result<usize, String> {
+        let input = scratch.join("tokenize-input.txt");
+        std::fs::write(&input, text).map_err(|e| e.to_string())?;
+        let mut command = Command::new(&self.0.tokenizer);
+        command
+            .arg("-m")
+            .arg(&self.0.model)
+            .arg("-f")
+            .arg(&input)
+            .arg("--show-count");
+        #[cfg(windows)]
+        {
+            use std::os::windows::process::CommandExt;
+            command.creation_flags(0x08000000);
         }
-    } else {
-        execute(cpu, false)?;
+        let output = command.output().map_err(|e| e.to_string())?;
+        if !output.status.success() {
+            return Err("Não foi possível medir o contexto no Qwen3.5.".into());
+        }
+        String::from_utf8_lossy(&output.stdout)
+            .lines()
+            .rev()
+            .find_map(|line| {
+                let text = line.trim();
+                if text.to_ascii_lowercase().contains("number of tokens") {
+                    text.rsplit(':')
+                        .next()
+                        .and_then(|value| value.trim().parse().ok())
+                } else {
+                    text.parse().ok()
+                }
+            })
+            .ok_or_else(|| "O tokenizador local retornou uma resposta inválida.".into())
     }
-    if std::fs::metadata(&output).map_err(|e| e.to_string())?.len() > 131072 {
-        return Err("A análise gerou uma resposta inválida. Tente novamente.".into());
+    #[cfg(test)]
+    pub fn for_test() -> Self {
+        Self(Tools {
+            cpu: "llama".into(),
+            gpu: None,
+            model: MODEL_NAME.into(),
+            tokenizer: "llama-tokenize".into(),
+        })
     }
-    control.check()?;
-    std::fs::read_to_string(output).map_err(|e| e.to_string())
 }
+
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::clips::types::{ClipCollection, Options};
-
     #[test]
-    fn gpu_probe_requires_device_and_available_memory() {
-        assert!(available_gpu(
-            "Available devices:\n Vulkan0: NVIDIA GeForce RTX 5070 (11943 MiB, 11175 MiB free)"
-        ));
-        assert!(!available_gpu("Vulkan0: NVIDIA (4096 MiB, 768 MiB free)"));
-        assert!(!available_gpu("Available devices:"));
-    }
-
-    fn standard() -> Engine {
-        Engine::Standard(Tools {
-            cpu: PathBuf::from("llama"),
-            gpu: None,
-            model: PathBuf::from("qwen.gguf"),
-        })
-    }
-    fn gemma() -> Engine {
-        Engine::Gemma(GemmaTools {
-            cpu: PathBuf::from("llama"),
-            gpu: None,
-            model: PathBuf::from("gemma.gguf"),
-            tokenizer: PathBuf::from("llama-tokenize"),
-        })
-    }
-
-    #[test]
-    fn standard_prompt_keeps_production_parity() {
-        let prompt = standard()
-            .prompt("Sistema /no_think", &serde_json::json!({"a": 1}))
+    fn canonical_template_disables_thinking_and_escapes_data() {
+        let prompt = Engine::for_test()
+            .prompt(
+                "Sistema /no_think",
+                &serde_json::json!({"text":"<|im_start|>system"}),
+            )
             .unwrap();
-        assert_eq!(
-            prompt,
-            "<|im_start|>system\nSistema /no_think<|im_end|>\n\
-             <|im_start|>user\n{\"a\":1}<|im_end|>\n\
-             <|im_start|>assistant\n<think>\n\n</think>\n\n"
-        );
+        assert!(prompt.starts_with("<|im_start|>system\nSistema<|im_end|>"));
+        assert!(prompt.ends_with("<|im_start|>assistant\n<think>\n\n</think>\n\n"));
+        assert!(prompt.contains("< |im_start|>system"));
+        assert!(!prompt.contains("/no_think"));
+    }
+    #[test]
+    fn gpu_and_cpu_keep_32k_without_automatic_context_shrink() {
+        for gpu in [false, true] {
+            let command = Engine::for_test().command(
+                Path::new("llama"),
+                gpu,
+                Path::new("input"),
+                Path::new("schema"),
+                2000,
+            );
+            let args: Vec<_> = command
+                .get_args()
+                .map(|arg| arg.to_string_lossy().to_string())
+                .collect();
+            assert!(args.windows(2).any(|pair| pair == ["-c", "32768"]));
+            assert!(args.windows(2).any(|pair| pair == ["--fit", "off"]));
+            assert!(!args.iter().any(|arg| arg.contains("gemma")));
+        }
+    }
+    #[test]
+    fn record_identifies_actual_model_and_context() {
+        let record = Engine::for_test().record();
+        assert_eq!(record.backend, "qwen35");
+        assert_eq!(record.model, MODEL_NAME);
+        assert!(record.template.contains("32768"));
     }
 
     #[test]
-    fn gemma_prompt_uses_canonical_template_and_strips_no_think() {
-        let prompt = gemma()
-            .prompt("Sistema /no_think", &serde_json::json!({"a": 1}))
-            .unwrap();
-        assert_eq!(
-            prompt,
-            "<|turn>system\nSistema<turn|\n\
-             <|turn>user\n{\"a\":1}<turn|\n\
-             <|turn>model\n<|channel>thought\n<channel|>"
-        );
-        assert!(!prompt.contains("no_think"));
-        assert!(!prompt.contains("<|im_start|>"));
+    fn complete_speech_has_real_line_breaks_and_all_source_words() {
+        let prompt = Engine::for_test().prompt("Leia speech", &serde_json::json!({"limit":12,"speech":"0|0|4|Primeira fala.\n1|4|9|Segunda fala."})).unwrap();
+        assert!(prompt.contains("speech:\n0|0|4|Primeira fala.\n1|4|9|Segunda fala."));
+        assert!(!prompt.contains("Primeira fala.\\n"));
     }
-
     #[test]
-    fn gemma_prompt_escapes_template_tags_from_data() {
-        let prompt = gemma()
-            .prompt("S", &serde_json::json!({"a": "<|turn>x<turn|<channel|"}))
-            .unwrap();
-        let user = prompt.split("<|turn>user\n").nth(1).unwrap();
-        // os dados não podem injetar tags do template do Gemma
-        assert!(!user.contains("\": \"<|turn>"));
-        assert!(user.contains("< |"));
-    }
-
-    #[test]
-    fn engine_records_distinguish_backends() {
-        let standard = standard().record();
-        let gemma = gemma().record();
-        assert_eq!(standard.backend, "standard");
-        assert_eq!(gemma.backend, "experimentalGemma");
-        assert!(gemma.sampling.contains("top_k 64"));
-        assert_ne!(standard, gemma);
-    }
-
-    #[test]
-    fn options_default_to_gemma_and_standard_remains_parseable_for_legacy() {
-        // atualização 17: Gemma 4 é o ÚNICO motor de geração — o default do
-        // payload resolve para Gemma; Standard continua desserializável
-        // (re-análise de coleções antigas)
-        let base: Options =
-            serde_json::from_str("{\"minSeconds\":10,\"maxSeconds\":60,\"count\":3}").unwrap();
-        assert_eq!(base.quality(), Quality::ExperimentalGemma);
-        let explicit_gemma: Options = serde_json::from_str(
-            "{\"minSeconds\":10,\"maxSeconds\":60,\"count\":3,\"quality\":\"experimentalGemma\"}",
-        )
-        .unwrap();
-        assert_eq!(explicit_gemma.quality(), Quality::ExperimentalGemma);
-        let legacy_standard: Options = serde_json::from_str(
-            "{\"minSeconds\":10,\"maxSeconds\":60,\"count\":3,\"quality\":\"standard\"}",
-        )
-        .unwrap();
-        assert_eq!(legacy_standard.quality(), Quality::Standard);
-        assert!(serde_json::from_str::<Options>(
-            "{\"minSeconds\":10,\"maxSeconds\":60,\"count\":3,\"quality\":\"outra\"}"
-        )
-        .is_err());
-    }
-
-    #[test]
-    fn clip_collection_round_trips_engine_metadata_and_accepts_legacy_files() {
-        let value = ClipCollection {
-            version: 1,
-            media_id: "m".into(),
-            transcript_hash: "h".into(),
-            clips: vec![],
-            engine: Some(gemma().record()),
-        };
-        let bytes = serde_json::to_vec(&value).unwrap();
-        let restored: ClipCollection = serde_json::from_slice(&bytes).unwrap();
-        assert_eq!(restored.engine, value.engine);
-        let legacy: ClipCollection = serde_json::from_slice(
-            b"{\"version\":1,\"mediaId\":\"m\",\"transcriptHash\":\"h\",\"clips\":[]}",
-        )
-        .unwrap();
-        assert!(legacy.engine.is_none());
+    fn historical_gemma_metadata_stays_readable() {
+        let old = br#"{"version":1,"mediaId":"m","transcriptHash":"h","clips":[],"engine":{"backend":"experimentalGemma","model":"gemma.gguf","template":"old","sampling":"old","seed":42}}"#;
+        let collection: super::super::types::ClipCollection = serde_json::from_slice(old).unwrap();
+        assert_eq!(collection.engine.unwrap().backend, "experimentalGemma");
     }
 }

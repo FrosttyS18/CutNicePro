@@ -49,7 +49,7 @@ export function ProjectWorkspace({ project, initialView = "overview", onRename, 
     consumeAutoGenerate(project.id); // marca ANTES de iniciar: cancelado não refire ao reabrir
     void (async () => {
       if (await workspace.save()) {
-        await clips.generate({ automatic: true, format: workspace.data.settings.ratio, fit: workspace.data.settings.fit, quality: "experimentalGemma" });
+        await clips.generate({ automatic: true, format: workspace.data.settings.ratio, fit: workspace.data.settings.fit, quality: "qwen35" });
       }
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps

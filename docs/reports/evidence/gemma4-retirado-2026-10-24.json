@@ -1,0 +1,17 @@
+[
+  {
+    "path": "C:\\CutNicePro\\experiments\\clip-selection-ab\\models\\home-e\\gemma-4-12b-it-qat-q4_0.gguf",
+    "bytes": 6975879296,
+    "sha256": "93567E57A8FE10B23569B9D9EC38CD005DEEDF71E29477C421A4B83F418A538B"
+  },
+  {
+    "path": "C:\\CutNicePro\\experiments\\clip-selection-ab\\models\\home-e\\mmproj-gemma-4-12b-it-qat-q4_0.gguf",
+    "bytes": 175115616,
+    "sha256": "CB018338A7538A9814D994BFE54644C71EB7ED54E31EAE2F721E45FD3C260DA7"
+  },
+  {
+    "path": "C:\\CutNicePro\\.tooling\\vendor\\analysis\\engine-gemma.json",
+    "bytes": 566,
+    "sha256": "84E4F83CA103789FC253A3F8C6D9D7EE4F36E62D9B20D8D619FAFA774098C633"
+  }
+]

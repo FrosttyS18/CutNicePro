@@ -1,5 +1,5 @@
 use super::{
-    borders, editorial, face_framing, multimodal, scene_regions, selection, semantic, store,
+    borders, editorial, editorial_repair, face_framing, scene_regions, selection, semantic, store,
     text_engine,
     types::{Clip, ClipCollection, Options},
 };
@@ -33,7 +33,9 @@ fn analyze(
                 .reasons
                 .iter()
                 .filter(|reason| {
-                    reason.contains("proveniência") || reason.contains("Avaliação do intervalo")
+                    reason.to_lowercase().contains("proveniência")
+                        || reason.contains("Avaliação do intervalo")
+                        || reason.contains("Conteúdo promocional")
                 })
                 .cloned()
                 .collect();
@@ -60,46 +62,7 @@ fn analyze(
     Ok(())
 }
 
-/// Unidades narrativas da transcrição dentro de uma janela — os IDs dos
-/// segmentos que a alimentam. Estratégia determinística de conteúdo (upd 20):
-/// a sobreposição temporal é SINAL, não prova; a equivalência editorial
-/// precisa das mesmas unidades de fala.
-fn speech_units(segments: &[Segment], start: f64, end: f64) -> std::collections::BTreeSet<&str> {
-    segments
-        .iter()
-        .filter(|s| s.start < end && s.end > start)
-        .map(|s| s.id.as_str())
-        .collect()
-}
-
-/// Duplicata = mesmo momento JÁ presente na biblioteca (atualizações 19/20).
-/// - Id idêntico: duplicata exata (mesma mídia, limites e formato).
-/// - Quase duplicata: MESMO formato, interseção ≥ 75% da união E as unidades
-///   de fala do candidato estão CONTIDAS nas do existente — a mesma história
-///   com outros limites. A sobreposição sozinha NÃO decide: histórias
-///   distintas que compartilham a janela (unidades novas no candidato) são
-///   variação editorial legítima e entram como cortes novos.
-/// Clipes EXCLUÍDOS e REJEITADOS participam da verificação: a geração não
-/// ressuscita o mesmo CONTEÚDO que o usuário descartou.
-pub(crate) fn duplicate_of(existing: &[Clip], candidate: &Clip, segments: &[Segment]) -> bool {
-    let units = speech_units(segments, candidate.start, candidate.end);
-    existing.iter().any(|old| {
-        if old.id == candidate.id {
-            return true;
-        }
-        if old.format != candidate.format {
-            return false;
-        }
-        let overlap = old.end.min(candidate.end) - old.start.max(candidate.start);
-        if overlap <= 0.0
-            || overlap / (old.end.max(candidate.end) - old.start.min(candidate.start)) < 0.75
-        {
-            return false;
-        }
-        let old_units = speech_units(segments, old.start, old.end);
-        units.iter().all(|unit| old_units.contains(unit))
-    })
-}
+pub(crate) use super::novelty::duplicate_of;
 
 /// Geração incremental (atualizações 19/20): a biblioteca é CUMULATIVA. Os
 /// cortes existentes permanecem INTACTOS — id, título, revisão, análise,
@@ -145,16 +108,6 @@ pub(crate) fn merge_incremental(
     }
 }
 
-/// Partes da fala ainda não ocupadas por nenhum clipe da biblioteca — insumo
-/// da SEGUNDA passada de descoberta, delimitada e única (upd 20).
-fn unoccupied_speech(speech: &[Segment], existing: &[Clip]) -> Vec<Segment> {
-    speech
-        .iter()
-        .filter(|s| !existing.iter().any(|c| s.start < c.end && s.end > c.start))
-        .cloned()
-        .collect()
-}
-
 pub fn run(
     base: &Path,
     scratch: &Path,
@@ -163,49 +116,29 @@ pub fn run(
     mut progress: impl FnMut(u8),
 ) -> Result<ClipCollection, String> {
     let engine = text_engine::Engine::discover(base, request.options.quality())?;
-    let evaluator =
-        |pending: &[Clip], segments: &[Segment]| -> Result<Vec<selection::Evaluation>, String> {
-            selection::evaluate_batch_with(&engine, scratch, pending, segments, control)
-        };
-    // Multimodal (M3): quando o modo experimental encontra server+mmproj,
-    // o enriquecimento por candidato usa pausas REAIS de áudio (uma passada
-    // FFmpeg por geração) e frames REAIS nos limites do corte. Sem artefatos
-    // o motor degrada para textual com backend distinto (declarado).
-    let multimodal = match &engine {
-        text_engine::Engine::GemmaMultimodal { server, .. } => Some(server.clone()),
-        _ => None,
+    let repair_pool = std::cell::RefCell::new(Vec::new());
+    let evaluator = |pending: &[Clip],
+                     _segments: &[Segment]|
+     -> Result<Vec<selection::Evaluation>, String> {
+        let judgments =
+            selection::evaluate_batch_with(&engine, scratch, pending, request.speech, control)?;
+        editorial_repair::remember_rejections(&mut repair_pool.borrow_mut(), pending, &judgments);
+        Ok(judgments)
     };
-    let ffmpeg: Option<std::path::PathBuf> = multimodal.as_ref().and_then(|_| {
-        crate::media_analyze::detect_fftools().map(|tools| {
-            tools.ffprobe.with_file_name(if cfg!(windows) {
-                "ffmpeg.exe"
-            } else {
-                "ffmpeg"
-            })
-        })
-    });
-    let pauses: Option<Vec<(f64, f64)>> = match (&multimodal, &ffmpeg) {
-        (Some(_), Some(ffmpeg)) => Some(multimodal::audio_pauses(
-            ffmpeg,
-            request.source,
-            scratch,
-            control,
-        )?),
-        (Some(_), None) => {
-            return Err("FFmpeg não encontrado. Repare a instalação e tente novamente.".into())
-        }
-        _ => None,
-    };
-    // descoberta → cenas → multimodal → fit/id/proveniência (mesma preparação
-    // para a primeira passada e para a segunda delimitada)
-    let multimodal_successes = std::cell::Cell::new(0u32);
-    let multimodal_attempts = std::cell::Cell::new(0u32);
     let previous = store::load(base, request.project, request.media, request.duration)?;
+    let search_history = std::cell::RefCell::new(
+        previous
+            .as_ref()
+            .map(|p| p.clips.clone())
+            .unwrap_or_default(),
+    );
     let known_ids: std::collections::HashSet<String> = previous
         .as_ref()
         .map(|library| library.clips.iter().map(|c| c.id.clone()).collect())
         .unwrap_or_default();
-    let mut prepare = |speech: &[Segment]| -> Result<Vec<Clip>, String> {
+    let prepare = |speech: &[Segment],
+                   on_progress: &mut dyn FnMut(u8)|
+     -> Result<Vec<Clip>, String> {
         let mut clips = selection::select(
             &engine,
             scratch,
@@ -213,9 +146,10 @@ pub fn run(
             request.media,
             request.duration,
             request.options,
+            &search_history.borrow(),
             control,
             &evaluator,
-            |percent| progress(percent / 2),
+            |percent| on_progress(percent / 2),
         )?;
         let original_bounds = clips
             .iter()
@@ -238,7 +172,6 @@ pub fn run(
         // + pausas reais quando o modo multimodal as calculou). Sem words →
         // janela intacta (borders.rs é conservador). IDs dependem dos limites
         // e são recalculados no laço seguinte.
-        let flat_pauses: Vec<(f64, f64)> = pauses.clone().unwrap_or_default();
         {
             let mut sorted: Vec<&mut Clip> = clips.iter_mut().collect();
             sorted.sort_by(|a, b| a.start.total_cmp(&b.start));
@@ -254,7 +187,7 @@ pub fn run(
                     start,
                     end,
                     speech,
-                    &flat_pauses,
+                    &[],
                     request.options.min_seconds,
                     prev_end,
                     next_start,
@@ -267,28 +200,6 @@ pub fn run(
         clips.retain(|clip| clip.end - clip.start <= request.options.max_seconds + 1e-6);
         editorial::recheck_adjusted(&mut clips, &original_bounds, speech, &evaluator)?;
         control.check()?;
-        if let (Some(server), Some(pauses), Some(ffmpeg)) = (&multimodal, &pauses, &ffmpeg) {
-            for clip in &mut clips {
-                multimodal_attempts.set(multimodal_attempts.get() + 1);
-                // falha de UM candidato não derruba a geração: sem evidência
-                // multimodal, o clipe segue textual (contado p/ o gate abaixo)
-                if multimodal::enrich_clip(
-                    server,
-                    ffmpeg,
-                    request.source,
-                    scratch,
-                    speech,
-                    pauses,
-                    request.options.min_seconds,
-                    clip,
-                    control,
-                )
-                .is_ok()
-                {
-                    multimodal_successes.set(multimodal_successes.get() + 1);
-                }
-            }
-        }
         for clip in &mut clips {
             clip.fit = request.options.fit.clone();
             clip.id =
@@ -301,51 +212,88 @@ pub fn run(
     // descoberta considera o que já existe: candidatos que repetem CONTEÚDO
     // da biblioteca (incluindo excluídos/rejeitados) são descartados.
     let mut fresh: Vec<Clip> = match previous.as_ref() {
-        Some(library) => prepare(request.speech)?
+        Some(library) => prepare(request.speech, &mut progress)?
             .into_iter()
             .filter(|candidate| !duplicate_of(&library.clips, candidate, request.speech))
             .collect(),
-        None => prepare(request.speech)?,
+        None => prepare(request.speech, &mut progress)?,
     };
-    // Segunda passada DELIMITADA (uma única, sem loops): quando a primeira
-    // não encontrou nada novo, a descoberta tenta as partes do vídeo ainda
-    // não ocupadas pela biblioteca — momentos de verdade inéditos, não
-    // repetições com outros limites. Falta de fala livre preserva a
-    // biblioteca e informa "nenhum corte novo".
-    if fresh.is_empty() {
-        if let Some(library) = previous.as_ref() {
-            let free = unoccupied_speech(request.speech, &library.clips);
-            let free_seconds: f64 = free.iter().map(|s| s.end - s.start).sum();
-            if free_seconds >= request.options.min_seconds {
-                if let Ok(more) = prepare(&free) {
-                    fresh = more
-                        .into_iter()
-                        .filter(|candidate| {
-                            !duplicate_of(&library.clips, candidate, request.speech)
-                        })
-                        .collect();
-                }
-            }
-        }
-    }
+    let mut repair_budget = 3usize;
+    let mut finish_candidates = |fresh: &mut Vec<Clip>,
+                                 on_progress: &mut dyn FnMut(u8)|
+     -> Result<(), String> {
+        analyze(
+            fresh,
+            control,
+            |clip| semantic::run(&engine, scratch, clip, request.speech, control),
+            &mut *on_progress,
+        )?;
+        let mut rejected: Vec<_> = fresh
+            .iter()
+            .filter(|c| !editorial::is_complete(c))
+            .cloned()
+            .collect();
+        rejected.extend(std::mem::take(&mut *repair_pool.borrow_mut()));
+        rejected.sort_by(|a, b| b.score.cmp(&a.score));
+        let mut seen = std::collections::HashSet::new();
+        rejected.retain(|c| seen.insert(c.id.clone()));
+        search_history.borrow_mut().extend(rejected.iter().cloned());
+        editorial::retain_analyzed_complete(fresh);
+        editorial_repair::fill_remaining(fresh, &rejected, request.options, || {
+            let repaired = editorial_repair::recover(
+                &engine,
+                scratch,
+                &rejected,
+                request.speech,
+                request.media,
+                request.options,
+                control,
+                &mut repair_budget,
+            )?;
+            let originals = repaired
+                .iter()
+                .map(|r| (r.clip.id.clone(), r.original))
+                .collect();
+            let mut candidates: Vec<_> = repaired
+                .into_iter()
+                .map(|r| r.clip)
+                .filter(|c| {
+                    previous
+                        .as_ref()
+                        .is_none_or(|p| !duplicate_of(&p.clips, c, request.speech))
+                })
+                .collect();
+            editorial::recheck_adjusted(&mut candidates, &originals, request.speech, &evaluator)?;
+            analyze(
+                &mut candidates,
+                control,
+                |clip| semantic::run(&engine, scratch, clip, request.speech, control),
+                &mut *on_progress,
+            )?;
+            candidates.retain(|c| c.analysis.is_some());
+            editorial::retain_analyzed_complete(&mut candidates);
+            candidates.retain(|c| {
+                !request.options.automatic || c.score >= super::types::AUTOMATIC_RELEVANCE_FLOOR
+            });
+            Ok(candidates)
+        })?;
+        Ok(())
+    };
     // análise SOMENTE dos novos (upd 20): antigos, excluídos, rejeitados e
     // desatualizados não recebem trabalho oculto do motor nesta geração.
-    // Gate multimodal (M3): se o motor declarou multimodal, tentou
-    // candidatos e NENHUM recebeu evidência real (frames/áudio), a rodada
-    // NÃO pode se passar por multimodal — erro explícito em vez de PASS
-    // textual disfarçado.
-    if multimodal.is_some() && multimodal_attempts.get() > 0 && multimodal_successes.get() == 0 {
-        return Err(
-            "A análise multimodal falhou para todos os cortes. Verifique o motor multimodal e tente novamente.".into(),
-        );
+    finish_candidates(&mut fresh, &mut progress)?;
+    if fresh.is_empty() {
+        eprintln!("[clips] segunda busca de momentos distintos com a transcrição completa e histórico desta rodada");
+        fresh = prepare(request.speech, &mut progress)?
+            .into_iter()
+            .filter(|candidate| {
+                previous
+                    .as_ref()
+                    .is_none_or(|library| !duplicate_of(&library.clips, candidate, request.speech))
+            })
+            .collect();
+        finish_candidates(&mut fresh, &mut progress)?;
     }
-    analyze(
-        &mut fresh,
-        control,
-        |clip| semantic::run(&engine, scratch, clip, request.speech, control),
-        progress,
-    )?;
-    editorial::retain_analyzed_complete(&mut fresh);
     if fresh.is_empty() && previous.is_none() {
         return Err("Não encontramos cortes com abertura e fechamento completos nesta rodada. Tente outra faixa ou amplie a duração máxima.".into());
     }
@@ -647,6 +595,17 @@ mod incremental_tests {
             "experimentalGemma"
         );
         assert!(!value.clips.iter().any(|c| c.id == "b".repeat(64)));
+    }
+
+    #[test]
+    fn deleted_ranges_do_not_blacklist_distinct_future_moments() {
+        let speech = speech();
+        let deleted = Clip {
+            deleted: Some(true),
+            ..clip(&"a".repeat(64), 0.0, 600.0)
+        };
+        let distinct = clip(&"b".repeat(64), 0.0, 12.0);
+        assert!(!super::duplicate_of(&[deleted], &distinct, &speech));
     }
 
     #[test]

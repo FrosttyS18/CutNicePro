@@ -6,7 +6,7 @@ import type { AspectRatio } from "../components/upload/tools";
 import { defaultEditorSettings } from "./workspace";
 
 export type ClipReview = "pending" | "approved" | "rejected";
-export type ClipQuality = "standard" | "experimentalGemma";
+export type ClipQuality = "qwen35" | "standard" | "experimentalGemma";
 export interface ClipEngine { backend: string; model: string; template: string; sampling: string; seed: number }
 export interface ClipAnalysis { title: string; summary: string; criteria: {label: string; score: number; explanation: string; evidence: string}[] }
 export type ClipFit = "cover" | "contain";

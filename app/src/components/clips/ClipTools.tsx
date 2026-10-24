@@ -45,13 +45,9 @@ export function ClipTools({ controller: c, settings, ready, disabled, onSave, on
     try {
       if (await onSave()) {
         setDialog(null); requestedGeneration.current = true;
-        // Atualização 17: Gemma 4 é o único motor de análise (default do
-        // backend); a UI não escolhe mais motor. O automático não envia
-        // duração/quantidade (limites técnicos no app); o personalizado
-        // envia os três + o ajuste de preenchimento escolhido (fit).
         await c.generate(automatic
-          ? { automatic: true, format, fit, quality: "experimentalGemma" }
-          : { minSeconds: 10, maxSeconds: duration, count, format, fit, quality: "experimentalGemma" });
+          ? { automatic: true, format, fit, quality: "qwen35" }
+          : { minSeconds: 10, maxSeconds: duration, count, format, fit, quality: "qwen35" });
       }
     }
     finally { setPreparing(false); }
@@ -71,7 +67,7 @@ export function ClipTools({ controller: c, settings, ready, disabled, onSave, on
     {c.notice && <p role="status">{c.notice}</p>}
     <FlowDialog open={dialog === "generate"} title="Gerar cortes" onClose={() => setDialog(null)} busy={preparing}>
       <p className="flow-muted">Escolha como quer receber seus clipes.</p>
-      <p className="clip-engine-badge"><CpuIcon size={14} aria-hidden="true"/>IA local: Gemma 4</p>
+      <p className="clip-engine-badge"><CpuIcon size={14} aria-hidden="true"/>IA local: Qwen3.5-4B</p>
       <ClipFormatPicker value={format} onChange={setFormat}/>
       {c.collection && <p>Os novos cortes serão adicionados aos que você já tem.</p>}
       <div className="clip-options"><label>Geração<AppSelect aria-label="Geração" name="clipMode" value={automatic ? "automatic" : "custom"} onChange={event => setAutomatic(event.target.value === "automatic")}><option value="automatic">Automática (recomendada)</option><option value="custom">Personalizada</option></AppSelect></label>

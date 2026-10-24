@@ -71,17 +71,24 @@ impl DraftAnalysis {
 }
 
 pub fn schema(quote_count: usize) -> serde_json::Value {
-    let criterion = serde_json::json!({"type":"object","additionalProperties":false,"required":["score","explanation","evidenceId"],"properties":{
-        "score":{"type":"integer","minimum":0,"maximum":100},"explanation":{"type":"string","minLength":20,"maxLength":600},
-        "evidenceId":{"type":"integer","enum":(0..quote_count).collect::<Vec<_>>()}}});
-    serde_json::json!({"type":"object","additionalProperties":false,"required":["title","summary","hook","development","closing"],"properties":{
-        "title":{"type":"string","minLength":8,"maxLength":120},"summary":{"type":"string","minLength":40,"maxLength":1400},
-        "hook":criterion,"development":criterion,"closing":criterion}})
+    let criterion = serde_json::json!({"type":"object","additionalProperties":false,"required":["evidenceId","explanation","score"],"properties":{
+        "evidenceId":{"type":"integer","enum":(0..quote_count).collect::<Vec<_>>()},
+        "explanation":{"type":"string","minLength":20,"maxLength":600},"score":{"type":"integer","minimum":0,"maximum":100}}});
+    serde_json::json!({"type":"object","additionalProperties":false,"required":["hook","development","closing","summary","title"],"properties":{
+        "hook":criterion,"development":criterion,"closing":criterion,
+        "summary":{"type":"string","minLength":40,"maxLength":1400},"title":{"type":"string","minLength":8,"maxLength":120}}})
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn schema_preserves_the_editorial_reasoning_order_sent_to_runtime() {
+        let value = schema(3);
+        let properties = value["properties"].as_object().unwrap();
+        let keys = properties.keys().map(String::as_str).collect::<Vec<_>>();
+        assert_eq!(keys, ["hook", "development", "closing", "summary", "title"]);
+    }
     #[test]
     fn grounds_references_in_source_and_rejects_unknown_ids() {
         let source="O jogo apagou o salvamento e travou depois que a criação do personagem falhou. O relato termina sem apresentar uma solução para recuperar o progresso perdido.";

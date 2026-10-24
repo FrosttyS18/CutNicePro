@@ -1,0 +1,242 @@
+{
+  "status": "COMPLETED_NOT_ACCEPTED",
+  "authorization": "Mantenedor autorizou comparar Qwen3.5-9B antes de mudar o padrão",
+  "defaultChanged": false,
+  "model": "Qwen/Qwen3.5-9B",
+  "quantizer": "unsloth/Qwen3.5-9B-GGUF",
+  "revision": "3885219b6810b007914f3a7950a8d1b469d598a5",
+  "filename": "Qwen3.5-9B-Q4_K_M.gguf",
+  "bytes": 5680522464,
+  "sha256": "03b74727a860a56338e042c4420bb3f04b2fec5734175f4cb9fa853daf52b7e8",
+  "verifiedDownload": true,
+  "license": "Apache-2.0",
+  "storage": "experiments/clip-selection-ab/models/Qwen3.5-9B-Q4_K_M.gguf",
+  "protocol": {
+    "context": 32768,
+    "source": "334 segmentos, transcrição completa de 599,08 s, sem divisão",
+    "discovery": "Mesmo prompt, esquema, runtime, amostragem e seed; mudam os pesos 4B/9B",
+    "factualControl": "Mesma fala sobre a skin antiga; resumo/título",
+    "negativeControl": "Mesmo intervalo que junta uma história e uma intervenção alheia",
+    "acceptance": "Referência editorial aprovada em criterio-editorial-assistente-2026-10-24.json; contagem e nota do modelo não são aceite"
+  },
+  "resourceScope": "WorkingSet do processo llama; VRAM medida é global da placa e não RAM total do aplicativo",
+  "limitations": [
+    "Comparação textual isolada, sem publicar na biblioteca real",
+    "Não aprova imagens, áudio, enquadramento ou MP4",
+    "Não comprova qualidade em outros vídeos"
+  ],
+  "results": {
+    "4B": {
+      "model": "4B",
+      "name": "episodes",
+      "exitCode": 0,
+      "elapsedSeconds": 36.5078079,
+      "context": 32768,
+      "peakWorkingSetMiB": 3763.84765625,
+      "baselineGlobalGpuMiB": 2228,
+      "peakGlobalGpuMiB": 6641,
+      "promptPath": "C:\\CutNicePro\\.tooling\\test-output\\geracao-incremental-2026-10-24\\qwen35-episodes-presence-1.5\\prompt.txt",
+      "schemaPath": "C:\\CutNicePro\\.tooling\\test-output\\geracao-incremental-2026-10-24\\qwen35-episodes-presence-1.5\\schema.json",
+      "scope": "WorkingSet do processo llama; VRAM é uso global da placa durante o teste, não consumo exclusivo atribuído ao modelo.",
+      "episodes": [
+        {
+          "setup": "O apresentador afirma que a EA deve odiar quando ele joga jogos deles devido a problemas graves.",
+          "payoff": "Ele relata que na live o personagem levantava a taça enquanto ela não estava na mão e o jogo carregava infinitamente.",
+          "firstId": 6,
+          "lastId": 50,
+          "title": "Falhas técnicas no EAFC"
+        },
+        {
+          "setup": "Durante a configuração do personagem no EAFC, os usuários enfrentaram problemas de carregamento e bugs visuais.",
+          "payoff": "O save foi deletado acidentalmente ao tentar mudar a roupa, forçando o reinício do jogo.",
+          "firstId": 19,
+          "lastId": 41,
+          "title": "Bug na personalização do personagem"
+        },
+        {
+          "setup": "A EA lançou um novo passo de batalha para Battlefield 6 com benefícios limitados se jogado gratuitamente.",
+          "payoff": "Jogadores relataram skins estranhas geradas por IA, como texto incorreto e armas em quantidades exageradas.",
+          "firstId": 65,
+          "lastId": 81,
+          "title": "Lançamento de novo passo de batalha com erros"
+        },
+        {
+          "setup": "Uma skin no Battlefield 6 apresenta o texto 'group T-PAP' em vez do nome correto 'group therapy'.",
+          "payoff": "Os apresentadores deduzem que a IA provavelmente não revisou o conteúdo antes da publicação.",
+          "firstId": 94,
+          "lastId": 112,
+          "title": "Erro de texto em skin gerada por IA"
+        },
+        {
+          "setup": "Outra skin mostra um personagem com armas em quantidades impossíveis para o modelo do corpo.",
+          "payoff": "Ao analisar de perto, verificam-se cinco pistolas visíveis no peito, axilas e coldre além das escopetas nas costas.",
+          "firstId": 167,
+          "lastId": 205,
+          "title": "Skin com excesso de armas"
+        },
+        {
+          "setup": "A EA costuma vender skins bugadas como itens de coleção ou passe de batalha.",
+          "payoff": "O apresentador sugere que essas skins poderiam ter sido monetizadas em jogos anteriores da Valve, mas não se sabe o valor atual.",
+          "firstId": 246,
+          "lastId": 268,
+          "title": "Possibilidade de monetização de skins bugadas"
+        },
+        {
+          "setup": "O computador do apresentador está em um estado crítico após horas de uso intenso.",
+          "payoff": "Ele menciona que o PC está tão ruim que poderia voar igual o 'Carlos Alamo' e precisa de proteção contra o barulho.",
+          "firstId": 278,
+          "lastId": 290,
+          "title": "Estado crítico do computador"
+        }
+      ]
+    },
+    "9B": {
+      "model": "9B",
+      "name": "episodes",
+      "exitCode": 0,
+      "elapsedSeconds": 57.858049699999995,
+      "context": 32768,
+      "peakWorkingSetMiB": 6596.05078125,
+      "baselineGlobalGpuMiB": 2372,
+      "peakGlobalGpuMiB": 7897,
+      "promptPath": "C:\\CutNicePro\\.tooling\\test-output\\geracao-incremental-2026-10-24\\qwen35-episodes-presence-1.5\\prompt.txt",
+      "schemaPath": "C:\\CutNicePro\\.tooling\\test-output\\geracao-incremental-2026-10-24\\qwen35-episodes-presence-1.5\\schema.json",
+      "scope": "WorkingSet do processo llama; VRAM é uso global da placa durante o teste, não consumo exclusivo atribuído ao modelo.",
+      "episodes": [
+        {
+          "setup": "Os narradores relatam experiências frustrantes com erros técnicos e bugs visuais graves no jogo EAFC.",
+          "payoff": "O personagem do jogo levanta uma taça de vitória enquanto o modelo 3D está claramente vazio, sem a taça na mão.",
+          "firstId": 16,
+          "lastId": 40,
+          "title": "Bug da taça vazia no EAFC"
+        },
+        {
+          "setup": "Durante a criação de personagem, o jogo apresenta um erro visual onde os botões de barba mostram mensagens de arquivo ausente.",
+          "payoff": "A seleção visual do cabelo do personagem muda completamente enquanto o jogador tenta navegar pelas opções.",
+          "firstId": 46,
+          "lastId": 127,
+          "title": "Erro 'Thumbnail Missing' na barba"
+        },
+        {
+          "setup": "O narrador anuncia o lançamento do novo Passe de Batalha do Battlefield 6 e menciona skins suspeitas.",
+          "payoff": "Uma skin mostra um texto escrito como 'T-PAP' em vez da palavra correta 'therapy' no nome do grupo.",
+          "firstId": 129,
+          "lastId": 187,
+          "title": "Erro de digitação 'T-PAP' na skin"
+        },
+        {
+          "setup": "Outra skin é exibida com um modelo de personagem que possui uma escrita claramente incorreta na nuca.",
+          "payoff": "A palavra 'Secute' aparece gravada no pescoço do boneco, substituindo a palavra correta ou deixando o modelo incompleto.",
+          "firstId": 189,
+          "lastId": 238,
+          "title": "Skin com escrita 'Secute' na nuca"
+        },
+        {
+          "setup": "Os narradores analisam uma skin onde o número de armas carregadas não corresponde à quantidade visual no corpo do personagem.",
+          "payoff": "O modelo possui pistolas escondidas em locais anatômicos estranhos, como dentro das axilas e na bainha, totalizando um número absurdo.",
+          "firstId": 239,
+          "lastId": 280,
+          "title": "Skin com excesso de armas no corpo"
+        },
+        {
+          "setup": "A discussão sobre skins bugadas leva a uma comparação histórica com uma skin do PUBG que se tornou valiosa.",
+          "payoff": "O narrador sugere que as skins defeituosas da EA podem aumentar drasticamente de valor no mercado futuro devido à sua raridade.",
+          "firstId": 281,
+          "lastId": 300,
+          "title": "Potencial valorização de skins bugadas"
+        }
+      ]
+    }
+  },
+  "control9B": {
+    "facts": {
+      "summary": "Uma skin antiga que os jogadores compraram ao adquirir uma estátua física acabou sendo considerada ruim pela Valve, que criou uma versão melhorada mantendo a original no jogo. Como resultado, a skin antiga desvalorizada dentro do jogo tornou-se um item valioso na comunidade.",
+      "title": "A Skin Bugada Que Virou Ouro"
+    },
+    "mixedNegative": {
+      "nature": "humor",
+      "analysis": {
+        "hook": {
+          "evidenceId": 0,
+          "explanation": "A abertura apresenta uma revelação sobre um erro específico no Passe de Batalha do Battlefield 6, estabelecendo o contexto da piada.",
+          "score": 75
+        },
+        "development": {
+          "evidenceId": 12,
+          "explanation": "O desenvolvimento descreve a dificuldade visual do erro e prepara a expectativa para a conclusão engraçada.",
+          "score": 80
+        },
+        "closing": {
+          "evidenceId": 13,
+          "explanation": "A piada é concluída com uma imitação de gíria brasileira mal pronunciada ('valeu meu coringão'), servindo como punchline.",
+          "score": 85
+        },
+        "summary": "O falante noticia um erro de tradução no jogo Battlefield 6 onde 'group therapy' apareceu como 'T-PAP'. Ele explica que a piada só é percebida ao olhar para as costas do personagem e termina imitando uma gíria brasileira.",
+        "title": "Erro de IA no Battlefield 6 vira piada"
+      },
+      "standalone": true,
+      "complete": true,
+      "advertising": false
+    }
+  },
+  "verdict": "Não trocar o padrão. O 9B produziu seis propostas, mas os IDs apontam para falas de assuntos diferentes e o controle negativo foi aprovado incorretamente; contagem não comprova qualidade.",
+  "review": [
+    "9B diz taça no EAFC, mas indica IDs 16-40; a taça está antes desse começo.",
+    "9B indica 239-280 para excesso de armas; o intervalo começa na discussão de revisão e atravessa Valve/PUBG.",
+    "9B indica 281-300 para valorização de skins, mas essas falas são sobre o PC e o começo do agradecimento ao patrocinador.",
+    "Controle factual 9B transfere aos desenvolvedores o julgamento negativo feito pelos jogadores; título usa metáfora genérica.",
+    "Controle negativo: esperado complete=false, recebido true no 4B e 9B."
+  ],
+  "nextHypothesis": "Testar chaves L000 etc. sem tempos por linha para separar identificação de fala e duração. Hipótese ainda não comprovada.",
+  "thinkingFollowUp": {
+    "meta": {
+      "elapsedSeconds": 173.34086709999997,
+      "fullTranscript": true,
+      "segments": 334,
+      "usage": {
+        "completion_tokens": 5734,
+        "prompt_tokens": 5286,
+        "total_tokens": 11020,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        }
+      },
+      "finishReason": "stop",
+      "reasoningCharacters": 18555,
+      "nativeGeneration": false
+    },
+    "output": {
+      "candidates": [
+        {
+          "moment": "Os hosts relatam os problemas de performance e bugs vividos durante uma live jogando EA FC, incluindo carregamentos infinitos, erros na criação de personagem com thumbnails ausentes e corrupção de save.",
+          "firstLine": "L010",
+          "lastLine": "L062",
+          "score": 92
+        },
+        {
+          "moment": "Especula-se sobre a qualidade da nova Battle Pass do Battlefield 6, apontando erros de digitação em skins ('T-PAP' ao invés de 'therapy', 'Secute') e armas com quantidades absurdas de pistolas integradas.",
+          "firstLine": "L063",
+          "lastLine": "L276",
+          "score": 94
+        },
+        {
+          "moment": "Durante a transmissão, o computador do estúdio esquenta e os ventiladores geram um barulho alto comparado a uma máquina de barbear, causando desconforto no ambiente.",
+          "firstLine": "L277",
+          "lastLine": "L299",
+          "score": 85
+        }
+      ]
+    },
+    "serverShutdown": {
+      "stopped": true,
+      "pid": 6468
+    },
+    "assistantAudit": [
+      "Primeira proposta atribui ao EAFC o jogo cujo vínculo não é inequívoco e cobre introdução extensa.",
+      "Segunda proposta L063-L276 mistura diversas histórias e excede a duração técnica de 180 s.",
+      "Terceira proposta L277-L299 aproxima-se da referência do PC, mas o resumo acrescenta aquecimento sem sustentação explícita."
+    ],
+    "promoted": false,
+    "scope": "Protótipo textual com fonte integral e esquema da aplicação; não é geração/exportação no app nem aceite editorial."
+  }
+}

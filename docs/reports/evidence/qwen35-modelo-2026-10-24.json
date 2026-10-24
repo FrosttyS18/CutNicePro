@@ -1,0 +1,100 @@
+{
+  "baseModel": "Qwen/Qwen3.5-4B",
+  "baseRevision": "851bf6e806efd8d0a36b00ddf55e13ccb7b8cd0a",
+  "quantizer": "unsloth/Qwen3.5-4B-GGUF",
+  "revision": "e87f176479d0855a907a41277aca2f8ee7a09523",
+  "file": "experiments/clip-selection-ab/models/Qwen3.5-4B-Q4_K_M.gguf",
+  "bytes": 2740937888,
+  "sha256": "00fe7986ff5f6b463e62455821146049db6f9313603938a70800d1fb69ef11a4",
+  "license": "Apache-2.0",
+  "licenseFile": "docs/references/Qwen3.5-4B-LICENSE.txt",
+  "contextTokens": 32768,
+  "productionMode": "instruct, non-thinking",
+  "steering": "Mantenedor determinou Qwen3.5 exclusivo e retirada do Gemma 4; não testar Qwen3 antigo.",
+  "initialBenchmarks": [
+    {
+      "mode": "instruct",
+      "status": "completed",
+      "elapsedSeconds": 24.6124369,
+      "usage": {
+        "completion_tokens": 795,
+        "prompt_tokens": 7262,
+        "total_tokens": 8057,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        }
+      },
+      "finishReason": "stop",
+      "timings": {
+        "cache_n": 0,
+        "prompt_n": 7262,
+        "prompt_ms": 17211.28,
+        "prompt_per_token_ms": 2.3700468190581105,
+        "prompt_per_second": 421.9325930436319,
+        "predicted_n": 795,
+        "predicted_ms": 7330.005,
+        "predicted_per_token_ms": 9.231744332493703,
+        "predicted_per_second": 108.32189063991089
+      },
+      "reasoningCharacters": 0,
+      "candidateCount": 6,
+      "technicalEligible": 5,
+      "nonAdvertisingTechnical": 5,
+      "metrics": {
+        "pid": 42480,
+        "peakWorkingSetMiB": 3769.16015625,
+        "workingSetMiB": 3141.10546875,
+        "cpuSeconds": 29.0625
+      },
+      "completeTranscript": true,
+      "contextSize": 32768,
+      "editorialApproved": false
+    },
+    {
+      "mode": "thinking",
+      "status": "completed",
+      "elapsedSeconds": 40.9000472,
+      "usage": {
+        "completion_tokens": 4533,
+        "prompt_tokens": 7260,
+        "total_tokens": 11793,
+        "prompt_tokens_details": {
+          "cached_tokens": 7258
+        }
+      },
+      "finishReason": "stop",
+      "timings": {
+        "cache_n": 7258,
+        "prompt_n": 2,
+        "prompt_ms": 33.532,
+        "prompt_per_token_ms": 16.766,
+        "prompt_per_second": 59.64451866873435,
+        "predicted_n": 4533,
+        "predicted_ms": 40854.823,
+        "predicted_per_token_ms": 9.014744704324801,
+        "predicted_per_second": 110.92937546198645
+      },
+      "reasoningCharacters": 14859,
+      "candidateCount": 4,
+      "technicalEligible": 2,
+      "nonAdvertisingTechnical": 1,
+      "metrics": {
+        "pid": 42480,
+        "peakWorkingSetMiB": 3769.16015625,
+        "workingSetMiB": 3142.02734375,
+        "cpuSeconds": 55
+      },
+      "completeTranscript": true,
+      "contextSize": 32768,
+      "editorialApproved": false
+    }
+  ],
+  "benchmarkLimitations": [
+    "Thinking reutilizou 7258 tokens do prompt anterior: não é comparação de latência com cache frio.",
+    "TechnicalEligible verifica forma/duração/pontuação, não aprovação editorial.",
+    "WorkingSet é somente o processo do servidor, não app completo nem VRAM.",
+    "Produção usa o CLI por ProcessControl: os tempos/recursos do servidor não são os do app."
+  ],
+  "latestEvidence": "geracao-incremental-modelos-2026-10-24.json:qwen35Continuation",
+  "editorialStatus": "PARTIAL: referência e descoberta ainda não alcançadas, ver último checkpoint"
+}

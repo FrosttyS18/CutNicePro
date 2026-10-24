@@ -59,16 +59,12 @@ fn real_generation_selects_and_persists_grounded_clips() {
     .unwrap();
 }
 
-/// Caminho REAL integrado do modo experimental (atualização 8): mesma
-/// transcrição de validação, motor Gemma 4 pela configuração preparada,
-/// janelas com orçamento de tokens, avaliação própria e análise publicada.
-/// Mede as etapas e grava artefatos para comparação com o experimento.
 #[test]
-#[ignore = "Executa o motor experimental Gemma real sobre o vídeo local delimitado"]
-fn real_experimental_gemma_generation_end_to_end() {
+#[ignore = "Executa o motor local real sobre o vídeo delimitado; não comprova os artefatos históricos"]
+fn real_local_generation_end_to_end() {
     let root = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../.tooling/vendor");
     // base ISOLADO: nada do modo experimental toca os artefatos do padrão
-    let base = root.join("pipeline-validation-gemma");
+    let base = root.join("pipeline-validation-local");
     let scratch = base.join("generation");
     std::fs::create_dir_all(&scratch).unwrap();
     let transcript: Transcript = serde_json::from_slice(
@@ -81,7 +77,7 @@ fn real_experimental_gemma_generation_end_to_end() {
         count: 3,
         format: Some("9:16".into()),
         fit: None,
-        quality: Some(Quality::ExperimentalGemma),
+        quality: Some(Quality::Qwen35),
         automatic: false,
     };
     // etapa 1: descoberta do motor (modelo/config preparada + prova de GPU)
@@ -89,8 +85,8 @@ fn real_experimental_gemma_generation_end_to_end() {
     let engine = text_engine::Engine::discover(&base, options.quality()).unwrap();
     let engine_discovery_s = t0.elapsed().as_secs_f64();
     let engine_record = engine.record();
-    assert_eq!(engine_record.backend, "experimentalGemma");
-    assert!(engine_record.model.contains("gemma"));
+    assert_eq!(engine_record.backend, "qwen35");
+    assert!(engine_record.model.contains("Qwen3.5"));
 
     // etapa 2..n: pipeline completo (janelas com orçamento → seleção →
     // avaliação própria → cenas → análise publicada)
@@ -119,7 +115,7 @@ fn real_experimental_gemma_generation_end_to_end() {
             .engine
             .as_ref()
             .map(|record| record.backend.as_str()),
-        Some("experimentalGemma")
+        Some("qwen35")
     );
     for clip in &collection.clips {
         assert!(clip.analysis_error.is_none(), "{:?}", clip.analysis_error);
@@ -142,7 +138,7 @@ fn real_experimental_gemma_generation_end_to_end() {
     assert_eq!(reopened.clips.len(), 3);
     assert_eq!(reopened.engine, collection.engine);
     std::fs::write(
-        base.join("generated-clips-gemma.json"),
+        base.join("generated-clips-local.json"),
         serde_json::to_vec_pretty(&collection).unwrap(),
     )
     .unwrap();
@@ -260,16 +256,9 @@ fn real_comparison_custom_floor_vs_automatic() {
     .unwrap();
 }
 
-/// Laboratório da atualização 19: geração INCREMENTAL real com Gemma 4 e
-/// exportação verificável de um clipe da biblioteca cumulativa — SEM
-/// aprovação. Base ISOLADA (pipeline-validation-upd19): nada toca o
-/// app-data do mantenedor nem os artefatos das validações anteriores.
-/// Execução 1: 3 cortes (biblioteca inicial persistida). Execução 2: até
-/// 6 — os anteriores devem permanecer com id/título/nota/revisão e as
-/// assinaturas granulares; novos candidatos entram sem substituí-los.
 #[test]
-#[ignore = "Executa geração incremental real (Gemma 4) + exportação verificável no vídeo local delimitado"]
-fn real_incremental_gemma_generation_and_verifiable_export() {
+#[ignore = "Executa geração incremental local real e exportação verificável no vídeo delimitado"]
+fn real_incremental_local_generation_and_verifiable_export() {
     let root = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../.tooling/vendor");
     let base = root.join("pipeline-validation-upd19");
     let scratch = base.join("generation");
@@ -284,7 +273,7 @@ fn real_incremental_gemma_generation_and_verifiable_export() {
         count,
         format: Some("9:16".into()),
         fit: Some("cover".into()),
-        quality: Some(Quality::ExperimentalGemma),
+        quality: Some(Quality::Qwen35),
         automatic: false,
     };
     let project = "d1e2f3a4-0001-4000-8000-00000000a001";

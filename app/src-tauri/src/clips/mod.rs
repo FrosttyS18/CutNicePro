@@ -1,16 +1,24 @@
 mod analysis_types;
+mod assessment;
 #[cfg(test)]
 mod autoclip_runtime_tests;
 pub mod borders;
 pub mod commands;
 mod content;
+mod discovery_reply;
 mod editorial;
+mod editorial_repair;
+mod engine_tools;
 mod evidence;
 mod face_framing;
 mod generation;
-pub mod multimodal;
+#[cfg(test)]
+mod incremental_runtime_tests;
+mod novelty;
 #[cfg(test)]
 mod pipeline_tests;
+#[cfg(test)]
+mod qwen35_contract_tests;
 #[cfg(test)]
 mod ranking;
 mod scene_regions;
@@ -21,6 +29,7 @@ mod semantic;
 mod semantic_tests;
 mod store;
 mod text_engine;
+#[cfg(test)]
 pub mod tracking;
 #[cfg(test)]
 mod tracking_tests;

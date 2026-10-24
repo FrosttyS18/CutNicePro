@@ -190,15 +190,9 @@ pub struct EngineRecord {
 #[derive(Clone, Copy, Debug, Default, Deserialize, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub enum Quality {
-    /// Motor padrão histórico (Qwen3-4B local). NÃO é mais usado para GERAR
-    /// (decisão do mantenedor, atualização 17: Gemma 4 exclusivo); permanece
-    /// para LER e re-analisar coleções antigas que o registraram.
-    Standard,
-    /// Gemma-4-12B-IT QAT Q4_0 local — ÚNICO motor de geração desde a
-    /// atualização 17. Default do payload: pedidos sem `quality` explícito
-    /// também geram com Gemma 4.
     #[default]
-    ExperimentalGemma,
+    #[serde(alias = "standard", alias = "experimentalGemma")]
+    Qwen35,
 }
 
 #[derive(Deserialize)]
@@ -213,9 +207,6 @@ pub struct Options {
     /// "contain"=Manter vídeo inteiro). Ausente = "contain" (histórico).
     #[serde(default)]
     pub fit: Option<String>,
-    /// Escolha explícita de motor; ignorado na geração desde a atualização
-    /// 17 (Gemma 4 exclusivo — o default resolve para Gemma). Nunca houve
-    /// troca silenciosa: o Gemma falha com erro próprio se indisponível.
     #[serde(default)]
     pub quality: Option<Quality>,
     /// Modo automático: quantidade e duração resultam dos momentos

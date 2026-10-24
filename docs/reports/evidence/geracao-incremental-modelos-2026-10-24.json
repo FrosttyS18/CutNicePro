@@ -1,0 +1,1144 @@
+{
+  "task": "geracao-incremental-modelos-2026-10-24",
+  "head": "1de7f9812c01b4dd75982e35fc7ab723262e3a15",
+  "version": "0.19.0",
+  "scope": "Geração textual incremental e comparações exploratórias; sem operação da tela/perfil real.",
+  "nativeRun": {
+    "run": "after-assessment1",
+    "model": "Gemma-4-12B",
+    "elapsedSeconds": 281.3739706,
+    "newCount": 3,
+    "existingPreserved": true,
+    "totalRecords": 20,
+    "clips": [
+      {
+        "start": 414.02,
+        "end": 478.76,
+        "title": "A valorização de skins bugadas e raras no PUBG",
+        "score": 79
+      },
+      {
+        "start": 389.92,
+        "end": 413.8,
+        "title": "Crítica ao design de armas e falta de revisão da EA",
+        "score": 71
+      },
+      {
+        "start": 308.28,
+        "end": 326.3,
+        "title": "Descoberta de detalhes em QR Code e armas de um boneco",
+        "score": 70
+      }
+    ],
+    "editorialApproved": false
+  },
+  "failedIntermediateRuns": [
+    {
+      "run": "after",
+      "elapsedSeconds": 310.3076399,
+      "existingPreserved": true,
+      "newClips": [],
+      "newCount": 0,
+      "status": "completed",
+      "total": 17
+    },
+    {
+      "run": "after-repair1",
+      "elapsedSeconds": 228.4228538,
+      "existingPreserved": true,
+      "newClips": [],
+      "newCount": 0,
+      "status": "completed",
+      "total": 17
+    },
+    {
+      "run": "after-repair2",
+      "elapsedSeconds": 750.2581415,
+      "existingPreserved": true,
+      "newClips": [],
+      "newCount": 0,
+      "status": "completed",
+      "total": 17
+    }
+  ],
+  "models": [
+    {
+      "model": "Qwen3-4B",
+      "file": ".tooling/vendor/analysis/Qwen3-4B-Q4_K_M.gguf",
+      "bytes": 2497280256,
+      "GiB": 2.33,
+      "identityVerifiedBy": "GGUF general metadata",
+      "measuresRam": false
+    },
+    {
+      "model": "Qwen3-4B-Instruct-2507",
+      "file": "experiments/clip-selection-ab/models/Qwen3-4B-Instruct-2507-Q4_K_M.gguf",
+      "bytes": 2497281120,
+      "GiB": 2.33,
+      "identityVerifiedBy": "GGUF general metadata",
+      "measuresRam": false
+    },
+    {
+      "model": "Gemma-4-12B",
+      "file": "experiments/clip-selection-ab/models/home-e/gemma-4-12b-it-qat-q4_0.gguf",
+      "bytes": 6975879296,
+      "GiB": 6.5,
+      "identityVerifiedBy": "GGUF general metadata",
+      "measuresRam": false
+    }
+  ],
+  "qwen35Found": false,
+  "newQwenInference": false,
+  "providers": [
+    {
+      "run": "gemini-full-b2-narrative",
+      "model": "gemini-2.5-flash",
+      "status": "failed",
+      "httpStatus": 404,
+      "errorType": null,
+      "completeTranscript": true,
+      "segmentCount": 334,
+      "elapsedSeconds": 0.4783580999999976,
+      "proposals": 0,
+      "promptTokens": null,
+      "completionTokens": null
+    },
+    {
+      "run": "gemini38-full-b2-narrative",
+      "model": "gemini-3.8-flash",
+      "status": "failed",
+      "httpStatus": 503,
+      "errorType": null,
+      "completeTranscript": true,
+      "segmentCount": 334,
+      "elapsedSeconds": 4.642731200000002,
+      "proposals": 0,
+      "promptTokens": null,
+      "completionTokens": null
+    },
+    {
+      "run": "gemini38-full-b2-range-long",
+      "model": "gemini-3.8-flash",
+      "status": "failed",
+      "httpStatus": 503,
+      "errorType": null,
+      "completeTranscript": true,
+      "segmentCount": 334,
+      "elapsedSeconds": 2.1785962,
+      "proposals": 0,
+      "promptTokens": null,
+      "completionTokens": null
+    },
+    {
+      "run": "gemini38-full-b2-retry",
+      "model": "gemini-3.8-flash",
+      "status": "failed",
+      "httpStatus": null,
+      "errorType": "TimeoutError",
+      "completeTranscript": true,
+      "segmentCount": 334,
+      "elapsedSeconds": 120.00891979999997,
+      "proposals": 0,
+      "promptTokens": null,
+      "completionTokens": null
+    },
+    {
+      "run": "groq-full-a-compact-schema",
+      "model": "openai/gpt-oss-120b",
+      "status": "completed",
+      "httpStatus": 200,
+      "errorType": null,
+      "completeTranscript": true,
+      "segmentCount": 334,
+      "elapsedSeconds": 1.5087252000000009,
+      "proposals": 3,
+      "promptTokens": 7182,
+      "completionTokens": 378
+    },
+    {
+      "run": "groq-full-a-current",
+      "model": "openai/gpt-oss-120b",
+      "status": "failed",
+      "httpStatus": 413,
+      "errorType": null,
+      "completeTranscript": true,
+      "segmentCount": 334,
+      "elapsedSeconds": 0.13021600000000036,
+      "proposals": 0,
+      "promptTokens": null,
+      "completionTokens": null
+    },
+    {
+      "run": "groq-full-b-narrative",
+      "model": "openai/gpt-oss-120b",
+      "status": "failed",
+      "httpStatus": 400,
+      "errorType": null,
+      "completeTranscript": true,
+      "segmentCount": 334,
+      "elapsedSeconds": 1.851297599999998,
+      "proposals": 0,
+      "promptTokens": null,
+      "completionTokens": null
+    },
+    {
+      "run": "groq-full-b2-narrative",
+      "model": "openai/gpt-oss-120b",
+      "status": "completed",
+      "httpStatus": 200,
+      "errorType": null,
+      "completeTranscript": true,
+      "segmentCount": 334,
+      "elapsedSeconds": 1.9250291000000144,
+      "proposals": 3,
+      "promptTokens": 5786,
+      "completionTokens": 609
+    },
+    {
+      "run": "groq-full-b3-medium",
+      "model": "openai/gpt-oss-120b",
+      "status": "failed",
+      "httpStatus": 400,
+      "errorType": null,
+      "completeTranscript": true,
+      "segmentCount": 334,
+      "elapsedSeconds": 9.136701699999998,
+      "proposals": 0,
+      "promptTokens": null,
+      "completionTokens": null
+    },
+    {
+      "run": "groq-full-b3-medium-budget",
+      "model": "openai/gpt-oss-120b",
+      "status": "completed",
+      "httpStatus": 200,
+      "errorType": null,
+      "completeTranscript": true,
+      "segmentCount": 334,
+      "elapsedSeconds": 10.386778500000014,
+      "proposals": 6,
+      "promptTokens": 5834,
+      "completionTokens": 4742
+    },
+    {
+      "run": "groq-full-c-boundaries",
+      "model": "openai/gpt-oss-120b",
+      "status": "failed",
+      "httpStatus": 400,
+      "errorType": null,
+      "completeTranscript": true,
+      "segmentCount": 334,
+      "elapsedSeconds": 13.553180099999997,
+      "proposals": 0,
+      "promptTokens": null,
+      "completionTokens": null
+    },
+    {
+      "run": "groq-full-c2-literal-boundaries",
+      "model": "openai/gpt-oss-120b",
+      "status": "failed",
+      "httpStatus": 400,
+      "errorType": null,
+      "completeTranscript": true,
+      "segmentCount": 334,
+      "elapsedSeconds": 10.697206500000087,
+      "proposals": 0,
+      "promptTokens": null,
+      "completionTokens": null
+    },
+    {
+      "run": "groq-full-c3-literal-boundaries",
+      "model": "openai/gpt-oss-120b",
+      "status": "completed",
+      "httpStatus": 200,
+      "errorType": null,
+      "completeTranscript": true,
+      "segmentCount": 334,
+      "elapsedSeconds": 13.576635699999985,
+      "proposals": 6,
+      "promptTokens": 6220,
+      "completionTokens": 6252
+    },
+    {
+      "run": "groq-full-d-literal",
+      "model": "openai/gpt-oss-120b",
+      "status": "completed",
+      "httpStatus": 200,
+      "errorType": null,
+      "completeTranscript": true,
+      "segmentCount": 334,
+      "elapsedSeconds": 6.876825599999982,
+      "proposals": 6,
+      "promptTokens": 5811,
+      "completionTokens": 3011
+    },
+    {
+      "run": "groq-full-e-repaired",
+      "model": "openai/gpt-oss-120b",
+      "status": "completed",
+      "httpStatus": 200,
+      "errorType": null,
+      "completeTranscript": true,
+      "segmentCount": 334,
+      "elapsedSeconds": 6.269159500000067,
+      "proposals": 2,
+      "promptTokens": 5986,
+      "completionTokens": 2712
+    }
+  ],
+  "providerResultsAreNotEditorialApproval": true,
+  "googleAndZaiHadNoSuccessfulOutput": true,
+  "frontend": {
+    "passed": 258,
+    "failed": 0
+  },
+  "knownLimits": [
+    "Ensaios locais usam cópias isoladas e não inserem cortes na biblioteca real.",
+    "Ensaios de API exploratórios mudaram prompt e orçamento: não são benchmark causal entre famílias.",
+    "Validação de citações é protótipo do laboratório, sem integração ao app.",
+    "GPT-OSS ainda escolheu finais incompletos; reparo posterior também falhou.",
+    "Sem nova medição válida de RAM/VRAM nesta tarefa; tamanhos são somente disco.",
+    "Sem seletor ou credenciais externas integrados; Gemma continua solicitado pela UI.",
+    "Nova política de reparo textual não foi estendida ao opt-in multimodal experimental."
+  ],
+  "artifacts": ".tooling/test-output/geracao-incremental-2026-10-24",
+  "realControl": {
+    "cases": [
+      {
+        "name": "relato-completo",
+        "expectedComplete": true,
+        "complete": true,
+        "standalone": true,
+        "passed": true
+      },
+      {
+        "name": "mesmo-relato-interrompido",
+        "expectedComplete": false,
+        "complete": false,
+        "standalone": false,
+        "passed": true
+      },
+      {
+        "name": "mudanca-sem-desfecho",
+        "expectedComplete": false,
+        "complete": false,
+        "standalone": true,
+        "passed": true
+      }
+    ],
+    "editorialScope": "Três intervalos de controle, não avaliação universal."
+  },
+  "finalValidation": {
+    "rust": {
+      "passed": 184,
+      "failed": 0,
+      "ignored": 17
+    },
+    "frontend": {
+      "passed": 258,
+      "failed": 0
+    },
+    "rustCheckAllTargets": "PASS",
+    "rustBuild": "PASS",
+    "rustfmt": "PASS",
+    "frontendBuild": "PASS",
+    "frontendStrictLint": "PASS",
+    "compilerWarnings": 0,
+    "executable": "app/src-tauri/target/debug/cutnicepro.exe",
+    "executableSha256": "1DCE6BD9ED09A535A4C131434A95DE17FA0101E835066B46311403FBBE1DF1FD",
+    "nativeInferenceAfterLastSafetyChanges": false,
+    "manualUi": "NOT TESTED",
+    "visual": "PENDING HUMAN APPROVAL"
+  },
+  "qwen35Continuation": {
+    "status": "PARTIAL_EDITORIAL",
+    "productionModel": "Qwen3.5-4B-Q4_K_M.gguf",
+    "contextTokens": 32768,
+    "comparison9B": "qwen35-9b-comparacao-2026-10-24.json",
+    "cloudUsedInThisPhase": false,
+    "reference": "criterio-editorial-assistente-2026-10-24.json",
+    "nativeFresh3": {
+      "status": "failed",
+      "elapsedSeconds": 35.3845726,
+      "error": "Não encontramos cortes com abertura e fechamento completos nesta rodada. Tente outra faixa ou amplie a duração máxima."
+    },
+    "nativeFresh4": {
+      "status": "completed",
+      "baselineRecords": 0,
+      "elapsedSeconds": 63.8644031,
+      "newCount": 1,
+      "newClips": [
+        {
+          "faceFraming": {
+            "status": "ambiguous",
+            "samples": 11
+          },
+          "id": "5d27920797ef581abec432348b65da3d53135680c670e60c723f57d6d078ba4f",
+          "start": 249.46,
+          "end": 275.52,
+          "title": "Skin do boneco é visível no jogo",
+          "score": 69,
+          "reasons": [
+            "Proveniência: momento proposto — A análise detalhada das skins bugadas do Battlefield 6, começando pela skin 'Secute' (provavelmente 'Sextet') e continuando com a contagem exagerada de pistolas no personagem.",
+            "Proveniência: nota de proposta 90",
+            "Avaliação do intervalo efetivo (humor/reação): Gancho: O intervalo inicia com uma observação específica sobre um elemento visual ('zoom') e confirmação de que o falante já viu, estabelecendo o objeto de discussão.; Desenvolvimento: A conversa avança questionando a origem do elemento (cutscene vs. gameplay) e a visibilidade dele no jogo, criando o contexto necessário para a piada.; Fechamento: A última fala finaliza a discussão sobre a visibilidade do item ao declarar que 'é fácil de ver mesmo', reforçando a conclusão da observação inicial e fechando a unidade narrativa com uma constatação humorística.",
+            "O intervalo inicia com uma observação específica sobre um elemento visual ('zoom') e confirmação de que o falante já viu, estabelecendo o objeto de discussão.",
+            "A conversa avança questionando a origem do elemento (cutscene vs. gameplay) e a visibilidade dele no jogo, criando o contexto necessário para a piada.",
+            "A última fala finaliza a discussão sobre a visibilidade do item ao declarar que 'é fácil de ver mesmo', reforçando a conclusão da observação inicial e fechando a unidade narrativa com uma constatação humorística."
+          ],
+          "review": "pending",
+          "format": "9:16",
+          "fit": "cover",
+          "analysis": {
+            "title": "Skin do boneco é visível no jogo",
+            "summary": "Dois amigos discutem se um efeito visual específico no jogo é visível durante o gameplay ou apenas na cutscene, culminando na confirmação de que ele é facilmente notável mesmo sendo uma skin.",
+            "criteria": [
+              {
+                "label": "Gancho",
+                "score": 65,
+                "explanation": "O intervalo inicia com uma observação específica sobre um elemento visual ('zoom') e confirmação de que o falante já viu, estabelecendo o objeto de discussão.",
+                "evidence": "Aí esse é o seguinte, dá um zoom nisso aí. Hum, já vi."
+              },
+              {
+                "label": "Desenvolvimento",
+                "score": 70,
+                "explanation": "A conversa avança questionando a origem do elemento (cutscene vs. gameplay) e a visibilidade dele no jogo, criando o contexto necessário para a piada.",
+                "evidence": "Mas vem cá, isso aí é na cutscene ou é no jogo, no gameplay?"
+              },
+              {
+                "label": "Fechamento",
+                "score": 75,
+                "explanation": "A última fala finaliza a discussão sobre a visibilidade do item ao declarar que 'é fácil de ver mesmo', reforçando a conclusão da observação inicial e fechando a unidade narrativa com uma constatação humorística.",
+                "evidence": "Mas é um negócio bizarro. Secute."
+              }
+            ]
+          },
+          "analysisSignature": "bb4b6814de217e939d987b1b20d70fb83c4977e961d61d89c5cce9b7f230bd38",
+          "engine": {
+            "backend": "qwen35",
+            "model": "Qwen3.5-4B-Q4_K_M.gguf",
+            "template": "qwen3.5-canonical-nothink, ctx 32768",
+            "sampling": "temp 0.7, top_k 20, top_p 0.8, min_p 0, presence 1.5, seed 42",
+            "seed": 42
+          },
+          "createdAtMs": 1792871790598
+        }
+      ],
+      "existingPreserved": true,
+      "total": 1
+    },
+    "fresh4AssistantAudit": {
+      "approved": false,
+      "reason": "Título genérico, explicação do fechamento e resumo não correspondem suficientemente à última fala e à unidade proposta; não equivale à referência aprovada."
+    },
+    "runtimeControls": {
+      "result": "CPU/Vulkan/CUDA ainda erraram fatos e bordas; não comprova bug exclusivo de backend. CUDA não integrado.",
+      "cpu": {
+        "exitCode": 0,
+        "elapsedSeconds": 69.92887640000001,
+        "fullTranscript": true,
+        "segments": 334,
+        "presencePenalty": 1.5,
+        "nativeGeneration": false,
+        "purpose": "Comparação controlada de seleção por episódios; nenhum intervalo aprovado é passado ao modelo."
+      },
+      "cuda": {
+        "exitCode": 0,
+        "elapsedSeconds": 11.940521799999999,
+        "fullTranscript": true,
+        "segments": 334,
+        "presencePenalty": 1.5,
+        "nativeGeneration": false,
+        "purpose": "Comparação controlada de seleção por episódios; nenhum intervalo aprovado é passado ao modelo."
+      }
+    },
+    "cudaRuntime": {
+      "systemInstallation": false,
+      "directory": ".tooling/vendor/llamacpp-b11829-cuda",
+      "source": "https://github.com/ggml-org/llama.cpp/releases/tag/b11829",
+      "productionDefault": false,
+      "licenseScope": "llama.cpp MIT; bibliotecas NVIDIA proprietárias, redistribuição não auditada para instalador",
+      "packages": [
+        {
+          "name": "llama-b11829-bin-win-cuda-13.4-x64.zip",
+          "bytes": 159850549,
+          "sha256": "838cd16df87fd9de11e044629da88fb872a875298dfdb20b246128926819301c"
+        },
+        {
+          "name": "cudart-llama-bin-win-cuda-13.4-x64.zip",
+          "bytes": 423535356,
+          "sha256": "738f8c251ac22b70c3ae6f83a10cf222725df0395246a2cf58f32bdb85fbe668"
+        }
+      ],
+      "downloadArchivesRemovedAfterHashVerification": true
+    },
+    "prototypeFindings": {
+      "withoutGrammar": "Nove fragmentos e fatos incorretos, não integrado.",
+      "outlineAndPerTopicLocation": "Dez propostas localizadas separadamente, mas ainda houve fragmentos, fatos e referências incorretos.",
+      "outlineAndSingleLocation": "Assuntos reconhecidos, bordas incorretas.",
+      "englishInstructions": "Uma proposta ampla que juntava episódios, não integrado."
+    },
+    "keptAssessment": {
+      "reference": {
+        "elapsedSeconds": 169.437415,
+        "cases": [
+          {
+            "number": 1,
+            "start": 70.88,
+            "end": 127.88,
+            "expectedComplete": true,
+            "expectedStandalone": true,
+            "requiresImage": false,
+            "standalone": true,
+            "complete": true,
+            "analysis": {
+              "title": "Jogo comprado crasha e apaga saves repetidamente",
+              "summary": "Um grupo compra um lançamento por 400 reais, mas enfrenta múltiplos problemas técnicos no PlayStation, incluindo crashes constantes e perda de saves. A discussão detalha a frustração com os carregamentos infinitos e o desperdício de progresso.",
+              "criteria": [
+                {
+                  "label": "Gancho",
+                  "score": 85,
+                  "explanation": "O trecho inicia com a confirmação clara da compra de um jogo por 400 reais, estabelecendo o contexto financeiro e a ação principal.",
+                  "evidence": "No jogo, 400 reais, a gente comprou o lançamento. Eu paguei, tá?"
+                },
+                {
+                  "label": "Desenvolvimento",
+                  "score": 90,
+                  "explanation": "O desenvolvimento descreve a falha técnica (crash do jogo) e a consequência imediata (perda do save e necessidade de começar tudo de novo), detalhando o caos técnico.",
+                  "evidence": "fomos passar pra botar roupa, sei lá. O jogo crashou no Playstation."
+                },
+                {
+                  "label": "Fechamento",
+                  "score": 80,
+                  "explanation": "A última fala confirma a conclusão da história: o jogo continua instável ('não para'), com a menção final de que ele vai 'brincar o console', fechando a unidade narrativa sobre a experiência negativa do jogador sem introduzir um novo assunto.",
+                  "evidence": "É, é. Então é isso aqui aí. Só falta ele brincar o console."
+                }
+              ]
+            }
+          },
+          {
+            "number": 2,
+            "start": 132.24,
+            "end": 211.08,
+            "expectedComplete": true,
+            "expectedStandalone": true,
+            "requiresImage": false,
+            "standalone": true,
+            "complete": true,
+            "analysis": {
+              "title": "Battlefield 6: Equipe erra revisão de skin",
+              "summary": "Após anunciar um novo passe de batalha no Battlefield 6, o apresentador explora imagens de skins estranhas e descobre que o nome 'group T-PAP' foi usado em vez de 'group therapy'.",
+              "criteria": [
+                {
+                  "label": "Gancho",
+                  "score": 75,
+                  "explanation": "O intervalo inicia com a menção do lançamento de um novo passe de batalha em Battlefield 6 e a observação cômica sobre a cobrança antecipada por benefícios que podem ser obtidos gratuitamente.",
+                  "evidence": "Battlefield 6 lançou um novo passe de batalha. O passe de batalha, imagina que você já paga, né?"
+                },
+                {
+                  "label": "Desenvolvimento",
+                  "score": 60,
+                  "explanation": "A narrativa transita para uma investigação visual onde o apresentador examina imagens de skins estranhas no passe de batalha, levando à descoberta do texto errado 'group T-PAP'.",
+                  "evidence": "isso com o IA E aí por que? Você pergunta Vamos puxar as imagens aí Você tem imagem Ah, tem umas imagens Não, eu quero ver Eu quero"
+                },
+                {
+                  "label": "Fechamento",
+                  "score": 85,
+                  "explanation": "A última fala conclui a unidade narrativa ao estabelecer que o erro foi deixado passar por falta de revisão ou má execução, fechando a observação sobre a incompetência da equipe sem resolver o problema dos jogadores.",
+                  "evidence": "Ou uma fizeram com o Iá e não revisaram ou fizeram errado e não revisaram, está tudo errado, independente da situação, né, está tudo errado"
+                }
+              ]
+            }
+          },
+          {
+            "number": 3,
+            "start": 249.04,
+            "end": 300.9,
+            "expectedComplete": true,
+            "expectedStandalone": true,
+            "requiresImage": true,
+            "standalone": true,
+            "complete": false,
+            "analysis": {
+              "title": "Skin bizarra do Secute parece ser meme proposital",
+              "summary": "Dois amigos discutem se uma skin específica de um jogo (Secute) foi feita propositalmente para virar meme. Eles analisam a visibilidade do item no boneco e especulam sobre sua origem, chegando à conclusão de que não faz sentido.",
+              "criteria": [
+                {
+                  "label": "Gancho",
+                  "score": 75,
+                  "explanation": "A fala inicial propõe a observação de um elemento visual ('zoom') e confirma o reconhecimento prévio do objeto.",
+                  "evidence": "Aí esse é o seguinte, dá um zoom nisso aí. Hum, já vi."
+                },
+                {
+                  "label": "Desenvolvimento",
+                  "score": 70,
+                  "explanation": "O diálogo avança identificando que se trata de uma 'skin' no jogo, estabelecendo o contexto e a dúvida sobre a visibilidade do item.",
+                  "evidence": "Mas vem cá, isso aí é na cutscene ou é no jogo, no gameplay?"
+                },
+                {
+                  "label": "Fechamento",
+                  "score": 45,
+                  "explanation": "A última frase, 'Não faz nenhum sentido', é uma conclusão lógica do debate sobre a合理性 da skin, mas o assunto não foi encerrado; há um silêncio ou corte imediato após essa negação absoluta.",
+                  "evidence": "Não faz nenhum sentido."
+                }
+              ]
+            }
+          },
+          {
+            "number": 4,
+            "start": 315.12,
+            "end": 367.76,
+            "expectedComplete": true,
+            "expectedStandalone": true,
+            "requiresImage": true,
+            "standalone": true,
+            "complete": true,
+            "analysis": {
+              "title": "Boneco com muitas armas: contagem e confusão",
+              "summary": "Dois personagens analisam detalhadamente quantas armas um boneco em exibição possui, debatendo se são pistolas ou pentes enquanto confirmam sua quantidade total.",
+              "criteria": [
+                {
+                  "label": "Gancho",
+                  "score": 75,
+                  "explanation": "O intervalo inicia com o personagem questionando a quantidade de armas do boneco ('Esses números...'), estabelecendo imediatamente o foco da observação visual.",
+                  "evidence": "Esses números... Esses números é a quantidade de pistola que esse boneco tem."
+                },
+                {
+                  "label": "Desenvolvimento",
+                  "score": 85,
+                  "explanation": "A conversa se desenvolve através de uma disputa e confirmação visual sobre a natureza dos objetos (pistolas vs. pentes), detalhando a quantidade e o posicionamento das armas no personagem.",
+                  "evidence": "Ele tem cinco pistolas. A verdade é... É o cara bem preparado para a guerra, Dava."
+                },
+                {
+                  "label": "Fechamento",
+                  "score": 90,
+                  "explanation": "O diálogo encerra com uma observação final sobre a complexidade da arma escondida dentro de outra ('Que loucura'), confirmando o relato completo e a reação do grupo à situação visual.",
+                  "evidence": "É, que tá uma dentro da outra. Que loucura. Dos lados também."
+                }
+              ]
+            }
+          },
+          {
+            "number": 5,
+            "start": 418.4,
+            "end": 455.3,
+            "expectedComplete": true,
+            "expectedStandalone": true,
+            "requiresImage": false,
+            "standalone": true,
+            "complete": true,
+            "analysis": {
+              "title": "Skin antiga vira item de luxo após erro da Valve",
+              "summary": "Usuários criticam skins de baixa qualidade que exigem gastos desnecessários, citando o caso da Valve onde jogadores compravam estátuas apenas para receber itens inúteis. O debate mostra como a comunidade reagiu à má escolha dos designers e como a empresa corrigiu o problema anos depois.",
+              "criteria": [
+                {
+                  "label": "Gancho",
+                  "score": 85,
+                  "explanation": "O intervalo inicia com uma crítica direta ao ato de gastar dinheiro em skins de baixa qualidade ('skin bugada'), estabelecendo o contexto do debate sobre a economia e valor das itens dentro do jogo.",
+                  "evidence": "Você gasta o seu dinheiro pra comprar a skin bugada. Essas skins aí, eles podiam monter no jogo."
+                },
+                {
+                  "label": "Desenvolvimento",
+                  "score": 90,
+                  "explanation": "A conversa desenvolve um caso específico da Valve onde jogadores compraram estátuas apenas para receber uma skin, detalhando o processo de espera e a consequente frustração dos usuários ao receberem o item final.",
+                  "evidence": "A Valve já fez isso, cara, que é bem interessante. Teve uma skin que a galera comprou uma estátua e aí ganhou a skin."
+                },
+                {
+                  "label": "Fechamento",
+                  "score": 95,
+                  "explanation": "A última fala conclui a piada/observação inicial ao revelar que, após a Valve corrigir o problema com outra skin, a versão antiga (a 'bugada') tornou-se um item de luxo valioso hoje. Isso fecha a unidade narrativa da crítica original transformando-a em uma constatação sobre o valor histórico do erro.",
+                  "evidence": "Mas manteve a skin antiga e aí a skin antiga hoje vale 3 mil reais, né?"
+                }
+              ]
+            }
+          },
+          {
+            "number": 6,
+            "start": 487.7,
+            "end": 536.08,
+            "expectedComplete": true,
+            "expectedStandalone": true,
+            "requiresImage": false,
+            "standalone": true,
+            "complete": true,
+            "analysis": {
+              "title": "Computador grita demais na live",
+              "summary": "Um usuário relata que seu computador está emitem um volume de barulho excessivo durante uma transmissão em vivo, piorando desde a manhã. A audiência confirma que o som está crescendo e faz a comparação com máquinas usadas para barbear, concordando coletivamente com a gravidade da situação.",
+              "criteria": [
+                {
+                  "label": "Gancho",
+                  "score": 75,
+                  "explanation": "O trecho inicia com a observação do aumento repentino do volume de um computador (PC) que está 'voando', comparado ao nível anterior.",
+                  "evidence": "A galera só escutando a Makita É, não, o computador, coitado O computador tá O PC vai voar igual o Carlos Alamo É, galera, hoje a bancada é"
+                },
+                {
+                  "label": "Desenvolvimento",
+                  "score": 70,
+                  "explanation": "A conversa expande o relato, estabelecendo a cronologia do problema ('uma hora atrás... não tava gritando tanto') e identificando que o barulho está piorando durante uma transmissão em vivo.",
+                  "evidence": "com 5 Nós 4 e a Makita E o bagulho O que tá bem pior Uma hora atrás, ele não tava gritando tanto Ele tá piorando, é Eu"
+                },
+                {
+                  "label": "Fechamento",
+                  "score": 85,
+                  "explanation": "O diálogo finaliza com a confirmação do grupo sobre a comparação entre o uso de máquinas para barbear e o barulho excessivo do PC. A última fala ('Parece mesmo') encerra a unidade narrativa ao validar a reação compartilhada ao problema, sem introduzir novos assuntos ou interromper uma frase.",
+                  "evidence": "É isso. Parece mesmo, parece mesmo, parece mesmo."
+                }
+              ]
+            }
+          }
+        ],
+        "scope": "Avaliação de intervalos aprovados; não comprova descoberta e títulos ainda exigem auditoria."
+      },
+      "controls": {
+        "elapsedSeconds": 97.1841762,
+        "cases": [
+          {
+            "name": "relato-completo",
+            "start": 427.96,
+            "end": 455.3,
+            "expectedComplete": true,
+            "standalone": true,
+            "complete": true,
+            "analysis": {
+              "title": "Skin ruim gera nova recompensa na loja",
+              "summary": "Um jogador relata a frustração de ter comprado uma estátua apenas para receber uma skin que acabou sendo considerada ruim pela comunidade. A Valve percebeu o problema e decidiu lançar uma nova skin, mantendo a primeira disponível no mercado por um valor alto.",
+              "criteria": [
+                {
+                  "label": "Gancho",
+                  "score": 75,
+                  "explanation": "O trecho inicia com a premissa de um evento específico no jogo: a compra de uma estátua que concedeu uma skin específica.",
+                  "evidence": "Teve uma skin que a galera comprou uma estátua e aí ganhou a skin."
+                },
+                {
+                  "label": "Desenvolvimento",
+                  "score": 80,
+                  "explanation": "A fala seguinte detalha o processo temporal e frustrante da espera pela recompensa, estabelecendo o conflito central do relato.",
+                  "evidence": "E aí essa skin, quando ela chegou, porque você comprava a estátua e demorava pra chegar a estátua e chegava a skin."
+                },
+                {
+                  "label": "Fechamento",
+                  "score": 85,
+                  "explanation": "O intervalo se completa ao mostrar a reação final dos jogadores (considerarem a skin ruim) e a consequência imediata da empresa (Vale criar uma nova skin), além de destacar o valor residual da antiga.",
+                  "evidence": "Mas manteve a skin antiga e aí a skin antiga hoje vale 3 mil reais, né?"
+                }
+              ]
+            },
+            "passed": true
+          },
+          {
+            "name": "mesmo-relato-interrompido",
+            "start": 427.96,
+            "end": 445.52,
+            "expectedComplete": false,
+            "standalone": true,
+            "complete": false,
+            "analysis": {
+              "title": "Jogador espera dias pela skin e recebe uma merda",
+              "summary": "Dois jogadores discutem sobre uma mecânica de jogo onde comprar uma estátua concede uma skin. O primeiro fala sobre esperar o item chegar, enquanto o segundo expressa frustração ao descobrir que a skin recebida foi ruim.",
+              "criteria": [
+                {
+                  "label": "Gancho",
+                  "score": 75,
+                  "explanation": "O bloco inicia apresentando a mecânica do jogo (comprar estátua para ganhar skin), estabelecendo o contexto da frustração iminente.",
+                  "evidence": "Teve uma skin que a galera comprou uma estátua e aí ganhou a skin."
+                },
+                {
+                  "label": "Desenvolvimento",
+                  "score": 80,
+                  "explanation": "A fala seguinte detalha a experiência específica de atraso (demora na entrega do item), aumentando a tensão narrativa.",
+                  "evidence": "E aí essa skin, quando ela chegou, porque você comprava a estátua e demorava pra chegar a estátua e chegava a skin."
+                },
+                {
+                  "label": "Fechamento",
+                  "score": 90,
+                  "explanation": "O diálogo se encerra com a revelação da piada: o jogador espera dias pela skin e recebe uma 'merda', completando a ironia do momento sem cortar a frase.",
+                  "evidence": "Quando chegou a skin, a skin é uma merda. Todo mundo falou, porra, comprei a estátua, esperei um tempo,"
+                }
+              ]
+            },
+            "passed": true
+          },
+          {
+            "name": "mudanca-sem-desfecho",
+            "start": 129.84,
+            "end": 235.04,
+            "expectedComplete": false,
+            "standalone": true,
+            "complete": false,
+            "analysis": {
+              "title": "Skins erradas da Battlefield 6 causam caos",
+              "summary": "Jogadores de Battlefield 6 descobrem skins no novo passe de batalha com textos absurdos gerados por IA, como 'group T-PAP' em vez de 'group therapy', o que gera risadas e crítica sobre a falta de revisão.",
+              "criteria": [
+                {
+                  "label": "Gancho",
+                  "score": 75,
+                  "explanation": "O trecho inicia com a revelação de um fato curioso sobre Battlefield 6: o lançamento de um novo passe de batalha e as skins estranhas avistadas pelos jogadores. Isso estabelece o contexto imediato.",
+                  "evidence": "Aí o que eu avistei O quê? Battlefield 6 lançou um novo passe de batalha."
+                },
+                {
+                  "label": "Desenvolvimento",
+                  "score": 70,
+                  "explanation": "A conversa detalha a situação: players acusando a EA de usar IA para criar skins com textos errados (como 'group T-PAP' em vez de 'group therapy'), gerando uma piada visual e verbal.",
+                  "evidence": "bunda Claro Aí o que aconteceu Os jogadores avistaram Umas coisas estranhas No passo de batalha De umas skins Que está sendo Eles estão acusando a EA Battlefield"
+                },
+                {
+                  "label": "Fechamento",
+                  "score": 30,
+                  "explanation": "A última fala introduz um novo tópico (Tourette vs. coringão) que não conecta ao relato anterior sobre as skins erradas ou a piada do texto 'group T-PAP'. A transição abrupta rompe a unidade narrativa.",
+                  "evidence": "valeu meu coringão é o Tourette? É nóis vai melhorar para nós, hein Que caralho!"
+                }
+              ]
+            },
+            "passed": true
+          }
+        ]
+      },
+      "promptMatchesRecordedKeptControl": true,
+      "acceptance": "FAIL: referência exige seis completos, foram cinco; títulos ainda incorretos. Controles de completos/interrompido/outro assunto: 3/3."
+    },
+    "rejectedTextOnlyCalibration": {
+      "reference": {
+        "elapsedSeconds": 170.9527986,
+        "cases": [
+          {
+            "number": 1,
+            "start": 70.88,
+            "end": 127.88,
+            "expectedComplete": true,
+            "expectedStandalone": true,
+            "requiresImage": false,
+            "standalone": true,
+            "complete": true,
+            "analysis": {
+              "title": "Jogo faz load infinito e apaga o save dos jogadores",
+              "summary": "Dois jogadores relatam ter comprado um jogo e ficarem frustrados após perderem todo o progresso feito devido a um crash e à perda acidental do save. Eles discutem se foi culpa do jogador ou do sistema, culminando na conclusão de que o próprio jogo causou a falha propositalmente.",
+              "criteria": [
+                {
+                  "label": "Gancho",
+                  "score": 55,
+                  "explanation": "O trecho inicia com a confirmação da compra de um jogo por 400 reais, estabelecendo o contexto inicial do gasto.",
+                  "evidence": "No jogo, 400 reais, a gente comprou o lançamento. Eu paguei, tá?"
+                },
+                {
+                  "label": "Desenvolvimento",
+                  "score": 65,
+                  "explanation": "No meio do intervalo, são relatados os problemas técnicos: o crash no Playstation e a perda do save ao tentar continuar, gerando frustração dos jogadores.",
+                  "evidence": "fomos passar pra botar roupa, sei lá. O jogo crashou no Playstation."
+                },
+                {
+                  "label": "Fechamento",
+                  "score": 70,
+                  "explanation": "A última fala conclui a unidade narrativa ao confirmar que o problema principal (a perda do progresso) ocorreu porque o jogo 'brincou' com o console, eliminando a necessidade de uma solução técnica ou resolução final do bug.",
+                  "evidence": "É, é. Então é isso aqui aí. Só falta ele brincar o console."
+                }
+              ]
+            }
+          },
+          {
+            "number": 2,
+            "start": 132.24,
+            "end": 211.08,
+            "expectedComplete": true,
+            "expectedStandalone": true,
+            "requiresImage": false,
+            "standalone": true,
+            "complete": false,
+            "analysis": {
+              "title": "Battlefield 6: Acusações e erro de digitação na skin",
+              "summary": "Após discutir o lançamento do Battlefield 6 e os benefícios do passe de batalha, o foco se desvia para acusações contra a EA por usar IA na criação de skins. Durante uma análise visual das imagens questionadas, surge um erro de digitação em 'group T-PAP' ao invés de 'group therapy', gerando uma troca sobre o equívoco específico antes da conclusão.",
+              "criteria": [
+                {
+                  "label": "Gancho",
+                  "score": 50,
+                  "explanation": "A abertura contextualiza o lançamento do novo passe de batalha no Battlefield 6 e a possibilidade de compra gratuita, estabelecendo o tema inicial sobre os benefícios do jogo.",
+                  "evidence": "Battlefield 6 lançou um novo passe de batalha. O passe de batalha, imagina que você já paga, né?"
+                },
+                {
+                  "label": "Desenvolvimento",
+                  "score": 60,
+                  "explanation": "O trecho desenvolve a narrativa ao mencionar que jogadores avistaram coisas estranhas (skins) no passe de batalha e estão acusando a EA Battlefield Studios sobre o uso de IA na criação desses ativos.",
+                  "evidence": "Os jogadores avistaram Umas coisas estranhas No passo de batalha De umas skins Que está sendo Eles estão acusando a EA Battlefield Studios agora De ter feito tudo"
+                },
+                {
+                  "label": "Fechamento",
+                  "score": 40,
+                  "explanation": "A última fala conclui a reflexão sobre a qualidade do trabalho com a afirmação categórica de que está tudo errado, seja por falha na revisão ou erro de execução. No entanto, o foco muda abruptamente para uma análise interna da frase 'group T-PAP' versus 'group therapy', introduzindo um novo assunto (o erro de digitação específico) que interrompe e não conclui a unidade do relato sobre as skins estranhas.",
+                  "evidence": "Ou uma fizeram com o Iá e não revisaram ou fizeram errado e não revisaram, está tudo errado, independente da situação, né, está tudo errado"
+                }
+              ]
+            }
+          },
+          {
+            "number": 3,
+            "start": 249.04,
+            "end": 300.9,
+            "expectedComplete": true,
+            "expectedStandalone": true,
+            "requiresImage": true,
+            "standalone": true,
+            "complete": false,
+            "analysis": {
+              "title": "Usuários debatem a lógica de uma skin estranha",
+              "summary": "Dois usuários discutem se uma skin específica de um personagem é apenas decorativa ou parte do gameplay, analisando sua visibilidade e características técnicas no menu. O debate culmina com uma dúvida sobre a lógica da criação sem resposta definitiva.",
+              "criteria": [
+                {
+                  "label": "Gancho",
+                  "score": 85,
+                  "explanation": "O intervalo inicia com a identificação de um elemento visual específico ('dá um zoom nisso aí'), estabelecendo o objeto central da conversa.",
+                  "evidence": "Aí esse é o seguinte, dá um zoom nisso aí. Hum, já vi."
+                },
+                {
+                  "label": "Desenvolvimento",
+                  "score": 75,
+                  "explanation": "Os falantes discutem as características técnicas do item (skin, modelo TNZ) e sua visibilidade no jogo, construindo a base argumentativa sobre a natureza do objeto.",
+                  "evidence": "Mas ele tem um modelo TNZ, que você gira e vê no menu e tal."
+                },
+                {
+                  "label": "Fechamento",
+                  "score": 45,
+                  "explanation": "A última fala ('Não faz nenhum sentido') é uma conclusão negativa ao argumento anterior sobre a lógica da criação da skin, mas introduz um novo ponto de dúvida ('por que eles fariam isso?') sem responder, mudando o foco para uma especulação vazia que não fecha a unidade narrativa iniciada.",
+                  "evidence": "Não faz nenhum sentido."
+                }
+              ]
+            }
+          },
+          {
+            "number": 4,
+            "start": 315.12,
+            "end": 367.76,
+            "expectedComplete": true,
+            "expectedStandalone": true,
+            "requiresImage": true,
+            "standalone": true,
+            "complete": true,
+            "analysis": {
+              "title": "Boneco de guerra tem pistola dentro de pistola",
+              "summary": "Dois personagens discutem a quantidade de pistolas em um boneco de guerra, inicialmente concordando que são cinco armas distribuídas estrategicamente. A conversa termina com a revelação de que uma das 'pistolas' está dentro de outra, expondo o absurdo da situação e fechando a piada sobre a contagem total.",
+              "criteria": [
+                {
+                  "label": "Gancho",
+                  "score": 75,
+                  "explanation": "O intervalo inicia com uma observação sobre a quantidade de armas em um boneco ('Esses números... é a quantidade de pistola'), estabelecendo o assunto central.",
+                  "evidence": "Esses números... Esses números é a quantidade de pistola que esse boneco tem."
+                },
+                {
+                  "label": "Desenvolvimento",
+                  "score": 80,
+                  "explanation": "A conversa desenvolve-se com os participantes confirmando a preparação militar do boneco e sugerindo um mecanismo de recarga infinita ('Acabou uma pistola, a gente saca outra no peito'), o que cria uma premissa absurda para a piada.",
+                  "evidence": "Quanto mais arma, melhor, pô. É muito bom, né? Acabou uma pistola, a gente saca outra no peito, saca outra aqui."
+                },
+                {
+                  "label": "Fechamento",
+                  "score": 85,
+                  "explanation": "O fechamento é alcançado com a revelação final ('que tá uma dentro da outra. Que loucura'), que confirma o absurdo da situação e resolve a dúvida inicial sobre a contagem de armas, transformando a observação em piada completa.",
+                  "evidence": "É, que tá uma dentro da outra. Que loucura. Dos lados também."
+                }
+              ]
+            }
+          },
+          {
+            "number": 5,
+            "start": 418.4,
+            "end": 455.3,
+            "expectedComplete": true,
+            "expectedStandalone": true,
+            "requiresImage": false,
+            "standalone": true,
+            "complete": true,
+            "analysis": {
+              "title": "Skin de estátua vale 3 mil reais hoje",
+              "summary": "Jogadores discutem a compra de skins bugadas no jogo, citando um caso da Valve onde usuários pagaram por estátuas apenas para ganhar recompensas. A conversa revela que, embora a skin original tenha sido considerada ruim no momento, ela agora tem um valor de mercado alto.",
+              "criteria": [
+                {
+                  "label": "Gancho",
+                  "score": 85,
+                  "explanation": "O intervalo inicia com uma crítica direta à qualidade das skins do jogo (termo 'bugada') e ao custo-benefício, estabelecendo o conflito central sobre a compra de itens virtuais.",
+                  "evidence": "Você gasta o seu dinheiro pra comprar a skin bugada. Essas skins aí, eles podiam monter no jogo."
+                },
+                {
+                  "label": "Desenvolvimento",
+                  "score": 90,
+                  "explanation": "A conversa desenvolve o argumento citando um caso real da Valve onde jogadores compraram estátuas apenas para ganhar skins, contextualizando o mecanismo do jogo e criando expectativa sobre o resultado final.",
+                  "evidence": "A Valve já fez isso, cara, que é bem interessante. Teve uma skin que a galera comprou uma estátua e aí ganhou a skin."
+                },
+                {
+                  "label": "Fechamento",
+                  "score": 92,
+                  "explanation": "O trecho termina revelando que a skin antiga adquirida através desse caminho agora vale 3 mil reais, fechando a piada com o contraste entre o esforço (esperar pela estátua) e o valor atual do prêmio.",
+                  "evidence": "Mas manteve a skin antiga e aí a skin antiga hoje vale 3 mil reais, né?"
+                }
+              ]
+            }
+          },
+          {
+            "number": 6,
+            "start": 487.7,
+            "end": 536.08,
+            "expectedComplete": true,
+            "expectedStandalone": true,
+            "requiresImage": false,
+            "standalone": true,
+            "complete": true,
+            "analysis": {
+              "title": "Computador voando demais na bancada",
+              "summary": "Um falante relata que o computador da bancada está voando muito e piorou em relação ao dia anterior. O grupo concorda que o barulho é excessivo, sugerindo a necessidade de proteção.",
+              "criteria": [
+                {
+                  "label": "Gancho",
+                  "score": 85,
+                  "explanation": "O trecho inicia com a observação do computador voando e a comparação ao Carlos Alamo, estabelecendo o conflito principal (o barulho excessivo) imediatamente.",
+                  "evidence": "A galera só escutando a Makita É, não, o computador, coitado O computador tá O PC vai voar igual o Carlos Alamo É, galera, hoje a bancada é"
+                },
+                {
+                  "label": "Desenvolvimento",
+                  "score": 90,
+                  "explanation": "A fala desenvolve o relato ao explicar que o computador está piorando do que ontem e menciona a necessidade de proteção, reforçando a gravidade da situação.",
+                  "evidence": "tô em live aqui com esse PC Desde duas horas, né, Taquete E ele não tava nesse nível Tem que botar uma proteção aí, cara É verdade É"
+                },
+                {
+                  "label": "Fechamento",
+                  "score": 80,
+                  "explanation": "A última fala confirma a percepção dos outros participantes sobre o barulho ('Parece mesmo'), fechando a reação do grupo ao fato relatado sem introduzir novos assuntos.",
+                  "evidence": "É isso. Parece mesmo, parece mesmo, parece mesmo."
+                }
+              ]
+            }
+          }
+        ],
+        "scope": "Avaliação de intervalos aprovados; não comprova descoberta e títulos ainda exigem auditoria."
+      },
+      "controls": {
+        "elapsedSeconds": 97.927981,
+        "cases": [
+          {
+            "name": "relato-completo",
+            "start": 427.96,
+            "end": 455.3,
+            "expectedComplete": true,
+            "standalone": true,
+            "complete": true,
+            "analysis": {
+              "title": "Skin antiga vira investimento após feedback ruim",
+              "summary": "Um jogador relata como comprou uma estátua esperando receber uma skin específica, mas quando o item chegou, ele estava insatisfeito. A comunidade reagiu negativamente e a empresa Valve ouviu os comentários, lançando outra versão do item.",
+              "criteria": [
+                {
+                  "label": "Gancho",
+                  "score": 50,
+                  "explanation": "O blope inicia com uma premissa clara sobre a dinâmica de compra e entrega de itens em um jogo (skin vs. estátua), estabelecendo o conflito central.",
+                  "evidence": "Teve uma skin que a galera comprou uma estátua e aí ganhou a skin."
+                },
+                {
+                  "label": "Desenvolvimento",
+                  "score": 70,
+                  "explanation": "A fala desenvolve o relato mostrando a reação negativa da comunidade ('a skin é uma merda') após a demora na entrega do item, explicando o motivo do insatisfação.",
+                  "evidence": "Quando chegou a skin, a skin é uma merda. Todo mundo falou, porra, comprei a estátua, esperei um tempo, a skin é uma merda."
+                },
+                {
+                  "label": "Fechamento",
+                  "score": 85,
+                  "explanation": "A última fala completa a história ao revelar a consequência final: a Valve ouviu a crítica, lançou outra skin e manteve a antiga, que agora tem valor monetário. O relato do problema (skin ruim) chega à sua solução/resolução (nova skin + valorização da velha).",
+                  "evidence": "Mas manteve a skin antiga e aí a skin antiga hoje vale 3 mil reais, né?"
+                }
+              ]
+            },
+            "passed": true
+          },
+          {
+            "name": "mesmo-relato-interrompido",
+            "start": 427.96,
+            "end": 445.52,
+            "expectedComplete": false,
+            "standalone": true,
+            "complete": false,
+            "analysis": {
+              "title": "Skin comprada na estátua vira merda",
+              "summary": "Um jogador compra uma estátua para ganhar uma skin, mas o processo demora muito tempo. Ao receber finalmente a skin, ele se decepciona profundamente com a qualidade ou utilidade do item adquirido.",
+              "criteria": [
+                {
+                  "label": "Gancho",
+                  "score": 65,
+                  "explanation": "O bloco inicia descrevendo o mecanismo de compra (estátua) e entrega da skin, estabelecendo o contexto do evento.",
+                  "evidence": "Teve uma skin que a galera comprou uma estátua e aí ganhou a skin."
+                },
+                {
+                  "label": "Desenvolvimento",
+                  "score": 70,
+                  "explanation": "A fala seguinte detalha a frustração do processo: comprar a estátua primeiro, esperar por um tempo, e receber apenas a skin no final.",
+                  "evidence": "E aí essa skin, quando ela chegou, porque você comprava a estátua e demorava pra chegar a estátua e chegava a skin."
+                },
+                {
+                  "label": "Fechamento",
+                  "score": 85,
+                  "explanation": "A última fala conclui o relato expressando a reação negativa ao resultado: 'a skin é uma merda', validando completamente a narrativa de frustração iniciada.",
+                  "evidence": "Quando chegou a skin, a skin é uma merda. Todo mundo falou, porra, comprei a estátua, esperei um tempo,"
+                }
+              ]
+            },
+            "passed": true
+          },
+          {
+            "name": "mudanca-sem-desfecho",
+            "start": 129.84,
+            "end": 235.04,
+            "expectedComplete": false,
+            "standalone": true,
+            "complete": true,
+            "analysis": {
+              "title": "Imagens estranhas no BF6 revelam marca de T-PAP",
+              "summary": "Jogadores descobrem imagens estranhas no novo passe de batalha do Battlefield 6. A equipe de desenvolvimento explica que as marcas 'T-PAP' foram inseridas intencionalmente para parecerem como um grupo terapêutico, mas soam como uma referência a pacientes com Transtorno de Tourette.",
+              "criteria": [
+                {
+                  "label": "Gancho",
+                  "score": 85,
+                  "explanation": "O intervalo começa com a revelação de que jogadores viram imagens estranhas no novo passe de batalha do Battlefield 6, estabelecendo o evento central.",
+                  "evidence": "Aí o que eu avistei O quê? Battlefield 6 lançou um novo passe de batalha."
+                },
+                {
+                  "label": "Desenvolvimento",
+                  "score": 90,
+                  "explanation": "A discussão se foca na diferença entre 'group therapy' e a marca registrada 'T-PAP', esclarecendo que a confusão visual foi intencional por parte da equipe de desenvolvimento.",
+                  "evidence": "Não, não, não. Lê de novo. Não, grupo T-PAP. Era pra ser group therapy, certo?"
+                },
+                {
+                  "label": "Fechamento",
+                  "score": 92,
+                  "explanation": "A piada final é encerrada pela reação do grupo ao perceberem que 'T-PAP' soa como um jogo para pacientes com Transtorno de Tourette, transformando o erro técnico em uma observação humorística autônoma.",
+                  "evidence": "valeu meu coringão é o Tourette? É nóis vai melhorar para nós, hein Que caralho!"
+                }
+              ]
+            },
+            "passed": false
+          }
+        ]
+      },
+      "kept": false,
+      "reason": "Regrediu para 4/6 positivos e 2/3 controles. Parágrafo removido; prompt restaurado ao conteúdo do ensaio 5/6 + 3/3."
+    },
+    "nativeFresh5": {
+      "status": "failed",
+      "elapsedSeconds": 58.9216712,
+      "error": "Não encontramos cortes com abertura e fechamento completos nesta rodada. Tente outra faixa ou amplie a duração máxima."
+    },
+    "nativeFresh5Scope": "Configuração mantida após rejeitar a calibração: geração terminou sem cortes, portanto FAIL editorial; nenhuma gravação no perfil real.",
+    "finalChecks": {
+      "rustPassed": 186,
+      "rustFailed": 0,
+      "rustIgnored": 18,
+      "frontendPassed": 258,
+      "frontendFailed": 0,
+      "frontendScope": "Rodada após migração; desde então só comentário removido no frontend.",
+      "format": "PASS",
+      "checkAllTargets": "PASS",
+      "canonicalBuild": "PASS",
+      "compilerWarnings": 0,
+      "binary": "app/src-tauri/target/debug/cutnicepro.exe",
+      "sha256": "F170AB89178747C81B44A5CEB5D11D4C56092CE6209FCF07906D43659EB7757D",
+      "uiAutomation": false,
+      "realProfileWrites": false,
+      "commit": false,
+      "push": false
+    }
+  },
+  "currentStatus": "PARTIAL_EDITORIAL",
+  "chronology": "nativeRun e controles anteriores descrevem a etapa Gemma, preservada como histórico. qwen35Continuation descreve o estado atual Qwen3.5, sem promover 9B."
+}

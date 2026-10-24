@@ -2,6 +2,10 @@
 
 Atualização operacional 2026-10-24: mantenedor testou a biblioteca e relatou funcionamento mais leve e organizado. Próxima adaptação autorizada: prompts editoriais e detecção local de rostos do AutoClip, com escopo/aceites no BACKLOG e estudo em OPEN-SOURCE-ENGINE-RESEARCH. Isso não equivale a aceite editorial dos novos cortes ou tracking animado. Regras complementares em BUSINESS-RULES (Cortes), rastreabilidade em TRACEABILITY e evidências/limites no ENGINE-HANDOFF.
 
+Continuidade atual: mantenedor determinou Qwen3.5-4B exclusivo/32K, sem novos testes Qwen3 e com retirada do Gemma 4. Aprovou como referência editorial as seis propostas do assistente (duas dependem de imagem), registradas em docs/reports/evidence/criterio-editorial-assistente-2026-10-24.json. Isso não aprova saídas do Qwen. Migração/refino ainda em validação; estudos AutoClip/SupoClip, resultados e falhas no ENGINE-HANDOFF. Direção local preservada; comparações de API e proposta de seletor anterior ficam adiadas por essa nova decisão.
+
+Comparação posterior Qwen3.5-9B autorizada e executada: não demonstrou o ganho editorial necessário, portanto não substitui o 4B. As seis referências não foram alcançadas pela descoberta automática. A comparação e os reparos de orquestração permanecem distintos de aceite editorial ou de uma entrega estável; estado atual no registro canônico.
+
 > Ponto de entrada da inteligência de produto. **Não duplica especificações**: indexa os
 > documentos canônicos e suas relações. Regra permanente de atualização incremental:
 > toda mudança relevante em funcionalidade, fluxo, regra ou prioridade atualiza o documento

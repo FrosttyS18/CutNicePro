@@ -1,0 +1,95 @@
+{
+  "author": "Julgamento editorial do assistente nesta conversa, sem API externa",
+  "basis": "Leitura integral de 334 segmentos/599,08 segundos de ASR; sem assistir/ouvir o original.",
+  "status": "APPROVED_AS_DELIVERY_REFERENCE",
+  "notModelOutput": true,
+  "notPublished": true,
+  "proposals": [
+    {
+      "number": 1,
+      "firstId": 30,
+      "lastId": 61,
+      "start": 70.88,
+      "end": 127.88,
+      "title": "R$ 400 num jogo que trava e apaga o save",
+      "reason": "Compra, crash, perda do progresso e reação final. Não atribuir o jogo ao Battlefield por proximidade temática.",
+      "requiresImage": false,
+      "opening": "No jogo, 400 reais, a gente comprou o lançamento.",
+      "closing": "Só falta ele brincar o console."
+    },
+    {
+      "number": 2,
+      "firstId": 65,
+      "lastId": 111,
+      "start": 132.24,
+      "end": 211.08,
+      "title": "IA ou falta de revisão? O “Group T-PAP” do Battlefield 6",
+      "reason": "Apresentação do passe, suspeita, exemplo e conclusão; não afirmar uso de IA como fato.",
+      "requiresImage": false,
+      "opening": "Battlefield 6 lançou um novo passe de batalha.",
+      "closing": "da situação, né, está tudo errado"
+    },
+    {
+      "number": 3,
+      "firstId": 128,
+      "lastId": 159,
+      "start": 249.04,
+      "end": 300.9,
+      "title": "“Secute”: erro na skin ou meme de propósito?",
+      "reason": "Pergunta sobre o erro e conclusão de que a escrita não faz sentido; depende da inscrição visível.",
+      "requiresImage": true,
+      "opening": "Aí esse é o seguinte, dá um zoom nisso aí.",
+      "closing": "Não faz nenhum sentido."
+    },
+    {
+      "number": 4,
+      "firstId": 176,
+      "lastId": 212,
+      "start": 315.12,
+      "end": 367.76,
+      "title": "Cinco ou seis pistolas? A skin que virou piada",
+      "reason": "Descoberta, discussão da contagem e reação; mostrar o personagem, sem cravar uma contagem contestada.",
+      "requiresImage": true,
+      "opening": "Esses números...",
+      "closing": "Dos lados também."
+    },
+    {
+      "number": 5,
+      "firstId": 246,
+      "lastId": 258,
+      "start": 418.4,
+      "end": 455.3,
+      "title": "A Valve corrigiu a skin — e a versão ruim ficou valiosa",
+      "reason": "Reclamação, correção e valor da antiga; parar antes da intervenção incompleta seguinte.",
+      "requiresImage": false,
+      "opening": "Você gasta o seu dinheiro pra comprar a skin bugada.",
+      "closing": "vale 3 mil reais, né?"
+    },
+    {
+      "number": 6,
+      "firstId": 276,
+      "lastId": 299,
+      "start": 487.7,
+      "end": 536.08,
+      "title": "O PC virou o quinto integrante da bancada",
+      "reason": "Apresenta a piada da Makita, explica o computador barulhento e fecha na máquina de barbear; preservar áudio.",
+      "requiresImage": false,
+      "opening": "A galera só escutando a Makita",
+      "closing": "Parece mesmo, parece mesmo, parece mesmo."
+    }
+  ],
+  "excluded": [
+    "Introdução isolada do passe de batalha sem o exemplo/desfecho.",
+    "Sobretudo do PUBG com começo fragmentado e mudança para o PC.",
+    "Interrupções soltas sem desenvolvimento.",
+    "Patrocínio Logitech separado de conteúdo editorial."
+  ],
+  "criteria": [
+    "Título sustentado pelo intervalo.",
+    "Abertura compreensível no próprio corte.",
+    "Final encerra a mesma ideia.",
+    "Dependência de imagem respeitada no enquadramento."
+  ],
+  "approval": "Mantenedor: aceito como um bom parâmetro de entrega; agora é conseguir fazer o Qwen entregar isso.",
+  "approvalScope": "Seis propostas editoriais como critério de entrega, não aprovação de cortes gerados pelo Qwen ou de MP4s ainda não vistos."
+}

@@ -3,72 +3,129 @@
 ╚════════════════════════════════════════════╝
 
 TASK
-  Name: Resultado silencioso da geração
-  Status: PASS no tratamento de resultado/erro.
-  FUNCTIONAL STATUS: PASS nos cenários automatizados.
-  REGRESSION STATUS: PASS no frontend executado.
+  Name: Qwen3.5 local — comparação 9B e refino do descarte
+  Status: PARTIAL — a comparação terminou; a qualidade não foi resolvida.
+  Objective: alcançar o parâmetro editorial aprovado, usando IA local.
+  FUNCTIONAL STATUS: PARTIAL
+  REGRESSION STATUS: PASS nas suítes executadas; interface não operada.
   VISUAL STATUS: PENDING HUMAN APPROVAL
 
+RESULTADO DIDÁTICO
+  O 9B não justificou substituir o 4B neste ensaio:
+  - 4B: 36,51 s; pico observado do processo 3763,85 MiB.
+  - 9B: 57,86 s; pico observado do processo 6596,05 MiB.
+  Mesma transcrição completa, contexto 32K e quantização Q4_K_M.
+  Esses números não são RAM total do aplicativo nem VRAM exclusiva.
+  Ambos erraram fatos e limites. O 9B thinking levou 173,34 s e propôs
+  três intervalos: um próximo ao exemplo do PC, outro misturou histórias
+  e excedeu 180 s; persistiu atribuição incorreta ao EAFC. Não promovido.
+
 IMPLEMENTATION
-  Log do mantenedor: 13 propostas recusadas; a única selecionada
-    também foi recusada na análise final. Zero cortes novos aprovados.
-  Corrigido: toast persistente para resultado, zero novos ou erro.
-  Corrigido: retorno inválido não vira sucesso; evento tardio não apaga falha.
-  Mensagens explicam o motivo, sem atribuir qualquer falha ao disco.
-  Critérios editoriais, prompts, modelos e backend preservados.
+  Completed: Qwen3.5-4B/32K como motor local; aliases legados preservados;
+    retirada autorizada do Gemma 4; descoberta com fonte inteira, sem
+    truncagem/divisão; avaliação única por intervalo; dedupe antes das
+    vagas; reparos também quando já existe corte aceito; segunda busca
+    com falhas concretas, inclusive em coleção inicialmente vazia.
+  Decisions: piso 50 e contexto/conclusão mantidos. Não copiar tempos ou
+    títulos de referência para produção. 9B permanece experimental.
+  Research: AutoClip separa mapa, localização, notas e títulos no fluxo
+    normal, além do caminho rápido. Protótipos em etapas, sem gramática,
+    em inglês e com thinking ainda falharam; não integrados. SupoClip
+    estudado sem incorporar seu código/prompt AGPL ao produto.
+  Not completed: descoberta confiável, títulos fiéis e seis referências.
+    O avaliador mantido reconheceu 5/6 positivos e passou 3/3 controles.
+    Calibração pior (4/6 e 2/3) foi retirada. A última geração isolada
+    ainda terminou sem cortes em 58,92 s. Isso é falha editorial real,
+    não uma pendência exclusiva de aprovação do mantenedor.
+  Architecture impact: adaptador local e regras internas; histórico,
+    edição, biblioteca e contratos públicos existentes preservados.
 
 FILES
-  Modified: useClips.ts, clips.ts, ProjectWorkspace.tsx, clips.css,
-    ENGINE-HANDOFF.md, BACKLOG.md e LATEST.txt.
-  Created: ClipFeedback.tsx, clip-generation-feedback.test.tsx,
-    manifesto e histórico deste relatório.
-  Deleted: nenhum. Unexpected changes: NONE.
-  Lista: docs/reports/evidence/geracao-feedback-2026-10-24.json.
+  Base: C:/CutNicePro/
+  Created: app/src-tauri/src/clips/{assessment.rs,discovery_reply.rs,
+    editorial_repair.rs,engine_tools.rs,incremental_runtime_tests.rs,
+    novelty.rs,qwen35_contract_tests.rs,repair-prompt.txt}; licença Qwen;
+    cinco JSONs de evidência em docs/reports/evidence; este relatório.
+  Modified: Cargo.toml/lock; clips/{autoclip_runtime_tests,commands,
+    editorial,evidence,generation,mod,pipeline_tests,selection,semantic,
+    semantic_tests,text_engine,types}.rs; três prompts de descoberta/
+    avaliação; ClipTools.tsx, ProjectWorkspace.tsx, lib/clips.ts,
+    clip-flow.test.tsx; TOOLING, ENGINE-HANDOFF, PRODUCT-BRAIN, BACKLOG,
+    BUSINESS-RULES, TRACEABILITY, OPEN-SOURCE-ENGINE-RESEARCH e LATEST.txt.
+  Deleted: clips/multimodal.rs; pesos Gemma 4, mmproj e configuração
+    específica (inventário: 6,6599 GiB lógicos). Dados reais preservados.
+  Experiments: pesos 4B/9B e runtime CUDA identificados, fora do Git;
+    scripts/logs em .tooling/test-output/geracao-incremental-2026-10-24.
+    Dois ZIPs temporários próprios removidos após conferir os digests.
+  Unexpected changes: NONE; nenhuma build alternativa do aplicativo.
 
 VALIDATION
-  Frontend: 258 PASS, 0 FAIL, 40 arquivos.
-  Cinco cenários: zero novos, resposta inválida/evento tardio,
-    erro persistente, cancelamento e novos realmente adicionados.
-  Regressões reproduzidas antes das correções.
-  Typecheck/build e ESLint estrito: PASS, zero warnings.
-  Rust não alterado/reexecutado; IPC dos testes é simulado.
-  Sem teste de desktop ou nova inferência de IA.
+  Typecheck / lint / frontend build: PASS na rodada após migração;
+    depois houve apenas remoção de comentário obsoleto no frontend.
+  Unit/contract tests: Rust 186 PASS/0 FAIL/18 opt-in; frontend 258/258.
+  Format / check all-targets / canonical build: PASS, sem avisos.
+  Integration: FFmpeg real nas suítes; geração/avaliação local isoladas.
+  Runtime editorial: FAIL — referência 6/6 não atingida; geração final 0.
+    Rodada intermediária publicou um no laboratório, mas a auditoria
+    reprovou título/descrição/borda. Contagem não foi tratada como aceite.
+  Total passed: 444 nas suítes rápidas.
+  Total failed: 0 nessas suítes; os gates editoriais acima falharam.
+    Tentativas reprovadas foram preservadas nas evidências.
+  Total skipped: 18 opt-in; UI e instalador/release não executados.
 
 HOOKS / HARNESS
-  Verificações explícitas; hooks ZCode não executados neste cliente.
-  Testes de React corrigidos para progresso animado/nome acessível.
+  Hooks ZCode: não executados por este cliente; Stop não usado como PASS.
+  Harness: testes nativos e saídas isoladas. Sem automação de tela,
+    gravação no perfil real ou publicação dos testes na sua biblioteca.
 
 MCP / SKILLS
-  Graphify remoto antes/depois; índice corresponde ao HEAD.
-  Working tree ainda não indexado; fonte local complementada.
-  Diagnóstico sistemático, TDD, frontend e verificação de conclusão.
+  Graphify remoto consultado antes/depois, workspace wesley-s-workspace,
+    FrosttyS18/CutNicePro, índice no HEAD abaixo. Mudanças locais ainda
+    não indexadas; fonte/diff/testes complementaram o grafo. Nenhum teste
+    vinculado retornado pelo grafo; isso não prova ausência de testes.
+  Pesquisa: GitHub/fontes oficiais e leitura AutoClip/SupoClip.
+  Skills: investigação sistemática, TDD e verificação antes da entrega.
+  Pending activation: nenhuma.
 
 GIT
   Branch: main
-  HEAD: 8a635b5c36b93a4a6f4ac0ddf0bb657510096be5
-  Latest commit: chore(repo): organiza evidências e governança do projeto
+  HEAD: 1de7f9812c01b4dd75982e35fc7ab723262e3a15
+  Latest commit: fix(clips): preservar contexto e conclusões nos cortes
   Commits created: nenhum. Push: NOT EXECUTED.
   Remote: origin → FrosttyS18/CutNicePro, main.
-  Working tree: MODIFIED/UNTRACKED; 85 arquivos pendentes,
-    incluindo trabalho anterior.
+  Working tree: MODIFIED + UNTRACKED; arquivos acima pendentes, incluindo
+    os dois relatórios. Pesos/runtimes não entram no Git.
 
 EVIDENCE
-  Manifesto: docs/reports/evidence/geracao-feedback-2026-10-24.json.
-  Logs: .tooling/test-output/silent-generation-*.
+  C:/CutNicePro/docs/reports/evidence/
+    qwen35-9b-comparacao-2026-10-24.json
+    geracao-incremental-modelos-2026-10-24.json
+    criterio-editorial-assistente-2026-10-24.json
+  Commands: cargo test/check/build --offline --locked; cargo fmt;
+    tsc/Vite/eslint/vitest; ensaios locais completos e diff --check.
+  Screenshots: nenhuma. Reproduction: geração fresca 5, fonte completa,
+    configuração mantida, nenhum corte aprovado. Não depende de teste UI.
 
 ISSUES / FINAL
-  Comunicação corrigida; isto não comprova melhora editorial.
-  A IA ainda pode aprovar zero cortes. Nada foi liberado à força.
-  Dados preservados; nenhuma build paralela ou rebuild do motor.
+  Unresolved: descoberta, fronteiras e fidelidade dos títulos/resumos.
+  Regressions: calibração pior rejeitada; não declarar qualidade estável.
+  Delivery: PARTIAL. Comparação 9B concluída; correção editorial pendente.
+  Next step: comprovar localização correta de uma unidade real antes de
+    ampliar cobertura. Não trocar modelo nem baixar critérios por nota.
+  Canonical executable: C:/CutNicePro/app/src-tauri/target/debug/cutnicepro.exe
+  SHA-256: F170AB89178747C81B44A5CEB5D11D4C56092CE6209FCF07906D43659EB7757D
+  Restart: build padrão atualizada; aplicativo não aberto automaticamente.
+  User action required: nenhuma para concluir esta comparação.
 
 REPORT
-  Latest: docs/reports/LATEST.txt
-  History: docs/reports/history/2026-10-24_110257_geracao-feedback.txt
+  Latest: C:/CutNicePro/docs/reports/LATEST.txt
+  History: C:/CutNicePro/docs/reports/history/2026-10-24_171352_qwen35-comparacao-e-refino-parcial.txt
 
 GUIA DO MANTENEDOR — O QUE MUDOU E COMO TESTAR
-  1. Reabra pelo comando habitual se a interface não tiver atualizado.
-  2. Gere novamente: deve aparecer quantidade adicionada, aviso de
-     zero novos ou erro explicado. O aviso fica até Fechar aviso.
-  3. A caixa do print inclui todas as alterações unstaged no commit.
-     Não precisa desmarcar para o Graphify: as mudanças precisam
-     estar no commit enviado ao GitHub e o índice precisa atualizar.
+  O 9B foi comparado e não virou padrão. A única build padrão contém o
+  Qwen3.5-4B e as correções de fluxo; não contém uma solução editorial
+  comprovada. Não é necessário repetir os testes manuais agora: a falha
+  já foi reproduzida. Na próxima abertura habitual, o diálogo Gerar cortes
+  identifica Qwen3.5-4B; não há projeto/perfil alternativo para procurar.
+
+END OF REPORT

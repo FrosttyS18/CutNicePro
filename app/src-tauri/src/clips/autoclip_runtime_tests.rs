@@ -91,7 +91,7 @@ fn autoclip_editorial_runtime_probe() {
         count: 3,
         format: Some("9:16".into()),
         fit: Some("cover".into()),
-        quality: Some(Quality::ExperimentalGemma),
+        quality: Some(Quality::Qwen35),
         automatic: false,
     };
     let project = uuid::Uuid::new_v4().to_string();
@@ -155,11 +155,11 @@ fn autoclip_editorial_runtime_probe() {
         |_| {},
     )
     .expect("MP4 pelo render real");
-    let destination = dir.join("amostra-Gemma12B-YuNet.mp4");
+    let destination = dir.join("amostra-local-YuNet.mp4");
     std::fs::copy(&output, &destination).unwrap();
     let tools = crate::media_analyze::detect_fftools().expect("ffprobe instalado");
     let actual = crate::media_analyze::analyze(&tools, &destination).expect("ffprobe do resultado");
     assert!((actual.duration_ms as f64 / 1000.0 - (clip.end - clip.start)).abs() < 0.3);
-    std::fs::write(dir.join("export-result.json"), serde_json::to_vec_pretty(&serde_json::json!({"clipId":clip.id,"title":clip.title,"model":collection.engine,"sourceStart":clip.start,"sourceEnd":clip.end,"actualDurationMs":actual.duration_ms,"width":actual.width,"height":actual.height,"fit":fit,"focalPoint":focal,"faceFraming":face,"filename":"amostra-Gemma12B-YuNet.mp4","method":"render::pipeline, sem diálogo/IPC/UI"})).unwrap()).unwrap();
+    std::fs::write(dir.join("export-result.json"), serde_json::to_vec_pretty(&serde_json::json!({"clipId":clip.id,"title":clip.title,"model":collection.engine,"sourceStart":clip.start,"sourceEnd":clip.end,"actualDurationMs":actual.duration_ms,"width":actual.width,"height":actual.height,"fit":fit,"focalPoint":focal,"faceFraming":face,"filename":"amostra-local-YuNet.mp4","method":"render::pipeline, sem diálogo/IPC/UI"})).unwrap()).unwrap();
     drop(render_scratch);
 }
