@@ -18,8 +18,10 @@ describe("enquadramento por rosto independente do LLM", () => {
     expect(isolatedClipSettings(clip, manual).focalPoint).toEqual(manual.focalPoint);
     expect(isolatedClipSettings(clip, manual).fit).toBe("contain");
   });
-  it("mantém quadro amplo na ambiguidade e preserva a escolha sem rostos", () => {
-    expect(isolatedClipSettings({ ...clip, faceFraming: { status: "ambiguous", samples: 8 } }).fit).toBe("contain");
+  it("preserva Preencher mesmo quando o rosto principal é ambíguo", () => {
+    const settings = isolatedClipSettings({ ...clip, faceFraming: { status: "ambiguous", samples: 8 } });
+    expect(settings.fit).toBe("cover");
+    expect(renderSettings(settings).fit).toBe("cover");
     expect(isolatedClipSettings({ ...clip, faceFraming: { status: "noFaces", samples: 8 } }).fit).toBe("cover");
     expect(isolatedClipSettings({ ...clip, faceFraming: undefined }).fit).toBe("cover");
   });

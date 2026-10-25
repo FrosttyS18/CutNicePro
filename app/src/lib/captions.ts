@@ -63,10 +63,12 @@ export function captionPresentation(s:CaptionStyle, ratio=16/9, sample=false):CS
 export interface CaptionCue { words:{text:string;active:boolean;spoken:boolean}[] }
 /** Pausa maior que 0,6 s entre palavras fecha o grupo (paridade SupoClip). */
 const GROUP_GAP = 0.6;
-export function captionCue(segments:TranscriptSegment[],time:number,wordsPerCaption=5):CaptionCue | null {
+export function captionCue(segments:TranscriptSegment[],time:number,wordsPerCaption=5,bounds?:{start:number;end:number}):CaptionCue | null {
   const segment=segments.find(s=>time>=s.start && time<s.end);
   if (!segment) return null;
-  const words=displayWords(segment);
+  const partial = bounds && (segment.start < bounds.start || segment.end > bounds.end);
+  const words=displayWords(segment).filter(word => !bounds ||
+    (word.start === null || word.end === null ? !partial : word.start >= bounds.start && word.end <= bounds.end));
   if (!words.length) return null;
   const timed=words.some(word=>word.start!==null);
   if (!timed) return {words:words.map(word=>({text:cleanTranscriptText(word.text),active:false,spoken:false}))};

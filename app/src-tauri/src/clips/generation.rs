@@ -62,6 +62,7 @@ fn analyze(
     Ok(())
 }
 
+#[cfg(test)]
 pub(crate) use super::novelty::duplicate_of;
 
 /// Geração incremental (atualizações 19/20): a biblioteca é CUMULATIVA. Os
@@ -126,12 +127,7 @@ pub fn run(
         Ok(judgments)
     };
     let previous = store::load(base, request.project, request.media, request.duration)?;
-    let search_history = std::cell::RefCell::new(
-        previous
-            .as_ref()
-            .map(|p| p.clips.clone())
-            .unwrap_or_default(),
-    );
+    let search_history = std::cell::RefCell::new(Vec::new());
     let known_ids: std::collections::HashSet<String> = previous
         .as_ref()
         .map(|library| library.clips.iter().map(|c| c.id.clone()).collect())
@@ -208,16 +204,7 @@ pub fn run(
         }
         Ok(clips)
     };
-    let previous = store::load(base, request.project, request.media, request.duration)?;
-    // descoberta considera o que já existe: candidatos que repetem CONTEÚDO
-    // da biblioteca (incluindo excluídos/rejeitados) são descartados.
-    let mut fresh: Vec<Clip> = match previous.as_ref() {
-        Some(library) => prepare(request.speech, &mut progress)?
-            .into_iter()
-            .filter(|candidate| !duplicate_of(&library.clips, candidate, request.speech))
-            .collect(),
-        None => prepare(request.speech, &mut progress)?,
-    };
+    let mut fresh = prepare(request.speech, &mut |percent| progress(percent / 2))?;
     let mut repair_budget = 3usize;
     let mut finish_candidates = |fresh: &mut Vec<Clip>,
                                  on_progress: &mut dyn FnMut(u8)|
@@ -254,15 +241,7 @@ pub fn run(
                 .iter()
                 .map(|r| (r.clip.id.clone(), r.original))
                 .collect();
-            let mut candidates: Vec<_> = repaired
-                .into_iter()
-                .map(|r| r.clip)
-                .filter(|c| {
-                    previous
-                        .as_ref()
-                        .is_none_or(|p| !duplicate_of(&p.clips, c, request.speech))
-                })
-                .collect();
+            let mut candidates: Vec<_> = repaired.into_iter().map(|r| r.clip).collect();
             editorial::recheck_adjusted(&mut candidates, &originals, request.speech, &evaluator)?;
             analyze(
                 &mut candidates,
@@ -281,19 +260,38 @@ pub fn run(
     };
     // análise SOMENTE dos novos (upd 20): antigos, excluídos, rejeitados e
     // desatualizados não recebem trabalho oculto do motor nesta geração.
-    finish_candidates(&mut fresh, &mut progress)?;
-    if fresh.is_empty() {
-        eprintln!("[clips] segunda busca de momentos distintos com a transcrição completa e histórico desta rodada");
-        fresh = prepare(request.speech, &mut progress)?
-            .into_iter()
-            .filter(|candidate| {
-                previous
-                    .as_ref()
-                    .is_none_or(|library| !duplicate_of(&library.clips, candidate, request.speech))
-            })
-            .collect();
-        finish_candidates(&mut fresh, &mut progress)?;
+    finish_candidates(&mut fresh, &mut |percent| progress(percent / 2))?;
+    let additional = super::generation_rounds::extend(
+        &mut fresh,
+        request.options.automatic,
+        request.options.count,
+        |attempted| {
+            eprintln!("[clips] busca de cobertura com a transcrição completa; {} resultados já aproveitáveis nesta execução", attempted.len());
+            search_history
+                .borrow_mut()
+                .extend(attempted.iter().cloned());
+            let mut more = prepare(request.speech, &mut |percent| {
+                progress(50 + (u16::from(percent) * 45 / 100) as u8)
+            })?;
+            finish_candidates(&mut more, &mut |percent| {
+                progress(50 + (u16::from(percent) * 45 / 100) as u8)
+            })?;
+            Ok(more)
+        },
+    );
+    if let Err(error) = additional {
+        control.check()?;
+        if fresh.is_empty() {
+            return Err(error);
+        }
+        eprintln!(
+            "[clips] busca adicional não concluída; {} resultados válidos mantidos: {error}",
+            fresh.len()
+        );
     }
+    fresh =
+        selection::finalize_prioritized(fresh, request.options.count, request.options.automatic, 0);
+    progress(95);
     if fresh.is_empty() && previous.is_none() {
         return Err("Não encontramos cortes com abertura e fechamento completos nesta rodada. Tente outra faixa ou amplie a duração máxima.".into());
     }
@@ -302,6 +300,11 @@ pub fn run(
         .duration_since(std::time::UNIX_EPOCH)
         .map(|d| d.as_millis() as u64)
         .unwrap_or(0);
+    super::generation_batch::publish(
+        &mut fresh,
+        &uuid::Uuid::new_v4().to_string(),
+        published_at_ms,
+    );
     stamp_creation(&mut fresh, &known_ids, published_at_ms);
     let mut value = merge_incremental(
         previous,
@@ -536,7 +539,7 @@ mod incremental_tests {
     }
 
     #[test]
-    fn generation_preserves_existing_library_and_adds_only_new_moments() {
+    fn generation_preserves_library_and_publishes_new_versions_of_its_moments() {
         let mut kept = clip(&"a".repeat(64), 0.0, 100.0);
         kept.title = "Título editado por mim".into();
         kept.review = Review::Approved;
@@ -548,27 +551,17 @@ mod incremental_tests {
             Some(record("standard")),
             vec![kept.clone(), deleted.clone()],
         );
-        // candidatos: 1 repetido (mesmo id), 1 sobreposição sem unidade nova,
-        // 1 novo momento (fora da fala da biblioteca)
         let mut fresh = vec![
-            clip(&"a".repeat(64), 10.0, 90.0),
-            clip(&"b".repeat(64), 2.0, 98.0),
+            clip(&"a".repeat(64), 0.0, 100.0),
+            clip(&"f".repeat(64), 400.0, 500.0),
             clip(&"c".repeat(64), 200.0, 260.0),
         ];
         for candidate in &mut fresh {
-            candidate.engine = Some(record("experimentalGemma"));
+            candidate.engine = Some(record("qwen35"));
         }
-        let filtered: Vec<Clip> = fresh
-            .into_iter()
-            .filter(|candidate| !duplicate_of(&previous.clips, candidate, &speech()))
-            .collect();
-        let value = merge_incremental(
-            Some(previous),
-            filtered,
-            "m",
-            &speech(),
-            record("experimentalGemma"),
-        );
+        super::super::generation_batch::publish(&mut fresh, "new-run", 200);
+        let added = fresh.clone();
+        let value = merge_incremental(Some(previous), fresh, "m", &speech(), record("qwen35"));
         let kept_now = value.clips.iter().find(|c| c.id == kept.id).unwrap();
         assert_eq!(kept_now.title, "Título editado por mim");
         assert_eq!(kept_now.review, Review::Approved);
@@ -579,22 +572,14 @@ mod incremental_tests {
             .clips
             .iter()
             .any(|c| c.id == deleted.id && c.deleted == Some(true)));
-        assert_eq!(value.clips.len(), 3);
-        assert!(value.clips.iter().any(|c| c.id == "c".repeat(64)));
-        assert_eq!(value.engine.as_ref().unwrap().backend, "experimentalGemma");
-        assert_eq!(
-            value
-                .clips
-                .iter()
-                .find(|c| c.id == "c".repeat(64))
-                .unwrap()
-                .engine
-                .as_ref()
-                .unwrap()
-                .backend,
-            "experimentalGemma"
-        );
-        assert!(!value.clips.iter().any(|c| c.id == "b".repeat(64)));
+        assert_eq!(value.clips.len(), 5);
+        assert_eq!(value.engine.as_ref().unwrap().backend, "qwen35");
+        for new in added {
+            let saved = value.clips.iter().find(|c| c.id == new.id).unwrap();
+            assert_eq!(saved.created_at_ms, Some(200));
+            assert_eq!(saved.review, Review::Pending);
+            assert_eq!(saved.engine.as_ref().unwrap().backend, "qwen35");
+        }
     }
 
     #[test]
@@ -609,7 +594,7 @@ mod incremental_tests {
     }
 
     #[test]
-    fn deleted_clip_content_is_not_restored_by_new_generation() {
+    fn new_version_of_deleted_content_does_not_restore_the_deleted_record() {
         let speech = vec![
             segment(10.0, 11.0, "intro"),
             segment(11.0, 60.0, "historia"),
@@ -619,15 +604,13 @@ mod incremental_tests {
             ..clip(&"a".repeat(64), 10.0, 60.0)
         };
         let previous = collection(None, vec![deleted]);
-        // mesmo CONTEÚDO (unidades contidas) com limites diferentes
-        let fresh = vec![clip(&"z".repeat(64), 12.0, 58.0)];
-        let filtered: Vec<Clip> = fresh
-            .into_iter()
-            .filter(|candidate| !duplicate_of(&previous.clips, candidate, &speech))
-            .collect();
-        let value = merge_incremental(Some(previous), filtered, "m", &speech, record("standard"));
-        assert_eq!(value.clips.len(), 1, "conteúdo excluído não volta");
+        let mut fresh = vec![clip(&"a".repeat(64), 10.0, 60.0)];
+        super::super::generation_batch::publish(&mut fresh, "new-run", 200);
+        let value = merge_incremental(Some(previous), fresh, "m", &speech, record("qwen35"));
+        assert_eq!(value.clips.len(), 2);
         assert_eq!(value.clips[0].deleted, Some(true));
+        assert_eq!(value.clips[1].deleted, None);
+        assert_ne!(value.clips[0].id, value.clips[1].id);
     }
 
     /// upd 20: a edição marca SOMENTE os clipes afetados como desatualizados.

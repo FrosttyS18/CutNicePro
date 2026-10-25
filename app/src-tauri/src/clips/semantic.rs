@@ -40,8 +40,11 @@ pub fn run(
         );
     }
     let quotes = evidence::quotes(&text);
-    let data = serde_json::json!({"quotes":quotes.iter().enumerate().map(|(id,text)|serde_json::json!({"id":id,"text":text})).collect::<Vec<_>>()});
+    let data = serde_json::json!({"speech":segments.iter().map(|s|s.text.as_str()).collect::<Vec<_>>().join("\n"),"quotes":quotes.iter().enumerate().map(|(id,text)|serde_json::json!({"id":id,"text":text})).collect::<Vec<_>>()});
     let prompt = engine.prompt(include_str!("analysis-prompt.txt"), &data)?;
+    if engine.count_tokens(scratch, &prompt)? > super::engine_tools::CONTEXT_TOKENS - 1528 {
+        return Err("A transcrição completa e o trecho excedem o contexto disponível para análise. Nenhum texto foi dividido ou truncado.".into());
+    }
     let output = engine.generate(
         scratch,
         "analysis",
@@ -55,7 +58,8 @@ pub fn run(
         .next()
         .ok_or("A análise não gerou uma resposta. Tente novamente.")?
         .map_err(|_| "Não foi possível concluir a análise do trecho. Tente novamente.")?;
-    let analysis = draft.ground(&quotes, &text)?;
+    let mut analysis = draft.ground(&quotes, &text)?;
+    super::editorial::enforce_ending(&mut analysis, &text);
     control.check()?;
     clip.score = analysis.score();
     clip.title = analysis.title.clone();

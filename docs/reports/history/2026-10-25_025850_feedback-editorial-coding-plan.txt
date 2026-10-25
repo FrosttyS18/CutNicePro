@@ -1,0 +1,137 @@
+╔════════════════════════════════════════════╗
+║       CUTNICEPRO — ZCODE REPORT            ║
+╚════════════════════════════════════════════╝
+
+TASK
+  Name: Feedback editorial e teste do Coding Plan
+  Status: PARTIAL
+  Scope: correções locais, calibração e comparação autorizada GLM/Qwen.
+  Objective: corrigir falhas e distinguir modelo, prompt e pipeline.
+  Result: Coding Plan conectado; qualidade editorial ainda não resolvida.
+  FUNCTIONAL STATUS: PARTIAL
+  REGRESSION STATUS: PASS nos testes executados
+  VISUAL STATUS: PENDING HUMAN APPROVAL
+
+IMPLEMENTATION
+  Completed: Preencher preservado; legenda respeita trim; recusa e nota
+    concordam; reparo recebe fonte integral; novas gerações preservam as
+    anteriores. Descoberta/reparo 0,4; avaliação/análise 0,7 após controle.
+  Not completed: seleção, títulos e fechamento editorial satisfatórios.
+  Changes: GLM-5.3-Flash via endpoint Coding Plan funcionou com a chave
+    nova. Transcrição inteira: 11 propostas, 10 localizadas exatamente.
+    Acertou a avaliação dos casos 17 s/incompleto e 78 s/completo, mas
+    também aprovou o MESMO T-PAP de 48 s do Qwen e incluiu no resumo
+    uma conclusão posterior ao corte. Não é problema exclusivo do modelo.
+  Architecture impact: app permanece local/Qwen. Sem provedor cloud,
+    configuração global ou dependência nova. Revisão narrativa adicional
+    reprovada: somente cfg(test), sem custo no caminho padrão.
+
+FILES
+  Created: C:/CutNicePro/app/src-tauri/src/clips/{feedback_runtime_tests.rs,
+    generation_rounds.rs,narrative_bounds.rs,bounds-prompt.txt};
+    C:/CutNicePro/app/src/test/clip-inspection-boundaries.test.tsx;
+    C:/CutNicePro/docs/reports/evidence/feedback-editorial-2026-10-25.json;
+    relatório histórico identificado abaixo.
+  Modified: C:/CutNicePro/AGENTS.md;
+    C:/CutNicePro/app/src-tauri/src/clips/{assessment,discovery_reply,
+    editorial,editorial_repair,generation,mod,selection,semantic,
+    source_anchors,text_engine}.rs e prompts analysis/evaluate/repair;
+    C:/CutNicePro/app/src/lib/{clips,captions}.ts;
+    C:/CutNicePro/app/src/components/clips/{ClipDetails,ClipInspection}.tsx;
+    C:/CutNicePro/app/src/test/face-framing.test.ts;
+    C:/CutNicePro/docs/{TOOLING.md,engineering/ENGINE-HANDOFF.md,
+    product/BACKLOG.md,product/TRACEABILITY.md,
+    references/OPEN-SOURCE-ENGINE-RESEARCH.md,reports/LATEST.txt}.
+  Deleted: nenhum.
+  Unexpected changes: nenhuma observada; pendências herdadas preservadas.
+
+VALIDATION
+  Typecheck: PASS; Vite/build canônica PASS, compilador sem warnings.
+  Lint: ESLint/fmt PASS; Clippy estrito não repetido (baseline anterior
+    registrava 19 diagnósticos preexistentes).
+  Unit tests: Rust 200/200; frontend 260/260.
+  Integration tests: API 5 respostas HTTP 200 (conexão + 4 casos);
+    persistência/MP4 nativos exercitados sem operar a interface.
+  Regression tests: PASS nos contratos testados; revisão independente
+    corrigiu legenda, ambiguidade de citações e piso da revisão experimental.
+  Visual tests: SKIP; validação manual pertence ao mantenedor.
+  Runtime verification: PARTIAL. Cinco rodadas integrais geraram
+    2/3/4/5/4 MP4s; todas falharam no critério editorial. Controle focal
+    também falhou. Variantes reprovadas não viraram padrão.
+  Total passed: 460 testes rápidos; 5 respostas API válidas.
+  Total failed: 5 aceites integrais + 1 focal; qualidade segue aberta.
+  Total skipped: 25 testes opt-in na suíte rápida; interface não operada.
+
+HOOKS / HARNESS
+  Hooks active: hooks ZCode não verificados nesta execução Codex.
+  PreToolUse/PostToolUse/Stop: não utilizados como prova de aprovação.
+  Baseline: testes e resultados reais acima.
+  Gate result: PARTIAL; não falta somente aceite humano.
+  Evidence: JSON e logs no laboratório abaixo.
+
+MCP / SKILLS
+  Tools used: Graphify remoto antes/depois; documentação oficial na web;
+    diagnóstico sistemático, TDD, revisão e verificação antes da entrega.
+  Connection status: workspace wesley-s-workspace, FrosttyS18/CutNicePro,
+    índice no HEAD; mudanças locais complementadas por fonte/diff/testes.
+  Failures: primeira rede bloqueada; repetição autorizada conectou.
+    Chave anterior: 1113; controle GLM max: JSON não utilizável, causa
+    indeterminada porque o envelope bruto não foi preservado.
+  Pending activation: nenhuma para o teste; app não integra essa API.
+
+GIT
+  Branch: main
+  HEAD: 9785ff962082dc59082e4ac45fe0e1fe31a1b38b
+  Latest commit: Simplifique a interface do editor e ajuste o fluxo de clipes
+  Commits created: nenhum.
+  Push: NOT EXECUTED.
+  Remote: origin → FrosttyS18/CutNicePro; main.
+  Working tree: MODIFIED + UNTRACKED; versão 0.19.0 mantida.
+  Pending files: alterações acima e herdadas; lista integral de caminhos
+    em workingTreeFiles no JSON de evidência. Nada publicado automaticamente.
+
+EVIDENCE
+  Commands executed: cargo test/build --offline --locked; cargo fmt;
+    npm test; npm run lint/build; testes locais e chamadas Coding Plan.
+  Relevant logs/Test artifacts:
+    C:/CutNicePro/.tooling/test-output/feedback-editorial-2026-10-25/
+    e C:/CutNicePro/.tooling/test-output/feedback-*.log.
+  Screenshots: nenhuma; sem controle da tela/PC.
+  Reproduction details: fontes integrais, 334/568 segmentos na calibração;
+    334 em cada chamada GLM. Chaves não persistidas; sem vídeos enviados.
+    GLM usa thinking low/JSON object, Qwen nonthinking/gramática: comparação
+    de comportamento, não ablação isolada dos pesos.
+
+ISSUES
+  Bugs found: cover→contain; legenda fora do trim; recusa contraditória;
+    pontuação ASR tratada como recusa; classificação/cópia ainda falíveis.
+  Unresolved failures: T-PAP incompleto, títulos/resumos e fidelidade.
+  Regressions: nenhuma nos testes rápidos; protótipos piores rejeitados.
+  Risks: mais propostas e notas altas não provam bons cortes.
+  Blockers: nenhum para continuar o desenvolvimento; sem nova API exigida.
+
+FINAL
+  Delivery status: PARTIAL; teste do Coding Plan concluído.
+  Requirements met: conexão/API, diagnóstico e correções técnicas listadas.
+  Remaining work: corrigir o contrato editorial e sua execução local.
+  User action required: nenhuma para repetir o teste de conexão; não pedir
+    aprovação de amostras já conhecidas como ruins.
+  Restart required: reabrir o app para usar a build canônica atualizada.
+  Ready for next task: continuidade registrada; sem declarar meta concluída.
+
+REPORT
+  Latest file: C:/CutNicePro/docs/reports/LATEST.txt
+  Historical file: C:/CutNicePro/docs/reports/history/2026-10-25_025850_feedback-editorial-coding-plan.txt
+
+GUIA DO MANTENEDOR — O QUE MUDOU E COMO TESTAR
+  O que mudou: Preencher e os limites das legendas foram corrigidos.
+    A API funciona no laboratório; não há seletor GLM novo no aplicativo.
+  Teste 1: abrir pela execução normal em C:/CutNicePro/app
+    (npm run tauri dev), gerar com Preencher → manter preenchimento,
+    respeitando edições manuais salvas. Biblioteca anterior preservada.
+  Teste 2: pausar no fim de um corte → não mostrar palavras posteriores.
+  Qualidade: continua reprovada nos casos descritos; não é aceite pendente.
+  Build: C:/CutNicePro/app/src-tauri/target/debug/cutnicepro.exe
+  SHA-256: 801052D54E085EF784DCC479CC805A8DB21393FC7E6427D52313D6F843199A31
+
+END OF REPORT

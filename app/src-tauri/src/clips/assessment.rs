@@ -51,12 +51,21 @@ impl EndingStatus {
 }
 
 fn ground(draft: Draft, id: String, quotes: &[String], source: &str) -> Result<Evaluation, String> {
-    let analysis = draft.analysis.ground(quotes, source)?;
+    let mut analysis = draft.analysis.ground(quotes, source)?;
+    let interrupted = super::editorial::enforce_ending(&mut analysis, source);
     let floor = super::types::AUTOMATIC_RELEVANCE_FLOOR;
+    if matches!(draft.opening_status, OpeningStatus::ContextoAusente) {
+        analysis.criteria[0].score = analysis.criteria[0].score.min(floor - 1);
+        analysis.criteria[0].explanation =
+            "A abertura depende de contexto que não está incluído no intervalo.".into();
+    }
+    if !draft.ending_status.closes_episode() && !interrupted {
+        analysis.criteria[2].score = analysis.criteria[2].score.min(floor - 1);
+        analysis.criteria[2].explanation =
+            "O final não conclui a unidade iniciada: a avaliação identificou uma fala interrompida, uma pergunta pendente ou a mudança para outro assunto.".into();
+    }
     let standalone = !matches!(draft.opening_status, OpeningStatus::ContextoAusente)
         && analysis.criteria[0].score >= floor;
-    let interrupted =
-        source.trim_end().ends_with([',', ':', ';', '…']) || source.trim_end().ends_with("...");
     let complete =
         draft.ending_status.closes_episode() && analysis.criteria[2].score >= floor && !interrupted;
     let mut reason = analysis
@@ -114,6 +123,7 @@ pub fn evaluate(
             return Err("O trecho não tem fala suficiente para avaliação.".into());
         }
         let data = serde_json::json!({"start":clip.start,"end":clip.end,
+            "speech":speech.iter().map(|s|s.text.as_str()).collect::<Vec<_>>().join("\n"),
             "quotes":quotes.iter().enumerate().map(|(id,text)|serde_json::json!({"id":id,"text":text})).collect::<Vec<_>>()});
         let mut analysis_schema = evidence::schema(quotes.len());
         analysis_schema["properties"]["closing"]["properties"]["evidenceId"]["enum"] =
@@ -125,6 +135,9 @@ pub fn evaluate(
             "nature":{"type":"string","enum":["relato","humor","explicacao","opiniao","demonstracao"]},
             "advertising":{"type":"boolean"},"analysis":analysis_schema}});
         let prompt = engine.prompt(include_str!("evaluate-prompt.txt"), &data)?;
+        if engine.count_tokens(scratch, &prompt)? > super::engine_tools::CONTEXT_TOKENS - 1728 {
+            return Err("A transcrição completa e o trecho excedem o contexto disponível para avaliação. Nenhum texto foi dividido ou truncado.".into());
+        }
         let output = engine.generate(
             scratch,
             &format!("assessment-{index}"),
@@ -246,6 +259,8 @@ mod tests {
             )
             .unwrap();
             assert!(!evaluation.complete);
+            assert!(evaluation.analysis.as_ref().unwrap().criteria[2].score < 50);
+            assert!(evaluation.reason.contains("não conclui"));
         }
         let evaluation = ground(
             draft_for(95, "contextoAusente", "consequenciaOuReacaoDoMesmoEpisodio"),
@@ -255,6 +270,7 @@ mod tests {
         )
         .unwrap();
         assert!(!evaluation.standalone);
+        assert!(evaluation.analysis.as_ref().unwrap().criteria[0].score < 50);
         assert!(judgment(80).complete);
     }
 
@@ -270,6 +286,38 @@ mod tests {
             !judgment_for(
                 85,
                 "A skin antiga ficou valiosa. No mercado, se você tem ela..."
+            )
+            .complete
+        );
+    }
+
+    #[test]
+    fn a_promised_explanation_is_not_a_complete_ending_even_with_a_period() {
+        for ending in [
+            "Aí das duas uma.",
+            "O problema é o seguinte.",
+            "Vou explicar.",
+        ] {
+            let source = format!("Comprei um jogo e ele apagou todo o progresso. {ending}");
+            let evaluation = judgment_for(85, &source);
+            assert!(!evaluation.complete, "fechamento indevido: {ending}");
+            assert!(evaluation.analysis.unwrap().criteria[2].score < 50);
+        }
+        assert!(
+            judgment_for(
+                85,
+                "Comprei um jogo e ele apagou todo o progresso. Precisei começar de novo."
+            )
+            .complete
+        );
+    }
+
+    #[test]
+    fn an_asr_comma_after_a_concluded_observation_is_not_itself_an_unfinished_story() {
+        assert!(
+            judgment_for(
+                85,
+                "O nome estava escrito errado na roupa. Ninguém revisou o texto, né,"
             )
             .complete
         );

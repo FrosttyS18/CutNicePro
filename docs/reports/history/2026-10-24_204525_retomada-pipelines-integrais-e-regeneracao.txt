@@ -1,0 +1,159 @@
+╔════════════════════════════════════════════╗
+║       CUTNICEPRO — ZCODE REPORT            ║
+╚════════════════════════════════════════════╝
+
+TASK
+  Name: Pipelines integrais, localização dos cortes e regeneração
+  Status: PARTIAL — funcionamento testável; qualidade editorial ainda falha.
+  Scope: correção incremental e comparação local, sem nuvem, automação da tela ou commit/push.
+  Objective: gerar novamente sem veto da biblioteca e comparar pipelines reais locais.
+  Result:
+    Davy inteiro: 2 cortes; repetir gerou +2 versões, preservando os anteriores.
+    UX inteiro, 24,6 min: 8 cortes e 8 MP4 em 8 min 12 s.
+    AutoClip/SupoClip: 7 execuções originais até MP4, incluindo ASR local dos dois.
+  FUNCTIONAL STATUS: PARTIAL — regeneração/export passaram; qualidade não está concluída.
+  REGRESSION STATUS: PASS no escopo testado; UI real não operada.
+  VISUAL STATUS: PENDING HUMAN APPROVAL
+  EDITORIAL STATUS: PARTIAL — não é apenas espera por aprovação humana.
+
+IMPLEMENTATION
+  Completed:
+    Biblioteca anterior deixou de bloquear a geração. ID/data novos por execução.
+    Modo automático localiza citações reais de abertura/fechamento na fonte inteira.
+    Citações inventadas, ambíguas ou invertidas são recusadas; filtros mantidos.
+    Mensagem antiga que atribuía a recusa a repetições foi corrigida.
+    Salvar/reabrir, preservação dos registros e exportação nativa foram exercitados.
+  Not completed:
+    Recuperar os seis episódios de referência do Davy e melhorar fidelidade dos títulos.
+    Um título de UX introduziu “cliente”, ausente das falas incluídas.
+  Decisions:
+    Qwen3.5-4B Q4 continua padrão. Q8 e thinking não resolveram a qualidade.
+    Aumentar saída de 4K para 16K deu respostas idênticas, sem truncamento, nos controles.
+    Foram usados os vídeos inteiros de 10 e 24,6 minutos; sem amostras escolhidas.
+    As referências também erraram títulos, juntaram assuntos e cortaram ideias.
+    Não houve treinamento dos pesos, integração de nuvem ou código AGPL no app.
+  Architecture impact: contratos públicos preservados; personalizado mantém IDs de linhas.
+  Retomada: quatro hipóteses adicionais de descoberta, sempre com a fonte inteira.
+    Revisão: 5 propostas/2 localizadas; citações restritas: 6/3; entrada simples: 4/3.
+    Inventário + localização: 7/5 em 224,35 s, com fatos inventados e bordas inadequadas.
+    Nenhuma adotada. Localização e quantidade não comprovam qualidade editorial.
+
+FILES
+  Created:
+    C:/CutNicePro/app/src-tauri/src/clips/generation_batch.rs
+    C:/CutNicePro/app/src-tauri/src/clips/source_anchors.rs
+    C:/CutNicePro/app/src-tauri/src/clips/comparison_runtime_tests.rs
+    C:/CutNicePro/docs/reports/evidence/pipelines-comparados-2026-10-24.json
+    Histórico indicado em REPORT.
+  Modified:
+    C:/CutNicePro/.gitignore
+    C:/CutNicePro/app/src-tauri/src/clips/generation.rs
+    C:/CutNicePro/app/src-tauri/src/clips/selection.rs
+    C:/CutNicePro/app/src-tauri/src/clips/discovery_reply.rs
+    C:/CutNicePro/app/src-tauri/src/clips/discover-auto-prompt.txt
+    C:/CutNicePro/app/src-tauri/src/clips/mod.rs
+    C:/CutNicePro/app/src/hooks/useClips.ts
+    C:/CutNicePro/app/src/test/clip-generation-feedback.test.tsx
+    C:/CutNicePro/docs/TOOLING.md
+    C:/CutNicePro/docs/engineering/ENGINE-HANDOFF.md
+    C:/CutNicePro/docs/product/PRODUCT-BRAIN.md
+    C:/CutNicePro/docs/product/BACKLOG.md
+    C:/CutNicePro/docs/product/BUSINESS-RULES.md
+    C:/CutNicePro/docs/product/TRACEABILITY.md
+    C:/CutNicePro/docs/references/OPEN-SOURCE-ENGINE-RESEARCH.md
+    C:/CutNicePro/docs/reports/LATEST.txt
+  Generated outside Git:
+    Laboratórios, fontes das referências, ambiente Python e MP4s em .tooling.
+    Q8 de controle: 4,48 GB; não carregado pelo app:
+    C:/CutNicePro/experiments/clip-selection-ab/models/Qwen3.5-4B-Q8_0.gguf
+    Whisper Base exclusivo do laboratório AutoClip; Turbo do app preservado.
+  Deleted: nenhum arquivo do projeto/mantenedor.
+  Unexpected changes: NONE.
+
+VALIDATION
+  Typecheck/build: PASS — TypeScript/Vite e executável padrão Rust, sem avisos do compilador.
+  Lint: ESLint PASS; Clippy estrito global FAIL, 19 diagnósticos em trechos preexistentes.
+  Unit/regression tests: Rust 189/189; frontend 258/258.
+  Related retest: 23 testes após a alteração da mensagem, todos PASS.
+  Integration/runtime: 3 cenários nativos PASS; 10 MP4 próprios conferidos por ffprobe/hash.
+  Artefatos próprios: 1080×1920 com áudio; diferença máxima de duração 0,034833 s.
+  Visual tests: SKIP — validação manual da interface conforme preferência do mantenedor.
+  Total passed: 447 nas suítes; 3 cenários nativos separados. Retestes não somados.
+  Total failed: 0 nas suítes finais; Clippy permanece FAIL.
+  Total skipped: 20 opt-in na suíte rápida; alguns executados separadamente; UI real não operada.
+  Failures corrected: colisão de IDs, âncoras invertidas sobrepostas e mensagem ambígua.
+  Harness: queda interrompeu uma avaliação; retomada sem repetir casos concluídos.
+    Dois erros do teste foram corrigidos: estilo de legenda ausente e título/análise divergentes.
+    A primeira geração foi reaproveitada do checkpoint; não é benchmark de geração instantânea.
+
+HOOKS / HARNESS
+  Hooks ZCode/Stop: não verificados neste executor; nenhuma baseline alegada como PASS.
+  Gate result: entrega testável, editorial PARTIAL.
+  Evidence: manifesto e logs do laboratório indicado abaixo.
+
+MCP / SKILLS
+  Tools used: Graphify remoto, fontes oficiais/web, edição e testes; sem controle da tela.
+  Skills: diagnóstico, planejamento, TDD, revisão, verificação e orientações frontend.
+  Connection status: workspace wesley-s-workspace / FrosttyS18/CutNicePro validado.
+  Index: 9785ff9, consultado antes/depois; mudanças locais complementadas por fonte/diff.
+  Pending activation: nenhuma. Alterações atuais ainda não indexadas.
+
+GIT
+  Branch: main
+  HEAD: 9785ff962082dc59082e4ac45fe0e1fe31a1b38b
+  Latest commit: Simplifique a interface do editor e ajuste o fluxo de clipes
+  Commits created: nenhum. Push: NOT EXECUTED.
+  Remote: origin → https://github.com/FrosttyS18/CutNicePro.git
+  Working tree: MODIFIED + UNTRACKED; arquivos em FILES, incluindo relatórios.
+  Version: 0.19.0; sem bump, tags ou alteração de dependências do app.
+
+EVIDENCE
+  Commands: cargo test/build/fmt/clippy; Vitest; TypeScript/Vite; ESLint; ffprobe/SHA-256.
+  Test artifacts: C:/CutNicePro/.tooling/test-output/pipelines-comparados-2026-10-24
+  Manifest: C:/CutNicePro/docs/reports/evidence/pipelines-comparados-2026-10-24.json
+  References: AutoClip 3d3b5ed (MIT); SupoClip 72f1659 (AGPL-3.0), código original.
+  Outputs: 29 MP4 das referências e 10 do app; contagem não significa qualidade aprovada.
+  Retomada: 11 chamadas locais em quatro controles de descoberta, não testes de aceite.
+    Sem mudança adicional no código do app; sem repetir as suítes já aprovadas.
+    Resultados portáteis: manifesto, campo resumptionDiscoveryControls.
+  Sources: no app, transcrições reais completas já salvas (334 e 568 falas).
+    As referências também tiveram execuções desde o vídeo, com ASR próprio sem cache.
+  Limits: três hashes das referências com leitura negada após a queda, marcados no manifesto.
+    Os dez MP4 do app tiveram leitura, hash e ffprobe confirmados no destino.
+  Screenshots: nenhuma. Perfil real: somente leitura; nenhum projeto de teste inserido nele.
+
+ISSUES
+  Unresolved: recall do Davy, títulos/fidelidade, Clippy e avaliação manual.
+  Not tested: vídeo de 2 horas; textos que excedam o contexto não são truncados/divididos.
+  Regressions: nenhuma detectada nas suítes e casos executados; não é garantia universal.
+  Resources: servidores próprios encerrados; snapshot final sem processo llama.
+  Blockers: nenhum para usar a build normal; qualidade ainda requer trabalho.
+
+FINAL
+  Delivery status: PARTIAL, com geração/regeneração/export testáveis.
+  Requirements met: geração independente, fontes integrais, controles de tokens,
+    execução real das referências e build única atualizada.
+  Remaining work: melhorar cobertura/contexto/títulos; não declarar aceite pelos scores.
+  User action required: testar a interface pelo fluxo normal e avaliar o conteúdo.
+  Restart required: iniciar o app com o comando habitual; não foi aberto automaticamente.
+  Build: C:/CutNicePro/app/src-tauri/target/debug/cutnicepro.exe
+  SHA-256: 39A1BE494A5F57671E199A448076E6B1CFE689DF8BC3A39D150BCF336123894C
+
+REPORT
+  Latest file: C:/CutNicePro/docs/reports/LATEST.txt
+  Historical file: C:/CutNicePro/docs/reports/history/2026-10-24_204525_retomada-pipelines-integrais-e-regeneracao.txt
+  Checkpoint anterior preservado: history/2026-10-24_202104_pipelines-integrais-e-regeneracao.txt
+
+GUIA DO MANTENEDOR — O QUE MUDOU E COMO TESTAR
+  1. Em C:/CutNicePro/app, execute npm run tauri dev, como habitualmente.
+     É a build normal atualizada para este teste.
+  2. Abra um projeto real com transcrição pronta → Gerar cortes → Automática.
+     A fonte inteira será analisada. Nos casos testados, o processamento levou minutos.
+  3. Gere novamente. Esperado: versões novas podem repetir os mesmos momentos;
+     os cortes anteriores e suas alterações permanecem.
+  4. Assista ao começo/fim, confira o título e exporte um corte pela interface.
+     Ainda existem defeitos editoriais; os exemplos não foram retocados para escondê-los.
+  Amostras próprias: subpastas native-full-davyjones e native-full-ux no laboratório.
+  São arquivos de teste, não projetos escondidos na sua biblioteca.
+
+END OF REPORT

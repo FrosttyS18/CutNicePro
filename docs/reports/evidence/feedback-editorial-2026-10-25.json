@@ -1,0 +1,1061 @@
+{
+  "date": "2026-10-25",
+  "head": "9785ff962082dc59082e4ac45fe0e1fe31a1b38b",
+  "version": "0.19.0",
+  "workingTreeFiles": [
+    {
+      "status": " M",
+      "path": "C:/CutNicePro/.gitignore"
+    },
+    {
+      "status": " M",
+      "path": "C:/CutNicePro/AGENTS.md"
+    },
+    {
+      "status": " M",
+      "path": "C:/CutNicePro/app/src-tauri/src/clips/analysis-prompt.txt"
+    },
+    {
+      "status": " M",
+      "path": "C:/CutNicePro/app/src-tauri/src/clips/assessment.rs"
+    },
+    {
+      "status": " M",
+      "path": "C:/CutNicePro/app/src-tauri/src/clips/discover-auto-prompt.txt"
+    },
+    {
+      "status": " M",
+      "path": "C:/CutNicePro/app/src-tauri/src/clips/discovery_reply.rs"
+    },
+    {
+      "status": " M",
+      "path": "C:/CutNicePro/app/src-tauri/src/clips/editorial.rs"
+    },
+    {
+      "status": " M",
+      "path": "C:/CutNicePro/app/src-tauri/src/clips/editorial_repair.rs"
+    },
+    {
+      "status": " M",
+      "path": "C:/CutNicePro/app/src-tauri/src/clips/evaluate-prompt.txt"
+    },
+    {
+      "status": " M",
+      "path": "C:/CutNicePro/app/src-tauri/src/clips/generation.rs"
+    },
+    {
+      "status": " M",
+      "path": "C:/CutNicePro/app/src-tauri/src/clips/mod.rs"
+    },
+    {
+      "status": " M",
+      "path": "C:/CutNicePro/app/src-tauri/src/clips/repair-prompt.txt"
+    },
+    {
+      "status": " M",
+      "path": "C:/CutNicePro/app/src-tauri/src/clips/selection.rs"
+    },
+    {
+      "status": " M",
+      "path": "C:/CutNicePro/app/src-tauri/src/clips/semantic.rs"
+    },
+    {
+      "status": " M",
+      "path": "C:/CutNicePro/app/src-tauri/src/clips/text_engine.rs"
+    },
+    {
+      "status": " M",
+      "path": "C:/CutNicePro/app/src/components/clips/ClipDetails.tsx"
+    },
+    {
+      "status": " M",
+      "path": "C:/CutNicePro/app/src/components/clips/ClipInspection.tsx"
+    },
+    {
+      "status": " M",
+      "path": "C:/CutNicePro/app/src/hooks/useClips.ts"
+    },
+    {
+      "status": " M",
+      "path": "C:/CutNicePro/app/src/lib/captions.ts"
+    },
+    {
+      "status": " M",
+      "path": "C:/CutNicePro/app/src/lib/clips.ts"
+    },
+    {
+      "status": " M",
+      "path": "C:/CutNicePro/app/src/test/clip-generation-feedback.test.tsx"
+    },
+    {
+      "status": " M",
+      "path": "C:/CutNicePro/app/src/test/face-framing.test.ts"
+    },
+    {
+      "status": " M",
+      "path": "C:/CutNicePro/docs/TOOLING.md"
+    },
+    {
+      "status": " M",
+      "path": "C:/CutNicePro/docs/engineering/ENGINE-HANDOFF.md"
+    },
+    {
+      "status": " M",
+      "path": "C:/CutNicePro/docs/product/BACKLOG.md"
+    },
+    {
+      "status": " M",
+      "path": "C:/CutNicePro/docs/product/BUSINESS-RULES.md"
+    },
+    {
+      "status": " M",
+      "path": "C:/CutNicePro/docs/product/PRODUCT-BRAIN.md"
+    },
+    {
+      "status": " M",
+      "path": "C:/CutNicePro/docs/product/TRACEABILITY.md"
+    },
+    {
+      "status": " M",
+      "path": "C:/CutNicePro/docs/references/OPEN-SOURCE-ENGINE-RESEARCH.md"
+    },
+    {
+      "status": " M",
+      "path": "C:/CutNicePro/docs/reports/LATEST.txt"
+    },
+    {
+      "status": "??",
+      "path": "C:/CutNicePro/app/src-tauri/src/clips/bounds-prompt.txt"
+    },
+    {
+      "status": "??",
+      "path": "C:/CutNicePro/app/src-tauri/src/clips/comparison_runtime_tests.rs"
+    },
+    {
+      "status": "??",
+      "path": "C:/CutNicePro/app/src-tauri/src/clips/feedback_runtime_tests.rs"
+    },
+    {
+      "status": "??",
+      "path": "C:/CutNicePro/app/src-tauri/src/clips/generation_batch.rs"
+    },
+    {
+      "status": "??",
+      "path": "C:/CutNicePro/app/src-tauri/src/clips/generation_rounds.rs"
+    },
+    {
+      "status": "??",
+      "path": "C:/CutNicePro/app/src-tauri/src/clips/narrative_bounds.rs"
+    },
+    {
+      "status": "??",
+      "path": "C:/CutNicePro/app/src-tauri/src/clips/source_anchors.rs"
+    },
+    {
+      "status": "??",
+      "path": "C:/CutNicePro/app/src/test/clip-inspection-boundaries.test.tsx"
+    },
+    {
+      "status": "??",
+      "path": "C:/CutNicePro/docs/reports/evidence/feedback-editorial-2026-10-25.json"
+    },
+    {
+      "status": "??",
+      "path": "C:/CutNicePro/docs/reports/evidence/pipelines-comparados-2026-10-24.json"
+    },
+    {
+      "status": "??",
+      "path": "C:/CutNicePro/docs/reports/history/2026-10-24_202104_pipelines-integrais-e-regeneracao.txt"
+    },
+    {
+      "status": "??",
+      "path": "C:/CutNicePro/docs/reports/history/2026-10-24_204525_retomada-pipelines-integrais-e-regeneracao.txt"
+    },
+    {
+      "status": "??",
+      "path": "C:/CutNicePro/docs/reports/history/2026-10-25_025850_feedback-editorial-coding-plan.txt"
+    }
+  ],
+  "defaultModel": "Qwen3.5-4B Q4_K_M",
+  "context": 32768,
+  "sampling": {
+    "discovery": 0.4,
+    "repair": 0.4,
+    "assessment": 0.7,
+    "analysis": 0.7,
+    "topK": 20,
+    "topP": 0.8,
+    "minP": 0,
+    "presencePenalty": 1.5,
+    "seed": 42
+  },
+  "temperatures": [
+    {
+      "dataset": "davyjones",
+      "temperature": 0.7,
+      "baselineReused": true,
+      "promptSha256": "75206b31cae91ded8e5227148ea0c25b43f40e649b0a7358f3d62ebbe5b1e073",
+      "schemaSha256": "c4329b57e33e74d2c3fa04f85b898f0a1737b11e47a2983c24a4e03dd8661cfe",
+      "fullTranscript": true,
+      "segments": 334,
+      "seed": 42,
+      "context": 32768,
+      "elapsedSeconds": null,
+      "proposed": 5,
+      "exactlyLocated": 2,
+      "withinDuration": 2
+    },
+    {
+      "dataset": "davyjones",
+      "temperature": 0.4,
+      "baselineReused": false,
+      "promptSha256": "75206b31cae91ded8e5227148ea0c25b43f40e649b0a7358f3d62ebbe5b1e073",
+      "schemaSha256": "c4329b57e33e74d2c3fa04f85b898f0a1737b11e47a2983c24a4e03dd8661cfe",
+      "fullTranscript": true,
+      "segments": 334,
+      "seed": 42,
+      "context": 32768,
+      "elapsedSeconds": 36.86741070000062,
+      "proposed": 5,
+      "exactlyLocated": 5,
+      "withinDuration": 4
+    },
+    {
+      "dataset": "davyjones",
+      "temperature": 0.2,
+      "baselineReused": false,
+      "promptSha256": "75206b31cae91ded8e5227148ea0c25b43f40e649b0a7358f3d62ebbe5b1e073",
+      "schemaSha256": "c4329b57e33e74d2c3fa04f85b898f0a1737b11e47a2983c24a4e03dd8661cfe",
+      "fullTranscript": true,
+      "segments": 334,
+      "seed": 42,
+      "context": 32768,
+      "elapsedSeconds": 35.32241369999974,
+      "proposed": 5,
+      "exactlyLocated": 5,
+      "withinDuration": 5
+    },
+    {
+      "dataset": "ux",
+      "temperature": 0.7,
+      "baselineReused": true,
+      "promptSha256": "f0874ba454893646c601e2c6be36d90d4f0ef794ad5b7827194ccdc9e7324f34",
+      "schemaSha256": "c4329b57e33e74d2c3fa04f85b898f0a1737b11e47a2983c24a4e03dd8661cfe",
+      "fullTranscript": true,
+      "segments": 568,
+      "seed": 42,
+      "context": 32768,
+      "elapsedSeconds": null,
+      "proposed": 12,
+      "exactlyLocated": 10,
+      "withinDuration": 10
+    },
+    {
+      "dataset": "ux",
+      "temperature": 0.4,
+      "baselineReused": false,
+      "promptSha256": "f0874ba454893646c601e2c6be36d90d4f0ef794ad5b7827194ccdc9e7324f34",
+      "schemaSha256": "c4329b57e33e74d2c3fa04f85b898f0a1737b11e47a2983c24a4e03dd8661cfe",
+      "fullTranscript": true,
+      "segments": 568,
+      "seed": 42,
+      "context": 32768,
+      "elapsedSeconds": 36.898963299998286,
+      "proposed": 12,
+      "exactlyLocated": 12,
+      "withinDuration": 11
+    },
+    {
+      "dataset": "ux",
+      "temperature": 0.2,
+      "baselineReused": false,
+      "promptSha256": "f0874ba454893646c601e2c6be36d90d4f0ef794ad5b7827194ccdc9e7324f34",
+      "schemaSha256": "c4329b57e33e74d2c3fa04f85b898f0a1737b11e47a2983c24a4e03dd8661cfe",
+      "fullTranscript": true,
+      "segments": 568,
+      "seed": 42,
+      "context": 32768,
+      "elapsedSeconds": 36.29989879999994,
+      "proposed": 9,
+      "exactlyLocated": 9,
+      "withinDuration": 8
+    }
+  ],
+  "runtime": [
+    {
+      "arm": "whole-source-v1",
+      "fullVideo": true,
+      "segments": 334,
+      "elapsedSeconds": 210.0122282,
+      "newCount": 2,
+      "preserved": 2,
+      "editorialCriterion": "FAIL: T-PAP não contém a explicação e o veredito pedidos pelo mantenedor",
+      "clips": [
+        {
+          "file": "C:\\CutNicePro\\app\\src-tauri\\../../.tooling/test-output/feedback-editorial-2026-10-25\\whole-source-v1\\whole-video\\Qwen35-Davy-01.mp4",
+          "start": 26.66,
+          "end": 93.22,
+          "title": "EAFC causa crashes e perde saves dos jogadores",
+          "summary": "Jogadores relatam uma experiência frustrante com o lançamento EAFC, onde bugs técnicos como loads infinitos e falhas na criação de personagens impediram o progresso do jogo. A situação culminou em um crash que apagou o save, obrigando-os a reiniciar tudo do zero.",
+          "score": 82,
+          "fit": "cover"
+        },
+        {
+          "file": "C:\\CutNicePro\\app\\src-tauri\\../../.tooling/test-output/feedback-editorial-2026-10-25\\whole-source-v1\\whole-video\\Qwen35-Davy-02.mp4",
+          "start": 428.02,
+          "end": 455.3,
+          "title": "Skin de jogo ruim vira valor de 3 mil reais",
+          "summary": "Um participante conta uma história sobre skins digitais compradas na Steam, onde o atraso na entrega resultou em itens ruins. Ele explica como a comunidade reage negativamente e como as empresas corrigem esses erros no futuro.",
+          "score": 82,
+          "fit": "cover"
+        }
+      ],
+      "status": "PARTIAL_EDITORIAL"
+    },
+    {
+      "arm": "anchored-v2",
+      "fullVideo": true,
+      "segments": 334,
+      "elapsedSeconds": 273.5349037,
+      "newCount": 3,
+      "preserved": 2,
+      "editorialCriterion": "FAIL: T-PAP não contém a explicação e o veredito pedidos pelo mantenedor",
+      "clips": [
+        {
+          "file": "C:\\CutNicePro\\app\\src-tauri\\../../.tooling/test-output/feedback-editorial-2026-10-25\\anchored-v2\\whole-video\\Qwen35-Davy-01.mp4",
+          "start": 317.03999999999996,
+          "end": 405.58,
+          "title": "Battlefield 6 deixa armas e texturas erradas nos personagens",
+          "summary": "Os participantes analisam um erro visual grave no Battlefield 6, onde skins e armas aparecem incorretamente nos personagens do modo de batalha. Após inspecionarem as imagens em tela cheia, descobrem textos estranhos como 'Secute' e quantidades exageradas de pistolas, o que gera uma piada sobre a falta de revisão da EA.",
+          "score": 89,
+          "fit": "cover"
+        },
+        {
+          "file": "C:\\CutNicePro\\app\\src-tauri\\../../.tooling/test-output/feedback-editorial-2026-10-25\\anchored-v2\\whole-video\\Qwen35-Davy-02.mp4",
+          "start": 26.66,
+          "end": 93.22,
+          "title": "Jogadores perdem save e têm que reiniciar tudo no EAFC por bug",
+          "summary": "Um grupo de jogadores relata uma experiência ruim ao criar personagem no jogo EAFC, onde um erro técnico impediu de configurar a aparência visual. A situação culminou no jogo travar e apagar o progresso salvo.",
+          "score": 87,
+          "fit": "cover"
+        },
+        {
+          "file": "C:\\CutNicePro\\app\\src-tauri\\../../.tooling/test-output/feedback-editorial-2026-10-25\\anchored-v2\\whole-video\\Qwen35-Davy-03.mp4",
+          "start": 256.98,
+          "end": 275.52,
+          "title": "Battlefield 6 lança skin com texto bizarro na nuca",
+          "summary": "Jogadores comentam sobre uma skin estranha lançada no Battlefield 6 que apresenta um texto ilegível na nuca do personagem. Eles discutem se o erro é visível no jogo ou apenas no menu e reagem com humor ao absurdo da situação.",
+          "score": 85,
+          "fit": "cover"
+        }
+      ],
+      "status": "PARTIAL_EDITORIAL"
+    },
+    {
+      "arm": "sampling-v3",
+      "fullVideo": true,
+      "segments": 334,
+      "elapsedSeconds": 314.5725076,
+      "newCount": 4,
+      "preserved": 2,
+      "editorialCriterion": "FAIL: T-PAP não contém a explicação e o veredito pedidos pelo mantenedor",
+      "clips": [
+        {
+          "file": "C:\\CutNicePro\\app\\src-tauri\\../../.tooling/test-output/feedback-editorial-2026-10-25\\sampling-v3\\whole-video\\Qwen35-Davy-01.mp4",
+          "start": 149.4,
+          "end": 197.8,
+          "title": "Battlefield 6: Skin com texto errado deixa jogadores confusos",
+          "summary": "Jogadores do Battlefield 6 encontram skins com textos errados em batalhas. Ao examinar uma imagem, descobrem que 'group therapy' foi alterado para 'T-PAP'. A equipe tenta decifrar o erro e conclui que é um texto incorreto na skin.",
+          "score": 88,
+          "fit": "cover"
+        },
+        {
+          "file": "C:\\CutNicePro\\app\\src-tauri\\../../.tooling/test-output/feedback-editorial-2026-10-25\\sampling-v3\\whole-video\\Qwen35-Davy-02.mp4",
+          "start": 317.03999999999996,
+          "end": 332.06,
+          "title": "Boneco com cinco pistolas no corpo",
+          "summary": "Os participantes descobrem que uma skin de personagem no jogo Battlefield 6 possui cinco pistolas em seu modelo. Ao confirmar a quantidade de armas, eles brincam sobre como o boneco está bem preparado para a guerra, comentando que quando uma pistola acaba, ele saca outra do peito ou da axila.",
+          "score": 88,
+          "fit": "cover"
+        },
+        {
+          "file": "C:\\CutNicePro\\app\\src-tauri\\../../.tooling/test-output/feedback-editorial-2026-10-25\\sampling-v3\\whole-video\\Qwen35-Davy-03.mp4",
+          "start": 26.66,
+          "end": 93.22,
+          "title": "Jogadores perdem save e têm que reiniciar tudo no EAFC por bug",
+          "summary": "Um grupo de jogadores relata uma experiência ruim ao criar personagem no jogo EAFC, onde um erro técnico impediu de configurar a aparência visual. A situação culminou no jogo travar e apagar o progresso salvo.",
+          "score": 87,
+          "fit": "cover"
+        },
+        {
+          "file": "C:\\CutNicePro\\app\\src-tauri\\../../.tooling/test-output/feedback-editorial-2026-10-25\\sampling-v3\\whole-video\\Qwen35-Davy-04.mp4",
+          "start": 428.02,
+          "end": 455.3,
+          "title": "Skin bugada da Valve vira artefato valioso",
+          "summary": "A comunidade de jogadores reclama de uma skin lançada pela Valve após compra via estátua. A empresa corrigiu o erro e a skin antiga agora é colecionável por cerca de R$ 3 mil.",
+          "score": 83,
+          "fit": "cover"
+        }
+      ],
+      "status": "PARTIAL_EDITORIAL"
+    },
+    {
+      "arm": "bounds-v4",
+      "fullVideo": true,
+      "segments": 334,
+      "elapsedSeconds": 556.8787003,
+      "newCount": 5,
+      "preserved": 2,
+      "editorialCriterion": "FAIL: T-PAP não contém a explicação e o veredito pedidos pelo mantenedor",
+      "clips": [
+        {
+          "file": "C:\\CutNicePro\\app\\src-tauri\\../../.tooling/test-output/feedback-editorial-2026-10-25\\bounds-v4\\whole-video\\Qwen35-Davy-01.mp4",
+          "start": 149.4,
+          "end": 197.8,
+          "title": "Battlefield 6: Skin com texto errado deixa jogadores confusos",
+          "summary": "Jogadores do Battlefield 6 encontram skins com textos errados em batalhas. Ao examinar uma imagem, descobrem que 'group therapy' foi alterado para 'T-PAP'. A equipe tenta decifrar o erro e conclui que é um texto incorreto na skin.",
+          "score": 88,
+          "fit": "cover"
+        },
+        {
+          "file": "C:\\CutNicePro\\app\\src-tauri\\../../.tooling/test-output/feedback-editorial-2026-10-25\\bounds-v4\\whole-video\\Qwen35-Davy-02.mp4",
+          "start": 317.03999999999996,
+          "end": 332.06,
+          "title": "Boneco com cinco pistolas no corpo",
+          "summary": "Os participantes descobrem que uma skin de personagem no jogo Battlefield 6 possui cinco pistolas em seu modelo. Ao confirmar a quantidade de armas, eles brincam sobre como o boneco está bem preparado para a guerra, comentando que quando uma pistola acaba, ele saca outra do peito ou da axila.",
+          "score": 88,
+          "fit": "cover"
+        },
+        {
+          "file": "C:\\CutNicePro\\app\\src-tauri\\../../.tooling/test-output/feedback-editorial-2026-10-25\\bounds-v4\\whole-video\\Qwen35-Davy-03.mp4",
+          "start": 428.02,
+          "end": 455.3,
+          "title": "Skin bugada da Valve vira artefato valioso",
+          "summary": "A comunidade de jogadores reclama de uma skin lançada pela Valve após compra via estátua. A empresa corrigiu o erro e a skin antiga agora é colecionável por cerca de R$ 3 mil.",
+          "score": 83,
+          "fit": "cover"
+        },
+        {
+          "file": "C:\\CutNicePro\\app\\src-tauri\\../../.tooling/test-output/feedback-editorial-2026-10-25\\bounds-v4\\whole-video\\Qwen35-Davy-04.mp4",
+          "start": 83.32,
+          "end": 93.38,
+          "title": "Jogo crasha durante customização e apaga save",
+          "summary": "Um jogador relata um crash inesperado no jogo enquanto tentava personalizar o personagem. Ao tentar retomar a partida, ele perdeu o progresso salvo e teve que reiniciar tudo do zero.",
+          "score": 75,
+          "fit": "cover"
+        },
+        {
+          "file": "C:\\CutNicePro\\app\\src-tauri\\../../.tooling/test-output/feedback-editorial-2026-10-25\\bounds-v4\\whole-video\\Qwen35-Davy-05.mp4",
+          "start": 26.66,
+          "end": 82.9,
+          "title": "Jogador relata bug 'Thumbnail Missing' impede customização em EAFC",
+          "summary": "Um jogador relata que comprou o EAFC por R$ 400 e encontrou problemas graves no lançamento. Durante a criação do personagem, o erro 'Thumbnail Missing' bloqueava a personalização da barba, forçando o grupo a recomeçar ou mudar de opção sem resolver a falha técnica.",
+          "score": 74,
+          "fit": "cover"
+        }
+      ],
+      "status": "REJECTED_EXPERIMENT_NOT_IN_DEFAULT_PATH"
+    },
+    {
+      "arm": "bounds-v5",
+      "fullVideo": true,
+      "segments": 334,
+      "elapsedSeconds": 347.7656129,
+      "newCount": 4,
+      "preserved": 2,
+      "editorialCriterion": "FAIL: T-PAP não contém a explicação e o veredito pedidos pelo mantenedor",
+      "clips": [
+        {
+          "file": "C:\\CutNicePro\\app\\src-tauri\\../../.tooling/test-output/feedback-editorial-2026-10-25\\bounds-v5\\whole-video\\Qwen35-Davy-01.mp4",
+          "start": 149.4,
+          "end": 197.8,
+          "title": "Battlefield 6: Skin com texto errado deixa jogadores confusos",
+          "summary": "Jogadores do Battlefield 6 encontram skins com textos errados em batalhas. Ao examinar uma imagem, descobrem que 'group therapy' foi alterado para 'T-PAP'. A equipe tenta decifrar o erro e conclui que é um texto incorreto na skin.",
+          "score": 88,
+          "fit": "cover"
+        },
+        {
+          "file": "C:\\CutNicePro\\app\\src-tauri\\../../.tooling/test-output/feedback-editorial-2026-10-25\\bounds-v5\\whole-video\\Qwen35-Davy-02.mp4",
+          "start": 317.03999999999996,
+          "end": 332.06,
+          "title": "Boneco com cinco pistolas no corpo",
+          "summary": "Os participantes descobrem que uma skin de personagem no jogo Battlefield 6 possui cinco pistolas em seu modelo. Ao confirmar a quantidade de armas, eles brincam sobre como o boneco está bem preparado para a guerra, comentando que quando uma pistola acaba, ele saca outra do peito ou da axila.",
+          "score": 88,
+          "fit": "cover"
+        },
+        {
+          "file": "C:\\CutNicePro\\app\\src-tauri\\../../.tooling/test-output/feedback-editorial-2026-10-25\\bounds-v5\\whole-video\\Qwen35-Davy-03.mp4",
+          "start": 26.66,
+          "end": 93.22,
+          "title": "Jogadores perdem save e têm que reiniciar tudo no EAFC por bug",
+          "summary": "Um grupo de jogadores relata uma experiência ruim ao criar personagem no jogo EAFC, onde um erro técnico impediu de configurar a aparência visual. A situação culminou no jogo travar e apagar o progresso salvo.",
+          "score": 87,
+          "fit": "cover"
+        },
+        {
+          "file": "C:\\CutNicePro\\app\\src-tauri\\../../.tooling/test-output/feedback-editorial-2026-10-25\\bounds-v5\\whole-video\\Qwen35-Davy-04.mp4",
+          "start": 428.02,
+          "end": 455.3,
+          "title": "Skin bugada da Valve vira artefato valioso",
+          "summary": "A comunidade de jogadores reclama de uma skin lançada pela Valve após compra via estátua. A empresa corrigiu o erro e a skin antiga agora é colecionável por cerca de R$ 3 mil.",
+          "score": 83,
+          "fit": "cover"
+        }
+      ],
+      "status": "REJECTED_EXPERIMENT_NOT_IN_DEFAULT_PATH"
+    }
+  ],
+  "cloudDiagnostic": {
+    "endpoint": "https://api.z.ai/api/coding/paas/v4/chat/completions",
+    "model": "glm-5.3-flash",
+    "scope": "Codex: comparação autorizada, sem integração no aplicativo e sem vídeos enviados",
+    "connection": {
+      "endpoint": "https://api.z.ai/api/coding/paas/v4/chat/completions",
+      "requestedModel": "glm-5.3-flash",
+      "elapsedSeconds": 2.830832199999999,
+      "httpStatus": 200,
+      "ok": true,
+      "request": {
+        "model": "glm-5.3-flash",
+        "messages": [
+          {
+            "role": "system",
+            "content": "Você está auxiliando o Codex a depurar o CutNicePro. Responda apenas JSON."
+          },
+          {
+            "role": "user",
+            "content": "Teste de conexão do Coding Plan: em TypeScript, a função const clamp = (x:number) => Math.max(100, Math.min(0,x)) está errada. Retorne {\"ok\":true,\"corrected\":\"a função corrigida\"}."
+          }
+        ],
+        "thinking": {
+          "type": "enabled",
+          "clear_thinking": false
+        },
+        "reasoning_effort": "low",
+        "temperature": 1,
+        "top_p": 0.95,
+        "max_tokens": 2048,
+        "response_format": {
+          "type": "json_object"
+        },
+        "stream": false
+      },
+      "response": {
+        "choices": [
+          {
+            "finish_reason": "stop",
+            "index": 0,
+            "message": {
+              "content": "{\"ok\":true,\"corrected\":\"const clamp = (x: number): number => Math.max(0, Math.min(100, x));\"}",
+              "reasoning_content": "clamp: min/max swapped.",
+              "role": "assistant"
+            }
+          }
+        ],
+        "created": 1792905791,
+        "id": "202610251323107baf099fbcf9429c",
+        "model": "glm-5.3-flash",
+        "object": "chat.completion",
+        "request_id": "202610251323107baf099fbcf9429c",
+        "usage": {
+          "completion_tokens": 39,
+          "completion_tokens_details": {
+            "reasoning_tokens": 6
+          },
+          "prompt_tokens": 89,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          },
+          "total_tokens": 128
+        }
+      }
+    },
+    "fullTranscript": true,
+    "segments": 334,
+    "transcriptSha256": "7cacc40f3dbac073fb109714de9b1adcab32f69e6b023e6dff873a96a7544e48",
+    "limitations": [
+      "GLM usa thinking low e JSON object; Qwen usa nonthinking e gramática JSON Schema. Não é ablação isolada dos pesos.",
+      "Mesmo texto completo e instruções de conteúdo; parâmetros são específicos por modelo.",
+      "Diagnóstico do Codex; não integrado como provedor do aplicativo."
+    ],
+    "cases": [
+      {
+        "name": "discovery",
+        "httpStatus": 200,
+        "elapsedSeconds": 10.637578800000002,
+        "finish": "stop",
+        "usage": {
+          "completion_tokens": 569,
+          "completion_tokens_details": {
+            "reasoning_tokens": 0
+          },
+          "prompt_tokens": 3485,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          },
+          "total_tokens": 4054
+        },
+        "output": {
+          "clips": [
+            {
+              "title": "EAFC: taça do campeonato bugada no personagem",
+              "openingQuote": "Eu joguei o EAFC, que é medonho, medonho.",
+              "closingQuote": "Isso é o de menos que a gente viu naquele dia."
+            },
+            {
+              "title": "Thumbnail Missing na barba do personagem",
+              "openingQuote": "Chegou numa parte que era botar barba.",
+              "closingQuote": "Os caras não oparam a Thumbnail do personagem, pô."
+            },
+            {
+              "title": "Jogo crasha e apaga o save no modo carreira",
+              "openingQuote": "fomos passar pra botar roupa, sei lá.",
+              "closingQuote": "Fora que pra tudo que você vai fazer no modo deles no rolar,"
+            },
+            {
+              "title": "Load infinito entre qualquer coisa no jogo da EA",
+              "openingQuote": "Primeiro que o jogo tem loads infinitos entre qualquer coisa.",
+              "closingQuote": "Porra, o SSD torando, pô. Não existe isso."
+            },
+            {
+              "title": "Skin do Battlefield 6 com escrita Group T-PAP",
+              "openingQuote": "Não, grupo T-PAP. Era pra ser group therapy, certo?",
+              "closingQuote": "Mas não é possível que vocês deixaram passar aí."
+            },
+            {
+              "title": "Escrito Secute no placeira da skin",
+              "openingQuote": "Hum, já vi. Já viu? O que? Secute?",
+              "closingQuote": "E a palavra em si não tem como mudar, pô. Não faz nenhum sentido."
+            },
+            {
+              "title": "Contagem de armas escondida na nuca do personagem",
+              "openingQuote": "Ô, meu garoto. Opa, brabo. Esses números...",
+              "closingQuote": "Porra, tu fazia pra fazer o bagulho? Pelo menos, tenta fazer direito."
+            },
+            {
+              "title": "EA vende skin bugada sem revisar",
+              "openingQuote": "É, que porra é essa? De nem revisar.",
+              "closingQuote": "Esse é o tipo de arma mal utilizada que ninguém gosta."
+            },
+            {
+              "title": "Valve corrigiu skin ruim que hoje vale 3 mil reais",
+              "openingQuote": "A Valve já fez isso, cara, que é bem interessante.",
+              "closingQuote": "Caralho. É, no mercado, se você tem ela..."
+            },
+            {
+              "title": "Sobretudo do PUBG vale uma fortuna",
+              "openingQuote": "É que nem o... Até hoje... Do PUBG.",
+              "closingQuote": "Eu achei que já tinha morrido. Mas em qualquer momento"
+            },
+            {
+              "title": "PC da Makita rachando barulho na live",
+              "openingQuote": "A galera só escutando a Makita",
+              "closingQuote": "Vocês usam a maquininha pra barbear?"
+            }
+          ]
+        }
+      },
+      {
+        "name": "therapy-rejected-17s",
+        "httpStatus": 200,
+        "elapsedSeconds": 14.015415100000002,
+        "finish": "stop",
+        "usage": {
+          "completion_tokens": 599,
+          "completion_tokens_details": {
+            "reasoning_tokens": 301
+          },
+          "prompt_tokens": 5456,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          },
+          "total_tokens": 6055
+        },
+        "output": {
+          "nature": "humor",
+          "advertising": false,
+          "openingStatus": "contextoAusente",
+          "endingStatus": "falaInterrompida",
+          "analysis": {
+            "title": "Skin traz 'T-PAP' no lugar de 'group therapy'",
+            "summary": "Uma skin traz o texto 'T-PAP' onde deveria estar escrito 'group therapy'. Os participantes estranham o erro e sugerem que algo foi feito sem revisão.",
+            "hook": {
+              "evidenceId": 0,
+              "explanation": "A fala inicial já entrega o erro de texto ('grupo T-PAP' em vez de 'group therapy'), o que desperta curiosidade, mas o intervalo começa no meio da leitura, sem indicar onde esse texto aparece.",
+              "score": 45
+            },
+            "development": {
+              "evidenceId": 1,
+              "explanation": "A repetição e a reação de incredulidade reforçam o erro, porém o objeto em que o texto está impresso (skin de passe de batalha) nunca é esclarecido dentro do corte, o que depende da imagem exibida.",
+              "score": 48
+            },
+            "closing": {
+              "evidenceId": 2,
+              "explanation": "O intervalo termina em 'Aí das duas uma', frase que anuncia duas possibilidades e é interrompida antes de enunciá-las; a conclusão só aparece depois do corte, então a unidade fica sem desfecho.",
+              "score": 35
+            }
+          },
+          "decision": "rejeitar"
+        }
+      },
+      {
+        "name": "therapy-complete-context",
+        "httpStatus": 200,
+        "elapsedSeconds": 11.7216132,
+        "finish": "stop",
+        "usage": {
+          "completion_tokens": 560,
+          "completion_tokens_details": {
+            "reasoning_tokens": 187
+          },
+          "prompt_tokens": 5747,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          },
+          "total_tokens": 6307
+        },
+        "output": {
+          "nature": "relato",
+          "advertising": false,
+          "openingStatus": "assuntoApresentado",
+          "endingStatus": "observacaoConcluidaDoMesmoAssunto",
+          "analysis": {
+            "title": "Erro em skin do Battle Pass reacende acusação de uso de IA na EA",
+            "summary": "Jogadores notaram textos errados em skins do novo passe de batalha de Battlefield 6 e acusam a EA e a Battlefield Studios de terem produzido o conteúdo com IA sem revisão. Um dos erros mostra 'group T-PAP' no lugar de 'group therapy'. A conversa conclui que o erro passa batido porque ninguém olha a parte de trás do personagem.",
+            "hook": {
+              "evidenceId": 0,
+              "explanation": "A abertura apresenta direto o assunto: jogadores avistaram coisas estranhas no passe de batalha e acusam a EA de ter feito as skins com IA. Gancho claro e com conflito.",
+              "score": 75
+            },
+            "development": {
+              "evidenceId": 4,
+              "explanation": "O desenvolvimento mostra o erro concreto ('group T-PAP' em vez de 'group therapy') com a reação de incredulidade, e discute as duas hipóteses: IA sem revisão ou erro manual sem revisão. Há dependência parcial da imagem na tela, mas o erro é lido em voz alta, o que sustenta a compreensão no áudio.",
+              "score": 65
+            },
+            "closing": {
+              "evidenceId": 8,
+              "explanation": "O intervalo termina com a conclusão do grupo sobre o próprio episódio: o erro passa despercebido porque ninguém olha a nuca do personagem. É uma observação que conclui o ponto discutido, sem pendências ou assunto novo.",
+              "score": 68
+            }
+          }
+        }
+      },
+      {
+        "name": "therapy-current-48s",
+        "httpStatus": 200,
+        "elapsedSeconds": 10.594527100000002,
+        "finish": "stop",
+        "usage": {
+          "completion_tokens": 468,
+          "completion_tokens_details": {
+            "reasoning_tokens": 46
+          },
+          "prompt_tokens": 5577,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          },
+          "total_tokens": 6045
+        },
+        "output": {
+          "nature": "relato",
+          "advertising": false,
+          "openingStatus": "assuntoApresentado",
+          "endingStatus": "consequenciaOuReacaoDoMesmoEpisodio",
+          "analysis": {
+            "title": "Erro 'group T-PAP' em skin do passe de batalha acusa uso de IA",
+            "summary": "Jogadores acusaram a EA e a Battlefield Studios de ter criado skins do novo passe de batalha de Battlefield 6 com IA, após encontrarem textos errados. Na imagem exibida, o texto 'group therapy' aparece escrito como 'group T-PAP'. A reação é de espanto: se foi feito com IA ou à mão, ninguém revisou.",
+            "hook": {
+              "evidenceId": 0,
+              "explanation": "Abertura direta: jogadores avistaram coisas estranhas no passe de batalha e acusam a EA de usar IA, apresentando o assunto e o gancho.",
+              "score": 80
+            },
+            "development": {
+              "evidenceId": 2,
+              "explanation": "Desenvolvimento mostra a imagem sendo exibida na tela e constrói a expectativa antes da revelação do erro no texto.",
+              "score": 70
+            },
+            "closing": {
+              "evidenceId": 4,
+              "explanation": "Encerra com a constatação e a reação ao erro do mesmo episódio: era para ser 'group therapy' e está 'T-PAP', com espanto do grupo. A unidade iniciada na acusação de IA se completa com o exemplo concreto do erro.",
+              "score": 75
+            }
+          },
+          "title": "Erro 'group T-PAP' em skin do passe de batalha acusa uso de IA",
+          "summary": "Jogadores acusaram a EA e a Battlefield Studios de ter criado skins do novo passe de batalha de Battlefield 6 com IA, após encontrarem textos errados. Na imagem exibida, o texto 'group therapy' aparece escrito como 'group T-PAP'. A reação é de espanto: com IA ou não, ninguém revisou o conteúdo."
+        }
+      }
+    ],
+    "anchorComparison": [
+      {
+        "model": "GLM-5.3-Flash",
+        "proposed": 11,
+        "exactlyLocated": 10,
+        "withinDuration": 10,
+        "clips": [
+          {
+            "title": "EAFC: taça do campeonato bugada no personagem",
+            "openingQuote": "Eu joguei o EAFC, que é medonho, medonho.",
+            "closingQuote": "Isso é o de menos que a gente viu naquele dia.",
+            "exactlyLocated": true,
+            "start": 26.56,
+            "end": 46.02,
+            "duration": 19.460000000000004,
+            "withinDuration": true
+          },
+          {
+            "title": "Thumbnail Missing na barba do personagem",
+            "openingQuote": "Chegou numa parte que era botar barba.",
+            "closingQuote": "Os caras não oparam a Thumbnail do personagem, pô.",
+            "exactlyLocated": true,
+            "start": 60.34,
+            "end": 78.78,
+            "duration": 18.439999999999998,
+            "withinDuration": true
+          },
+          {
+            "title": "Jogo crasha e apaga o save no modo carreira",
+            "openingQuote": "fomos passar pra botar roupa, sei lá.",
+            "closingQuote": "Fora que pra tudo que você vai fazer no modo deles no rolar,",
+            "exactlyLocated": true,
+            "start": 83.32,
+            "end": 99.12,
+            "duration": 15.800000000000011,
+            "withinDuration": true
+          },
+          {
+            "title": "Load infinito entre qualquer coisa no jogo da EA",
+            "openingQuote": "Primeiro que o jogo tem loads infinitos entre qualquer coisa.",
+            "closingQuote": "Porra, o SSD torando, pô. Não existe isso.",
+            "exactlyLocated": true,
+            "start": 49.66,
+            "end": 110.58,
+            "duration": 60.92,
+            "withinDuration": true
+          },
+          {
+            "title": "Skin do Battlefield 6 com escrita Group T-PAP",
+            "openingQuote": "Não, grupo T-PAP. Era pra ser group therapy, certo?",
+            "closingQuote": "Mas não é possível que vocês deixaram passar aí.",
+            "exactlyLocated": true,
+            "start": 183.78,
+            "end": 199.18,
+            "duration": 15.400000000000006,
+            "withinDuration": true
+          },
+          {
+            "title": "Escrito Secute no placeira da skin",
+            "openingQuote": "Hum, já vi. Já viu? O que? Secute?",
+            "closingQuote": "E a palavra em si não tem como mudar, pô. Não faz nenhum sentido.",
+            "exactlyLocated": false
+          },
+          {
+            "title": "Contagem de armas escondida na nuca do personagem",
+            "openingQuote": "Ô, meu garoto. Opa, brabo. Esses números...",
+            "closingQuote": "Porra, tu fazia pra fazer o bagulho? Pelo menos, tenta fazer direito.",
+            "exactlyLocated": true,
+            "start": 313.41999999999996,
+            "end": 373.26,
+            "duration": 59.84000000000003,
+            "withinDuration": true
+          },
+          {
+            "title": "EA vende skin bugada sem revisar",
+            "openingQuote": "É, que porra é essa? De nem revisar.",
+            "closingQuote": "Esse é o tipo de arma mal utilizada que ninguém gosta.",
+            "exactlyLocated": true,
+            "start": 400.66,
+            "end": 410.84,
+            "duration": 10.17999999999995,
+            "withinDuration": true
+          },
+          {
+            "title": "Valve corrigiu skin ruim que hoje vale 3 mil reais",
+            "openingQuote": "A Valve já fez isso, cara, que é bem interessante.",
+            "closingQuote": "Caralho. É, no mercado, se você tem ela...",
+            "exactlyLocated": true,
+            "start": 424.86,
+            "end": 456.88,
+            "duration": 32.01999999999998,
+            "withinDuration": true
+          },
+          {
+            "title": "Sobretudo do PUBG vale uma fortuna",
+            "openingQuote": "É que nem o... Até hoje... Do PUBG.",
+            "closingQuote": "Eu achei que já tinha morrido. Mas em qualquer momento",
+            "exactlyLocated": true,
+            "start": 463.68,
+            "end": 484.08,
+            "duration": 20.399999999999977,
+            "withinDuration": true
+          },
+          {
+            "title": "PC da Makita rachando barulho na live",
+            "openingQuote": "A galera só escutando a Makita",
+            "closingQuote": "Vocês usam a maquininha pra barbear?",
+            "exactlyLocated": true,
+            "start": 487.7,
+            "end": 530.16,
+            "duration": 42.45999999999998,
+            "withinDuration": true
+          }
+        ]
+      },
+      {
+        "model": "Qwen3.5-4B",
+        "proposed": 5,
+        "exactlyLocated": 5,
+        "withinDuration": 4,
+        "clips": [
+          {
+            "title": "EAFC bug: barra de cabelo sem imagem",
+            "openingQuote": "Eu joguei o EAFC, que é medonho, medonho.",
+            "closingQuote": "Não é possível. Ele deletou, você bugou o save?",
+            "exactlyLocated": true,
+            "start": 26.56,
+            "end": 95.94,
+            "duration": 69.38,
+            "withinDuration": true
+          },
+          {
+            "title": "Battlefield 6: Skin com texto errado 'Group T-PAP'",
+            "openingQuote": "Os jogadores avistaram umas coisas estranhas no passo de batalha.",
+            "closingQuote": "Era pra ser group therapy e tá T-PAP.",
+            "exactlyLocated": true,
+            "start": 149.4,
+            "end": 197.8,
+            "duration": 48.400000000000006,
+            "withinDuration": true
+          },
+          {
+            "title": "Skin do Battlefield 6: boneco armado com excesso de pistolas",
+            "openingQuote": "Esses números é a quantidade de pistola que esse boneco tem.",
+            "closingQuote": "É muito bom, né? Acabou uma pistola, a gente saca outra no peito.",
+            "exactlyLocated": true,
+            "start": 316.88,
+            "end": 332.06,
+            "duration": 15.180000000000007,
+            "withinDuration": true
+          },
+          {
+            "title": "Mercado de skins bugadas: valorização de itens errados",
+            "openingQuote": "Essas skins aí, eles podiam monter no jogo.",
+            "closingQuote": "A skin antiga hoje vale 3 mil reais, né? Caralho.",
+            "exactlyLocated": true,
+            "start": 421.64,
+            "end": 456.88,
+            "duration": 35.24000000000001,
+            "withinDuration": true
+          },
+          {
+            "title": "PC superaquecendo durante a live com o 'Taquete'",
+            "openingQuote": "Eu já ouço a buzina do Dinera e já dá uma ansiedade aqui, brincadeira.",
+            "closingQuote": "Tem que botar uma proteção aí, cara. É verdade.",
+            "exactlyLocated": true,
+            "start": 245.04,
+            "end": 515.86,
+            "duration": 270.82000000000005,
+            "withinDuration": false
+          }
+        ]
+      }
+    ],
+    "conclusion": "GLM também aprova o mesmo intervalo de 48 s e inclui no resumo a revisão que só foi dita depois. Trocar somente o modelo não corrige o problema.",
+    "contractLimit": "Respostas JSON object incluem campos extras incompatíveis com o contrato Rust atual. Não prova integração com o motor.",
+    "initialMaxAttempt": "JSON não utilizável; envelope bruto não foi preservado; causa e consumo desconhecidos"
+  },
+  "rejectedControls": {
+    "compactAssessment": "Rejeitado: GTA inventado, metalinguagem e recusas de contexto indevidas.",
+    "cpu": "Não resolveu fatos/limites; Vulkan mantido.",
+    "narrativeReview": "Lote e individual não recuperaram o fechamento requerido; compilados somente sob cfg(test). Não aumentam custo do fluxo normal.",
+    "focusedRegion": {
+      "fullTranscript": true,
+      "segments": 334,
+      "scope": "Revisão de uma proposta, não geração integral do pipeline",
+      "elapsedSeconds": 62.3798289,
+      "clip": {
+        "faceFraming": {
+          "status": "ambiguous",
+          "samples": 12
+        },
+        "id": "c7edced804bc487f58f6cd0809dde32f7b4235661777b83f5516e0bd9840cbbd",
+        "start": 149.78,
+        "end": 197.8,
+        "title": "Battlefield 6 libera skins com erros de texto absurdos",
+        "score": 73,
+        "reasons": [
+          "Proveniência: momento proposto — os jogadores avistaram umas coisas estranhas no passo de batalha — era pra ser group therapy e tá t pap",
+          "Avaliação do intervalo efetivo (publicidade, relato): Gancho: O trecho inicia narrando que jogadores viram coisas estranhas em skins do Battlefield 6 e estão acusando a EA de erros com IA, estabelecendo o conflito central imediatamente.; Desenvolvimento: A discussão foca na leitura da imagem estranha ('grupo T-PAP' em vez de 'group therapy'), onde os participantes tentam decifrar o erro visual e expressam confusão sobre a intenção por trás do texto.; Fechamento: A fala final confirma que o texto 'T-PAP' está incorreto em vez de 'therapy', estabelecendo a piada/erro visual e a reação de incredulidade ('você está zoando') como desfecho da unidade narrativa sobre a skin específica.",
+          "O trecho inicia narrando que jogadores viram coisas estranhas em skins do Battlefield 6 e estão acusando a EA de erros com IA, estabelecendo o conflito central imediatamente.",
+          "A discussão foca na leitura da imagem estranha ('grupo T-PAP' em vez de 'group therapy'), onde os participantes tentam decifrar o erro visual e expressam confusão sobre a intenção por trás do texto.",
+          "A fala final confirma que o texto 'T-PAP' está incorreto em vez de 'therapy', estabelecendo a piada/erro visual e a reação de incredulidade ('você está zoando') como desfecho da unidade narrativa sobre a skin específica.",
+          "Proveniência: limites narrativos revistos na transcrição completa, com tempos da fonte",
+          "Conteúdo promocional: prioridade secundária"
+        ],
+        "review": "pending",
+        "format": "9:16",
+        "fit": "cover",
+        "analysis": {
+          "title": "Battlefield 6 libera skins com erros de texto absurdos",
+          "summary": "Jogadores relatam que skins novas do Battlefield 6 contêm erros de texto estranhos, como 'group T-PAP' ao invés de 'group therapy'. A comunidade acusa a EA e os estúdios de negligência na revisão dos assets gerados por IA.",
+          "criteria": [
+            {
+              "label": "Gancho",
+              "score": 75,
+              "explanation": "O trecho inicia apresentando o problema de forma direta: jogadores avistaram coisas estranhas em skins do Battlefield 6 e estão acusando a EA/Battlefield Studios.",
+              "evidence": "Os jogadores avistaram Umas coisas estranhas No passo de batalha De umas skins Que está sendo Eles estão acusando a EA Battlefield Studios agora De ter feito tudo"
+            },
+            {
+              "label": "Desenvolvimento",
+              "score": 65,
+              "explanation": "A discussão sobre o erro específico ('group T-PAP' em vez de 'group therapy') é apresentada como evidência do problema relatado na abertura.",
+              "evidence": "Não, não, não. Lê de novo. Não, grupo T-PAP. Era pra ser group therapy, certo?"
+            },
+            {
+              "label": "Fechamento",
+              "score": 80,
+              "explanation": "A última fala do intervalo confirma a natureza da falha com ironia ('Era pra ser group therapy e tá T-PAP'), fechando o relato sobre essa skin específica sem resolver o problema geral das outras skins mostradas.",
+              "evidence": "Era pra ser therapy. Então, group T-PAP. Ah, você está zoando. Era pra ser group therapy e tá T-PAP."
+            }
+          ]
+        },
+        "analysisSignature": "d03c82e1dd3d4a4991daeba52d578d370b162e63f6191300847ce3d238481f8a",
+        "engine": {
+          "backend": "qwen35",
+          "model": "Qwen3.5-4B-Q4_K_M.gguf",
+          "template": "qwen3.5-canonical-nothink, ctx 32768",
+          "sampling": "extração 0.4, avaliação 0.7, top_k 20, top_p 0.8, min_p 0, presence 1.5, seed 42",
+          "seed": 42
+        },
+        "createdAtMs": 1792904875695
+      },
+      "includedSpeech": "Os jogadores avistaram Umas coisas estranhas No passo de batalha De umas skins Que está sendo Eles estão acusando a EA Battlefield Studios agora De ter feito tudo isso com o IA E aí por que? Você pergunta Vamos puxar as imagens aí Você tem imagem Ah, tem umas imagens Não, eu quero ver Eu quero enxergar Ele bota o acrim Ele vai chamar Vai botar a imagem na tela Bom, primeiro é esse O que está escrito ali? Não, não, não. Lê de novo. Não, grupo T-PAP. Era pra ser group therapy, certo? Era pra ser therapy. Então, group T-PAP. Ah, você está zoando. Era pra ser group therapy e tá T-PAP."
+    }
+  },
+  "checks": {
+    "rust": "cargo test --offline --locked: 200 PASS/0 FAIL/25 opt-in",
+    "frontend": "vitest: 260 PASS/0 FAIL",
+    "typecheckVite": "PASS",
+    "eslint": "PASS",
+    "modelEditorial": "FAIL no critério obrigatório; não depende somente de aprovação visual",
+    "uiAutomation": "NOT RUN: mantenedor executa manualmente",
+    "humanVisual": "PENDING HUMAN APPROVAL",
+    "preservedProfile": "Nenhuma gravação no perfil normal do mantenedor",
+    "graphify": "Remoto em HEAD 9785ff9, complementado por fonte/diff locais; alterações locais não indexadas"
+  },
+  "build": {
+    "path": "C:\\CutNicePro\\app\\src-tauri\\target\\debug\\cutnicepro.exe",
+    "sha256": "801052d54e085ef784dcc479cc805a8db21393fc7e6427d52313d6f843199a31",
+    "singleTarget": true
+  },
+  "research": {
+    "autoclipRevision": "3d3b5edf9ffa595a764b0919e6dbd4ce8acaca84",
+    "source": "backend/services/studio/boundaries.py",
+    "programmaticLeadSeconds": 20,
+    "programmaticTailSeconds": 25,
+    "modelMaxExtendSeconds": 60,
+    "contextBeforeSeconds": 40,
+    "contextAfterSeconds": 75,
+    "mergeGapSeconds": 5,
+    "note": "Busca e junção, não acréscimo fixo; a própria referência também falhou no fechamento T-PAP."
+  }
+}

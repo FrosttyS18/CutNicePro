@@ -62,7 +62,7 @@ export function ClipInspection({ entry,onClose,onEdit,onChanged }: Props) {
     }} busy={controller.busy && controller.ownedJob} allowCloseWhileBusy={ownAnalysis}>
       <div className="clip-inspection__body">
         <div className="clip-inspection__player"><VideoPreview media={media.source?.media ?? null} localUrl={media.source?.url ?? null} settings={settings} videoRef={video}
-          nativeControls={false} onTogglePlay={toggle} cue={captionCue(allTranscript,time)} onDuration={() => seek(from)}
+          nativeControls={false} onTogglePlay={toggle} cue={captionCue(transcript,Math.min(time,to-0.001),undefined,{start:from,end:to})} onDuration={() => seek(from)}
           onTime={value => {
             if (value >= to) { video.current?.pause(); setPlaying(false); setTime(to); }
             else if (value < from) seek(from); else setTime(value);

@@ -76,6 +76,7 @@ describe("resultado da geração depois dos 25%", () => {
     expect(mounted!.host.querySelector('progress')).toBeNull();
     expect(feedback()?.textContent).toContain("Nenhum corte novo foi aprovado");
     expect(feedback()?.textContent).toContain("contexto e conclusão");
+    expect(feedback()?.textContent).not.toContain("se repetiram");
     expect(mounted!.host.querySelector('[aria-label="Clipes salvos"]')?.textContent).toContain("1 clipes preservados");
     await act(async () => { mounted!.host.querySelector<HTMLButtonElement>('[aria-label="Fechar aviso"]')!.click(); });
     expect(feedback()).toBeNull();

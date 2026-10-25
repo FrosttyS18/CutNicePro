@@ -5,6 +5,7 @@
 .tooling/playwright/package-lock.json
 .tooling/docs-refs/
 .tooling/npm-cache/
+.tooling/pip-cache/
 
 # Node
 node_modules/
@@ -50,6 +51,7 @@ __pycache__/
 .tooling/_checks.json
 
 /docs/reports/evidence/**/*.mp4
+/Opus teste/
 /apply_f1.py
 /apply_g3c.py
 /app/src-tauri/apply_mm_helpers.py

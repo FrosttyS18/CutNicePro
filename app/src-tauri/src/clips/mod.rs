@@ -4,6 +4,8 @@ mod assessment;
 mod autoclip_runtime_tests;
 pub mod borders;
 pub mod commands;
+#[cfg(test)]
+mod comparison_runtime_tests;
 mod content;
 mod discovery_reply;
 mod editorial;
@@ -11,9 +13,15 @@ mod editorial_repair;
 mod engine_tools;
 mod evidence;
 mod face_framing;
+#[cfg(test)]
+mod feedback_runtime_tests;
 mod generation;
+mod generation_batch;
+mod generation_rounds;
 #[cfg(test)]
 mod incremental_runtime_tests;
+#[cfg(test)]
+mod narrative_bounds;
 mod novelty;
 #[cfg(test)]
 mod pipeline_tests;
@@ -27,6 +35,7 @@ mod selection;
 mod semantic;
 #[cfg(test)]
 mod semantic_tests;
+mod source_anchors;
 mod store;
 mod text_engine;
 #[cfg(test)]

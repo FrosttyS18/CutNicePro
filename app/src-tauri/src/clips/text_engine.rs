@@ -7,6 +7,12 @@ use std::{path::Path, process::Command};
 
 pub struct Engine(Tools);
 
+#[derive(Clone, Copy)]
+struct Generation {
+    tokens: u16,
+    temperature: f32,
+}
+
 impl Engine {
     pub fn discover(base: &Path, _quality: Quality) -> Result<Self, String> {
         Ok(Self(engine_tools::discover(base)?))
@@ -16,7 +22,9 @@ impl Engine {
             backend: "qwen35".into(),
             model: MODEL_NAME.into(),
             template: "qwen3.5-canonical-nothink, ctx 32768".into(),
-            sampling: "temp 0.7, top_k 20, top_p 0.8, min_p 0, presence 1.5, seed 42".into(),
+            sampling:
+                "extração 0.4, avaliação 0.7, top_k 20, top_p 0.8, min_p 0, presence 1.5, seed 42"
+                    .into(),
             seed: 42,
         }
     }
@@ -47,6 +55,48 @@ impl Engine {
         tokens: u16,
         control: &ProcessControl,
     ) -> Result<String, String> {
+        self.complete(
+            scratch,
+            stem,
+            prompt,
+            schema,
+            Generation {
+                tokens,
+                temperature: 0.7,
+            },
+            control,
+        )
+    }
+    pub fn generate_extraction(
+        &self,
+        scratch: &Path,
+        stem: &str,
+        prompt: &str,
+        schema: &serde_json::Value,
+        tokens: u16,
+        control: &ProcessControl,
+    ) -> Result<String, String> {
+        self.complete(
+            scratch,
+            stem,
+            prompt,
+            schema,
+            Generation {
+                tokens,
+                temperature: 0.4,
+            },
+            control,
+        )
+    }
+    fn complete(
+        &self,
+        scratch: &Path,
+        stem: &str,
+        prompt: &str,
+        schema: &serde_json::Value,
+        generation: Generation,
+        control: &ProcessControl,
+    ) -> Result<String, String> {
         control.check()?;
         let input = scratch.join(format!("{stem}-prompt.txt"));
         let schema_path = scratch.join(format!("{stem}.schema.json"));
@@ -58,7 +108,7 @@ impl Engine {
         )
         .map_err(|e| e.to_string())?;
         let execute = |binary: &Path, gpu: bool| {
-            let mut command = self.command(binary, gpu, &input, &schema_path, tokens);
+            let mut command = self.command(binary, gpu, &input, &schema_path, generation);
             control.run_to_file(
                 &mut command,
                 &scratch.join(format!("{stem}-{}.log", if gpu { "gpu" } else { "cpu" })),
@@ -86,7 +136,7 @@ impl Engine {
         gpu: bool,
         input: &Path,
         schema: &Path,
-        tokens: u16,
+        generation: Generation,
     ) -> Command {
         let threads = std::thread::available_parallelism()
             .map(|n| n.get().min(6))
@@ -103,7 +153,7 @@ impl Engine {
                 "-c",
                 &CONTEXT_TOKENS.to_string(),
                 "-n",
-                &tokens.to_string(),
+                &generation.tokens.to_string(),
                 "-t",
                 &threads.to_string(),
                 "-ngl",
@@ -111,7 +161,7 @@ impl Engine {
                 "--fit",
                 "off",
                 "--temp",
-                "0.7",
+                &generation.temperature.to_string(),
                 "--top-k",
                 "20",
                 "--top-p",
@@ -202,7 +252,10 @@ mod tests {
                 gpu,
                 Path::new("input"),
                 Path::new("schema"),
-                2000,
+                Generation {
+                    tokens: 2000,
+                    temperature: 0.7,
+                },
             );
             let args: Vec<_> = command
                 .get_args()
@@ -211,6 +264,32 @@ mod tests {
             assert!(args.windows(2).any(|pair| pair == ["-c", "32768"]));
             assert!(args.windows(2).any(|pair| pair == ["--fit", "off"]));
             assert!(!args.iter().any(|arg| arg.contains("gemma")));
+            assert!(args.windows(2).any(|pair| pair == ["--temp", "0.7"]));
+        }
+    }
+    #[test]
+    fn extraction_sampling_reaches_the_process_without_changing_context_or_seed() {
+        let command = Engine::for_test().command(
+            Path::new("llama"),
+            true,
+            Path::new("input"),
+            Path::new("schema"),
+            Generation {
+                tokens: 4096,
+                temperature: 0.4,
+            },
+        );
+        let args: Vec<_> = command
+            .get_args()
+            .map(|a| a.to_string_lossy().to_string())
+            .collect();
+        for pair in [
+            ["--temp", "0.4"],
+            ["-c", "32768"],
+            ["--seed", "42"],
+            ["-n", "4096"],
+        ] {
+            assert!(args.windows(2).any(|actual| actual == pair));
         }
     }
     #[test]
@@ -219,6 +298,7 @@ mod tests {
         assert_eq!(record.backend, "qwen35");
         assert_eq!(record.model, MODEL_NAME);
         assert!(record.template.contains("32768"));
+        assert!(record.sampling.contains("extração 0.4"));
     }
 
     #[test]

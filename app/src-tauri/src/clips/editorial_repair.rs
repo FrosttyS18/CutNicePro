@@ -70,11 +70,6 @@ struct Bounds {
     first_id: usize,
     last_id: usize,
 }
-#[derive(Deserialize)]
-#[serde(deny_unknown_fields)]
-struct Reply {
-    repair: Option<Bounds>,
-}
 
 fn apply(
     original: &Clip,
@@ -157,39 +152,41 @@ pub fn recover(
             break;
         }
         control.check()?;
-        let mut input = None;
-        for padding in [45.0, 20.0, 0.0] {
-            let start = speech
-                .iter()
-                .position(|s| s.end >= original.start - padding)
-                .unwrap_or(speech.len());
-            let end = speech.partition_point(|s| s.start <= original.end + padding);
-            let range = start..end;
-            if range.is_empty() {
-                continue;
-            }
-            let data = serde_json::json!({"rejected":{"start":original.start,"end":original.end,"analysis":original.analysis,"reasons":original.reasons},
-                "minSeconds":options.min_seconds,"maxSeconds":options.max_seconds,
-                "speech":range.clone().map(|i|serde_json::json!([i,speech[i].start,speech[i].end,speech[i].text])).collect::<Vec<_>>()});
-            let prompt = engine.prompt(include_str!("repair-prompt.txt"), &data)?;
-            let fits = engine.count_tokens(scratch, &prompt)?
-                <= super::engine_tools::CONTEXT_TOKENS - 1000;
-            if fits {
-                input = Some((range, prompt));
-                break;
-            }
-        }
-        let Some((range, prompt)) = input else {
+        let range = 0..speech.len();
+        if range.is_empty() {
             continue;
+        }
+        let defects = original
+            .analysis
+            .as_ref()
+            .map(|analysis| {
+                analysis
+                    .criteria
+                    .iter()
+                    .filter(|c| c.score < super::types::AUTOMATIC_RELEVANCE_FLOOR)
+                    .map(|c| c.explanation.clone())
+                    .collect::<Vec<_>>()
+            })
+            .unwrap_or_default();
+        let issues = if defects.is_empty() {
+            &original.reasons
+        } else {
+            &defects
         };
-        let ids: Vec<_> = range.clone().collect();
-        let schema = serde_json::json!({"type":"object","additionalProperties":false,"required":["repair"],"properties":{"repair":{"anyOf":[{"type":"null"},{"type":"object","additionalProperties":false,"required":["firstId","lastId"],"properties":{"firstId":{"type":"integer","enum":ids},"lastId":{"type":"integer","enum":ids}}}]}}});
+        let data = serde_json::json!({"rejected":{"start":original.start,"end":original.end,"includedSpeech":super::semantic::source(original,speech),"issues":issues},
+            "minSeconds":options.min_seconds,"maxSeconds":options.max_seconds,
+            "speech":speech.iter().map(|s|s.text.as_str()).collect::<Vec<_>>().join("\n")});
+        let prompt = engine.prompt(include_str!("repair-prompt.txt"), &data)?;
+        if engine.count_tokens(scratch, &prompt)? > super::engine_tools::CONTEXT_TOKENS - 1000 {
+            return Err("A transcrição completa excede o contexto disponível para corrigir o corte. Nenhum texto foi dividido ou truncado.".into());
+        }
+        let schema = super::source_anchors::schema(1);
         *budget -= 1;
         eprintln!(
-            "[clips] reparando [{:.2}-{:.2}] com falas vizinhas; {} tentativas restantes",
+            "[clips] reparando [{:.2}-{:.2}] com a transcrição completa; {} tentativas restantes",
             original.start, original.end, budget
         );
-        let output = engine.generate(
+        let output = engine.generate_extraction(
             scratch,
             &format!("repair-{budget}"),
             &prompt,
@@ -197,12 +194,18 @@ pub fn recover(
             600,
             control,
         )?;
-        let reply = serde_json::Deserializer::from_str(output.trim())
-            .into_iter::<Reply>()
-            .next()
-            .ok_or("A correção do intervalo não gerou resposta.")?
-            .map_err(|_| "A correção do intervalo retornou uma resposta inválida.")?;
-        if let Some(bounds) = reply.repair {
+        let candidates = match super::discovery_reply::decode(&output, speech) {
+            Ok(candidates) => candidates,
+            Err(error) => {
+                eprintln!("[clips] reparo sem bordas localizadas: {error}");
+                continue;
+            }
+        };
+        if let Some(candidate) = candidates.into_iter().next() {
+            let bounds = Bounds {
+                first_id: candidate.first_id,
+                last_id: candidate.last_id,
+            };
             if let Some(mut repaired) = apply(original, bounds, &range, speech, media, options) {
                 repaired.clip.engine = Some(engine.record());
                 eprintln!(

@@ -74,7 +74,7 @@ export function useClips(projectId: string, mediaId?: string) {
           const total = result.clips.filter(clip => !clip.deleted).length;
           const base = added
             ? `${added} ${added === 1 ? "novo corte adicionado" : "novos cortes adicionados"} — ${total} ${total === 1 ? "corte no total" : "cortes no total"}.`
-            : `Nenhum corte novo foi aprovado nesta rodada. As sugestões se repetiram ou não passaram nos critérios de contexto e conclusão. Seus ${total} ${total === 1 ? "corte salvo foi mantido" : "cortes salvos foram mantidos"}.`;
+            : `Nenhum corte novo foi aprovado nesta rodada. A IA não conseguiu validar trechos com contexto e conclusão nesta execução. Seus ${total} ${total === 1 ? "corte salvo foi mantido" : "cortes salvos foram mantidos"}.`;
           const failed = result.clips.filter(clip => clip.analysisError).length;
           setNotice(failed ? `${base} ${failed} ${failed === 1 ? "precisa" : "precisam"} de nova análise.` : base);
         } else {

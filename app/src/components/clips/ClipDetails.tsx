@@ -20,7 +20,7 @@ export function ClipDetails({clip,transcript,time,loading,analyzing,error,onSeek
       {valid && <strong className="clip-inspection__score">{clip.score}<small>/100</small></strong>}
       {clip.faceFraming && <p className="flow-muted">{
         clip.faceFraming.status === "stable" ? "Rosto detectado para o enquadramento inicial."
-          : clip.faceFraming.status === "ambiguous" ? "Quadro inteiro recomendado para manter as pessoas visíveis."
+          : clip.faceFraming.status === "ambiguous" ? "Sem um rosto principal definido. Você pode ajustar o enquadramento no editor."
           : clip.faceFraming.status === "noFaces" ? "Nenhum rosto seguro para ajustar; enquadramento original mantido."
           : "Detecção de rostos indisponível; enquadramento original mantido."
       }</p>}

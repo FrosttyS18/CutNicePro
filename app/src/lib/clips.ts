@@ -117,10 +117,6 @@ export function isolatedClipSettings(clip: Clip, saved?: EditorSettings, media?:
     fresh.focalPoint = { x: clip.faceFraming.x! * 100, y: clip.faceFraming.y! * 100 };
     return clipSettings(fresh, clip);
   }
-  if (clip.faceFraming?.status === "ambiguous" && fresh.fit === "cover") {
-    fresh.fit = "contain";
-    return clipSettings(fresh, clip);
-  }
   const framing = clip.multimodal?.framing;
   if (framing && Number.isFinite(framing.cx) && Number.isFinite(framing.cy)) {
     fresh.focalPoint = { x: Math.round(framing.cx * 100), y: Math.round(framing.cy * 100) };

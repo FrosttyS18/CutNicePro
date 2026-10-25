@@ -2,6 +2,39 @@ use super::{selection::Evaluate, types::Clip};
 use crate::transcription::types::Segment;
 use std::collections::{HashMap, HashSet};
 
+pub fn enforce_ending(analysis: &mut super::analysis_types::Analysis, source: &str) -> bool {
+    let tail = source
+        .to_lowercase()
+        .split(|c: char| !c.is_alphanumeric())
+        .filter(|word| !word.is_empty())
+        .collect::<Vec<_>>()
+        .join(" ");
+    let interrupted = source.trim_end().ends_with([':', '…'])
+        || source.trim_end().ends_with("...")
+        || (source.trim_end().ends_with([',', ';'])
+            && ["porque", "mas", "se"]
+                .iter()
+                .any(|ending| tail == *ending || tail.ends_with(&format!(" {ending}"))))
+        || [
+            "das duas uma",
+            "o seguinte",
+            "vou explicar",
+            "vou te explicar",
+            "são as seguintes",
+            "são os seguintes",
+        ]
+        .iter()
+        .any(|ending| tail == *ending || tail.ends_with(&format!(" {ending}")));
+    if interrupted {
+        analysis.criteria[2].score = analysis.criteria[2]
+            .score
+            .min(super::types::AUTOMATIC_RELEVANCE_FLOOR - 1);
+        analysis.criteria[2].explanation =
+            "O intervalo termina com uma oração aberta ou com o anúncio de uma explicação que ainda não foi incluída.".into();
+    }
+    interrupted
+}
+
 pub fn is_complete(clip: &Clip) -> bool {
     clip.analysis.as_ref().is_none_or(|analysis| {
         analysis

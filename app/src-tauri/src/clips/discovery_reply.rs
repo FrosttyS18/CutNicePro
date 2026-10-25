@@ -13,8 +13,21 @@ struct Draft {
 
 #[derive(Deserialize)]
 #[serde(deny_unknown_fields)]
-struct Reply {
+struct LineReply {
     candidates: Vec<Draft>,
+}
+
+#[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
+struct AnchoredReply {
+    clips: Vec<super::source_anchors::Draft>,
+}
+
+#[derive(Deserialize)]
+#[serde(untagged)]
+enum Reply {
+    Lines(LineReply),
+    Anchors(AnchoredReply),
 }
 
 pub fn line_key(id: usize) -> String {
@@ -32,6 +45,17 @@ pub fn decode(output: &str, speech: &[Segment]) -> Result<Vec<Candidate>, String
         .next()
         .ok_or("A seleção local não retornou resposta.")?
         .map_err(|_| "O Qwen3.5 retornou uma seleção inválida. Tente novamente.")?;
+    let reply = match reply {
+        Reply::Lines(value) => value,
+        Reply::Anchors(value) => {
+            let had_proposals = !value.clips.is_empty();
+            let candidates = super::source_anchors::resolve(value.clips, speech);
+            if had_proposals && candidates.is_empty() {
+                return Err("O Qwen3.5 não localizou as citações de abertura e fechamento na transcrição. Nenhum corte salvo foi alterado.".into());
+            }
+            return Ok(candidates);
+        }
+    };
     let had_proposals = !reply.candidates.is_empty();
     let mut candidates = Vec::new();
     for draft in reply.candidates {
@@ -118,6 +142,128 @@ mod tests {
         assert_eq!(
             schema["properties"]["candidates"]["items"]["properties"]["firstLine"]["enum"],
             serde_json::json!(["L000", "L001", "L002"])
+        );
+    }
+
+    #[test]
+    fn literal_quotes_are_located_across_source_segments_without_invented_ids() {
+        let source = [
+            "Comprei uma passagem para a viagem.",
+            "O voo foi cancelado antes do embarque.",
+            "Por isso paguei um hotel e perdi a conexão.",
+        ]
+        .into_iter()
+        .enumerate()
+        .map(|(id, text)| Segment {
+            id: id.to_string(),
+            start: id as f64 * 10.0,
+            end: id as f64 * 10.0 + 9.0,
+            text: text.into(),
+            words: vec![],
+        })
+        .collect::<Vec<_>>();
+        let reply = r#"{"clips":[{"title":"A viagem cancelada gerou despesas","openingQuote":"Comprei uma passagem para a viagem","closingQuote":"paguei um hotel e perdi a conexão"}]}"#;
+        let candidates = decode(reply, &source).expect("as bordas precisam vir das citações reais");
+        assert_eq!((candidates[0].first_id, candidates[0].last_id), (0, 2));
+        let across = r#"{"clips":[{"title":"Despesas depois do cancelamento","openingQuote":"a viagem O voo foi cancelado","closingQuote":"paguei um hotel e perdi a conexão"}]}"#;
+        assert_eq!(decode(across, &source).unwrap()[0].first_id, 0);
+        let invented = reply.replace(
+            "paguei um hotel e perdi a conexão",
+            "a companhia devolveu todo o dinheiro",
+        );
+        assert!(decode(&invented, &source).is_err());
+        let mut repeated = source.clone();
+        repeated.push(source[0].clone());
+        assert!(
+            decode(reply, &repeated).is_err(),
+            "citação repetida não determina uma borda única"
+        );
+        let reversed = reply
+            .replace(
+                "Comprei uma passagem para a viagem",
+                "paguei um hotel e perdi a conexão",
+            )
+            .replace(
+                "\"closingQuote\":\"paguei um hotel e perdi a conexão\"",
+                "\"closingQuote\":\"Comprei uma passagem para a viagem\"",
+            );
+        assert!(decode(&reversed, &source).is_err());
+        let single = vec![Segment {
+            id: "one".into(),
+            start: 0.0,
+            end: 30.0,
+            text: source
+                .iter()
+                .map(|s| s.text.as_str())
+                .collect::<Vec<_>>()
+                .join(" "),
+            words: vec![],
+        }];
+        assert!(
+            decode(&reversed, &single).is_err(),
+            "a ordem das palavras também deve valer dentro de uma fala"
+        );
+        let overlapping = vec![Segment {
+            id: "overlap".into(),
+            start: 0.0,
+            end: 30.0,
+            text: "Comprei uma passagem para a viagem ontem sem saber do atraso".into(),
+            words: vec![],
+        }];
+        let reply = r#"{"clips":[{"title":"Uma viagem com contexto anterior","openingQuote":"para a viagem ontem sem","closingQuote":"Comprei uma passagem para a viagem"}]}"#;
+        assert!(
+            decode(reply, &overlapping).is_err(),
+            "sobreposição não permite fechar antes da abertura"
+        );
+        let reversed_end = r#"{"clips":[{"title":"Uma viagem com contexto anterior","openingQuote":"Comprei uma passagem para a viagem ontem sem","closingQuote":"passagem para a viagem"}]}"#;
+        assert!(
+            decode(reversed_end, &overlapping).is_err(),
+            "o fim da abertura não pode passar do fim do fechamento"
+        );
+    }
+
+    #[test]
+    fn minor_copy_errors_can_locate_one_source_interval_but_never_invent_speech() {
+        let speech = [
+            "Comprei uma passagem para viajar com a família durante as férias.",
+            "O voo foi cancelado antes de embarcar e perdemos a conexão.",
+            "Por isso paguei um hotel muito caro e tive que remarcar a viagem.",
+        ]
+        .into_iter()
+        .enumerate()
+        .map(|(id, text)| Segment {
+            id: id.to_string(),
+            start: id as f64 * 10.0,
+            end: id as f64 * 10.0 + 9.0,
+            text: text.into(),
+            words: vec![],
+        })
+        .collect::<Vec<_>>();
+        let reply = serde_json::json!({"clips":[{"title":"Uma viagem interrompida","openingQuote":"Comprei uma passagem para viajar com minha família durante as férias","closingQuote":"paguei um hotel caro e tive que remarcar a viagem"}]}).to_string();
+        let candidates = decode(&reply, &speech)
+            .expect("pequenos erros de cópia não devem perder uma história localizada");
+        assert_eq!((candidates[0].first_id, candidates[0].last_id), (0, 2));
+        assert!(!candidates[0].moment.contains("minha"));
+        let invented = reply.replace(
+            "paguei um hotel caro e tive que remarcar a viagem",
+            "a empresa devolveu todo o dinheiro da passagem no mesmo dia",
+        );
+        assert!(decode(&invented, &speech).is_err());
+        let mut ambiguous = speech.clone();
+        ambiguous.push(Segment {
+            text: "Comprei uma passagem para viajar com minha família durante as férias."
+                .replace("minha", "nossa"),
+            ..speech[0].clone()
+        });
+        assert!(decode(&reply, &ambiguous).is_err());
+        let mut different_costs = speech.clone();
+        different_costs.push(Segment {
+            text: "Comprei uma passagem para passear com nossa família durante as férias.".into(),
+            ..speech[0].clone()
+        });
+        assert!(
+            decode(&reply, &different_costs).is_err(),
+            "duas posições toleradas continuam ambíguas mesmo com custos diferentes"
         );
     }
 }
