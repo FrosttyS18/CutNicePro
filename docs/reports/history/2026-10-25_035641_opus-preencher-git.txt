@@ -1,0 +1,102 @@
+╔════════════════════════════════════════════╗
+║       CUTNICEPRO — ZCODE REPORT            ║
+╚════════════════════════════════════════════╝
+
+TASK
+  Name: Comparação Opus, Preencher e recuperação do push
+  Status: PARTIAL — correção testada e enviada; qualidade editorial aberta.
+  Scope: 14 referências locais, perda de preenchimento e Git autorizado.
+  Objective: preservar arquivos, corrigir o defeito e fundamentar os próximos passos.
+  Result: 14/14 arquivos preservados; push aceito; reparo mantém Preencher.
+  FUNCTIONAL STATUS: PASS da correção/organização; PARTIAL editorial.
+  REGRESSION STATUS: PASS no escopo nativo testado.
+  VISUAL STATUS: PENDING HUMAN APPROVAL.
+
+IMPLEMENTATION
+  Completed: reparo editorial agora copia o ajuste cover/contain solicitado.
+  O Valve reparado perdia esse campo e a interface assumia contain.
+  O teste anterior de export fixava cover e ocultava essa perda.
+  Opus: 14 MP4s incluem variantes sobrepostas, não 14 assuntos diferentes.
+  No vídeo de R$ 400, a fala sobre perder o save é antecipada; depois volta
+  à explicação. Frames mostram falante, participantes e imagem comentada.
+  T-PAP Opus: aproximadamente 168–228 s; local: 149–198 s, sem a conclusão.
+  Valve já possui limites semelhantes aos do Opus, conforme melhora relatada.
+  Not completed: cobertura dos assuntos, títulos fiéis e montagem automática.
+  Architecture impact: nenhuma mudança; EditPlan v1 continua cronológico.
+  Renderizar ao baixar já existe; não melhora sozinho a escolha das histórias.
+
+FILES
+  Created: docs/reports/evidence/opus-comparison-2026-10-25.json;
+    este histórico. LATEST atualizado com o mesmo conteúdo.
+  Modified: .gitignore; clips/editorial_repair.rs; ENGINE-HANDOFF.md;
+    BACKLOG.md; OPEN-SOURCE-ENGINE-RESEARCH.md.
+  Deleted: nenhum arquivo físico; 12 MP4s retirados somente do Git.
+  Unexpected changes: NONE.
+
+VALIDATION
+  Typecheck/Lint frontend: SKIP — frontend inalterado nesta correção.
+  Unit/Regression: 201 PASS, 0 FAIL, 25 ignored opt-in.
+  Teste novo: falhou antes, passou depois; cobre cover e contain.
+  Integration/runtime UI: NOT TESTED nesta correção; teste manual pendente.
+  Build: cargo build --offline --locked PASS, sem warnings; fmt/diff PASS.
+  Visual: 42 frames examinados para comparação objetiva, sem aceite estético.
+  Mídia: ffprobe/correspondência de áudio nos 14 arquivos; hashes preservados.
+  Limite: amostragem não prova ausência de outras edições nem o algoritmo Opus.
+
+HOOKS / HARNESS
+  Hooks/Stop/baseline: não usados como evidência de aprovação.
+  Harness: FFmpeg, ffprobe e análise local; sem controle interativo do PC.
+  Evidence: .tooling/test-output/opus-review-2026-10-25/ e repair-fit-*.log.
+
+MCP / SKILLS
+  Tools: Graphify remoto antes/depois, documentação oficial, Git e Rust.
+  Skills: investigação sistemática, TDD e verificação antes de conclusão.
+  Connection: workspace/repositório corretos; índice ainda em 9785ff9.
+  Falha/lacuna: Context7 indisponível; usadas fontes oficiais diretamente.
+
+GIT
+  Branch: main.
+  Snapshot técnico verificado antes do commit documental deste relatório:
+  HEAD: e3f93548c0bbb2d7242ad458159d7463a1cf97a8
+  Latest commit: fix(clips): preservar preenchimento nos cortes reparados
+  Commits: 12a5422 fix(clips): aprimorar seleção e avaliação por citações;
+    e3f9354 fix(clips): preservar preenchimento nos cortes reparados.
+  Push: SUCCESS; remoto confirmou e3f9354; ahead/behind 0/0 nesse checkpoint.
+  Remote: origin → FrosttyS18/CutNicePro, main.
+  Working tree: somente documentação de encerramento após esse checkpoint;
+    incluída no commit documental que contém este TXT.
+  Histórico publicado preservado; sem force push. Nenhum blob >=50 MB enviado.
+  Pending files: nenhum código ou vídeo pendente de envio.
+
+EVIDENCE
+  Commands: cargo test/build/fmt; git diff/check-ignore/cat-file/push/ls-remote.
+  Test artifacts: docs/reports/evidence/opus-comparison-2026-10-25.json.
+  Comparação detalhada e fontes: OPEN-SOURCE-ENGINE-RESEARCH.md.
+  Build normal: C:/CutNicePro/app/src-tauri/target/debug/cutnicepro.exe
+  SHA-256: 804561D9E68DF207A993694360BE43E0DF9D4206A83EB3919A2669C20A2476BD
+
+ISSUES
+  Bugs found: ajuste de vídeo perdido no reparo, corrigido.
+  Unresolved: T-PAP incompleto, redação e cobertura editorial insuficientes.
+  Risks: teto 12/seleção sem sobreposição diferem do Opus; não explicam só quatro.
+  Regressions: nenhuma nos testes executados; interface não revalidada aqui.
+  Blockers: nenhum para o push; reindexação Graphify ainda não confirmada.
+
+FINAL
+  Delivery: correção e Git entregues; sem alegar equivalência editorial ao Opus.
+  Remaining: histórias completas antes de variantes/layouts/gancho reordenado.
+  User action: teste manual abaixo. Restart: usar a build normal recompilada.
+  Ready: sim para a próxima fatia editorial; sem novo modelo ou serviço pago.
+
+REPORT
+  Latest: docs/reports/LATEST.txt
+  History: docs/reports/history/2026-10-25_035641_opus-preencher-git.txt
+
+GUIA DO MANTENEDOR — O QUE MUDOU E COMO TESTAR
+  1. Abra normalmente por npm run tauri dev em C:/CutNicePro/app.
+  2. Gere novos cortes com Preencher ligado; confira o novo corte reparado
+     na inspeção e ao baixar. Esperado: manter Preencher, inclusive no reparo.
+  3. Edições antigas foram preservadas; esta correção não regrava os cortes
+     já salvos. O T-PAP incompleto continua pendente, sem pedir novo aceite.
+
+END OF REPORT

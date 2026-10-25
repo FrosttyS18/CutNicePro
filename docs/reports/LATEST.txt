@@ -3,135 +3,100 @@
 ╚════════════════════════════════════════════╝
 
 TASK
-  Name: Feedback editorial e teste do Coding Plan
-  Status: PARTIAL
-  Scope: correções locais, calibração e comparação autorizada GLM/Qwen.
-  Objective: corrigir falhas e distinguir modelo, prompt e pipeline.
-  Result: Coding Plan conectado; qualidade editorial ainda não resolvida.
-  FUNCTIONAL STATUS: PARTIAL
-  REGRESSION STATUS: PASS nos testes executados
-  VISUAL STATUS: PENDING HUMAN APPROVAL
+  Name: Comparação Opus, Preencher e recuperação do push
+  Status: PARTIAL — correção testada e enviada; qualidade editorial aberta.
+  Scope: 14 referências locais, perda de preenchimento e Git autorizado.
+  Objective: preservar arquivos, corrigir o defeito e fundamentar os próximos passos.
+  Result: 14/14 arquivos preservados; push aceito; reparo mantém Preencher.
+  FUNCTIONAL STATUS: PASS da correção/organização; PARTIAL editorial.
+  REGRESSION STATUS: PASS no escopo nativo testado.
+  VISUAL STATUS: PENDING HUMAN APPROVAL.
 
 IMPLEMENTATION
-  Completed: Preencher preservado; legenda respeita trim; recusa e nota
-    concordam; reparo recebe fonte integral; novas gerações preservam as
-    anteriores. Descoberta/reparo 0,4; avaliação/análise 0,7 após controle.
-  Not completed: seleção, títulos e fechamento editorial satisfatórios.
-  Changes: GLM-5.3-Flash via endpoint Coding Plan funcionou com a chave
-    nova. Transcrição inteira: 11 propostas, 10 localizadas exatamente.
-    Acertou a avaliação dos casos 17 s/incompleto e 78 s/completo, mas
-    também aprovou o MESMO T-PAP de 48 s do Qwen e incluiu no resumo
-    uma conclusão posterior ao corte. Não é problema exclusivo do modelo.
-  Architecture impact: app permanece local/Qwen. Sem provedor cloud,
-    configuração global ou dependência nova. Revisão narrativa adicional
-    reprovada: somente cfg(test), sem custo no caminho padrão.
+  Completed: reparo editorial agora copia o ajuste cover/contain solicitado.
+  O Valve reparado perdia esse campo e a interface assumia contain.
+  O teste anterior de export fixava cover e ocultava essa perda.
+  Opus: 14 MP4s incluem variantes sobrepostas, não 14 assuntos diferentes.
+  No vídeo de R$ 400, a fala sobre perder o save é antecipada; depois volta
+  à explicação. Frames mostram falante, participantes e imagem comentada.
+  T-PAP Opus: aproximadamente 168–228 s; local: 149–198 s, sem a conclusão.
+  Valve já possui limites semelhantes aos do Opus, conforme melhora relatada.
+  Not completed: cobertura dos assuntos, títulos fiéis e montagem automática.
+  Architecture impact: nenhuma mudança; EditPlan v1 continua cronológico.
+  Renderizar ao baixar já existe; não melhora sozinho a escolha das histórias.
 
 FILES
-  Created: C:/CutNicePro/app/src-tauri/src/clips/{feedback_runtime_tests.rs,
-    generation_rounds.rs,narrative_bounds.rs,bounds-prompt.txt};
-    C:/CutNicePro/app/src/test/clip-inspection-boundaries.test.tsx;
-    C:/CutNicePro/docs/reports/evidence/feedback-editorial-2026-10-25.json;
-    relatório histórico identificado abaixo.
-  Modified: C:/CutNicePro/AGENTS.md;
-    C:/CutNicePro/app/src-tauri/src/clips/{assessment,discovery_reply,
-    editorial,editorial_repair,generation,mod,selection,semantic,
-    source_anchors,text_engine}.rs e prompts analysis/evaluate/repair;
-    C:/CutNicePro/app/src/lib/{clips,captions}.ts;
-    C:/CutNicePro/app/src/components/clips/{ClipDetails,ClipInspection}.tsx;
-    C:/CutNicePro/app/src/test/face-framing.test.ts;
-    C:/CutNicePro/docs/{TOOLING.md,engineering/ENGINE-HANDOFF.md,
-    product/BACKLOG.md,product/TRACEABILITY.md,
-    references/OPEN-SOURCE-ENGINE-RESEARCH.md,reports/LATEST.txt}.
-  Deleted: nenhum.
-  Unexpected changes: nenhuma observada; pendências herdadas preservadas.
+  Created: docs/reports/evidence/opus-comparison-2026-10-25.json;
+    este histórico. LATEST atualizado com o mesmo conteúdo.
+  Modified: .gitignore; clips/editorial_repair.rs; ENGINE-HANDOFF.md;
+    BACKLOG.md; OPEN-SOURCE-ENGINE-RESEARCH.md.
+  Deleted: nenhum arquivo físico; 12 MP4s retirados somente do Git.
+  Unexpected changes: NONE.
 
 VALIDATION
-  Typecheck: PASS; Vite/build canônica PASS, compilador sem warnings.
-  Lint: ESLint/fmt PASS; Clippy estrito não repetido (baseline anterior
-    registrava 19 diagnósticos preexistentes).
-  Unit tests: Rust 200/200; frontend 260/260.
-  Integration tests: API 5 respostas HTTP 200 (conexão + 4 casos);
-    persistência/MP4 nativos exercitados sem operar a interface.
-  Regression tests: PASS nos contratos testados; revisão independente
-    corrigiu legenda, ambiguidade de citações e piso da revisão experimental.
-  Visual tests: SKIP; validação manual pertence ao mantenedor.
-  Runtime verification: PARTIAL. Cinco rodadas integrais geraram
-    2/3/4/5/4 MP4s; todas falharam no critério editorial. Controle focal
-    também falhou. Variantes reprovadas não viraram padrão.
-  Total passed: 460 testes rápidos; 5 respostas API válidas.
-  Total failed: 5 aceites integrais + 1 focal; qualidade segue aberta.
-  Total skipped: 25 testes opt-in na suíte rápida; interface não operada.
+  Typecheck/Lint frontend: SKIP — frontend inalterado nesta correção.
+  Unit/Regression: 201 PASS, 0 FAIL, 25 ignored opt-in.
+  Teste novo: falhou antes, passou depois; cobre cover e contain.
+  Integration/runtime UI: NOT TESTED nesta correção; teste manual pendente.
+  Build: cargo build --offline --locked PASS, sem warnings; fmt/diff PASS.
+  Visual: 42 frames examinados para comparação objetiva, sem aceite estético.
+  Mídia: ffprobe/correspondência de áudio nos 14 arquivos; hashes preservados.
+  Limite: amostragem não prova ausência de outras edições nem o algoritmo Opus.
 
 HOOKS / HARNESS
-  Hooks active: hooks ZCode não verificados nesta execução Codex.
-  PreToolUse/PostToolUse/Stop: não utilizados como prova de aprovação.
-  Baseline: testes e resultados reais acima.
-  Gate result: PARTIAL; não falta somente aceite humano.
-  Evidence: JSON e logs no laboratório abaixo.
+  Hooks/Stop/baseline: não usados como evidência de aprovação.
+  Harness: FFmpeg, ffprobe e análise local; sem controle interativo do PC.
+  Evidence: .tooling/test-output/opus-review-2026-10-25/ e repair-fit-*.log.
 
 MCP / SKILLS
-  Tools used: Graphify remoto antes/depois; documentação oficial na web;
-    diagnóstico sistemático, TDD, revisão e verificação antes da entrega.
-  Connection status: workspace wesley-s-workspace, FrosttyS18/CutNicePro,
-    índice no HEAD; mudanças locais complementadas por fonte/diff/testes.
-  Failures: primeira rede bloqueada; repetição autorizada conectou.
-    Chave anterior: 1113; controle GLM max: JSON não utilizável, causa
-    indeterminada porque o envelope bruto não foi preservado.
-  Pending activation: nenhuma para o teste; app não integra essa API.
+  Tools: Graphify remoto antes/depois, documentação oficial, Git e Rust.
+  Skills: investigação sistemática, TDD e verificação antes de conclusão.
+  Connection: workspace/repositório corretos; índice ainda em 9785ff9.
+  Falha/lacuna: Context7 indisponível; usadas fontes oficiais diretamente.
 
 GIT
-  Branch: main
-  HEAD: 9785ff962082dc59082e4ac45fe0e1fe31a1b38b
-  Latest commit: Simplifique a interface do editor e ajuste o fluxo de clipes
-  Commits created: nenhum.
-  Push: NOT EXECUTED.
-  Remote: origin → FrosttyS18/CutNicePro; main.
-  Working tree: MODIFIED + UNTRACKED; versão 0.19.0 mantida.
-  Pending files: alterações acima e herdadas; lista integral de caminhos
-    em workingTreeFiles no JSON de evidência. Nada publicado automaticamente.
+  Branch: main.
+  Snapshot técnico verificado antes do commit documental deste relatório:
+  HEAD: e3f93548c0bbb2d7242ad458159d7463a1cf97a8
+  Latest commit: fix(clips): preservar preenchimento nos cortes reparados
+  Commits: 12a5422 fix(clips): aprimorar seleção e avaliação por citações;
+    e3f9354 fix(clips): preservar preenchimento nos cortes reparados.
+  Push: SUCCESS; remoto confirmou e3f9354; ahead/behind 0/0 nesse checkpoint.
+  Remote: origin → FrosttyS18/CutNicePro, main.
+  Working tree: somente documentação de encerramento após esse checkpoint;
+    incluída no commit documental que contém este TXT.
+  Histórico publicado preservado; sem force push. Nenhum blob >=50 MB enviado.
+  Pending files: nenhum código ou vídeo pendente de envio.
 
 EVIDENCE
-  Commands executed: cargo test/build --offline --locked; cargo fmt;
-    npm test; npm run lint/build; testes locais e chamadas Coding Plan.
-  Relevant logs/Test artifacts:
-    C:/CutNicePro/.tooling/test-output/feedback-editorial-2026-10-25/
-    e C:/CutNicePro/.tooling/test-output/feedback-*.log.
-  Screenshots: nenhuma; sem controle da tela/PC.
-  Reproduction details: fontes integrais, 334/568 segmentos na calibração;
-    334 em cada chamada GLM. Chaves não persistidas; sem vídeos enviados.
-    GLM usa thinking low/JSON object, Qwen nonthinking/gramática: comparação
-    de comportamento, não ablação isolada dos pesos.
+  Commands: cargo test/build/fmt; git diff/check-ignore/cat-file/push/ls-remote.
+  Test artifacts: docs/reports/evidence/opus-comparison-2026-10-25.json.
+  Comparação detalhada e fontes: OPEN-SOURCE-ENGINE-RESEARCH.md.
+  Build normal: C:/CutNicePro/app/src-tauri/target/debug/cutnicepro.exe
+  SHA-256: 804561D9E68DF207A993694360BE43E0DF9D4206A83EB3919A2669C20A2476BD
 
 ISSUES
-  Bugs found: cover→contain; legenda fora do trim; recusa contraditória;
-    pontuação ASR tratada como recusa; classificação/cópia ainda falíveis.
-  Unresolved failures: T-PAP incompleto, títulos/resumos e fidelidade.
-  Regressions: nenhuma nos testes rápidos; protótipos piores rejeitados.
-  Risks: mais propostas e notas altas não provam bons cortes.
-  Blockers: nenhum para continuar o desenvolvimento; sem nova API exigida.
+  Bugs found: ajuste de vídeo perdido no reparo, corrigido.
+  Unresolved: T-PAP incompleto, redação e cobertura editorial insuficientes.
+  Risks: teto 12/seleção sem sobreposição diferem do Opus; não explicam só quatro.
+  Regressions: nenhuma nos testes executados; interface não revalidada aqui.
+  Blockers: nenhum para o push; reindexação Graphify ainda não confirmada.
 
 FINAL
-  Delivery status: PARTIAL; teste do Coding Plan concluído.
-  Requirements met: conexão/API, diagnóstico e correções técnicas listadas.
-  Remaining work: corrigir o contrato editorial e sua execução local.
-  User action required: nenhuma para repetir o teste de conexão; não pedir
-    aprovação de amostras já conhecidas como ruins.
-  Restart required: reabrir o app para usar a build canônica atualizada.
-  Ready for next task: continuidade registrada; sem declarar meta concluída.
+  Delivery: correção e Git entregues; sem alegar equivalência editorial ao Opus.
+  Remaining: histórias completas antes de variantes/layouts/gancho reordenado.
+  User action: teste manual abaixo. Restart: usar a build normal recompilada.
+  Ready: sim para a próxima fatia editorial; sem novo modelo ou serviço pago.
 
 REPORT
-  Latest file: C:/CutNicePro/docs/reports/LATEST.txt
-  Historical file: C:/CutNicePro/docs/reports/history/2026-10-25_025850_feedback-editorial-coding-plan.txt
+  Latest: docs/reports/LATEST.txt
+  History: docs/reports/history/2026-10-25_035641_opus-preencher-git.txt
 
 GUIA DO MANTENEDOR — O QUE MUDOU E COMO TESTAR
-  O que mudou: Preencher e os limites das legendas foram corrigidos.
-    A API funciona no laboratório; não há seletor GLM novo no aplicativo.
-  Teste 1: abrir pela execução normal em C:/CutNicePro/app
-    (npm run tauri dev), gerar com Preencher → manter preenchimento,
-    respeitando edições manuais salvas. Biblioteca anterior preservada.
-  Teste 2: pausar no fim de um corte → não mostrar palavras posteriores.
-  Qualidade: continua reprovada nos casos descritos; não é aceite pendente.
-  Build: C:/CutNicePro/app/src-tauri/target/debug/cutnicepro.exe
-  SHA-256: 801052D54E085EF784DCC479CC805A8DB21393FC7E6427D52313D6F843199A31
+  1. Abra normalmente por npm run tauri dev em C:/CutNicePro/app.
+  2. Gere novos cortes com Preencher ligado; confira o novo corte reparado
+     na inspeção e ao baixar. Esperado: manter Preencher, inclusive no reparo.
+  3. Edições antigas foram preservadas; esta correção não regrava os cortes
+     já salvos. O T-PAP incompleto continua pendente, sem pedir novo aceite.
 
 END OF REPORT
