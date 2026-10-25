@@ -115,6 +115,7 @@ fn apply(
         ),
         start: refined.start,
         end: refined.end,
+        fit: options.fit.clone(),
         score: 0,
         reasons: vec![
             "Proveniência: intervalo reparado a partir da análise de abertura/fechamento".into(),
@@ -342,6 +343,28 @@ mod tests {
             &options
         )
         .is_some());
+    }
+    #[test]
+    fn a_repaired_cut_keeps_the_requested_fit_when_the_original_draft_has_none() {
+        let (clip, speech, mut options) = fixture();
+        assert!(clip.fit.is_none());
+        for fit in ["cover", "contain"] {
+            options.fit = Some(fit.into());
+            let repaired = apply(
+                &clip,
+                Bounds {
+                    first_id: 0,
+                    last_id: 3,
+                },
+                &(0..6),
+                &speech,
+                "m",
+                &options,
+            )
+            .unwrap();
+            assert_eq!(repaired.clip.fit.as_deref(), Some(fit));
+            assert!(clip.fit.is_none());
+        }
     }
     #[test]
     fn repair_rejects_unchanged_out_of_context_or_overlong_intervals() {

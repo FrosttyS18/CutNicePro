@@ -2,6 +2,20 @@
 
 Pesquisa em 2026-10-19 para continuidade com ZCode. Recomendação: manter React/Tauri/Rust e integrar capacidades pequenas por adaptadores. Preservar a UI do CutNicePro. Esta pesquisa não instala motores nem aprova incorporar código de terceiros.
 
+## Comparação dos 14 MP4s do Opus — 2026-10-25
+
+Fonte primária local: os 14 arquivos fornecidos pelo mantenedor em `C:/CutNicePro/Opus teste`, todos preservados e ignorados no Git. Inventário com duração, SHA-256, correspondências de áudio e limites em `docs/reports/evidence/opus-comparison-2026-10-25.json`. FFmpeg/ffprobe reais, correlação espectral contra a fonte integral de 599,098 s e inspeção objetiva de três frames por arquivo. Amostragem não equivale a assistir integralmente cada vídeo nem revela o algoritmo proprietário. Nenhuma inferência/API nova ou mídia enviada.
+
+- **Quantidade:** há variantes sobrepostas. O corte Battlefield de 37,93 s começa no mesmo ponto do de 171,43 s; o EAFC de 17,47 s integra uma história maior. O automático local tem teto 12 e `selection::finalize_weighted` escolhe intervalos sem sobreposição. O teto impede 14, mas NÃO explica sozinho a entrega de apenas quatro ou a falta de assuntos distintos.
+- **Gancho antecipado:** no vídeo de R$ 400, áudio em 0,5 s corresponde à fonte em 89,86 s; em 7,5 s corresponde a 50,74 s. A consequência vem antes da explicação. `edit-plan.ts::normalizePlan/planIsValid` e Rust `effective_segments` exigem ordem cronológica: EditPlan v1 não representa esse resultado. Não basta retirar validações ou ordenar o mesmo array de outra forma; relógio, legendas, persistência e export precisam compartilhar uma futura semântica de montagem.
+- **História completa:** T-PAP no Opus cobre aproximadamente 168,26–227,73 s. O local 149,40–197,80 s inclui outra abertura e perde a explicação posterior. Valve já é próximo: Opus 427,96–455,19 s, local 428,02–455,30 s. A melhora reconhecida pelo mantenedor permanece; o defeito do T-PAP continua técnico, sem pedir aprovação de um resultado conhecido como incompleto.
+- **Composição:** frames comprovam alternância entre falante, grade de participantes e imagem comentada acima das pessoas. Isso supera um `fit/focalPoint` global; não comprova que um modelo multimodal tomou cada decisão. [Documentação de layouts](https://help.opus.pro/docs/article/apply-the-layouts) permite ajuste por cena e composição com B-roll.
+- **Exportação:** a [interface pública oficial](https://github.com/opus-pro/opus-skills/blob/main/skills/opusclip/SKILL.md), consultada em 2026-10-25 em main, distingue preview de baixa resolução e export HD com estado de renderização. Também expõe edição por operações/seções. [Exemplo oficial de hooks](https://www.opus.pro/mcp/inspiration/turn-your-best-clip-into-a-three-way-hook-test) descreve antecipar a consequência reorganizando seções. Não foi instalado/executado serviço Opus. Renderizar ao baixar reduz trabalho antecipado, mas não melhora por si a seleção; nosso FFmpeg já renderiza no download.
+
+Ordem proposta para a próxima fatia local: recuperar histórias autônomas distintas da referência humana; avaliar variantes sobrepostas como versões úteis, sem repetir o mesmo intervalo para inflar quantidade; título/resumo fundamentados somente na montagem publicada; depois contrato versionado para gancho reordenado e composição por cena. Proposta, não implementação nem novo aceite. Nenhum motivo demonstrado para reativar multimodal pesado ou substituir Qwen nesta auditoria.
+
+Correção pontual executada: `editorial_repair::apply` perdia `options.fit` ao clonar um draft sem esse campo. Valve reparado persistia `fit:null`, caindo em contain na UI. Agora o reparo preserva cover/contain; teste reproduziu a falha antes e passou depois. O export de laboratório anterior fixava cover e ocultava esse defeito de propagação. Não migra edições salvas do mantenedor.
+
 ## Preparação de estudo AutoClip — 2026-10-23
 
 ### Pipelines executados com Qwen3.5-4B — 2026-10-24

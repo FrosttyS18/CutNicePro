@@ -1,0 +1,371 @@
+{
+  "date": "2026-10-25",
+  "referenceCount": 14,
+  "source": ".tooling/test-output/pipelines-comparados-2026-10-24/corpus/davyjones-completo.mp4",
+  "sourceSha256": "57fbe0fabed97558cd779579475e9e49e07c492d8d2d2a20603ccb4ccd6730ca",
+  "method": {
+    "audio": "Correlação espectral normalizada: mono 8 kHz, janela 512, passo 160, 24 bandas; blocos 2,5 s a cada 4 s e bloco final; controle inicial de 0,8 s.",
+    "confidence": "Blocos longos: score >=0,65 e margem >=0,08; curtos >=0,78 e margem >=0,1.",
+    "visual": "Três frames por arquivo, examinados em quatro folhas de contato; observação objetiva, sem aprovação estética.",
+    "limits": "Amostragem não comprova ausência de outras edições. Tempos aproximados; não revela algoritmo proprietário nem faz medição de qualidade por score. Nenhuma chamada de IA ou envio de vídeo."
+  },
+  "findings": [
+    "14 variantes incluem sobreposição: o trecho de 37,93 s começa no mesmo ponto do de 171,43 s; o de 17,47 s pertence à história EAFC maior.",
+    "Gancho antecipado comprovado na amostra do vídeo de R$ 400: 0,5 s -> fonte 89,86 s; 7,5 s -> fonte 50,74 s.",
+    "T-PAP no Opus cobre aproximadamente 168,26-227,73 s; corte local 149,40-197,80 s termina antes da explicação posterior.",
+    "Valve no Opus cobre aproximadamente 427,96-455,19 s; corte local 428,02-455,30 s já possui limites semelhantes.",
+    "Automático local tem teto 12 e seleção sem sobreposição; EditPlan v1 exige ordem cronológica; fit/focalPoint são globais. São diferenças de contrato além dos prompts."
+  ],
+  "fillFix": {
+    "cause": "editorial_repair::apply clonava draft sem fit; apenas os aceitos diretamente recebiam options.fit; frontend faltante usa contain.",
+    "localValveResult": {
+      "start": 428.02,
+      "end": 455.3,
+      "fit": null,
+      "repaired": true
+    },
+    "change": "Copiar options.fit no Clip reparado, preservando cover e contain; sem migração destrutiva das edições salvas.",
+    "regressionTest": "a_repaired_cut_keeps_the_requested_fit_when_the_original_draft_has_none",
+    "red": "None != Some(cover), reproduzido antes da correção.",
+    "green": "201 passed / 0 failed / 25 ignored; build canônica e fmt aprovados.",
+    "limit": "Sem nova inferência ou teste interativo da UI. Export anterior de laboratório fixava cover e ocultava a perda do campo."
+  },
+  "git": {
+    "publishedBaseline": "9785ff962082dc59082e4ac45fe0e1fe31a1b38b",
+    "rejectedUnpublishedCommit": "a58099133747e174bfad156cece3852793c2cae8",
+    "replacement": "12a542285f3ff3d843cd64efc29a289cccbcd42b",
+    "difference": "Somente /Opus teste/ no .gitignore e retirada dos 12 MP4s antes versionados; código anterior preservado.",
+    "diskPreservation": "14/14 hashes iguais ao inventário; todos ignorados, nenhum MP4 versionado nessa pasta. Sem limpeza/gc ou force push."
+  },
+  "sources": [
+    "https://help.opus.pro/docs/article/apply-the-layouts",
+    "https://www.opus.pro/mcp/inspiration/turn-your-best-clip-into-a-three-way-hook-test",
+    "https://github.com/opus-pro/opus-skills/blob/main/skills/opusclip/SKILL.md"
+  ],
+  "clips": [
+    {
+      "number": 1,
+      "file": "Opus teste/A Skin da Valve que Hoje Vale R$ 3 Mil.mp4",
+      "bytes": 36090069,
+      "sha256": "f703cd7c59e2cd4b02294f0c0666ba6971daf7b22a6b9ec6d37d0b06a3215413",
+      "durationSeconds": 27.233333,
+      "width": 1080,
+      "height": 1920,
+      "audioSampleCount": 8,
+      "confidentAudioSamples": 8,
+      "approximateContinuousSourceSpan": [
+        427.96,
+        455.19
+      ],
+      "sampledDiscontinuities": [],
+      "framesInspectedAtSeconds": [
+        1,
+        13.617,
+        26.733
+      ],
+      "observation": "Falante ocupa a altura; título sobreposto na abertura; limites quase iguais ao corte Valve local."
+    },
+    {
+      "number": 2,
+      "file": "Opus teste/Battlefield 6_ O Novo Passe de Batalha da EA.mp4",
+      "bytes": 55666189,
+      "sha256": "d74ad82503a6d10bb03a961e9d7c60e73df919ee48559185c2bc883adb4b59b0",
+      "durationSeconds": 46.833333,
+      "width": 1080,
+      "height": 1920,
+      "audioSampleCount": 13,
+      "confidentAudioSamples": 13,
+      "approximateContinuousSourceSpan": [
+        0.06,
+        46.89
+      ],
+      "sampledDiscontinuities": [],
+      "framesInspectedAtSeconds": [
+        1,
+        23.417,
+        46.333
+      ],
+      "observation": "Amostras com reenquadramento vertical de participantes."
+    },
+    {
+      "number": 3,
+      "file": "Opus teste/Battlefield_ Erros Bizarros nas Skins do Passe de Batalha.mp4",
+      "bytes": 157985907,
+      "sha256": "797bd9c283bbed9755fd2284a2c5d7571c80be66055336dcc6aa49702a021235",
+      "durationSeconds": 171.433333,
+      "width": 1080,
+      "height": 1920,
+      "audioSampleCount": 44,
+      "confidentAudioSamples": 44,
+      "approximateContinuousSourceSpan": [
+        129.78,
+        301.21
+      ],
+      "sampledDiscontinuities": [],
+      "framesInspectedAtSeconds": [
+        1,
+        85.717,
+        170.933
+      ],
+      "observation": "Amostras alternam falante, grade de participantes e imagem comentada acima dos participantes."
+    },
+    {
+      "number": 4,
+      "file": "Opus teste/Battlefield_ Jogadores Encontram Algo Estranho no Novo Passe.mp4",
+      "bytes": 48091839,
+      "sha256": "62321711c0870e2d2dfdb5ec0cb804a7c04d01b7735b29b94a782744ecb8ff38",
+      "durationSeconds": 37.933333,
+      "width": 1080,
+      "height": 1920,
+      "audioSampleCount": 10,
+      "confidentAudioSamples": 10,
+      "approximateContinuousSourceSpan": [
+        129.78,
+        167.71
+      ],
+      "sampledDiscontinuities": [],
+      "framesInspectedAtSeconds": [
+        1,
+        18.967,
+        37.433
+      ],
+      "observation": "Amostras com reenquadramento vertical de participantes."
+    },
+    {
+      "number": 5,
+      "file": "Opus teste/Group Therapy ou T-Papy_ O Erro Que Passou Batido.mp4",
+      "bytes": 54272996,
+      "sha256": "bcdde49ad2eec79d97ab8b18a59529bc09ef40a4036cc64b61f6ce00f09652f0",
+      "durationSeconds": 59.466667,
+      "width": 1080,
+      "height": 1920,
+      "audioSampleCount": 16,
+      "confidentAudioSamples": 16,
+      "approximateContinuousSourceSpan": [
+        168.26,
+        227.73
+      ],
+      "sampledDiscontinuities": [],
+      "framesInspectedAtSeconds": [
+        1,
+        29.733,
+        58.967
+      ],
+      "observation": "Abertura no falante; amostras posteriores em grade de participantes; explicação continua além do final local."
+    },
+    {
+      "number": 6,
+      "file": "Opus teste/Itens Raros do PUBG_ Quanto Valem Hoje_.mp4",
+      "bytes": 36264011,
+      "sha256": "67c56fc442ba524fbac875c9556432efc1d62d4b8219fddf58e173e821d24c0a",
+      "durationSeconds": 31.6,
+      "width": 1080,
+      "height": 1920,
+      "audioSampleCount": 9,
+      "confidentAudioSamples": 9,
+      "approximateContinuousSourceSpan": [
+        456.88,
+        488.48
+      ],
+      "sampledDiscontinuities": [],
+      "framesInspectedAtSeconds": [
+        1,
+        15.8,
+        31.1
+      ],
+      "observation": "Amostras com reenquadramento vertical de participantes."
+    },
+    {
+      "number": 7,
+      "file": "Opus teste/Jogo de R$ 400 trava, crasha e apaga nosso save!.mp4",
+      "bytes": 97559918,
+      "sha256": "286ed2c91b2356d6fdfbf0be1b4c7414b2f4a37f6169089ebf4af150ba4c3997",
+      "durationSeconds": 84.833333,
+      "width": 1080,
+      "height": 1920,
+      "audioSampleCount": 22,
+      "confidentAudioSamples": 22,
+      "approximateContinuousSourceSpan": null,
+      "sampledDiscontinuities": [
+        {
+          "before": {
+            "clipTime": 0.5,
+            "sourceTime": 89.86,
+            "score": 0.9733,
+            "alternative": 0.5763,
+            "confident": true
+          },
+          "after": {
+            "clipTime": 3.5,
+            "sourceTime": 46.74,
+            "score": 0.6569,
+            "alternative": 0.2951,
+            "confident": true
+          },
+          "removedOrReorderedSeconds": -46.12,
+          "backward": true
+        }
+      ],
+      "framesInspectedAtSeconds": [
+        1,
+        42.417,
+        84.333
+      ],
+      "observation": "Áudio da consequência aparece antes da explicação; correspondência volta de cerca de 89 s para 47 s da fonte."
+    },
+    {
+      "number": 8,
+      "file": "Opus teste/John Wick_ Quantas Pistolas Cabem Nesse Boneco_.mp4",
+      "bytes": 36757721,
+      "sha256": "65a8f169c7734b071db5938bfbd16c389fdec0f2a6eae07b91a11078a7b4454f",
+      "durationSeconds": 66.6,
+      "width": 1080,
+      "height": 1920,
+      "audioSampleCount": 18,
+      "confidentAudioSamples": 18,
+      "approximateContinuousSourceSpan": [
+        301.2,
+        367.8
+      ],
+      "sampledDiscontinuities": [],
+      "framesInspectedAtSeconds": [
+        1,
+        33.3,
+        66.1
+      ],
+      "observation": "Imagem das pistolas acima dos participantes nas três amostras."
+    },
+    {
+      "number": 9,
+      "file": "Opus teste/Logitech G_ 15% OFF com o Cupom FLOW no Seu Setup.mp4",
+      "bytes": 67915910,
+      "sha256": "6c7f7d3f5bbe47d5820cbbfb159db4aab8012bd5779171976d733f0c441d1a4f",
+      "durationSeconds": 62.233333,
+      "width": 1080,
+      "height": 1920,
+      "audioSampleCount": 17,
+      "confidentAudioSamples": 17,
+      "approximateContinuousSourceSpan": [
+        536.92,
+        599.15
+      ],
+      "sampledDiscontinuities": [],
+      "framesInspectedAtSeconds": [
+        1,
+        31.117,
+        61.733
+      ],
+      "observation": "Publicidade presente na coleção; não comprova classificação automática pelo MP4."
+    },
+    {
+      "number": 10,
+      "file": "Opus teste/O Jogo Travou e Perdemos o Save no PlayStation!.mp4",
+      "bytes": 20740636,
+      "sha256": "b9122598dbcb6af6c1f4956655862947a33014fa803669a984552b328af83c1a",
+      "durationSeconds": 17.466667,
+      "width": 1080,
+      "height": 1920,
+      "audioSampleCount": 5,
+      "confidentAudioSamples": 5,
+      "approximateContinuousSourceSpan": [
+        79.02,
+        96.49
+      ],
+      "sampledDiscontinuities": [],
+      "framesInspectedAtSeconds": [
+        1,
+        8.733,
+        16.967
+      ],
+      "observation": "Amostras com reenquadramento vertical de participantes."
+    },
+    {
+      "number": 11,
+      "file": "Opus teste/PC Faz Barulho de Maquininha e Parece Que Vai Decolar.mp4",
+      "bytes": 51870931,
+      "sha256": "26978f8cdcee94c09e1721deaf6df0b024594428f1ee252cdfde2f562c355597",
+      "durationSeconds": 48.466667,
+      "width": 1080,
+      "height": 1920,
+      "audioSampleCount": 13,
+      "confidentAudioSamples": 13,
+      "approximateContinuousSourceSpan": [
+        488.48,
+        536.95
+      ],
+      "sampledDiscontinuities": [],
+      "framesInspectedAtSeconds": [
+        1,
+        24.233,
+        47.967
+      ],
+      "observation": "Amostras com reenquadramento vertical de participantes."
+    },
+    {
+      "number": 12,
+      "file": "Opus teste/Skin Bugada no Jogo_ Você Pagaria por Isso_.mp4",
+      "bytes": 44081134,
+      "sha256": "469609d68a53c45b721dd903e3589804aaed51c1ee34343709c1a508e631d0d4",
+      "durationSeconds": 54.2,
+      "width": 1080,
+      "height": 1920,
+      "audioSampleCount": 15,
+      "confidentAudioSamples": 15,
+      "approximateContinuousSourceSpan": [
+        367.76,
+        421.96
+      ],
+      "sampledDiscontinuities": [],
+      "framesInspectedAtSeconds": [
+        1,
+        27.1,
+        53.7
+      ],
+      "observation": "Imagem comentada acima dos participantes; amostra final no falante."
+    },
+    {
+      "number": 13,
+      "file": "Opus teste/Skin de Jogo com Detalhe Bizarro Intriga a Galera.mp4",
+      "bytes": 41808198,
+      "sha256": "592fd2ac38e061d36acc44243f4dd6ea0363a12727b96bb82582f0c32f99f308",
+      "durationSeconds": 51.766667,
+      "width": 1080,
+      "height": 1920,
+      "audioSampleCount": 14,
+      "confidentAudioSamples": 14,
+      "approximateContinuousSourceSpan": [
+        249.4,
+        301.17
+      ],
+      "sampledDiscontinuities": [],
+      "framesInspectedAtSeconds": [
+        1,
+        25.883,
+        51.267
+      ],
+      "observation": "Imagem comentada acima dos participantes nas amostras central e final."
+    },
+    {
+      "number": 14,
+      "file": "Opus teste/Tourette e Ansiedade_ Quando Até uma Buzina Incomoda.mp4",
+      "bytes": 16528754,
+      "sha256": "3fcfefe6878e114a2ebf869a2dc0b598ad7720189b5b51ab9e4cfa6fe157c76c",
+      "durationSeconds": 21.733333,
+      "width": 1080,
+      "height": 1920,
+      "audioSampleCount": 6,
+      "confidentAudioSamples": 6,
+      "approximateContinuousSourceSpan": [
+        227.68,
+        249.41
+      ],
+      "sampledDiscontinuities": [],
+      "framesInspectedAtSeconds": [
+        1,
+        10.867,
+        21.233
+      ],
+      "observation": "Layout muda entre participantes empilhados, grade e falante."
+    }
+  ]
+}
