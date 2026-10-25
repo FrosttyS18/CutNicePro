@@ -1,8 +1,13 @@
 import unittest
-from worker import crop_position, offsets, summarize
+from worker import crop_position, offsets, summarize, validate_request
 
 
 class FramingTests(unittest.TestCase):
+    def test_sixteen_clips_are_accepted_but_seventeen_are_rejected(self):
+        validate_request({"version": 1, "clips": [{}] * 16})
+        with self.assertRaises(ValueError):
+            validate_request({"version": 1, "clips": [{}] * 17})
+
     def test_sampling_is_bounded_and_inside_clip(self):
         values = offsets(10, 190)
         self.assertEqual(len(values), 12)

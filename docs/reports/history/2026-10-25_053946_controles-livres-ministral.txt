@@ -1,0 +1,118 @@
+╔════════════════════════════════════════════╗
+║       CUTNICEPRO — ZCODE REPORT            ║
+╚════════════════════════════════════════════╝
+
+TASK
+  Name: Cobertura editorial, controles livres e Ministral local
+  Status: PARTIAL — qualidade narrativa ainda não resolvida.
+  Scope: fonte integral, referências AutoClip/SupoClip/14 MP4s Opus,
+    Qwen 4B/9B e Ministral solicitado; preservar os quatro cortes reais.
+  Objective: distinguir falha de descoberta, limites e descartes.
+  Result: descarte de citações longas corrigido; controles demonstram
+    erros antes dos filtros. Nenhuma troca do modelo padrão.
+
+IMPLEMENTATION
+  Completed: citação longa literal e única aceita; cópia longa alterada
+    segue recusada. Harness exporta o fit do Clip, sem impor cover.
+    Ministral oficial baixado/verificado e executado no runtime existente.
+  Not completed: recuperar histórias completas e títulos fiéis de forma
+    consistente; Ministral não integrado nem testado no pipeline completo.
+  Changes: dois testes de regressão e correção pontual no localizador.
+  Architecture impact: sem mudança de arquitetura, UI ou armazenamento.
+    Experiência de cobertura regional foi rejeitada e retirada do produto.
+
+FILES
+  Created: docs/reports/evidence/editorial-stories-2026-10-25.json;
+    este histórico; controles e GGUF em diretórios ignorados.
+  Modified: clips/{source_anchors,discovery_reply,feedback_runtime_tests}.rs;
+    ENGINE-HANDOFF.md; TOOLING.md; BACKLOG.md;
+    OPEN-SOURCE-ENGINE-RESEARCH.md; docs/reports/LATEST.txt.
+  Deleted: nenhum arquivo preexistente; protótipos desta tarefa retirados.
+  Unexpected changes: NONE. Biblioteca normal não foi escrita.
+
+VALIDATION
+  Typecheck / Lint: SKIP — frontend não alterado; Rust compilado sem avisos.
+  Unit tests: PASS — 203; 0 falhas; 25 opt-in ignorados. RED→GREEN verificado.
+  Integration tests: 2 rodadas nativas integrais com persistência/export;
+    FAIL editorial: 4/321,10 s e 5/582,84 s, quinto era fragmento repetido.
+  Regression tests: PASS no escopo automatizado; fmt e diff check PASS.
+  Visual tests: SKIP; VISUAL STATUS: PENDING HUMAN APPROVAL.
+  Runtime verification: 13 controles isolados reais; nenhum usa nuvem.
+    Qwen 4B livre: 4 propostas em 0,4; 3 em 0,7, com erros de limites/fatos.
+    Qwen 9B/64K: 4/54,45 s; contexto confirmado, omissões e finais errados.
+    Ministral livre: 5/44,36 s; pedido de extração do app: 8/35,48 s.
+    Seis pares literais únicos neste último controle, mas T-PAP termina
+    antes da explicação. Não são oito cortes aprovados.
+    Ministral 16K: entrada integral 7701/3313 tokens, saída até 4096;
+    template nativo, temperatura 0,05; não houve divisão/truncagem.
+  Total passed: 203 unitários finais. Total failed: 2 aceites editoriais
+    nativos experimentais. Total skipped: 25 testes opt-in da suíte final.
+  FUNCTIONAL STATUS: PARTIAL. REGRESSION STATUS: PASS no escopo testado.
+
+HOOKS / HARNESS
+  Hooks active / PreToolUse / PostToolUse / Stop: não invocados pelo Codex.
+  Baseline: testes/build diretos; não atribuída ao hook.
+  Gate result: editorial FAIL; experimentos não promovidos.
+  Evidence: .tooling/test-output/editorial-stories-2026-10-25/.
+    Controle 4B salvou resposta e falhou apenas ao imprimir emoji CP1252.
+    Preparação Ministral corrigida para CRLF antes de iniciar inferência.
+
+MCP / SKILLS
+  Tools used: Graphify remoto; documentação oficial; debugging/TDD/
+    planejamento/verificação. Sem automação interativa do PC.
+  Connection status: consulta real antes/depois, wesley-s-workspace,
+    FrosttyS18/CutNicePro, índice 499d263; mudanças locais fora do grafo.
+  Failures / Pending activation: nenhuma conexão pendente.
+
+GIT
+  Branch: main
+  HEAD: 499d2633897d36e4fd0a00e5b55805013e30516b
+  Latest commit: docs(engine): registrar comparação Opus e entrega validada
+  Commits created: nenhum. Push: NOT EXECUTED nesta tarefa.
+  Remote: origin → FrosttyS18/CutNicePro; main.
+  Working tree: MODIFIED + UNTRACKED.
+  Pending files: três fontes Rust, quatro documentos, evidência JSON,
+    LATEST.txt e este histórico. GGUF e laboratório ignorados.
+
+EVIDENCE
+  Commands executed: cargo test --offline --locked; cargo build --offline
+    --locked; cargo fmt --all -- --check; git diff --check; controles locais.
+  Relevant logs: final-unit-tests.log, final-build.log e subpastas dos
+    controles no diretório de Evidence acima. Screenshots: nenhuma.
+  Test artifacts: JSON consolidado em FILES; respostas originais no lab.
+  Reproduction details: mesmo vídeo integral/334 segmentos; prompts,
+    schemas, sampling e recursos salvos. Famílias usam templates próprios;
+    comparação não isola efeito de contexto, tamanho ou temperatura.
+
+ISSUES
+  Bugs found: limite de 40 palavras descartava citação literal válida.
+  Unresolved failures: T-PAP incompleto; títulos com fatos externos;
+    cobertura insuficiente. Reservar 64K não corrigiu o julgamento.
+  Regressions: nenhuma observada na suíte pertinente; não é garantia geral.
+  Risks: score/quantidade não são fidelidade. GPU medida inclui outros
+    processos; WorkingSet é do processo, não RAM total do app.
+  Blockers: nenhum externo; problema editorial continua técnico.
+
+FINAL
+  Delivery status: PARTIAL; default Qwen3.5-4B/32K preservado.
+  Requirements met: diagnóstico, comparação solicitada e correção pontual.
+  Remaining work: descoberta/limites completos antes de variantes e montagem.
+  User action required: nenhuma para estes experimentos já reprovados.
+  Restart required: somente para usar a build atualizada se estava aberta.
+  Ready for next task: sim; não confundir esta entrega com qualidade resolvida.
+  Build única: C:/CutNicePro/app/src-tauri/target/debug/cutnicepro.exe
+  SHA256: 2F0B4732F7F906E19B8B2D08788A65F71F612048506F7687AE2C35645ACA400C
+
+REPORT
+  Latest file: docs/reports/LATEST.txt
+  Historical file: docs/reports/history/2026-10-25_053946_controles-livres-ministral.txt
+
+GUIA DO MANTENEDOR — O QUE MUDOU E COMO TESTAR
+  O que mudou: retirado um descarte indevido de fala copiada. Ministral
+    foi testado no laboratório; não aparece no seletor. Os quatro vídeos
+    e o preenchimento aprovados foram preservados. Nada novo para testar
+    manualmente: os controles ainda falham em qualidade e não foram
+    publicados na biblioteca. Próximo teste deve comprovar histórias
+    completas, sem falas inventadas nem contagem artificial.
+
+END OF REPORT

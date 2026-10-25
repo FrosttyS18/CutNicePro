@@ -210,7 +210,7 @@ pub struct Options {
     #[serde(default)]
     pub quality: Option<Quality>,
     /// Modo automático: quantidade e duração resultam dos momentos
-    /// encontrados dentro de LIMITES TÉCNICOS fixos (10–180 s, até 12
+    /// encontrados dentro de LIMITES TÉCNICOS fixos (10–180 s, até 16
     /// cortes) — nunca de valores de episódio. Resolvido a partir de
     /// `GenerateOptions` antes de entrar no pipeline.
     #[serde(default)]
@@ -227,13 +227,13 @@ impl Options {
                 || self.min_seconds < 10.0
                 || self.max_seconds > 180.0
                 || self.max_seconds < self.min_seconds
-                || !(1..=12).contains(&self.count)
+                || !(1..=AUTOMATIC_MAX_CLIPS).contains(&self.count)
                 || self
                     .format
                     .as_ref()
                     .is_some_and(|v| !["16:9", "9:16", "1:1", "4:5"].contains(&v.as_str())))
         {
-            return Err("Escolha de 1 a 12 cortes, com duração entre 10 e 180 segundos.".into());
+            return Err("Escolha de 1 a 16 cortes, com duração entre 10 e 180 segundos.".into());
         }
         if self.automatic
             && self
@@ -241,7 +241,7 @@ impl Options {
                 .as_ref()
                 .is_some_and(|v| !["16:9", "9:16", "1:1", "4:5"].contains(&v.as_str()))
         {
-            return Err("Escolha de 1 a 12 cortes, com duração entre 10 e 180 segundos.".into());
+            return Err("Escolha de 1 a 16 cortes, com duração entre 10 e 180 segundos.".into());
         }
         Ok(())
     }
@@ -253,7 +253,7 @@ impl Options {
 /// momentos existem; o piso editorial e o teto aplicam-se com registro.
 pub const AUTOMATIC_MIN_SECONDS: f64 = 10.0;
 pub const AUTOMATIC_MAX_SECONDS: f64 = 180.0;
-pub const AUTOMATIC_MAX_CLIPS: usize = 12;
+pub const AUTOMATIC_MAX_CLIPS: usize = 16;
 /// Piso editorial do automático: candidato cuja PRÓPRIA avaliação fique
 /// abaixo disso não vira sugestão (registro no log; nunca some em silêncio).
 pub const AUTOMATIC_RELEVANCE_FLOOR: u8 = 50;

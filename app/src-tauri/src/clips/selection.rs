@@ -307,90 +307,27 @@ pub(crate) fn evaluate_batch_with(
     super::assessment::evaluate(engine, scratch, pending, segments, control)
 }
 
-/// Finalização da seleção — weighted interval scheduling. OBJETIVO
-/// MATEMÁTICO: entre clipes não sobrepostos, até `count` (teto), maximizar
-/// lexicograficamente (soma das notas VÁLIDAS, cardinalidade, -soma dos
-/// inícios). Sem nenhuma poda prévia (contraprovas no experimento).
-/// Célula da DP: (soma das notas, cardinalidade, -soma dos inícios, caminho).
-type DpCell = (i64, i64, f64, Vec<usize>);
-
-pub(crate) fn finalize_weighted(sorted: &[Clip], count: usize) -> Vec<Clip> {
-    let n = sorted.len();
-    if n == 0 {
-        return Vec::new();
-    }
-    let mut order: Vec<usize> = (0..n).collect();
-    order.sort_by(|&a, &b| {
-        sorted[a]
-            .end
-            .total_cmp(&sorted[b].end)
-            .then(sorted[a].start.total_cmp(&sorted[b].start))
+pub(crate) fn finalize_ranked(clips: &[Clip], count: usize) -> Vec<Clip> {
+    let mut ranked = clips.to_vec();
+    ranked.sort_by(|a, b| {
+        b.score
+            .cmp(&a.score)
+            .then(a.start.total_cmp(&b.start))
+            .then(a.end.total_cmp(&b.end))
+            .then(a.id.cmp(&b.id))
     });
-    let mut best: Vec<Vec<Option<DpCell>>> = vec![vec![None; count + 1]; n + 1];
-    best[0][0] = Some((0, 0, 0.0, Vec::new()));
-    for i in 1..=n {
-        let idx = order[i - 1];
-        let mut prefix = 0usize;
-        while prefix < i - 1 && sorted[order[prefix]].end <= sorted[idx].start {
-            prefix += 1;
+    let mut selected = Vec::new();
+    for clip in ranked {
+        if selected.len() == count {
+            break;
         }
-        for k in 0..=count {
-            let mut current = best[i - 1][k].clone();
-            if k >= 1 {
-                if let Some((sum, len, neg, path)) = &best[prefix][k - 1] {
-                    let mut new_path = path.clone();
-                    new_path.push(idx);
-                    let next = (
-                        sum + i64::from(sorted[idx].score),
-                        *len + 1,
-                        neg - sorted[idx].start,
-                        new_path,
-                    );
-                    let replace = current.as_ref().is_none_or(|(s, l, ng, _)| {
-                        next.0 > *s
-                            || (next.0 == *s && next.1 > *l)
-                            || (next.0 == *s && next.1 == *l && next.2 > *ng)
-                    });
-                    if replace {
-                        current = Some(next);
-                    }
-                }
-            }
-            best[i][k] = current;
+        if !super::novelty::duplicate_of(&selected, &clip) {
+            selected.push(clip);
         }
     }
-    let mut winner: Option<(usize, DpCell)> = None;
-    for (k, slot) in best[n].iter().enumerate() {
-        if let Some(cell) = slot.clone() {
-            let replace = match &winner {
-                None => true,
-                Some((wk, (ws, _wl, wng, _))) => {
-                    cell.0 > *ws
-                        || (cell.0 == *ws && k > *wk)
-                        || (cell.0 == *ws && k == *wk && cell.2 > *wng)
-                }
-            };
-            if replace {
-                winner = Some((k, cell));
-            }
-        }
-    }
-    let mut chosen: Vec<Clip> = Vec::new();
-    if let Some((_, (_, _, _, path))) = winner {
-        let keep: std::collections::HashSet<usize> = path.iter().copied().collect();
-        chosen = sorted
-            .iter()
-            .enumerate()
-            .filter(|(i, _)| keep.contains(i))
-            .map(|(_, clip)| clip.clone())
-            .collect();
-    }
-    chosen
+    selected
 }
 
-/// Fluxo pós-janelas, executável sem LLM (teste de fluxo completo):
-/// propostas por janela -> construção (conform/alternativas) -> AVALIAÇÃO
-/// -> seleção definitiva (DP sem poda, apenas notas válidas).
 pub type EvaluateFn<'a> = dyn Fn(&[Clip], &[Segment]) -> Result<Vec<Evaluation>, String> + 'a;
 pub type Evaluate<'a> = &'a EvaluateFn<'a>;
 
@@ -465,7 +402,7 @@ fn resolve_with_existing(
     let mut seen_candidates = std::collections::HashSet::new();
     contenders.retain(|c| {
         c.clip.end - c.clip.start <= options.max_seconds + 1e-6
-            && !super::novelty::duplicate_of(existing, &c.clip, segments)
+            && !super::novelty::duplicate_of(existing, &c.clip)
             && seen_candidates.insert(c.clip.id.clone())
     });
     eprintln!(
@@ -625,9 +562,6 @@ pub(crate) fn finalize_prioritized(
     automatic: bool,
     below_floor: usize,
 ) -> Vec<Clip> {
-    // Publicidade depois dos destaques editoriais: a DP maximize a soma
-    // sobre os NÃO promocionais primeiro e só preenche sobras com
-    // promocionais marcados (prioridade secundária, sem exclusão).
     let mut editorial: Vec<Clip> = Vec::new();
     let mut promotional: Vec<Clip> = Vec::new();
     for clip in dispute {
@@ -641,28 +575,11 @@ pub(crate) fn finalize_prioritized(
             editorial.push(clip);
         }
     }
-    editorial.sort_by(|a, b| b.score.cmp(&a.score).then(a.start.total_cmp(&b.start)));
-    promotional.sort_by(|a, b| b.score.cmp(&a.score).then(a.start.total_cmp(&b.start)));
-    let mut selected = finalize_weighted(&editorial, budget);
-    // Atualização 16: promocionais só podem ocupar intervalos LIVRES. A DP
-    // independente anterior ignorava os cortes editoriais já fixados e
-    // produzia sobreposição editorial×promocional (reprovação comprovada).
-    // Editorial tem prioridade: promocional conflitante fica fora, com
-    // registro — os demais disputam as vagas restantes pela DP normal.
+    let mut selected = finalize_ranked(&editorial, budget);
     let ads_no_lote = promotional.len();
-    let mut ads_conflito = 0usize;
-    if selected.len() < budget && !promotional.is_empty() {
-        promotional.retain(|ad| {
-            let conflita = selected
-                .iter()
-                .any(|fixado| ad.start < fixado.end && fixado.start < ad.end);
-            if conflita {
-                ads_conflito += 1;
-            }
-            !conflita
-        });
-        let rest = finalize_weighted(&promotional, budget - selected.len());
-        selected.extend(rest);
+    if selected.len() < budget {
+        promotional.retain(|ad| !super::novelty::duplicate_of(&selected, ad));
+        selected.extend(finalize_ranked(&promotional, budget - selected.len()));
     }
     let promocionais = selected
         .iter()
@@ -670,19 +587,9 @@ pub(crate) fn finalize_prioritized(
         .count();
     let editoriais = selected.len() - promocionais;
     if automatic {
-        // log honesto: descreve exatamente o resultado (atualização 16) —
-        // substitui a mensagem antiga que afirmava que publicidade "ficou
-        // fora" mesmo quando ela entrava como prioridade secundária
-        let motivo_fora = if ads_conflito > 0 {
-            format!("{ads_conflito} por conflito temporal com cortes já escolhidos")
-        } else if selected.len() >= budget && ads_no_lote > promocionais {
-            "orçamento esgotado pelos editoriais".to_string()
-        } else {
-            "sem vagas restantes".to_string()
-        };
         eprintln!(
             "[clips] automático: {editoriais} editoriais e {promocionais} promocionais nas sugestões; \
-             {below_floor} descartados pelo piso editorial ({}); {} promocionais de fora ({motivo_fora})",
+             {below_floor} descartados pelo piso editorial ({}); {} promocionais de fora (teto da rodada ou sugestões idênticas)",
             super::types::AUTOMATIC_RELEVANCE_FLOOR,
             ads_no_lote - promocionais,
         );
@@ -892,7 +799,7 @@ mod tests {
         .unwrap();
         let new: Vec<_> = selected
             .into_iter()
-            .filter(|c| !super::super::generation::duplicate_of(&existing, c, &speech))
+            .filter(|c| !super::super::generation::duplicate_of(&existing, c))
             .collect();
         assert_eq!(
             new.len(),
@@ -1072,16 +979,42 @@ mod tests {
     }
 
     #[test]
-    fn finalizacao_recupera_dois_medianos_bloqueados_por_um_alto() {
+    fn overlapping_versions_keep_their_own_rank_and_count_toward_the_limit() {
+        let candidates = vec![
+            clip_named("complete", 0.0, 90.0, 95),
+            clip_named("focused", 20.0, 60.0, 90),
+            clip_named("other", 100.0, 130.0, 85),
+        ];
+        let chosen = finalize_ranked(&candidates, 3);
+        assert_eq!(
+            chosen.iter().map(|c| c.id.as_str()).collect::<Vec<_>>(),
+            ["complete", "focused", "other"]
+        );
+    }
+
+    #[test]
+    fn sixteen_overlapping_versions_are_allowed_without_repeating_identical_spans() {
+        let mut candidates = (0..17)
+            .map(|i| clip_named(&format!("version-{i}"), i as f64, 120.0, 90 - i))
+            .collect::<Vec<_>>();
+        candidates.push(clip_named("same-span", 0.0, 120.0, 70));
+        let chosen = finalize_ranked(&candidates, 16);
+        assert_eq!(chosen.len(), 16);
+        assert_eq!(chosen[0].id, "version-0");
+        assert_eq!(chosen[15].id, "version-15");
+    }
+
+    #[test]
+    fn finalizacao_prioriza_nota_sem_bloqueio_temporal() {
         let sorted = vec![
             clip_named("alfa", 30.0, 90.0, 90),
             clip_named("beta", 0.0, 35.0, 75),
             clip_named("gamma", 85.0, 120.0, 75),
         ];
-        let chosen = finalize_weighted(&sorted, 2);
+        let chosen = finalize_ranked(&sorted, 2);
         assert_eq!(chosen.len(), 2);
         let ids: Vec<&str> = chosen.iter().map(|c| c.id.as_str()).collect();
-        assert!(ids.contains(&"beta") && ids.contains(&"gamma"));
+        assert!(ids.contains(&"alfa") && ids.contains(&"beta"));
     }
 
     #[test]
@@ -1091,7 +1024,7 @@ mod tests {
             clip_named("b", 40.0, 70.0, 80),
             clip_named("c", 80.0, 110.0, 75),
         ];
-        let chosen = finalize_weighted(&sorted, 3);
+        let chosen = finalize_ranked(&sorted, 3);
         assert_eq!(
             chosen.iter().map(|c| c.id.as_str()).collect::<Vec<_>>(),
             vec!["a", "b", "c"]
@@ -1099,30 +1032,27 @@ mod tests {
     }
 
     #[test]
-    fn finalizacao_prioriza_soma_com_count_como_teto() {
+    fn finalizacao_respeita_teto_sem_descartar_versao_contida() {
         let sorted = vec![
             clip_named("longo", 0.0, 60.0, 100),
             clip_named("esquerda", 0.0, 30.0, 49),
             clip_named("direita", 30.0, 60.0, 49),
         ];
-        let chosen = finalize_weighted(&sorted, 2);
-        assert_eq!(chosen.len(), 1);
+        let chosen = finalize_ranked(&sorted, 2);
+        assert_eq!(chosen.len(), 2);
         assert_eq!(chosen[0].id, "longo");
+        assert_eq!(chosen[1].id, "esquerda");
     }
 
     #[test]
-    fn finalizacao_nunca_escolhe_sobrepostos() {
+    fn finalizacao_aceita_versoes_sobrepostas() {
         let sorted = vec![
             clip_named("x", 0.0, 40.0, 80),
             clip_named("y", 10.0, 50.0, 80),
             clip_named("z", 20.0, 60.0, 80),
         ];
-        let chosen = finalize_weighted(&sorted, 3);
-        for (i, a) in chosen.iter().enumerate() {
-            assert!(chosen[i + 1..]
-                .iter()
-                .all(|b| a.start >= b.end || a.end <= b.start));
-        }
+        let chosen = finalize_ranked(&sorted, 3);
+        assert_eq!(chosen.len(), 3);
     }
 
     /// FLUXO COMPLETO (sem LLM; avaliação aplicada pelo mesmo camamento do
@@ -1190,7 +1120,7 @@ mod tests {
             "nota herdada não pode disputar"
         );
         dispute.sort_by(|a, b| b.score.cmp(&a.score).then(a.start.total_cmp(&b.start)));
-        let chosen = finalize_weighted(&dispute, options.count);
+        let chosen = finalize_ranked(&dispute, options.count);
         assert_eq!(chosen.len(), 1);
         assert_eq!(chosen[0].score, 80, "B (avaliação válida 80) deve vencer");
     }
@@ -1289,12 +1219,6 @@ mod tests {
 
     #[test]
     fn associacao_normal_e1_10_e2_90_e3_20() {
-        // ordem NORMAL — caso da contraprova. As três propostas curtas
-        // geram 5 alternativas (E1..E5: p1-fim, p2-fim, p2-início,
-        // p3-fim, p3-início); respondemos E1..E5 e a DP escolhe
-        // E2(90)+E1(10)+E5(60) — E3 sobrepõe E2. No código de bc8a198,
-        // E2=90 caía na TERCEIRA alternativa (deslocamento): este teste
-        // falharia (raz-E2 num clipe errado com nota errada).
         let chosen = run_associacao(vec![
             ("E1".into(), 10, "raz-E1".into()),
             ("E2".into(), 90, "raz-E2".into()),
@@ -1302,7 +1226,7 @@ mod tests {
             ("E4".into(), 50, "raz-E4".into()),
             ("E5".into(), 60, "raz-E5".into()),
         ]);
-        assert_associacao(&chosen, &[("raz-E2", 90), ("raz-E5", 60), ("raz-E1", 10)]);
+        assert_associacao(&chosen, &[("raz-E2", 90), ("raz-E5", 60), ("raz-E4", 50)]);
     }
 
     #[test]
@@ -1314,7 +1238,7 @@ mod tests {
             ("E4".into(), 50, "raz-E4".into()),
             ("E5".into(), 60, "raz-E5".into()),
         ];
-        let esperado = [("raz-E2", 90), ("raz-E5", 60), ("raz-E1", 10)];
+        let esperado = [("raz-E2", 90), ("raz-E5", 60), ("raz-E4", 50)];
         let inversa: Vec<_> = base.iter().rev().cloned().collect();
         assert_associacao(&run_associacao(inversa), &esperado);
         let permutada = vec![
@@ -1388,7 +1312,7 @@ mod tests {
         }
         let b = conform(candidate(2, 6, 80), &segments, "media", 240.0, &options).expect("válida");
         let dispute = vec![b.clip];
-        let chosen = finalize_weighted(&dispute, options.count);
+        let chosen = finalize_ranked(&dispute, options.count);
         assert_eq!(chosen.len(), 1);
         assert_eq!(chosen[0].score, 80);
     }
@@ -1455,7 +1379,7 @@ pub fn select(
     let limit = if options.automatic {
         super::types::AUTOMATIC_MAX_CLIPS
     } else {
-        (options.count * 2).min(12)
+        (options.count * 2).min(super::types::AUTOMATIC_MAX_CLIPS)
     };
     let system = discovery_system(options, existing, segments);
     let selection_system = system.as_str();
@@ -1697,10 +1621,6 @@ mod automatic_tests {
     #[test]
     fn automatico_exclui_piso_e_publicidade_personalizado_mantem_marca() {
         let segments = speech(60);
-        // atualização 16: candidatos DIRETOS disjuntos (propostas curtas
-        // eram rejeitadas pelo conform e viravam alternativas cuja
-        // numeração E{n} fazia a publicidade cair em janela conflitante —
-        // exatamente a sobreposição que esta atualização elimina)
         let proposals = vec![(
             0..60,
             vec![
@@ -1760,9 +1680,6 @@ mod automatic_tests {
             &evaluate2,
         )
         .expect("seleção personalizada");
-        // propostas curtas geram até 2 alternativas; a DP escolhe sem
-        // sobreposição — o que importa: a publicidade AVALIADA permanece
-        // disponível ao usuário com a marcação explícita no motivo.
         assert!(
             custom.len() >= 2,
             "personalizado entrega os momentos pedidos (recebeu {})",
@@ -1858,17 +1775,12 @@ mod automatic_tests {
         assert!(legacy.is_err());
     }
 
-    // ── Atualização 16: invariável GLOBAL de não-sobreposição ────────────
     fn overlaps(a: &Clip, b: &Clip) -> bool {
         a.start < b.end && b.start < a.end
     }
 
     #[test]
-    fn reproducao_promocional_sobreposto_a_editorial_nao_pode_entrar() {
-        // Cenário do ofício 16: editorial A 20–60 (85), promocional B 40–70
-        // (75), promocional C 75–95 (65). Segmentos de 10s: A=(2,5) B=(4,6)
-        // C=(7,9). Esperado: A + C (B conflita com A temporalmente).
-        // speech local: segmentos de 4s (grid do módulo automatic_tests)
+    fn promocional_sobreposto_entra_com_prioridade_secundaria() {
         let segments = speech(60);
         let proposals = vec![(
             0..60,
@@ -1893,28 +1805,18 @@ mod automatic_tests {
             &evaluate,
         )
         .expect("seleção");
-        for (i, a) in chosen.iter().enumerate() {
-            for b in chosen.iter().skip(i + 1) {
-                assert!(
-                    !overlaps(a, b),
-                    "sobreposição: [{},{}] × [{},{}]",
-                    a.start,
-                    a.end,
-                    b.start,
-                    b.end
-                );
-            }
-        }
-        assert_eq!(chosen.len(), 2, "A + C; B fica fora por conflito temporal");
+        assert!(chosen
+            .iter()
+            .enumerate()
+            .any(|(i, a)| chosen[i + 1..].iter().any(|b| overlaps(a, b))));
+        assert_eq!(chosen.len(), 3);
+
         assert!(chosen.iter().any(|c| c.score == 85));
         assert!(chosen.iter().any(|c| c.score == 65));
     }
 
     #[test]
-    fn selecao_global_editoriais_parcialmente_sobrepostos_nao_coexistem() {
-        // dois editoriais relevantes disputam intervalos parcialmente
-        // sobrepostos: a DP editorial escolhe sem interseção (qualidade
-        // preservada — não é um filtro guloso)
+    fn selecao_global_preserva_editoriais_parcialmente_sobrepostos() {
         let segments = speech(60);
         let proposals = vec![(
             0..60,
@@ -1939,20 +1841,12 @@ mod automatic_tests {
             &evaluate,
         )
         .expect("seleção");
-        for (i, a) in chosen.iter().enumerate() {
-            for b in chosen.iter().skip(i + 1) {
-                assert!(
-                    !overlaps(a, b),
-                    "sobreposição: [{},{}] × [{},{}]",
-                    a.start,
-                    a.end,
-                    b.start,
-                    b.end
-                );
-            }
-        }
-        // A+C (soma 160) supera B+C (158): qualidade editorial decide
-        assert_eq!(chosen.len(), 2);
+        assert!(chosen
+            .iter()
+            .enumerate()
+            .any(|(i, a)| chosen[i + 1..].iter().any(|b| overlaps(a, b))));
+        assert_eq!(chosen.len(), 3);
+
         assert!(chosen.iter().any(|c| c.score == 90));
         assert!(chosen.iter().any(|c| c.score == 70));
     }

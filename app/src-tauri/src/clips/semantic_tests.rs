@@ -1,5 +1,19 @@
 use super::{analysis_types::Analysis, semantic};
 
+#[test]
+fn generation_contract_allows_sixteen_but_not_seventeen_clips() {
+    let automatic: super::types::GenerateOptions =
+        serde_json::from_value(serde_json::json!({"automatic":true})).unwrap();
+    assert_eq!(automatic.resolve().unwrap().count, 16);
+    for (count, valid) in [(0, false), (12, true), (16, true), (17, false)] {
+        let request: super::types::GenerateOptions = serde_json::from_value(
+            serde_json::json!({"minSeconds":10.0,"maxSeconds":180.0,"count":count}),
+        )
+        .unwrap();
+        assert_eq!(request.resolve().is_ok(), valid, "count={count}");
+    }
+}
+
 fn analysis() -> Analysis {
     serde_json::from_value(serde_json::json!({
         "title":"Falha de salvamento interrompe o jogo",

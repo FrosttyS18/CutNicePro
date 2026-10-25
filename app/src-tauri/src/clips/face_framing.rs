@@ -121,7 +121,7 @@ fn python(base: &Path) -> Option<Python> {
 fn apply(response: Response, clips: &mut [Clip]) -> Result<(), String> {
     if response.version != 1
         || response.backend != "yunet-mouth-motion-static-v1"
-        || response.items.len() > 12
+        || response.items.len() > super::types::AUTOMATIC_MAX_CLIPS
     {
         return Err("Resposta inválida do enquadramento local.".into());
     }
@@ -275,6 +275,19 @@ mod tests {
         assert!(frame.valid());
         frame.samples = 13;
         assert!(!frame.valid());
+    }
+
+    #[test]
+    fn face_response_accepts_sixteen_clips_and_rejects_seventeen() {
+        for count in [16, 17] {
+            let mut clips: Vec<Clip> = (0..count).map(|i|serde_json::from_value(serde_json::json!({"id":i.to_string(),"start":0,"end":30,"title":"Trecho","score":80,"reasons":[],"review":"pending"})).unwrap()).collect();
+            let items = clips.iter().map(|clip|serde_json::json!({"id":clip.id,"status":"stable","samples":3,"x":0.3,"y":0.5,"confidence":0.9})).collect::<Vec<_>>();
+            let response: Response = serde_json::from_value(serde_json::json!({"version":1,"backend":"yunet-mouth-motion-static-v1","elapsedMs":25,"items":items})).unwrap();
+            assert_eq!(apply(response, &mut clips).is_ok(), count == 16);
+            if count == 16 {
+                assert!(clips.iter().all(|c| c.face_framing.is_some()));
+            }
+        }
     }
 
     #[test]

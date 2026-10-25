@@ -12,8 +12,7 @@
 //! 3) pergunta final sem uma resposta concluída é devolvida
 //!    ao próximo tópico — corta ANTES dela, sem jamais remover >40% do clipe;
 //! 4) bordas deslizam para a pausa de áudio real mais próxima (≤1,2 s).
-//! Nenhuma correção pode: encolher abaixo do mínimo da Options, colidir com
-//! outro clipe ou sair da mídia. Sem dado de palavras/pausas → devolve a
+//! Nenhuma correção pode encolher abaixo do mínimo da Options ou sair da mídia. Sem dado de palavras/pausas → devolve a
 //! janela intacta (nunca perde clipe).
 
 use crate::transcription::types::Segment;
@@ -229,7 +228,6 @@ pub fn refine_boundaries(
         }
     }
 
-    // --- snap para pausa real de áudio (não cria sobreposição) ---
     let mut bounds: Vec<f64> = units.iter().map(|u| u.1).collect();
     let mut starts: Vec<f64> = units.iter().map(|u| u.0).collect();
     for &(ps, pe) in pauses {
@@ -268,10 +266,56 @@ pub fn refine_boundaries(
     Refined { start, end, ops }
 }
 
+pub fn refine_candidates(
+    clips: &mut [super::types::Clip],
+    speech: &[Segment],
+    min_seconds: f64,
+    duration: f64,
+) {
+    for clip in clips {
+        let refined = refine_boundaries(
+            clip.start,
+            clip.end,
+            speech,
+            &[],
+            min_seconds,
+            None,
+            None,
+            duration,
+        );
+        clip.start = refined.start;
+        clip.end = refined.end;
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
     use crate::transcription::types::Word;
+
+    #[test]
+    fn overlapping_candidates_are_refined_without_trimming_each_other() {
+        let speech = vec![
+            seg(0.0, 20.0, "Contexto.", vec![("Contexto.", 0.0, 20.0)]),
+            seg(20.0, 39.0, "Conclusão.", vec![("Conclusão.", 20.0, 39.0)]),
+            seg(
+                41.0,
+                45.0,
+                "Outra pergunta?",
+                vec![("Outra", 41.0, 43.0), ("pergunta?", 43.0, 45.0)],
+            ),
+            seg(
+                45.0,
+                60.0,
+                "Resposta completa.",
+                vec![("Resposta", 45.0, 52.0), ("completa.", 52.0, 60.0)],
+            ),
+        ];
+        let mut clips: Vec<super::super::types::Clip> = [(0.0,41.0),(20.0,60.0)].into_iter().enumerate().map(|(i,(start,end))|serde_json::from_value(serde_json::json!({"id":i.to_string(),"start":start,"end":end,"title":"Versão completa","score":80,"reasons":[],"review":"pending"})).unwrap()).collect();
+        refine_candidates(&mut clips, &speech, 10.0, 60.0);
+        assert_eq!((clips[0].start, clips[0].end), (0.0, 39.0));
+        assert_eq!((clips[1].start, clips[1].end), (20.0, 60.0));
+    }
 
     fn seg(start: f64, end: f64, text: &str, words: Vec<(&str, f64, f64)>) -> Segment {
         Segment {

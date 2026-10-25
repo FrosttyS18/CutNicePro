@@ -5,6 +5,8 @@ import { normalizePlan } from "./edit-plan";
 import type { AspectRatio } from "../components/upload/tools";
 import { defaultEditorSettings } from "./workspace";
 
+export const MAX_CLIPS_PER_GENERATION = 16;
+
 export type ClipReview = "pending" | "approved" | "rejected";
 export type ClipQuality = "qwen35" | "standard" | "experimentalGemma";
 export interface ClipEngine { backend: string; model: string; template: string; sampling: string; seed: number }
@@ -35,7 +37,7 @@ export function parseClips(value: unknown): ClipCollection {
   const v = value as Partial<ClipCollection>;
   const ids = new Set<string>();
   // Atualização 19: a biblioteca é CUMULATIVA — sem teto total aqui; o limite
-  // de 12 é por EXECUÇÃO (dialog/backend), não do total armazenado.
+  // de 16 é por EXECUÇÃO (dialog/backend), não do total armazenado.
   if (v.version !== 1 || typeof v.mediaId !== "string" || typeof v.transcriptHash !== "string" || !Array.isArray(v.clips)
     || !v.clips.every(c => c && typeof c.id === "string" && /^[a-f\d]{64}$/i.test(c.id) && !ids.has(c.id) && Boolean(ids.add(c.id))
       && Number.isFinite(c.start) && Number.isFinite(c.end) && c.start >= 0 && c.end > c.start && typeof c.title === "string" && c.title.length > 0

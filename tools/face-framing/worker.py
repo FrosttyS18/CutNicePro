@@ -86,12 +86,16 @@ def summarize(samples, fraction):
             "confidence": min(s["confidence"] for s in found), "samples": len(samples)}
 
 
+def validate_request(request):
+    if request.get("version") != 1 or not isinstance(request.get("clips"), list) or len(request["clips"]) > 16:
+        raise ValueError("Pedido de enquadramento inválido")
+
+
 def analyze(request):
+    validate_request(request)
     import cv2
     cv2.setNumThreads(1)
     cv2.ocl.setUseOpenCL(False)
-    if request.get("version") != 1 or not isinstance(request.get("clips"), list) or len(request["clips"]) > 12:
-        raise ValueError("Pedido de enquadramento inválido")
     source, model = Path(request["source"]), Path(request["model"])
     if not source.is_file() or not model.is_file():
         raise ValueError("Arquivo local indisponível")

@@ -25,11 +25,7 @@ pub fn fill_remaining(
         return Ok(0);
     }
     let mut candidates = repair()?;
-    candidates.retain(|candidate| {
-        fresh
-            .iter()
-            .all(|old| candidate.end <= old.start || candidate.start >= old.end)
-    });
+    candidates.retain(|candidate| !super::novelty::duplicate_of(fresh, candidate));
     let selected =
         super::selection::finalize_prioritized(candidates, remaining, options.automatic, 0);
     let count = selected.len();
@@ -61,7 +57,7 @@ pub fn remember_rejections(
         }
     }
     pool.sort_by(|a, b| b.score.cmp(&a.score));
-    pool.truncate(12);
+    pool.truncate(super::types::AUTOMATIC_MAX_CLIPS);
 }
 
 #[derive(Deserialize)]
@@ -277,7 +273,7 @@ mod tests {
             serde_json::to_value(&fresh[0]).unwrap(),
             serde_json::to_value(&accepted).unwrap()
         );
-        assert_eq!((fresh[1].start, fresh[1].end), (30.0, 50.0));
+        assert_eq!((fresh[1].start, fresh[1].end), (10.0, 30.0));
         assert_eq!(
             fill_remaining(&mut fresh, &rejected, &options, || panic!("sem vagas")),
             Ok(0)

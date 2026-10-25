@@ -73,7 +73,7 @@ fn timed_edge(
 
 fn locate(quote: &str, source: &[(String, usize)]) -> Option<(usize, usize, usize, usize)> {
     let needle = words(quote);
-    if !(4..=40).contains(&needle.len()) || needle.len() > source.len() {
+    if needle.len() < 4 || needle.len() > source.len() {
         return None;
     }
     let mut matches = source
@@ -96,7 +96,7 @@ fn locate(quote: &str, source: &[(String, usize)]) -> Option<(usize, usize, usiz
             found.last()?.1,
         ));
     }
-    if needle.len() < 8 {
+    if !(8..=40).contains(&needle.len()) {
         return None;
     }
     let budget = (needle.len() / 5).min(2);

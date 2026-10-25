@@ -146,6 +146,30 @@ mod tests {
     }
 
     #[test]
+    fn a_long_literal_anchor_is_not_discarded_for_exceeding_the_copy_hint() {
+        let mut source = speech();
+        source[0].text = (0..55)
+            .map(|n| format!("palavra{n}"))
+            .collect::<Vec<_>>()
+            .join(" ");
+        let output = serde_json::json!({"clips":[{"title":"Viagem interrompida exige pagar hospedagem", "openingQuote":source[0].text,"closingQuote":"Tive de pagar um hotel"}]}).to_string();
+        let candidates = decode(&output, &source).unwrap();
+        assert_eq!(candidates.len(), 1);
+        assert_eq!((candidates[0].first_id, candidates[0].last_id), (0, 2));
+    }
+
+    #[test]
+    fn a_long_inexact_anchor_is_not_accepted_by_short_quote_tolerance() {
+        let mut source = speech();
+        source[0].text = (0..55)
+            .map(|n| format!("palavra{n}"))
+            .collect::<Vec<_>>()
+            .join(" ");
+        let output = serde_json::json!({"clips":[{"title":"Viagem interrompida exige pagar hospedagem", "openingQuote":source[0].text.replace("palavra20", "inventado"),"closingQuote":"Tive de pagar um hotel"}]}).to_string();
+        assert!(decode(&output, &source).is_err());
+    }
+
+    #[test]
     fn literal_quotes_are_located_across_source_segments_without_invented_ids() {
         let source = [
             "Comprei uma passagem para a viagem.",

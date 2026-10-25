@@ -129,14 +129,16 @@ fn whole_video_after_manual_feedback() {
         .filter(|c| previous.clips.iter().all(|old| old.id != c.id))
         .cloned()
         .collect::<Vec<_>>();
+    assert!(fresh.len() <= options.count);
     let mut exports = Vec::new();
     for (index, clip) in fresh.iter().enumerate() {
+        assert_eq!(clip.fit.as_deref(), Some("cover"));
         let focal = clip
             .face_framing
             .as_ref()
             .filter(|f| f.status == "stable")
             .map(|f| serde_json::json!({"x":f.x.unwrap()*100.0,"y":f.y.unwrap()*100.0}));
-        let settings=serde_json::from_value(serde_json::json!({"ratio":"9:16","fit":"cover","focalPoint":focal,"captionModel":2,
+        let settings=serde_json::from_value(serde_json::json!({"ratio":"9:16","fit":clip.fit,"focalPoint":focal,"captionModel":2,
             "captionStyle":{"font":"Poppins","size":64,"weight":600,"color":"#ffffff","italic":false,"underline":false,"uppercase":false,"outline":2,"outlineColor":"#000000","shadow":true,"background":"transparent","highlightColor":"#02c2be","effect":"highlight","position":"bottom","wordsPerCaption":5},
             "volume":1,"muted":false,"background":"#000000","text":"","trimStart":clip.start,"trimEnd":clip.end})).unwrap();
         let (temporary, output) = crate::render::pipeline::run(
@@ -155,7 +157,17 @@ fn whole_video_after_manual_feedback() {
         drop(temporary);
         exports.push(serde_json::json!({"file":destination,"clip":clip,"fit":"cover","includedSpeech":super::semantic::source(clip,&transcript.segments)}));
     }
-    std::fs::write(base.join("result.json"),serde_json::to_vec_pretty(&serde_json::json!({"fullVideo":true,"segments":transcript.segments.len(),"elapsedSeconds":started.elapsed().as_secs_f64(),"preserved":previous.clips.len(),"newCount":fresh.len(),"exports":exports})).unwrap()).unwrap();
+    let overlaps = fresh
+        .iter()
+        .enumerate()
+        .flat_map(|(i, a)| {
+            fresh[i + 1..]
+                .iter()
+                .filter(move |b| a.start < b.end && b.start < a.end)
+                .map(move |b| serde_json::json!([a.id, b.id]))
+        })
+        .collect::<Vec<_>>();
+    std::fs::write(base.join("result.json"),serde_json::to_vec_pretty(&serde_json::json!({"fullVideo":true,"segments":transcript.segments.len(),"elapsedSeconds":started.elapsed().as_secs_f64(),"preserved":previous.clips.len(),"newCount":fresh.len(),"generationLimit":options.count,"overlappingPairs":overlaps,"exports":exports})).unwrap()).unwrap();
     assert!(
         fresh.len() >= 4,
         "esta fonte ainda ficou abaixo de quatro episódios úteis: {}",

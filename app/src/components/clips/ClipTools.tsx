@@ -8,7 +8,7 @@ import { CpuIcon } from "@phosphor-icons/react/dist/csr/Cpu";
 import type { useClips } from "../../hooks/useClips";
 import type { EditorSettings } from "../../lib/workspace-types";
 import type { Clip, ClipFit } from "../../lib/clips";
-import { clipMessage } from "../../lib/clips";
+import { clipMessage, MAX_CLIPS_PER_GENERATION } from "../../lib/clips";
 import { FlowDialog } from "../workspace/FlowDialog";
 import { ProcessingDialog } from "../workspace/ProcessingDialog";
 import "./clips.css";
@@ -73,7 +73,7 @@ export function ClipTools({ controller: c, settings, ready, disabled, onSave, on
       <div className="clip-options"><label>Geração<AppSelect aria-label="Geração" name="clipMode" value={automatic ? "automatic" : "custom"} onChange={event => setAutomatic(event.target.value === "automatic")}><option value="automatic">Automática (recomendada)</option><option value="custom">Personalizada</option></AppSelect></label>
         <label>Ajuste do vídeo<AppSelect aria-label="Ajuste do vídeo" name="clipFit" value={fit} onChange={event => setFit(event.target.value as ClipFit)}><option value="cover">Preencher (corta o excedente)</option><option value="contain">Manter vídeo inteiro (admite espaços)</option></AppSelect></label>
         {!automatic && <label>Duração máxima<AppSelect name="clipDuration" value={duration} onChange={event => setDuration(Number(event.target.value))}><option value={30}>Até 30 segundos</option><option value={60}>Até 1 minuto</option><option value={90}>Até 1 minuto e 30 segundos</option><option value={180}>Até 3 minutos</option></AppSelect></label>}
-        {!automatic && <label>Quantidade máxima<input name="clipCount" autoComplete="off" type="number" min={1} max={12} value={count} onChange={event => setCount(Number(event.target.value))}/></label>}</div>
+        {!automatic && <label>Quantidade máxima<input name="clipCount" autoComplete="off" type="number" min={1} max={MAX_CLIPS_PER_GENERATION} value={count} onChange={event => setCount(Number(event.target.value))}/></label>}</div>
       <p className="flow-muted">{automatic
         ? "A quantidade e a duração saem dos momentos encontrados no vídeo — nenhum corte é cortado no meio para caber em um tempo."
         : "Duração máxima é teto, não meta: um corte termina quando a história termina, mesmo que mais curto. A quantidade também é máxima — sem cortes ruins para preencher."}</p>
@@ -81,7 +81,7 @@ export function ClipTools({ controller: c, settings, ready, disabled, onSave, on
         <input type="checkbox" checked={autoGenerateEnabled()} onChange={event => setAutoGenerateEnabled(event.target.checked)}/>
         Gerar automaticamente quando a transcrição terminar
       </label>
-      <button type="button" className="upload-primary flow-wide" disabled={busy || (!automatic && (!Number.isInteger(count) || count<1 || count>12))} onClick={() => void generate()}>Gerar cortes</button>
+      <button type="button" className="upload-primary flow-wide" disabled={busy || (!automatic && (!Number.isInteger(count) || count<1 || count>MAX_CLIPS_PER_GENERATION))} onClick={() => void generate()}>Gerar cortes</button>
     </FlowDialog>
     {c.job && (c.operation === "generate" || c.operation === "export") && <ProcessingDialog key={c.job.jobId} open={c.busy || (c.ownedJob && c.job.state === "failed" && dismissed !== c.job.jobId)} id={c.job.jobId} busy={c.busy}
       title={c.job.stage === "analyzing" ? "Encontrando cortes…" : "Exportando…"} status={c.job.stage === "analyzing" ? "Analisando cenas e falas" : "Preparando seu vídeo"}

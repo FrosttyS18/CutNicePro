@@ -1,0 +1,1028 @@
+{
+  "date": "2026-10-25",
+  "baseCommit": "499d2633897d36e4fd0a00e5b55805013e30516b",
+  "model": "Qwen3.5-4B-Q4_K_M",
+  "context": 32768,
+  "seed": 42,
+  "cloud": false,
+  "interactivePC": false,
+  "maintainerFeedback": "Quatro novos cortes preenchidos na prévia e no download, testados pelo mantenedor; os demais foram apagados por ele. Nenhum teste desta tarefa escreve na biblioteca normal.",
+  "assistantReference": "As seis propostas aprovadas vieram da leitura da transcrição integral/tempos originais, sem assistir nem ouvir o vídeo.",
+  "normalInput": "ASR salvo contém tempos originais por segmento e palavras disponíveis; automático atual envia falas integrais sem tempos, recebe citações e localiza-as nos tempos ASR.",
+  "controls": [
+    {
+      "case": "context-first",
+      "elapsedSeconds": 39.375,
+      "fullTranscript": true,
+      "segments": 334,
+      "response": {
+        "openingStatus": "assuntoApresentado",
+        "endingStatus": "consequenciaOuReacaoDoMesmoEpisodio",
+        "nature": "humor",
+        "advertising": false,
+        "analysis": {
+          "hook": {
+            "evidenceId": 0,
+            "explanation": "O bloco inicia com a revelação direta do problema: jogadores encontrando skins estranhas no Battlefield e acusando a EA/EA Battlefield Studios de usar IA para criar erros.",
+            "score": 85
+          },
+          "development": {
+            "evidenceId": 3,
+            "explanation": "A transição para as imagens é feita pela ação visual ('Vamos puxar as imagens') seguida da apresentação do primeiro exemplo (T-PAP em vez de Group Therapy), estabelecendo o contexto visual necessário.",
+            "score": 80
+          },
+          "closing": {
+            "evidenceId": 4,
+            "explanation": "A última fala confirma a piada ('Ah, você está zoando. Era pra ser group therapy e tá T-PAP'), fechando a unidade narrativa com a reação dos participantes ao erro visual.",
+            "score": 90
+          },
+          "summary": "Os jogadores encontram skins estranhas no Battlefield acusando o desenvolvedor de usar IA para erros. Ao mostrar as imagens, um personagem aparece com 'group T-PAP' em vez de 'group therapy', gerando risos e confirmação do erro.",
+          "title": "Skins erradas revelam que EA usou IA no Battlefield"
+        }
+      },
+      "promptSha256": "1cd01cf9035470d1d5f18347b0e157344d6b6c81d3032a10ea5323a3687f1c0a"
+    },
+    {
+      "case": "episode-lines",
+      "elapsedSeconds": 32.39099999999962,
+      "fullTranscript": true,
+      "segments": 334,
+      "response": {
+        "episodes": [
+          {
+            "story": "Os jogadores relatam que a EAFC possui bugs graves, como menus infinitos carregando, falhas na criação de personagens (botão 'Thumbnail Missing'), e o jogo deletar saves ao crashar no PlayStation.",
+            "conclusion": "A conclusão é que os usuários pagaram R$ 400 pelo lançamento e enfrentam um ciclo vicioso de travamentos e perda de progresso, algo descrito como 'medonho' e 'absurdo'.",
+            "firstLine": "L010",
+            "lastLine": "L062",
+            "title": "EAFC: O jogo que deleta seu save enquanto você tenta criar um personagem",
+            "advertising": false
+          }
+        ]
+      },
+      "promptSha256": "4ec0e6ade0708e6a6f1c33e43781cf75e138d38a979bda90b493a1ea6cb82442"
+    },
+    {
+      "case": "coverage-1",
+      "elapsedSeconds": 33.6720000000023,
+      "fullTranscript": true,
+      "segments": 334,
+      "response": {
+        "episodes": [
+          {
+            "story": "Os jogadores relatam que a EA está usando IA para gerar skins de batalha com erros graves, como textos errados ('group T-PAP' em vez de 'group therapy') e modelos com detalhes estranhos (o nome 'Secute' na nuca do boneco",
+            "conclusion": "A conclusão é que os erros são tão visíveis e absurdos que parecem intencionais para criar memes, mas a EA não revisou o conteúdo final.",
+            "firstLine": "L111",
+            "lastLine": "L220",
+            "title": "EA usa IA e gera skins com textos errados e nomes ridículos",
+            "advertising": false
+          },
+          {
+            "story": "Além dos textos errados, a comunidade aponta que as skins possuem quantidades absurdas de armas (cinco ou seis pistolas) embaixo do corpo dos personagens, o que é visualmente confuso e não faz sentido para um personagem.",
+            "conclusion": "Os desenvolvedores parecem não ter revisado o modelo 3D final, resultando em uma quantidade excessiva e mal posicionada de armas nos personagens das skins.",
+            "firstLine": "L216",
+            "lastLine": "L220",
+            "title": "Personagens nas skins da Battlefield têm quantidades absurdas de armas",
+            "advertising": false
+          },
+          {
+            "story": "Os criadores discutem se a EA poderia ter usado um sistema similar ao da Valve, onde jogadores compram uma estátua e ganham a skin automaticamente, para evitar que pessoas paguem por skins visivelmente bugadas.",
+            "conclusion": "A discussão sugere que, se a EA tivesse implementado esse sistema de entrega automática, muitos jogadores não teriam comprado as skins com erros visuais tão óbvios.",
+            "firstLine": "L216",
+            "lastLine": "L237",
+            "title": "Jogadores questionam como a EA vende skins bugadas sem sistemas de verificação",
+            "advertising": false
+          },
+          {
+            "story": "Um jogador menciona que possui uma skin do PUBG antiga que vale muito dinheiro no mercado atual, e compara isso com o potencial das skins da Battlefield.",
+            "conclusion": "A conversa sugere que, se essas skins bugadas forem raras ou tiverem valor de coleção, elas podem se tornar itens valiosos no mercado secundário, similar a skins lendárias do PUBG.",
+            "firstLine": "L216",
+            "lastLine": "L237",
+            "title": "Skins bugadas da Battlefield podem virar itens colecionáveis valiosos",
+            "advertising": false
+          },
+          {
+            "story": "O PC do apresentador começa a fazer barulhos altos e estranhos, parecendo um motor de guerra ou uma máquina de cortar cabelo.",
+            "conclusion": "A conversa finaliza com os participantes tentando lidar com o ruído do computador enquanto continuam a discutir as skins da Battlefield.",
+            "firstLine": "L216",
+            "lastLine": "L237",
+            "title": "PC faz barulhos estranhos durante a análise das skins da Battlefield",
+            "advertising": false
+          }
+        ]
+      },
+      "promptSha256": "f2190994757fa2ce1bd9256804a0521a11ff10a90109f64626f32aa6bd7dc7a0"
+    },
+    {
+      "case": "anchors-coverage-1",
+      "elapsedSeconds": 31.73400000000038,
+      "fullTranscript": true,
+      "segments": 334,
+      "response": {
+        "clips": [
+          {
+            "title": "EAFC buga save e trava em loop absurdo",
+            "openingQuote": "Eu joguei o EAFC, que é medonho, medonho.",
+            "closingQuote": "É load, load, load, load. E demorado."
+          },
+          {
+            "title": "Personagem com barba 'Thumbnail Missing'",
+            "openingQuote": "Aparece na tela dois quadradinhos que eram botar barba escrito Thumbnail Missing.",
+            "closingQuote": "Não é possível. Caramba, você tá zoando."
+          },
+          {
+            "title": "Jogo crasha e mata o save no PlayStation",
+            "openingQuote": "fomos passar pra botar roupa, sei lá. O jogo crashou no Playstation.",
+            "closingQuote": "Não é possível. Ele deletou, você bugou o save?"
+          },
+          {
+            "title": "Battlefield 6 libera skins com texto errado",
+            "openingQuote": "Os jogadores avistaram umas coisas estranhas No passo de batalha De umas skins",
+            "closingQuote": "está tudo errado, independente da situação, né, está tudo errado"
+          },
+          {
+            "title": "Skins com 'Group T-PAP' em vez de Terapia",
+            "openingQuote": "Não, grupo T-PAP. Era pra ser group therapy, certo? Era pra ser therapy.",
+            "closingQuote": "Ou uma fizeram com o Iá e não revisaram ou fizeram errado e não revisaram"
+          },
+          {
+            "title": "Personagem com 'Secute' na nuca",
+            "openingQuote": "O que? Secute? Secute é foda. Secute é foda.",
+            "closingQuote": "Mas a palavra em si não tem como mudar, pô. Não faz nenhum sentido."
+          },
+          {
+            "title": "Skins com QR Code e números de pistolas",
+            "openingQuote": "Tem o QR Code nela. Aí, ó. Ô, meu garoto. Opa, brabo.",
+            "closingQuote": "É o cara bem preparado para a guerra, Dava. Quanto mais arma, melhor, pô."
+          },
+          {
+            "title": "Boneco com cinco pistolas visíveis",
+            "openingQuote": "Esses números é a quantidade de pistola que esse boneco tem. Ele tem cinco pistolas.",
+            "closingQuote": "É muito bom, né? Acabou uma pistola, a gente saca outra no peito, saca outra aqui."
+          },
+          {
+            "title": "Contagem confusa das armas do personagem",
+            "openingQuote": "Não, são cinco pentes. Ah, não, tem uma do lado mesmo ali.",
+            "closingQuote": "Dá para ver arma. Não é o pente, entendeu? Não tinha visto cabo."
+          },
+          {
+            "title": "EA costuma fazer bagunça sem revisão",
+            "openingQuote": "Mas assim, os caras não têm... Não, olha no meio.",
+            "closingQuote": "Tipo assim, os caras não têm o mínimo de..."
+          }
+        ]
+      },
+      "promptSha256": "6fdbdfbe0e68c2c6d06561a4cb3a86a2a302ebd832a843e92f3ba51aa6951512"
+    },
+    {
+      "case": "anchors-coverage-2",
+      "elapsedSeconds": 27.96900000000096,
+      "fullTranscript": true,
+      "segments": 334,
+      "response": {
+        "clips": [
+          {
+            "title": "Skin da Battlefield bugada com QR Code de pistolas vende dinheiro",
+            "openingQuote": "Esses números... Esses números é a quantidade de pistola que esse boneco tem.",
+            "closingQuote": "Tem isso ainda, né? Você gasta o seu dinheiro pra comprar a skin bugada."
+          },
+          {
+            "title": "Erro de texto 'Group T-PAP' em Battlefield vira meme irreparável",
+            "openingQuote": "Não, grupo T-PAP. Era pra ser group therapy, certo? Era pra ser therapy.",
+            "closingQuote": "Nem revisar o bagulho. É. Secute, tepap. Esse é o tipo de arma mal utilizada que ninguém gosta."
+          },
+          {
+            "title": "Fãs reclamam de skins da EA e Valve criam mercado secundário por bugs",
+            "openingQuote": "Essas skins aí, eles podiam monter no jogo. A Valve já fez isso, cara, que é bem interessante.",
+            "closingQuote": "Mas manteve a skin antiga e aí a skin antiga hoje vale 3 mil reais, né?"
+          },
+          {
+            "title": "Skin antiga do PUBG com erro de texto vira fortuna no mercado secundário",
+            "openingQuote": "Aí a skin antiga hoje vale 3 mil reais, né? Caralho. É, no mercado, se você tem ela...",
+            "closingQuote": "Mas será que essas aí... Fica mais rara. Pô, eu tenho... Pelo erro?"
+          },
+          {
+            "title": "Colecionadores vendem skins bugadas antigas do PUBG por milhares de reais",
+            "openingQuote": "Pelo erro? Eu tenho a... É, então... É que nem o... Até hoje...",
+            "closingQuote": "Do PUBG. Do PUBG, tá lá. Quanto é que vale isso hoje em dia? Uma fortuna, vale..."
+          }
+        ]
+      },
+      "promptSha256": "fceab1c2b0825e90a0dadc56212c01c4eeed4a7a8223ffcc7eee1475863b3a46"
+    },
+    {
+      "case": "anchors-coverage-3",
+      "elapsedSeconds": 37.875,
+      "fullTranscript": true,
+      "segments": 334,
+      "response": {
+        "clips": [
+          {
+            "title": "Skin bugada vira artefato valioso no mercado de jogos",
+            "openingQuote": "Caralho. É, no mercado, se você tem ela...",
+            "closingQuote": "...Hoje eu já não sei. Vocês têm que ver de vender isso"
+          },
+          {
+            "title": "Raridade das skins antigas do PUBG e valorização",
+            "openingQuote": "Logo então, porque nunca se sabe\nQuando o PUBG vai morrer, cara\nJá fazem muitos anos que ele existe\nEu achei que já tinha morrido\nMas em qualquer momento\nQuanto é que tá valendo da primeira temporada\nPrimeiro loot",
+            "closingQuote": "A galera só escutando a Makita"
+          },
+          {
+            "title": "PC falhando e barulho ensurdecedor durante live",
+            "openingQuote": "É, não, o computador, coitado\nO computador tá\nO PC vai voar igual o Carlos Alamo\nÉ, galera, hoje a bancada é com 5\nNós 4 e a Makita\nE o bagulho\nO que tá bem pior",
+            "closingQuote": "Uma hora atrás, ele não tava gritando tanto\nEle tá piorando, é"
+          },
+          {
+            "title": "Live com PC instável e barulho excessivo",
+            "openingQuote": "É, galera, hoje a bancada é com 5\nNós 4 e a Makita\nE o bagulho\nO que tá bem pior\nUma hora atrás, ele não tava gritando tanto\nEle tá piorando, é\nEu tô em live aqui com esse PC\nDesde duas horas, né, Taquete\nE ele não tava nesse nível\nTem que botar uma proteção aí, cara",
+            "closingQuote": "É verdade\nÉ meu, o Fernandinho tá só rachando o barulho\nVocês vão dormir com o zoom"
+          },
+          {
+            "title": "Barulho do PC oscilando durante transmissão ao vivo",
+            "openingQuote": "Vocês usam a maquininha pra barbear?\nÉ mesmo, pode ser.\nÉ isso.\nParece mesmo, parece mesmo, parece mesmo.\nBom, galera, ia agradecer mais uma vez o Logitech G que tá aqui com a\nde novo, tá precisando de um mouse, do\nteleclado, headset,\nmicrofone, volante.",
+            "closingQuote": "Tem tudo na Logitech G e são\nos melhores do planeta,\ntá certo? E a gente tem o cupom\nexclusivo Flow15, que vai dar\n15% de desconto. Qual é o cupom?\nFlow15."
+          },
+          {
+            "title": "Promoção exclusiva da Logitech G com cupom",
+            "openingQuote": "São\nduas unidades pro CPF apenas, tá?\nEntão você pode comprar várias coisas, tem muito\nheadset, tem muitas faixas de preço\npra você escolher e todos com uma excelente\nqualidade. Então entrem aí\nno site da Logitech e aproveitem,\nporque tem promoções lá também,\nvocê pode usar o cupom, não vai\npra cima de outras promoções, mas sempre tem,\nse você tiver nos nossos grupos do Low Games,\nvocê também vai receber promoções exclusivas\nde produtos da Logitech G lá,\nquer fazer upgrade no seu setup, já sabe,\njá sabe, porque a Logitech G\nvocê não tem erro e realmente\nvai melhorar aí o seu dia a dia\nquando você, se você fizer\nesse upgrade para os periféricos da Logitech,\ntá bom? Então é isso aí, obrigado Logitech mais uma vez\nPor estar com a gente\nGrande parceiro\nEstá com a gente\nHá muito tempo já\nE vamos embora",
+            "closingQuote": "você também vai receber promoções exclusivas\nde produtos da Logitech G lá,\nquer fazer upgrade no seu setup, já sabe,\njá sabe, porque a Logitech G\nvocê não tem erro e realmente\nvai melhorar aí o seu dia a dia\nquando você, se você fizer\nesse upgrade para os periféricos da Logitech,\ntá bom? Então é isso aí, obrigado Logitech mais uma vez\nPor estar com a gente\nGrande parceiro\nEstá com a gente\nHá muito tempo já\nE vamos embora"
+          }
+        ]
+      },
+      "promptSha256": "94dc2c6df9a740f8616abcd4188c59be6fb7c44cf4fefdd6e0892967472d11c5"
+    },
+    {
+      "case": "compare-versions",
+      "elapsedSeconds": 44.81300000000192,
+      "fullTranscript": true,
+      "segments": 334,
+      "response": {
+        "reason": "A versão B desenvolve a narrativa de forma muito mais completa e estruturada para quem não assistiu ao vídeo original. Enquanto a versão A apenas apresenta o fato inicial (jogadores acusando a EA por skins com bugs), a versão B introduz imediatamente a pergunta retórica ('E aí por que?'), cria suspense pedindo para ver as imagens, detalha os erros específicos encontrados ('group T-PAP' em vez de 'group therapy') e, crucialmente, oferece uma explicação lógica sobre *por que* isso acontece (falta de revisão ou erro intencional) antes de dar o 'twist' final sobre a perna do personagem. A versão A",
+        "preferredCandidate": "B"
+      },
+      "promptSha256": "184cb1c95bb39c6f50f6c32d75ad9f414985a70806829cbc81c8ce2e83061bda"
+    },
+    {
+      "case": "human-baseline",
+      "elapsedSeconds": 48.125,
+      "fullTranscript": true,
+      "segments": 334,
+      "response": "Com base na transcrição fornecida, identifiquei um conteúdo excelente para vídeos curtos (Reels, TikTok, Shorts) devido à alta densidade de memes, erros de tradução/IA e a reação exagerada do apresentador. O tema \"EA fazendo merda\" é muito forte no momento.\n\nAqui estão 4 cortes sugeridos:\n\n### Corte 1: A Erro da Tradução \"Group T-PAP\"\nEste corte foca no momento em que a IA ou o tradutor falha miseravelmente, criando um meme visual imediato. É o clímax da parte sobre as skins bugadas.\n\n*   **Início:** `[03:07] Era pra ser`\n*   **Fim:** `[03:19] Aí das duas uma.`\n*   **Título Sugerido:** \"A IA traduziu errado e a EA não revisou 😂\" ou \"Group T-PAP? Que erro de merda!\"\n*   **Por que escolher:** O contraste entre o esperado (\"group therapy\") e o resultado estranho (\"group T-PAP\") gera engajamento imediato. A reação do apresentador (\"Você está zoando\", \"Não é possível que vocês deixaram passar\") valida a frustração do público gamer, incentivando comentários sobre outros bugs da EA.\n\n### Corte 2: O Personagem com 5 Pistolas (O Meme Visual)\nEste corte foca na skin visualmente absurda onde o personagem tem pistolas em todos os lugares. É puramente visual e funciona muito bem sem áudio complexo, dependendo apenas do som do apresentador comentando.\n\n*   **Início:** `[05:15] Esses números...`\n*   **Fim:** `[06:14] Não sei se tem mais, acho que não, né?`\n*   **Título Sugerido:** \"Ele tem 5 pistolas em cada lugar 🤯 Battlefield 6 Bug\" ou \"Preparado para a guerra de verdade...\"\n*   **Por que escolher:** A imagem do personagem com armas nas axilas, no peito e na mão é visualmente chocante e compartilhável. O apresentador conta a lógica absurda (\"É o cara bem preparado para a guerra\") enquanto mostra o meme, mantendo a atenção até o final da explicação dos pentes.\n\n### Corte 3: A Reação ao \"Thumbnail Missing\"\nEste corte pega o momento inicial do caos no jogo de criação de personagem, onde o erro técnico aparece na tela antes mesmo de acontecer algo grave. É um \"ganchinho\" (hook) forte para quem já jogou ou viu trailers.\n\n*   **Início:** `[01:03] Aparece na tela dois quadradinhos que eram botar barba`\n*   **Fim:** `[01:24] fomos passar pra`\n*   **Título Sugerido:** \"Thumbnail Missing no EAFC/Battlefield? 😱\" ou \"Erro de texto que ninguém viu até agora\"\n*   **Por que escolher:** Começa com a descoberta do bug (\"Thumbnail Missing\") e leva o espectador até a consequência (o jogo crashar e apagar o save). A sequência narrativa rápida (bug -> crash -> perder progresso) é muito satisfatória para quem odeia bugs de jogos.\n\n### Corte 4: O \"Secute\" e a Reação Exagerada\nEste corte foca em um meme específico (\"Secute\") que parece ser uma referência interna ou um erro visual muito específico, seguido pela reação do apresentador que quase perde o controle.\n\n*   **Início:** `[04:13] Já viu?`\n*   **Fim:** `[04:26] Mas ele tem um modelo TNZ, que você gira e vê no menu e tal.`\n*   **Título Sugerido:** \"Secute é foda! 😱 Battlefield 6 Memes\" ou \"Onde está o 'S'? A resposta vai te surpreender.\"\n*   **Por que escolher:** O apresentador diz \"Secute é foda\" repetidamente, criando uma atmosfera de cumplicidade com o meme. O corte termina antes dele perder a calma (\"Que caralho!\"), deixando um gancho para o próximo vídeo ou para o espectador tentar entender o que é \"Secute\".\n\n**Dica Extra para Edição:**\nPara aumentar o potencial viral, sugiro adicionar **legendas dinâmicas** (estilo Alex Hormozi) nos momentos de risada e choque, e usar uma trilha sonora de \"fail\" ou som de erro do Windows no início dos cortes. O tom de voz do apresentador é muito engraçado (\"porra\", \"absurdo\"), então mantenha o corte curto (entre 40s e 60s) para caber perfeitamente nos algoritmos de Shorts/Reels/TikTok. [end of text]",
+      "promptSha256": "40481cb258c703e9bd69ec9fe60cc4940c6cbe54fca289f69e9057a0fc4a6992",
+      "schema": null,
+      "postFilters": false,
+      "timestamps": "MM:SS originais por segmento, arredondados para baixo no controle",
+      "temperature": 0.4,
+      "thinking": false,
+      "outputLimit": 4096,
+      "stop": "fim de resposta; saída abaixo do limite",
+      "proposedClips": 4
+    },
+    {
+      "case": "human-baseline-07",
+      "elapsedSeconds": 62.64100000000326,
+      "fullTranscript": true,
+      "segments": 334,
+      "response": "Com base na transcrição fornecida, identifiquei o conteúdo principal (a crítica aos bugs do EAFC e as skins estranhas do Battlefield 6) que tem alto potencial de viralização em plataformas como TikTok, Instagram Reels e YouTube Shorts. A parte final é apenas uma promoção comercial de patrocinador que geralmente não performa bem como conteúdo orgânico.\n\nAqui estão **3 sugestões de cortes** focados em retenção e curiosidade:\n\n### Corte 1: O \"Bug\" Inesquecível (Foco na Curiosidade Visual)\nEste corte foca no erro mais óbvio e engraçado que a transcrição menciona, ideal para prender a atenção nos primeiros 3 segundos.\n\n*   **Início:** `[00:56] Aparece na tela dois quadradinhos...`\n*   **Fim:** `[01:12] Não é possível.`\n*   **Título Sugerido:** \"O bug do EAFC que ninguém viu...\" ou \"EAFC travou no menu e ficou assim.\"\n*   **Por que escolhi:** O público de jogos ama bugs visíveis. A imagem dos quadradinhos (\"Thumbnail Missing\") aparecendo em vez da barba é um visual forte, absurdo e fácil de entender sem precisar ouvir muita explicação. É o \"climax\" do problema técnico descrito antes.\n\n### Corte 2: Battlefield 6 x Secute (Foco na Reação e Meme)\nEste corte pega a parte onde os apresentadores descobrem que uma skin tem a palavra \"Secute\" no lugar de \"Sexto\" ou algo similar, gerando confusão e humor.\n\n*   **Início:** `[04:12] Já viu?` (ou `[04:09] Aí esse é o seguinte...`)\n*   **Fim:** `[04:35] Secute.`\n*   **Título Sugerido:** \"Sete pistolas em Battlefield 6? Um erro fatal da EA!\" ou \"EA fez uma skin tão estranha que a gente não acredita.\"\n*   **Por que escolhi:** A descoberta de que o nome da skin está errado (\"Secute\" inválido) gera curiosidade imediata. O texto da transcrição mostra os apresentadores reagem com choque e confusão (\"Isso é foda\", \"Será que eles fizeram de propósito?\"). Essa dinâmica de \"descobrir um segredo/bug\" funciona muito bem para retenção.\n\n### Corte 3: A Skin com 7 Armas (Foco em Curiosidade Absurda)\nEste corte foca no detalhe mais complexo e visualmente impressionante da skin, que gera discussões nos comentários (\"Quantas armas são mesmo?\").\n\n*   **Início:** `[05:16] Esses números...`\n*   **Fim:** `[06:07] Que loucura.`\n*   **Título Sugerido:** \"A skin do Battlefield 6 que tem 7 pistolas escondidas.\" ou \"O personagem mais armado da história dos jogos?\"\n*   **Por que escolhi:** A quantidade de armas (5 pentes + 2 no peito + 1 na axila + 1 no coldre + 1 dentro da outra) é um número absurdo para um jogo de tiro. O corte foca na contagem visual que os apresentadores fazem, mostrando o \"bagulho\" e finalizando com a reação de espanto (\"Que loucura\"). Isso incentiva o usuário a parar o vídeo para contar junto ou ver as imagens.\n\n---\n\n**Dica Extra:** Para todos esses cortes, recomendo adicionar **legendas dinâmicas** (estilo TikTok) destacando palavras-chave como \"BUG\", \"EAFC\", \"Secute\" e \"7 Armas\", além de usar uma trilha sonora de tensão ou humor no momento da revelação do erro. [end of text]",
+      "promptSha256": "40481cb258c703e9bd69ec9fe60cc4940c6cbe54fca289f69e9057a0fc4a6992",
+      "schema": null,
+      "postFilters": false,
+      "timestamps": "MM:SS originais por segmento, arredondados para baixo no controle",
+      "temperature": 0.7,
+      "thinking": false,
+      "outputLimit": 4096,
+      "stop": "fim de resposta; saída abaixo do limite",
+      "proposedClips": 3
+    },
+    {
+      "case": "endings-control",
+      "elapsedSeconds": 44.43699999999808,
+      "fullTranscript": true,
+      "segments": 334,
+      "response": {
+        "choices": [
+          {
+            "case": "T",
+            "reason": "A versão C é a mais equilibrada. Ela mantém o tom de indignação sobre o erro de texto ('group T-PAP' em vez de 'group therapy') e adiciona uma observação relevante da audiência ('ninguém vai parar para olhar na nuca'), que é o ponto central da crítica à EA, sem cair na piada forçada e desconectada da versão D.",
+            "preferredCandidate": "C"
+          },
+          {
+            "case": "E",
+            "reason": "A versão C é a única que conclui a história de forma lógica. Ela apresenta o problema (EAFC travado), descreve a frustração, e então faz a transição natural para o próximo assunto (Battlefield 6). As outras versões se repetem ou cortam abruptamente no meio do caos.",
+            "preferredCandidate": "C"
+          },
+          {
+            "case": "V",
+            "reason": "A versão B é preferível porque encerra a fala com uma reflexão sobre o mercado de skins raras (PUBG) e o valor emocional/financeiro dos erros, dando um 'ponto final' satisfatório ao relato. A versão C se perde em ruídos de fundo e gritos do PC que não contribuem para o conteúdo narrativo.",
+            "preferredCandidate": "B"
+          }
+        ]
+      },
+      "promptSha256": "686610f7ee194400f41fc28ef9451171377d6a02e7864279fc2582274c08a67a"
+    }
+  ],
+  "nativeRuns": [
+    {
+      "arm": "coverage-v1",
+      "fullVideo": true,
+      "segments": 334,
+      "elapsedSeconds": 321.1022272,
+      "newCount": 4,
+      "preservedLabClips": 2,
+      "exports": [
+        {
+          "start": 149.4,
+          "end": 197.8,
+          "title": "Battlefield 6: Skin com texto errado deixa jogadores confusos",
+          "score": 88,
+          "fit": "cover",
+          "analysis": {
+            "title": "Battlefield 6: Skin com texto errado deixa jogadores confusos",
+            "summary": "Jogadores do Battlefield 6 encontram skins com textos errados em batalhas. Ao examinar uma imagem, descobrem que 'group therapy' foi alterado para 'T-PAP'. A equipe tenta decifrar o erro e conclui que é um texto incorreto na skin.",
+            "criteria": [
+              {
+                "label": "Gancho",
+                "score": 85,
+                "explanation": "O trecho inicia narrando que jogadores viram coisas estranhas em skins do Battlefield 6 e estão acusando a EA de erros com IA, estabelecendo o conflito central imediatamente.",
+                "evidence": "Os jogadores avistaram Umas coisas estranhas No passo de batalha De umas skins Que está sendo Eles estão acusando a EA Battlefield Studios agora De ter feito tudo"
+              },
+              {
+                "label": "Desenvolvimento",
+                "score": 90,
+                "explanation": "A discussão foca na leitura da imagem estranha ('grupo T-PAP' em vez de 'group therapy'), onde os participantes tentam decifrar o erro visual e expressam confusão sobre a intenção por trás do texto.",
+                "evidence": "Não, não, não. Lê de novo. Não, grupo T-PAP. Era pra ser group therapy, certo?"
+              },
+              {
+                "label": "Fechamento",
+                "score": 92,
+                "explanation": "A fala final confirma que o texto 'T-PAP' está incorreto em vez de 'therapy', estabelecendo a piada/erro visual e a reação de incredulidade ('você está zoando') como desfecho da unidade narrativa sobre a skin específica.",
+                "evidence": "Era pra ser therapy. Então, group T-PAP. Ah, você está zoando. Era pra ser group therapy e tá T-PAP."
+              }
+            ]
+          },
+          "includedSpeech": "Os jogadores avistaram Umas coisas estranhas No passo de batalha De umas skins Que está sendo Eles estão acusando a EA Battlefield Studios agora De ter feito tudo isso com o IA E aí por que? Você pergunta Vamos puxar as imagens aí Você tem imagem Ah, tem umas imagens Não, eu quero ver Eu quero enxergar Ele bota o acrim Ele vai chamar Vai botar a imagem na tela Bom, primeiro é esse O que está escrito ali? Não, não, não. Lê de novo. Não, grupo T-PAP. Era pra ser group therapy, certo? Era pra ser therapy. Então, group T-PAP. Ah, você está zoando. Era pra ser group therapy e tá T-PAP.",
+          "file": "app/src-tauri/../../.tooling/test-output/feedback-editorial-2026-10-25/coverage-v1/whole-video/Qwen35-Davy-01.mp4"
+        },
+        {
+          "start": 317.03999999999996,
+          "end": 332.06,
+          "title": "Boneco com cinco pistolas no corpo",
+          "score": 88,
+          "fit": "cover",
+          "analysis": {
+            "title": "Boneco com cinco pistolas no corpo",
+            "summary": "Os participantes descobrem que uma skin de personagem no jogo Battlefield 6 possui cinco pistolas em seu modelo. Ao confirmar a quantidade de armas, eles brincam sobre como o boneco está bem preparado para a guerra, comentando que quando uma pistola acaba, ele saca outra do peito ou da axila.",
+            "criteria": [
+              {
+                "label": "Gancho",
+                "score": 85,
+                "explanation": "A abertura define o foco da piada ao revelar que o boneco do jogo possui cinco pistolas em seu modelo.",
+                "evidence": "Esses números é a quantidade de pistola que esse boneco tem. Ele tem cinco pistolas."
+              },
+              {
+                "label": "Desenvolvimento",
+                "score": 90,
+                "explanation": "Os participantes concordam com a quantidade de armas e comentam sobre a preparação bélica implícita na skin.",
+                "evidence": "A verdade é... É o cara bem preparado para a guerra, Dava."
+              },
+              {
+                "label": "Fechamento",
+                "score": 90,
+                "explanation": "O fechamento cumpre a piada ao descrever o mecanismo de uso das armas (sacar novas do corpo quando uma acaba), reforçando o absurdo e o humor da situação.",
+                "evidence": "Quanto mais arma, melhor, pô. É muito bom, né? Acabou uma pistola, a gente saca outra no peito, saca outra aqui."
+              }
+            ]
+          },
+          "includedSpeech": "Esses números é a quantidade de pistola que esse boneco tem. Ele tem cinco pistolas. A verdade é... É o cara bem preparado para a guerra, Dava. Quanto mais arma, melhor, pô. É muito bom, né? Acabou uma pistola, a gente saca outra no peito, saca outra aqui.",
+          "file": "app/src-tauri/../../.tooling/test-output/feedback-editorial-2026-10-25/coverage-v1/whole-video/Qwen35-Davy-02.mp4"
+        },
+        {
+          "start": 26.66,
+          "end": 93.22,
+          "title": "Jogadores perdem save e têm que reiniciar tudo no EAFC por bug",
+          "score": 87,
+          "fit": "cover",
+          "analysis": {
+            "title": "Jogadores perdem save e têm que reiniciar tudo no EAFC por bug",
+            "summary": "Um grupo de jogadores relata uma experiência ruim ao criar personagem no jogo EAFC, onde um erro técnico impediu de configurar a aparência visual. A situação culminou no jogo travar e apagar o progresso salvo.",
+            "criteria": [
+              {
+                "label": "Gancho",
+                "score": 85,
+                "explanation": "O falante introduz o problema narrando a experiência negativa com o jogo EAFC (EA Sports FC), descrevendo-o como 'medonho' e citando que causou problemas além do próprio jogo.",
+                "evidence": "Eu joguei o EAFC, que é medonho, medonho. E não só jogou como fez a mim jogar essas Desgraça também."
+              },
+              {
+                "label": "Desenvolvimento",
+                "score": 90,
+                "explanation": "O relato detalha a falha específica: ao comprar o jogo por 400 reais, a interface de criação de personagem apresentou um erro ('Thumbnail Missing') que impediu de aplicar barba ou roupa, levando o grupo a escolher opções aleatórias.",
+                "evidence": "Não é possível. Caramba, você tá zoando. Aí, sério? No jogo, 400 reais, a gente comprou o lançamento."
+              },
+              {
+                "label": "Fechamento",
+                "score": 88,
+                "explanation": "A unidade narrativa se encerra com a consequência direta do bug: após o crash e a perda do progresso ('matou o save'), os jogadores tiveram que começar tudo do zero, consolidando a frustração relatada.",
+                "evidence": "Aí a gente voltou pro jogo, matou o save, a gente teve que começar tudo de novo."
+              }
+            ]
+          },
+          "includedSpeech": "Eu joguei o EAFC, que é medonho, medonho. E não só jogou como fez a mim jogar essas Desgraça também. A gente fez uma live aqui, foi um transtorno, terrível. Foi muito engraçado quando eu cheguei aqui e ouvi o personagem levantando a taça, cara. Isso é muito bom, a taça não tá na mão dele. Isso é o de menos que a gente viu naquele dia. Tu não viu, a gente entrou em uma sala, olha só essa sequência. Primeiro que o jogo tem loads infinitos entre qualquer coisa. Você muda o menu, fica carregando. Absurdo, absurdo. Aí a gente entrou mal e começou a fazer o personagem. Que, tchau lá, faça o personagem. Aí o Caio tava mexendo, não sei o quê. Chegou numa parte que era botar barba. Ele foi descendo, assim, as opções de barba. Aparece na tela dois quadradinhos que eram botar barba escrito Thumbnail Missing. Não é possível. Caramba, você tá zoando. Aí, sério? No jogo, 400 reais, a gente comprou o lançamento. Eu paguei, tá? Eu comprei esse jogo. Os caras não oparam a Thumbnail do personagem, pô. Aí o Caio, beleza. Aí a gente escolheu outra barba, não sei o quê. fomos passar pra botar roupa, sei lá. O jogo crashou no Playstation. Aí a gente voltou pro jogo, matou o save, a gente teve que começar tudo de novo.",
+          "file": "app/src-tauri/../../.tooling/test-output/feedback-editorial-2026-10-25/coverage-v1/whole-video/Qwen35-Davy-03.mp4"
+        },
+        {
+          "start": 428.02,
+          "end": 455.3,
+          "title": "Skin bugada da Valve vira artefato valioso",
+          "score": 83,
+          "fit": "cover",
+          "analysis": {
+            "title": "Skin bugada da Valve vira artefato valioso",
+            "summary": "A comunidade de jogadores reclama de uma skin lançada pela Valve após compra via estátua. A empresa corrigiu o erro e a skin antiga agora é colecionável por cerca de R$ 3 mil.",
+            "criteria": [
+              {
+                "label": "Gancho",
+                "score": 85,
+                "explanation": "O bloco inicia a narrativa sobre um evento específico (o lançamento de uma skin) com o fato central: os jogadores compraram uma estátua para ganhar a skin.",
+                "evidence": "Teve uma skin que a galera comprou uma estátua e aí ganhou a skin."
+              },
+              {
+                "label": "Desenvolvimento",
+                "score": 75,
+                "explanation": "O bloco descreve o mecanismo do problema (demora na entrega da skin após a compra) e a reação inicial dos jogadores ao recebê-la.",
+                "evidence": "E aí essa skin, quando ela chegou, porque você comprava a estátua e demorava pra chegar a estátua e chegava a skin."
+              },
+              {
+                "label": "Fechamento",
+                "score": 90,
+                "explanation": "O bloco finaliza o ciclo narrativo mostrando que a Valve corrigiu o erro, mas o valor da skin antiga (bugada) no mercado subiu para R$ 3 mil, encerrando a história do relato.",
+                "evidence": "Mas manteve a skin antiga e aí a skin antiga hoje vale 3 mil reais, né?"
+              }
+            ]
+          },
+          "includedSpeech": "Teve uma skin que a galera comprou uma estátua e aí ganhou a skin. E aí essa skin, quando ela chegou, porque você comprava a estátua e demorava pra chegar a estátua e chegava a skin. Quando chegou a skin, a skin é uma merda. Todo mundo falou, porra, comprei a estátua, esperei um tempo, a skin é uma merda. Aí a Valve ouviu isso e chegou lá e fez outra skin. Mas manteve a skin antiga e aí a skin antiga hoje vale 3 mil reais, né?",
+          "file": "app/src-tauri/../../.tooling/test-output/feedback-editorial-2026-10-25/coverage-v1/whole-video/Qwen35-Davy-04.mp4"
+        }
+      ]
+    },
+    {
+      "arm": "coverage-v2",
+      "fullVideo": true,
+      "segments": 334,
+      "elapsedSeconds": 582.8439069,
+      "newCount": 5,
+      "preservedLabClips": 2,
+      "exports": [
+        {
+          "start": 149.4,
+          "end": 197.8,
+          "title": "Battlefield 6: Skin com texto errado deixa jogadores confusos",
+          "score": 88,
+          "fit": "cover",
+          "analysis": {
+            "title": "Battlefield 6: Skin com texto errado deixa jogadores confusos",
+            "summary": "Jogadores do Battlefield 6 encontram skins com textos errados em batalhas. Ao examinar uma imagem, descobrem que 'group therapy' foi alterado para 'T-PAP'. A equipe tenta decifrar o erro e conclui que é um texto incorreto na skin.",
+            "criteria": [
+              {
+                "label": "Gancho",
+                "score": 85,
+                "explanation": "O trecho inicia narrando que jogadores viram coisas estranhas em skins do Battlefield 6 e estão acusando a EA de erros com IA, estabelecendo o conflito central imediatamente.",
+                "evidence": "Os jogadores avistaram Umas coisas estranhas No passo de batalha De umas skins Que está sendo Eles estão acusando a EA Battlefield Studios agora De ter feito tudo"
+              },
+              {
+                "label": "Desenvolvimento",
+                "score": 90,
+                "explanation": "A discussão foca na leitura da imagem estranha ('grupo T-PAP' em vez de 'group therapy'), onde os participantes tentam decifrar o erro visual e expressam confusão sobre a intenção por trás do texto.",
+                "evidence": "Não, não, não. Lê de novo. Não, grupo T-PAP. Era pra ser group therapy, certo?"
+              },
+              {
+                "label": "Fechamento",
+                "score": 92,
+                "explanation": "A fala final confirma que o texto 'T-PAP' está incorreto em vez de 'therapy', estabelecendo a piada/erro visual e a reação de incredulidade ('você está zoando') como desfecho da unidade narrativa sobre a skin específica.",
+                "evidence": "Era pra ser therapy. Então, group T-PAP. Ah, você está zoando. Era pra ser group therapy e tá T-PAP."
+              }
+            ]
+          },
+          "includedSpeech": "Os jogadores avistaram Umas coisas estranhas No passo de batalha De umas skins Que está sendo Eles estão acusando a EA Battlefield Studios agora De ter feito tudo isso com o IA E aí por que? Você pergunta Vamos puxar as imagens aí Você tem imagem Ah, tem umas imagens Não, eu quero ver Eu quero enxergar Ele bota o acrim Ele vai chamar Vai botar a imagem na tela Bom, primeiro é esse O que está escrito ali? Não, não, não. Lê de novo. Não, grupo T-PAP. Era pra ser group therapy, certo? Era pra ser therapy. Então, group T-PAP. Ah, você está zoando. Era pra ser group therapy e tá T-PAP.",
+          "file": "app/src-tauri/../../.tooling/test-output/feedback-editorial-2026-10-25/coverage-v2/whole-video/Qwen35-Davy-01.mp4"
+        },
+        {
+          "start": 317.03999999999996,
+          "end": 332.06,
+          "title": "Boneco com cinco pistolas no corpo",
+          "score": 88,
+          "fit": "cover",
+          "analysis": {
+            "title": "Boneco com cinco pistolas no corpo",
+            "summary": "Os participantes descobrem que uma skin de personagem no jogo Battlefield 6 possui cinco pistolas em seu modelo. Ao confirmar a quantidade de armas, eles brincam sobre como o boneco está bem preparado para a guerra, comentando que quando uma pistola acaba, ele saca outra do peito ou da axila.",
+            "criteria": [
+              {
+                "label": "Gancho",
+                "score": 85,
+                "explanation": "A abertura define o foco da piada ao revelar que o boneco do jogo possui cinco pistolas em seu modelo.",
+                "evidence": "Esses números é a quantidade de pistola que esse boneco tem. Ele tem cinco pistolas."
+              },
+              {
+                "label": "Desenvolvimento",
+                "score": 90,
+                "explanation": "Os participantes concordam com a quantidade de armas e comentam sobre a preparação bélica implícita na skin.",
+                "evidence": "A verdade é... É o cara bem preparado para a guerra, Dava."
+              },
+              {
+                "label": "Fechamento",
+                "score": 90,
+                "explanation": "O fechamento cumpre a piada ao descrever o mecanismo de uso das armas (sacar novas do corpo quando uma acaba), reforçando o absurdo e o humor da situação.",
+                "evidence": "Quanto mais arma, melhor, pô. É muito bom, né? Acabou uma pistola, a gente saca outra no peito, saca outra aqui."
+              }
+            ]
+          },
+          "includedSpeech": "Esses números é a quantidade de pistola que esse boneco tem. Ele tem cinco pistolas. A verdade é... É o cara bem preparado para a guerra, Dava. Quanto mais arma, melhor, pô. É muito bom, né? Acabou uma pistola, a gente saca outra no peito, saca outra aqui.",
+          "file": "app/src-tauri/../../.tooling/test-output/feedback-editorial-2026-10-25/coverage-v2/whole-video/Qwen35-Davy-02.mp4"
+        },
+        {
+          "start": 26.66,
+          "end": 93.22,
+          "title": "Jogadores perdem save e têm que reiniciar tudo no EAFC por bug",
+          "score": 87,
+          "fit": "cover",
+          "analysis": {
+            "title": "Jogadores perdem save e têm que reiniciar tudo no EAFC por bug",
+            "summary": "Um grupo de jogadores relata uma experiência ruim ao criar personagem no jogo EAFC, onde um erro técnico impediu de configurar a aparência visual. A situação culminou no jogo travar e apagar o progresso salvo.",
+            "criteria": [
+              {
+                "label": "Gancho",
+                "score": 85,
+                "explanation": "O falante introduz o problema narrando a experiência negativa com o jogo EAFC (EA Sports FC), descrevendo-o como 'medonho' e citando que causou problemas além do próprio jogo.",
+                "evidence": "Eu joguei o EAFC, que é medonho, medonho. E não só jogou como fez a mim jogar essas Desgraça também."
+              },
+              {
+                "label": "Desenvolvimento",
+                "score": 90,
+                "explanation": "O relato detalha a falha específica: ao comprar o jogo por 400 reais, a interface de criação de personagem apresentou um erro ('Thumbnail Missing') que impediu de aplicar barba ou roupa, levando o grupo a escolher opções aleatórias.",
+                "evidence": "Não é possível. Caramba, você tá zoando. Aí, sério? No jogo, 400 reais, a gente comprou o lançamento."
+              },
+              {
+                "label": "Fechamento",
+                "score": 88,
+                "explanation": "A unidade narrativa se encerra com a consequência direta do bug: após o crash e a perda do progresso ('matou o save'), os jogadores tiveram que começar tudo do zero, consolidando a frustração relatada.",
+                "evidence": "Aí a gente voltou pro jogo, matou o save, a gente teve que começar tudo de novo."
+              }
+            ]
+          },
+          "includedSpeech": "Eu joguei o EAFC, que é medonho, medonho. E não só jogou como fez a mim jogar essas Desgraça também. A gente fez uma live aqui, foi um transtorno, terrível. Foi muito engraçado quando eu cheguei aqui e ouvi o personagem levantando a taça, cara. Isso é muito bom, a taça não tá na mão dele. Isso é o de menos que a gente viu naquele dia. Tu não viu, a gente entrou em uma sala, olha só essa sequência. Primeiro que o jogo tem loads infinitos entre qualquer coisa. Você muda o menu, fica carregando. Absurdo, absurdo. Aí a gente entrou mal e começou a fazer o personagem. Que, tchau lá, faça o personagem. Aí o Caio tava mexendo, não sei o quê. Chegou numa parte que era botar barba. Ele foi descendo, assim, as opções de barba. Aparece na tela dois quadradinhos que eram botar barba escrito Thumbnail Missing. Não é possível. Caramba, você tá zoando. Aí, sério? No jogo, 400 reais, a gente comprou o lançamento. Eu paguei, tá? Eu comprei esse jogo. Os caras não oparam a Thumbnail do personagem, pô. Aí o Caio, beleza. Aí a gente escolheu outra barba, não sei o quê. fomos passar pra botar roupa, sei lá. O jogo crashou no Playstation. Aí a gente voltou pro jogo, matou o save, a gente teve que começar tudo de novo.",
+          "file": "app/src-tauri/../../.tooling/test-output/feedback-editorial-2026-10-25/coverage-v2/whole-video/Qwen35-Davy-03.mp4"
+        },
+        {
+          "start": 428.02,
+          "end": 455.3,
+          "title": "Skin bugada da Valve vira artefato valioso",
+          "score": 83,
+          "fit": "cover",
+          "analysis": {
+            "title": "Skin bugada da Valve vira artefato valioso",
+            "summary": "A comunidade de jogadores reclama de uma skin lançada pela Valve após compra via estátua. A empresa corrigiu o erro e a skin antiga agora é colecionável por cerca de R$ 3 mil.",
+            "criteria": [
+              {
+                "label": "Gancho",
+                "score": 85,
+                "explanation": "O bloco inicia a narrativa sobre um evento específico (o lançamento de uma skin) com o fato central: os jogadores compraram uma estátua para ganhar a skin.",
+                "evidence": "Teve uma skin que a galera comprou uma estátua e aí ganhou a skin."
+              },
+              {
+                "label": "Desenvolvimento",
+                "score": 75,
+                "explanation": "O bloco descreve o mecanismo do problema (demora na entrega da skin após a compra) e a reação inicial dos jogadores ao recebê-la.",
+                "evidence": "E aí essa skin, quando ela chegou, porque você comprava a estátua e demorava pra chegar a estátua e chegava a skin."
+              },
+              {
+                "label": "Fechamento",
+                "score": 90,
+                "explanation": "O bloco finaliza o ciclo narrativo mostrando que a Valve corrigiu o erro, mas o valor da skin antiga (bugada) no mercado subiu para R$ 3 mil, encerrando a história do relato.",
+                "evidence": "Mas manteve a skin antiga e aí a skin antiga hoje vale 3 mil reais, né?"
+              }
+            ]
+          },
+          "includedSpeech": "Teve uma skin que a galera comprou uma estátua e aí ganhou a skin. E aí essa skin, quando ela chegou, porque você comprava a estátua e demorava pra chegar a estátua e chegava a skin. Quando chegou a skin, a skin é uma merda. Todo mundo falou, porra, comprei a estátua, esperei um tempo, a skin é uma merda. Aí a Valve ouviu isso e chegou lá e fez outra skin. Mas manteve a skin antiga e aí a skin antiga hoje vale 3 mil reais, né?",
+          "file": "app/src-tauri/../../.tooling/test-output/feedback-editorial-2026-10-25/coverage-v2/whole-video/Qwen35-Davy-04.mp4"
+        },
+        {
+          "start": 197.9,
+          "end": 214.92,
+          "title": "EA erra no Battlefield 6: substitui 'therapy' por 'T-PAP'",
+          "score": 75,
+          "fit": "cover",
+          "analysis": {
+            "title": "EA erra no Battlefield 6: substitui 'therapy' por 'T-PAP'",
+            "summary": "Os jogadores relatam um erro estranho no lançamento do Battlefield 6 onde a EA substituiu o texto 'group therapy' por 'group T-PAP'. Eles criticam a falta de revisão e a possível intenção maliciosa da empresa, concluíndo que esse tipo de falha é comum e passa batido sem causar grande problema.",
+            "criteria": [
+              {
+                "label": "Gancho",
+                "score": 75,
+                "explanation": "A fala inicial 'Mas não é possível que vocês deixaram passar aí' estabelece imediatamente a frustração com um erro visual (o texto 'group T-PAP' em vez de 'group therapy') que foi relatado anteriormente no intervalo.",
+                "evidence": "Mas não é possível que vocês deixaram passar aí. Aí das duas uma."
+              },
+              {
+                "label": "Desenvolvimento",
+                "score": 70,
+                "explanation": "O falante expande o problema, argumentando que a EA pode ter feito maliciosamente ('não revisaram', 'fizeram errado'), deixando a culpa da situação não resolvida mas focada na qualidade do produto.",
+                "evidence": "Ou uma fizeram com o Iá e não revisaram ou fizeram errado e não revisaram, está tudo errado, independente da situação, né, está tudo errado mas realmente é"
+              },
+              {
+                "label": "Fechamento",
+                "score": 80,
+                "explanation": "A frase final 'um negócio que passa batido' serve como conclusão definitiva à piada sobre o erro de texto. O falante aceita a situação ('passa batido') e oferece uma perspectiva cínica sobre a negligência da empresa, fechando a unidade narrativa de crítica sem resolver o problema técnico.",
+                "evidence": "um negócio que passa batido, né, se você olha assim"
+              }
+            ]
+          },
+          "includedSpeech": "Mas não é possível que vocês deixaram passar aí. Aí das duas uma. Ou uma fizeram com o Iá e não revisaram ou fizeram errado e não revisaram, está tudo errado, independente da situação, né, está tudo errado mas realmente é um negócio que passa batido, né, se você olha assim",
+          "file": "app/src-tauri/../../.tooling/test-output/feedback-editorial-2026-10-25/coverage-v2/whole-video/Qwen35-Davy-05.mp4"
+        }
+      ]
+    }
+  ],
+  "findings": [
+    "Resposta sem regra editorial, gramática JSON ou filtro já escolhe aberturas/finais incompletos e inventa fatos; não atribuir todo problema ao descarte do pipeline.",
+    "0,4 livre: 4 sugestões/48,125 s; T-PAP termina em Aí das duas uma e a justificativa da barba atribui ao intervalo consequências posteriores.",
+    "0,7 livre: 3 sugestões; mistura Secute e pistolas e afirma sete pistolas. Não houve truncamento por 4096 tokens.",
+    "Troca isolada da ordem do contexto não resolveu; catálogo por IDs gerou referências incorretas. Nenhuma das duas hipóteses adotada.",
+    "Comparação T-PAP preferiu a versão completa, mas controles de finais EAFC/Valve preferiram versões que unem outro assunto; reranker não adotado.",
+    "Descartes indevidos de citações longas literais foram reproduzidos: agora só cópias exatas e únicas acima de 40 palavras são aceitas; tolerância textual segue limitada às curtas.",
+    "Primeira rodada nativa: resposta inválida da região final abortou a busca da outra região; correção de isolamento exige tentativa das demais e mantém erro se todas falham.",
+    "Ministral com o prompt de extração atual entrega 8 propostas/6 pares literais únicos, mas continua escolhendo finais interrompidos. Não confundir descoberta com cortes aprovados pelo pipeline."
+  ],
+  "references": [
+    "docs/reports/evidence/opus-comparison-2026-10-25.json",
+    "https://github.com/zhouxiaoka/autoclip/blob/3d3b5edf9ffa595a764b0919e6dbd4ce8acaca84/backend/pipeline/clip_finder.py",
+    "https://github.com/FujiwaraChoki/supoclip/blob/72f1659d4e6dd65c925960239249fe6d04871e45/backend/src/ai.py",
+    "https://huggingface.co/Qwen/Qwen3.5-4B"
+  ],
+  "limits": "Ensaios isolados não são entregas do app; quantidade e score não substituem fidelidade. Primeiro controle livre executou e salvou saída, mas falhou apenas no print de emoji em CP1252; resposta lida do arquivo sem nova inferência. Comparação de versões é experimental, sem integração. Vídeos Opus permanecem locais/ignorados.",
+  "qwen9b64k": {
+    "model": "Qwen3.5-9B-Q4_K_M.gguf",
+    "contextRequested": 65536,
+    "samePromptAs4B": true,
+    "promptSha256": "40481cb258c703e9bd69ec9fe60cc4940c6cbe54fca289f69e9057a0fc4a6992",
+    "temperature": 0.7,
+    "thinking": false,
+    "schema": null,
+    "postFilters": false,
+    "outputTokens": 4096,
+    "ramFreeBeforeMiB": 13039,
+    "gpuUsedBeforeMiB": 3276,
+    "peakProcessWorkingSetMiB": 6020,
+    "minSystemAvailableMiB": 7791,
+    "maxWholeDeviceGpuUsedMiB": 10879,
+    "guard": null,
+    "exitCode": 0,
+    "elapsedSeconds": 54.453,
+    "output": "Com base na transcrição fornecida, identifiquei quatro cortes potenciais para vídeos curtos (Shorts/Reels/TikTok). O foco principal aqui é o **humor**, a **crítica à EA** e os **erros de qualidade**, que são temas com alto engajamento no nicho de games.\n\nAqui estão as sugestões:\n\n### Corte 1: O Erro \"Secute\" (Meme Visual)\nEste é o ponto mais forte do vídeo para viralizar, pois mostra um erro absurdo e engraçado na skin de um jogo pago.\n\n*   **Início:** `[04:11]` (\"Hum, já vi.\")\n*   **Fim:** `[04:35]` (\"Secute. Será que eles fizeram de propósito para virar meme?\")\n*   **Título Sugerido:** \"A skin mais ridícula do Battlefield 6 🤣🔫\"\n*   **Por que escolher:** A palavra \"Secute\" em vez de \"Secutor\" é visualmente chocante e gera curiosidade imediata. O comentário dos apresentadores sobre o erro ser óbvio cria uma conexão rápida com o público gamer, que adora apontar falhas da indústria.\n\n---\n\n### Corte 2: A Skin com 5 Pistolas (Fator \"Buffa\")\nEste corte foca na exageração absurda de um item de skin, gerando humor por ser algo impraticável e ridículo.\n\n*   **Início:** `[05:16]` (\"Esses números é a quantidade de pistola que esse boneco tem.\")\n*   **Fim:** `[06:09]` (\"Porra, tu fazia pra fazer o bagulho? Pelo menos, tenta fazer direito.\")\n*   **Título Sugerido:** \"Skin com 5 pistolas no corpo? A EA não testa nada! 🤡\"\n*   **Por que escolher:** O visual de um personagem coberto de armas (quatro no corpo + uma na mão) é engraçado. A narrativa de que o desenvolvedor \"tentou fazer direito e falhou\" ou fez propositalmente para causar revolta gera muita discussão nos comentários.\n\n---\n\n### Corte 3: Crítica à Qualidade da EA (Lista de Erros)\nUm corte rápido que resume a frustração geral com a Electronic Arts, usando exemplos concretos do próprio vídeo. Funciona bem como um \"roast\" da empresa.\n\n*   **Início:** `[00:26]` (\"Eu joguei o EAFC, que é medonho, medonho.\")\n*   **Fim:** `[01:45]` (\"É load, load, load, load. E demorado.\")\n*   **Título Sugerido:** \"Por que a EA odeia quando jogamos seus jogos? 😡📉\"\n*   **Por que escolher:** Começa com uma afirmação forte (\"EAFC é medonho\") e lista problemas reais (bugs de barba, crashes, loads infinitos). É um conteúdo \"de denúncia\" que ressoa fortemente com jogadores insatisfeitos.\n\n---\n\n### Corte 4: O Bug da Barba e do Salve (Storytelling Rápido)\nUm corte narrativo sobre uma experiência caótica onde a vida do jogador foi destruída por um bug simples.\n\n*   **Início:** `[01:06]` (\"Aparece na tela dois quadradinhos que eram botar barba escrito Thumbnail Missing.\")\n*   **Fim:** `[02:02]` (\"Calma aí, mano. A sequência do pente.\")\n*   **Título Sugerido:** \"Paguei 400 reais e o jogo apagou meu save na cara da barba 😱\"\n*   **Por que escolher:** A história tem um arco completo em pouco tempo: o problema (barba sem imagem) -> a consequência grave (crash e perda de progresso). O gatilho emocional é a raiva do jogador que pagou caro por uma experiência falha. [end of text]\n\n\n",
+    "runtimeLogSha256": "96d2dcadb8844bc4a7716d23eb6c6d1dc21a855a6e87c29479c17d7aeec1983b",
+    "modelSha256": "03b74727a860a56338e042c4420bb3f04b2fec5734175f4cb9fa853daf52b7e8",
+    "review": {
+      "proposedClips": 4,
+      "editorialPass": false,
+      "issues": [
+        "Inventa Secutor, ausente da transcrição.",
+        "Encerra Secute em 04:35 mas cita uma pergunta que começa depois desse horário.",
+        "A fala final citada para as pistolas continua depois de 06:09.",
+        "Não recupera T-PAP, Valve e computador; duas propostas cobrem a mesma história do jogo."
+      ],
+      "contextVerification": "Log confirma n_ctx=65536; mesma entrada do 4B, 7833 tokens; não existe ganho de informação por reservar 64K."
+    }
+  },
+  "productionDisposition": {
+    "kept": [
+      "Aceitar citações longas apenas quando literais e únicas.",
+      "Harness de export usa fit do próprio Clip e exige cover quando solicitado."
+    ],
+    "rejected": [
+      "Cobertura por regiões: 4 -> 5 arquivos, sem novo assunto e com T-PAP fragmentado; 321,10 -> 582,84 s. Código retirado do caminho normal; patch de reprodução no laboratório.",
+      "Ordem do contexto, catálogo por IDs e comparação de versões não demonstraram qualidade suficiente."
+    ],
+    "normalModel": "Qwen3.5-4B, 32K; 9B/64K foi somente o controle autorizado.",
+    "normalLibrary": "Nenhuma escrita na biblioteca do mantenedor."
+  },
+  "researchedCandidates": [
+    {
+      "model": "mistralai/Ministral-3-8B-Instruct-2512",
+      "priority": 1,
+      "parameters": "8B",
+      "portuguese": true,
+      "declaredContext": "256K",
+      "license": "Apache-2.0",
+      "gguf": "https://huggingface.co/mistralai/Ministral-3-8B-Instruct-2512-GGUF/tree/main",
+      "q4DownloadGB": 5.2,
+      "reason": "Outra família, instruct e GGUF oficial; candidato ao teste editorial local, não superioridade comprovada.",
+      "source": "https://huggingface.co/mistralai/Ministral-3-8B-Instruct-2512"
+    },
+    {
+      "model": "microsoft/Phi-4-mini-instruct",
+      "priority": 2,
+      "parameters": "3.8B",
+      "portuguese": true,
+      "declaredContext": "128K",
+      "license": "MIT",
+      "reason": "Comparação de família menor com seguimento de instruções; artefato GGUF e compatibilidade local ainda não validados.",
+      "source": "https://huggingface.co/microsoft/Phi-4-mini-instruct"
+    },
+    {
+      "model": "ibm-granite/granite-4.0-micro",
+      "priority": 3,
+      "parameters": "3B",
+      "portuguese": true,
+      "declaredContext": "128K",
+      "license": "Apache-2.0",
+      "gguf": "https://huggingface.co/ibm-granite/granite-4.0-micro-GGUF",
+      "reason": "Extração e sumarização declaradas; alternativa menor para controle, sem benchmark editorial local.",
+      "source": "https://huggingface.co/ibm-granite/granite-4.0-micro"
+    }
+  ],
+  "ministral": {
+    "download": {
+      "repository": "mistralai/Ministral-3-8B-Instruct-2512-GGUF",
+      "revision": "0102285ad796bd99af90f58de616092e5630e970",
+      "file": "Ministral-3-8B-Instruct-2512-Q4_K_M.gguf",
+      "bytes": 5198911904,
+      "sha256": "33e7a72cf5e6e2cfc2f2847075acc013d68bba023e35310cef86b5cf8fdca761",
+      "license": "apache-2.0",
+      "destination": "C:\\CutNicePro\\experiments\\clip-selection-ab\\models\\Ministral-3-8B-Instruct-2512-Q4_K_M.gguf",
+      "source": "https://huggingface.co/mistralai/Ministral-3-8B-Instruct-2512-GGUF/resolve/0102285ad796bd99af90f58de616092e5630e970/Ministral-3-8B-Instruct-2512-Q4_K_M.gguf",
+      "downloadedBytes": 5198911904,
+      "status": "downloaded-verified",
+      "elapsedSeconds": 54.907
+    },
+    "humanControl": {
+      "model": "Ministral-3-8B-Instruct-2512-Q4_K_M.gguf",
+      "contextRequested": 16384,
+      "samePromptAs4B": false,
+      "sameUserMessageAs4B": true,
+      "userMessageSha256": "fce60af6ba8cb3caf8cea7f1032125e97681bf38a20949703095e1039f10cdcd",
+      "template": "embedded GGUF Jinja",
+      "promptSha256": "fce60af6ba8cb3caf8cea7f1032125e97681bf38a20949703095e1039f10cdcd",
+      "temperature": 0.05,
+      "thinking": false,
+      "schema": null,
+      "postFilters": false,
+      "outputTokens": 4096,
+      "ramFreeBeforeMiB": 14341,
+      "gpuUsedBeforeMiB": 2867,
+      "peakProcessWorkingSetMiB": 5799,
+      "minSystemAvailableMiB": 8497,
+      "maxWholeDeviceGpuUsedMiB": 10062,
+      "guard": null,
+      "exitCode": 0,
+      "elapsedSeconds": 44.359,
+      "output": "Aqui estão os cortes mais promissores para vídeos curtos com potencial de viralização, baseados na transcrição, com justificativas e sugestões de títulos:\n\n---\n\n### **1. \"EA FAZ MERDA: Jogo CRASHA AO MESMO TEMPO QUE PERDE THUMBNAILS\"**\n**Tempo:** [00:26 - 01:28]\n**Por que?**\n- **Momento épico:** O jogo crashando no PlayStation enquanto o personagem não carrega a imagem da barba (\"Thumbnail Missing\") é um *fail* visual hilário e inesperado.\n- **Engajamento:** A reação do apresentador (\"Não é possível!\") e a frustração (\"Eu comprei esse jogo!\") criam empatia e humor.\n- **Viralidade:** Erros técnicos em jogos são sempre bem recebidos pela comunidade gamer, especialmente quando são absurdos.\n\n---\n\n### **2. \"BATTLEFIELD 6 TEM SKINS COM ERROS DE IA (E NINGUÉM REVISA)\"**\n**Tempo:** [02:11 - 03:33] (Foco nas skins \"T-PAP\" e \"Secute\")\n**Por que?**\n- **Conteúdo viral:** As skins com erros de IA (\"group T-PAP\" ao invés de \"group therapy\") são memes prontos. O zoom nas imagens e a discussão sobre o possível uso intencional para memes aumentam o potencial.\n- **Engajamento:** A curiosidade (\"Será que eles fizeram isso de propósito?\") e a crítica à falta de revisão (\"Não revisaram nada!\") geram discussões.\n- **Visual atraente:** Imagens lado a lado das skins erradas e corretas são fáceis de editar e compartilhar.\n\n---\n\n### **3. \"PERSONAGEM COM 5 PISTOLAS (E NINGUÉM NOTA)\"**\n**Tempo:** [05:08 - 06:10]\n**Por que?**\n- **Surpresa + humor:** Um personagem com cinco pistolas (e mais armas escondidas) é absurdo e divertido. A explicação detalhada (\"Pistola no peito, na axila, na mão...\") torna o vídeo interativo.\n- **Engajamento:** Perguntas como \"Tu fazia pra fazer o bagulho?\" e a reação exagerada (\"Porra, tu fazia pra fazer o bagulho?\") criam identificação.\n- **Edição fácil:** É possível fazer um *cut* rápido mostrando as armas sendo apontadas uma a uma.\n\n---\n\n### **4. \"EA VENDE SKINS BUGADAS (E A VALVE APRENDEU COM ISSO)\"**\n**Tempo:** [06:50 - 07:35]\n**Por que?**\n- **Contraste interessante:** Comparar o erro da EA com a solução da Valve (que corrigiu uma skin bugada e a tornou rara) mostra uma crítica construtiva.\n- **Engajamento:** A menção ao valor das skins raras (\"Hoje vale 3 mil reais!\") desperta curiosidade e debate.\n- **Tema atual:** O microtransações e skins em jogos são sempre polêmicos, especialmente quando há erros.\n\n---\n\n### **5. \"PC CRASHANDO NA LIVE (E NINGUÉM FAZ NADA)\"**\n**Tempo:** [08:20 - 09:00]\n**Por que?**\n- **Momento real e engraçado:** O PC fazendo barulhos estranhos (parecido com uma máquina de barbear) é um *fail* cotidiano que todos podem se identificar.\n- **Engajamento:** Frases como \"Vocês vão dormir com o zoom\" e a tentativa de solução (\"Tem que botar uma proteção aí, cara\") criam humor e empatia.\n- **Viralidade:** Problemas técnicos em lives são sempre compartilhados pela comunidade.\n\n---\n\n### **Dicas para edição:**\n1. **Corte os momentos mais tensos:** Use transições rápidas e zooms nas imagens para destacar os erros (ex.: skins, armas, crash).\n2. **Legendas humorísticas:** Adicione textos como \"EA: 'Tudo certo!'\" ao lado de imagens de bugs para reforçar a crítica.\n3. **Música viral:** Use trilhas curtas e engraçadas (ex.: sons de *fail* ou memes como \"Oh no\").\n4. **Call-to-action:** Termine com uma pergunta no final, como \"Vocês já viram erros piores nesses jogos?\" para incentivar comentários.\n\n---\n**Melhor opção para viralizar:** **O corte das skins com erros de IA (2)** ou **o personagem com 5 pistolas (3)**, pois combinam humor absurdo com conteúdo fácil de compartilhar. O **crash do jogo (1)** também é forte, mas depende mais do contexto da live. [end of text]\n\n\n",
+      "runtimeLogSha256": "d22515f2854a7ec60e92b7da3f7b577c849b936afa7d43bf9ad376397142006a",
+      "modelSha256": "33e7a72cf5e6e2cfc2f2847075acc013d68bba023e35310cef86b5cf8fdca761"
+    },
+    "productionDiscoveryControl": {
+      "model": "Ministral-3-8B-Instruct-2512-Q4_K_M.gguf",
+      "contextRequested": 16384,
+      "samePromptAs4B": false,
+      "sameUserMessageAs4B": false,
+      "userMessageSha256": "b28b8d9a77cf6dcb87c62f0c61ede8bad029dd9c8cd1b509fc0825bd9c0642b1",
+      "template": "embedded GGUF Jinja",
+      "promptSha256": "b28b8d9a77cf6dcb87c62f0c61ede8bad029dd9c8cd1b509fc0825bd9c0642b1",
+      "temperature": 0.05,
+      "thinking": false,
+      "schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "clips"
+        ],
+        "properties": {
+          "clips": {
+            "type": "array",
+            "maxItems": 12,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "title",
+                "openingQuote",
+                "closingQuote"
+              ],
+              "properties": {
+                "title": {
+                  "type": "string"
+                },
+                "openingQuote": {
+                  "type": "string"
+                },
+                "closingQuote": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "postFilters": false,
+      "outputTokens": 4096,
+      "ramFreeBeforeMiB": 14258,
+      "gpuUsedBeforeMiB": 2900,
+      "peakProcessWorkingSetMiB": 5799,
+      "minSystemAvailableMiB": 9133,
+      "maxWholeDeviceGpuUsedMiB": 10072,
+      "guard": null,
+      "productionDiscoveryPrompt": true,
+      "fullTranscript": true,
+      "segments": 334,
+      "exitCode": 0,
+      "elapsedSeconds": 35.484,
+      "output": "{\n\"clips\": [\n    {\n        \"title\": \"Crash do EAFC e falhas no personagem\",\n        \"openingQuote\": \"A gente fez uma live aqui, foi um transtorno, terrível.\",\n        \"closingQuote\": \"Não é possível. Ele deletou, você bugou o save?\"\n    },\n    {\n        \"title\": \"Thumbnail Missing na criação de personagem\",\n        \"openingQuote\": \"Aparece na tela dois quadradinhos que eram botar barba escrito Thumbnail Missing.\",\n        \"closingQuote\": \"Os caras não oparam a Thumbnail do personagem, pô.\"\n    },\n    {\n        \"title\": \"Reação ao erro de 'group therapy' como 'group T-PAP'\",\n        \"openingQuote\": \"Não, não, não. Lê de novo.\",\n        \"closingQuote\": \"Mas não é possível que vocês deixaram passar aí.\"\n    },\n    {\n        \"title\": \"Skins do Battlefield 6 com erros visuais\",\n        \"openingQuote\": \"Secute é foda.\",\n        \"closingQuote\": \"Não sei se tem mais, acho que não, né?\"\n    },\n    {\n        \"title\": \"Reação ao personagem com cinco pistolas\",\n        \"openingQuote\": \"Esses números... Esses números é a quantidade de pistola que esse boneco tem.\",\n        \"closingQuote\": \"Porra, tu fazia pra fazer o bagulho?\"\n    },\n    {\n        \"title\": \"Crítica à EA por falta de revisão\",\n        \"openingQuote\": \"Os caras não têm o mínimo de... Nem revisar o bagulho.\",\n        \"closingQuote\": \"Esse é o tipo de arma mal utilizada que ninguém gosta.\"\n    },\n    {\n        \"title\": \"Comparação com a Valve e skins valiosas\",\n        \"openingQuote\": \"A Valve já fez isso, cara, que é bem interessante.\",\n        \"closingQuote\": \"Hoje eu já não sei. Vocês têm que ver de vender isso.\"\n    },\n    {\n        \"title\": \"Queixa sobre o desempenho do PC durante a live\",\n        \"openingQuote\": \"O computador tá... O PC vai voar igual o Carlos Alamo\",\n        \"closingQuote\": \"Vocês usam a maquininha pra barbear?\"\n    }\n]\n} [end of text]\n\n\n",
+      "runtimeLogSha256": "6c01de209c1c25e064cca7e8577a5376732f7d5f985d35828b3d62012f343253",
+      "modelSha256": "33e7a72cf5e6e2cfc2f2847075acc013d68bba023e35310cef86b5cf8fdca761"
+    },
+    "literalReview": [
+      {
+        "title": "Crash do EAFC e falhas no personagem",
+        "openingQuote": "A gente fez uma live aqui, foi um transtorno, terrível.",
+        "closingQuote": "Não é possível. Ele deletou, você bugou o save?",
+        "opening": {
+          "matches": 1,
+          "firstWord": 119,
+          "lastWord": 128,
+          "firstRow": 12,
+          "lastRow": 12
+        },
+        "closing": {
+          "matches": 1,
+          "firstWord": 327,
+          "lastWord": 335,
+          "firstRow": 41,
+          "lastRow": 42
+        },
+        "startRow": 12,
+        "endRow": 42,
+        "startSegment": 33.46,
+        "endSegment": 95.94
+      },
+      {
+        "title": "Thumbnail Missing na criação de personagem",
+        "openingQuote": "Aparece na tela dois quadradinhos que eram botar barba escrito Thumbnail Missing.",
+        "closingQuote": "Os caras não oparam a Thumbnail do personagem, pô.",
+        "opening": {
+          "matches": 1,
+          "firstWord": 238,
+          "lastWord": 249,
+          "firstRow": 25,
+          "lastRow": 26
+        },
+        "closing": {
+          "matches": 1,
+          "firstWord": 275,
+          "lastWord": 283,
+          "firstRow": 33,
+          "lastRow": 33
+        },
+        "startRow": 25,
+        "endRow": 33,
+        "startSegment": 63.82,
+        "endSegment": 78.78
+      },
+      {
+        "title": "Reação ao erro de 'group therapy' como 'group T-PAP'",
+        "openingQuote": "Não, não, não. Lê de novo.",
+        "closingQuote": "Mas não é possível que vocês deixaram passar aí.",
+        "opening": {
+          "matches": 1,
+          "firstWord": 594,
+          "lastWord": 599,
+          "firstRow": 96,
+          "lastRow": 97
+        },
+        "closing": {
+          "matches": 1,
+          "firstWord": 631,
+          "lastWord": 639,
+          "firstRow": 105,
+          "lastRow": 105
+        },
+        "startRow": 96,
+        "endRow": 105,
+        "startSegment": 180.48,
+        "endSegment": 199.18
+      },
+      {
+        "title": "Skins do Battlefield 6 com erros visuais",
+        "openingQuote": "Secute é foda.",
+        "closingQuote": "Não sei se tem mais, acho que não, né?",
+        "opening": {
+          "matches": 2
+        },
+        "closing": {
+          "matches": 1,
+          "firstWord": 1199,
+          "lastWord": 1207,
+          "firstRow": 216,
+          "lastRow": 216
+        }
+      },
+      {
+        "title": "Reação ao personagem com cinco pistolas",
+        "openingQuote": "Esses números... Esses números é a quantidade de pistola que esse boneco tem.",
+        "closingQuote": "Porra, tu fazia pra fazer o bagulho?",
+        "opening": {
+          "matches": 1,
+          "firstWord": 1007,
+          "lastWord": 1019,
+          "firstRow": 176,
+          "lastRow": 178
+        },
+        "closing": {
+          "matches": 1,
+          "firstWord": 1187,
+          "lastWord": 1193,
+          "firstRow": 214,
+          "lastRow": 214
+        },
+        "startRow": 176,
+        "endRow": 214,
+        "startSegment": 315.12,
+        "endSegment": 370.98
+      },
+      {
+        "title": "Crítica à EA por falta de revisão",
+        "openingQuote": "Os caras não têm o mínimo de... Nem revisar o bagulho.",
+        "closingQuote": "Esse é o tipo de arma mal utilizada que ninguém gosta.",
+        "opening": {
+          "matches": 0
+        },
+        "closing": {
+          "matches": 1,
+          "firstWord": 1325,
+          "lastWord": 1335,
+          "firstRow": 239,
+          "lastRow": 239
+        }
+      },
+      {
+        "title": "Comparação com a Valve e skins valiosas",
+        "openingQuote": "A Valve já fez isso, cara, que é bem interessante.",
+        "closingQuote": "Hoje eu já não sei. Vocês têm que ver de vender isso.",
+        "opening": {
+          "matches": 1,
+          "firstWord": 1376,
+          "lastWord": 1385,
+          "firstRow": 248,
+          "lastRow": 248
+        },
+        "closing": {
+          "matches": 1,
+          "firstWord": 1543,
+          "lastWord": 1554,
+          "firstRow": 268,
+          "lastRow": 268
+        },
+        "startRow": 248,
+        "endRow": 268,
+        "startSegment": 424.86,
+        "endSegment": 475.02
+      },
+      {
+        "title": "Queixa sobre o desempenho do PC durante a live",
+        "openingQuote": "O computador tá... O PC vai voar igual o Carlos Alamo",
+        "closingQuote": "Vocês usam a maquininha pra barbear?",
+        "opening": {
+          "matches": 1,
+          "firstWord": 1605,
+          "lastWord": 1615,
+          "firstRow": 278,
+          "lastRow": 279
+        },
+        "closing": {
+          "matches": 1,
+          "firstWord": 1708,
+          "lastWord": 1713,
+          "firstRow": 296,
+          "lastRow": 296
+        },
+        "startRow": 278,
+        "endRow": 296,
+        "startSegment": 491.6,
+        "endSegment": 530.16
+      }
+    ],
+    "review": {
+      "humanProposals": 5,
+      "productionPromptProposals": 8,
+      "uniqueLiteralPairs": 6,
+      "nativePipelineExecuted": false,
+      "adoptedAsDefault": false,
+      "issues": [
+        "Livre: título do PC afirma crash, ausente da fonte; afirma erro de IA e mistura Secute com intervalo do T-PAP.",
+        "Prompt de extração do app: T-PAP 180,48–199,18 s termina antes de Aí das duas uma; sem a conclusão.",
+        "Secute começa com citação que ocorre duas vezes; abertura da crítica EA não existe literalmente.",
+        "Valve se estende ao PUBG e acaba em Vocês têm que ver de vender isso, antes de Logo então, porque nunca se sabe.",
+        "Pistolas termina numa pergunta, antes da observação seguinte."
+      ],
+      "context": "16K alocados somente neste modelo: entrada integral 7701 tokens no pedido livre e 3313 no pedido do app; reserva 4096 de saída, sem truncagem. KV FP16 de 64K/34 camadas/8 heads/128 dim sozinho ~8,5 GiB, além dos pesos; não reutilizar o contexto do Qwen sem orçamento de memória.",
+      "comparison": "Mesmo vídeo integral. Controle livre usa a mesma mensagem de usuário normalizada para LF; template nativo e amostragem por família diferem. Não é ablação isolada de tamanho/contexto/temperatura.",
+      "resources": "WorkingSet do processo de inferência; GPU é memória TOTAL do dispositivo e contém outros processos, não consumo exclusivo do modelo.",
+      "harness": "Duas preparações falharam antes de iniciar inferência por CRLF no separador do prompt Qwen; normalização corrigida. Nenhuma resposta foi perdida ou repetida por essa falha."
+    }
+  },
+  "researchLimits": "Somente Ministral 3 8B foi baixado por autorização expressa e testado nesta pesquisa adicional. Phi/Granite não foram baixados ou executados. Capacidades e licença da ficha não comprovam qualidade de corte. Contexto e uso total de VRAM dependem também do cache; não tratar tamanho do GGUF como consumo total. LFM2.5-1.2B não priorizado porque a ficha oficial não lista português entre as oito línguas."
+}

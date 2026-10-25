@@ -7,3 +7,5 @@ Retorne {"candidates":[{"moment":"situação e consequência desse episódio","f
 Antes de escolher as bordas, identifique o episódio inteiro. A abertura precisa esclarecer seu assunto no próprio corte, sem depender do título. Não comece no meio de uma lista, numa interrupção alheia ou num pronome que nunca é explicado. O final precisa concluir a MESMA ideia da abertura. Pare antes da próxima pergunta sem resposta, de outro exemplo ou de uma frase pendurada. Uma frase gramaticalmente completa não comprova que a ideia acabou. Preserve suspeitas como suspeitas e não atribua um nome citado em outro episódio ao acontecimento principal.
 
 Exemplo de raciocínio editorial, sem relação com a fonte real: comprar uma passagem, descobrir o cancelamento do voo, perder a conexão e precisar pagar hotel é uma história completa. Não são quatro clipes e a história não acaba ao dizer que a passagem foi comprada. Prefira o acontecimento e sua consequência a uma introdução genérica. Retorne somente JSON.
+
+É permitido propor versões sobrepostas ou contidas da mesma história, desde que cada uma tenha abertura e conclusão próprias e não seja mera repetição do mesmo intervalo.

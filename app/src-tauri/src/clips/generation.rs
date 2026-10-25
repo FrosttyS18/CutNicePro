@@ -168,31 +168,12 @@ pub fn run(
         // + pausas reais quando o modo multimodal as calculou). Sem words →
         // janela intacta (borders.rs é conservador). IDs dependem dos limites
         // e são recalculados no laço seguinte.
-        {
-            let mut sorted: Vec<&mut Clip> = clips.iter_mut().collect();
-            sorted.sort_by(|a, b| a.start.total_cmp(&b.start));
-            for index in 0..sorted.len() {
-                let prev_end = if index > 0 {
-                    Some(sorted[index - 1].end)
-                } else {
-                    None
-                };
-                let next_start = sorted.get(index + 1).map(|c| c.start);
-                let (start, end) = (sorted[index].start, sorted[index].end);
-                let refined = borders::refine_boundaries(
-                    start,
-                    end,
-                    speech,
-                    &[],
-                    request.options.min_seconds,
-                    prev_end,
-                    next_start,
-                    request.duration,
-                );
-                sorted[index].start = refined.start;
-                sorted[index].end = refined.end;
-            }
-        }
+        borders::refine_candidates(
+            &mut clips,
+            speech,
+            request.options.min_seconds,
+            request.duration,
+        );
         clips.retain(|clip| clip.end - clip.start <= request.options.max_seconds + 1e-6);
         editorial::recheck_adjusted(&mut clips, &original_bounds, speech, &evaluator)?;
         control.check()?;
@@ -497,45 +478,22 @@ mod incremental_tests {
         ]
     }
 
-    /// Contrato upd 20: sobreposição é SINAL; equivalência editorial precisa
-    /// das mesmas unidades de fala. Casos: id exato; mesma história com
-    /// limites diferentes (unidades contidas); história DISTINTA que inclui
-    /// unidade nova (variação legítima); outro formato; sem interseção.
     #[test]
-    fn duplicates_use_speech_units_not_overlap_alone() {
-        let speech = vec![
-            segment(10.0, 11.0, "intro"),
-            segment(11.0, 60.0, "historia"),
-        ];
+    fn duplicates_require_the_same_identity_or_interval() {
         let existing = [clip(&"a".repeat(64), 11.0, 60.0)];
-        // id idêntico → duplicata exata
-        assert!(duplicate_of(
-            &existing,
-            &clip(&"a".repeat(64), 20.0, 30.0),
-            &speech
-        ));
-        // mesma história, limites diferentes: unidades contidas + IoU 0.92
+        assert!(duplicate_of(&existing, &clip(&"a".repeat(64), 20.0, 30.0)));
         let same_story = clip(&"b".repeat(64), 12.0, 58.0);
-        assert!(duplicate_of(&existing, &same_story, &speech));
-        // história distinta sobreposta: inclui a "intro" (unidade nova) —
-        // IoU 0.98, mas o conteúdo difere → variação legítima, NÃO duplicata
+        assert!(!duplicate_of(&existing, &same_story));
+        assert!(duplicate_of(&existing, &clip(&"8".repeat(64), 11.0, 60.0)));
         let variation = clip(&"c".repeat(64), 10.0, 60.0);
-        assert!(!duplicate_of(&existing, &variation, &speech));
-        // mesmo intervalo em OUTRO formato não é duplicata
+        assert!(!duplicate_of(&existing, &variation));
         let mut other_format = clip(&"d".repeat(64), 11.0, 60.0);
         other_format.format = Some("16:9".into());
-        assert!(!duplicate_of(&existing, &other_format, &speech));
-        // momento totalmente fora
-        assert!(!duplicate_of(
-            &existing,
-            &clip(&"e".repeat(64), 80.0, 95.0),
-            &speech
-        ));
-        // sobreposição sem unidades compartilhadas de verdade não é provada
-        let wide = vec![segment(0.0, 50.0, "x"), segment(50.0, 100.0, "y")];
+        assert!(!duplicate_of(&existing, &other_format));
+        assert!(!duplicate_of(&existing, &clip(&"e".repeat(64), 80.0, 95.0)));
         let anchor = [clip(&"f".repeat(64), 0.0, 50.0)];
         let tail = clip(&"9".repeat(64), 45.0, 95.0); // IoU 5/95 — baixo
-        assert!(!duplicate_of(&anchor, &tail, &wide));
+        assert!(!duplicate_of(&anchor, &tail));
     }
 
     #[test]
@@ -584,13 +542,12 @@ mod incremental_tests {
 
     #[test]
     fn deleted_ranges_do_not_blacklist_distinct_future_moments() {
-        let speech = speech();
         let deleted = Clip {
             deleted: Some(true),
             ..clip(&"a".repeat(64), 0.0, 600.0)
         };
         let distinct = clip(&"b".repeat(64), 0.0, 12.0);
-        assert!(!super::duplicate_of(&[deleted], &distinct, &speech));
+        assert!(!super::duplicate_of(&[deleted], &distinct));
     }
 
     #[test]
@@ -834,16 +791,21 @@ mod incremental_tests {
     }
 
     #[test]
-    fn library_above_twelve_clips_persists_and_reloads() {
+    fn library_above_generation_limit_preserves_overlapping_versions() {
         let base =
             std::env::temp_dir().join(format!("cnp-clips-cumulative-{}", uuid::Uuid::new_v4()));
         let project = uuid::Uuid::new_v4().to_string();
-        let clips: Vec<Clip> = (0..15)
+        let clips: Vec<Clip> = (0..20)
             .map(|index| {
                 clip(
-                    &format!("{index:x}").repeat(64),
-                    index as f64 * 10.0,
-                    index as f64 * 10.0 + 8.0,
+                    &super::super::types::identity(
+                        "m",
+                        index as f64,
+                        index as f64 + 30.0,
+                        Some("9:16"),
+                    ),
+                    index as f64,
+                    index as f64 + 30.0,
                 )
             })
             .collect();
@@ -852,8 +814,12 @@ mod incremental_tests {
         let reopened = super::store::read(&base, &project).unwrap().unwrap();
         assert_eq!(
             reopened.clips.len(),
-            15,
-            "biblioteca cumulativa sem teto de 12"
+            20,
+            "biblioteca cumulativa sem teto por execução"
+        );
+        assert_eq!(
+            serde_json::to_value(reopened).unwrap(),
+            serde_json::to_value(value).unwrap()
         );
         std::fs::remove_dir_all(base).unwrap();
     }

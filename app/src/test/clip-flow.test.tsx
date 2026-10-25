@@ -128,6 +128,13 @@ describe("geração incremental e mensagens do diálogo (atualização 19)",()=>
     expect(c.collection?.engine?.backend).toBe("experimentalGemma");
     expect(mounted!.host.querySelector('[aria-label="Análise"]')).toBeNull();
   });
+  it("oferece até 16 cortes na geração personalizada",async()=>{
+    await openDialog(controller(null));
+    await mounted!.chooseOption("Geração","Personalizada");
+    const count=mounted!.host.querySelector<HTMLInputElement>('input[name="clipCount"]');
+    expect(count?.min).toBe("1");
+    expect(count?.max).toBe("16");
+  });
 });
 
 describe("prévia da inspeção usa o intervalo EDITADO (upd 20)",()=>{

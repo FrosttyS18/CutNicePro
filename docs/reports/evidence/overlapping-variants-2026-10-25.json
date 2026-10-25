@@ -1,0 +1,332 @@
+{
+  "date": "2026-10-25",
+  "head": "499d2633897d36e4fd0a00e5b55805013e30516b",
+  "request": {
+    "maximumPerGeneration": 16,
+    "allowOverlappingVersions": true,
+    "allowContainedVersions": true,
+    "allowIdenticalSpansInOneJob": false,
+    "cumulativeLibraryUnlimited": true
+  },
+  "production": "Qwen3.5-4B, 32K, full transcript, no cloud, no interactive PC control",
+  "graphify": {
+    "repository": "FrosttyS18/CutNicePro",
+    "workspace": "wesley-s-workspace",
+    "commit": "499d2633897d36e4fd0a00e5b55805013e30516b",
+    "localChangesIndexed": false
+  },
+  "changes": [
+    "Ranking by editorial priority and score, no interval scheduling.",
+    "Same id or same format/bounds within 1 ms deduplicated in current job.",
+    "Repair/scene/sentence refinement do not use another version as a boundary.",
+    "Rust/UI/discovery/schema/face batch limits synchronized to 16.",
+    "Face sampling stays bounded at 12 per clip."
+  ],
+  "tests": {
+    "rustSuitePassed": 209,
+    "rustSuiteFailed": 0,
+    "rustIgnored": 25,
+    "frontendPassed": 261,
+    "frontendFailed": 0,
+    "pythonPassed": 5,
+    "pythonFailed": 0,
+    "strongerPersistenceTest": "20 overlapping clips saved and reloaded with full JSON equality; targeted test passed after the full suite.",
+    "redEvidence": [
+      "overlap16-red-rust.log: 5 expected failures",
+      "clip-flow: max 12 observed before fix",
+      "overlap16-refine-red.log: 3 expected failures",
+      "Python batch 16 rejected before fix"
+    ],
+    "review": "Independent read-only review found border truncation and face batch limit; both fixed and reviewed again. No additional concrete defect found."
+  },
+  "native": {
+    "fullVideo": true,
+    "segments": 334,
+    "elapsedSeconds": 278.8809982,
+    "preserved": 2,
+    "newCount": 3,
+    "generationLimit": 16,
+    "overlappingPairs": []
+  },
+  "nativeExports": [
+    {
+      "file": "C:\\CutNicePro\\app\\src-tauri\\..\\..\\.tooling\\test-output\\feedback-editorial-2026-10-25\\overlap16-v2\\whole-video\\Qwen35-Davy-01.mp4",
+      "sha256": "49240a29142c38860231e0ea10d38e49524e5df9dcb89568768c484f5b006ba4",
+      "bytes": 9981935,
+      "clip": {
+        "faceFraming": {
+          "status": "ambiguous",
+          "samples": 12
+        },
+        "id": "4bfcb374cc6e163999d61acc4fdb3257a08502508c50c271dd77b35818715689",
+        "start": 317.03999999999996,
+        "end": 405.58,
+        "title": "Battlefield 6 deixa armas e texturas erradas nos personagens",
+        "score": 89,
+        "reasons": [
+          "Proveniência: momento proposto — esses números é a quantidade de pistola que esse boneco tem — é que porra é essa de nem revisar nem revisar o bagulho",
+          "Avaliação do intervalo efetivo (humor/reação): Gancho: O hook é a expressão de frustração técnica 'Tem que dar o zoom, eu não tô...' quando um participante não consegue ver claramente os detalhes da skin do personagem no jogo, estabelecendo o problema central.; Desenvolvimento: O desenvolvimento foca na descoberta de que os objetos estranhos (textos como 'Secute', 'T-PAP') e as armas extras no modelo do personagem são bugs reais da EA, confirmados pela inspeção detalhada das imagens.; Fechamento: O fechamento é uma reação de humor e crítica final: 'De nem revisar. Nem revisar o bagulho.', que resume a incompetência da EA em deixar esses erros públicos sem tentar corrigi-los.",
+          "O hook é a expressão de frustração técnica 'Tem que dar o zoom, eu não tô...' quando um participante não consegue ver claramente os detalhes da skin do personagem no jogo, estabelecendo o problema central.",
+          "O desenvolvimento foca na descoberta de que os objetos estranhos (textos como 'Secute', 'T-PAP') e as armas extras no modelo do personagem são bugs reais da EA, confirmados pela inspeção detalhada das imagens.",
+          "O fechamento é uma reação de humor e crítica final: 'De nem revisar. Nem revisar o bagulho.', que resume a incompetência da EA em deixar esses erros públicos sem tentar corrigi-los."
+        ],
+        "review": "pending",
+        "format": "9:16",
+        "fit": "cover",
+        "analysis": {
+          "title": "Battlefield 6 deixa armas e texturas erradas nos personagens",
+          "summary": "Os participantes analisam um erro visual grave no Battlefield 6, onde skins e armas aparecem incorretamente nos personagens do modo de batalha. Após inspecionarem as imagens em tela cheia, descobrem textos estranhos como 'Secute' e quantidades exageradas de pistolas, o que gera uma piada sobre a falta de revisão da EA.",
+          "criteria": [
+            {
+              "label": "Gancho",
+              "score": 85,
+              "explanation": "O hook é a expressão de frustração técnica 'Tem que dar o zoom, eu não tô...' quando um participante não consegue ver claramente os detalhes da skin do personagem no jogo, estabelecendo o problema central.",
+              "evidence": "Opa. Mas eu não sei qual é o problema dessa aí. Tem que dar o zoom, eu não tô..."
+            },
+            {
+              "label": "Desenvolvimento",
+              "score": 90,
+              "explanation": "O desenvolvimento foca na descoberta de que os objetos estranhos (textos como 'Secute', 'T-PAP') e as armas extras no modelo do personagem são bugs reais da EA, confirmados pela inspeção detalhada das imagens.",
+              "evidence": "Não, olha no meio. Você vê que a EA, olha as armas juntadinhas ali, ó."
+            },
+            {
+              "label": "Fechamento",
+              "score": 95,
+              "explanation": "O fechamento é uma reação de humor e crítica final: 'De nem revisar. Nem revisar o bagulho.', que resume a incompetência da EA em deixar esses erros públicos sem tentar corrigi-los.",
+              "evidence": "De nem revisar. Nem revisar o bagulho."
+            }
+          ]
+        },
+        "analysisSignature": "62b865c403c61aaceca9d98c093f7e9870a2a4f3b26ef2b2c227e69b1e7bbf0a",
+        "engine": {
+          "backend": "qwen35",
+          "model": "Qwen3.5-4B-Q4_K_M.gguf",
+          "template": "qwen3.5-canonical-nothink, ctx 32768",
+          "sampling": "extração 0.4, avaliação 0.7, top_k 20, top_p 0.8, min_p 0, presence 1.5, seed 42",
+          "seed": 42
+        },
+        "createdAtMs": 1792919320087
+      },
+      "includedSpeech": "Esses números é a quantidade de pistola que esse boneco tem. Ele tem cinco pistolas. A verdade é... É o cara bem preparado para a guerra, Dava. Quanto mais arma, melhor, pô. É muito bom, né? Acabou uma pistola, a gente saca outra no peito, saca outra aqui. Um cara preparado para a guerra, pô. Então, né, tá aí. E aí, assim... Cara, será? Não, são cinco pentes. Ah, não, tem uma do lado mesmo ali. Não, é tudo arma. Dá para ver arma. Não é o pente, entendeu? Não tinha visto cabo. Pistola, assim, esquisito. São duas aqui, beleza? Dá para ver as duas aqui no peito. Duas aqui no peito. Aí duas na axila. É. É isso. Bem na axila. E uma no coldre. E lá atrás são os estendidos, os pentes. E ele ainda tem uma R4 na mão dele. A galera tá falando que são seis pistolas. Ali do lado cinco é pistola também, aquilo? É, ali no meio. É, que tá uma dentro da outra. Que loucura. Dos lados também. Então assim, cara. Porra, tu fazia pra fazer o bagulho? Pelo menos, tenta fazer direito. Não sei se tem mais, acho que não, né? Eu acho que tem mais uma imagem. Opa. Mas eu não sei qual é o problema dessa aí. Tem que dar o zoom, eu não tô... É micro imagem também, né? Rapaz, o PC, ele tá... Meu Deus! É, vamos ver se a gente dura até o fim, né? Não sei. Vai dar, vai dar. Mas é isso aí. Ah, e aí, né, galera? É isso aí que a EA costuma fazer. Mas assim, os caras não têm... Não, olha no meio. Você vê que a EA, olha as armas juntadinhas ali, ó. Tipo assim, os caras não têm o mínimo de... É, que porra é essa? De nem revisar. Nem revisar o bagulho.",
+      "ffprobe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "codec_type": "video",
+            "width": 1080,
+            "height": 1920
+          },
+          {
+            "codec_type": "audio"
+          }
+        ],
+        "format": {
+          "duration": "88.566666"
+        }
+      }
+    },
+    {
+      "file": "C:\\CutNicePro\\app\\src-tauri\\..\\..\\.tooling\\test-output\\feedback-editorial-2026-10-25\\overlap16-v2\\whole-video\\Qwen35-Davy-02.mp4",
+      "sha256": "07422813e132e28d757fb906ab4bd333dceb6752103b810d0311128796049852",
+      "bytes": 19100184,
+      "clip": {
+        "faceFraming": {
+          "status": "ambiguous",
+          "samples": 12
+        },
+        "id": "a6c3c0dc7726b2b34bfb1e14328b4cb035fd73352f414501378fda4c81476fef",
+        "start": 149.4,
+        "end": 197.8,
+        "title": "Battlefield 6: Skin com texto errado deixa jogadores confusos",
+        "score": 88,
+        "reasons": [
+          "Proveniência: momento proposto — os jogadores avistaram umas coisas estranhas no passo de batalha — era pra ser group therapy e tá t pap",
+          "Avaliação do intervalo efetivo (publicidade, relato): Gancho: O trecho inicia narrando que jogadores viram coisas estranhas em skins do Battlefield 6 e estão acusando a EA de erros com IA, estabelecendo o conflito central imediatamente.; Desenvolvimento: A discussão foca na leitura da imagem estranha ('grupo T-PAP' em vez de 'group therapy'), onde os participantes tentam decifrar o erro visual e expressam confusão sobre a intenção por trás do texto.; Fechamento: A fala final confirma que o texto 'T-PAP' está incorreto em vez de 'therapy', estabelecendo a piada/erro visual e a reação de incredulidade ('você está zoando') como desfecho da unidade narrativa sobre a skin específica.",
+          "Conteúdo promocional: prioridade secundária",
+          "O trecho inicia narrando que jogadores viram coisas estranhas em skins do Battlefield 6 e estão acusando a EA de erros com IA, estabelecendo o conflito central imediatamente.",
+          "A discussão foca na leitura da imagem estranha ('grupo T-PAP' em vez de 'group therapy'), onde os participantes tentam decifrar o erro visual e expressam confusão sobre a intenção por trás do texto.",
+          "A fala final confirma que o texto 'T-PAP' está incorreto em vez de 'therapy', estabelecendo a piada/erro visual e a reação de incredulidade ('você está zoando') como desfecho da unidade narrativa sobre a skin específica."
+        ],
+        "review": "pending",
+        "format": "9:16",
+        "fit": "cover",
+        "analysis": {
+          "title": "Battlefield 6: Skin com texto errado deixa jogadores confusos",
+          "summary": "Jogadores do Battlefield 6 encontram skins com textos errados em batalhas. Ao examinar uma imagem, descobrem que 'group therapy' foi alterado para 'T-PAP'. A equipe tenta decifrar o erro e conclui que é um texto incorreto na skin.",
+          "criteria": [
+            {
+              "label": "Gancho",
+              "score": 85,
+              "explanation": "O trecho inicia narrando que jogadores viram coisas estranhas em skins do Battlefield 6 e estão acusando a EA de erros com IA, estabelecendo o conflito central imediatamente.",
+              "evidence": "Os jogadores avistaram Umas coisas estranhas No passo de batalha De umas skins Que está sendo Eles estão acusando a EA Battlefield Studios agora De ter feito tudo"
+            },
+            {
+              "label": "Desenvolvimento",
+              "score": 90,
+              "explanation": "A discussão foca na leitura da imagem estranha ('grupo T-PAP' em vez de 'group therapy'), onde os participantes tentam decifrar o erro visual e expressam confusão sobre a intenção por trás do texto.",
+              "evidence": "Não, não, não. Lê de novo. Não, grupo T-PAP. Era pra ser group therapy, certo?"
+            },
+            {
+              "label": "Fechamento",
+              "score": 92,
+              "explanation": "A fala final confirma que o texto 'T-PAP' está incorreto em vez de 'therapy', estabelecendo a piada/erro visual e a reação de incredulidade ('você está zoando') como desfecho da unidade narrativa sobre a skin específica.",
+              "evidence": "Era pra ser therapy. Então, group T-PAP. Ah, você está zoando. Era pra ser group therapy e tá T-PAP."
+            }
+          ]
+        },
+        "analysisSignature": "d03c82e1dd3d4a4991daeba52d578d370b162e63f6191300847ce3d238481f8a",
+        "engine": {
+          "backend": "qwen35",
+          "model": "Qwen3.5-4B-Q4_K_M.gguf",
+          "template": "qwen3.5-canonical-nothink, ctx 32768",
+          "sampling": "extração 0.4, avaliação 0.7, top_k 20, top_p 0.8, min_p 0, presence 1.5, seed 42",
+          "seed": 42
+        },
+        "createdAtMs": 1792919320087
+      },
+      "includedSpeech": "Os jogadores avistaram Umas coisas estranhas No passo de batalha De umas skins Que está sendo Eles estão acusando a EA Battlefield Studios agora De ter feito tudo isso com o IA E aí por que? Você pergunta Vamos puxar as imagens aí Você tem imagem Ah, tem umas imagens Não, eu quero ver Eu quero enxergar Ele bota o acrim Ele vai chamar Vai botar a imagem na tela Bom, primeiro é esse O que está escrito ali? Não, não, não. Lê de novo. Não, grupo T-PAP. Era pra ser group therapy, certo? Era pra ser therapy. Então, group T-PAP. Ah, você está zoando. Era pra ser group therapy e tá T-PAP.",
+      "ffprobe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "codec_type": "video",
+            "width": 1080,
+            "height": 1920
+          },
+          {
+            "codec_type": "audio"
+          }
+        ],
+        "format": {
+          "duration": "48.400000"
+        }
+      }
+    },
+    {
+      "file": "C:\\CutNicePro\\app\\src-tauri\\..\\..\\.tooling\\test-output\\feedback-editorial-2026-10-25\\overlap16-v2\\whole-video\\Qwen35-Davy-03.mp4",
+      "sha256": "f3fa15c5a05be580be4c938b2d98c0a1a17bc8ff2074b9f2c4ac80e6da978a3b",
+      "bytes": 43717350,
+      "clip": {
+        "faceFraming": {
+          "status": "ambiguous",
+          "samples": 12
+        },
+        "id": "bf180d60d879c5a56018f41c91439fd09aff37666210d756549257b20f510804",
+        "start": 26.66,
+        "end": 93.22,
+        "title": "Jogadores perdem save e têm que reiniciar tudo no EAFC por bug",
+        "score": 87,
+        "reasons": [
+          "Proveniência: momento proposto — eu joguei o eafc que é medonho medonho — não é possível ele deletou você bugou o save",
+          "Avaliação do intervalo efetivo (relato): Gancho: O falante introduz o problema narrando a experiência negativa com o jogo EAFC (EA Sports FC), descrevendo-o como 'medonho' e citando que causou problemas além do próprio jogo.; Desenvolvimento: O relato detalha a falha específica: ao comprar o jogo por 400 reais, a interface de criação de personagem apresentou um erro ('Thumbnail Missing') que impediu de aplicar barba ou roupa, levando o grupo a escolher opções aleatórias.; Fechamento: A unidade narrativa se encerra com a consequência direta do bug: após o crash e a perda do progresso ('matou o save'), os jogadores tiveram que começar tudo do zero, consolidando a frustração relatada.",
+          "O falante introduz o problema narrando a experiência negativa com o jogo EAFC (EA Sports FC), descrevendo-o como 'medonho' e citando que causou problemas além do próprio jogo.",
+          "O relato detalha a falha específica: ao comprar o jogo por 400 reais, a interface de criação de personagem apresentou um erro ('Thumbnail Missing') que impediu de aplicar barba ou roupa, levando o grupo a escolher opções aleatórias.",
+          "A unidade narrativa se encerra com a consequência direta do bug: após o crash e a perda do progresso ('matou o save'), os jogadores tiveram que começar tudo do zero, consolidando a frustração relatada."
+        ],
+        "review": "pending",
+        "format": "9:16",
+        "fit": "cover",
+        "analysis": {
+          "title": "Jogadores perdem save e têm que reiniciar tudo no EAFC por bug",
+          "summary": "Um grupo de jogadores relata uma experiência ruim ao criar personagem no jogo EAFC, onde um erro técnico impediu de configurar a aparência visual. A situação culminou no jogo travar e apagar o progresso salvo.",
+          "criteria": [
+            {
+              "label": "Gancho",
+              "score": 85,
+              "explanation": "O falante introduz o problema narrando a experiência negativa com o jogo EAFC (EA Sports FC), descrevendo-o como 'medonho' e citando que causou problemas além do próprio jogo.",
+              "evidence": "Eu joguei o EAFC, que é medonho, medonho. E não só jogou como fez a mim jogar essas Desgraça também."
+            },
+            {
+              "label": "Desenvolvimento",
+              "score": 90,
+              "explanation": "O relato detalha a falha específica: ao comprar o jogo por 400 reais, a interface de criação de personagem apresentou um erro ('Thumbnail Missing') que impediu de aplicar barba ou roupa, levando o grupo a escolher opções aleatórias.",
+              "evidence": "Não é possível. Caramba, você tá zoando. Aí, sério? No jogo, 400 reais, a gente comprou o lançamento."
+            },
+            {
+              "label": "Fechamento",
+              "score": 88,
+              "explanation": "A unidade narrativa se encerra com a consequência direta do bug: após o crash e a perda do progresso ('matou o save'), os jogadores tiveram que começar tudo do zero, consolidando a frustração relatada.",
+              "evidence": "Aí a gente voltou pro jogo, matou o save, a gente teve que começar tudo de novo."
+            }
+          ]
+        },
+        "analysisSignature": "ded93684651ebf32326612cb36d4de0ecc6f572f66725de500af507c15a62578",
+        "engine": {
+          "backend": "qwen35",
+          "model": "Qwen3.5-4B-Q4_K_M.gguf",
+          "template": "qwen3.5-canonical-nothink, ctx 32768",
+          "sampling": "extração 0.4, avaliação 0.7, top_k 20, top_p 0.8, min_p 0, presence 1.5, seed 42",
+          "seed": 42
+        },
+        "createdAtMs": 1792919320087
+      },
+      "includedSpeech": "Eu joguei o EAFC, que é medonho, medonho. E não só jogou como fez a mim jogar essas Desgraça também. A gente fez uma live aqui, foi um transtorno, terrível. Foi muito engraçado quando eu cheguei aqui e ouvi o personagem levantando a taça, cara. Isso é muito bom, a taça não tá na mão dele. Isso é o de menos que a gente viu naquele dia. Tu não viu, a gente entrou em uma sala, olha só essa sequência. Primeiro que o jogo tem loads infinitos entre qualquer coisa. Você muda o menu, fica carregando. Absurdo, absurdo. Aí a gente entrou mal e começou a fazer o personagem. Que, tchau lá, faça o personagem. Aí o Caio tava mexendo, não sei o quê. Chegou numa parte que era botar barba. Ele foi descendo, assim, as opções de barba. Aparece na tela dois quadradinhos que eram botar barba escrito Thumbnail Missing. Não é possível. Caramba, você tá zoando. Aí, sério? No jogo, 400 reais, a gente comprou o lançamento. Eu paguei, tá? Eu comprei esse jogo. Os caras não oparam a Thumbnail do personagem, pô. Aí o Caio, beleza. Aí a gente escolheu outra barba, não sei o quê. fomos passar pra botar roupa, sei lá. O jogo crashou no Playstation. Aí a gente voltou pro jogo, matou o save, a gente teve que começar tudo de novo.",
+      "ffprobe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "codec_type": "video",
+            "width": 1080,
+            "height": 1920
+          },
+          {
+            "codec_type": "audio"
+          }
+        ],
+        "format": {
+          "duration": "66.566667"
+        }
+      }
+    }
+  ],
+  "nativeVerdict": "FAIL: 3 results, 0 overlapping pairs; required >=4 episodes not met. T-PAP also still ends without the later explanation. Persistence/reload/previous lab records/export passed before the editorial assertion.",
+  "interruptedAttempt": "overlap16-v1 interrupted with Ctrl+C after review found temporal refinement and face batch issues, before completion. No orphan inference process remained.",
+  "promptControl": {
+    "elapsedSeconds": 30.89100000000326,
+    "segments": 334,
+    "fullTranscript": true,
+    "result": {
+      "clips": [
+        {
+          "title": "EAFC bug: barra de cabelo sem thumbnail",
+          "openingQuote": "Aparece na tela dois quadradinhos que eram botar barba escrito Thumbnail Missing.",
+          "closingQuote": "Não é possível. Ele deletou, você bugou o save?"
+        },
+        {
+          "title": "Battlefield 6: Group Therapy vira T-PAP",
+          "openingQuote": "Era pra ser group therapy, certo? Era pra ser therapy.",
+          "closingQuote": "Mas não é possível que vocês deixaram passar aí."
+        },
+        {
+          "title": "Skin do Battlefield com 5 pistolas no corpo",
+          "openingQuote": "Esses números é a quantidade de pistola que esse boneco tem.",
+          "closingQuote": "Ele tem cinco pistolas. É o cara bem preparado para a guerra."
+        },
+        {
+          "title": "EAFC: Crash e perda do save",
+          "openingQuote": "O jogo crashou no Playstation. Aí a gente voltou pro jogo.",
+          "closingQuote": "matou o save, a gente teve que começar tudo de novo."
+        },
+        {
+          "title": "Reação ao PC barulhento durante a live",
+          "openingQuote": "Eu já ouço a buzina do Dinera e já dá uma ansiedade aqui, brincadeira.",
+          "closingQuote": "É meu, o Fernandinho tá só rachando o barulho."
+        }
+      ]
+    }
+  },
+  "promptControlVerdict": "Not adopted: 5 proposals, an altered closing quote and a PC proposal connecting unrelated distant speech beyond 180 s. No editorial improvement established.",
+  "limits": [
+    "Overlapping publication verified deterministically; model did not propose surviving overlapping versions in this whole-video run.",
+    "Normal maintainer library not written; four clips preserved.",
+    "No claim of Opus-equivalent quality or 16 guaranteed clips.",
+    "Normal build updated; GUI validation belongs to maintainer."
+  ],
+  "build": {
+    "path": "C:/CutNicePro/app/src-tauri/target/debug/cutnicepro.exe",
+    "sha256": "deb570a5dfce103c7ba47ae33cb21dbe9461343b7b34b70b9bb0e4f87829e13b"
+  }
+}

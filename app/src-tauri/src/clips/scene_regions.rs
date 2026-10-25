@@ -92,6 +92,11 @@ pub fn refine(
         })?;
         values
     };
+    apply_scene_times(clips, speech, &times, options);
+    Ok(())
+}
+
+fn apply_scene_times(clips: &mut [Clip], speech: &[Segment], times: &[f64], options: &Options) {
     for i in 0..clips.len() {
         let clip = &clips[i];
         let start = times
@@ -114,23 +119,27 @@ pub fn refine(
             })
             .min_by(f64::total_cmp)
             .unwrap_or(clip.end);
-        if end - start <= options.max_seconds
-            && end - start >= options.min_seconds
-            && clips
-                .iter()
-                .enumerate()
-                .all(|(j, other)| i == j || start >= other.end || end <= other.start)
-        {
+        if end - start <= options.max_seconds && end - start >= options.min_seconds {
             clips[i].start = start;
             clips[i].end = end;
         }
     }
-    Ok(())
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn scene_snap_preserves_independent_overlapping_versions() {
+        let mut clips: Vec<Clip> = [(10.0,30.0),(20.0,40.0)].into_iter().enumerate().map(|(i,(start,end))|serde_json::from_value(serde_json::json!({"id":i.to_string(),"start":start,"end":end,"title":"Versão completa","score":80,"reasons":[],"review":"pending"})).unwrap()).collect();
+        let options: Options = serde_json::from_value(
+            serde_json::json!({"minSeconds":10,"maxSeconds":180,"count":16}),
+        )
+        .unwrap();
+        apply_scene_times(&mut clips, &[], &[9.5, 19.5, 30.5, 40.5], &options);
+        assert_eq!((clips[0].start, clips[0].end), (9.5, 30.5));
+        assert_eq!((clips[1].start, clips[1].end), (19.5, 40.5));
+    }
     #[test]
     fn short_regions_stay_near_candidates_instead_of_scanning_entire_video() {
         let clip = Clip {
