@@ -130,8 +130,17 @@ fn whole_video_after_manual_feedback() {
         .cloned()
         .collect::<Vec<_>>();
     assert!(fresh.len() <= options.count);
+    let generation_only = std::env::var("CNP_FEEDBACK_GENERATE_ONLY").as_deref() == Ok("1");
+    let generated = fresh
+        .iter()
+        .map(|clip| serde_json::json!({"clip":clip,"includedSpeech":super::semantic::source(clip,&transcript.segments)}))
+        .collect::<Vec<_>>();
+    std::fs::write(
+        base.join("generated-clips.json"),
+        serde_json::to_vec_pretty(&serde_json::json!({"scope":"Real generation::run, persistence and reopened data; not a UI test","generationOnly":generation_only,"clips":generated})).unwrap(),
+    ).unwrap();
     let mut exports = Vec::new();
-    for (index, clip) in fresh.iter().enumerate() {
+    for (index, clip) in fresh.iter().enumerate().filter(|_| !generation_only) {
         assert_eq!(clip.fit.as_deref(), Some("cover"));
         let focal = clip
             .face_framing
@@ -167,7 +176,7 @@ fn whole_video_after_manual_feedback() {
                 .map(move |b| serde_json::json!([a.id, b.id]))
         })
         .collect::<Vec<_>>();
-    std::fs::write(base.join("result.json"),serde_json::to_vec_pretty(&serde_json::json!({"fullVideo":true,"segments":transcript.segments.len(),"elapsedSeconds":started.elapsed().as_secs_f64(),"preserved":previous.clips.len(),"newCount":fresh.len(),"generationLimit":options.count,"overlappingPairs":overlaps,"exports":exports})).unwrap()).unwrap();
+    std::fs::write(base.join("result.json"),serde_json::to_vec_pretty(&serde_json::json!({"fullVideo":true,"segments":transcript.segments.len(),"elapsedSeconds":started.elapsed().as_secs_f64(),"preserved":previous.clips.len(),"newCount":fresh.len(),"generationLimit":options.count,"generationOnly":generation_only,"overlappingPairs":overlaps,"exports":exports})).unwrap()).unwrap();
     assert!(
         fresh.len() >= 4,
         "esta fonte ainda ficou abaixo de quatro episódios úteis: {}",
@@ -182,6 +191,236 @@ fn whole_video_after_manual_feedback() {
         therapy.contains("não revisaram") && therapy.contains("tudo errado"),
         "o corte ainda perdeu a explicação e sua conclusão: {therapy}"
     );
+}
+
+#[test]
+#[ignore = "auditoria de propostas reais preservadas, com avaliação e reparo locais reais; não publica no perfil do mantenedor"]
+fn audits_recorded_discovery_pool_with_real_editorial_stages() {
+    let (root, transcript, _) = inputs();
+    let directory = scratch("recorded-pool");
+    let engine = Engine::discover(&root, Quality::Qwen35).unwrap();
+    let options = serde_json::from_value::<GenerateOptions>(
+        serde_json::json!({"automatic":true,"format":"9:16","fit":"cover"}),
+    )
+    .unwrap()
+    .resolve()
+    .unwrap();
+    let lab = root.join("../editorial-stories-2026-10-25");
+    let cases = [
+        "goal-seed-43",
+        "goal-seed-44",
+        "goal-local-decoder-1",
+        "goal-local-decoder-2",
+    ];
+    let mut candidates = Vec::new();
+    let mut failures = Vec::new();
+    for case in cases {
+        let output = std::fs::read_to_string(lab.join(case).join("output.txt")).unwrap();
+        let decoded =
+            super::discovery_reply::decode_with_feedback(&output, &transcript.segments).unwrap();
+        candidates.extend(decoded.candidates);
+        failures.extend(decoded.failures);
+    }
+    let rejected = std::cell::RefCell::new(Vec::new());
+    let evaluate = |pending: &[super::types::Clip], _: &[crate::transcription::types::Segment]| {
+        let judgments = assessment::evaluate(
+            &engine,
+            &directory,
+            pending,
+            &transcript.segments,
+            &ProcessControl::default(),
+        )?;
+        editorial_repair::remember_rejections(&mut rejected.borrow_mut(), pending, &judgments);
+        Ok(judgments)
+    };
+    let started = std::time::Instant::now();
+    let proposed = candidates.len();
+    let mut chosen = super::selection::resolve(
+        &[(0..transcript.segments.len(), candidates)],
+        &transcript.segments,
+        &transcript.media_id,
+        599.098,
+        &options,
+        &evaluate,
+    )
+    .unwrap();
+    let mut budget = 3;
+    let repaired = editorial_repair::recover(
+        &engine,
+        &directory,
+        &rejected.borrow(),
+        &transcript.segments,
+        &transcript.media_id,
+        &options,
+        &ProcessControl::default(),
+        &mut budget,
+    )
+    .unwrap();
+    let originals = repaired
+        .iter()
+        .map(|r| (r.clip.id.clone(), r.original))
+        .collect();
+    let mut repaired: Vec<_> = repaired.into_iter().map(|r| r.clip).collect();
+    super::editorial::recheck_adjusted(&mut repaired, &originals, &transcript.segments, &evaluate)
+        .unwrap();
+    super::editorial::retain_analyzed_complete(&mut repaired);
+    chosen.extend(repaired);
+    chosen = super::selection::finalize_prioritized(chosen, options.count, true, 0);
+    let values = chosen.iter().map(|clip| serde_json::json!({"clip":clip,"includedSpeech":super::semantic::source(clip,&transcript.segments)})).collect::<Vec<_>>();
+    std::fs::write(directory.join("result.json"),serde_json::to_vec_pretty(&serde_json::json!({
+        "scope":"Recorded real discovery outputs replayed through native selection, real local assessment and repair; NOT a fresh generation::run, NOT UI, NOT a normal library publication",
+        "cases":cases,"fullTranscriptEveryAssessment":true,"segments":transcript.segments.len(),
+        "proposed":proposed,"locationFailures":failures,"selected":chosen.len(),"clips":values,
+        "elapsedSeconds":started.elapsed().as_secs_f64()})).unwrap()).unwrap();
+}
+
+#[test]
+#[ignore = "localiza uma resposta salva na fonte integral, sem inferência, avaliação editorial ou publicação"]
+fn ground_saved_discovery_without_model_calls() {
+    use sha2::Digest;
+    use std::io::Write;
+
+    let workspace = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+        .join("../..")
+        .canonicalize()
+        .unwrap();
+    let allowed = workspace
+        .join(".tooling/test-output")
+        .canonicalize()
+        .unwrap();
+    let input =
+        PathBuf::from(std::env::var("CNP_GROUNDING_RAW").expect("CNP_GROUNDING_RAW ausente"))
+            .canonicalize()
+            .unwrap();
+    assert!(input.starts_with(&allowed) && input.is_file());
+    assert!(std::fs::metadata(&input).unwrap().len() <= 131_072);
+    let explicit_transcript = std::env::var_os("CNP_GROUNDING_TRANSCRIPT");
+    let transcript_path = explicit_transcript
+        .as_ref()
+        .map(PathBuf::from)
+        .unwrap_or_else(|| {
+            allowed.join("pipelines-comparados-2026-10-24/corpus/davyjones-transcript.json")
+        })
+        .canonicalize()
+        .unwrap();
+    assert!(transcript_path.starts_with(&allowed));
+    let transcript: Transcript =
+        serde_json::from_slice(&std::fs::read(&transcript_path).unwrap()).unwrap();
+    let duration = 599.098;
+    if explicit_transcript.is_none() {
+        assert_eq!(transcript.segments.len(), 334);
+    }
+    crate::transcription::parser::validate(&transcript.segments, duration).unwrap();
+    let options = serde_json::from_value::<GenerateOptions>(
+        serde_json::json!({"automatic":true,"format":"9:16","fit":"cover"}),
+    )
+    .unwrap()
+    .resolve()
+    .unwrap();
+    let raw = std::fs::read_to_string(&input).unwrap();
+    let decoded = super::discovery_reply::decode_with_feedback(&raw, &transcript.segments);
+    let parse_error = decoded.as_ref().err().cloned();
+    let location_failures = decoded
+        .as_ref()
+        .map(|reply| reply.failures.clone())
+        .unwrap_or_default();
+    let candidates = decoded.map(|reply| reply.candidates).unwrap_or_default();
+    let localized = candidates.len();
+    let mut conform_rejected = 0;
+    let mut refined_in_range = 0;
+    let mut rows = Vec::new();
+    for candidate in candidates {
+        let source = &transcript.segments[candidate.first_id..=candidate.last_id];
+        let bounds = candidate
+            .quote_bounds
+            .unwrap_or((source[0].start, source.last().unwrap().end.min(duration)));
+        let invalid_duration =
+            bounds.1 - bounds.0 < options.min_seconds || bounds.1 - bounds.0 > options.max_seconds;
+        let mut row = serde_json::json!({
+            "candidate":{"firstId":candidate.first_id,"lastId":candidate.last_id,
+                "quoteBounds":candidate.quote_bounds,"resolvedBounds":bounds,"sourceQuotes":candidate.moment},
+            "sourceSegmentText":source.iter().map(|segment|segment.text.as_str()).collect::<Vec<_>>().join("\n"),
+            "requestedFit":options.fit,"invalidDurationBeforeConform":invalid_duration,
+            "editorialStatus":"NOT ASSESSED"
+        });
+        match super::selection::conform(
+            candidate,
+            &transcript.segments,
+            &transcript.media_id,
+            duration,
+            &options,
+        ) {
+            Ok(mut contender) => {
+                row["conformStatus"] = serde_json::json!("PASS");
+                row["conformedClip"] = serde_json::json!({"clip":contender.clip,
+                    "includedSpeech":super::semantic::source(&contender.clip,&transcript.segments)});
+                let refined = super::borders::refine_boundaries(
+                    contender.clip.start,
+                    contender.clip.end,
+                    &transcript.segments,
+                    &[],
+                    options.min_seconds,
+                    None,
+                    None,
+                    duration,
+                );
+                contender.clip.start = refined.start;
+                contender.clip.end = refined.end;
+                contender.clip.id = super::types::identity(
+                    &transcript.media_id,
+                    refined.start,
+                    refined.end,
+                    contender.clip.format.as_deref(),
+                );
+                let invalid_refined_duration = refined.end - refined.start < options.min_seconds
+                    || refined.end - refined.start > options.max_seconds;
+                refined_in_range += usize::from(!invalid_refined_duration);
+                row["refinedClip"] = serde_json::json!({"clip":contender.clip,"operations":refined.ops,
+                    "includedSpeech":super::semantic::source(&contender.clip,&transcript.segments),
+                    "invalidDuration":invalid_refined_duration});
+            }
+            Err(_) => {
+                conform_rejected += 1;
+                row["conformStatus"] = serde_json::json!("REJECTED");
+                row["refinedClip"] = serde_json::Value::Null;
+            }
+        }
+        rows.push(row);
+    }
+    let audit = serde_json::json!({
+        "scope":"Native localization, conform and deterministic borders only; no inference, editorial assessment, export or publication",
+        "parseStatus":if parse_error.is_none(){"PASS"}else{"FAIL"},"parseError":parse_error,
+        "editorialStatus":"NOT ASSESSED","published":false,"exported":false,
+        "input":input.strip_prefix(&workspace).unwrap().to_string_lossy(),
+        "inputSha256":format!("{:x}",sha2::Sha256::digest(raw.as_bytes())),
+        "transcript":transcript_path.strip_prefix(&workspace).unwrap().to_string_lossy(),
+        "segments":transcript.segments.len(),"durationSeconds":duration,
+        "minSeconds":options.min_seconds,"maxSeconds":options.max_seconds,
+        "localizedCandidates":localized,"locationFailures":location_failures,
+        "conformRejected":conform_rejected,"conformed":localized-conform_rejected,
+        "refinedWithinDuration":refined_in_range,"candidates":rows
+    });
+    let output = input
+        .parent()
+        .unwrap()
+        .join(format!("native-grounding-{}.json", uuid::Uuid::new_v4()));
+    let mut file = std::fs::OpenOptions::new()
+        .write(true)
+        .create_new(true)
+        .open(&output)
+        .unwrap();
+    file.write_all(&serde_json::to_vec_pretty(&audit).unwrap())
+        .unwrap();
+    file.sync_all().unwrap();
+    let reread: serde_json::Value =
+        serde_json::from_slice(&std::fs::read(&output).unwrap()).unwrap();
+    assert_eq!(reread, audit);
+    eprintln!("[grounding] {}", output.display());
+    eprintln!(
+        "[grounding] localizados={localized}; conformados={}; refinados_na_faixa={refined_in_range}",
+        localized - conform_rejected
+    );
+    assert!(audit["parseError"].is_null(), "{}", audit["parseError"]);
 }
 
 #[test]
@@ -318,7 +557,8 @@ fn repair_has_the_complete_source_and_does_not_end_on_a_promised_explanation() {
         &mut budget,
     )
     .unwrap();
-    let prompt = std::fs::read_to_string(scratch.join("repair-0-prompt.txt")).unwrap();
+    let prompt =
+        std::fs::read_to_string(scratch.join("repair-0-call-0000/repair-0-prompt.txt")).unwrap();
     let source = transcript
         .segments
         .iter()

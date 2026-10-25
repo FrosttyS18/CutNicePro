@@ -107,6 +107,18 @@ pub fn apply(clip: &mut Clip, judgment: &Evaluation) {
     }
 }
 
+fn schema(quote_count: usize) -> serde_json::Value {
+    let mut analysis_schema = evidence::schema(quote_count);
+    analysis_schema["properties"]["closing"]["properties"]["evidenceId"]["enum"] =
+        serde_json::json!([quote_count - 1]);
+    serde_json::json!({"type":"object","additionalProperties":false,
+        "required":["openingStatus","endingStatus","nature","advertising","analysis"],
+        "properties":{"openingStatus":{"type":"string","enum":["assuntoApresentado","referentesEsclarecidosNoIntervalo","contextoAusente"]},
+        "endingStatus":{"type":"string","enum":["consequenciaOuReacaoDoMesmoEpisodio","respostaOuExplicacaoConcluida","observacaoConcluidaDoMesmoAssunto","falaInterrompida","perguntaPendente","novoAssunto"]},
+        "nature":{"type":"string","enum":["relato","humor","explicacao","opiniao","demonstracao"]},
+        "advertising":{"type":"boolean"},"analysis":analysis_schema}})
+}
+
 pub fn evaluate(
     engine: &Engine,
     scratch: &Path,
@@ -125,15 +137,7 @@ pub fn evaluate(
         let data = serde_json::json!({"start":clip.start,"end":clip.end,
             "speech":speech.iter().map(|s|s.text.as_str()).collect::<Vec<_>>().join("\n"),
             "quotes":quotes.iter().enumerate().map(|(id,text)|serde_json::json!({"id":id,"text":text})).collect::<Vec<_>>()});
-        let mut analysis_schema = evidence::schema(quotes.len());
-        analysis_schema["properties"]["closing"]["properties"]["evidenceId"]["enum"] =
-            serde_json::json!([quotes.len() - 1]);
-        let schema = serde_json::json!({"type":"object","additionalProperties":false,
-            "required":["openingStatus","endingStatus","nature","advertising","analysis"],
-            "properties":{"openingStatus":{"type":"string","enum":["assuntoApresentado","referentesEsclarecidosNoIntervalo","contextoAusente"]},
-            "endingStatus":{"type":"string","enum":["consequenciaOuReacaoDoMesmoEpisodio","respostaOuExplicacaoConcluida","observacaoConcluidaDoMesmoAssunto","falaInterrompida","perguntaPendente","novoAssunto"]},
-            "nature":{"type":"string","enum":["relato","humor","explicacao","opiniao","demonstracao"]},
-            "advertising":{"type":"boolean"},"analysis":analysis_schema}});
+        let schema = schema(quotes.len());
         let prompt = engine.prompt(include_str!("evaluate-prompt.txt"), &data)?;
         if engine.count_tokens(scratch, &prompt)? > super::engine_tools::CONTEXT_TOKENS - 1728 {
             return Err("A transcrição completa e o trecho excedem o contexto disponível para avaliação. Nenhum texto foi dividido ou truncado.".into());
@@ -158,6 +162,10 @@ pub fn evaluate(
     }
     Ok(results)
 }
+
+#[cfg(test)]
+#[path = "assessment_context_tests.rs"]
+mod context_tests;
 
 #[cfg(test)]
 mod tests {

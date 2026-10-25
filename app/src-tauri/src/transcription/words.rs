@@ -29,6 +29,18 @@ pub fn clean_text(text: &str) -> String {
         .join(" ")
 }
 
+pub fn reconstructs_text(text: &str, words: &[Word]) -> bool {
+    !words.is_empty()
+        && clean_text(text)
+            == clean_text(
+                &words
+                    .iter()
+                    .map(|word| word.text.as_str())
+                    .collect::<Vec<_>>()
+                    .join(" "),
+            )
+}
+
 pub fn from_tokens(tokens: Vec<Token>, start: f64, end: f64) -> Vec<Word> {
     let mut groups: Vec<(String, Option<(f64, f64)>)> = Vec::new();
     let mut space = false;
@@ -96,6 +108,32 @@ pub fn from_tokens(tokens: Vec<Token>, start: f64, end: f64) -> Vec<Word> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn reconstruction_accepts_only_complete_cleaned_text() {
+        let words = vec![
+            Word {
+                text: "Olá,".into(),
+                start: 0.0,
+                end: 0.5,
+            },
+            Word {
+                text: "mundo!".into(),
+                start: 0.5,
+                end: 1.0,
+            },
+        ];
+        assert!(reconstructs_text(" —Olá,\n  mundo! ", &words));
+        for text in [
+            "Olá, mundo! fim",
+            "mundo! Olá,",
+            "olá, mundo!",
+            "Olá, mundo",
+        ] {
+            assert!(!reconstructs_text(text, &words));
+        }
+        assert!(!reconstructs_text("Olá, mundo!", &[]));
+    }
+
     #[test]
     fn zero_length_boundary_does_not_join_following_words() {
         let tokens = serde_json::from_str(r#"[{"text":" Olá","offsets":{"from":100,"to":500}},{"text":" a","offsets":{"from":600,"to":600}},{"text":"gora","offsets":{"from":600,"to":1000}},{"text":" mundo","offsets":{"from":1300,"to":1900}}]"#).unwrap();

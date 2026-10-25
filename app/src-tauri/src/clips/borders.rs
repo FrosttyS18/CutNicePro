@@ -38,6 +38,12 @@ fn ends_sentence(text: &str) -> bool {
     }
 }
 
+fn lexical_words(text: &str) -> impl Iterator<Item = String> + '_ {
+    text.split(|c: char| !c.is_alphanumeric())
+        .filter(|word| !word.is_empty())
+        .map(str::to_lowercase)
+}
+
 /** Frases como (início_palavra, fim_palavra, texto) em [from, to] da mídia. */
 fn sentence_units(speech: &[Segment], from: f64, to: f64) -> Vec<(f64, f64, String)> {
     let punctuated = speech
@@ -85,6 +91,25 @@ fn sentence_units(speech: &[Segment], from: f64, to: f64) -> Vec<(f64, f64, Stri
             if ends_sentence(&word.text) {
                 flush(&mut current, &mut units);
             }
+        }
+        if ends_sentence(&segment.text) && !current.is_empty() {
+            let words_match_text = lexical_words(&segment.text).eq(segment
+                .words
+                .iter()
+                .flat_map(|word| lexical_words(&word.text)));
+            let end = if words_match_text {
+                current.last().unwrap().end
+            } else {
+                segment.end
+            };
+            let mut text = current
+                .iter()
+                .map(|word| word.text.as_str())
+                .collect::<Vec<_>>()
+                .join(" ");
+            text.push(segment.text.trim_end().chars().last().unwrap());
+            units.push((current[0].start, end, text));
+            current.clear();
         }
     }
     flush(&mut current, &mut units);
@@ -349,6 +374,72 @@ mod tests {
         )];
         let refined = refine_boundaries(0.0, 15.0, &speech, &[], 3.0, None, None, 25.0);
         assert_eq!(refined.end, 18.0);
+    }
+
+    #[test]
+    fn a_truncated_word_list_does_not_attach_the_next_interrupted_sentence() {
+        let speech = vec![
+            seg(
+                0.0,
+                8.0,
+                "Eu vi o erro.",
+                vec![
+                    ("Eu", 0.0, 1.0),
+                    ("vi", 1.0, 2.0),
+                    ("o", 2.0, 3.0),
+                    ("erro.", 3.0, 8.0),
+                ],
+            ),
+            seg(
+                8.0,
+                12.0,
+                "Não sei qual é o problema dessa imagem.",
+                vec![
+                    ("Não", 8.0, 8.2),
+                    ("sei", 8.2, 8.4),
+                    ("qual", 8.4, 8.6),
+                    ("é", 8.6, 8.8),
+                    ("o", 8.8, 9.0),
+                    ("problema", 9.0, 10.0),
+                    ("dessa", 10.0, 11.0),
+                ],
+            ),
+            seg(
+                12.02,
+                14.0,
+                "Tem que ampliar, eu não tô...",
+                vec![
+                    ("Tem", 12.02, 12.5),
+                    ("que ampliar,", 12.5, 13.0),
+                    ("eu não tô...", 13.0, 14.0),
+                ],
+            ),
+        ];
+        let refined = refine_boundaries(0.0, 12.0, &speech, &[], 3.0, None, None, 14.0);
+        assert_eq!(refined.end, 12.0);
+        assert_eq!(speech[1].words.last().unwrap().end, 11.0);
+        assert_eq!(speech[1].text, "Não sei qual é o problema dessa imagem.");
+    }
+
+    #[test]
+    fn missing_terminal_punctuation_preserves_the_complete_word_timing() {
+        let speech = vec![seg(
+            0.0,
+            30.0,
+            "A tarefa terminou com sucesso.",
+            vec![
+                ("A", 0.0, 1.0),
+                ("tarefa", 1.0, 2.0),
+                ("terminou", 2.0, 3.0),
+                ("com", 3.0, 4.0),
+                ("sucesso", 4.0, 5.0),
+            ],
+        )];
+        let refined = refine_boundaries(0.0, 5.0, &speech, &[], 3.0, None, None, 30.0);
+        assert_eq!(refined.end, 5.0);
+        assert!(refined.end - refined.start <= 15.0);
+        assert_eq!(speech[0].end, 30.0);
+        assert_eq!(speech[0].words.last().unwrap().text, "sucesso");
     }
 
     #[test]

@@ -5,8 +5,7 @@ use serde::Deserialize;
 #[derive(Deserialize)]
 #[serde(rename_all = "camelCase", deny_unknown_fields)]
 pub struct Draft {
-    #[serde(rename = "title")]
-    _title: String,
+    title: String,
     opening_quote: String,
     closing_quote: String,
 }
@@ -18,15 +17,14 @@ fn words(text: &str) -> Vec<String> {
         .collect()
 }
 
-#[cfg(test)]
 pub fn quote_bounds(opening: &str, closing: &str, speech: &[Segment]) -> Option<(f64, f64)> {
     let source: Vec<_> = speech
         .iter()
         .enumerate()
         .flat_map(|(id, s)| words(&s.text).into_iter().map(move |word| (word, id)))
         .collect();
-    let first = locate(opening, &source)?;
-    let last = locate(closing, &source)?;
+    let first = locate(opening, &source).ok()?;
+    let last = locate(closing, &source).ok()?;
     if first.0 > last.0 || first.1 > last.1 {
         return None;
     }
@@ -35,7 +33,6 @@ pub fn quote_bounds(opening: &str, closing: &str, speech: &[Segment]) -> Option<
     (start.is_finite() && end.is_finite() && start >= 0.0 && start < end).then_some((start, end))
 }
 
-#[cfg(test)]
 fn timed_edge(
     index: usize,
     end: bool,
@@ -57,7 +54,12 @@ fn timed_edge(
         .collect();
     if timed.iter().map(|(text, _, _)| text).eq(expected.iter()) {
         let (_, start, stop) = timed.get(offset)?;
-        if *start < segment.start || *stop > segment.end || start > stop {
+        if !start.is_finite()
+            || !stop.is_finite()
+            || *start < segment.start
+            || *stop > segment.end
+            || start >= stop
+        {
             return None;
         }
         return Some(if end { *stop } else { *start });
@@ -71,10 +73,27 @@ fn timed_edge(
     }
 }
 
-fn locate(quote: &str, source: &[(String, usize)]) -> Option<(usize, usize, usize, usize)> {
+enum LocationFailure {
+    Missing,
+    Ambiguous,
+}
+
+impl LocationFailure {
+    fn description(&self) -> &'static str {
+        match self {
+            Self::Missing => "citação ausente ou insuficiente para localização na transcrição",
+            Self::Ambiguous => "citação ambígua na transcrição",
+        }
+    }
+}
+
+fn locate(
+    quote: &str,
+    source: &[(String, usize)],
+) -> Result<(usize, usize, usize, usize), LocationFailure> {
     let needle = words(quote);
     if needle.len() < 4 || needle.len() > source.len() {
-        return None;
+        return Err(LocationFailure::Missing);
     }
     let mut matches = source
         .windows(needle.len())
@@ -87,17 +106,17 @@ fn locate(quote: &str, source: &[(String, usize)]) -> Option<(usize, usize, usiz
         });
     if let Some((index, found)) = matches.next() {
         if matches.next().is_some() {
-            return None;
+            return Err(LocationFailure::Ambiguous);
         }
-        return Some((
+        return Ok((
             index,
             index + needle.len() - 1,
-            found.first()?.1,
-            found.last()?.1,
+            found.first().ok_or(LocationFailure::Missing)?.1,
+            found.last().ok_or(LocationFailure::Missing)?.1,
         ));
     }
     if !(8..=40).contains(&needle.len()) {
-        return None;
+        return Err(LocationFailure::Missing);
     }
     let budget = (needle.len() / 5).min(2);
     let mut best: Option<(usize, usize, usize)> = None;
@@ -109,21 +128,23 @@ fn locate(quote: &str, source: &[(String, usize)]) -> Option<(usize, usize, usiz
             let Some(window) = source.get(index..index + length) else {
                 continue;
             };
-            if window.last()?.0 != *needle.last()? {
+            if window.last().ok_or(LocationFailure::Missing)?.0
+                != *needle.last().ok_or(LocationFailure::Missing)?
+            {
                 continue;
             }
             let Some(distance) = copy_distance(&needle, window, budget) else {
                 continue;
             };
             if best.is_some() {
-                return None;
+                return Err(LocationFailure::Ambiguous);
             }
             best = Some((distance, index, length));
         }
     }
-    let (distance, index, length) = best?;
+    let (distance, index, length) = best.ok_or(LocationFailure::Missing)?;
     eprintln!("[clips] citação localizada com {distance} ajuste(s) de cópia; fonte preservada");
-    Some((
+    Ok((
         index,
         index + length - 1,
         source[index].1,
@@ -151,28 +172,57 @@ fn copy_distance(needle: &[String], source: &[(String, usize)], budget: usize) -
         .filter(|distance| *distance <= budget)
 }
 
-pub fn resolve(drafts: Vec<Draft>, speech: &[Segment]) -> Vec<Candidate> {
+pub fn resolve_with_feedback(
+    drafts: Vec<Draft>,
+    speech: &[Segment],
+) -> super::discovery_reply::Decoded {
     let source: Vec<_> = speech
         .iter()
         .enumerate()
         .flat_map(|(id, s)| words(&s.text).into_iter().map(move |word| (word, id)))
         .collect();
-    drafts
-        .into_iter()
-        .filter_map(|draft| {
-            let Some((first, last)) =
-                locate(&draft.opening_quote, &source).zip(locate(&draft.closing_quote, &source))
-            else {
-                eprintln!(
-                    "[clips] proposta recusada: citações ausentes ou ambíguas na transcrição"
+    let mut candidates = Vec::new();
+    let mut failures = Vec::new();
+    for (index, draft) in drafts.into_iter().enumerate() {
+        let mut locate_edge = |field: &str, quote: &str| match locate(quote, &source) {
+            Ok(found) => Some(found),
+            Err(reason) => {
+                let failure = format!(
+                    "Proposta {} recusada: {field}, {}. DADOS: {}",
+                    index + 1,
+                    reason.description(),
+                    serde_json::json!({"title":&draft.title,field:quote})
                 );
-                return None;
-            };
-            if first.0 > last.0 || first.1 > last.1 {
-                eprintln!("[clips] proposta recusada: fechamento anterior à abertura na fonte");
-                return None;
+                eprintln!(
+                    "[clips] proposta {} recusada: {field}, {}",
+                    index + 1,
+                    reason.description()
+                );
+                failures.push(failure);
+                None
             }
-            Some(Candidate {
+        };
+        let first = locate_edge("openingQuote", &draft.opening_quote);
+        let last = locate_edge("closingQuote", &draft.closing_quote);
+        if let Some((first, last)) = first.zip(last) {
+            if first.0 > last.0 || first.1 > last.1 {
+                let failure = format!(
+                    "Proposta {} recusada: fechamento anterior à abertura na fonte. DADOS: {}",
+                    index + 1,
+                    serde_json::json!({"title":&draft.title,"openingQuote":&draft.opening_quote,"closingQuote":&draft.closing_quote})
+                );
+                eprintln!(
+                    "[clips] proposta {} recusada: fechamento anterior à abertura na fonte",
+                    index + 1
+                );
+                failures.push(failure);
+                continue;
+            }
+            let quote_bounds = quote_bounds(&draft.opening_quote, &draft.closing_quote, speech);
+            if quote_bounds.is_none() {
+                eprintln!("[clips] citações sem alinhamento temporal confiável; limites dos segmentos preservados");
+            }
+            candidates.push(Candidate {
                 moment: format!(
                     "{} — {}",
                     source[first.0..=first.1]
@@ -189,9 +239,14 @@ pub fn resolve(drafts: Vec<Draft>, speech: &[Segment]) -> Vec<Candidate> {
                 first_id: first.2,
                 last_id: last.3,
                 score: 0,
-            })
-        })
-        .collect()
+                quote_bounds,
+            });
+        }
+    }
+    super::discovery_reply::Decoded {
+        candidates,
+        failures,
+    }
 }
 
 pub fn schema(limit: usize) -> serde_json::Value {

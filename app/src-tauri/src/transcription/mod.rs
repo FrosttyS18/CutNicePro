@@ -23,4 +23,6 @@ mod benchmark_contract;
 #[cfg(test)]
 mod refinement_contract;
 #[cfg(test)]
+mod source_audit_contract;
+#[cfg(test)]
 mod tests;

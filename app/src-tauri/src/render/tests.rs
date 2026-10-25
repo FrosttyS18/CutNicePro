@@ -77,6 +77,94 @@ fn offsets_real_word_times_and_escapes_subtitle_control_sequences() {
     assert!(!ass.contains("{\\move("));
 }
 #[test]
+fn incomplete_word_timings_keep_the_full_canonical_caption_without_fake_karaoke() {
+    let segments = vec![Segment {
+        id: "source".into(),
+        start: 1.0,
+        end: 5.0,
+        text: "Quero preservar toda a conclusão.".into(),
+        words: vec![
+            Word {
+                text: "Quero".into(),
+                start: 1.0,
+                end: 1.5,
+            },
+            Word {
+                text: "preservar".into(),
+                start: 1.5,
+                end: 2.0,
+            },
+        ],
+    }];
+    let mut value = settings();
+    for effect in ["none", "highlight", "karaoke"] {
+        value.caption_style.as_mut().unwrap().effect = effect.into();
+        let output = ass::build(&segments, &value, 1.0, 5.0).unwrap();
+        assert!(output.contains("Quero preservar toda a conclusão."));
+        assert_eq!(output.matches("Dialogue:").count(), 1);
+        assert!(output.contains("Dialogue: 0,0:00:00.00,0:00:04.00"));
+    }
+}
+
+#[test]
+fn complete_lexical_timings_do_not_caption_words_outside_the_trim() {
+    for last in ["sucesso", "SUCESSO"] {
+        let segments = vec![Segment {
+            id: "source".into(),
+            start: 0.0,
+            end: 5.0,
+            text: "A tarefa terminou com sucesso.".into(),
+            words: ["A", "tarefa", "terminou", "com", last]
+                .iter()
+                .enumerate()
+                .map(|(index, text)| Word {
+                    text: (*text).into(),
+                    start: index as f64,
+                    end: index as f64 + 1.0,
+                })
+                .collect(),
+        }];
+        let mut value = settings();
+        value.caption_style.as_mut().unwrap().words_per_line = Some(3);
+        for effect in ["none", "highlight", "karaoke"] {
+            value.caption_style.as_mut().unwrap().effect = effect.into();
+            let output = ass::build(&segments, &value, 3.0, 5.0).unwrap();
+            assert!(!output.contains("tarefa"), "{effect}: {output}");
+            assert!(!output.contains("terminou"), "{effect}: {output}");
+            assert!(output.contains(last), "{effect}: {output}");
+        }
+    }
+}
+
+#[test]
+fn caption_groups_exclude_timed_words_outside_a_partial_group() {
+    let segments = vec![Segment {
+        id: "source".into(),
+        start: 0.0,
+        end: 3.0,
+        text: "Antes dentro depois.".into(),
+        words: ["Antes", "dentro", "depois."]
+            .iter()
+            .enumerate()
+            .map(|(index, text)| Word {
+                text: (*text).into(),
+                start: index as f64,
+                end: index as f64 + 1.0,
+            })
+            .collect(),
+    }];
+    let mut value = settings();
+    value.caption_style.as_mut().unwrap().words_per_line = Some(3);
+    for effect in ["none", "highlight", "karaoke"] {
+        value.caption_style.as_mut().unwrap().effect = effect.into();
+        let output = ass::build(&segments, &value, 1.0, 2.0).unwrap();
+        assert!(!output.contains("Antes"), "{effect}: {output}");
+        assert!(!output.contains("depois"), "{effect}: {output}");
+        assert!(output.contains("dentro"), "{effect}: {output}");
+    }
+}
+
+#[test]
 fn builds_arguments_as_separate_values_and_matches_visible_framing_and_audio() {
     let value = settings();
     let args = pipeline::arguments(

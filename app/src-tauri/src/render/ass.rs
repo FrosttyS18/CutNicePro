@@ -1,6 +1,25 @@
 use super::settings::{CaptionStyle, RenderSettings};
 use crate::transcription::types::{Segment, Word};
 
+fn complete_word_sequence(segment: &Segment) -> bool {
+    let lexical = |text: &str| {
+        text.split(|c: char| !c.is_alphanumeric())
+            .filter(|word| !word.is_empty())
+            .map(str::to_lowercase)
+            .collect::<Vec<_>>()
+    };
+    !segment.words.is_empty()
+        && lexical(&segment.text)
+            == lexical(
+                &segment
+                    .words
+                    .iter()
+                    .map(|word| word.text.as_str())
+                    .collect::<Vec<_>>()
+                    .join(" "),
+            )
+}
+
 pub fn timestamp(seconds: f64) -> String {
     let cs = (seconds.max(0.0) * 100.0).round() as u64;
     format!(
@@ -164,7 +183,11 @@ pub fn build(
             height as f64 * style.vertical()
         );
         for segment in segments.iter().filter(|s| s.start < end && s.end > start) {
-            if segment.words.is_empty() {
+            if segment.words.is_empty()
+                || (!complete_word_sequence(segment)
+                    && segment.start >= start
+                    && segment.end <= end)
+            {
                 event(
                     &mut out,
                     segment.start.max(start) - start,
@@ -174,6 +197,17 @@ pub fn build(
                 );
             } else {
                 for words in word_groups(&segment.words, style.per_line()) {
+                    let Some(first) = words
+                        .iter()
+                        .position(|word| word.start < end && word.end > start)
+                    else {
+                        continue;
+                    };
+                    let last = words
+                        .iter()
+                        .rposition(|word| word.start < end && word.end > start)
+                        .unwrap();
+                    let words = &words[first..=last];
                     let from = words.first().unwrap().start.max(start);
                     let until = words.last().unwrap().end.min(end);
                     group(&mut out, words, from, until, start, style, &position);

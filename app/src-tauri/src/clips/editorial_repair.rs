@@ -65,6 +65,8 @@ pub fn remember_rejections(
 struct Bounds {
     first_id: usize,
     last_id: usize,
+    #[serde(skip)]
+    quote_bounds: Option<(f64, f64)>,
 }
 
 fn apply(
@@ -83,9 +85,24 @@ fn apply(
     }
     let first = speech.get(bounds.first_id)?;
     let last = speech.get(bounds.last_id)?;
+    let (start, end) = if let Some(quote_bounds) = bounds.quote_bounds {
+        let candidate = super::selection::Candidate {
+            moment: String::new(),
+            first_id: bounds.first_id,
+            last_id: bounds.last_id,
+            score: 0,
+            quote_bounds: Some(quote_bounds),
+        };
+        let contender =
+            super::selection::conform(candidate, speech, media, speech.last()?.end, options)
+                .ok()?;
+        (contender.clip.start, contender.clip.end)
+    } else {
+        (first.start, last.end)
+    };
     let refined = super::borders::refine_boundaries(
-        first.start,
-        last.end,
+        start,
+        end,
         speech,
         &[],
         options.min_seconds,
@@ -202,6 +219,7 @@ pub fn recover(
             let bounds = Bounds {
                 first_id: candidate.first_id,
                 last_id: candidate.last_id,
+                quote_bounds: candidate.quote_bounds,
             };
             if let Some(mut repaired) = apply(original, bounds, &range, speech, media, options) {
                 repaired.clip.engine = Some(engine.record());
@@ -314,6 +332,7 @@ mod tests {
             Bounds {
                 first_id: 0,
                 last_id: 3,
+                quote_bounds: None,
             },
             &(0..6),
             &speech,
@@ -331,7 +350,8 @@ mod tests {
             &clip,
             Bounds {
                 first_id: 1,
-                last_id: 1
+                last_id: 1,
+                quote_bounds: None,
             },
             &(0..6),
             &speech,
@@ -351,6 +371,7 @@ mod tests {
                 Bounds {
                     first_id: 0,
                     last_id: 3,
+                    quote_bounds: None,
                 },
                 &(0..6),
                 &speech,
@@ -369,21 +390,78 @@ mod tests {
             Bounds {
                 first_id: 1,
                 last_id: 2,
+                quote_bounds: None,
             },
             Bounds {
                 first_id: 0,
                 last_id: 3,
+                quote_bounds: None,
             },
             Bounds {
                 first_id: 1,
                 last_id: 7,
+                quote_bounds: None,
             },
             Bounds {
                 first_id: 4,
                 last_id: 3,
+                quote_bounds: None,
             },
         ] {
             assert!(apply(&clip, bounds, &(1..7), &speech, "m", &options).is_none());
         }
+    }
+
+    #[test]
+    fn repaired_quote_boundaries_stop_at_the_source_word_and_preserve_fit() {
+        let (clip, mut speech, options) = fixture();
+        speech.truncate(2);
+        speech[0].text = "Comprei uma passagem para viajar.".into();
+        speech[1].text = "O voo cancelou e paguei um hotel. Mas e amanhã?".into();
+        speech[1].end = 30.0;
+        speech[1].words = [
+            ("O", 10.0, 10.5),
+            ("voo", 10.5, 11.0),
+            ("cancelou", 11.0, 12.0),
+            ("e", 12.0, 12.5),
+            ("paguei", 12.5, 14.0),
+            ("um", 14.0, 14.5),
+            ("hotel.", 14.5, 15.0),
+            ("Mas", 20.0, 20.5),
+            ("e", 20.5, 21.0),
+            ("amanhã?", 21.0, 22.0),
+        ]
+        .into_iter()
+        .map(|(text, start, end)| crate::transcription::types::Word {
+            text: text.into(),
+            start,
+            end,
+        })
+        .collect();
+        let output = r#"{"clips":[{"title":"A viagem cancelada exigiu hospedagem","openingQuote":"Comprei uma passagem para viajar","closingQuote":"voo cancelou e paguei um hotel"}]}"#;
+        let candidate = super::super::discovery_reply::decode(output, &speech)
+            .unwrap()
+            .remove(0);
+        let repaired = apply(
+            &clip,
+            Bounds {
+                first_id: candidate.first_id,
+                last_id: candidate.last_id,
+                quote_bounds: candidate.quote_bounds,
+            },
+            &(0..2),
+            &speech,
+            "m",
+            &options,
+        )
+        .unwrap();
+        assert_eq!((repaired.clip.start, repaired.clip.end), (0.0, 15.0));
+        assert_eq!(repaired.clip.fit.as_deref(), Some("cover"));
+        assert_eq!(repaired.original, (10.0, 30.0));
+        assert_eq!(
+            repaired.clip.id,
+            super::super::types::identity("m", 0.0, 15.0, None)
+        );
+        assert!(repaired.clip.analysis.is_none());
     }
 }

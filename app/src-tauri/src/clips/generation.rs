@@ -127,7 +127,7 @@ pub fn run(
         Ok(judgments)
     };
     let previous = store::load(base, request.project, request.media, request.duration)?;
-    let search_history = std::cell::RefCell::new(Vec::new());
+    let search_history = std::cell::RefCell::new(selection::DiscoveryHistory::default());
     let known_ids: std::collections::HashSet<String> = previous
         .as_ref()
         .map(|library| library.clips.iter().map(|c| c.id.clone()).collect())
@@ -142,7 +142,7 @@ pub fn run(
             request.media,
             request.duration,
             request.options,
-            &search_history.borrow(),
+            &mut search_history.borrow_mut(),
             control,
             &evaluator,
             |percent| on_progress(percent / 2),
@@ -205,7 +205,10 @@ pub fn run(
         rejected.sort_by(|a, b| b.score.cmp(&a.score));
         let mut seen = std::collections::HashSet::new();
         rejected.retain(|c| seen.insert(c.id.clone()));
-        search_history.borrow_mut().extend(rejected.iter().cloned());
+        search_history
+            .borrow_mut()
+            .rejected
+            .extend(rejected.iter().cloned());
         editorial::retain_analyzed_complete(fresh);
         editorial_repair::fill_remaining(fresh, &rejected, request.options, || {
             let repaired = editorial_repair::recover(
@@ -250,6 +253,7 @@ pub fn run(
             eprintln!("[clips] busca de cobertura com a transcrição completa; {} resultados já aproveitáveis nesta execução", attempted.len());
             search_history
                 .borrow_mut()
+                .accepted
                 .extend(attempted.iter().cloned());
             let mut more = prepare(request.speech, &mut |percent| {
                 progress(50 + (u16::from(percent) * 45 / 100) as u8)

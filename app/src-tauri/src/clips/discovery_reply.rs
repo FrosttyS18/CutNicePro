@@ -30,6 +30,15 @@ enum Reply {
     Anchors(AnchoredReply),
 }
 
+pub struct Decoded {
+    pub candidates: Vec<Candidate>,
+    pub failures: Vec<String>,
+}
+
+pub fn decode_with_feedback(output: &str, speech: &[Segment]) -> Result<Decoded, String> {
+    Ok(resolve_reply(parse_reply(output)?, speech))
+}
+
 pub fn line_key(id: usize) -> String {
     format!("L{id:03}")
 }
@@ -39,26 +48,37 @@ fn source_id(key: &str, speech: &[Segment]) -> Option<usize> {
     (id < speech.len() && key == line_key(id)).then_some(id)
 }
 
-pub fn decode(output: &str, speech: &[Segment]) -> Result<Vec<Candidate>, String> {
-    let reply = serde_json::Deserializer::from_str(output.trim())
+fn parse_reply(output: &str) -> Result<Reply, String> {
+    serde_json::Deserializer::from_str(output.trim())
         .into_iter::<Reply>()
         .next()
         .ok_or("A seleção local não retornou resposta.")?
-        .map_err(|_| "O Qwen3.5 retornou uma seleção inválida. Tente novamente.")?;
+        .map_err(|_| "O Qwen3.5 retornou uma seleção inválida. Tente novamente.".into())
+}
+
+pub fn decode(output: &str, speech: &[Segment]) -> Result<Vec<Candidate>, String> {
+    let reply = parse_reply(output)?;
+    let empty_error = match &reply {
+        Reply::Anchors(_) => "O Qwen3.5 não localizou as citações de abertura e fechamento na transcrição. Nenhum corte salvo foi alterado.",
+        Reply::Lines(_) => "O Qwen3.5 não localizou intervalos válidos na transcrição. Nenhum corte salvo foi alterado.",
+    };
+    let decoded = resolve_reply(reply, speech);
+    if decoded.candidates.is_empty() && !decoded.failures.is_empty() {
+        return Err(empty_error.into());
+    }
+    Ok(decoded.candidates)
+}
+
+fn resolve_reply(reply: Reply, speech: &[Segment]) -> Decoded {
     let reply = match reply {
         Reply::Lines(value) => value,
         Reply::Anchors(value) => {
-            let had_proposals = !value.clips.is_empty();
-            let candidates = super::source_anchors::resolve(value.clips, speech);
-            if had_proposals && candidates.is_empty() {
-                return Err("O Qwen3.5 não localizou as citações de abertura e fechamento na transcrição. Nenhum corte salvo foi alterado.".into());
-            }
-            return Ok(candidates);
+            return super::source_anchors::resolve_with_feedback(value.clips, speech);
         }
     };
-    let had_proposals = !reply.candidates.is_empty();
     let mut candidates = Vec::new();
-    for draft in reply.candidates {
+    let mut failures = Vec::new();
+    for (index, draft) in reply.candidates.into_iter().enumerate() {
         let bounds = source_id(&draft.first_line, speech).zip(source_id(&draft.last_line, speech));
         match bounds {
             Some((first_id, last_id)) if first_id <= last_id && draft.score <= 100 => {
@@ -67,17 +87,27 @@ pub fn decode(output: &str, speech: &[Segment]) -> Result<Vec<Candidate>, String
                     first_id,
                     last_id,
                     score: draft.score,
+                    quote_bounds: None,
                 });
             }
-            _ => eprintln!(
-                "[clips] proposta recusada: referências de fala inexistentes ou invertidas"
-            ),
+            _ => {
+                let failure = format!(
+                    "Proposta {} recusada: referências de fala inexistentes, invertidas ou nota inválida. DADOS: {}",
+                    index + 1,
+                    serde_json::json!({"moment":draft.moment,"firstLine":draft.first_line,"lastLine":draft.last_line,"score":draft.score})
+                );
+                eprintln!(
+                    "[clips] proposta {} recusada: referências de fala inexistentes, invertidas ou nota inválida",
+                    index + 1
+                );
+                failures.push(failure);
+            }
         }
     }
-    if had_proposals && candidates.is_empty() {
-        return Err("O Qwen3.5 não localizou intervalos válidos na transcrição. Nenhum corte salvo foi alterado.".into());
+    Decoded {
+        candidates,
+        failures,
     }
-    Ok(candidates)
 }
 
 pub fn schema(limit: usize, speech_count: usize) -> serde_json::Value {
@@ -110,6 +140,127 @@ mod tests {
             words: Vec::new(),
         })
         .collect()
+    }
+
+    fn speech_with_timed_closing() -> Vec<Segment> {
+        let mut source = speech();
+        source.truncate(2);
+        source[0].text = "Comprei uma passagem para viajar.".into();
+        source[0].start = 0.0;
+        source[0].end = 8.0;
+        source[1].text = "O voo cancelou e paguei um hotel. Mas e amanhã?".into();
+        source[1].start = 12.0;
+        source[1].end = 25.0;
+        source[1].words = [
+            ("O", 12.0, 12.5),
+            ("voo", 12.5, 13.0),
+            ("cancelou", 13.0, 14.0),
+            ("e", 14.0, 14.5),
+            ("paguei", 14.5, 16.0),
+            ("um", 16.0, 16.5),
+            ("hotel.", 16.5, 17.0),
+            ("Mas", 20.0, 20.5),
+            ("e", 20.5, 21.0),
+            ("amanhã?", 21.0, 22.0),
+        ]
+        .into_iter()
+        .map(|(text, start, end)| crate::transcription::types::Word {
+            text: text.into(),
+            start,
+            end,
+        })
+        .collect();
+        source
+    }
+
+    fn conform_reply(output: &str, source: &[Segment]) -> super::super::types::Clip {
+        let candidate = decode(output, source).unwrap().remove(0);
+        let options = super::super::types::Options {
+            min_seconds: 10.0,
+            max_seconds: 30.0,
+            count: 1,
+            format: Some("9:16".into()),
+            fit: None,
+            quality: None,
+            automatic: true,
+        };
+        super::super::selection::conform(candidate, source, "media", 30.0, &options)
+            .unwrap()
+            .clip
+    }
+
+    #[test]
+    fn decoded_quotes_end_at_the_source_word_before_the_next_question() {
+        let source = speech_with_timed_closing();
+        let output = r#"{"clips":[{"title":"A viagem cancelada exigiu hospedagem","openingQuote":"Comprei uma passagem para viajar","closingQuote":"voo cancelou e paguei um hotel"}]}"#;
+        let clip = conform_reply(output, &source);
+        assert_eq!((clip.start, clip.end), (0.0, 17.0));
+        assert!(clip.end < source[1].words[7].start);
+    }
+
+    #[test]
+    fn incomplete_word_alignment_keeps_the_original_segment_limits() {
+        let mut source = speech_with_timed_closing();
+        source[1].words.pop();
+        let output = r#"{"clips":[{"title":"A viagem cancelada exigiu hospedagem","openingQuote":"Comprei uma passagem para viajar","closingQuote":"voo cancelou e paguei um hotel"}]}"#;
+        let clip = conform_reply(output, &source);
+        assert_eq!((clip.start, clip.end), (0.0, 25.0));
+    }
+
+    #[test]
+    fn line_references_keep_segment_limits_even_when_words_have_times() {
+        let source = speech_with_timed_closing();
+        let output = r#"{"candidates":[{"moment":"A viagem cancelada exigiu hospedagem","firstLine":"L000","lastLine":"L001","score":80}]}"#;
+        let clip = conform_reply(output, &source);
+        assert_eq!((clip.start, clip.end), (0.0, 25.0));
+    }
+
+    #[test]
+    fn feedback_preserves_a_valid_proposal_and_the_independent_anchor_failure() {
+        let source = speech_with_timed_closing();
+        let output = r#"{"clips":[{"title":"A viagem cancelada exigiu hospedagem","openingQuote":"Comprei uma passagem para viajar","closingQuote":"voo cancelou e paguei um hotel"},{"title":"Reembolso inventado","openingQuote":"Comprei uma passagem para viajar","closingQuote":"A empresa devolveu todo o dinheiro"}]}"#;
+        let decoded = decode_with_feedback(output, &source).unwrap();
+        assert_eq!(decoded.candidates.len(), 1);
+        assert_eq!(decoded.failures.len(), 1);
+        assert!(decoded.failures[0].contains("Proposta 2"));
+        assert!(decoded.failures[0].contains("Reembolso inventado"));
+        assert!(decoded.failures[0].contains("closingQuote"));
+        assert!(decoded.failures[0].contains("A empresa devolveu todo o dinheiro"));
+    }
+
+    #[test]
+    fn feedback_keeps_all_invalid_proposals_available_for_the_existing_second_search() {
+        let source = speech_with_timed_closing();
+        let output = r#"{"clips":[{"title":"Reembolso inventado","openingQuote":"Comprei uma passagem para viajar","closingQuote":"A empresa devolveu todo o dinheiro"}]}"#;
+        let decoded = decode_with_feedback(output, &source).unwrap();
+        assert!(decoded.candidates.is_empty());
+        assert_eq!(decoded.failures.len(), 1);
+        assert!(decode(output, &source).is_err());
+        assert!(decode_with_feedback(r#"{"clips":[],"unknown":1}"#, &source).is_err());
+    }
+
+    #[test]
+    fn feedback_explains_reversed_anchors_without_accepting_the_interval() {
+        let source = speech_with_timed_closing();
+        let output = r#"{"clips":[{"title":"Bordas invertidas","openingQuote":"voo cancelou e paguei um hotel","closingQuote":"Comprei uma passagem para viajar"}]}"#;
+        let decoded = decode_with_feedback(output, &source).unwrap();
+        assert!(decoded.candidates.is_empty());
+        assert_eq!(decoded.failures.len(), 1);
+        assert!(decoded.failures[0].contains("fechamento anterior"));
+        assert!(decoded.failures[0].contains("openingQuote"));
+        assert!(decoded.failures[0].contains("closingQuote"));
+    }
+
+    #[test]
+    fn feedback_identifies_an_ambiguous_opening_quote() {
+        let mut source = speech_with_timed_closing();
+        source.push(source[0].clone());
+        let output = r#"{"clips":[{"title":"Abertura repetida","openingQuote":"Comprei uma passagem para viajar","closingQuote":"voo cancelou e paguei um hotel"}]}"#;
+        let decoded = decode_with_feedback(output, &source).unwrap();
+        assert!(decoded.candidates.is_empty());
+        assert_eq!(decoded.failures.len(), 1);
+        assert!(decoded.failures[0].contains("openingQuote"));
+        assert!(decoded.failures[0].contains("ambígua"));
     }
 
     #[test]

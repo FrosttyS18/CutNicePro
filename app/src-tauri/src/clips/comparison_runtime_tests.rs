@@ -4,7 +4,90 @@ use super::{
     types::{Clip, Quality},
 };
 use crate::transcription::{process::ProcessControl, types::Transcript};
-use std::{path::PathBuf, time::Instant};
+use std::{
+    collections::BTreeSet,
+    path::{Path, PathBuf},
+    time::Instant,
+};
+
+fn selection_calls(scratch: &Path) -> std::io::Result<BTreeSet<PathBuf>> {
+    let mut calls = BTreeSet::new();
+    for entry in std::fs::read_dir(scratch)? {
+        let entry = entry?;
+        if entry.file_type()?.is_dir()
+            && entry
+                .file_name()
+                .to_str()
+                .and_then(|name| name.strip_prefix("selection-0-call-"))
+                .is_some_and(|index| {
+                    index.len() == 4 && index.bytes().all(|digit| digit.is_ascii_digit())
+                })
+        {
+            calls.insert(entry.path());
+        }
+    }
+    Ok(calls)
+}
+
+fn discovery_prompt(
+    scratch: &Path,
+    before: &BTreeSet<PathBuf>,
+    reuse_checkpoint: bool,
+) -> std::io::Result<String> {
+    let calls = selection_calls(scratch)?;
+    let selected = if reuse_checkpoint {
+        calls.iter().next()
+    } else {
+        calls.difference(before).next()
+    };
+    if let Some(directory) = selected {
+        return std::fs::read_to_string(directory.join("selection-0-prompt.txt"));
+    }
+    if reuse_checkpoint {
+        return std::fs::read_to_string(scratch.join("selection-0-prompt.txt"));
+    }
+    Err(std::io::Error::new(
+        std::io::ErrorKind::NotFound,
+        "Nenhuma chamada nova da descoberta foi registrada nesta execução.",
+    ))
+}
+
+#[test]
+fn artifact_prompt_selects_the_first_new_call_in_a_replayed_round() {
+    let root = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../.tooling/test-output");
+    let scratch = crate::render::scratch::Scratch::new(&root).unwrap();
+    let old = super::model_artifacts::Artifacts::create(&scratch.path, "selection-0").unwrap();
+    std::fs::write(old.prompt(), "previous run").unwrap();
+    let before = selection_calls(&scratch.path).unwrap();
+    let first = super::model_artifacts::Artifacts::create(&scratch.path, "selection-0").unwrap();
+    std::fs::write(first.prompt(), "current initial discovery").unwrap();
+    let additional =
+        super::model_artifacts::Artifacts::create(&scratch.path, "selection-0").unwrap();
+    std::fs::write(additional.prompt(), "current coverage search").unwrap();
+    assert_eq!(
+        discovery_prompt(&scratch.path, &before, false).unwrap(),
+        "current initial discovery"
+    );
+    let unchanged = selection_calls(&scratch.path).unwrap();
+    assert!(discovery_prompt(&scratch.path, &unchanged, false).is_err());
+}
+
+#[test]
+fn artifact_prompt_reads_legacy_only_for_an_explicit_checkpoint_reuse() {
+    let root = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../.tooling/test-output");
+    let scratch = crate::render::scratch::Scratch::new(&root).unwrap();
+    std::fs::write(
+        scratch.path.join("selection-0-prompt.txt"),
+        "legacy checkpoint",
+    )
+    .unwrap();
+    let before = selection_calls(&scratch.path).unwrap();
+    assert_eq!(
+        discovery_prompt(&scratch.path, &before, true).unwrap(),
+        "legacy checkpoint"
+    );
+    assert!(discovery_prompt(&scratch.path, &before, false).is_err());
+}
 
 #[test]
 #[ignore = "avalia propostas reais do laboratório pelo avaliador nativo; exige modelo e fonte integral"]
@@ -87,12 +170,14 @@ fn whole_video_generation_regeneration_and_export() {
     uuid::Uuid::parse_str(&project).unwrap();
     let reuse_first = std::env::var("CNP_COMPARISON_REUSE_FIRST").as_deref() == Ok("1");
     let mut previous: Option<super::types::ClipCollection> = None;
+    let mut first_discovery: Option<String> = None;
     let mut rounds = Vec::new();
     let started = Instant::now();
     let count = if dataset == "ux" { 1 } else { 2 };
     for round in 1..=count {
         let scratch = base.join(format!("round-{round}"));
         std::fs::create_dir_all(&scratch).unwrap();
+        let before = selection_calls(&scratch).unwrap();
         let control = std::sync::Arc::new(ProcessControl::default());
         let timer = control.clone();
         let (finish, wait) = std::sync::mpsc::channel();
@@ -147,7 +232,7 @@ fn whole_video_generation_regeneration_and_export() {
             "é necessário gerar pelo menos dois episódios nesta fonte: {}",
             new.len()
         );
-        let discovery = std::fs::read_to_string(scratch.join("selection-0-prompt.txt")).unwrap();
+        let discovery = discovery_prompt(&scratch, &before, reused).unwrap();
         let full_source = transcript
             .segments
             .iter()
@@ -159,6 +244,14 @@ fn whole_video_generation_regeneration_and_export() {
             discovery.contains(&full_source),
             "a descoberta deve receber todas as falas"
         );
+        if let Some(initial) = &first_discovery {
+            assert_eq!(
+                &discovery, initial,
+                "a biblioteca não deve alterar a descoberta inicial"
+            );
+        } else {
+            first_discovery = Some(discovery.clone());
+        }
         if let Some(old) = &previous {
             let latest = old.clips.iter().filter_map(|c| c.created_at_ms).max();
             assert!(
@@ -180,11 +273,6 @@ fn whole_video_generation_regeneration_and_export() {
                         && (before.end - c.end).abs() < 0.01
                         && before.deleted == Some(true))),
                 "conteúdo excluído deve poder gerar uma versão nova"
-            );
-            assert_eq!(
-                discovery,
-                std::fs::read_to_string(base.join("round-1/selection-0-prompt.txt")).unwrap(),
-                "a biblioteca não deve alterar a descoberta inicial"
             );
         }
         store::save(&base, &project, &collection, duration).unwrap();

@@ -5,7 +5,7 @@ use super::{
 use crate::transcription::process::ProcessControl;
 use std::{path::Path, process::Command};
 
-pub struct Engine(Tools);
+pub struct Engine(Tools, #[cfg(test)] bool);
 
 #[derive(Clone, Copy)]
 struct Generation {
@@ -15,7 +15,11 @@ struct Generation {
 
 impl Engine {
     pub fn discover(base: &Path, _quality: Quality) -> Result<Self, String> {
-        Ok(Self(engine_tools::discover(base)?))
+        Ok(Self(
+            engine_tools::discover(base)?,
+            #[cfg(test)]
+            true,
+        ))
     }
     pub fn record(&self) -> EngineRecord {
         EngineRecord {
@@ -98,9 +102,17 @@ impl Engine {
         control: &ProcessControl,
     ) -> Result<String, String> {
         control.check()?;
-        let input = scratch.join(format!("{stem}-prompt.txt"));
-        let schema_path = scratch.join(format!("{stem}.schema.json"));
-        let output = scratch.join(format!("{stem}-result.json"));
+        let files = super::model_artifacts::Artifacts::create(scratch, stem)?;
+        let input = files.prompt();
+        let schema_path = files.schema();
+        eprintln!(
+            "[clips] chamada {stem}: {}",
+            files
+                .directory
+                .file_name()
+                .unwrap_or_default()
+                .to_string_lossy()
+        );
         std::fs::write(&input, prompt).map_err(|e| e.to_string())?;
         std::fs::write(
             &schema_path,
@@ -109,21 +121,26 @@ impl Engine {
         .map_err(|e| e.to_string())?;
         let execute = |binary: &Path, gpu: bool| {
             let mut command = self.command(binary, gpu, &input, &schema_path, generation);
-            control.run_to_file(
-                &mut command,
-                &scratch.join(format!("{stem}-{}.log", if gpu { "gpu" } else { "cpu" })),
-                &output,
-            )
+            let output = files.output(gpu);
+            control.run_to_file(&mut command, &files.log(gpu), &output)?;
+            Ok::<_, String>(output)
         };
-        if let Some(gpu) = &self.0.gpu {
-            if execute(gpu, true).is_err() {
-                control.check()?;
-                eprintln!("[clips] Qwen3.5: GPU falhou; uma tentativa na CPU, sem trocar modelo ou contexto");
-                execute(&self.0.cpu, false)?;
+        let output = if let Some(gpu) = &self.0.gpu {
+            match execute(gpu, true) {
+                Ok(output) => output,
+                Err(_error) => {
+                    #[cfg(test)]
+                    if !self.1 {
+                        return Err(_error);
+                    }
+                    control.check()?;
+                    eprintln!("[clips] Qwen3.5: GPU falhou; uma tentativa na CPU, sem trocar modelo ou contexto");
+                    execute(&self.0.cpu, false)?
+                }
             }
         } else {
-            execute(&self.0.cpu, false)?;
-        }
+            execute(&self.0.cpu, false)?
+        };
         control.check()?;
         if std::fs::metadata(&output).map_err(|e| e.to_string())?.len() > 131072 {
             return Err("A análise gerou uma resposta inválida. Tente novamente.".into());
@@ -145,7 +162,7 @@ impl Engine {
         command
             .arg("-m")
             .arg(&self.0.model)
-            .arg("-f")
+            .arg("-bf")
             .arg(input)
             .arg("-jf")
             .arg(schema)
@@ -218,19 +235,215 @@ impl Engine {
             .ok_or_else(|| "O tokenizador local retornou uma resposta inválida.".into())
     }
     #[cfg(test)]
+    pub fn for_test_runtime(runtime: &Path, model: &Path) -> Result<Self, String> {
+        let completion = runtime.join("llama-completion.exe");
+        let tokenizer = runtime.join("llama-tokenize.exe");
+        if !completion.is_file() || !tokenizer.is_file() || !model.is_file() {
+            return Err("Runtime ou modelo de auditoria ausente.".into());
+        }
+        Ok(Self(
+            Tools {
+                cpu: completion.clone(),
+                gpu: Some(completion),
+                model: model.to_owned(),
+                tokenizer,
+            },
+            false,
+        ))
+    }
+    #[cfg(test)]
     pub fn for_test() -> Self {
-        Self(Tools {
-            cpu: "llama".into(),
-            gpu: None,
-            model: MODEL_NAME.into(),
-            tokenizer: "llama-tokenize".into(),
-        })
+        Self(
+            Tools {
+                cpu: "llama".into(),
+                gpu: None,
+                model: MODEL_NAME.into(),
+                tokenizer: "llama-tokenize".into(),
+            },
+            true,
+        )
     }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    fn observed_native_prompt(log: &str) -> (String, Vec<u32>) {
+        let log = log.replace("\r\n", "\n");
+        let prompt_start = log.find(": prompt: '").unwrap() + ": prompt: '".len();
+        let count_start = log[prompt_start..]
+            .find("number of tokens in prompt = ")
+            .unwrap()
+            + prompt_start;
+        let prompt_end = log[prompt_start..count_start].rfind("'\n").unwrap() + prompt_start;
+        let count_and_tokens = &log[count_start + "number of tokens in prompt = ".len()..];
+        let (count, tokens) = count_and_tokens.split_once('\n').unwrap();
+        let count = count.trim().parse::<usize>().unwrap();
+        let tokens = tokens.split_once("sampler seed:").unwrap().0;
+        let ids = tokens
+            .lines()
+            .filter_map(|line| {
+                line.split_once(" -> '")?
+                    .0
+                    .split_whitespace()
+                    .last()?
+                    .parse::<u32>()
+                    .ok()
+            })
+            .collect::<Vec<_>>();
+        assert_eq!(ids.len(), count);
+        (log[prompt_start..prompt_end].to_string(), ids)
+    }
+
+    fn vocabulary_ids(engine: &Engine, input: &Path, directory: &Path, stem: &str) -> Vec<u32> {
+        let mut command = Command::new(&engine.0.tokenizer);
+        command
+            .arg("-m")
+            .arg(&engine.0.model)
+            .arg("-f")
+            .arg(input)
+            .args(["--ids", "--no-escape", "--offline"]);
+        #[cfg(windows)]
+        {
+            use std::os::windows::process::CommandExt;
+            command.creation_flags(0x08000000);
+        }
+        let output = command.output().unwrap();
+        std::fs::write(
+            directory.join(format!("{stem}-tokenizer.stdout")),
+            &output.stdout,
+        )
+        .unwrap();
+        std::fs::write(
+            directory.join(format!("{stem}-tokenizer.stderr")),
+            &output.stderr,
+        )
+        .unwrap();
+        assert!(output.status.success());
+        serde_json::from_slice(&output.stdout).unwrap()
+    }
+
+    fn native_transport(
+        engine: &Engine,
+        input: &Path,
+        schema: &Path,
+        directory: &Path,
+        flag: &str,
+    ) -> (String, Vec<u32>) {
+        std::fs::create_dir(directory).unwrap();
+        let original = engine.command(
+            &engine.0.cpu,
+            false,
+            input,
+            schema,
+            Generation {
+                tokens: 0,
+                temperature: 0.4,
+            },
+        );
+        let mut command = Command::new(original.get_program());
+        for arg in original.get_args() {
+            command.arg(if arg == "-f" || arg == "-bf" {
+                std::ffi::OsStr::new(flag)
+            } else {
+                arg
+            });
+        }
+        command.args([
+            "--device",
+            "none",
+            "--no-op-offload",
+            "--no-warmup",
+            "--verbose-prompt",
+            "--offline",
+        ]);
+        let log_path = directory.join("runtime.log");
+        ProcessControl::default()
+            .run_to_file(&mut command, &log_path, &directory.join("output.txt"))
+            .unwrap();
+        let log = std::fs::read_to_string(log_path).unwrap();
+        assert!(log.contains("n_predict = 0,"));
+        observed_native_prompt(&log)
+    }
+
+    #[test]
+    #[ignore = "prova nativa n0 de transporte/tokenização Qwen em CPU, sem geração editorial"]
+    fn real_completion_transport_preserves_the_canonical_prefix_bytes_and_tokens() {
+        use sha2::Digest;
+        let workspace = Path::new(env!("CARGO_MANIFEST_DIR"))
+            .join("../..")
+            .canonicalize()
+            .unwrap();
+        let directory = workspace
+            .join(".tooling/test-output/goal-story-coverage-2026-10-25")
+            .join(format!("qwen-transport-n0-{}", uuid::Uuid::new_v4()));
+        std::fs::create_dir(&directory).unwrap();
+        let engine = Engine::discover(&workspace, Quality::Qwen35).unwrap();
+        let prompt = engine
+            .prompt(
+                "Responda somente JSON.",
+                &serde_json::json!({"speech":"Uma fala completa."}),
+            )
+            .unwrap();
+        let input = directory.join("submitted-prompt.txt");
+        let trimmed_input = directory.join("trimmed-prompt.txt");
+        let schema = directory.join("schema.json");
+        std::fs::write(&input, &prompt).unwrap();
+        std::fs::write(&trimmed_input, prompt.strip_suffix('\n').unwrap()).unwrap();
+        std::fs::write(&schema, r#"{"type":"object","properties":{"ok":{"type":"boolean"}},"required":["ok"],"additionalProperties":false}"#).unwrap();
+        let expected_full = vocabulary_ids(&engine, &input, &directory, "full");
+        let expected_trimmed = vocabulary_ids(&engine, &trimmed_input, &directory, "trimmed");
+        let (text_prompt, text_ids) =
+            native_transport(&engine, &input, &schema, &directory.join("text"), "-f");
+        let (binary_prompt, binary_ids) =
+            native_transport(&engine, &input, &schema, &directory.join("binary"), "-bf");
+        assert_eq!(text_prompt, prompt.strip_suffix('\n').unwrap());
+        assert_eq!(text_ids, expected_trimmed);
+        assert_eq!(binary_prompt, prompt);
+        assert_eq!(binary_ids, expected_full);
+        let command = engine.command(
+            &engine.0.cpu,
+            false,
+            &input,
+            &schema,
+            Generation {
+                tokens: 0,
+                temperature: 0.4,
+            },
+        );
+        let current_flag = command
+            .get_args()
+            .find(|arg| *arg == "-f" || *arg == "-bf")
+            .unwrap()
+            .to_string_lossy()
+            .to_string();
+        let (current_prompt, current_ids) = if current_flag == "-bf" {
+            (&binary_prompt, &binary_ids)
+        } else {
+            (&text_prompt, &text_ids)
+        };
+        let matches_canonical = current_prompt == &prompt && current_ids == &expected_full;
+        let report = serde_json::json!({
+            "scope":"Real completion and vocabulary tokenizer; CPU only; n_predict=0; no warmup, editorial generation or quality claim",
+            "engineTransportFlag":current_flag,"enginePreservesCanonicalPrefix":matches_canonical,
+            "submittedBytes":prompt.len(),"submittedSha256":format!("{:x}",sha2::Sha256::digest(prompt.as_bytes())),
+            "text":{"receivedBytes":text_prompt.len(),"receivedPrompt":text_prompt,"tokenIds":text_ids,"lastTokenIds":&text_ids[text_ids.len().saturating_sub(8)..]},
+            "binary":{"receivedBytes":binary_prompt.len(),"receivedPrompt":binary_prompt,"tokenIds":binary_ids,"lastTokenIds":&binary_ids[binary_ids.len().saturating_sub(8)..]},
+            "vocabularyExpectedFull":expected_full,"vocabularyExpectedTrimmed":expected_trimmed
+        });
+        std::fs::write(
+            directory.join("result.json"),
+            serde_json::to_vec_pretty(&report).unwrap(),
+        )
+        .unwrap();
+        eprintln!("[transport] {}", directory.join("result.json").display());
+        assert!(
+            matches_canonical,
+            "o completion não recebeu os bytes/tokens canônicos medidos pelo tokenizador"
+        );
+    }
+
     #[test]
     fn canonical_template_disables_thinking_and_escapes_data() {
         let prompt = Engine::for_test()

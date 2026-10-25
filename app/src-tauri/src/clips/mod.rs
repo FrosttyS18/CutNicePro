@@ -20,6 +20,7 @@ mod generation_batch;
 mod generation_rounds;
 #[cfg(test)]
 mod incremental_runtime_tests;
+mod model_artifacts;
 #[cfg(test)]
 mod narrative_bounds;
 mod novelty;
