@@ -35,7 +35,7 @@ export class FrameSeeker {
     const current = () => !this.disposed && !data.closed && this.requests.get(mediaId) === request;
     const result = data.chain.catch(() => null).then(async () => {
       if (!current()) return null;
-      const frame = await this.resolve(data, time);
+      const frame = await this.resolve(data, time, current);
       return current() ? frame?.canvas ?? null : null;
     });
     data.chain = result;
@@ -118,7 +118,7 @@ export class FrameSeeker {
     return time + 1e-8 >= frame.timestamp && time < frame.timestamp + frame.duration - 1e-8;
   }
 
-  private async resolve(data: SinkData, time: number): Promise<WrappedCanvas | null> {
+  private async resolve(data: SinkData, time: number, current: () => boolean): Promise<WrappedCanvas | null> {
     if (data.frame && this.contains(data.frame, time)) return data.frame;
     try {
       if (data.iterator && data.frame && time >= data.frame.timestamp && time < data.frame.timestamp + 2) {
@@ -126,12 +126,13 @@ export class FrameSeeker {
           const { value, done } = await data.iterator.next();
           if (done || data.closed) break;
           data.frame = value;
+          if (!current()) return null;
           if (this.contains(value, time)) return value;
           if (value.timestamp > time) break;
         }
       }
       await data.iterator?.return();
-      if (data.closed) return null;
+      if (!current()) return null;
       data.iterator = data.sink.canvases(time);
       const { value, done } = await data.iterator.next();
       data.frame = !done && !data.closed ? value : null;

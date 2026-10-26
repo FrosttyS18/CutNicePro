@@ -1,14 +1,13 @@
 import { memo, useEffect, useMemo, useRef, useState, useSyncExternalStore, type CSSProperties, type RefObject } from "react";
 import { activeItems, linkedSourceAudio, montageTranscript, sourceTimeAt, sourceVideoForAudio } from "../../lib/composition-playback";
-import { frameToSeconds } from "../../lib/composition-time";
+import { captionSourceVideo } from "../../lib/composition-item-links";
 import { synchronizeMedia } from "../../lib/composition-clock";
 import { CompositionAudio } from "../../lib/composition-audio";
 import { FrameSeeker, type ScrubCanvas } from "../../lib/frame-seeker";
-import { captionCue, effectiveCaptionStyle } from "../../lib/captions";
 import { SplitPreview } from "../workspace/SplitPreview";
 import { isSplitScreen } from "../../lib/split-screen";
 import { compositionEffectFilter, compositionOutputSize, placementStyle, visualContentStyle } from "../../lib/composition-placement";
-import { CaptionVisual } from "./CaptionVisual";
+import { CompositionCaptions } from "./CompositionCaptions";
 import { useCompositionMediaReadiness, useCompositionReadiness } from "../../hooks/useCompositionMediaReadiness";
 import type { CompositionReadiness } from "../../lib/composition-readiness";
 import type { Composition, CompositionAsset, CompositionItem } from "../../lib/composition-types";
@@ -108,6 +107,8 @@ export function CompositionStage({document,frame,playing,media,onError,onReady}:
   const buffered=useSyncExternalStore(readiness.subscribe,readiness.getSnapshot,readiness.getSnapshot);
   const entries=useMemo(()=>montageTranscript(document),[document]);
   const captions=active.filter(item=>item.kind==="caption" && item.settings.captionModel>0);
+  const owners=new Map(captions.map(item=>[item.id,captionSourceVideo(document,item)?.id]));
+  const captionProps={entries,document,frame,ratio};
   return <div className="composition-stage" style={{aspectRatio:ratio,background:document.settings.background,"--preview-ratio":ratio} as CSSProperties} aria-label="Prévia da montagem">
     {rendered.map(item=>{
       const asset=document.assets.find(value=>value.id===item.assetId)!;
@@ -118,13 +119,9 @@ export function CompositionStage({document,frame,playing,media,onError,onReady}:
       const original=linkedSourceAudio(document,item);
       const originalTrack=document.tracks.find(track=>track.id===original?.trackId);
       const volume=original && originalTrack && !originalTrack.hidden && !originalTrack.muted && !original.settings.muted ? original.settings.volume : 0;
-      return item.kind==="audio" ? <Audio key={key} {...props} engine={audio}/> : <div key={key} className="composition-stage__layer" data-composition-layer={item.id} style={placementStyle(item.placement)}><Visual {...props} engine={audio} volume={volume}/></div>;
+      return item.kind==="audio" ? <Audio key={key} {...props} engine={audio}/> : <div key={key} className="composition-stage__layer" data-composition-layer={item.id} style={placementStyle(item.placement)}><Visual {...props} engine={audio} volume={volume}/><CompositionCaptions {...captionProps} items={captions.filter(caption=>owners.get(caption.id)===item.id)}/></div>;
     })}
-    {captions.map(item=>{
-      const style=effectiveCaptionStyle(item.settings.captionModel,item.settings.captionStyle);
-      const cue=captionCue(entries.filter(entry=>entry.itemId===item.id).map(entry=>entry.segment),frameToSeconds(frame,document.fps),style.wordsPerCaption);
-      return cue ? <div key={item.id} className="caption-overlay" style={{"--caption-y":`${Math.round((style.y??.86)*100)}%`} as CSSProperties}><CaptionVisual style={style} ratio={ratio} cue={cue}/></div> : null;
-    })}
+    <CompositionCaptions {...captionProps} items={captions.filter(caption=>!owners.get(caption.id))}/>
     {document.settings.text && <span className="workspace-preview__text">{document.settings.text}</span>}
   </div>;
 }

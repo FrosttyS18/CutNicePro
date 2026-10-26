@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useLayoutEffect, useRef, useState, type SetStateAction } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type SetStateAction } from "react";
 import * as ipc from "./lib/ipc";
 import type { CollectionMeta, ProjectMeta } from "./lib/types";
 import { sortProjects } from "./lib/projects";
@@ -77,6 +77,7 @@ function AppContent() {
     projects: [],
     error: null,
   });
+  const orderedProjects = useMemo(() => sortProjects(load.projects), [load.projects]);
   const [collectionsLoad, setCollectionsLoad] = useState<CollectionsState>({
     status: "loading",
     collections: [],
@@ -311,7 +312,7 @@ function AppContent() {
         {route.kind === "home" && <HomeScreen onCreate={goUpload} />}
 
         {route.kind === "upload" && (
-          <UploadScreen projects={sortProjects(load.projects)} loading={load.status === "loading"}
+          <UploadScreen projects={orderedProjects} loading={load.status === "loading"}
             onDelete={handleDeleteProject} onCollectionsChanged={refreshCollections}
             error={load.error} onRetry={() => void refreshProjects()}
             onCreate={handleCreateFromMedia}
@@ -331,7 +332,7 @@ function AppContent() {
             }))}
             onCollectionsChanged={refreshCollections}
             onDelete={handleDeleteProject}
-            projects={sortProjects(load.projects)}
+            projects={orderedProjects}
             loading={load.status === "loading"}
             error={load.status === "error" ? load.error : null}
             onRetry={() => void refreshProjects()}

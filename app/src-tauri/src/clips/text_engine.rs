@@ -200,7 +200,13 @@ impl Engine {
             ]);
         command
     }
-    pub fn count_tokens(&self, scratch: &Path, text: &str) -> Result<usize, String> {
+    pub fn count_tokens(
+        &self,
+        scratch: &Path,
+        text: &str,
+        control: &ProcessControl,
+    ) -> Result<usize, String> {
+        control.check()?;
         let input = scratch.join("tokenize-input.txt");
         std::fs::write(&input, text).map_err(|e| e.to_string())?;
         let mut command = Command::new(&self.0.tokenizer);
@@ -215,11 +221,22 @@ impl Engine {
             use std::os::windows::process::CommandExt;
             command.creation_flags(0x08000000);
         }
-        let output = command.output().map_err(|e| e.to_string())?;
-        if !output.status.success() {
-            return Err("Não foi possível medir o contexto no Qwen3.5.".into());
+        let output = scratch.join("tokenize-output.txt");
+        if let Err(error) =
+            control.run_to_file(&mut command, &scratch.join("tokenize.log"), &output)
+        {
+            control.check()?;
+            if error.starts_with("O motor encerrou com erro (") {
+                return Err("Não foi possível medir o contexto no Qwen3.5.".into());
+            }
+            return Err(error
+                .strip_prefix("não foi possível iniciar o motor: ")
+                .unwrap_or(&error)
+                .to_owned());
         }
-        String::from_utf8_lossy(&output.stdout)
+        control.check()?;
+        let output = std::fs::read(output).map_err(|e| e.to_string())?;
+        String::from_utf8_lossy(&output)
             .lines()
             .rev()
             .find_map(|line| {
@@ -264,6 +281,10 @@ impl Engine {
         )
     }
 }
+
+#[cfg(test)]
+#[path = "text_engine_tokenizer_tests.rs"]
+mod tokenizer_process_tests;
 
 #[cfg(test)]
 mod tests {

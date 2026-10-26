@@ -70,32 +70,95 @@ pub fn allowed_editor_ext(name: &str, kind: &crate::editor::types::MediaKind) ->
 }
 
 pub struct ImportJobs {
-    cancels: Mutex<HashMap<String, Arc<AtomicBool>>>,
+    cancels: Mutex<HashMap<String, ImportJob>>,
+    closed: AtomicBool,
+}
+
+struct ImportJob {
+    cancel: Arc<AtomicBool>,
+    process: Arc<crate::transcription::process::ProcessControl>,
 }
 
 impl ImportJobs {
     pub fn new() -> ImportJobs {
         ImportJobs {
             cancels: Mutex::new(HashMap::new()),
+            closed: AtomicBool::new(false),
         }
     }
 
     pub fn register(&self, job_id: &str) -> Arc<AtomicBool> {
         let flag = Arc::new(AtomicBool::new(false));
-        self.cancels
-            .lock()
-            .unwrap()
-            .insert(job_id.to_string(), Arc::clone(&flag));
+        let process = Arc::new(crate::transcription::process::ProcessControl::default());
+        let mut cancels = self.cancels.lock().unwrap();
+        if self.closed.load(Ordering::SeqCst) {
+            flag.store(true, Ordering::SeqCst);
+            process.cancel();
+        }
+        cancels.insert(
+            job_id.to_string(),
+            ImportJob {
+                cancel: flag.clone(),
+                process,
+            },
+        );
         flag
     }
 
     pub fn cancel(&self, job_id: &str) -> bool {
-        match self.cancels.lock().unwrap().get(job_id) {
-            Some(f) => {
-                f.store(true, Ordering::SeqCst);
-                true
-            }
-            None => false,
+        let process = self.cancels.lock().unwrap().get(job_id).map(|job| {
+            job.cancel.store(true, Ordering::SeqCst);
+            job.process.clone()
+        });
+        if let Some(process) = process {
+            process.cancel();
+            true
+        } else {
+            false
+        }
+    }
+
+    pub fn cancel_all(&self) {
+        self.closed.store(true, Ordering::SeqCst);
+        let processes: Vec<_> = self
+            .cancels
+            .lock()
+            .unwrap()
+            .values()
+            .map(|job| {
+                job.cancel.store(true, Ordering::SeqCst);
+                job.process.clone()
+            })
+            .collect();
+        for process in processes {
+            process.cancel();
+        }
+    }
+
+    pub fn analyze(
+        &self,
+        job_id: &str,
+        tools: &crate::media_analyze::FfTools,
+        source: &Path,
+        kind: &crate::editor::types::MediaKind,
+        scratch_root: &Path,
+    ) -> Result<crate::media_analyze::MediaAnalysis, String> {
+        let (cancel, process) = self
+            .cancels
+            .lock()
+            .unwrap()
+            .get(job_id)
+            .map(|job| (job.cancel.clone(), job.process.clone()))
+            .ok_or("importação não encontrada")?;
+        if cancel.load(Ordering::SeqCst) {
+            return Err("importação cancelada".into());
+        }
+        let result =
+            crate::media_analyze::analyze_import(tools, source, kind, process, scratch_root);
+        if cancel.load(Ordering::SeqCst) {
+            Err("importação cancelada".into())
+        } else {
+            result
         }
     }
 

@@ -1,5 +1,5 @@
 use super::{
-    render_media, render_plan,
+    render_captions, render_media, render_plan,
     types::{Composition, ItemKind},
 };
 use crate::render::{ass, encoder::Encoder};
@@ -45,6 +45,7 @@ pub fn video(
     let mut graph = String::new();
     let mut current = "0:v".to_string();
     let mut input = 1;
+    let mut caption_index = 0;
     for item in active
         .iter()
         .filter(|item| matches!(item.kind, ItemKind::Video | ItemKind::Image))
@@ -91,34 +92,33 @@ pub fn video(
             .effects_filter()
             .map(|value| format!(",{value}"))
             .unwrap_or_default();
-        graph.push_str(&format!("[{input}:v]setpts=PTS-STARTPTS,fps={rate},format=rgba,{geometry}{effects},scale={scaled_width}:{scaled_height},colorchannelmixer=aa={}[layer{input}];[{current}][layer{input}]overlay=x={x}:y={y}:eof_action=pass:repeatlast=0[mix{input}];",placement.opacity));
+        let mut captions = String::new();
+        for caption in active.iter().filter(|caption| {
+            render_captions::source_video(document, caption)
+                .is_some_and(|owner| owner.id == item.id)
+        }) {
+            let filename = format!("caption-{index}-{caption_index}.ass");
+            if let Some(filter) =
+                render_captions::filter(document, caption, window, directory, &filename)?
+            {
+                captions.push(',');
+                captions.push_str(&filter);
+                caption_index += 1;
+            }
+        }
+        graph.push_str(&format!("[{input}:v]setpts=PTS-STARTPTS,fps={rate},format=rgba,{geometry}{effects}{captions},scale={scaled_width}:{scaled_height},colorchannelmixer=aa={}[layer{input}];[{current}][layer{input}]overlay=x={x}:y={y}:eof_action=pass:repeatlast=0[mix{input}];",placement.opacity));
         current = format!("mix{input}");
         input += 1;
     }
-    let mut caption_index = 0;
-    for item in active.iter().filter(|item| item.kind == ItemKind::Caption) {
-        let asset = document
-            .assets
-            .iter()
-            .find(|asset| asset.id == item.asset_id)
-            .ok_or("Fonte da legenda ausente")?;
-        let mut config = render_media::settings(document, Some(asset), &item.settings)?;
-        config.text.clear();
-        if config.caption_model == 0 {
-            continue;
-        }
-        let source_time = render_plan::source_time(document, item, window.start);
-        let captions = ass::build(
-            &render_media::captions(asset, item)?,
-            &config,
-            source_time,
-            source_time + duration,
-        )?;
+    for item in active.iter().filter(|item| {
+        item.kind == ItemKind::Caption && render_captions::source_video(document, item).is_none()
+    }) {
         let filename = format!("caption-{index}-{caption_index}.ass");
-        std::fs::write(directory.join(&filename), captions).map_err(|error| error.to_string())?;
-        graph.push_str(&format!(
-            "[{current}]ass=filename={filename}:fontsdir=fonts[caption{caption_index}];"
-        ));
+        let Some(filter) = render_captions::filter(document, item, window, directory, &filename)?
+        else {
+            continue;
+        };
+        graph.push_str(&format!("[{current}]{filter}[caption{caption_index}];"));
         current = format!("caption{caption_index}");
         caption_index += 1;
     }

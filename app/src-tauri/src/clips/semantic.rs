@@ -42,7 +42,8 @@ pub fn run(
     let quotes = evidence::quotes(&text);
     let data = serde_json::json!({"speech":segments.iter().map(|s|s.text.as_str()).collect::<Vec<_>>().join("\n"),"quotes":quotes.iter().enumerate().map(|(id,text)|serde_json::json!({"id":id,"text":text})).collect::<Vec<_>>()});
     let prompt = engine.prompt(include_str!("analysis-prompt.txt"), &data)?;
-    if engine.count_tokens(scratch, &prompt)? > super::engine_tools::CONTEXT_TOKENS - 1528 {
+    if engine.count_tokens(scratch, &prompt, control)? > super::engine_tools::CONTEXT_TOKENS - 1528
+    {
         return Err("A transcrição completa e o trecho excedem o contexto disponível para análise. Nenhum texto foi dividido ou truncado.".into());
     }
     let output = engine.generate(

@@ -110,9 +110,14 @@ async fn import_media(
             let analysis_err = match media_analyze::detect_fftools() {
                 Some(tools) => {
                     let final_path = store.files_dir().join(format!("{sha}.{ext}"));
-                    match asset_kind.as_ref().map_or_else(
-                        || media_analyze::analyze(&tools, &final_path),
-                        |kind| media_analyze::analyze_for_kind(&tools, &final_path, kind),
+                    match jobs.analyze(
+                        &job_id,
+                        &tools,
+                        &final_path,
+                        asset_kind
+                            .as_ref()
+                            .unwrap_or(&editor::types::MediaKind::Video),
+                        &store.files_dir(),
                     ) {
                         Ok(analysis) => {
                             store.store_analysis(&entry.media_id, analysis)?;
@@ -268,6 +273,7 @@ pub fn run() {
             app.manage(Arc::new(processing::ProcessingGate::default()));
             app.manage(clips::ClipJobs::default());
             app.manage(Arc::new(media_preview::PreviewJobs::default()));
+            app.manage(Arc::new(editor::thumbnail::ThumbnailJobs::default()));
             let store = MediaStore::open(&app_data_base(app.handle())?)?;
             app.manage(store);
             let s = app.state::<MediaStore>();
@@ -340,11 +346,15 @@ pub fn run() {
         ])
         .on_window_event(|window, event| {
             if matches!(event, tauri::WindowEvent::Destroyed) {
+                window.state::<Arc<ImportJobs>>().cancel_all();
                 window
                     .state::<Arc<transcription::TranscriptionJobs>>()
                     .cancel(None);
                 window.state::<clips::ClipJobs>().0.cancel(None);
                 window.state::<Arc<media_preview::PreviewJobs>>().cancel();
+                window
+                    .state::<Arc<editor::thumbnail::ThumbnailJobs>>()
+                    .cancel();
             }
         })
         .run(tauri::generate_context!())

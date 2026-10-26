@@ -167,7 +167,7 @@ fn real_composition_preserves_repetition_layer_placement_and_audio() {
         .iter()
         .any(|sample| sample.abs() > 1000));
     assert_eq!(std::fs::metadata(source).unwrap().len(), before);
-    let thumbnail = super::thumbnail::create(&base, &fixture(), &sources).unwrap();
+    let thumbnail = super::thumbnail::create(&base, &fixture(), &sources, &control).unwrap();
     assert!(thumbnail.starts_with(&[0xff, 0xd8]));
     assert!(thumbnail.len() < 250_000);
 }
@@ -319,4 +319,107 @@ fn real_split_and_local_caption_use_saved_source_positions() {
     assert!(ass.contains("TEXTO LOCAL"));
     assert!(!ass.contains("ORIGINAL"));
     assert_eq!(document.assets[0].transcript[0]["text"], "ORIGINAL");
+}
+
+#[test]
+fn real_overlay_covers_linked_captions_but_preserves_transparent_layers() {
+    let tools = crate::media_analyze::detect_fftools().expect("FFmpeg exigido para integração");
+    let exe = tools.ffprobe.with_file_name(if cfg!(windows) {
+        "ffmpeg.exe"
+    } else {
+        "ffmpeg"
+    });
+    let base = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+        .join("target/test-editor-caption-layers");
+    let scratch = Scratch::new(&base).unwrap();
+    let control = ProcessControl::default();
+    let source = scratch.path.join("source.mp4");
+    execute(
+        &exe,
+        &[
+            "-f",
+            "lavfi",
+            "-i",
+            "color=c=blue:s=320x180:r=10:d=1",
+            "-c:v",
+            "libx264",
+            "-threads",
+            "2",
+        ],
+        &source,
+        &control,
+        &scratch.path.join("source.log"),
+    );
+    let mut document = fixture();
+    document.settings["ratio"] = json!("original");
+    document.assets.truncate(1);
+    document.assets[0].width = 320;
+    document.assets[0].height = 180;
+    document.assets[0].duration_us = 1_000_000;
+    document.assets[0].transcript =
+        vec![json!({"id":"s","start":0,"end":1,"text":"BOTTOM","words":[]})];
+    document.items.truncate(1);
+    let mut upper = document.items[0].clone();
+    upper.id = "upper".into();
+    upper.group_id = "upper".into();
+    upper.track_id = "V2".into();
+    upper.placement =
+        Some(serde_json::from_value(json!({"x":50,"y":50,"scale":1,"opacity":1})).unwrap());
+    let mut caption = document.items[0].clone();
+    caption.id = "caption".into();
+    caption.kind = super::types::ItemKind::Caption;
+    caption.track_id = "C1".into();
+    caption.settings["captionModel"] = json!(1);
+    caption.settings["captionStyle"] = json!({"font":"Arial","size":120,"weight":700,"color":"#00FF00","italic":false,"underline":false,"uppercase":false,"outline":0,"outlineColor":"#000000","shadow":false,"background":"transparent","highlightColor":"#00FF00","effect":"none","position":"bottom","y":0.7,"wordsPerLine":5});
+    document.tracks.truncate(2);
+    document.tracks.push(serde_json::from_value(json!({"id":"C1","name":"Legenda","kind":"caption","primary":false,"locked":true,"hidden":false,"muted":false})).unwrap());
+    document.items.extend([upper, caption]);
+    let sources = HashMap::from([("source".to_string(), source)]);
+    crate::render::fonts::prepare(&scratch.path).unwrap();
+    let mut green = Vec::new();
+    for (index, opacity) in [1.0, 0.0].into_iter().enumerate() {
+        document.items[1].placement.as_mut().unwrap().opacity = opacity;
+        let args = super::render_graph::video(
+            &document,
+            &super::render_plan::Window { start: 0, end: 10 },
+            &sources,
+            &scratch.path,
+            index,
+            crate::render::encoder::Encoder::Cpu,
+        )
+        .unwrap();
+        let mut command = Command::new(&exe);
+        command.current_dir(&scratch.path).args(args);
+        control
+            .run(command, &scratch.path.join("render.log"))
+            .unwrap();
+        let pixels = scratch.path.join(format!("pixels-{index}.rgb"));
+        let mut decode = Command::new(&exe);
+        decode
+            .args(["-nostdin", "-v", "error", "-ss", "0.5", "-i"])
+            .arg(scratch.path.join(format!("part-{index}.mp4")))
+            .args(["-frames:v", "1", "-pix_fmt", "rgb24", "-f", "rawvideo", "-"]);
+        control
+            .run_to_file(&mut decode, &scratch.path.join("decode.log"), &pixels)
+            .unwrap();
+        let pixels = std::fs::read(pixels).unwrap();
+        green.push(
+            pixels
+                .chunks_exact(3)
+                .filter(|rgb| {
+                    rgb[1] > 130
+                        && rgb[1] > rgb[0].saturating_add(60)
+                        && rgb[1] > rgb[2].saturating_add(60)
+                })
+                .count(),
+        );
+    }
+    assert_eq!(
+        green[0], 0,
+        "Camada opaca deve cobrir também a legenda inferior"
+    );
+    assert!(
+        green[1] > 10,
+        "Camada transparente deve preservar legenda inferior visível"
+    );
 }

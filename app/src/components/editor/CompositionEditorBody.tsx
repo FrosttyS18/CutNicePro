@@ -1,7 +1,9 @@
 import { useCallback, useEffect, useId, useMemo, useRef, useState, type CSSProperties, type ReactNode } from "react";
 import { useCompositionMedia } from "../../hooks/useCompositionMedia";
 import { useTimelinePreview } from "../../hooks/useTimelinePreview";
-import { activeItems, montageTranscript, sourceTimeAt } from "../../lib/composition-playback";
+import { montageTranscript, sourceTimeAt } from "../../lib/composition-playback";
+import { compositionContextItem, transcriptForItem } from "../../lib/composition-transcript-context";
+import { formatMediaTime } from "../../lib/workspace";
 import { splitViewport } from "../../lib/split-screen";
 import { fragmentFromAsset } from "../../lib/composition-source";
 import { insertComposition } from "../../lib/composition-insert";
@@ -63,7 +65,11 @@ export function CompositionEditorBody({projectId,document,frame,playing,selected
   const [transcriptFrame,setTranscriptFrame]=useState(frame);
   const latestFrame=useRef(frame);
   useEffect(()=>{latestFrame.current=frame;},[frame]);
-  useEffect(()=>{const timer=setInterval(()=>setTranscriptFrame(latestFrame.current),120);return()=>clearInterval(timer);},[]);
+  useEffect(()=>{
+    if(tab!=="transcript" || !libraryOpen)return;
+    setTranscriptFrame(latestFrame.current);
+    const timer=setInterval(()=>setTranscriptFrame(latestFrame.current),120);return()=>clearInterval(timer);
+  },[tab,libraryOpen]);
   const sourceAsset=document.assets.find(asset=>asset.id===source)??document.assets[0];
   const viewingSource=sourceOpen&&Boolean(sourceAsset);
   if(sourceRequest!==handledSourceRequest){
@@ -80,7 +86,10 @@ export function CompositionEditorBody({projectId,document,frame,playing,selected
     try{onPause();onChange(insertComposition(document,fragmentFromAsset(document,asset,start,end,asset.mediaId!==sourceId||document.items.some(value=>value.kind==="audio"&&value.assetId===asset.id)),frame));return true;}
     catch(error){onError(error instanceof Error?error.message:"Não foi possível adicionar a fonte");return false;}
   };
-  const item=document.items.find(value=>selected.includes(value.id))??activeItems(document,frame).find(value=>value.kind!=="caption");
+  const item=compositionContextItem(document,frame,selected);
+  const transcriptItemId=item?String(item.id):undefined;
+  const transcriptSegments=useMemo(()=>transcriptForItem(document,entries,document.items.find(value=>value.id===transcriptItemId)).map(entry=>entry.segment),[document,entries,transcriptItemId]);
+  const seekTranscript=useCallback((seconds:number)=>onSeek(Math.round(seconds*document.fps.numerator/document.fps.denominator)),[onSeek,document.fps]);
   const itemAsset=document.assets.find(asset=>asset.id===item?.assetId);
   const itemTrack=document.tracks.find(track=>track.id===item?.trackId);
   const overlay=item && selected.includes(item.id) && (item.kind==="image" || item.kind==="video") && itemTrack && !itemTrack.primary ? item : undefined;
@@ -134,7 +143,8 @@ export function CompositionEditorBody({projectId,document,frame,playing,selected
         {canApplyCaptions&&onApplyCaptions&&<div className="studio-section"><p className="flow-muted">A transcrição da fonte está disponível. Aplicar adiciona uma edição ao rascunho atual.</p>
           <EditorAction label="Aplicar legendas à montagem" icon={<ClosedCaptioningIcon size={16} aria-hidden="true"/>} onClick={()=>{onPause();onApplyCaptions();}}/>
         </div>}
-        <TranscriptPanel segments={entries.map(entry=>entry.segment)} demo={false} currentTime={frameToSeconds(transcriptFrame,document.fps)} canSeek generated={legacy.transcriptMode==="real"} onSeek={seconds=>onSeek(Math.round(seconds*document.fps.numerator/document.fps.denominator))} onText={editCaption}/>
+        {item&&<p className="flow-muted" role="status">{itemAsset?.name} · {formatMediaTime(frameToSeconds(item.startFrame,document.fps))}–{formatMediaTime(frameToSeconds(item.startFrame+item.durationFrames,document.fps))} na montagem</p>}
+        <TranscriptPanel segments={transcriptSegments} contextKey={transcriptItemId} demo={false} currentTime={frameToSeconds(transcriptFrame,document.fps)} canSeek generated={legacy.transcriptMode==="real"} onSeek={seekTranscript} onText={editCaption}/>
       </div>
       </aside>
     </CompositionSidePanel>}

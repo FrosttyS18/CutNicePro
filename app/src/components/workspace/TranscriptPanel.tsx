@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useId, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { memo, useCallback, useEffect, useId, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { displayWords } from "../../lib/transcript-text";
 import { transcriptSections } from "../../lib/transcript-sections";
 import { formatMediaTime } from "../../lib/workspace";
@@ -15,9 +15,10 @@ interface Props {
   actions?: ReactNode;
   generated?: boolean;
   readOnly?: boolean;
+  contextKey?: string;
 }
 
-export function TranscriptPanel({ segments, demo, onSeek, onText, currentTime, canSeek, actions, generated, readOnly }: Props) {
+export const TranscriptPanel=memo(function TranscriptPanel({ segments, demo, onSeek, onText, currentTime, canSeek, actions, generated, readOnly, contextKey }: Props) {
   const [query, setQuery] = useState("");
   const [editing, setEditing] = useState<string | null>(null);
   const id = useId();
@@ -29,11 +30,13 @@ export function TranscriptPanel({ segments, demo, onSeek, onText, currentTime, c
   const activeIndex = current ? displayWords(current).findIndex(word => word.start !== null && word.end !== null && currentTime >= word.start && currentTime < word.end) : -1;
   const activeKey = `${current?.id}:${activeIndex}`;
   const started = currentTime > 0;
-  const [expanded, setExpanded] = useState<Set<string>>(() => new Set(currentSection && started ? [currentSection] : []));
-  const [followed,setFollowed] = useState({currentSection,started});
-  if (followed.currentSection !== currentSection || followed.started !== started) {
-    setFollowed({currentSection,started});
+  const [expanded, setExpanded] = useState<Set<string>>(() => new Set(currentSection && started ? [currentSection] : contextKey && sections[0] ? [sections[0].id] : []));
+  const [followed,setFollowed] = useState({currentSection,started,contextKey});
+  if (followed.currentSection !== currentSection || followed.started !== started || followed.contextKey !== contextKey) {
+    setFollowed({currentSection,started,contextKey});
     if (currentSection && started) setExpanded(new Set([currentSection]));
+    else if(followed.contextKey!==contextKey) setExpanded(new Set(sections[0]?[sections[0].id]:[]));
+    if(followed.contextKey!==contextKey) setEditing(null);
   }
   useEffect(() => {
     const box = scroll.current;
@@ -49,7 +52,7 @@ export function TranscriptPanel({ segments, demo, onSeek, onText, currentTime, c
   const text = useCallback((key: string, value: string, words?: TranscriptWord[]) => callbacks.current.onText(key, value, words), []);
   const edit = useCallback((key: string) => setEditing(current => current === key ? null : key), []);
   const search = query.trim().toLocaleLowerCase("pt-BR");
-  const visible = sections.filter(section => section.segments.some(segment => segment.text.toLocaleLowerCase("pt-BR").includes(search)));
+  const visible = useMemo(()=>sections.filter(section => section.segments.some(segment => segment.text.toLocaleLowerCase("pt-BR").includes(search))),[sections,search]);
   return <section className="transcript-panel" aria-labelledby={`${id}-heading`}>
     <header><h2 id={`${id}-heading`}>Transcrição</h2></header>
     {actions}
@@ -78,4 +81,4 @@ export function TranscriptPanel({ segments, demo, onSeek, onText, currentTime, c
         })}
     </div>
   </section>;
-}
+});

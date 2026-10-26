@@ -6,6 +6,7 @@ import { webglAvailable } from "./webgl-support";
 import { introClock, introTuner } from "./intro";
 import { watchThemeColors, type ThemeColors } from "./theme-colors";
 import { useTunerStore } from "./tuner";
+import { useGalaxyMediaPool, type GalaxyMediaPool } from "./useGalaxyMediaPool";
 import {
   galaxyLayoutTuner,
   galaxyMobileTuner,
@@ -312,17 +313,25 @@ export default function HeroGalaxy() {
   );
 }
 
-function GalaxyScene({
-  colors,
-  onScreen,
-  pointer,
-  ripples,
-}: {
+interface GalaxySceneProps {
   colors: ThemeColors;
   onScreen: boolean;
   pointer: React.RefObject<GalaxyPointer>;
   ripples: React.RefObject<GalaxyRipple[]>;
-}) {
+}
+
+function GalaxyScene(props: GalaxySceneProps) {
+  const pool = useGalaxyMediaPool();
+  return pool ? <GalaxySceneContent {...props} pool={pool} /> : null;
+}
+
+function GalaxySceneContent({
+  colors,
+  onScreen,
+  pointer,
+  ripples,
+  pool,
+}: GalaxySceneProps & { pool: GalaxyMediaPool }) {
   const size = useThree((s) => s.size);
   const rigRef = useRef<THREE.Group>(null);
   const cardRefs = useRef<(THREE.Mesh | null)[]>([]);
@@ -349,107 +358,7 @@ function GalaxyScene({
     boostCard: -1,
   });
 
-  // 03B.6: posters locais (bundle) + vídeos do manifesto via proxy
-  // cnpmedia:// (crossOrigin anonymous; o proxy responde ACAO *). O aspect
-  // nominal vem do manifesto; o REAL chega em loadedmetadata (clipVA).
-  const clipVA = useMemo(() => {
-    const a = new Float32Array(GALAXY_MEDIA.length);
-    GALAXY_MEDIA.forEach((clip, i) => {
-      a[i] = clip.aspect || 16 / 9;
-    });
-    return a;
-  }, []);
-  const posterReady = useMemo(() => new Uint8Array(GALAXY_MEDIA.length), []);
-  const posterTextures = useMemo(
-    () =>
-      GALAXY_MEDIA.map((clip, i) => {
-        const t = new THREE.TextureLoader().load(clip.poster, () => {
-          posterReady[i] = 1;
-        });
-        t.colorSpace = THREE.SRGBColorSpace;
-        return t;
-      }),
-    [posterReady],
-  );
-  // Um <video> por mídia (pool único por URL), criado uma única vez; o
-  // decode budget abaixo decide quem toca.
-  const videos = useMemo(
-    () =>
-      GALAXY_MEDIA.map((clip) => {
-        const v = document.createElement("video");
-        v.src = clip.videoUrl;
-        v.muted = true;
-        v.loop = true;
-        v.playsInline = true;
-        v.crossOrigin = "anonymous";
-        v.disableRemotePlayback = true;
-        v.preload = "metadata";
-        return v;
-      }),
-    [],
-  );
-  const videoTextures = useMemo(
-    () =>
-      videos.map((v, i) => {
-        const t = new THREE.VideoTexture(v);
-        const record = () => {
-          clipVA[i] = v.videoWidth / Math.max(1, v.videoHeight) || GALAXY_MEDIA[i].aspect;
-        };
-        if (v.readyState >= 1) record();
-        else v.addEventListener("loadedmetadata", record, { once: true });
-        return t;
-      }),
-    [videos, clipVA],
-  );
-  // Falha de rede/CDN: re-armar o src com backoff (3 tentativas); o poster
-  // permanece enquanto o vídeo não tem frame.
-  useEffect(() => {
-    const timers: ReturnType<typeof setTimeout>[] = [];
-    videos.forEach((v) => {
-      let tries = 0;
-      const retry = () => {
-        if (tries >= 3 || v.readyState >= 2) return;
-        tries++;
-        timers.push(setTimeout(() => {
-          v.load();
-          v.addEventListener("error", retry, { once: true });
-        }, 15000 * tries));
-      };
-      v.addEventListener("error", retry, { once: true });
-    });
-    return () => timers.forEach(clearTimeout);
-  }, [videos]);
-  // Ciclo de vida do pool (re-armar src a cada montagem — strict mode pode
-  // ter desmontado) + priming escalonado, como no original.
-  useEffect(() => {
-    videos.forEach((v, i) => {
-      if (!v.getAttribute("src")) {
-        v.src = GALAXY_MEDIA[i].videoUrl;
-        v.load();
-      }
-    });
-    const timers = videos.map((v, i) =>
-      setTimeout(() => {
-        const seek = () => {
-          if (!v.paused || v.currentTime !== 0) return;
-          const usable = Math.max(0.2, (v.duration || 8) - 0.5);
-          v.currentTime = 0.1 + ((i * 2.618) % usable);
-        };
-        if (v.readyState >= 1) seek();
-        else v.addEventListener("loadedmetadata", seek, { once: true });
-      }, 400 + i * 250),
-    );
-    return () => {
-      timers.forEach(clearTimeout);
-      posterTextures.forEach((t) => t.dispose());
-      videoTextures.forEach((t) => t.dispose());
-      videos.forEach((v) => {
-        v.pause();
-        v.removeAttribute("src");
-        v.load();
-      });
-    };
-  }, [videos, posterTextures, videoTextures]);
+  const { clipVA, posterTextures, videos, videoTextures } = pool;
   // Hero fora da tela: o frame loop para; estaciona os decoders.
   const parkTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   useEffect(() => {

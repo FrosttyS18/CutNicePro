@@ -1,14 +1,14 @@
 use super::{export_snapshot, render_graph, render_plan::Window, store::EditorStore};
+mod jobs;
 use crate::{
     media_store::MediaStore,
     render::{encoder::Encoder, scratch::Scratch},
     transcription::process::ProcessControl,
 };
+pub use jobs::ThumbnailJobs;
 use serde::{Deserialize, Serialize};
-use std::{path::Path, process::Command, sync::Mutex};
+use std::{path::Path, process::Command, sync::Arc};
 use tauri::{AppHandle, Manager};
-
-static THUMBNAIL_GATE: Mutex<()> = Mutex::new(());
 
 #[derive(Serialize, Deserialize)]
 struct CachedThumbnail {
@@ -20,7 +20,9 @@ pub(super) fn create(
     base: &Path,
     document: &super::types::Composition,
     sources: &std::collections::HashMap<String, std::path::PathBuf>,
+    control: &ProcessControl,
 ) -> Result<Vec<u8>, String> {
+    control.check()?;
     let scratch = Scratch::new(base)?;
     crate::render::fonts::prepare(&scratch.path)?;
     let tools = crate::media_analyze::detect_fftools().ok_or("FFmpeg não encontrado")?;
@@ -29,7 +31,6 @@ pub(super) fn create(
     } else {
         "ffmpeg"
     });
-    let control = ProcessControl::default();
     let mut command = Command::new(&executable);
     command.current_dir(&scratch.path).args(render_graph::video(
         document,
@@ -66,13 +67,11 @@ fn read(
     project_id: &str,
     clip_id: &str,
     revision: u64,
+    control: &ProcessControl,
 ) -> Result<Vec<u8>, String> {
     if clip_id.len() != 64 || !clip_id.bytes().all(|byte| byte.is_ascii_hexdigit()) {
         return Err("Identificador de clipe inválido".into());
     }
-    let _guard = THUMBNAIL_GATE
-        .lock()
-        .map_err(|_| "Miniaturas indisponíveis")?;
     let state = EditorStore::open(base)?.load(project_id)?;
     let snapshot = state
         .clips
@@ -95,7 +94,8 @@ fn read(
     }
     let mut document = export_snapshot::freeze(Some(snapshot), &snapshot.document)?;
     let sources = export_snapshot::sources(media, project_id, &mut document)?;
-    let bytes = create(base, &document, &sources)?;
+    let bytes = create(base, &document, &sources, control)?;
+    control.check()?;
     std::fs::create_dir_all(folder).map_err(|error| error.to_string())?;
     crate::file_output::atomic_write(&cache, |file| {
         serde_json::to_writer(
@@ -117,22 +117,26 @@ pub async fn get_editor_thumbnail(
     clip_id: String,
     revision: u64,
 ) -> Result<Vec<u8>, String> {
+    let jobs = app.state::<Arc<ThumbnailJobs>>().inner().clone();
     tauri::async_runtime::spawn_blocking(move || {
-        let base = crate::app_data_base(&app)?;
-        if !crate::storage::Store::open(&base)?
-            .load()?
-            .iter()
-            .any(|project| project.id == project_id)
-        {
-            return Err("Projeto não encontrado".into());
-        }
-        read(
-            &base,
-            &app.state::<MediaStore>(),
-            &project_id,
-            &clip_id,
-            revision,
-        )
+        jobs.run(|control| {
+            let base = crate::app_data_base(&app)?;
+            if !crate::storage::Store::open(&base)?
+                .load()?
+                .iter()
+                .any(|project| project.id == project_id)
+            {
+                return Err("Projeto não encontrado".into());
+            }
+            read(
+                &base,
+                &app.state::<MediaStore>(),
+                &project_id,
+                &clip_id,
+                revision,
+                control,
+            )
+        })
     })
     .await
     .map_err(|error| error.to_string())?

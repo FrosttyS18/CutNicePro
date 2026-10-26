@@ -37,6 +37,8 @@
 .tool-dialog.clip-inspection { width: min(1180px,calc(100vw - 48px)); max-width: none; }
 .clip-inspection__body { display: grid; grid-template-columns: minmax(0,1.25fr) minmax(260px,1fr) 180px; gap: 24px; align-items: start; }
 .clip-inspection__player { min-width: 0; }
+.saved-composition-preview__viewport { --saved-preview-limit:min(60dvh,max(96px,calc(100dvh - 240px))); width:min(100%,calc(var(--saved-preview-limit) * var(--preview-ratio))); aspect-ratio:var(--preview-ratio); min-width:0; margin-inline:auto; overflow:hidden; container-type:size; }
+.saved-composition-preview__viewport > .composition-stage { width:100%; height:100%; }
 .clip-inspection__player .workspace-preview { width: min(100%,calc(60vh * var(--preview-ratio))); margin-inline: auto; }
 .clip-inspection__player > input[type="range"] { width: 100%; accent-color: #fff; cursor: pointer; }
 .clip-inspection__details { min-width: 0; }

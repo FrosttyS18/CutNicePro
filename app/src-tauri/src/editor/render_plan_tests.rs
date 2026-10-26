@@ -61,3 +61,53 @@ fn hidden_track_is_absent_but_does_not_shorten_the_document() {
     document.items.clear();
     assert!(super::render_plan::windows(&document).is_err());
 }
+
+#[test]
+fn source_captions_are_composed_before_their_video_is_overlaid() {
+    let mut document = fixture();
+    document.tracks.push(serde_json::from_value(json!({"id":"C1","name":"Legendas","kind":"caption","primary":false,"locked":true,"hidden":false,"muted":false})).unwrap());
+    document.assets[0].transcript =
+        vec![json!({"id":"s","start":0,"end":4,"text":"Legenda de teste"})];
+    let videos = document.items.clone();
+    for video in videos {
+        let mut caption = video.clone();
+        caption.id = format!("caption-{}", video.id);
+        caption.kind = super::types::ItemKind::Caption;
+        caption.track_id = "C1".into();
+        caption.settings["captionModel"] = json!(1);
+        caption.settings["captionStyle"] = json!({"font":"Arial","size":64,"weight":700,"color":"#FFFFFF","italic":false,"underline":false,"uppercase":false,"outline":2,"outlineColor":"#000000","shadow":false,"background":"transparent","highlightColor":"#00FFFF","effect":"none","position":"bottom","y":0.85,"wordsPerLine":5});
+        document.items.push(caption);
+    }
+    let base = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+        .join("target/test-editor-caption-graph");
+    let scratch = crate::render::scratch::Scratch::new(&base).unwrap();
+    let sources =
+        std::collections::HashMap::from([("source".to_string(), scratch.path.join("source.mp4"))]);
+    super::render_graph::video(
+        &document,
+        &super::render_plan::Window { start: 5, end: 10 },
+        &sources,
+        &scratch.path,
+        0,
+        crate::render::encoder::Encoder::Cpu,
+    )
+    .unwrap();
+    let graph = std::fs::read_to_string(scratch.path.join("video-0.txt")).unwrap();
+    let first_caption = graph.find("ass=filename=caption-0-0.ass").unwrap();
+    let second_caption = graph.find("ass=filename=caption-0-1.ass").unwrap();
+    assert!(first_caption < graph.find("[mix1]").unwrap());
+    assert!(second_caption < graph.find("[mix2]").unwrap());
+    assert_eq!(graph.matches("ass=filename=").count(), 2);
+    document.tracks[0].hidden = true;
+    super::render_graph::video(
+        &document,
+        &super::render_plan::Window { start: 5, end: 10 },
+        &sources,
+        &scratch.path,
+        1,
+        crate::render::encoder::Encoder::Cpu,
+    )
+    .unwrap();
+    let hidden = std::fs::read_to_string(scratch.path.join("video-1.txt")).unwrap();
+    assert_eq!(hidden.matches("ass=filename=").count(), 1);
+}

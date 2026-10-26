@@ -191,7 +191,9 @@ pub fn recover(
             "minSeconds":options.min_seconds,"maxSeconds":options.max_seconds,
             "speech":speech.iter().map(|s|s.text.as_str()).collect::<Vec<_>>().join("\n")});
         let prompt = engine.prompt(include_str!("repair-prompt.txt"), &data)?;
-        if engine.count_tokens(scratch, &prompt)? > super::engine_tools::CONTEXT_TOKENS - 1000 {
+        if engine.count_tokens(scratch, &prompt, control)?
+            > super::engine_tools::CONTEXT_TOKENS - 1000
+        {
             return Err("A transcrição completa excede o contexto disponível para corrigir o corte. Nenhum texto foi dividido ou truncado.".into());
         }
         let schema = super::source_anchors::schema(1);

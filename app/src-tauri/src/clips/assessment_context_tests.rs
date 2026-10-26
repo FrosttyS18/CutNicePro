@@ -430,7 +430,7 @@ fn run_prepared_native_full_assessment_context_comparison() {
             fs::create_dir(&directory).unwrap();
             let mut result = json!({"id":case.case.id,"scope":input.scope,"expectedComplete":case.case.expected_complete,"start":case.start,"end":case.end,"source":case.native_source,"quotes":case.quotes,"sourceChangedFromBinary":case.source_changed_from_binary,"fidelityStatus":"PENDING_TEXT_REVIEW"});
             let call_start = Instant::now();
-            match engine.count_tokens(&directory, &prompt) {
+            match engine.count_tokens(&directory, &prompt, &ProcessControl::default()) {
                 Ok(count) if count <= super::super::engine_tools::CONTEXT_TOKENS - 1728 => {
                     result["promptTokens"] = json!(count);
                     match generate_once(&engine, &directory, &prompt, &schema) {

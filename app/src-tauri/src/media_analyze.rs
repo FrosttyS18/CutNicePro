@@ -3,8 +3,14 @@
 //! `ffprobe -v quiet -print_format json -show_format -show_streams`
 //! (flags explícitas, conforme emenda do mantenedor).
 
-use std::path::PathBuf;
+use crate::transcription::process::ProcessControl;
+use std::path::{Path, PathBuf};
 use std::process::Command;
+use std::sync::{
+    atomic::{AtomicBool, Ordering},
+    mpsc, Arc,
+};
+use std::time::Duration;
 
 use serde::Deserialize;
 
@@ -71,7 +77,19 @@ pub fn analyze_for_kind(
     media_path: &std::path::Path,
     kind: &crate::editor::types::MediaKind,
 ) -> Result<MediaAnalysis, String> {
-    let out = Command::new(&fftools.ffprobe)
+    let out = probe_command(fftools, media_path)
+        .output()
+        .map_err(|e| format!("falha ao executar ffprobe: {e}"))?;
+    if !out.status.success() {
+        return Err("ffprobe não conseguiu analisar o arquivo (formato não suportado?)".into());
+    }
+    parse_probe_for_kind(&out.stdout, kind)
+        .ok_or_else(|| "saída do ffprobe em formato inesperado".to_string())
+}
+
+fn probe_command(tools: &FfTools, source: &Path) -> Command {
+    let mut command = Command::new(&tools.ffprobe);
+    command
         .args([
             "-v",
             "quiet",
@@ -80,14 +98,110 @@ pub fn analyze_for_kind(
             "-show_format",
             "-show_streams",
         ])
-        .arg(media_path)
-        .output()
-        .map_err(|e| format!("falha ao executar ffprobe: {e}"))?;
-    if !out.status.success() {
-        return Err("ffprobe não conseguiu analisar o arquivo (formato não suportado?)".into());
+        .arg(source);
+    command
+}
+
+#[cfg(all(test, windows))]
+#[path = "media_analyze_control_tests.rs"]
+mod control_tests;
+
+fn analyze_import_with_timeout(
+    tools: &FfTools,
+    source: &std::path::Path,
+    kind: &crate::editor::types::MediaKind,
+    control: Arc<ProcessControl>,
+    scratch_root: &Path,
+    timeout: Duration,
+) -> Result<MediaAnalysis, String> {
+    control.check()?;
+    let scratch = ProbeScratch(scratch_root.join(format!(".probe-{}", uuid::Uuid::new_v4())));
+    std::fs::create_dir(&scratch.0)
+        .map_err(|error| format!("análise temporária indisponível: {error}"))?;
+    let output = scratch.0.join("metadata.json");
+    let deadline = ProbeDeadline::new(control.clone(), timeout);
+    let timed_out = deadline.timed_out.clone();
+    let result = control.run_to_file(
+        &mut probe_command(tools, source),
+        &scratch.0.join("probe.log"),
+        &output,
+    );
+    drop(deadline);
+    if timed_out.load(Ordering::SeqCst) {
+        return Err("Tempo limite da análise de mídia excedido.".into());
     }
-    parse_probe_for_kind(&out.stdout, kind)
-        .ok_or_else(|| "saída do ffprobe em formato inesperado".to_string())
+    result?;
+    control.check()?;
+    parse_probe_for_kind(
+        &std::fs::read(output).map_err(|error| error.to_string())?,
+        kind,
+    )
+    .ok_or_else(|| "saída do ffprobe em formato inesperado".to_string())
+}
+
+pub fn analyze_import(
+    tools: &FfTools,
+    source: &Path,
+    kind: &crate::editor::types::MediaKind,
+    control: Arc<ProcessControl>,
+    scratch_root: &Path,
+) -> Result<MediaAnalysis, String> {
+    let bytes = std::fs::metadata(source)
+        .map_err(|error| error.to_string())?
+        .len();
+    let seconds = 30 + bytes.div_ceil(1024 * 1024 * 1024).min(18) * 5;
+    analyze_import_with_timeout(
+        tools,
+        source,
+        kind,
+        control,
+        scratch_root,
+        Duration::from_secs(seconds),
+    )
+}
+
+struct ProbeScratch(PathBuf);
+impl Drop for ProbeScratch {
+    fn drop(&mut self) {
+        let _ = std::fs::remove_dir_all(&self.0);
+    }
+}
+
+struct ProbeDeadline {
+    finished: Option<mpsc::Sender<()>>,
+    worker: Option<std::thread::JoinHandle<()>>,
+    timed_out: Arc<AtomicBool>,
+}
+impl ProbeDeadline {
+    fn new(control: Arc<ProcessControl>, timeout: Duration) -> Self {
+        let (finished, receiver) = mpsc::channel();
+        let timed_out = Arc::new(AtomicBool::new(false));
+        let state = timed_out.clone();
+        let worker = std::thread::spawn(move || {
+            if matches!(
+                receiver.recv_timeout(timeout),
+                Err(mpsc::RecvTimeoutError::Timeout)
+            ) {
+                state.store(true, Ordering::SeqCst);
+                control.cancel();
+            }
+        });
+        Self {
+            finished: Some(finished),
+            worker: Some(worker),
+            timed_out,
+        }
+    }
+}
+impl Drop for ProbeDeadline {
+    fn drop(&mut self) {
+        if let Some(finished) = self.finished.take() {
+            let _ = finished.send(());
+        }
+        if let Some(worker) = self.worker.take() {
+            let _ = worker.join();
+        }
+    }
 }
 
 pub fn parse_probe_for_kind(

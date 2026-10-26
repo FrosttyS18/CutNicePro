@@ -1702,7 +1702,7 @@ pub fn select(
         selection_system,
         &mut |text| {
             control.check()?;
-            engine.count_tokens(scratch, text)
+            engine.count_tokens(scratch, text, control)
         },
     )?;
     eprintln!("[clips] Qwen3.5: transcrição completa em uma entrada, contexto 32768");

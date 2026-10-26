@@ -102,7 +102,9 @@ pub fn review(
             "nearbySpeech":speech.iter().filter(|s|s.end>original.start-40.0 && s.start<original.end+60.0).map(|s|serde_json::json!({"start":s.start,"end":s.end,"text":s.text})).collect::<Vec<_>>(),
             "speech":speech.iter().map(|s|s.text.as_str()).collect::<Vec<_>>().join("\n")});
         let prompt = engine.prompt(include_str!("bounds-prompt.txt"), &data)?;
-        if engine.count_tokens(scratch, &prompt)? > super::engine_tools::CONTEXT_TOKENS - 1000 {
+        if engine.count_tokens(scratch, &prompt, control)?
+            > super::engine_tools::CONTEXT_TOKENS - 1000
+        {
             return Err("A transcrição completa excede o contexto para rever os limites. Nenhum texto foi truncado.".into());
         }
         let output = engine.generate_extraction(

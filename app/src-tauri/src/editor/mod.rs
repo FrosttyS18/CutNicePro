@@ -18,6 +18,7 @@ mod render_plan;
 
 mod render;
 mod render_audio;
+mod render_captions;
 mod render_graph;
 mod render_media;
 

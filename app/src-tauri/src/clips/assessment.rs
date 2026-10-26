@@ -139,7 +139,9 @@ pub fn evaluate(
             "quotes":quotes.iter().enumerate().map(|(id,text)|serde_json::json!({"id":id,"text":text})).collect::<Vec<_>>()});
         let schema = schema(quotes.len());
         let prompt = engine.prompt(include_str!("evaluate-prompt.txt"), &data)?;
-        if engine.count_tokens(scratch, &prompt)? > super::engine_tools::CONTEXT_TOKENS - 1728 {
+        if engine.count_tokens(scratch, &prompt, control)?
+            > super::engine_tools::CONTEXT_TOKENS - 1728
+        {
             return Err("A transcrição completa e o trecho excedem o contexto disponível para avaliação. Nenhum texto foi dividido ou truncado.".into());
         }
         let output = engine.generate(
