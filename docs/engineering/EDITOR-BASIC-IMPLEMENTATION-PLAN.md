@@ -278,6 +278,7 @@ Uma operação que alteraria uma faixa bloqueada será impedida com explicação
 - Vídeos sobrepostos ocupam faixas distintas. Em uma mesma faixa, o destino é limitado ao espaço livre; não se salva uma sobreposição inválida nem se remove a validação para ocultar o erro.
 - Camadas visuais aparecem de cima para baixo conforme sua ordem de composição; a faixa principal fica abaixo delas. A ordem visual das linhas não altera o documento salvo.
 - Zoom, slider e ajuste à largura ficam agrupados à direita na mesma barra das ações, com o conteúdo largo restrito ao scroll interno da timeline. Ctrl + roda do mouse ajusta o zoom em torno do ponto sob o ponteiro, sem aplicar zoom do navegador; roda sem Ctrl continua normal. O relógio abre o ajuste preciso em um popover do design system.
+- A visão mais afastada mostra até 16 vezes a duração da montagem, mantendo um limite real de afastamento. Roda, teclado, slider e botões compartilham limites; Ajustar à largura continua mostrando a montagem inteira. Essa faixa mais ampla substitui o primeiro limite demasiado restritivo identificado pelo mantenedor.
 
 ### Atalhos
 
