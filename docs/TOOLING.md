@@ -290,3 +290,9 @@ Python), `.zcode/figcraft/figcraft_app_server.py` (APP/CLI/ROOT), os scripts de 
 - Documentação completa, matriz de testes e políticas: **`docs/HOOKS.md`**.
 - Eventos nativos validados em 2026-10-17 pós-reinício (SessionStart, PreToolUse BLOCK,
   PostToolUse e Stop fast — detalhes e timestamps em `docs/HOOKS.md`).
+
+## Pesquisa desktop isolada — 2026-10-26
+
+REA clonado na revisão `2b84efe0da5ced67ca814e73060a63e7444d17b2` e Ghidra oficial 12.2 em `.tooling/research/`, diretório ignorado e separado do app. Provider REA não ativado (Node local 24.12.0 abaixo do mínimo 24.22.1; lane Windows documentada para Ghidra 12.1.x). Experimento dirigido usou a API Ghidra diretamente, sem execução do CapCut/DLL nem APIs externas. Não descrever esse experimento como provider REA validado.
+
+Notas/procedimento/recibo em `.tooling/research/capcut-study/`; resumo permanente em OPEN-SOURCE-ENGINE-RESEARCH. Footprint final 1.565.736.240 bytes, teto inicial 2 GB; sem nova build target do aplicativo. `research-temp/` foi autorizado/ignorado como alternativa de projeto Ghidra sem componente iniciado por ponto, mas não foi necessário. Esses diretórios não entram em Git/Graphify e não substituem os caches/projetos do usuário. Não iniciar varreduras totais ou novos downloads sem necessidade técnica demonstrada.

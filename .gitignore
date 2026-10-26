@@ -57,3 +57,5 @@ __pycache__/
 /apply_g3c.py
 /app/src-tauri/apply_mm_helpers.py
 /experiments/clip-selection-ab/scratch/discover-*-result.json
+/.tooling/research/
+/research-temp/

@@ -374,3 +374,26 @@ Leitura preparatória, sem execução de modelo ou adoção de dependências. In
 - **Aplicação:** `clips/scene_regions.rs` refina bordas por transições FFmpeg; isso não demonstra tracking. `clips/types.rs` e `EditorTimeline.tsx` consultados representam intervalo/trim; plano com múltiplos intervalos exige rastreio adicional pelo implementador.
 
 Branches externos consultados são móveis; hashes do conteúdo constam no inventário. Antes de adaptar código, o ZCode deve fixar revisões, seguir dependências relevantes e validar licença/contratos/testes. Não se afirma estudo completo ou integração destas referências.
+
+### Estudo de referência desktop — REA/Ghidra e CapCut, 2026-10-26
+
+Pedido do mantenedor: estudar canvas, timeline, prévia e desempenho do CapCut instalado; nenhuma integração de produto nesta etapa. Ferramenta open-source consultada: [morluto/rea, revisão 2b84efe0da5ced67ca814e73060a63e7444d17b2](https://github.com/morluto/rea/tree/2b84efe0da5ced67ca814e73060a63e7444d17b2), clone separado em `.tooling/research/rea`. README, AGENTS, skill `reverse-engineer-anything`, fluxo desktop, bridge e decompilador foram lidos. **Provider REA não executado:** Node local 24.12.0 abaixo do mínimo 24.22.1; lane Windows documenta Ghidra 12.1.x. Não declarar REA operacional por ter sido clonado.
+
+Foi executado um experimento separado com a API local do **Ghidra oficial 12.2**, sem abrir o CapCut, executar a DLL ou enviar binários a terceiros. Instalação examinada: CapCut 9.6.0.4097. `videoeditor.dll` conservou o SHA256 `47e341ce930074bd7d11ef418ea5c893fc6330aa73b2f2203c5098f302d63e9f` antes/depois. Seis funções foram examinadas por pseudocódigo e instruções, base 0x180000000:
+
+| Símbolo | RVA | Evidência delimitada |
+|---|---|---|
+| PlayerWin::GetCanvasSize | 0x15d6940 | Lê um par de campos de tamanho por auxiliares. |
+| PlayerWin::SetCanvasSize | 0x15da7f0 | Atualiza os campos e segue por despachos/ramificação. |
+| PlayerWin::SetCanvasSizeWithoutSeek | 0x15da910 | Atualiza os mesmos campos sem os despachos adicionais observados no caminho anterior. |
+| PlayerWin::SetPreviewSize | 0x15db280 | Encaminha tamanho a chamada virtual; alvo concreto não resolvido. |
+| PlayerWin::PreviewSeek | 0x15d8c70 | Escolhe valor solicitado/armazenado e combina flags; unidades/fila não comprovadas. |
+| VideoCoordinateUtils::getSegmentTransformInCanvas | 0x2864370 | Obtém tamanho recortado, compara proporções, ajusta dimensões e normaliza pelo canvas. |
+
+Auxiliares em 0x101610/0x11a940 e 0x2e13750/0x2e11cf0 confirmam leitura/escrita dos mesmos campos. Símbolos diferentes podem compartilhar endereço; nomes inferidos de classes não substituem as instruções. O fator 2 da normalização não identifica sozinho uma API gráfica. Não se comprovou ordenação de camadas, cache/proxy, fila de seek, codec/GPU ativo ou desempenho comparativo.
+
+Prévia social foi corroborada nos recursos `Resources/po/pt-BR.po:36849–36868` e `en.po:40139–40158`: opções Nenhum/TikTok/YouTube Shorts/Reels e aviso de variação por dispositivo. Isso confirma a feature apresentada pelo mantenedor, não o código do overlay. Proposta própria a especificar: camada React/CSS/SVG sobre o mesmo player, coordenadas normalizadas e safe areas versionadas; estado de visualização separado da composição/exportação. Não copiar a interface inteira nem adicionar outro player. Nenhuma tela definitiva foi aprovada nesta pesquisa.
+
+Aplicação conceitual possível: separar tamanho da saída, tamanho de exibição e transformação/hit-testing; redimensionar a visualização sem transformar todo ajuste em novo seek; medir antes de adotar proxies ou trocar motores. Fontes técnicas: [React Profiler](https://react.dev/reference/react/Profiler), [Mediabunny leitura](https://mediabunny.dev/guide/reading-media-files), [Tauri IPC](https://v2.tauri.app/develop/calling-rust/), [prévia/export no CapCut](https://www.capcut.com/help/video-quality-change-after-exporting). Não atribuir fluidez apenas à presença de Qt/CEF/FFmpeg no inventário.
+
+Artefatos locais ignorados: `.tooling/research/capcut-study/{notes.txt,videoeditor-functions-expanded.txt,focused-run-receipt.json,videoeditor-exports.json,run-focused-study.ps1}`. Execução final focal: 89,95 s, exit 0; uma repetição corrigiu corpos de função inicialmente representados como um byte. ZIP Ghidra verificado por SHA256 oficial; footprint final de pesquisa **1.565.736.240 bytes**, abaixo do limite inicial de 2 GB. Nenhum processo do estudo permaneceu ativo. Estudo PARTIAL nas capacidades não verificadas; nenhuma cópia de DLL/código decompilado/ZIP entra em Git/Graphify ou no app.

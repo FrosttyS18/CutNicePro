@@ -4,6 +4,17 @@
 > Priorização MoSCoW justificada por valor/dependência/risco. Sem estimativas de horas
 > inventadas (dependem de avaliação técnica). Há código implementado e itens ainda PLANNED; IN REVIEW não equivale a aceite do mantenedor. Estado operacional e histórico de entregas são distintos.
 
+## Fila adicional do mantenedor — 2026-10-26
+
+Ordem expressa: terminar a fatia ativa de legendas por camada, transcrição por ocorrência e cancelamento de processos próprios; depois executar os itens abaixo, sem abandonar o objetivo integral do editor. A regressão automatizada anterior passou antes de iniciar esta fila. Os itens 1/2 agora estão IMPLEMENTADOS EM REVISÃO; visual e uso normal ainda dependem do mantenedor.
+
+1. **Modal de clipe editado manualmente:** salvar, voltar à biblioteca e abrir o mesmo clipe não pode esticar o vídeo nem gerar rolagem gigante na janela. Preservar proporção, limite da área disponível, controles de reprodução, análise/transcrição e retorno à biblioteca. Aceite: clipes salvos verticais e horizontais cabem no modal em janelas menores e maiores, sem distorção ou vazamento da rolagem para a página. Rastreabilidade: JRN-007/008/009, BR-EDITOR-01/04/06; integração M4/M5 do EDITOR-BASIC-IMPLEMENTATION-PLAN.
+2. **Miniaturas persistentes de Meus projetos:** os cartões de projetos com mídia disponível devem carregar uma imagem identificável, reaproveitando cache e preservando o funcionamento leve da biblioteca. Investigar a origem de cartões pretos/sem imagem antes de alterar contratos; projeto vazio ou mídia ausente mantém estado explícito. Aceite: importar/reabrir/retornar a Meus projetos mostra miniaturas correspondentes e não inicia todos os vídeos para obter a imagem. Rastreabilidade: JRN-003/004, FR-003/005, BR-EDITOR-05; integração M0/M4/M5 do mesmo plano.
+
+3. **Estudo do canvas/editor CapCut via REA:** pesquisa local/documental e Ghidra autorizados pelo mantenedor em paralelo, sem substituir as correções da fila. Referência de prévia TikTok/Shorts/Reels para futura adaptação própria: moldura/áreas de possível obstrução apenas no editor, sem contaminar exportação. Estado: ESTUDO FOCAL REGISTRADO/PARTIAL, seis funções examinadas; provider REA não executado e ordenação/cache/fila de seek ainda não comprovados. Nenhuma UI nova autorizada como desenho definitivo; impacto/AC de implementação ainda precisam ser especificados. Artefatos/tooling isolados e ignorados; registro em OPEN-SOURCE-ENGINE-RESEARCH. Distinguir nomes de símbolos/strings e relações decompiladas de algoritmos comprovados.
+
+Próxima fatia autorizada depois do commit/push e confirmação Graphify: (4) reduzir sliders/botões da aba Enquadramento com controles compactos e ícones/tooltips, SOMENTE no painel, sem novos controles no canvas; (5) atualizar Node estável e verificar scripts próprios/compatibilidade FFmpeg 9, preservando build única e comandos existentes. A atualização de ambiente não autoriza migração de stack ou troca indiscriminada de dependências.
+
 ## Metas de usabilidade solicitadas — 2026-10-25
 
 Estado vigente: IMPLEMENTADAS EM REVISÃO, com correções após os testes do mantenedor; aprovação manual/visual pendente. Envio compacto centralizado; trim sobre a faixa real, ampliação até a fonte, histórico e persistência; split por cena com par confirmado e quadro único nos closes. Evidências e limites em ENGINE-HANDOFF e USABILITY-IMPLEMENTATION-PLAN. A melhoria editorial do modelo continua pausada. As três metas abaixo descrevem o escopo autorizado, sem declarar aceite humano.

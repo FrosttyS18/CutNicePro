@@ -195,6 +195,7 @@ Os botões `+` nas extremidades da faixa principal abrem o mesmo menu **Adiciona
 - Seletores nativos do sistema continuam apropriados para escolher arquivos e destino de exportação.
 - Scrollbars seguem o padrão visual do aplicativo.
 - Menus funcionam por teclado, fecham com Escape e devolvem o foco ao controle de origem.
+- Refinamento de 2026-10-26: compactar os ajustes de Enquadramento no próprio painel, com ícones referenciais/tooltips e campos precisos de posição/zoom. Essa fatia não adiciona controles de transformação sobre o canvas/prévia; preserva os contratos, a detecção de pessoas e o ajuste de cada painel.
 - Botões mantêm respiro, área clicável e foco visível por teclado.
 - Em janelas menores, painéis laterais recolhem em abas; ações essenciais e timeline continuam acessíveis.
 
@@ -310,6 +311,8 @@ Os atalhos só atuam quando o editor tem foco e o usuário não está digitando 
 
 - Presets, estilos, destaque por palavra e demais opções existentes permanecem.
 - Dividir, duplicar e mover vídeo também remapeia suas legendas.
+- A legenda vinculada é composta dentro da camada de seu vídeo, antes de aplicar posição, escala e opacidade; uma camada opaca acima cobre ambos. Transparência e sobreposição parcial seguem a composição real, sem apagar o texto salvo. Legendas independentes continuam acima da montagem. Ocultar a faixa do vídeo não deixa sua legenda vinculada vazar.
+- Na aba Transcrição, selecionar uma ocorrência troca o contexto de texto, busca e correção para essa ocorrência; sem seleção, acompanha o vídeo ativo superior. Tempos clicados são da montagem e correções permanecem locais. Seleção não modifica a composição exportada.
 - Cada instância pode ter correções locais de texto.
 - Transcrição concluída durante uma edição não substitui correções nem confirma a montagem.
 - Para adicionar novas legendas após uma transcrição tardia, aparece **Aplicar legendas à montagem**, como ação editável e reversível.

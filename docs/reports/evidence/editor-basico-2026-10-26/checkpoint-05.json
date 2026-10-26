@@ -1,0 +1,51 @@
+{
+  "status": "PARTIAL",
+  "goal": "editor-basico-2026-10-26",
+  "head": "97beed1fd74b31c7573876451be898597b0bb711",
+  "branch": "codex/editor-basico-20261026",
+  "frontend": { "files": 125, "passed": 701, "failed": 0 },
+  "native": { "passed": 301, "failed": 0, "ignored": 33 },
+  "lint": "PASS, completo e focal sem avisos",
+  "buildFrontend": "PASS, tsc/Vite sem avisos",
+  "buildNative": "PASS, target padrao",
+  "nativeExecutable": "C:\\CutNicePro\\app\\src-tauri\\target\\debug\\cutnicepro.exe",
+  "graphifyIndexedCommit": "b7166921ab7749b6059c6f50c570e68df83c635e",
+  "graphifyBuild": "f143e159-8a73-4ac9-9531-8d16956d0314",
+  "graphifyCoverage": "Snapshot publicado confirmado antes dos agentes; novas correcoes locais complementadas por fonte/diff, ainda nao indexadas",
+  "verified": [
+    "Legendas vinculadas compostas na camada do video, antes de placement/opacidade em TS e Rust",
+    "FFmpeg real comprova oclusao da legenda inferior e preservacao quando camada superior transparente",
+    "Transcricao contextual, seek de saida e correcao da segunda ocorrencia sem alterar ASR/primeira copia",
+    "Cleanup de pool Home em React StrictMode com midia/carregamento controlados",
+    "Seek obsoleto interrompe avanco entre awaits sem perder Input/cache",
+    "Lista ordenada estavel evita recarga sem mudanca e preserva save/reload",
+    "Cancelamento de miniatura interrompe filho proprio ativo e impede fila",
+    "Import cancel/shutdown/deadline encerram ffprobe fixture proprio e limpam scratch",
+    "Tokenizador recebe controle do job sem alterar prompts/modelo/contexto/parser",
+    "Miniatura de projeto recupera JPEG persistido por mediaId sem URL de sessao/player"
+  ],
+  "visualImplementationPendingManual": [
+    "Modal salvo com viewport proprio e proporcao/altura limitadas",
+    "Miniaturas de projetos apos reabrir a instancia normal",
+    "Legendas/selecoes/canvas no uso normal"
+  ],
+  "notProven": [
+    "Ausencia geral de vazamentos/orfaos ao fechar o aplicativo real",
+    "Jornada normal completa M0/M5 e primeiro envio/reabertura da midia 797 MB",
+    "p95 cursor/frame, RSS, VRAM no WebView real",
+    "Compatibilidade GET grande sem Range no WebView",
+    "Aceite humano visual e de uso"
+  ],
+  "evidenceLedger": ".superpowers/sdd/editor-basico-2026-10-26",
+  "logs": [
+    "audit-lifecycle-native-final.log",
+    "queued-previews-ts-final.log",
+    "audit-caption-lint-final.log",
+    "queued-previews-lint.log",
+    "queued-previews-build-final.log",
+    "audit-lifecycle-standard-build.log"
+  ],
+  "publishedBeforeAudits": "Fast-forward main to b716692 autorizado e executado; ajustes validados agora no commit 97beed1, publicacao seguinte solicitada",
+  "userDataMutationsByAgent": false,
+  "goalComplete": false
+}
