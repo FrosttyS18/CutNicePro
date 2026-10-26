@@ -9,6 +9,8 @@ O caminho principal será:
 
 **Enviar vídeo → nomear projeto → importar e transcrever → abrir projeto → editar ou gerar cortes → revisar → salvar → exportar.**
 
+Fila de refinamento autorizada em2026-10-26: miniaturas de imagem e seleção de itens curtos no zoom distante; biblioteca sem aprovação/rejeição, lixeira com restauração e exclusão permanente após7dias; importação para a abaMídia separada da inserção na timeline, incluindo arraste do Windows; tempo/Novo após salvar edição manual. Os botões+ de início/fim foram confirmados pelo mantenedor, com essas falhas adicionais registradas. Ao concluir esta fila e publicar os commits autorizados, pausar a meta a pedido do mantenedor; não marcar o editor integral como concluído. Permanecem as lacunas de desempenho com797MB, jornada nativa normal, prévia de imagens grandes e partes não comprovadas deM6.
+
 As decisões já definidas são:
 
 - Arrastar e editar altera um **rascunho**. O botão **Salvar** confirma as alterações.
@@ -187,6 +189,8 @@ A barra de ferramentas da timeline terá:
 
 Os botões `+` nas extremidades da faixa principal abrem o mesmo menu **Adicionar**, indicando inserção no início ou no fim.
 
+Fatia implementada no Complemento18: a intenção acompanha cada operação/importação/Fonte, sem mover o cursor. Fim considera somente itens da principal; áudio/CC/sobreposições posteriores não mudam esse destino. Cancelar o seletor/fechar Fonte não altera o pedido seguinte. Controles compartilham espaço lateral com a régua/itens/cursor e respeitam bloqueio/gestos/recuperação. Testes de domínio/React e build aprovados no escopo descrito; experiência da build normal permanece no aceite humano.
+
 ### Consistência e acessibilidade
 
 - Menus de contexto com ícone, texto, atalho e estado desabilitado.
@@ -195,7 +199,9 @@ Os botões `+` nas extremidades da faixa principal abrem o mesmo menu **Adiciona
 - Seletores nativos do sistema continuam apropriados para escolher arquivos e destino de exportação.
 - Scrollbars seguem o padrão visual do aplicativo.
 - Menus funcionam por teclado, fecham com Escape e devolvem o foco ao controle de origem.
-- Refinamento de 2026-10-26: compactar os ajustes de Enquadramento no próprio painel, com ícones referenciais/tooltips e campos precisos de posição/zoom. Essa fatia não adiciona controles de transformação sobre o canvas/prévia; preserva os contratos, a detecção de pessoas e o ajuste de cada painel.
+- Refinamento de 2026-10-26: compactar os ajustes de Enquadramento no próprio painel, com ícones referenciais/tooltips e campos precisos de posição/zoom. Após teste humano, corrigir o estado ativo para branco com texto/ícone preto e inativo discreto escuro; fundo usa o mesmo seletor circular+hex de Legendas, sem caixa aninhada. Posição/zoom têm controles visíveis de diminuir/aumentar com mouse, respeitando limites e faixa bloqueada; digitação e teclado continuam opcionais. Rascunho seguido de clique não aplica duas alterações nem usa valor antigo. Essa fatia não adiciona controles de transformação sobre o canvas/prévia; preserva os contratos, a detecção de pessoas e o ajuste de cada painel.
+- Pedido posterior explícito do mantenedor na mesma revisão: a mídia selecionada precisa da caixa e alças de seleção da referência para mover/redimensionar, inclusive na faixa principal. Isso refina a restrição anterior: não adicionar painéis ou botões soltos na prévia; a caixa/alças da seleção está autorizada. Pan deve seguir o gesto em contain e cover, distinguindo deslocamento da camada de deslocamento do recorte; preservar pixels/contrato da exportação, limites, lock e uma confirmação por gesto. Cancelar/Escape ou desmontar durante o gesto não deixa prévia pendente nem salva automaticamente.
+- Fila adicional da mesma revisão: todos os modais do aplicativo devem distinguir ação principal de secundária, sem dois botões de igual destaque para confirmar/cancelar. Criar clipe usa tempos legíveis e editáveis, título igual à ação que o abriu e texto orientado ao resultado, conforme a skill cutnicepro-ux-writing. Não mudar efeitos de cancelamento, recuperação, confirmação de exclusão ou salvamento por consequência da revisão visual.
 - Botões mantêm respiro, área clicável e foco visível por teclado.
 - Em janelas menores, painéis laterais recolhem em abas; ações essenciais e timeline continuam acessíveis.
 
@@ -221,8 +227,8 @@ O plano atual de intervalos ordenados da fonte não será usado como se já supo
 
 | Ação | Resultado definido |
 |---|---|
-| Arrastar a alça inicial | Altera a entrada do trecho na fonte e mostra essa borda na prévia. |
-| Arrastar a alça final | Altera a saída do trecho e mostra essa borda na prévia. |
+| Arrastar a alça inicial | Altera a entrada do trecho na fonte sem deslocar o cursor de reprodução. |
+| Arrastar a alça final | Altera a saída do trecho sem deslocar o cursor, inclusive se o novo fim ficar antes dele. |
 | Estender o primeiro item para trás | Recupera conteúdo anterior da fonte; a montagem continua começando em zero. |
 | Dividir no cursor | Separa os itens selecionados que atravessam o cursor. Não altera duração nem cria uma interface adicional de “corte”. |
 | Excluir à esquerda/direita do cursor | Q/W removem a parte correspondente somente dos vídeos/imagens explicitamente selecionados e seus vínculos. Preservam espaços e demais camadas; cursor fora do item ou nas extremidades não apaga o trecho inteiro. |
@@ -340,7 +346,7 @@ O botão Salvar:
 - Mantém o rascunho se falhar.
 - Não altera o ponto de reprodução nem navega sozinho.
 
-Salvar um corte da IA mantém seu identificador e projeto. Após alteração efetiva, remove a nota corrente e apresenta **Editado manualmente**. Salvar sem mudanças não altera sua classificação.
+Salvar um corte da IA mantém seu identificador e projeto. Após alteração efetiva, remove a nota corrente. Na biblioteca, a tag **Editado** ocupa a mesma linha e altura reservada à nota; a inspeção pode explicar que a edição foi manual. Salvar sem mudanças não altera sua classificação. Títulos dos cards ocupam até duas linhas, com reticências no excedente e texto completo no tooltip do projeto; as ações usam ícones com nomes acessíveis e tooltips próprios.
 
 ### Criar clipe manual
 
@@ -349,8 +355,9 @@ A ação usa o intervalo marcado na **montagem**, incluindo vídeos, imagens, á
 - Abre confirmação com nome e duração.
 - Salva somente o novo clipe.
 - Não salva implicitamente alterações da montagem do projeto.
-- Mantém o editor aberto e oferece **Ver clipe**.
+- Mantém o editor aberto e confirma a criação com o nome salvo. Conforme escolha expressa do mantenedor em2026-10-26, oferece **Ir para clipes**, sem abrir outro player nem navegar automaticamente. Se a montagem do projeto estiver alterada, esse atalho respeita Salvar, Descartar ou Continuar editando; uma falha de gravação impede a saída e preserva o rascunho e o novo clipe já criado.
 - O novo clipe aparece no projeto correto e na biblioteca global, sem nota.
+- Na biblioteca global, cada cabeçalho de projeto permite recolher/expandir somente os próprios cards. Nome/contagem permanecem visíveis; conteúdo recolhido não mantém seus cards montados. Não altera filtro, ordem ou dados salvos.
 - Um intervalo sem conteúdo visual válido não pode ser publicado como clipe.
 
 ### Casos de interrupção e erro
@@ -540,4 +547,75 @@ funcionar na build normal, usando apenas `app/src-tauri/target/`, com os cenári
 A implementação seguirá em fatias pequenas, consultando Graphify e fonte atual, atualizando a documentação canônica e executando as verificações pertinentes dentro da política do projeto.
 
 Os testes acima são **critérios planejados**, ainda não resultados executados. A aprovação visual e a avaliação do uso continuarão sendo suas.
+
+### M6 — Estudo profundo do editor CapCut e comparação de desempenho
+
+Ampliação expressamente solicitada pelo mantenedor em 2026-10-26, dentro da mesma meta. M0–M5 continuam vigentes; o estudo não substitui suas correções, testes ou aceites.
+
+**Objetivo:** compreender a tela de edição como sistema e identificar adaptações justificadas para nossa stack, com prioridade para importação, canvas da timeline, prévia, camadas e recursos. A importação aparentemente instantânea relatada pelo mantenedor é uma observação inicial, não um benchmark concluído.
+
+**Prioridade refinada pelo mantenedor na mesma execução:** o editor deve permitir fechar bem um corte que a IA entregou imperfeito, com trim, movimentação, camadas e exportação confiáveis. Estudar a fluidez da timeline e a clareza dos controles de travar/ocultar/silenciar por faixa em paralelo ao player, seek, cache e apresentação dos frames; uma frente não substitui a outra. O CutNicePro mantém sua proposta de cortes assistidos, complementar a um editor geral. Inventariar o restante do CapCut serve como referência; reproduzir todo o produto ou investigar efeitos Pro não é condição para melhorar o fluxo básico autorizado.
+
+Fatia de controles de faixa implementada e corrigida após retorno humano: ocultar não desdobra som/CC vinculados; cadeado/olho/alto-falante estão no cabeçalho visual. Mute visual suprime o áudio inequivocamente associado na prévia e no render, sem reescrever volume/mute individual, e o áudio independente continua separado. Estados próprios de faixas legadas não perdem acesso. Gutter144px e histórico/Salvar preservados. Integração836 TS/141 arquivos e339 Rust/33 opt-in, lint e builds aprovados; salvar/reabrir do acréscimo foi simulado em IPC e áudio intermediário foi exercitado com FFmpeg real, sem MP4 desta ação pela interface. Aprovação humana e gates reais da jornada continuam necessários. Estudo M6 permanece ativo; callbacks distintos de aceitação/seek/primeiro frame foram encontrados na referência e comparados à fonte atual do nosso player, sem mudança do clock.
+
+Correção contida de preparação implementada em revisão: `useCompositionMedia` publicava o mapa após `Promise.all` de todas as fontes; uma fonte pendente retinha outra já resolvida. Cada entrada agora é publicada independentemente, conservando o contrato de retorno. Entradas válidas não afetadas são preservadas ao adicionar mídia; troca/relink invalida a URI anterior e resultados tardios de fonte removida/trocada ou sessão desmontada não reaparecem. Critério comprovado com promessas controladas: fonte pronta aparece antes de outra pendente e falha fica restrita à sua entrada. Reconexão, indisponibilidade, StrictMode e consumidores foram testados, com inspeção salva usando Stage simulado. Isso comprova eliminação de uma dependência de espera, não uma latência prometida no app real.
+
+Abertura do editor: carregamento central com retorno à origem e boundary de falha React/importação, sem reload automático ou retry fictício de lazy rejeitado. O relato humano de recarregamento semelhante a Ctrl+R ocorreu no modo dev; a causa original não foi comprovada por log. Não usar testes de boundary como prova de correção de crash nativo ou watcher. Manter janela de teste sem gravações em fontes observadas pelo Vite/Tauri; investigação do CapCut segue isolada fora desses caminhos.
+
+Retorno humano da janela estável: o mantenedor informou que os testes da rodada funcionaram; acrescentou duas falhas reproduzíveis ao escopo. Ctrl+D seguido de apagar deixa camadas auxiliares vazias acumuladas; com muitas camadas, o cursor/alça desaparece ou fica encoberto no topo ao navegar. Corrigir por responsabilidades distintas — limpeza do domínio ao remover conteúdo e geometria/rolagem/z-order da viewport — sem substituir o comportamento por caixas ou contornos decorativos.
+
+| Cenário adicional | Resultado obrigatório |
+|---|---|
+| Duplicar50 vezes e apagar os últimos objetos das camadas criadas | Não acumular50 camadas auxiliares vazias; manter a faixa principal disponível. |
+| Exclusão parcial ou com imagem/áudio/legenda independente restante | Preservar a camada que ainda contém material e seus vínculos válidos. |
+| Excluir várias camadas, Desfazer/Refazer, salvar/reabrir e duplicar novamente | Restaurar/remover as mesmas identidades sem órfãos, colisões ou reordenação inesperada; respeitar bloqueios. |
+| Rolar50 camadas na vertical e o conteúdo na horizontal, com zoom | Régua e alça continuam alcançáveis, alinhadas ao tempo e fora do cabeçalho fixo das faixas; não criar dois cursores ou dois scrolls de conteúdo. |
+| Arrastar cursor e cancelar por Escape/blur | Restaurar a posição anterior e liberar listeners/captura; cálculo de tempo não muda com a posição visual da alça. |
+
+Testes de DOM/estilo com layout simulado demonstram contratos de posicionamento e eventos, não renderização real da janela; novo ensaio humano permanece necessário depois da build integrada. Limpar camadas do documento somente pelas operações pertinentes, sem regravar automaticamente dados reais na abertura. O tratamento de camadas vazias legadas deve ser explicitado, com fonte e consumidores conferidos, antes de alterar sua apresentação.
+
+Política mínima confirmada pela leitura dos comandos: remoção/Q/W podam no resultado final somente auxiliares não principais/não bloqueadas que tinham itens na entrada e ficaram sem nenhum item. Faixa com conteúdo independente restante é preservada; operações intermediárias de movimento não podam a faixa de destino/origem. Undo/Redo restaura a mesma estrutura; reinserção recria os tipos necessários. Camadas vazias anteriores não são apagadas automaticamente do documento. Na apresentação, auxiliares sem qualquer item podem ser omitidas sem regravação; principal, bloqueadas e a faixa enquanto retém foco permanecem acessíveis. A contagem de ocupação vem do documento completo, antes de recolher áudio/CC vinculados.
+
+Responsabilidade do cursor: régua acompanha rolagem horizontal e fica fixa no topo da viewport; um único overlay de cursor fica ancorado à área vertical visível, fora do conteúdo que sobe/desce. Clip exclui o gutter144px e as barras de rolagem; X continua derivado de frame×escala−scrollLeft+24px. O erro comprovado é régua/alça deslocadas pelo scroll de conteúdo e z-order do cursor inferior aos cabeçalhos; não afirmar clipping inicial por margem negativa sem reprodução. Histórico/gestos continuam no controlador existente.
+
+Novo refinamento humano: alças de aparar não arrastam o cursor de reprodução; a posição de edição só muda por navegação explícita ou reprodução. A previsão antiga de mostrar a borda na prévia não autoriza um seek implícito do playhead. Considerar também aparar até antes do cursor, pausa durante gesto, confirmação e cancelamento: limitar a duração de exportação não deve ser confundido com escolher outro tempo editorial silenciosamente. Antes de ampliar o hook de playback para esse caso, conferir seus consumidores de duração, viewport e transporte; não trocar chase da borda por outro deslocamento implícito não informado.
+
+Espaço na timeline, inclusive após focar item/alça/cursor, reproduz/pausa uma única vez. O evento não deve virar seleção ou click do controle focado, nem ser capturado em texto, campos, menus, modais ou no visualizador Fonte. Repetição da tecla não alterna várias vezes. Atalhos de salvar/editar e navegação por teclado dos controles permanecem com suas funções. Matriz de reprodução inclui gesto de mouse, trim por teclado, Escape/blur/pointercancel, foco e remontagem.
+
+Refinamento do arraste do corpo, relatado após as alças: mover o objeto para outro tempo ou camada também preserva o cursor. A prévia do gesto altera somente a montagem provisória, sem seek implícito; confirmação, erro e cancelamento não levam o cursor ao início do objeto. Durante o gesto ativo os comandos da montagem ficam suspensos para não operar sobre a prévia; Escape continua cancelando. Ao soltar/cancelar, Espaço volta a reproduzir normalmente. Testar outra faixa/nova camada, ímã ligado/desligado, seleção múltipla, autoscroll, Undo/Redo e ausência de salvamento automático.
+
+Novo caso crítico após teste humano: trim magnético de uma camada não pode recortar/apagar/fragmentar elementos independentes das outras. O ímã pode reencaixar blocos posteriores da principal e seus vínculos, mas não converte um gesto local em remoção global do intervalo. Matriz obrigatória: alça inicial/final × delta positivo/negativo × ímã ligado/desligado; sobreposição parcial/total e elementos posteriores de vídeo/imagem/áudio/CC independentes e vinculados; faixa principal/auxiliar, locks, histórico e nenhuma publicação parcial em erro. A poda de camadas não pode ocultar perda de conteúdo causada por um trim global indevido.
+
+Fila adicional posterior a essa correção: retirar o divisor inferior do cabeçalho apontado nos prints, sem remover a separação da navegação superior. Configurações do projeto com ícone de menu após Exportar e abas Detalhes/Desempenho ficam como pesquisa/proposta futura do M6, não como implementação agora. Investigar principalmente o ciclo real de proxy e distinguir os controles existentes no nosso domínio daqueles que ainda exigiriam capacidade nova; não adicionar opções apenas decorativas. Estado e pré-requisitos no BACKLOG.
+
+Frentes independentes:
+
+1. **Mapa da interface e dos comportamentos:** biblioteca/importação; fonte e montagem; timeline, seleção, alças, divisão, exclusão, ímã e encaixe; camadas; propriedades/transformação; áudio; legendas/texto; histórico/salvamento; exportação; qualidade da prévia e simulação de mídia social. Registrar também categorias fora do escopo de implementação, como efeitos e recursos Pro, sem adicioná-las ao produto por esta pesquisa.
+2. **Caminhos internos dirigidos:** partir das entradas relevantes, seguir chamadores, dados, tarefas assíncronas e consumidores de importação, metadados, cache/proxy, seek, tamanho da prévia, transformação e composição de camadas. Anotar revisão/binário, RVA/função, intermediários e limites. Nome de exportação ou string não comprova algoritmo nem uso em runtime; chamadas indiretas não resolvidas permanecem lacunas explícitas.
+3. **Comparação com CutNicePro:** mapear o caminho real atual, marcar o que bloqueia a interação e o que já roda em segundo plano, comparar contratos equivalentes e classificar propostas por impacto, evidência e risco de regressão. Não reimplementar mecanismos que já existem nem migrar stack sem evidência e autorização específica.
+
+**Medição justa:** separar tempo até o cartão aparecer, metadados disponíveis, primeiro frame reproduzível, miniaturas/onda prontas e transcrição concluída. Usar o mesmo arquivo identificado, máquina, estado de cache e roteiro nos dois apps; comparar importação por referência com cópia/transcrição completa seria inválido. Declarar método, versões, repetições, RAM/VRAM/CPU e limites. Medição sem controle interativo autorizado será feita por verificação passiva/fixtures próprias e roteiro manual do mantenedor; não inventar tempos de UI a partir da decompilação.
+
+**Isolamento:** REA e ferramentas no laboratório ignorado, sem alterar instalação, projetos ou perfil do CapCut, sem enviar binários/mídia para serviços e sem processos de análise órfãos. Um processo nativo de análise por vez. Em 2026-10-26 o mantenedor autorizou a instalação adicional do Ghidra compatível e retirou expressamente as janelas artificiais de 330/900 segundos: manter a análise enquanto houver progresso, acompanhando memória, CPU, logs e falhas concretas; uma espera de ferramenta não deve abortar o trabalho persistente. Respeitar limites do protocolo sem reiniciar a análise apenas por decurso de uma janela de acompanhamento. Downloads adicionais continuam exigindo necessidade concreta. Node global 26.12.1 e Ghidra12.1.4 habilitaram uma decompilação real pelo provider REA; o experimento anterior de seis funções permanece uma primeira etapa parcial, não prova de domínio do editor inteiro.
+
+**Gate M6:** matriz de cobertura com cada área e seus estados/gestos; percursos internos comprovados e lacunas nomeadas; mapa comparável do nosso pipeline; protocolo e resultados reais disponíveis da comparação; lista priorizada de adaptações, com módulos/contratos/testes afetados. Pesquisa, proposta, implementação e aceite humano devem continuar identificados separadamente. Não declarar todas as funções privadas conhecidas quando houver áreas não acessíveis ou não resolvidas.
+
+### M7 — Importação por referência aos originais
+
+Direção aprovada pelo mantenedor em 2026-10-26, condicionada à confirmação de que é adequada ao nosso pipeline. Após a matriz de consumidores e riscos, foi escolhida a **primeira fatia M7A: referência com SHA integral verdadeiro**, implementada e coberta pela integração334 Rust/743 TS e build padrão. Exportação FFmpeg real foi exercitada em fixture própria; jornada normal, inferência ASR e latência real permanecem pendentes, sem promoção automática do gate M7. Ela elimina a escrita da cópia, preservando identidade de ASR/análise/caches; continua lendo o arquivo integralmente para identificação. Registro por fingerprint parcial/sourceRevision e preparação incremental ficam para uma eventual segunda fatia, pois ampliariam os contratos de todos os derivados. Copiar o arquivo não modifica o original e oferece independência de sua localização; referenciar reduz duplicação de espaço e exige recuperação de vínculos e tratamento de alterações/indisponibilidade. Não atribuir todo travamento da timeline à cópia nem prometer importação instantânea antes de medir os marcos M6. Rastreabilidade: BR-EDITOR-07 e AC-EDITOR-07.
+
+Regras de entrega da fatia:
+
+- Novas mídias podem referenciar o original externo sem copiá-lo integralmente para dentro do armazenamento do app. Documentos/projetos existentes continuam resolvendo suas cópias gerenciadas; não haverá migração destrutiva ou limpeza automática dos arquivos anteriores.
+- Ownership deve ser explícito e compatível com entradas antigas. Excluir projeto remove seus vínculos e caches pertinentes; **nunca remove o original externo**. Nome semelhante, hash ou localização não substituem essa distinção.
+- Um resolvedor comum deve atender prévia local/Range, poster/timeline, transcrição, geração/análise/split, editor, exportação antiga e de montagem e arquivo de projeto. Nenhum consumidor pode continuar reconstruindo implicitamente o caminho apenas como `media/files/<sha>.<ext>` para uma referência.
+- Identidade do asset, integridade do conteúdo e chave de cache são conceitos distintos. Não preencher `sha256` com UUID, hash de caminho ou digest parcial fingindo ser o hash do vídeo. Definir o custo da identificação inicial e o comportamento quando a fonte muda; legendas, análise, notas, miniaturas e waveform antigos não podem ser reutilizados silenciosamente em conteúdo diferente.
+- Arquivo movido/renomeado, disco desconectado ou acesso negado mantém a montagem salva e oferece localizar novamente a mídia correspondente. Religação do mesmo conteúdo preserva edição e IDs; substituição por conteúdo diferente exige caminho explícito e invalidação definida, sem aceitar a transcrição anterior como verdadeira.
+- Exportação sempre produz outro arquivo e deve impedir destino que sobrescreva uma fonte externa usada no trabalho, inclusive aliases pertinentes. Validar no início e antes da publicação final; cancelamento/falha não modifica originais nem publica resultado parcial como sucesso.
+- Acesso nativo continua por registro autorizado, sem abrir um protocolo genérico para qualquer caminho do sistema. Validar origem/tipo/arquivo e alterações durante processamento; preservar cancelamento, timeout e liberação dos recursos próprios.
+- Cache de metadados, miniaturas, ondas e eventual proxy continua local e limitado; manter distinguível dos originais e dos documentos. Exportar a partir da fonte original, sem trocar silenciosamente pela prévia reduzida.
+
+**Sequência:** fechar matriz de consumidores/riscos no M6; escolher contrato de localização/identificação e testes; implementar resolvedor/compatibilidade/ownership e proteção de export; conectar importação e religação; testar o percurso real. Não liberar somente metade dos consumidores com referências.
+
+**Gate M7:** fixtures próprias comprovam ausência de cópia da mídia, salvar/reabrir/ler/ASR/exportar por referência, fonte movida e religada, fonte alterada rejeitada ou explicitamente invalidada, exclusão sem apagar original e exportação sem sobrescrita. Manter regressão das mídias gerenciadas, originais compartilhados por projetos, Unicode/espaços, cancelamento e mídia ausente. Medir latência/espaço por marcos equivalentes; aceite do fluxo na instância normal permanece com o mantenedor.
 

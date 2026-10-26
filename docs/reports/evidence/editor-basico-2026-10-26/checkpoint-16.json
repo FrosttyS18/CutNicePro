@@ -1,0 +1,14 @@
+{
+  "state": "IMPLEMENTED_PENDING_HUMAN_VALIDATION",
+  "pauseRequestedAfterPublication": true,
+  "implementationCommit": "bd370acd1c6773f4c46bd13049121df304cca775",
+  "humanConfirmation": "Endpoint Add controls worked; image thumbnail and tiny items were reported as additional failures.",
+  "queue": ["image timeline preview and compact markers", "active/all/trash with native seven-day retention and confirmed purge", "freshness from latest manual save without rewriting creation", "library-only import and pointer/native Windows drop", "authorized commit and push followed by goal pause"],
+  "frontend": {"finalPassed":1032,"finalFailed":0,"files":167,"seconds":24.73,"lint":"PASS","typecheck":"PASS","viteSeconds":4.77,"warnings":0,"earlierFull":{"passed":987,"failed":5},"relatedRetryPassed":53},
+  "native": {"initialFull":{"passed":352,"failed":1,"ignored":33},"fixedFailure":"old editor project lock compatibility","exactRetryPassed":1,"newTrashTestsPassed":9,"fullFinalRerun":false,"standardBuildSeconds":24.32,"buildWarnings":0},
+  "graphifyBeforePublication":{"commit":"72edd1b936fc7d4c52081d6b82326465fbefe538","buildId":"90438342-83c6-43fa-b1d9-09d93767c3be","localDeltaComplementedBySource":true},
+  "limits":["real Windows drag/DPI and visual acceptance pending", "one external file per operation", "same-track collision is rejected; no automatic ripple in new asset drop", "images above 4MiB in cnplocal remain a separate gap", "797MB and normal full journey not newly measured", "CapCut M6 and M7 remaining gates remain partial"],
+  "sourceBuild":"app/src-tauri/target/debug/cutnicepro.exe",
+  "originalsAndExports":"PRESERVED",
+  "routineGuiAutomation":false
+}

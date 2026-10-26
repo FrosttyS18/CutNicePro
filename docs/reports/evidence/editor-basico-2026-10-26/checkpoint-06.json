@@ -1,0 +1,71 @@
+{
+  "status": "PARTIAL",
+  "goal": "editor-basico-2026-10-26",
+  "head": "72edd1b936fc7d4c52081d6b82326465fbefe538",
+  "branch": "codex/editor-basico-20261026",
+  "graphify": {
+    "commit": "72edd1b936fc7d4c52081d6b82326465fbefe538",
+    "build": "90438342-83c6-43fa-b1d9-09d93767c3be",
+    "coverage": "Base publicada confirmada antes da fatia; painel/Node/docs novos ainda working tree"
+  },
+  "frontend": {
+    "files": 126,
+    "passed": 708,
+    "failed": 0,
+    "runtime": "Node26.12.1"
+  },
+  "native": {
+    "passed": 301,
+    "ignored": 33,
+    "scope": "Ultima suite anterior, Rust nao alterado nesta fatia; cargo build padrao reexecutado"
+  },
+  "node": {
+    "global": "26.12.1",
+    "npm": "11.20.0",
+    "path": "C:\\Program Files\\nodejs\\node.exe",
+    "scriptSyntaxPassed": 103,
+    "globalPortableSha256": "1c63f1417e2e26d83ca9a9ec1d548524ab1305bc7209d90ebca56257ff0d84ed",
+    "installerSha256": "f32a2844504ed8d73449ddb480385f69cb436bc9409a89e2049ae83447078457",
+    "initialInstallerExit": 1603,
+    "initialWindowsError": 1730,
+    "elevatedInstallerExit": 0,
+    "rebootPerformed": false
+  },
+  "checks": {
+    "lint": "PASS, zero warnings",
+    "frontendBuild": "PASS",
+    "standardCargoBuild": "PASS",
+    "tauriCli": "2.12.3",
+    "ffmpeg": "9.0.2, ja instalado"
+  },
+  "newUi": [
+    "Apenas aba Enquadramento; sem novos controles no canvas",
+    "Campos com confirmacao Enter/blur, clamp, vazio restaurado e valor aceito pelo pai",
+    "Rascunho por item/cena; permanencia dentro da mesma cena",
+    "Save/Undo e contratos de render preservados"
+  ],
+  "research": {
+    "M6": "IN_PROGRESS, mapa UI + caminhos nativos REA/Ghidra + comparacao de pipeline",
+    "M7": "PLANNED, referencia a originais autorizada condicionalmente, sem alteracao funcional ainda",
+    "ghidraQualified": "12.1.4, REA doctor healthy e primeira decompilacao real",
+    "labIgnored": true
+  },
+  "pending": [
+    "Teste/aceite humano do painel e correcoes de modal/miniaturas na instancia normal",
+    "Jornada normal e797MB/p95/RSS/VRAM/GETsemRange",
+    "M6 estudo aprofundado e benchmark comparavel",
+    "M7 contratos/migracao/resolvedores/ownership/relink/export sem sobrescrever original"
+  ],
+  "evidenceLedger": ".superpowers/sdd/editor-basico-2026-10-26",
+  "logs": [
+    "node26-final-tests.log",
+    "node26-final-build.log",
+    "node26-final-lint.log",
+    "node26-standard-build.log",
+    "node26-script-syntax.log",
+    "node26-install.log",
+    "node26-install-admin.log"
+  ],
+  "userDataMutationsByAgent": false,
+  "goalComplete": false
+}

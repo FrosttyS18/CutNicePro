@@ -1,0 +1,68 @@
+{
+  "status": "PARTIAL",
+  "goal": "editor-basico-2026-10-26",
+  "recordedAtUtc": "2026-10-26 20:17:55 UTC",
+  "previousCheckpoint": "checkpoint-12.json",
+  "head": "72edd1b936fc7d4c52081d6b82326465fbefe538",
+  "graphify": {
+    "commit": "72edd1b936fc7d4c52081d6b82326465fbefe538",
+    "build": "90438342-83c6-43fa-b1d9-09d93767c3be",
+    "localDeltaIndexed": false,
+    "prePost": "composition-trim.ts"
+  },
+  "humanFeedback": {
+    "gestureRound": "Other tests worked: cursor/Space/gesture cancellation within requested path",
+    "magneticTrim": "As camadas foram preservadas",
+    "wholeEditorVisualApproval": false
+  },
+  "rootCause": "Magnetic trim used removeRange/openGap globally across unrelated followsMain layers; pruning then removed emptied tracks",
+  "correction": "Update target group and shift only later primary blocks plus explicit group followers; no global interval removal/insertion in trim",
+  "preserves": [
+    "Independent video/image/audio/caption, even followsMain=true",
+    "Source times/durations/settings/IDs/tracks of independent layers",
+    "Fixed companions and unrelated locked layers",
+    "Explicit global range editing, previous pruning, cursor/Space behavior",
+    "Undo/Redo and original document"
+  ],
+  "conservativeLimit": "Later fixed block in primary rejects magnetic ripple atomically with advice to turn magnet off; off path tested",
+  "reproduced": "End handle contraction with magnet removes overlay; expansion/recovery splits or moves unrelated layers; literal start handle toward right did not reproduce deletion",
+  "validation": {
+    "focalRed": {
+      "failed": 7,
+      "passed": 6,
+      "total": 13
+    },
+    "focalGreen": 76,
+    "fixedCaseRetry": 1,
+    "fullTs": {
+      "passed": 922,
+      "failed": 0,
+      "total": 922,
+      "files": 148,
+      "seconds": 22.93
+    },
+    "fullLint": "PASS zero warnings",
+    "tscVite": "PASS zero warnings, Vite7.44s",
+    "native": "Unchanged since339 PASS/33 opt-in; not rerun",
+    "standardBuild": "Same sole target exe verified build3.35s in previous round; current frontend build updated",
+    "automatedBoundary": "In-memory domain and controlled React/media/IPC; no new native persistence/export or performance benchmark proof"
+  },
+  "logs": [
+    "trim-layers-integrated.log",
+    "trim-layers-build.log",
+    "trim-layers-lint.log"
+  ],
+  "evidenceLedger": ".superpowers/sdd/editor-basico-2026-10-26",
+  "sourcesFrozen": true,
+  "guiAutomation": false,
+  "userDataMutatedByTests": false,
+  "newCommitPush": false,
+  "goalComplete": false,
+  "research": "Active isolated REA: graph/drive command flow and pending-command discard traced; decoder/frame presentation and full proxy lifecycle/performance comparison still incomplete",
+  "remaining": [
+    "Normal project journey/save-reopen/export and797MB/resource gates",
+    "M6 unresolved player/proxy/compositor, comparable runtime metrics",
+    "Future project settings Details/Performance proposal",
+    "Overall aesthetic approval"
+  ]
+}

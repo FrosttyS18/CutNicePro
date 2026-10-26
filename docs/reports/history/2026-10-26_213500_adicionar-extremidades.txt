@@ -1,0 +1,91 @@
+╔════════════════════════════════════════════╗
+║       CUTNICEPRO — ZCODE REPORT            ║
+╚════════════════════════════════════════════╝
+
+TASK
+  Name: Adicionar no início e no fim da timeline
+  Status: PARTIAL da meta; fatia implementada e compilada.
+  Scope: botões+, menu e destino da importação/Fonte.
+  Objective: inserir na extremidade escolhida sem mover o cursor.
+  Result: início=zero; fim=último item da principal, sem usar caudas de outras faixas.
+  FUNCTIONAL STATUS: PASS nos testes controlados
+  REGRESSION STATUS: PASS nos consumidores verificados
+  VISUAL STATUS: PENDING HUMAN APPROVAL
+
+IMPLEMENTATION
+  Completed: dois+ reutilizam Adicionar; intenção por operação, incluindo Fonte.
+    Cancelamento não contamina o pedido seguinte; lock/gestos/recuperação respeitados.
+    Cursor, rascunho, Desfazer/Refazer e Salvar preservados.
+  Not completed: experiência normal desta fatia, imagem grande, jornada797MB/recursos e lacunasM6.
+  Changes: espaço lateral compartilhado entre controles, itens, régua, cursor e zoom.
+  Architecture impact: sem dependências, novo formato persistido ou mudança Rust.
+
+FILES
+  Created: CompositionAddMenu.tsx, composition-insertion-target.ts e dois testes.
+  Modified: Editor/Body/Source/Toolbar/Timeline/TrackLane, hook import, CSS e testes pertinentes.
+    Relação exata no checkpoint15; documentos canônicos atualizados.
+  Deleted: nenhum; Unexpected changes: alterações anteriores preservadas.
+
+VALIDATION
+  Typecheck: PASS; Lint: PASS focal final, após corrigir um efeito.
+  Unit tests: integração inicial962PASS/16FAIL em978casos/158arquivos.
+    As16falhas eram coordenadas antigas de fixtures após reservar espaço para os botões.
+    Repetição dirigida de todos os casos afetados e consumidores:51/51PASS.
+    Não foi realizada nova execução integral978/978.
+  Integration tests: editor/domínio reais com seletor, IPC e mídia controlados.
+  Regression tests: cursor, alças, movimento, cancelamento e histórico aprovados no retry.
+  Visual tests: SKIP, aprovação humana; Runtime verification: sem GUI normal nesta fatia.
+  Total passed:962na inicial e51no retry, com sobreposição entre execuções.
+  Total failed:0pendente nos consumidores; Total skipped:0nessas execuções.
+  Build: tsc/Vite4,54s PASS sem avisos.
+  Rust: inalterado;345PASS/33opt-in e build padrão anteriores não repetidos.
+  Executável padrão: C:/CutNicePro/app/src-tauri/target/debug/cutnicepro.exe
+
+HOOKS / HARNESS
+  Hooks active/PreToolUse/PostToolUse/Stop/Baseline: não verificados nesta execução Codex.
+  Gate result: PASS técnico delimitado; Evidence: ledger endpoint-*.
+
+MCP / SKILLS
+  Tools used: Graphify remoto, frontend, debugging e validação.
+  Connection status: pré/pós72edd1b/build90438342; delta local conferido.
+  Failures/Pending activation: nenhuma integração bloqueada.
+
+GIT
+  Branch: codex/editor-basico-20261026
+  HEAD:72edd1b936fc7d4c52081d6b82326465fbefe538
+  Latest commit: docs(engenharia): registrar auditoria e isolar pesquisa do CapCut
+  Commits created: nenhum; Push: NOT EXECUTED.
+  Remote: origin → FrosttyS18/CutNicePro, main.
+  Working tree: MODIFIED + UNTRACKED.
+  Pending files: esta fatia e trabalho anterior preservados; snapshot endpoint-status.txt.
+
+EVIDENCE
+  Commands executed: npm test, npm run lint/build, ESLint focal, git diff --check.
+  Relevant logs: .superpowers/sdd/editor-basico-2026-10-26/endpoint-*
+  Screenshots: nenhuma; Test artifacts: checkpoint15.
+  Reproduction details:6testes novos falharam sem os controles e passaram após implementação.
+
+ISSUES
+  Bugs found: destino de adição sempre usava o cursor; controles de extremidade ausentes.
+  Unresolved failures: nenhuma nos testes finais pertinentes.
+  Regressions: nenhuma adicional identificada na revisão independente delimitada.
+  Risks: experiência visual/normal ainda pendente; Blockers: nenhum para a fatia.
+
+FINAL
+  Delivery status: fontes congeladas; meta integral ACTIVE/PARTIAL.
+  Requirements met: adicionar nas extremidades, Fonte/importação coerentes, cursor preservado.
+  Remaining work: fila do Complemento18; pesquisa CapCut não foi reiniciada.
+  User action required: teste curto abaixo.
+  Restart required: nenhuma build alternativa; Ready for next task: fila preservada.
+
+REPORT
+  Latest file: docs/reports/LATEST.txt
+  Historical file: docs/reports/history/2026-10-26_213500_adicionar-extremidades.txt
+
+GUIA DO MANTENEDOR — O QUE MUDOU E COMO TESTAR
+  1. Posicione o cursor no meio. Use o+ inicial para adicionar → entra no começo; cursor parado.
+  2. Use o+ final → entra após o último vídeo da principal.
+  3. Cancele uma escolha e use Adicionar da toolbar → continua inserindo no cursor.
+  4. Confira Desfazer/Refazer e Salvar; os controles não devem encobrir as alças.
+
+END OF REPORT

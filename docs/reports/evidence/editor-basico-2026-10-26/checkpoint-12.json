@@ -1,0 +1,80 @@
+{
+  "status": "PARTIAL",
+  "goal": "editor-basico-2026-10-26",
+  "recordedAtUtc": "2026-10-26 20:00:17 UTC",
+  "previousCheckpoint": "checkpoint-11.json",
+  "head": "72edd1b936fc7d4c52081d6b82326465fbefe538",
+  "graphify": {
+    "commit": "72edd1b936fc7d4c52081d6b82326465fbefe538",
+    "build": "90438342-83c6-43fa-b1d9-09d93767c3be",
+    "localDeltaIndexed": false,
+    "prePostConsulted": "useCompositionGesture.ts"
+  },
+  "slice": {
+    "trimAndMove": "Preview document only, no implicit seek at begin/compute/commit/cancel/error; pause editorial position",
+    "duration": "Editor-only preservePausedPosition; saved/exported duration remains item-derived; bounded library players unchanged",
+    "provisionalState": "Base retained for click threshold/error while gesture active; editing commands suspended; Escape cancels",
+    "focus": "One-shot restore after original item DOM disconnects and focus drops to BODY; no RAF, no stealing another focused control",
+    "space": "Single scoped toggle after release/cancel; while held consumes valid timeline Space without collapsing selection; text/Fonte/menu/modal/modifiers/IME excluded",
+    "header": "Only lower editor-header divider removed",
+    "human": "Manual verification requested after source freeze; pending"
+  },
+  "validation": {
+    "initialFullTs": {
+      "passed": 907,
+      "failed": 1,
+      "total": 908,
+      "files": 147,
+      "seconds": 24.01
+    },
+    "initialFailure": "React event.isComposing was wrong; corrected to event.nativeEvent.isComposing",
+    "justifiedRetry": {
+      "passed": 50,
+      "failed": 0,
+      "files": 3,
+      "seconds": 3.38,
+      "tests": [
+        "composition-move-cursor.test.tsx (25)",
+        "composition-space-shortcut.test.tsx (16)",
+        "composition-timeline-ui.test.tsx (9)"
+      ]
+    },
+    "uniqueCovered": 908,
+    "fullSuiteRerun": false,
+    "unaffectedNotRepeated": 858,
+    "fullLint": "PASS before last one-property fix; focal TrackLane lint PASS afterward",
+    "tscVite": "PASS final, Vite4.73s, zero build warnings",
+    "standardCargoBuild": "PASS3.35s, sole app/src-tauri/target",
+    "native": "Unchanged since339 PASS/33 opt-in; not rerun",
+    "fixtureDiagnostics": "Expected corrupt-workspace fixture diagnostics in initial test stderr; no build warning",
+    "testBoundary": "Real React commands/domain/session, controlled DOM geometry/RAF and IPC/media replacements; no GUI/audiovisual runtime proof"
+  },
+  "executable": {
+    "path": "C:/CutNicePro/app/src-tauri/target/debug/cutnicepro.exe",
+    "bytes": 26412544,
+    "utc": "2026-10-26T18:42:19.6929580Z",
+    "sha256": "cccce3e9c33fd9b4d144aede52380c5bddbb460184b6ebd24750aacc7c61e315"
+  },
+  "logs": [
+    "timeline-gesture-integrated.log",
+    "timeline-gesture-retry.log",
+    "timeline-gesture-lint.log",
+    "timeline-gesture-lint-retry.log",
+    "timeline-gesture-build.log",
+    "timeline-gesture-build-retry.log",
+    "timeline-gesture-standard-build.log"
+  ],
+  "evidenceLedger": ".superpowers/sdd/editor-basico-2026-10-26",
+  "focalEvidence": ".tooling/research/editor-gesture-evidence/2026-10-26/checkpoint.json",
+  "research": "REA continues in ignored directory; one concrete preview graph and seek command dispatch traced, no decoder/presentation or full proxy lifecycle/performance benchmark proof",
+  "guiAutomation": false,
+  "userDataMutated": false,
+  "newCommitPush": false,
+  "goalComplete": false,
+  "remaining": [
+    "Manual current gesture/focus/Space and layers/cursor tests",
+    "Normal journey and797MB/resource gates",
+    "M6 remaining decoder/compositor/proxy and comparable metrics",
+    "Future project settings Details/Performance proposal"
+  ]
+}

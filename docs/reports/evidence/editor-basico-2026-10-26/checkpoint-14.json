@@ -1,0 +1,75 @@
+{
+  "goal": "editor-basico-2026-10-26",
+  "status": "PARTIAL",
+  "goalComplete": false,
+  "previousCheckpoint": "checkpoint-13.json",
+  "head": "72edd1b936fc7d4c52081d6b82326465fbefe538",
+  "graphify": { "commit": "72edd1b936fc7d4c52081d6b82326465fbefe538", "build": "90438342-83c6-43fa-b1d9-09d93767c3be", "localDeltaIndexed": false, "prePost": ["ClipGallery", "ClipCard", "EditorAction", "CompositionDelivery", "SplitPreview", "editor store/worker"] },
+  "delivery": [
+    "Clip actions icon-only, scissors for edit, project tooltips",
+    "Edited chip replaces score with common metadata height",
+    "Title max two lines, ellipsis, reserved height, full custom tooltip",
+    "Independent accessible disclosure per project, collapsed cards unmounted",
+    "After new manual creation offer Ir para clipes without automatic navigation; existing unsaved guard targets correct destination",
+    "Reject new audio/caption-only clips before media-link mutation; empty project save remains valid",
+    "SplitPreview ignores irrelevant scrub time and avoids redundant effect restarts"
+  ],
+  "created": [
+    "app/src/components/editor/CompositionCreatedNotice.tsx",
+    "app/src/components/clips/ClipProjectGroup.tsx",
+    "app/src/hooks/useEditorTooltip.tsx",
+    "app/src/test/clip-card-actions.test.tsx",
+    "app/src/test/clip-card-metadata.test.tsx",
+    "app/src/test/clip-card-title.test.tsx",
+    "app/src/test/clip-project-collapse.test.tsx",
+    "app/src/test/editor-action-tooltip.test.tsx",
+    "app/src/test/manual-clip-visual-contract.test.ts",
+    "app/src/test/composition-created-navigation.test.tsx",
+    "app/src/test/split-preview-lifecycle.test.tsx",
+    "app/src-tauri/src/editor/manual_clip_contract_tests.rs",
+    "app/src-tauri/src/editor/manual_command_tests.rs",
+    "app/src-tauri/src/editor/render_roundtrip_tests.rs"
+  ],
+  "modified": [
+    "app/src/components/clips/ClipCard.tsx", "app/src/components/clips/ClipGallery.tsx", "app/src/components/clips/clip-library.css",
+    "app/src/components/editor/EditorAction.tsx", "app/src/components/editor/CompositionDelivery.tsx", "app/src/components/editor/CompositionEditor.tsx", "app/src/components/editor/composition-editor.css", "app/src/components/editor/VideoEditor.tsx",
+    "app/src/screens/ProjectWorkspace.tsx", "app/src/lib/composition-persistence.ts", "app/src/components/workspace/SplitPreview.tsx", "app/src/test/project-workspace-navigation.test.tsx",
+    "app/src-tauri/src/editor/manual_commands.rs", "app/src-tauri/src/editor/store.rs", "app/src-tauri/src/editor/mod.rs", "app/src-tauri/src/editor/render_tests.rs",
+    "docs/engineering/ENGINE-HANDOFF.md", "docs/engineering/EDITOR-BASIC-IMPLEMENTATION-PLAN.md", "docs/product/PRODUCT-BRAIN.md", "docs/product/BUSINESS-RULES.md", "docs/product/TRACEABILITY.md", "docs/references/OPEN-SOURCE-ENGINE-RESEARCH.md"
+  ],
+  "validation": {
+    "fullTs": { "passed": 958, "failed": 0, "files": 155, "seconds": 25.4, "beforeSubsequentDisclosure": true },
+    "disclosure": { "uniqueCases": 3, "allPassedInDirectedExecutions": true, "relatedUniqueCases": 29, "notOneCombinedFinalRun": true },
+    "fullRust": { "passed": 345, "failed": 0, "ignored": 33, "seconds": 10.53 },
+    "lint": "Full PASS after shared tooltip; focal PASS after disclosure",
+    "frontendBuild": "Final tsc/Vite PASS, 4.90s Vite, zero warnings",
+    "nativeBuild": "PASS same sole target, 0.98s",
+    "intermediateFailures": "New test Array.at incompatible with current lib; tooltip test referenced restored global document after close; disclosure test matched unrelated AppSelect and used text-only click helper, then shadowed helper name. Corrected only harness/typing, behavior assertions preserved.",
+    "realNativeRoundtrip": "2 videos, repetition, PNG, WAV and CC saved/reopened/exported; pixels, PCM, times, local caption and original hashes verified",
+    "boundary": "Controlled React/IPC tests and own FFmpeg fixtures; no new normal WebView UI/export-dialog acceptance"
+  },
+  "build": { "path": "C:/CutNicePro/app/src-tauri/target/debug/cutnicepro.exe", "bytes": 26414592, "sha256": "7ffa513cbfb8be227708f49deffac2680c853d4bb2545b3be4f3950eff5e59a8", "utc": "2026-10-26T20:42:02.0636891Z" },
+  "previewExperiment": {
+    "scope": "Own 8s640x360 fixtures, Edge headless isolated profile, real decoder, not normal WebView or797MB",
+    "canvasResolutions": "200/200 time and color checks, p95 19.3ms",
+    "cleanup": "14Inputs/201VideoDecoders/6344outputFrames closed; eight owned Edge PIDs absent",
+    "memoryMiB": { "initial": 241.7, "peak": 422.1, "final": 381.3, "unavailableSamples": 1 },
+    "httpLimitation": "Two original404console events lacked URL; not reattributed",
+    "splitAB": "267to177 rVFC requests;90to0 cancels;360to180 draws; both91commits/88callbacks/Reactp95=.5ms; not general FPS gain",
+    "raw": [".tooling/research/editor-real-preview/run-01", ".tooling/research/editor-real-preview/split-ab-run-01"]
+  },
+  "research": {
+    "roundConsolidated": true, "fullM6Complete": false,
+    "confirmed": ["metadata probe and path+mtime LRU", "seek task chain and selective pending removal", "sink returns to graph; ack is not final presentation"],
+    "coverage": "108REA dossiers and179physical regions, not complete feature coverage",
+    "ownSessionClosedNormally": true, "ownedPidsAbsent": [21612,35008,30252],
+    "programNotExported": true, "reaReopenRequiresReanalysis": true,
+    "checkpoint": ".tooling/research/capcut-study/native-round-checkpoint.txt"
+  },
+  "remaining": ["Normal full journey and797MB/resource gates", "Plus controls at primary-track extremities", "Bounded image preview transport above4MiB; proposal only", "M6 pixels/cache/compositor and full proxy lifecycle", "Human visual approval"],
+  "sourcesFrozen": true,
+  "guiAutomation": false,
+  "userDataMutatedByTests": false,
+  "newCommitPush": false,
+  "ledger": ".superpowers/sdd/editor-basico-2026-10-26"
+}

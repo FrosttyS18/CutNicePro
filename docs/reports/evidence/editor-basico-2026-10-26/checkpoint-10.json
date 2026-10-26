@@ -1,0 +1,64 @@
+{
+  "status": "PARTIAL",
+  "goal": "editor-basico-2026-10-26",
+  "recordedAtUtc": "2026-10-26T18:49:36Z",
+  "previousCheckpoint": "checkpoint-09.json",
+  "head": "72edd1b936fc7d4c52081d6b82326465fbefe538",
+  "branch": "codex/editor-basico-20261026",
+  "graphify": {
+    "commit": "72edd1b936fc7d4c52081d6b82326465fbefe538",
+    "build": "90438342-83c6-43fa-b1d9-09d93767c3be",
+    "localDeltaIndexed": false,
+    "postQueries": ["composition-playback.ts", "render_plan.rs"],
+    "complement": "Current source, independent review, diff and consumer tests"
+  },
+  "humanFeedback": {
+    "previousHeaderSlice": "REJECTED: hide unfolded audio/caption lanes; visual mute missing",
+    "restartDescription": "Resembles Ctrl+R dev reload, not confirmed window exit",
+    "currentCorrectionAcceptance": "PENDING",
+    "testingWindow": "App source frozen while awaiting manual feedback; isolated research continues"
+  },
+  "corrections": {
+    "hide": "Visual hidden/muted no longer break timeline folding of linked audio/CC",
+    "visualMute": "Explicit visual track state suppresses only exact unique bound audio in preview and native render",
+    "individualItemAudioSettingsPreserved": true,
+    "independentAndAmbiguousAudioPreserved": true,
+    "sourceResolution": "Incremental by media and active revision; no global wait or global cache",
+    "lateResults": "Token and identity guarded across removal, replacement, relink, unmount and StrictMode",
+    "opening": "Eager loading presentation and local React error boundary with return to origin; no automatic reload",
+    "originalReloadCause": "NOT PROVEN; later process replacement correlates with Rust watcher writes"
+  },
+  "validation": {
+    "typescript": {"passed": 836, "failed": 0, "files": 141, "seconds": 29.67},
+    "rust": {"passed": 339, "failed": 0, "ignored": 33, "seconds": 26.61},
+    "realNewFixture": "1s own WAV/FFmpeg PCM: audible, silent, unmuted, hide retains audio; original bytes and item settings preserved",
+    "newMuteMp4ByUi": "NOT EXECUTED",
+    "redProof": "Three frontend symptom failures and native bound-audio mute failure before fixes",
+    "fixtureCorrection": "Persistence test originally requested visual mute after deliberately detaching audio; changed to a truly linked source with A1 locked and separate mute capability",
+    "initialNativeLogPathError": "First invocation did not execute Cargo due to redirection path; corrected invocation produced actual RED",
+    "eslint": "PASS full, zero warnings",
+    "tscVite": "PASS",
+    "cargoFmt": "PASS",
+    "standardCargoBuild": "PASS, 1.02s",
+    "guiAutomation": false,
+    "visualStatus": "PENDING HUMAN APPROVAL"
+  },
+  "standardExecutable": {
+    "path": "C:\\CutNicePro\\app\\src-tauri\\target\\debug\\cutnicepro.exe",
+    "bytes": 26412544,
+    "writeUtc": "2026-10-26T18:42:19.6929580Z",
+    "sha256": "cccce3e9c33fd9b4d144aede52380c5bddbb460184b6ebd24750aacc7c61e315"
+  },
+  "logs": [
+    "track-visibility-red.log", "track-visibility-green.log", "track-mute-native-red.log",
+    "track-stage-consumers.log", "track-controls-persistence-final.log",
+    "editor-corrections-integrated.log", "editor-corrections-native.log", "editor-corrections-lint.log",
+    "editor-corrections-build.log", "editor-corrections-standard-build.log"
+  ],
+  "evidenceLedger": ".superpowers/sdd/editor-basico-2026-10-26",
+  "userDataMutated": false,
+  "newCommitsOrPushes": false,
+  "goalComplete": false,
+  "research": "M6 ACTIVE in isolated ignored directory; warm REA Program preserved, no additional Java for concrete dependency assembly study",
+  "pending": ["Manual correction acceptance in normal profile", "Original reload log if it recurs without code writes", "Normal journey and 797MB resource/performance gates", "Remaining M6 concrete probe/proxy/compositor and comparable measurements", "Large-image no-Range compatibility design"]
+}

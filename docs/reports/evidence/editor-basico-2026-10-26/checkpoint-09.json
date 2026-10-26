@@ -1,0 +1,47 @@
+{
+  "status": "PARTIAL",
+  "goal": "editor-basico-2026-10-26",
+  "recordedAtUtc": "2026-10-26T18:18:21Z",
+  "previousCheckpoint": "checkpoint-08.json",
+  "head": "72edd1b936fc7d4c52081d6b82326465fbefe538",
+  "branch": "codex/editor-basico-20261026",
+  "graphify": {
+    "commit": "72edd1b936fc7d4c52081d6b82326465fbefe538",
+    "build": "90438342-83c6-43fa-b1d9-09d93767c3be",
+    "localDeltaIndexed": false,
+    "complement": "Current source, diff and consumer tests reviewed"
+  },
+  "trackHeaders": {
+    "visualCaption": ["lock", "hide"],
+    "audio": ["lock", "mute"],
+    "gutterPx": 144,
+    "existingHistorySavePath": true,
+    "individualItemSettingsPreserved": true,
+    "focusPreservedUntilBlur": true,
+    "nativePersistenceProof": false
+  },
+  "validation": {
+    "typescriptTestsPassed": 822,
+    "typescriptTestsFailed": 0,
+    "typescriptTestFiles": 138,
+    "typescriptTestSeconds": 15.80,
+    "fullEslint": "PASS zero warnings",
+    "tscVite": "PASS",
+    "rustChangedSinceCheckpoint07": false,
+    "nativePreviousResult": "334 pass, 33 ignored; not repeated for frontend-only delta",
+    "guiAutomation": false,
+    "visualStatus": "PENDING HUMAN APPROVAL"
+  },
+  "research": {
+    "status": "ACTIVE",
+    "sameReaProgramReused": true,
+    "selectedDossiersAtCheckpoint": 51,
+    "playerDistinctSignals": "acceptance, first-frame, seek, preview-seek callbacks observed in reference",
+    "runtimePerformanceComparison": "NOT MEASURED",
+    "remainingBoundaries": ["concrete codec probe", "complete proxy invalidation and generation", "final compositor", "OS frame presentation"]
+  },
+  "logs": ["track-controls-integrated.log", "track-controls-lint.log", "track-controls-build.log"],
+  "evidenceLedger": ".superpowers/sdd/editor-basico-2026-10-26",
+  "goalComplete": false,
+  "remaining": ["Normal user journey and human review", "797MB resource/performance gates", "M6 comparative study", "Scoped diagnosis of player readiness and large-image no-Range transport"]
+}

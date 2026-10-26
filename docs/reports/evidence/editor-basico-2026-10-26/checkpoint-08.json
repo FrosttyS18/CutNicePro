@@ -1,0 +1,108 @@
+{
+  "status": "PARTIAL",
+  "goal": "editor-basico-2026-10-26",
+  "recordedAtUtc": "2026-10-26T17:54:54Z",
+  "head": "72edd1b936fc7d4c52081d6b82326465fbefe538",
+  "branch": "codex/editor-basico-20261026",
+  "graphify": {
+    "commit": "72edd1b936fc7d4c52081d6b82326465fbefe538",
+    "build": "90438342-83c6-43fa-b1d9-09d93767c3be",
+    "coverage": "Base publicada confirmada; M7A/painel/Node/docs locais nao indexados. Fonte/diff/testes complementam."
+  },
+  "M7A": {
+    "implementation": "reference_import_full_sha256",
+    "indexVersion": 2,
+    "legacyManagedPreserved": true,
+    "sourcePathPrivate": true,
+    "relink": "same SHA and extension; identity and edits preserved",
+    "newImportCopiesOriginal": false,
+    "originalMayBeMovedWhileJobReading": "Windows read guards protect owned sources; relink available after moving source",
+    "atomicCancellation": "cancel before commit does not publish; confirmed success wins late cancellation",
+    "normalUserProfileValidated": false
+  },
+  "native": {
+    "passed": 334,
+    "failed": 0,
+    "ignored": 33,
+    "realFixtures": [
+      "reference composition and legacy MP4 export; content/duration verified and original SHA unchanged",
+      "source audio extraction adapter without Whisper inference"
+    ],
+    "whisperInference": "NOT EXECUTED"
+  },
+  "frontend": {
+    "passed": 815,
+    "failed": 0,
+    "files": 137,
+    "runtime": "Node26.12.1",
+    "initialUiRun": {
+      "passed": 813,
+      "failed": 2,
+      "reason": "Legacy crop tests hit bare Stage and asserted only a changed focal value, without actual media movement. Fixture now activates explicit crop, uses media with real margins and asserts20px visible upward movement."
+    }
+  },
+  "checks": {
+    "lint": "PASS complete zero warnings plus final edited test",
+    "tscVite": "PASS, UI refinements integrated",
+    "standardCargoBuild": "Last334-test M7 native build retained; no Rust changes in UI-only refinement",
+    "nativeBuildPath": "C:\\CutNicePro\\app\\src-tauri\\target\\debug\\cutnicepro.exe",
+    "executableBytes": 26407936,
+    "executableSha256": "8717c91c696ae9e51299546b48e7d9e3edc9e75c702d8b1b52cbd33614448769",
+    "executableWriteUtc": "2026-10-26T17:00:24Z"
+  },
+  "research": {
+    "M6": "ACTIVE; following real native call paths in same analyzed Program; not complete whole-editor/runtime or performance proof",
+    "inventoryRecords": 147,
+    "inventoryAreas": 12,
+    "realCapCutRuntime": "NOT TESTED",
+    "capcutComparablePerformance": "NOT MEASURED",
+    "reaVersion": "6.8.0",
+    "ghidra": "12.1.4",
+    "analysisStartUtc": "2026-10-26T16:46:41Z",
+    "artificial330And900SecondDeadlines": "removed by explicit maintainer direction",
+    "nodeGlobal": "26.12.1",
+    "javaHeap": "2048M",
+    "startupCompletedUtc": "2026-10-26T17:44:56Z",
+    "startupAndFirstFunctionSeconds": 3495.43,
+    "qualifiedFirstFunction": "GetCanvasSize",
+    "perFunctionDeadline": null
+  },
+  "logs": [
+    "reference-native-integrated.log",
+    "reference-front-integrated.log",
+    "reference-front-integrated-retry.log",
+    "reference-build-integrated.log",
+    "reference-lint-integrated.log",
+    "reference-standard-build.log",
+    "ui-refinements-integrated.log",
+    "ui-refinements-integrated-retry.log",
+    "ui-refinements-lint.log",
+    "ui-refinements-build.log",
+    "ui-source-flow-correction.log",
+    "ui-source-flow-green.log",
+    "ui-source-flow-final.log",
+    "selection-primary-red.log",
+    "selection-primary-green.log",
+    "selection-body-integration.log"
+  ],
+  "evidenceLedger": ".superpowers/sdd/editor-basico-2026-10-26",
+  "pending": [
+    "Normal-profile import/playback/save/reopen/relink/export and human approval",
+    "Actual Whisper transcription through reference in normal journey",
+    "797MB first import/reopen, cursor/frame p95, RSS/VRAM and WebView no-Range gate",
+    "M6 unresolved presentation/proxy/compositor paths and comparable performance"
+  ],
+  "uiControlByAgent": false,
+  "userDataMutationsByLab": false,
+  "goalComplete": false,
+  "uiRefinements": {
+    "activeState": "white with black text/icon; inactive dark, scoped to reframe",
+    "background": "shared circular StudioColorField with captions",
+    "numberControls": "visible decrement/increment; zoom click0.1 and keyboard0.01; draft and locks retained",
+    "selection": "effective media bounds; move and four anchored uniform resize handles, including primary",
+    "crop": "contain/cover geometry; black margins no hit; one commit and cancellation cleanup",
+    "dialogs": "Explicit primary/secondary/danger variants across custom modal inventory; native and single interruption actions preserved",
+    "manualClip": "Human-readable timecodes and strict validated range;23.976/60fps selection preserved",
+    "humanVisualAcceptance": "PENDING"
+  }
+}

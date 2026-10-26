@@ -1,0 +1,85 @@
+{
+  "status": "PARTIAL",
+  "goal": "editor-basico-2026-10-26",
+  "recordedAtUtc": "2026-10-26 17:03:57 UTC",
+  "head": "72edd1b936fc7d4c52081d6b82326465fbefe538",
+  "branch": "codex/editor-basico-20261026",
+  "graphify": {
+    "commit": "72edd1b936fc7d4c52081d6b82326465fbefe538",
+    "build": "90438342-83c6-43fa-b1d9-09d93767c3be",
+    "coverage": "Base publicada confirmada; M7A/painel/Node/docs locais nao indexados. Fonte/diff/testes complementam."
+  },
+  "M7A": {
+    "implementation": "reference_import_full_sha256",
+    "indexVersion": 2,
+    "legacyManagedPreserved": true,
+    "sourcePathPrivate": true,
+    "relink": "same SHA and extension; identity and edits preserved",
+    "newImportCopiesOriginal": false,
+    "originalMayBeMovedWhileJobReading": "Windows read guards protect owned sources; relink available after moving source",
+    "atomicCancellation": "cancel before commit does not publish; confirmed success wins late cancellation",
+    "normalUserProfileValidated": false
+  },
+  "native": {
+    "passed": 334,
+    "failed": 0,
+    "ignored": 33,
+    "realFixtures": [
+      "reference composition and legacy MP4 export; content/duration verified and original SHA unchanged",
+      "source audio extraction adapter without Whisper inference"
+    ],
+    "whisperInference": "NOT EXECUTED"
+  },
+  "frontend": {
+    "passed": 743,
+    "failed": 0,
+    "files": 130,
+    "runtime": "Node26.12.1",
+    "transport": "mocked IPC, including genuine Rust Serde DTO fixture",
+    "initialRun": {
+      "passed": 738,
+      "failed": 5,
+      "reason": "Three legacy test files mocked incomplete get_media DTO; fixtures aligned with native receipt, exact mediaId route assertion preserved."
+    }
+  },
+  "checks": {
+    "lint": "PASS zero warnings",
+    "tscVite": "PASS",
+    "standardCargoBuild": "PASS no warnings",
+    "nativeBuildPath": "C:\\CutNicePro\\app\\src-tauri\\target\\debug\\cutnicepro.exe",
+    "executableBytes": 26407936,
+    "executableSha256": "8717c91c696ae9e51299546b48e7d9e3edc9e75c702d8b1b52cbd33614448769",
+    "executableWriteUtc": "2026-10-26T17:00:24Z"
+  },
+  "research": {
+    "M6": "ACTIVE, full REA/Ghidra analysis continuing; not a completed whole-editor/runtime study",
+    "inventoryRecords": 147,
+    "inventoryAreas": 12,
+    "realCapCutRuntime": "NOT TESTED",
+    "capcutComparablePerformance": "NOT MEASURED",
+    "reaVersion": "6.8.0",
+    "ghidra": "12.1.4",
+    "analysisStartUtc": "2026-10-26T16:46:41Z",
+    "artificial330And900SecondDeadlines": "removed by explicit maintainer direction",
+    "nodeGlobal": "26.12.1",
+    "javaHeap": "2048M"
+  },
+  "logs": [
+    "reference-native-integrated.log",
+    "reference-front-integrated.log",
+    "reference-front-integrated-retry.log",
+    "reference-build-integrated.log",
+    "reference-lint-integrated.log",
+    "reference-standard-build.log"
+  ],
+  "evidenceLedger": ".superpowers/sdd/editor-basico-2026-10-26",
+  "pending": [
+    "Normal-profile import/playback/save/reopen/relink/export and human approval",
+    "Actual Whisper transcription through reference in normal journey",
+    "797MB first import/reopen, cursor/frame p95, RSS/VRAM and WebView no-Range gate",
+    "M6 unresolved presentation/proxy/compositor paths and comparable performance"
+  ],
+  "uiControlByAgent": false,
+  "userDataMutationsByLab": false,
+  "goalComplete": false
+}

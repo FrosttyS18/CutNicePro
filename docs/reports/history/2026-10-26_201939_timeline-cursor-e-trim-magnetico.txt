@@ -1,0 +1,94 @@
+╔════════════════════════════════════════════╗
+║       CUTNICEPRO — ZCODE REPORT            ║
+╚════════════════════════════════════════════╝
+
+TASK
+  Name: Cursor independente e trim magnético seguro
+  Status: PARTIAL da meta; correções desta rodada validadas.
+  Scope: alças, movimento, Espaço e preservação das camadas.
+  Objective: editar sem levar o cursor ou apagar outras camadas.
+  Result: mantenedor confirmou os testes de cursor/Espaço e a preservação das camadas.
+  FUNCTIONAL STATUS: PASS no escopo testado
+  REGRESSION STATUS: PASS no escopo testado
+  VISUAL STATUS: PENDING HUMAN APPROVAL
+
+IMPLEMENTATION
+  Completed: arraste/aparar preservam cursor; foco recuperado após trocar camada; Espaço funciona após o gesto.
+    Ímã deixou de recortar um intervalo de todas as faixas. Altera o grupo escolhido e reencaixa somente os blocos posteriores vinculados à principal.
+    Removido o divisor inferior duplicado do cabeçalho.
+  Not completed: estudo completo do player/proxy, medições com vídeo de797MB e jornada integral.
+  Changes: gestos, comandos, playback, timeline e domínio de trim.
+  Architecture impact: sem dependências, novo formato de dados ou build paralela.
+
+FILES
+  Created: cinco arquivos de testes; checkpoints12/13; este relatório.
+  Modified: oito fontes do editor/domínio e documentação canônica.
+  Deleted: nenhum arquivo de mídia ou fonte.
+  Unexpected changes: alterações anteriores preservadas; snapshot no ledger abaixo.
+
+VALIDATION
+  Typecheck: PASS final
+  Lint: PASS completo, sem avisos
+  Unit tests: PASS —922/922 em148 arquivos,22,93s
+  Integration tests: React/domínio controlados; não equivalem a nova exportação nativa.
+  Regression tests: PASS; novo teste reproduziu perda de camadas antes do fix.
+  Visual tests: SKIP — aprovação estética do mantenedor.
+  Runtime verification: mantenedor confirmou “As camadas foram preservadas”.
+  Total passed:922 na execução final; Total failed:0; Total skipped:0 nessa suíte.
+  Histórico: rodada anterior907/908 falhou em IME; corrigida e50/50 afetados passaram antes da integração final.
+  Build: tsc/Vite PASS, sem avisos; Rust inalterado, suíte anterior339 PASS/33 opt-in não repetida.
+  Executável: C:/CutNicePro/app/src-tauri/target/debug/cutnicepro.exe; somente target padrão.
+
+HOOKS / HARNESS
+  Hooks active/PreToolUse/PostToolUse/Stop: não verificados nesta rodada; nenhum PASS inferido.
+  Baseline/Gate: testes e builds acima; sem controle interativo do PC.
+
+MCP / SKILLS
+  Tools used: Graphify remoto; depuração sistemática, TDD, frontend e verificação.
+  Connection status: consulta real em72edd1b; alterações locais complementadas por fonte/diff/testes.
+  Failures/Pending activation: nenhuma pendência de conexão; índice não contém o delta local.
+
+GIT
+  Branch: codex/editor-basico-20261026
+  HEAD:72edd1b936fc7d4c52081d6b82326465fbefe538
+  Latest commit: docs(engenharia): registrar auditoria e isolar pesquisa do CapCut
+  Commits created: nenhum nesta rodada; Push: NOT EXECUTED
+  Remote: origin → FrosttyS18/CutNicePro
+  Working tree: MODIFIED + UNTRACKED; trabalho anterior preservado.
+  Pending files: fontes/testes/docs acumulados, checkpoints e relatórios ainda não commitados.
+
+EVIDENCE
+  Commands executed: npm test; npm run lint; npm run build; cargo build anterior na mesma target; git diff --check.
+  Relevant logs: C:/CutNicePro/.superpowers/sdd/editor-basico-2026-10-26/trim-layers-{integrated,build,lint}.log
+  Screenshots: nenhuma captura automática.
+  Test artifacts: C:/CutNicePro/docs/reports/evidence/editor-basico-2026-10-26/checkpoint-13.json
+  Reproduction details: fim encurtado com ímã apagava overlays; expansão dividia conteúdo independente.
+    A direção literal início→direita não reproduziu exclusão; ambas as alças/sinais estão na matriz.
+  Git snapshot: C:/CutNicePro/.superpowers/sdd/editor-basico-2026-10-26/final-git-status.txt
+
+ISSUES
+  Bugs found: cursor seguindo objeto/alças; foco perdido; Espaço interceptado; trim magnético global.
+  Unresolved failures: nenhuma nesta fatia validada.
+  Regressions: nenhuma identificada nos testes executados.
+  Risks: bloco posterior fixo na principal impede ripple; mensagem orienta desligar o ímã. Sem compactação nova ao redor de fixos.
+  Blockers: nenhum para estas correções; demais gates da meta continuam abertos.
+
+FINAL
+  Delivery status: correções testadas e confirmadas no percurso do mantenedor; meta integral ACTIVE/PARTIAL.
+  Requirements met: cursor independente, Espaço, camadas preservadas e build limpo.
+  Remaining work: estudo M6, recursos/jornada integral e proposta futura Detalhes/Desempenho.
+  User action required: nenhuma para encerrar esta correção.
+  Restart required: não; mantenedor já testou a versão atual.
+  Ready for next task: continuidade da mesma meta, sem declará-la concluída.
+
+REPORT
+  Latest file: C:/CutNicePro/docs/reports/LATEST.txt
+  Historical file: C:/CutNicePro/docs/reports/history/2026-10-26_201939_timeline-cursor-e-trim-magnetico.txt
+
+GUIA DO MANTENEDOR — O QUE MUDOU E COMO TESTAR
+  O que mudou: arrastar/aparar não leva o cursor; ímã não apaga outras camadas.
+  Teste1: mover trecho entre tempos/camadas e usar Espaço sem novo clique → cursor e reprodução independentes.
+  Teste2: aparar ambas as pontas com camada acima e usar Desfazer/Refazer → camadas preservadas.
+  Retorno recebido: demais testes funcionaram; “As camadas foram preservadas”.
+
+END OF REPORT

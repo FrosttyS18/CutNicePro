@@ -1,0 +1,90 @@
+╔════════════════════════════════════════════╗
+║       CUTNICEPRO — ZCODE REPORT            ║
+╚════════════════════════════════════════════╝
+
+TASK
+  Name: Biblioteca organizada e consolidação do estudo
+  Status: PARTIAL da meta; ajustes desta rodada implementados.
+  Scope: cards, recolhimento por projeto, criação e prévia.
+  Objective: facilitar revisão dos clipes e preservar o editor.
+  Result: seta individual, títulos de duas linhas, tag Editado e ações compactas.
+  FUNCTIONAL STATUS: PASS no escopo testado
+  REGRESSION STATUS: PASS no escopo testado
+  VISUAL STATUS: PENDING HUMAN APPROVAL
+
+IMPLEMENTATION
+  Completed: cada projeto recolhe seus próprios cards; contagem permanece.
+    Títulos com reticências e tooltip próprio; Editado ocupa a altura da nota.
+    Tesoura/baixar/excluir por ícones; após criar, atalho Ir para clipes protege o rascunho.
+    Criação inválida rejeitada antes de vincular mídia; prévia dividida evita redesenhos repetidos.
+  Not completed: jornada normal completa, vídeo797MB, botões+ nas extremidades e imagem grande.
+  Changes: biblioteca, tooltip compartilhado e contratos de criação.
+  Architecture impact: mesma stack; sem dependências ou build paralela.
+
+FILES
+  Created:14 fontes/testes identificados no checkpoint14, mais checkpoint/relatórios.
+  Modified:22 fontes/documentos identificados no checkpoint14; backlog atualizado.
+  Deleted: nenhum arquivo do usuário.
+  Unexpected changes: trabalho anterior preservado; listagem no ledger.
+
+VALIDATION
+  Typecheck: PASS; Lint: PASS completo e focal posterior.
+  Unit tests:958/958 TS;345 Rust PASS/0 FAIL/33 opt-in.
+  Integration tests: export real de dois vídeos, repetição, PNG, WAV e CC após salvar/reabrir.
+  Regression tests: PASS; recolhimento posterior teve3 casos aprovados em execuções dirigidas.
+  Visual tests: SKIP, aprovação humana; Runtime verification: fixtures/decoder reais, sem GUI normal.
+  Total passed:958 TS/345 Rust e3 casos novos posteriores; não são uma execução única.
+  Total failed:0 pendente; falhas intermediárias de testes/tipagem corrigidas e registradas.
+  Total skipped:33 opt-in Rust; demais limites no checkpoint.
+  Build: tsc/Vite final PASS sem avisos; cargo build padrão PASS.
+  Executável: C:/CutNicePro/app/src-tauri/target/debug/cutnicepro.exe
+
+HOOKS / HARNESS
+  Hooks active/PreToolUse/PostToolUse/Stop/Baseline: não verificados nesta execução Codex.
+  Gate result: PASS técnico delimitado; Evidence: ledger continuation17-*/collapse-*.
+
+MCP / SKILLS
+  Tools used: Graphify remoto, frontend, debugging e validação.
+  Connection status: consulta real pré/pós no snapshot72edd1b; delta local conferido.
+  Failures/Pending activation: nenhuma integração bloqueada.
+
+GIT
+  Branch: codex/editor-basico-20261026
+  HEAD:72edd1b936fc7d4c52081d6b82326465fbefe538
+  Latest commit: docs(engenharia): registrar auditoria e isolar pesquisa do CapCut
+  Commits created: nenhum; Push: NOT EXECUTED.
+  Remote: origin → FrosttyS18/CutNicePro, main.
+  Working tree: MODIFIED + UNTRACKED; Pending files: esta rodada e alterações anteriores preservadas.
+
+EVIDENCE
+  Commands executed: npm test, npm run lint/build, cargo test/build --offline --locked.
+  Relevant logs: .superpowers/sdd/editor-basico-2026-10-26/
+  Screenshots: nenhuma automação da tela.
+  Test artifacts/Reproduction details: checkpoint14 e testes RED/GREEN descritos no handoff.
+
+ISSUES
+  Bugs found: altura desigual dos cards, título sem limite e trabalho repetido na prévia dividida.
+  Unresolved failures: sem falha técnica pendente nesta fatia; gates da meta continuam abertos.
+  Regressions: nenhuma observada no escopo testado; Risks: aceite visual/normal ainda pendente.
+  Blockers: nenhum para estes ajustes.
+
+FINAL
+  Delivery status: ajustes implementados; meta integral permanece PARTIAL.
+  Requirements met: recolhimento individual, títulos, tag, ícones e atalho.
+  CapCut confirmado: cache de informações do arquivo, fila seletiva de buscas pendentes
+    e retorno interno da prévia ao grafo. Proxy completo, pixels finais e benchmark continuam abertos.
+  Estudo:108 dossiês preservados; sessão encerrada normalmente e três processos próprios liberados.
+  Remaining work: fila registrada no ENGINE-HANDOFF Complemento17; sem ampliar a pesquisa agora.
+  User action required: testes abaixo; Restart required: nenhuma build alternativa.
+  Ready for next task: fila preservada, fontes congeladas para o teste.
+
+REPORT
+  Latest file: docs/reports/LATEST.txt
+  Historical file: docs/reports/history/2026-10-26_211500_biblioteca-e-estudo-consolidado.txt
+
+GUIA DO MANTENEDOR — O QUE MUDOU E COMO TESTAR
+  1. Recolha um projeto pela seta → apenas seus cards somem; expanda → voltam.
+  2. Passe o mouse num título longo → até duas linhas no card e texto completo no tooltip.
+  3. Crie um recorte → Ir para clipes abre a coleção atual; alterações pendentes pedem sua decisão.
+
+END OF REPORT

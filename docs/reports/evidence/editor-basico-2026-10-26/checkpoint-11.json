@@ -1,0 +1,40 @@
+{
+  "status": "PARTIAL",
+  "goal": "editor-basico-2026-10-26",
+  "recordedAtUtc": "2026-10-26T19:10:49Z",
+  "previousCheckpoint": "checkpoint-10.json",
+  "head": "72edd1b936fc7d4c52081d6b82326465fbefe538",
+  "graphify": {"commit": "72edd1b936fc7d4c52081d6b82326465fbefe538", "build": "90438342-83c6-43fa-b1d9-09d93767c3be", "localDeltaIndexed": false},
+  "humanFeedback": {
+    "previousControlsAndOpening": "Maintainer said stable-round tests worked; limited to tested journey, not whole-editor visual approval",
+    "newFindings": ["Empty auxiliary tracks accumulate after duplicate/delete", "Playhead/ruler obscured during many-layer scrolling", "Trim moves playhead", "Space fails when focus is in timeline"]
+  },
+  "integratedSlice": {
+    "pruning": "Only unlocked non-primary tracks occupied before the operation and empty afterward; preserve intermediate move tracks and unrelated content",
+    "legacyEmptyTracks": "Document unchanged; presentation omits empty unlocked auxiliaries, retaining primary, locked and focused rows",
+    "cursorViewport": "One scrollport, sticky ruler, single cursor overlay outside vertical content, clipped to client area and gutter144",
+    "typescriptPassed": 853,
+    "typescriptFailed": 0,
+    "typescriptFiles": 143,
+    "typescriptSeconds": 23.13,
+    "lint": "PASS full zero warnings",
+    "tscVite": "PASS",
+    "standardCargoBuild": "PASS0.94s; same target",
+    "native": "Unchanged since339 PASS/33 ignored; not repeated",
+    "roundtripScope": "TS parser and CompositionSession, not native IPC",
+    "viewportTestScope": "Controlled DOM/CSS/geometry inputs, not real WebView hit-test"
+  },
+  "activeNextSlice": {
+    "space": "Early capture scoped to timeline; preserves text/Fonte/menus/modal/modifiers/IME/repeat and other shortcuts; focal tests passed, joint integration pending",
+    "trim": "TDD of stable editorial cursor independent of export duration; compatibility with bounded library player required",
+    "headerDivider": "Queued after trim/Space; remove only lower editor-header divider",
+    "projectSettings": "Future study/proposal with Details/Performance; no fake proxy controls or UI implemented"
+  },
+  "logs": ["timeline-layers-integrated.log", "timeline-layers-lint.log", "timeline-layers-build.log", "timeline-layers-standard-build.log"],
+  "evidenceLedger": ".superpowers/sdd/editor-basico-2026-10-26",
+  "research": "Active isolated REA study:64 dossiers plus19 small dependency regions; concrete FFmpeg metadata path and separate cache, unresolved proxy lifecycle/runtime benchmark",
+  "guiAutomation": false,
+  "userDataMutated": false,
+  "goalComplete": false,
+  "remaining": ["Integrate trim/Space and divider correction", "Manual current-layer/cursor tests", "Normal journey and797MB resource gates", "M6 unresolved player/proxy/compositor and comparable metrics"]
+}
