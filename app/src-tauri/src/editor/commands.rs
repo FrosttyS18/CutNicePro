@@ -39,11 +39,7 @@ pub async fn save_editor_document(
 ) -> Result<Snapshot, String> {
     tauri::async_runtime::spawn_blocking(move || {
         let editor = store(&app, &project_id)?;
-        let media = crate::media_store::MediaStore::open(
-            &app.path()
-                .app_data_dir()
-                .map_err(|error| error.to_string())?,
-        )?;
+        let media = crate::media_store_of(&app)?;
         for asset in &document.assets {
             let entry = media
                 .get(&asset.media_id)?

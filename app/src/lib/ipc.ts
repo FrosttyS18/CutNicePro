@@ -3,7 +3,7 @@
  * A UI nunca chama invoke diretamente; erros chegam como string legível.
  */
 import { invoke } from "@tauri-apps/api/core";
-import { listen } from "@tauri-apps/api/event";
+import { runMediaFileJob, type MediaFileProgress } from "./media-file-job";
 import type { CollectionIcon, CollectionMeta, ProjectMeta } from "./types";
 import type { Composition } from "./composition-types";
 
@@ -90,6 +90,8 @@ export interface MediaEntryDto {
   projectIds: string[];
   analysis: MediaAnalysisDto | null;
   unavailable: boolean;
+  storageKind?: "managed" | "reference";
+  availability?: "available" | "missing" | "changed" | "inaccessible";
 }
 
 export interface ImportedMedia {
@@ -112,82 +114,64 @@ function isImportPayload(value: unknown): value is MediaEntryDto & { analysisErr
   return [value.mediaId, value.sha256, value.ext, value.originalName].every((item) => typeof item === "string" && item.length > 0)
     && finite(value.sizeBytes) && finite(value.createdAtMs) && typeof value.unavailable === "boolean"
     && Array.isArray(value.projectIds) && value.projectIds.every((item: unknown) => typeof item === "string")
-    && validAnalysis && (value.analysisError == null || typeof value.analysisError === "string");
+    && validAnalysis && (value.analysisError == null || typeof value.analysisError === "string")
+    && (value.storageKind === undefined || value.storageKind === "managed" || value.storageKind === "reference")
+    && (value.availability === undefined || typeof value.availability === "string" && ["available", "missing", "changed", "inaccessible"].includes(value.availability))
+    && (value.availability === undefined || value.unavailable === (value.availability !== "available"));
+}
+
+function mediaEntry(payload: MediaEntryDto): MediaEntryDto {
+  return {
+    mediaId: payload.mediaId, sha256: payload.sha256, sizeBytes: payload.sizeBytes, ext: payload.ext,
+    originalName: payload.originalName, createdAtMs: payload.createdAtMs, projectIds: payload.projectIds,
+    analysis: payload.analysis ?? null, unavailable: payload.unavailable,
+    storageKind: payload.storageKind ?? "managed",
+    availability: payload.availability ?? (payload.unavailable ? "missing" : "available"),
+  };
+}
+
+function rejectMediaResponse(message: string, signal?: AbortSignal): never {
+  if (signal?.aborted) throw new DOMException("Importação cancelada.", "AbortError");
+  throw new Error(message);
 }
 
 export async function importMedia(
   projectId: string,
   srcPath: string,
-  onProgress: (copied: number, total: number) => void,
+  onProgress: MediaFileProgress,
   signal?: AbortSignal,
   assetKind?: "video"|"image"|"audio",
 ): Promise<ImportedMedia> {
-  const checkCancelled = () => {
-    if (signal?.aborted) throw new DOMException("Importação cancelada.", "AbortError");
-  };
-  checkCancelled();
-  const jobId = crypto.randomUUID();
-  let active = true;
-  let cancellationError: unknown;
-  let registrationSeen = false;
-  const requestCancel = () => {
-    void cancelImport(jobId).catch((error: unknown) => { cancellationError = error; });
-  };
-  const un = await listen<{ jobId: string; bytesCopied: number; totalBytes: number }>(
-    "import://progress",
-    (e) => {
-      if (!active || e.payload.jobId !== jobId) return;
-      if (signal?.aborted) {
-        if (!registrationSeen) requestCancel();
-      } else {
-        onProgress(e.payload.bytesCopied, e.payload.totalBytes);
-      }
-      registrationSeen = true;
-    },
-  );
-  try {
-    checkCancelled();
-    signal?.addEventListener("abort", requestCancel, { once: true });
-    const raw = await invoke<string>("import_media", { projectId, srcPath, jobId, ...(assetKind ? {assetKind} : {}) });
-    if (cancellationError) throw new Error(`Falha ao solicitar cancelamento: ${String(cancellationError)}`);
-    checkCancelled();
-    const payload: unknown = JSON.parse(raw);
-    if (!isImportPayload(payload)) throw new Error("Resposta de importação inválida. Tente novamente.");
-    return {
-      entry: {
-        mediaId: payload.mediaId,
-        sha256: payload.sha256,
-        sizeBytes: payload.sizeBytes,
-        ext: payload.ext,
-        originalName: payload.originalName,
-        createdAtMs: payload.createdAtMs,
-        projectIds: payload.projectIds,
-        analysis: payload.analysis ?? null,
-        unavailable: payload.unavailable,
-      },
-      analysisError: payload.analysisError ?? null,
-    };
-  } catch (error) {
-    if (cancellationError) throw Object.assign(new Error(`Falha ao solicitar cancelamento: ${String(cancellationError)}`), { cause: error });
-    checkCancelled();
-    throw error;
-  } finally {
-    active = false;
-    signal?.removeEventListener("abort", requestCancel);
-    un();
-  }
+  const raw = await runMediaFileJob("import_media", { projectId, srcPath, ...(assetKind ? { assetKind } : {}) }, onProgress, signal);
+  if (typeof raw !== "string") return rejectMediaResponse("Resposta de importação inválida. Tente novamente.", signal);
+  let payload: unknown;
+  try { payload = JSON.parse(raw); }
+  catch { return rejectMediaResponse("Resposta de importação inválida. Tente novamente.", signal); }
+  if (!isImportPayload(payload)) return rejectMediaResponse("Resposta de importação inválida. Tente novamente.", signal);
+  return { entry: mediaEntry(payload), analysisError: payload.analysisError ?? null };
+}
+
+export async function relinkMedia(projectId: string, mediaId: string, srcPath: string, onProgress: MediaFileProgress, signal?: AbortSignal): Promise<MediaEntryDto> {
+  const payload = await runMediaFileJob("relink_media", { projectId, mediaId, srcPath }, onProgress, signal);
+  if (!isImportPayload(payload) || payload.mediaId !== mediaId || !payload.projectIds.includes(projectId) || payload.unavailable) return rejectMediaResponse("Não foi possível confirmar o arquivo original. Tente novamente.", signal);
+  return mediaEntry(payload);
 }
 
 export function cancelImport(jobId: string): Promise<boolean> {
   return invoke<boolean>("cancel_import", { jobId });
 }
 
-export function linkMedia(mediaId: string, projectId: string): Promise<MediaEntryDto> {
-  return invoke<MediaEntryDto>("link_media", { mediaId, projectId });
+export async function linkMedia(mediaId: string, projectId: string): Promise<MediaEntryDto> {
+  const payload: unknown = await invoke("link_media", { mediaId, projectId });
+  if (!isImportPayload(payload)) throw new Error("Resposta de mídia inválida. Tente novamente.");
+  return mediaEntry(payload);
 }
 
-export function getMedia(mediaId: string): Promise<MediaEntryDto | null> {
-  return invoke<MediaEntryDto | null>("get_media", { mediaId });
+export async function getMedia(mediaId: string): Promise<MediaEntryDto | null> {
+  const payload: unknown = await invoke("get_media", { mediaId });
+  if (payload === null) return null;
+  if (!isImportPayload(payload)) throw new Error("Resposta de mídia inválida. Tente novamente.");
+  return mediaEntry(payload);
 }
 
 export function analyzeMedia(mediaId: string): Promise<MediaAnalysisDto> {
@@ -202,8 +186,9 @@ export function mediaReconcile(): Promise<string> {
   return invoke<string>("media_reconcile");
 }
 
-export function mediaUrl(entry: { sha256: string; ext: string }): string {
-  return `http://cnplocal.localhost/${entry.sha256}.${entry.ext}`;
+export function mediaUrl(entry: { mediaId?: string; sha256: string; ext: string }): string {
+  const key = entry.mediaId ? `media/${encodeURIComponent(entry.mediaId)}` : entry.sha256;
+  return `http://cnplocal.localhost/${key}.${entry.ext}`;
 }
 
 // ---- Coleções (Fase 03B; arquivo próprio, retrocompatível) ----

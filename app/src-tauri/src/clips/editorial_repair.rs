@@ -140,6 +140,7 @@ fn apply(
         created_at_ms: None,
         review: Review::Pending,
         deleted: None,
+        deleted_at_ms: None,
         face_framing: None,
         multimodal: None,
         ..original.clone()

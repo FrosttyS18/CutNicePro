@@ -41,6 +41,7 @@ fn snapshot(
         created_at_ms: previous.and_then(|value| value.created_at_ms),
         review: previous.and_then(|value| value.review.clone()),
         deleted: previous.and_then(|value| value.deleted),
+        deleted_at_ms: previous.and_then(|value| value.deleted_at_ms),
     })
 }
 pub(super) fn save(
@@ -63,6 +64,7 @@ pub(super) fn save(
         }
     }
     store.transaction(project, move |state| {
+        store.ensure_live(project, clip, &related)?;
         let previous = clip.and_then(|id| state.clips.get(id)).or_else(|| {
             if clip.is_none() {
                 state.project.as_ref()

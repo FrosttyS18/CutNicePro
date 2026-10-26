@@ -4,6 +4,7 @@ import * as api from "../lib/clips";
 import type { EditorSettings } from "../lib/workspace-types";
 import { loadEditorState, updateEditorClip, type EditorProjectState } from "../lib/composition-persistence";
 import { mergeEditorClips } from "../lib/clip-library";
+import { cleanupClipTrash, clipRestoreFailure, purgeClip } from "../lib/clip-trash";
 
 /**
  * Resultado real de uma operação (upd 20 — auditoria): sucesso só existe
@@ -55,6 +56,8 @@ export function useClips(projectId: string, mediaId?: string) {
       });
       if (disposed) { stop(); return; }
       off = stop;
+      try{await cleanupClipTrash(projectId);}catch{if(!disposed)setError("A lixeira não pôde ser atualizada. Seus clipes foram preservados. Tente novamente.");}
+      if(disposed)return;
       const [legacy, editor, active] = await Promise.allSettled([mediaId ? api.getClips(projectId, mediaId) : api.getProjectClips(projectId), loadEditorState(projectId), api.getClipJob()]);
       if (!disposed) {
         if (legacy.status === "fulfilled") setCollection(legacy.value);
@@ -156,7 +159,7 @@ export function useClips(projectId: string, mediaId?: string) {
       const value = await api.restoreClip(projectId, mediaId!, clipId);
       if (version !== epoch.current) return false;
       setCollection(value); return true;
-    } catch { if (version === epoch.current) setError("Não foi possível restaurar o clipe. Tente novamente."); return false; }
+    } catch(error) { if (version === epoch.current) setError(clipRestoreFailure(error)); return false; }
     finally { pending.current = false; }
   }
   async function review(clipId: string, review: api.ClipReview) {
@@ -175,6 +178,20 @@ export function useClips(projectId: string, mediaId?: string) {
     } catch { if (version === epoch.current) setError("Não foi possível salvar a revisão do clipe. Tente novamente."); return false; }
     finally { pending.current = false; if (version === epoch.current) setReviewing(false); }
   }
+  async function purge(clipId:string){
+    if(pending.current||job?.state==="running")throw new Error("Aguarde o processamento em andamento.");
+    pending.current=true;
+    const version=epoch.current;
+    try{
+      await purgeClip(projectId,mediaId??collection?.mediaId??"",clipId);
+      if(version!==epoch.current)return;
+      setCollection(current=>current?{...current,clips:current.clips.filter(clip=>clip.id!==clipId)}:null);
+      setEditorState(current=>{
+        if(!current)return null;
+        const clips={...current.clips};delete clips[clipId];return {...current,clips};
+      });
+    }finally{pending.current=false;}
+  }
   async function cancel() {
     if (!job) return false;
     try { return await api.cancelClips(job.jobId); }
@@ -182,6 +199,6 @@ export function useClips(projectId: string, mediaId?: string) {
   }
   return { collection, snapshots: editorState?.clips ?? {}, job, ownedJob:owned.current?.id === job?.jobId && owned.current !== null,
     operation: job?.operation ?? (owned.current && owned.current.id === job?.jobId ? owned.current.kind : null),
-    busy: job?.state === "running" || reviewing, loading, error, notice, generate, analyze, exportVideo, review, remove, restore, cancel,
+    busy: job?.state === "running" || reviewing, loading, error, notice, generate, analyze, exportVideo, review, remove, restore, purge, cancel,
     reload: () => setRevision(value => value + 1) };
 }

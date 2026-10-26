@@ -160,6 +160,7 @@ mod tests {
             face_framing: None,
             created_at_ms: None,
             deleted: None,
+            deleted_at_ms: None,
             engine: None,
         };
         let selected = regions(&[clip], 7200.0);

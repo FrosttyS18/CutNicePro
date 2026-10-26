@@ -35,7 +35,7 @@ export function PreparationDialog({
   const copying = stage === "importing";
   const value = preparation ? preparation.percent === null ? null : preparation.percent / 100 : progress && total > 0 ? progress.copied / total : null;
   const label = copying && progress && total > 0
-    ? `Copiando… ${formatMb(progress.copied)} de ${formatMb(total)}`
+    ? `Verificando arquivo… ${formatMb(progress.copied)} de ${formatMb(total)}`
     : preparationLabels[stage];
   const transcribing = stage !== "validating" && !copying;
   return (

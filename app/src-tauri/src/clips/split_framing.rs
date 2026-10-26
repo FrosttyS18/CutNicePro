@@ -1,5 +1,5 @@
 use crate::{
-    media_store::MediaStore, processing::ProcessingGate, render::split_screen::SplitScreen,
+    processing::ProcessingGate, render::split_screen::SplitScreen,
     transcription::process::ProcessControl,
 };
 use serde::{Deserialize, Serialize};
@@ -237,26 +237,19 @@ pub async fn suggest_split_screen(
         return Err("Selecione uma região válida do vídeo para localizar as pessoas.".into());
     }
     let lease = app.state::<Arc<ProcessingGate>>().acquire()?;
-    let (entry, duration) = super::commands::media(&app, &project_id, &media_id)?;
+    let (source, duration) = super::commands::media(&app, &project_id, &media_id)?;
     validate_window(start, end, duration)?;
     let base = crate::app_data_base(&app)?;
-    let source = app
-        .state::<MediaStore>()
-        .files_dir()
-        .join(format!("{}.{}", entry.sha256, entry.ext));
-    if !source.is_file() {
-        return Err("O vídeo está indisponível. Reconecte o arquivo original.".into());
-    }
     tauri::async_runtime::spawn_blocking(move || {
         let _lease = lease;
-        match suggest(&base, &source, start, end, viewport) {
-            Ok(suggestion) => suggestion,
+        match suggest(&base, &source.path, start, end, viewport) {
+            Ok(suggestion) => { source.recheck()?; Ok(suggestion) },
             Err(error) => {
                 eprintln!("[split] sugestão local não aplicada: {error}");
-                manual("Não foi possível concluir a sugestão local. Tente novamente ou use quadro único.")
+                Ok(manual("Não foi possível concluir a sugestão local. Tente novamente ou use quadro único."))
             }
         }
-    }).await.map_err(|e| e.to_string())
+    }).await.map_err(|e| e.to_string())?
 }
 
 #[cfg(test)]

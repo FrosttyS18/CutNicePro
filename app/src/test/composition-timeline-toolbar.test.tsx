@@ -40,6 +40,8 @@ it("exibe camadas pela ordem visual e mantém a ordem do documento",async()=>{
   const document=fixture();
   document.items=document.items.map(item=>item.kind==="audio"?{...item,groupId:"independent"}:item);
   document.tracks.push({id:"V2",name:"Camada 2",kind:"visual",primary:false,locked:false,hidden:false,muted:false},{id:"V3",name:"Camada 3",kind:"visual",primary:false,locked:false,hidden:false,muted:false});
+  const video=document.items.find(item=>item.kind==="video")!;
+  for(const trackId of ["V2","V3"])document.items.push({...structuredClone(video),id:`item-${trackId}`,trackId,groupId:`group-${trackId}`});
   const before=document.tracks.map(track=>track.id);
   view=await reactHost(<CompositionTimeline document={document} frame={0} selected={[]} mode="select" range={null} onSelect={noop} onRange={noop} onSeek={noop} onChange={noop} onPreview={noop} onError={noop}/>);
   expect(Array.from(view.host.querySelectorAll(".composition-track__label>strong")).map(label=>label.textContent)).toEqual(["Camada 3","Camada 2","Principal","Áudio da fonte"]);

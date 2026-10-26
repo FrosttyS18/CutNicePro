@@ -3,7 +3,13 @@ use crate::{render::scratch::Scratch, transcription::process::ProcessControl};
 use serde_json::json;
 use std::{collections::HashMap, path::Path, process::Command};
 
-fn execute(exe: &Path, args: &[&str], output: &Path, control: &ProcessControl, log: &Path) {
+pub(super) fn execute(
+    exe: &Path,
+    args: &[&str],
+    output: &Path,
+    control: &ProcessControl,
+    log: &Path,
+) {
     let mut command = Command::new(exe);
     command
         .args(["-nostdin", "-v", "error", "-y"])
@@ -11,7 +17,14 @@ fn execute(exe: &Path, args: &[&str], output: &Path, control: &ProcessControl, l
         .arg(output);
     control.run(command, log).unwrap();
 }
-fn pixel(exe: &Path, source: &Path, time: &str, x: &str, y: &str, base: &Path) -> [u8; 3] {
+pub(super) fn pixel(
+    exe: &Path,
+    source: &Path,
+    time: &str,
+    x: &str,
+    y: &str,
+    base: &Path,
+) -> [u8; 3] {
     let output = base.join(format!("pixel-{time}-{x}.rgb"));
     let mut command = Command::new(exe);
     command

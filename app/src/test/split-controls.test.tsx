@@ -55,6 +55,7 @@ async function slider(label: string, value: string) {
     Object.getOwnPropertyDescriptor(Object.getPrototypeOf(input), "value")!.set!.call(input, value);
     input.dispatchEvent(new window.Event("input", { bubbles: true }));
     input.dispatchEvent(new window.Event("change", { bubbles: true }));
+    input.dispatchEvent(new window.FocusEvent("focusout", { bubbles: true }));
   });
 }
 

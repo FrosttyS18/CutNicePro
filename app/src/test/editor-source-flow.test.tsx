@@ -54,13 +54,17 @@ async function key(label:string,value:string,ctrlKey=false){
 function end(){return Number(view!.host.querySelector('[data-composition-item][data-kind="video"]')?.getAttribute("data-source-end-us"))/1e6;}
 function saved(asClip=true){return (asClip?nativeState.clips[clip.id]:nativeState.project)!.document;}
 async function drag(){
+  await view!.click("Ajustar na prévia");
   const target=view!.host.querySelector<HTMLElement>(".composition-stage")!;
+  const video=target.querySelector<HTMLVideoElement>("video")!;
+  const before=Number.parseFloat(video.style.top);
   Object.defineProperty(target,"getBoundingClientRect",{value:()=>({left:100,top:100,width:200,height:400})});
   await act(async()=>{
-    target.dispatchEvent(new window.MouseEvent("pointerdown",{button:0,clientX:150,clientY:150,bubbles:true,cancelable:true}));
-    window.dispatchEvent(new window.MouseEvent("pointermove",{clientX:170,clientY:150}));
-    window.dispatchEvent(new window.MouseEvent("pointerup",{clientX:170,clientY:150}));
+    video.dispatchEvent(new window.MouseEvent("pointerdown",{button:0,clientX:200,clientY:300,bubbles:true,cancelable:true}));
+    window.dispatchEvent(new window.MouseEvent("pointermove",{clientX:200,clientY:280}));
+    window.dispatchEvent(new window.MouseEvent("pointerup",{clientX:200,clientY:280}));
   });
+  return (Number.parseFloat(video.style.top)-before)*400/100;
 }
 it("permite buscar a fala posterior ao corte da IA na Fonte antes de ampliá-lo",async()=>{
   await mount();
@@ -87,8 +91,11 @@ it("oferece divisão no vídeo completo sem modo técnico exclusivo de clipes",a
   await view!.click("Salvar");expect(saved(false).items.filter(item=>item.kind==="video")).toHaveLength(2);
 });
 it("o modo enquadrar move a imagem pela prévia sem disparar reprodução",async()=>{
-  await mount();await view!.click("Enquadrar");await drag();await view!.click("Salvar");
-  expect(saved().items.find(item=>item.kind==="video")!.settings.focalPoint?.x).toBe(40);
+  await mount();await view!.click("Enquadrar");
+  await act(async()=>view!.host.querySelector<HTMLButtonElement>('button[aria-label="Vertical"]')!.click());
+  const distance=await drag();await view!.click("Salvar");
+  expect(distance).toBeCloseTo(-20,0);
+  expect(saved().items.find(item=>item.kind==="video")!.settings.focalPoint!.y).toBeLessThan(50);
   expect(view!.host.querySelector(".composition-stage .video-surface-toggle")).toBeNull();
 });
 it("reabre split antigo sem apagar painéis e permite confirmação manual explícita",async()=>{
@@ -99,8 +106,9 @@ it("reabre split antigo sem apagar painéis e permite confirmação manual expl�
 });
 it("enquadrar durante localização pendente preserva painéis e permite salvar o ajuste",async()=>{
   vi.mocked(ipc.suggestSplitScreen).mockImplementationOnce(()=>new Promise(()=>undefined));
-  await mount(true,true);await view!.click("Enquadrar");await view!.click("Localizar duas pessoas");await drag();await view!.click("Salvar");
-  expect(saved().items[0].settings.focalPoint?.x).toBe(40);
+  await mount(true,true);await view!.click("Enquadrar");await view!.click("Localizar duas pessoas");const distance=await drag();await view!.click("Salvar");
+  expect(distance).toBeCloseTo(-20,0);
+  expect(saved().items[0].settings.focalPoint!.y).toBeLessThan(50);
   expect(saved().items[0].settings.splitScreen?.top.x).toBe(0);
 });
 it("ampliar preserva o split manual; localização explícita usa a nova janela",async()=>{
@@ -114,7 +122,9 @@ it("ampliar preserva o split manual; localização explícita usa a nova janela"
 it.each(["buscar","reproduzir"])("não usa eventos nativos para voltar ao vão removido ao %s",async mode=>{
   await mount(true,false,false,[{sourceStart:10,sourceEnd:20},{sourceStart:40,sourceEnd:60}]);
   const ruler=view!.host.querySelector<HTMLElement>(".composition-ruler__ticks")!;
-  await act(async()=>{ruler.dispatchEvent(new window.MouseEvent("pointerdown",{button:0,clientX:404,bubbles:true}));window.dispatchEvent(new window.MouseEvent("pointerup",{clientX:404}));});
+  const second=view!.host.querySelectorAll<HTMLElement>('[data-composition-item][data-kind="video"]')[1];
+  const clientX=144+Number.parseFloat(second.style.left);
+  await act(async()=>{ruler.dispatchEvent(new window.MouseEvent("pointerdown",{button:0,clientX,bubbles:true}));window.dispatchEvent(new window.MouseEvent("pointerup",{clientX}));});
   if(mode==="reproduzir")await act(async()=>view!.host.querySelector<HTMLButtonElement>('[aria-label="Reproduzir montagem"]')!.click());
   const video=view!.host.querySelector<HTMLVideoElement>(".composition-stage video")!;
   expect(video.currentTime).toBeCloseTo(40,1);

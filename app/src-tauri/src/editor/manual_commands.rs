@@ -1,7 +1,8 @@
 use super::{
-    store::{CreatedClip, EditorProject, EditorStore},
+    store::{validate_new_clip, CreatedClip, EditorProject, EditorStore},
     types::Composition,
 };
+use crate::media_store::MediaStore;
 use std::path::Path;
 use tauri::{AppHandle, Manager};
 
@@ -20,6 +21,25 @@ fn store(app: &AppHandle, project_id: &str) -> Result<EditorStore, String> {
     EditorStore::open(&base)
 }
 
+pub(super) fn create_clip_with_media(
+    editor: &EditorStore,
+    media: &MediaStore,
+    project_id: &str,
+    title: &str,
+    document: Composition,
+) -> Result<CreatedClip, String> {
+    validate_new_clip(title, &document)?;
+    for asset in &document.assets {
+        let entry = media
+            .get(&asset.media_id)?
+            .ok_or("Mídia da montagem não encontrada")?;
+        if !entry.project_ids.iter().any(|id| id == project_id) {
+            media.link_project(&asset.media_id, project_id)?;
+        }
+    }
+    editor.create_clip(project_id, title, document)
+}
+
 #[tauri::command]
 pub async fn create_editor_clip(
     app: AppHandle,
@@ -29,20 +49,8 @@ pub async fn create_editor_clip(
 ) -> Result<CreatedClip, String> {
     tauri::async_runtime::spawn_blocking(move || {
         let editor = store(&app, &project_id)?;
-        let media = crate::media_store::MediaStore::open(
-            &app.path()
-                .app_data_dir()
-                .map_err(|error| error.to_string())?,
-        )?;
-        for asset in &document.assets {
-            let entry = media
-                .get(&asset.media_id)?
-                .ok_or("Mídia da montagem não encontrada")?;
-            if !entry.project_ids.contains(&project_id) {
-                media.link_project(&asset.media_id, &project_id)?;
-            }
-        }
-        editor.create_clip(&project_id, &title, document)
+        let media = crate::media_store_of(&app)?;
+        create_clip_with_media(&editor, &media, &project_id, &title, document)
     })
     .await
     .map_err(|error| error.to_string())?

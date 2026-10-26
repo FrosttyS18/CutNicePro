@@ -1,6 +1,7 @@
 import { lazy, Suspense, useRef, useState } from "react";
 import type { ProjectMeta } from "../lib/types";
 import { useWorkspaceData } from "../hooks/useWorkspaceData";
+import { RelinkMediaControl } from "../components/workspace/RelinkMediaControl";
 import { useTranscription } from "../hooks/useTranscription";
 import { TranscriptionControls } from "../components/workspace/TranscriptionControls";
 import { ProjectOverview } from "../components/workspace/ProjectOverview";
@@ -21,6 +22,7 @@ import type { LibraryClip } from "../lib/clip-library";
 import { PreparationRecoveryNotice } from "../components/workspace/PreparationRecoveryNotice";
 import type { ProjectEditorOrigin } from "../lib/project-navigation";
 import { useViewScroll } from "../hooks/useViewScroll";
+import { EditorLoading, EditorOpenBoundary } from "../components/editor/EditorOpening";
 
 const VideoEditor=lazy(()=>import("../components/editor/VideoEditor").then(module=>({default:module.VideoEditor})));
 
@@ -69,6 +71,11 @@ export function ProjectWorkspace({ project, initialView = "overview", initialEdi
     workspace.change({ ...fullVideoWorkspace(workspace.data), tool });
     setView("editor");
   }
+  function leaveEditor() {
+    if (editorOrigin === "library" && onReturnToLibrary) onReturnToLibrary();
+    else setView(editorOrigin === "clips" ? "clips" : "overview");
+  }
+  const editorBackLabel = editorOrigin === "library" && onReturnToLibrary ? "Voltar à biblioteca" : editorOrigin === "clips" ? "Voltar aos clipes" : "Voltar ao projeto";
   return (
     <div className={view === "editor" ? "project-workspace project-workspace--editing" : "project-workspace"}>
       {view === "overview" ? <>
@@ -78,11 +85,13 @@ export function ProjectWorkspace({ project, initialView = "overview", initialEdi
           <button type="button" className="flow-button" onClick={onImport}>Importar arquivo do computador</button>
         </div>}
         {workspace.data.media ? <ProjectOverview project={project} data={workspace.data} localUrl={workspace.localUrl} onRename={onRename}
-          onChange={workspace.change} onEditor={openEditor} onDelete={onDelete} transcriptionControls={<>{transcriptionControls}{clipTools}</>}transcribing={transcription.busy || clips.busy} />
+          onChange={workspace.change} onEditor={openEditor} onDelete={onDelete} transcriptionControls={<>{transcriptionControls}{clipTools}</>} transcribing={transcription.busy || clips.busy}
+          mediaReconnect={workspace.data.media?.kind === "local" && workspace.data.media.mediaId && workspace.canRelink
+            ? <RelinkMediaControl key={workspace.data.media.mediaId} projectId={project.id} mediaId={workspace.data.media.mediaId} kind="video" knownEntry={workspace.mediaEntry}/> : undefined} />
           : <section className="project-without-media"><h1>{project.name}</h1><p>Este projeto não tem um vídeo.</p>
             <button type="button" className="upload-primary" onClick={onImport}>Importar vídeo</button>
             <ProjectDeleteButton name={project.name} onDelete={onDelete} disabled={transcription.busy} /></section>}
-        {workspace.data.media?.kind === "local" && !workspace.localUrl && <details className="project-reconnect" open>
+        {workspace.data.media?.kind === "local" && !workspace.data.media.mediaId && !workspace.localUrl && <details className="project-reconnect" open>
           <summary>Reconectar arquivo original</summary>
           <p className="flow-muted">Escolha o arquivo original para abrir este vídeo.</p>
           <SourceForm compact loading={workspace.source.loading} onFile={(file) => void workspace.selectFile(file)} />
@@ -92,17 +101,20 @@ export function ProjectWorkspace({ project, initialView = "overview", initialEdi
       </> : null}
       {(view === "clips" || view === "editor" && editorOrigin === "clips") && <div ref={clipPane} hidden={view!=="clips"} inert={view!=="clips"}>
         <header className="project-clips__heading"><div><button type="button" className="flow-button" onClick={() => setView("overview")}>Voltar ao projeto</button><h1>{project.name}</h1></div><div className="project-clips__tools">{clipTools}</div></header>
-        <ClipGallery entries={(clips.collection?.clips ?? []).map(clip => ({project,mediaId: clips.collection!.mediaId,clip, composition: clips.snapshots?.[clip.id]}))} loading={clips.loading} error={clips.error} notice={clipNotice}
+        <ClipGallery active={view==="clips"&&!clips.busy} entries={(clips.collection?.clips ?? []).map(clip => ({project,mediaId: clips.collection!.mediaId,clip, composition: clips.snapshots?.[clip.id]}))} loading={clips.loading} error={clips.error} notice={clipNotice}
           onRetry={clips.reload} onInspect={setInspecting}
           onEdit={entry => { openClip(entry.clip); }}
           onDownload={entry => setDownloading(entry)}
-          onDelete={entry => { void clips.remove(entry.clip.id).then(ok => { if (ok) { setClipNotice("Clipe excluído."); setUndoDelete({ clipId: entry.clip.id }); } }); }}
+          onDelete={entry => { void clips.remove(entry.clip.id).then(ok => { if (ok) { setClipNotice("Clipe movido para a lixeira por 7 dias."); setUndoDelete({ clipId: entry.clip.id }); } }); }}
+          onPurge={async entry=>{await clips.purge(entry.clip.id);setUndoDelete(null);setClipNotice("Clipe excluído permanentemente.");}}
           onRestore={entry => { void clips.restore(entry.clip.id).then(ok => { if (ok) { setClipNotice("Clipe restaurado."); setUndoDelete(null); } }); }}
           undoDelete={undoDelete ? { onUndo: () => { const clipId = undoDelete.clipId; void clips.restore(clipId).then(ok => { if (ok) { setClipNotice("Clipe restaurado."); setUndoDelete(null); } }); } } : null}/>
       </div>}
-      {view === "editor" && <Suspense fallback={<p role="status">Abrindo editor…</p>}><VideoEditor projectId={project.id} key={`${workspace.data.tool}:${activeClip ?? "video"}`} title={project.name} activeClip={activeClip ? clips.collection?.clips.find(clip => clip.id === activeClip) : undefined} data={workspace.data} localUrl={workspace.localUrl} dirty={workspace.dirty}
-        onChange={workspace.change} onSave={workspace.save} onBack={() => {if(editorOrigin==="library"&&onReturnToLibrary)onReturnToLibrary();else setView(editorOrigin==="clips"?"clips":"overview");}} transcriptionControls={workspace.data.transcript.length ? undefined : transcriptionControls} transcribing={transcription.busy || clips.busy}
-        allClips={clips.collection?.clips} /></Suspense>}
+      {view === "editor" && <EditorOpenBoundary key={`${workspace.data.tool}:${activeClip ?? "video"}`} onBack={leaveEditor} backLabel={editorBackLabel}>
+        <Suspense fallback={<EditorLoading onBack={leaveEditor} backLabel={editorBackLabel} />}><VideoEditor projectId={project.id} title={project.name} activeClip={activeClip ? clips.collection?.clips.find(clip => clip.id === activeClip) : undefined} data={workspace.data} localUrl={workspace.localUrl} dirty={workspace.dirty}
+          onChange={workspace.change} onSave={workspace.save} onBack={leaveEditor} transcriptionControls={workspace.data.transcript.length ? undefined : transcriptionControls} transcribing={transcription.busy || clips.busy}
+          allClips={clips.collection?.clips} onShowClips={()=>{clips.reload();setView("clips");}} /></Suspense>
+      </EditorOpenBoundary>}
       <ClipFeedback job={clips.job} ownedJob={clips.ownedJob} notice={clips.notice}/>
       {workspace.notice && <p className={workspace.notice.error ? "workspace-notice workspace-notice--error" : "workspace-notice"}
         role={workspace.notice.error ? "alert" : "status"}>{workspace.notice.text}</p>}

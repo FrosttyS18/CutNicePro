@@ -83,32 +83,41 @@ pub async fn export_editor_document(
     let task_id = job_id.clone();
     let task = tauri::async_runtime::spawn_blocking(move || {
         let _lease = lease;
-        let result = render::run(&base, &frozen, &sources, &control, |progress| {
-            if let Some(snapshot) = task_jobs.progress(&task_id, progress) {
-                let _ = task_app.emit("clips://job", snapshot);
-            }
-        })
-        .and_then(|(scratch, output)| {
-            let prepared = crate::file_output::prepare(&destination, |file| {
-                let mut source = std::fs::File::open(&output).map_err(|error| error.to_string())?;
-                let mut buffer = vec![0_u8; 1024 * 1024];
-                loop {
-                    control.check()?;
-                    let count = source
-                        .read(&mut buffer)
-                        .map_err(|error| error.to_string())?;
-                    if count == 0 {
-                        break;
+        let result = sources
+            .recheck()
+            .and_then(|()| {
+                render::run(&base, &frozen, &sources.paths, &control, |progress| {
+                    if let Some(snapshot) = task_jobs.progress(&task_id, progress) {
+                        let _ = task_app.emit("clips://job", snapshot);
                     }
-                    file.write_all(&buffer[..count])
-                        .map_err(|error| error.to_string())?;
-                }
-                control.check()
-            })?;
-            Ok((scratch, prepared))
-        });
+                })
+            })
+            .and_then(|(scratch, output)| {
+                sources.recheck()?;
+                let prepared = crate::media_output_guard::prepare(&base, &destination, |file| {
+                    let mut source =
+                        std::fs::File::open(&output).map_err(|error| error.to_string())?;
+                    let mut buffer = vec![0_u8; 1024 * 1024];
+                    loop {
+                        control.check()?;
+                        let count = source
+                            .read(&mut buffer)
+                            .map_err(|error| error.to_string())?;
+                        if count == 0 {
+                            break;
+                        }
+                        file.write_all(&buffer[..count])
+                            .map_err(|error| error.to_string())?;
+                    }
+                    control.check()
+                })?;
+                Ok((scratch, prepared))
+            });
         task_jobs
-            .finish(&task_id, result, |(_, prepared)| prepared.commit())
+            .finish(&task_id, result, |(_, prepared)| {
+                sources.recheck()?;
+                prepared.commit()
+            })
             .map(|_| true)
     })
     .await;

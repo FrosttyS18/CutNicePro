@@ -16,12 +16,12 @@ const entry:LibraryClip={project:{id:"p",name:"Projeto",created_at_ms:0,updated_
 const collection={version:1,mediaId:"m",transcriptHash:"h",clips:[entry.clip]};
 let mounted:Awaited<ReturnType<typeof reactHost>> | undefined;
 afterEach(async()=>{await mounted?.close();mounted=undefined;vi.clearAllMocks();});
-function reads(){vi.mocked(invoke).mockImplementation(async command=>command==="get_clips" ? collection : null);}
+function reads(){vi.mocked(invoke).mockImplementation(async command=>command==="cleanup_clip_trash"?0:command==="get_clips" ? collection : null);}
 
 describe("fluxo de clipes com efeitos e cliques do React",()=>{
   it("abrir corte salvo não inicia geração nem análise",async()=>{
     reads();mounted=await reactHost(<ClipInspection entry={entry} onClose={()=>undefined} onEdit={()=>undefined}/>);
-    expect(vi.mocked(invoke).mock.calls.map(([name])=>name)).toEqual(["get_clips","load_editor_project","clips_job"]);
+    expect(vi.mocked(invoke).mock.calls.map(([name])=>name)).toEqual(["cleanup_clip_trash","get_clips","load_editor_project","clips_job"]);
     expect(mounted.host.textContent).toContain("Analisar trecho");
   });
   it("exclui (recuperável), informa e fecha somente depois de persistir",async()=>{
@@ -48,12 +48,11 @@ describe("fluxo de clipes com efeitos e cliques do React",()=>{
     expect(call).toBeDefined();
     expect(call![1]).toMatchObject({projectId:"p",mediaId:"m",clipId:entry.clip.id});
   });
-  it("rejeitados e excluídos saem da lista ativa e continuam consultáveis",()=>{
+  it("rejeitados antigos permanecem ativos e excluídos continuam consultáveis na lixeira",()=>{
     const entries=[entry,
       {...entry,clip:{...entry.clip,id:"b".repeat(64),review:"rejected" as const}},
       {...entry,clip:{...entry.clip,id:"c".repeat(64),deleted:true}}];
-    expect(visibleClips(entries,"active","score")).toEqual([entry]);
-    expect(visibleClips(entries,"rejected","score")).toHaveLength(1);
+    expect(visibleClips(entries,"active","score")).toEqual(entries.slice(0,2));
     expect(visibleClips(entries,"deleted","score")).toHaveLength(1);
     expect(visibleClips(entries,"all","score")).toHaveLength(3);
   });
@@ -63,7 +62,7 @@ describe("fluxo de clipes com efeitos e cliques do React",()=>{
     {name:"falha antiga não reaparece ao abrir cortes salvos",operation:"generate" as const,state:"failed" as const,visible:false},
   ])("$name",async({operation,state,visible})=>{
     const controller={collection:null,snapshots:{},job:{jobId:"j",projectId:"p",state,stage:"analyzing" as const,progress:0,error:null},operation,
-      ownedJob:false,busy:state === "running",loading:false,error:null,notice:null,generate:vi.fn(async()=>({status:"completed"} as const)),analyze:vi.fn(async()=>({status:"completed"} as const)),exportVideo:vi.fn(async()=>({status:"completed"} as const)),review:vi.fn(async()=>true),remove:vi.fn(async()=>true),restore:vi.fn(async()=>true),cancel:vi.fn(async()=>true),reload:vi.fn()};
+      ownedJob:false,busy:state === "running",loading:false,error:null,notice:null,generate:vi.fn(async()=>({status:"completed"} as const)),analyze:vi.fn(async()=>({status:"completed"} as const)),exportVideo:vi.fn(async()=>({status:"completed"} as const)),review:vi.fn(async()=>true),remove:vi.fn(async()=>true),restore:vi.fn(async()=>true),purge:vi.fn(async()=>{}),cancel:vi.fn(async()=>true),reload:vi.fn()};
     mounted=await reactHost(<ClipTools controller={controller} settings={defaultEditorSettings()} ready disabled={false} onSave={async()=>true} onShowClips={()=>undefined} onFullVideo={()=>undefined}/>);
     expect(Boolean(mounted.host.querySelector("dialog[open]"))).toBe(visible);
   });
@@ -72,7 +71,7 @@ describe("fluxo de clipes com efeitos e cliques do React",()=>{
 describe("geração incremental e mensagens do diálogo (atualização 19)",()=>{
   function controller(collection:import("../lib/clips").ClipCollection|null){
     return {collection,snapshots:{},job:null,operation:undefined as never,ownedJob:false,busy:false,loading:false,error:null,notice:null,
-      generate:vi.fn(async()=>({status:"completed"} as const)),analyze:vi.fn(async()=>({status:"completed"} as const)),exportVideo:vi.fn(async()=>({status:"completed"} as const)),review:vi.fn(async()=>true),remove:vi.fn(async()=>true),restore:vi.fn(async()=>true),cancel:vi.fn(async()=>true),reload:vi.fn()};
+      generate:vi.fn(async()=>({status:"completed"} as const)),analyze:vi.fn(async()=>({status:"completed"} as const)),exportVideo:vi.fn(async()=>({status:"completed"} as const)),review:vi.fn(async()=>true),remove:vi.fn(async()=>true),restore:vi.fn(async()=>true),purge:vi.fn(async()=>{}),cancel:vi.fn(async()=>true),reload:vi.fn()};
   }
   /** O botão da barra E o de confirmação têm o mesmo rótulo ("Gerar cortes"):
    *  clica o PRIMÁRIO do diálogo ABERTO, não o primeiro da página. */

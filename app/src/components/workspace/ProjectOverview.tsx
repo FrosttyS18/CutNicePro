@@ -21,9 +21,10 @@ interface Props {
   onDelete: () => Promise<void>;
   transcriptionControls?: ReactNode;
   transcribing?: boolean;
+  mediaReconnect?: ReactNode;
 }
 
-export function ProjectOverview({ project, data, localUrl, onRename, onChange, onEditor, onDelete, transcriptionControls, transcribing }: Props) {
+export function ProjectOverview({ project, data, localUrl, onRename, onChange, onEditor, onDelete, transcriptionControls, transcribing, mediaReconnect }: Props) {
   const video = useRef<HTMLVideoElement>(null);
   const [time, setTime] = useState(0);
   return (
@@ -40,6 +41,7 @@ export function ProjectOverview({ project, data, localUrl, onRename, onChange, o
         {transcriptionControls}
         <button className="flow-button" type="button" onClick={() => onEditor("captions")}><ClosedCaptioningIcon size={18} aria-hidden="true"/>Legendas</button>
         <button className="flow-button" type="button" onClick={() => onEditor("reframe")}><CropIcon size={18} aria-hidden="true"/>Enquadramento</button>
+        {mediaReconnect}
         <ProjectDeleteButton name={project.name} onDelete={onDelete} disabled={transcribing} />
       </aside></div>
     </section>

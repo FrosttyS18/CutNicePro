@@ -26,7 +26,7 @@ pub async fn save_editor_batch(
         {
             return Err("Projeto não encontrado".into());
         }
-        let media = crate::media_store::MediaStore::open(&base)?;
+        let media = crate::media_store_of(&app)?;
         for asset in document.assets.iter().chain(
             related
                 .iter()

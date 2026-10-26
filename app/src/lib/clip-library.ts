@@ -1,11 +1,11 @@
-import type { Clip, ClipCollection, ClipReview } from "./clips";
+import { clipChangedAt, type Clip, type ClipCollection } from "./clips";
 import type { ProjectMeta } from "./types";
 import type { CompositionSnapshot, EditorProjectState } from "./composition-persistence";
 import { compositionDuration } from "./composition";
 import { frameToSeconds } from "./composition-time";
 
 export interface LibraryClip { project: ProjectMeta; mediaId: string; clip: Clip; composition?: CompositionSnapshot }
-export type LibraryFilter = "active" | "all" | "deleted" | ClipReview;
+export type LibraryFilter = "active" | "all" | "deleted";
 /** Nota válida = análise presente e NÃO desatualizada (upd 20): nota antiga
  *  nunca ordena como avaliação editorial concluída. */
 function editorialScore(clip: Clip): number {
@@ -19,6 +19,7 @@ export function mergeEditorClips(project: ProjectMeta, collection: ClipCollectio
     const duration = frameToSeconds(compositionDuration(snapshot.document), snapshot.document.fps);
     const clip: Clip = previous ? { ...previous.clip } : { id, start: 0, end: duration, title: snapshot.title!, score: null, reasons: [], review: "pending", origin: "manual", createdAtMs: snapshot.createdAtMs };
     clip.manuallyEdited = snapshot.manuallyEdited;
+    clip.editedAtMs = snapshot.editedAtMs;
     if (snapshot.manuallyEdited || snapshot.origin === "manual") {
       if (typeof clip.score === "number") clip.originalScore = clip.score;
       clip.score = null;
@@ -28,14 +29,15 @@ export function mergeEditorClips(project: ProjectMeta, collection: ClipCollectio
     clip.fit = snapshot.document.settings.fit;
     clip.review = snapshot.review ?? clip.review;
     clip.deleted = snapshot.deleted ?? clip.deleted;
+    clip.deletedAtMs = snapshot.deleted===false?undefined:snapshot.deletedAtMs??clip.deletedAtMs;
     entries.set(id, { project, mediaId: previous?.mediaId ?? snapshot.document.assets[0]?.mediaId ?? "", clip, composition: snapshot });
   }
   return [...entries.values()];
 }
 export function visibleClips(entries: LibraryClip[], filter: LibraryFilter, sort: string): LibraryClip[] {
-  return entries.filter(({ clip }) => filter === "all" || (filter === "active" ? clip.review !== "rejected" && !clip.deleted : filter === "deleted" ? clip.deleted === true : clip.review === filter && !clip.deleted)).sort((a,b) => {
+  return entries.filter(({ clip }) => filter === "all" || (filter === "active" ? !clip.deleted : clip.deleted === true)).sort((a,b) => {
     if (sort === "duration") return (a.clip.end-a.clip.start)-(b.clip.end-b.clip.start);
-    if (sort === "recent") return (b.clip.createdAtMs ?? 0) - (a.clip.createdAtMs ?? 0) || a.clip.start-b.clip.start;
+    if (sort === "recent") return (clipChangedAt(b.clip) ?? 0) - (clipChangedAt(a.clip) ?? 0) || a.clip.start-b.clip.start;
     if (sort === "time" || sort === "project") return a.project.name.localeCompare(b.project.name) || a.clip.start-b.clip.start;
     return editorialScore(b.clip)-editorialScore(a.clip) || a.clip.start-b.clip.start;
   });

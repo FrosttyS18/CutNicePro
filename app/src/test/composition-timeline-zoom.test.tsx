@@ -25,18 +25,18 @@ async function zoom(label:string){
   await act(async()=>button.click());
 }
 async function scroll(viewport:HTMLElement,left:number){await act(async()=>{viewport.scrollLeft=left;viewport.dispatchEvent(new window.Event("scroll",{bubbles:true}));});}
-function cursorPixel(viewport:HTMLElement){return parseFloat(view!.host.querySelector<HTMLElement>(".composition-playhead")!.style.left)-viewport.scrollLeft;}
+function cursorPixel(){return parseFloat(view!.host.querySelector<HTMLElement>(".composition-playhead")!.style.left);}
 
 it("preserva a posição visível do cursor ao aumentar e diminuir zoom após rolar",async()=>{
   const {viewport,item,onSelect,onChange}=await mount(1500);
   await zoom("Aumentar zoom");await scroll(viewport,240);
-  const before=cursorPixel(viewport);
+  const before=cursorPixel();
   expect(before).toBeGreaterThan(144);expect(before).toBeLessThan(800);
-  await zoom("Aumentar zoom");expect(cursorPixel(viewport)).toBeCloseTo(before,6);
-  await zoom("Diminuir zoom");expect(cursorPixel(viewport)).toBeCloseTo(before,6);
+  await zoom("Aumentar zoom");expect(cursorPixel()).toBeCloseTo(before,6);
+  await zoom("Diminuir zoom");expect(cursorPixel()).toBeCloseTo(before,6);
   const slider=view!.host.querySelector<HTMLInputElement>('[aria-label="Zoom da linha do tempo"]')!;
   await act(async()=>{Object.getOwnPropertyDescriptor(Object.getPrototypeOf(slider),"value")!.set!.call(slider,"50");slider.dispatchEvent(new window.Event("input",{bubbles:true}));});
-  expect(cursorPixel(viewport)).toBeCloseTo(before,6);
+  expect(cursorPixel()).toBeCloseTo(before,6);
   expect(item.getAttribute("data-selected")).toBe("true");
   expect(onSelect).not.toHaveBeenCalled();expect(onChange).not.toHaveBeenCalled();
 });
@@ -44,7 +44,7 @@ it("preserva a posição visível do cursor ao aumentar e diminuir zoom após ro
 it("preserva o tempo central se o cursor está fora da vista e Ajustar retorna à origem",async()=>{
   const {viewport,item,duration}=await mount(0);
   await zoom("Aumentar zoom");await scroll(viewport,250);
-  expect(cursorPixel(viewport)).toBeLessThan(144);
+  expect(cursorPixel()).toBeLessThan(144);
   const center=()=> (viewport.scrollLeft+(800-144)/2-24)/(parseFloat(item.style.width)/duration);
   const before=center();
   await zoom("Aumentar zoom");expect(center()).toBeCloseTo(before,6);

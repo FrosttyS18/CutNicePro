@@ -39,6 +39,27 @@ function editor(document: Composition, change = vi.fn(), preview = vi.fn(), fram
 }
 
 describe("controles e gesto de sobreposição", () => {
+  it("permite transformar a mídia selecionada também na faixa principal", async () => {
+    const document = fixture();
+    document.items[0].trackId = document.tracks.find(track => track.primary)!.id;
+    const change = vi.fn();
+    mounted = await reactHost(editor(document, change));
+    await mounted.click("Enquadrar");
+    const input = mounted.host.querySelector<HTMLInputElement>('[aria-label="Escala da mídia"]');
+    expect(input).not.toBeNull();
+    await act(async () => {
+      Object.getOwnPropertyDescriptor(Object.getPrototypeOf(input), "value")!.set!.call(input, "60");
+      input!.dispatchEvent(new window.Event("input", { bubbles: true }));
+      input!.dispatchEvent(new window.FocusEvent("focusout", { bubbles: true }));
+    });
+    expect(change).toHaveBeenCalledOnce();
+    const next = change.mock.calls[0][0] as Composition;
+    expect(next.items[0].placement).toEqual({ x: 50, y: 50, scale: .6, opacity: 1 });
+    expect(next.items[0].trackId).toBe(document.items[0].trackId);
+    expect(next.items[0].settings).toEqual(document.items[0].settings);
+    expect(next.assets).toBe(document.assets);
+  });
+
   it("altera a escala da sobreposição sem alterar o enquadramento ou a mídia", async () => {
     const document = fixture();
     const change = vi.fn();
@@ -49,6 +70,7 @@ describe("controles e gesto de sobreposição", () => {
     await act(async () => {
       Object.getOwnPropertyDescriptor(Object.getPrototypeOf(input), "value")!.set!.call(input, "40");
       input!.dispatchEvent(new window.Event("input", { bubbles: true }));
+      input!.dispatchEvent(new window.FocusEvent("focusout", { bubbles: true }));
     });
     const next = change.mock.calls[0][0] as Composition;
     expect(next.items[0].placement).toEqual({ x: 50, y: 50, scale: 0.4, opacity: 1 });

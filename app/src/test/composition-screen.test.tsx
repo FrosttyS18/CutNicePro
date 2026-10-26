@@ -22,6 +22,44 @@ let mounted:Awaited<ReturnType<typeof reactHost>>|undefined;
 afterEach(async()=>{await mounted?.close();mounted=undefined;vi.clearAllMocks();});
 function fixture(){const data=emptyWorkspace();data.media={kind:"local",mediaId:"source",name:"source.mp4",duration:10,width:1920,height:1080,videoId:null,url:null};data.activeClipId="a".repeat(64);return data;}
 describe("editor normal conectado à montagem",()=>{
+  it("controles diretos editam a faixa correta com histórico e reabrem as flags salvas sem alterar mutes individuais",async()=>{
+    const data=fixture();data.transcript=[{id:"s",start:0,end:5,text:"Legenda preservada"}];
+    const original=compositionFromLegacy(data);
+    original.tracks.find(track=>track.kind==="audio")!.locked=true;
+    original.items.find(item=>item.kind==="audio")!.settings.muted=true;
+    original.tracks.find(track=>track.kind==="caption")!.locked=true;
+    original.tracks.push({id:"V2",name:"Camada 2",kind:"visual",primary:false,locked:false,hidden:false,muted:false});
+    original.items.push({...structuredClone(original.items.find(item=>item.kind==="video")!),id:"layer-video",trackId:"V2",groupId:"layer-video",followsMain:false});
+    const snapshot={document:original,manuallyEdited:false,editedAtMs:1};
+    vi.mocked(ipc.loadEditorProject).mockResolvedValueOnce({version:1,project:null,clips:{[data.activeClipId!]:snapshot}});
+    const render=()=> <VideoEditor projectId="project" title="Projeto" data={data} localUrl="source.mp4" dirty={false} onChange={vi.fn()} onSave={vi.fn()} onBack={vi.fn()}/>;
+    mounted=await reactHost(render());
+    const click=async(label:string)=>{const button=mounted!.host.querySelector<HTMLButtonElement>(`[aria-label="${label}"]`);expect(button,label).not.toBeNull();await act(async()=>button!.click());};
+    await click("Opções da faixa Principal");
+    await click("Bloquear faixa Camada 2");
+    await click("Ocultar faixa Camada 2");
+    await click("Silenciar faixa Principal");
+    await click("Silenciar faixa Áudio da fonte");
+    await click("Desfazer (Ctrl+Z)");
+    expect(mounted.host.querySelector('[aria-label="Silenciar faixa Áudio da fonte"]')?.getAttribute("aria-pressed")).toBe("false");
+    await click("Refazer (Ctrl+Shift+Z)");
+    expect(mounted.host.querySelector('[aria-label="Silenciar faixa Áudio da fonte"]')?.getAttribute("aria-pressed")).toBe("true");
+    expect(ipc.saveEditorDocument).not.toHaveBeenCalled();
+    await mounted.click("Salvar");
+    const saved=vi.mocked(ipc.saveEditorDocument).mock.calls[0][2];
+    expect(saved.tracks.find(track=>track.id==="V1")).toMatchObject({locked:false,hidden:false,muted:true});
+    expect(saved.tracks.find(track=>track.id==="V2")).toMatchObject({locked:true,hidden:true,muted:false});
+    expect(saved.tracks.find(track=>track.id==="A1")).toMatchObject({muted:true});
+    expect(saved.tracks.find(track=>track.id==="C1")).toMatchObject({locked:true});
+    expect(saved.items).toEqual(original.items);
+    await mounted.close();mounted=undefined;
+    vi.mocked(ipc.loadEditorProject).mockResolvedValueOnce({version:1,project:null,clips:{[data.activeClipId!]:{document:{...saved,revision:1},manuallyEdited:true,editedAtMs:2}}});
+    mounted=await reactHost(render());
+    expect(mounted.host.querySelector('[aria-label="Bloquear faixa Camada 2"]')?.getAttribute("aria-pressed")).toBe("true");
+    expect(mounted.host.querySelector('[aria-label="Ocultar faixa Camada 2"]')?.getAttribute("aria-pressed")).toBe("true");
+    expect(mounted.host.querySelector('[aria-label="Silenciar faixa Áudio da fonte"]')?.getAttribute("aria-pressed")).toBe("true");
+    expect(mounted.host.querySelector('[aria-label="Silenciar faixa Principal"]')?.getAttribute("aria-pressed")).toBe("true");
+  });
   it("voltar para V limpa o intervalo de R tanto pelo botão quanto pelo teclado",async()=>{
     mounted=await reactHost(<VideoEditor projectId="project" title="Projeto" data={fixture()} localUrl="source.mp4" dirty={false} onChange={vi.fn()} onSave={vi.fn()} onBack={vi.fn()}/>);
     const mark=async()=>{

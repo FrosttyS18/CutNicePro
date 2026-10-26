@@ -49,6 +49,24 @@ describe("tempo da prévia e legenda da montagem", () => {
 });
 
 describe("áudio original associado ao vídeo",()=>{
+  it("silencia somente o áudio ligado à faixa visual sem apagar mutes ou volumes individuais",()=>{
+    const document=fixture();
+    const video=document.items.find(item=>item.kind==="video")!;
+    const audio=document.items.find(item=>item.kind==="audio")!;
+    document.items.push({...structuredClone(audio),id:"music",groupId:"independent",followsMain:false});
+    audio.settings.volume=.4;
+    const before=structuredClone(document.items);
+    const visual=document.tracks.find(track=>track.id===video.trackId)!;
+    visual.muted=true;
+    expect(activeItems(document,0).filter(item=>item.kind==="audio").map(item=>item.id)).toEqual(["music"]);
+    visual.muted=false;
+    expect(activeItems(document,0).filter(item=>item.kind==="audio").map(item=>item.id)).toEqual([audio.id,"music"]);
+    audio.settings.muted=true;
+    visual.muted=true;visual.muted=false;
+    expect(activeItems(document,0).filter(item=>item.kind==="audio").map(item=>item.id)).toEqual(["music"]);
+    expect(document.items).toEqual(before.map(item=>item.id===audio.id?{...item,settings:{...item.settings,muted:true}}:item));
+  });
+
   it("reconhece o par sem alterar a montagem ou o contrato salvo",()=>{
     const document=fixture();const before=JSON.stringify(document);
     const video=document.items.find(item=>item.kind==="video")!;

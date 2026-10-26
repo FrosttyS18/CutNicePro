@@ -15,6 +15,7 @@ export interface CompositionSnapshot {
   createdAtMs?: number;
   review?: "pending" | "approved" | "rejected";
   deleted?: boolean;
+  deletedAtMs?: number;
 }
 export interface EditorProjectState {
   version: 1;
@@ -33,11 +34,13 @@ function validRevision(value: unknown): value is number {
 function snapshot(value: unknown): CompositionSnapshot {
   if (!isRecord(value) || typeof value.manuallyEdited !== "boolean" || !validRevision(value.editedAtMs)) throw new Error("Não foi possível ler a versão salva da montagem");
   if ((value.origin !== undefined && value.origin !== "manual") || (value.origin === "manual" && (typeof value.title !== "string" || !value.title.trim() || Array.from(value.title).length > 120 || !validRevision(value.createdAtMs) || value.createdAtMs === 0))
-    || (value.review !== undefined && (typeof value.review !== "string" || !["pending", "approved", "rejected"].includes(value.review))) || (value.deleted !== undefined && typeof value.deleted !== "boolean")) throw new Error("Metadados do clipe salvo inválidos");
+    || (value.review !== undefined && (typeof value.review !== "string" || !["pending", "approved", "rejected"].includes(value.review))) || (value.deleted !== undefined && typeof value.deleted !== "boolean")
+    || (value.deletedAtMs !== undefined && (!validRevision(value.deletedAtMs) || value.deletedAtMs===0))) throw new Error("Metadados do clipe salvo inválidos");
   return { document: parseComposition(value.document), manuallyEdited: value.manuallyEdited, editedAtMs: value.editedAtMs,
     ...(value.origin === "manual" ? { origin: "manual", title: value.title as string, createdAtMs: value.createdAtMs as number } : {}),
     ...(value.review !== undefined ? { review: value.review as CompositionSnapshot["review"] } : {}),
-    ...(value.deleted !== undefined ? { deleted: value.deleted as boolean } : {}) };
+    ...(value.deleted !== undefined ? { deleted: value.deleted as boolean } : {}),
+    ...(value.deletedAtMs !== undefined ? {deletedAtMs:value.deletedAtMs as number}: {}) };
 }
 export function parseEditorState(value: unknown): EditorProjectState {
   if (!isRecord(value) || value.version !== 1 || !isRecord(value.clips)) throw new Error("Não foi possível ler as montagens deste projeto");
@@ -55,6 +58,8 @@ export function notifyEditorSaved() {
   if (typeof window !== "undefined") window.dispatchEvent(new window.Event("cnp:editor-saved"));
 }
 export async function createManualClip(projectId: string, title: string, document: Composition) {
+  parseComposition(document);
+  if (!document.items.some(item => item.kind === "video" || item.kind === "image")) throw new Error("Selecione um intervalo com vídeo ou imagem para criar o clipe.");
   const value = await ipc.createEditorClip(projectId, title, document);
   if (!isRecord(value) || typeof value.id !== "string" || !/^[a-f\d]{64}$/i.test(value.id)) throw new Error("Não foi possível confirmar o clipe criado");
   const saved = snapshot(value.snapshot);

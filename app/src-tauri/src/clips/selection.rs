@@ -100,6 +100,7 @@ fn clip_for(media: &str, start: f64, end: f64, score: u8, format: Option<&str>) 
         face_framing: None,
         created_at_ms: None,
         deleted: None,
+        deleted_at_ms: None,
         engine: None,
     }
 }
@@ -1215,6 +1216,7 @@ mod tests {
             face_framing: None,
             created_at_ms: None,
             deleted: None,
+            deleted_at_ms: None,
             engine: None,
         }
     }

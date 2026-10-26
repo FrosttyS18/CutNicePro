@@ -42,7 +42,7 @@ it("Ctrl+roda aplica zoom no ponteiro sem zoom do navegador e atualiza o slider"
   expect(event.defaultPrevented).toBe(true);
   expect((viewport.scrollLeft+pointer-168)/pixelsPerFrame(duration)).toBeCloseTo(at,6);
   expect(slider.valueAsNumber).toBeGreaterThan(before);expect(onChange).not.toHaveBeenCalled();
-  const cursor=()=>parseFloat(view!.host.querySelector<HTMLElement>(".composition-playhead")!.style.left)-viewport.scrollLeft;
+  const cursor=()=>parseFloat(view!.host.querySelector<HTMLElement>(".composition-playhead")!.style.left);
   const prior=cursor(),headerWheel=wheelEvent({ctrlKey:true,deltaY:-50,clientX:20,clientY:100});
   await act(async()=>{view!.host.querySelector(".composition-timeline")!.dispatchEvent(headerWheel);});
   expect(headerWheel.defaultPrevented).toBe(true);expect(cursor()).toBeCloseTo(prior,6);

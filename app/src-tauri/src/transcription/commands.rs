@@ -10,17 +10,13 @@ fn media(
     app: &AppHandle,
     project_id: &str,
     media_id: &str,
-) -> Result<(crate::media_store::MediaEntry, f64), String> {
+) -> Result<(crate::media_source::ResolvedMedia, f64), String> {
     uuid::Uuid::parse_str(project_id).map_err(|_| "projeto inválido")?;
-    let entry = app
+    let source = app
         .state::<crate::media_store::MediaStore>()
-        .get(media_id)?
-        .filter(|m| m.project_ids.iter().any(|p| p == project_id))
-        .ok_or("vídeo não encontrado neste projeto")?;
-    if entry.unavailable {
-        return Err("O vídeo está ausente do disco. Reconecte o arquivo original.".into());
-    }
-    let analysis = entry
+        .resolve(media_id, Some(project_id))?;
+    let analysis = source
+        .entry
         .analysis
         .as_ref()
         .ok_or("Analise o vídeo antes de transcrever. Metadados ausentes.")?;
@@ -28,7 +24,7 @@ fn media(
         return Err("Este vídeo não tem faixa de áudio para transcrever.".into());
     }
     let duration = analysis.duration_ms as f64 / 1000.0;
-    Ok((entry, duration))
+    Ok((source, duration))
 }
 
 #[tauri::command]
@@ -52,7 +48,7 @@ pub fn get_transcript(
     project_id: String,
     media_id: String,
 ) -> Result<Option<Transcript>, String> {
-    let (_, duration) = media(&app, &project_id, &media_id)?;
+    let (_source, duration) = media(&app, &project_id, &media_id)?;
     let record = store::load(&crate::app_data_base(&app)?, &project_id)?;
     if let Some(ref r) = record {
         if r.media_id != media_id {
@@ -73,7 +69,7 @@ pub fn save_transcript(
     let _lease = app
         .state::<Arc<crate::processing::ProcessingGate>>()
         .acquire()?;
-    let (_, duration) = media(&app, &project_id, &media_id)?;
+    let (source, duration) = media(&app, &project_id, &media_id)?;
     let jobs = app.state::<Arc<TranscriptionJobs>>();
     let base = crate::app_data_base(&app)?;
     jobs.edit(|| {
@@ -81,6 +77,7 @@ pub fn save_transcript(
             .filter(|r| r.media_id == media_id)
             .ok_or("transcrição não encontrada")?;
         record.segments = segments;
+        source.recheck()?;
         store::save(&base, &project_id, &record, duration)
     })
 }
@@ -97,7 +94,7 @@ pub async fn transcribe_project(
     let lease = app
         .state::<Arc<crate::processing::ProcessingGate>>()
         .acquire()?;
-    let (entry, duration) = media(&app, &project_id, &media_id)?;
+    let (source, duration) = media(&app, &project_id, &media_id)?;
     let base = crate::app_data_base(&app)?;
     let mut engine =
         tools::discover_profile(&base, super::profiles::Profile::parse(profile.as_deref())?)?;
@@ -111,10 +108,6 @@ pub async fn transcribe_project(
     if let Some(s) = jobs.snapshot() {
         let _ = app.emit("transcription://job", s);
     }
-    let path = app
-        .state::<crate::media_store::MediaStore>()
-        .files_dir()
-        .join(format!("{}.{}", entry.sha256, entry.ext));
     let task_app = app.clone();
     let task_jobs = jobs.clone();
     let task_id = job_id.clone();
@@ -122,7 +115,7 @@ pub async fn transcribe_project(
         let _lease = lease;
         let result = runner::run(
             &base,
-            &path,
+            &source.path,
             &media_id,
             duration,
             engine,
@@ -140,6 +133,7 @@ pub async fn transcribe_project(
         );
         task_jobs
             .finish(&task_id, result, |output| {
+                source.recheck()?;
                 store::save(&base, &project_id, &output.transcript, duration)?;
                 if let Err(error) = output.cache.complete() {
                     eprintln!("[transcription] checkpoint cleanup: {error}");

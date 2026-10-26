@@ -1,7 +1,6 @@
 use super::{pipeline, settings::RenderSettings};
 use crate::{
     clips::{commands::media, ClipJobs},
-    media_store::MediaStore,
     processing::ProcessingGate,
     transcription,
 };
@@ -22,9 +21,9 @@ pub async fn export_video(
     clip_id: Option<String>,
 ) -> Result<bool, String> {
     let lease = app.state::<Arc<ProcessingGate>>().acquire()?;
-    let (entry, duration) = media(&app, &project_id, &media_id)?;
+    let (source, duration) = media(&app, &project_id, &media_id)?;
     // proporção original/zoom precisam das dimensões reais da fonte
-    if let Some(analysis) = entry.analysis.as_ref() {
+    if let Some(analysis) = source.entry.analysis.as_ref() {
         settings.source_width = Some(analysis.width);
         settings.source_height = Some(analysis.height);
     }
@@ -59,10 +58,7 @@ pub async fn export_video(
     let segments = transcript.map(|t| t.segments).unwrap_or_default();
     transcription::parser::validate(&segments, duration)?;
     let jobs = app.state::<ClipJobs>().0.clone();
-    let path = app
-        .state::<MediaStore>()
-        .files_dir()
-        .join(format!("{}.{}", entry.sha256, entry.ext));
+    let path = source.path.clone();
     let selected_app = app.clone();
     let destination = tauri::async_runtime::spawn_blocking(move || {
         let mut dialog = selected_app
@@ -109,22 +105,25 @@ pub async fn export_video(
     let task_id = job_id.clone();
     let task = tauri::async_runtime::spawn_blocking(move || {
         let _lease = lease;
-        let result = pipeline::run(
-            &base,
-            &path,
-            &segments,
-            &settings,
-            duration,
-            entry.analysis.as_ref().is_some_and(|a| a.has_audio),
-            &control,
-            |progress| {
-                if let Some(snapshot) = task_jobs.progress(&task_id, progress) {
-                    let _ = task_app.emit("clips://job", snapshot);
-                }
-            },
-        );
+        let result = source.recheck().and_then(|()| {
+            pipeline::run(
+                &base,
+                &path,
+                &segments,
+                &settings,
+                duration,
+                source.entry.analysis.as_ref().is_some_and(|a| a.has_audio),
+                &control,
+                |progress| {
+                    if let Some(snapshot) = task_jobs.progress(&task_id, progress) {
+                        let _ = task_app.emit("clips://job", snapshot);
+                    }
+                },
+            )
+        });
         let result = result.and_then(|(scratch, output)| {
-            let prepared = crate::file_output::prepare(&destination, |file| {
+            source.recheck()?;
+            let prepared = crate::media_output_guard::prepare(&base, &destination, |file| {
                 let mut source = std::fs::File::open(&output).map_err(|e| e.to_string())?;
                 let mut buffer = vec![0_u8; 1024 * 1024];
                 loop {
@@ -141,7 +140,10 @@ pub async fn export_video(
             Ok((scratch, prepared))
         });
         task_jobs
-            .finish(&task_id, result, |(_, prepared)| prepared.commit())
+            .finish(&task_id, result, |(_, prepared)| {
+                source.recheck()?;
+                prepared.commit()
+            })
             .map(|_| true)
     })
     .await;

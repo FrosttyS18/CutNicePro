@@ -1,5 +1,5 @@
 .composition-editor{display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:auto auto minmax(240px,1fr) minmax(190px,var(--composition-timeline-height,260px));min-height:650px;height:calc(100dvh - 100px);color:var(--ink,#eee);font-size:12px;outline:none;min-width:0;width:100%;max-width:100%}
-.composition-editor__header{display:flex;align-items:center;gap:8px;padding:8px 0 12px;border-bottom:1px solid var(--sh-divider,#252525)}
+.composition-editor__header{display:flex;align-items:center;gap:8px;padding:8px 0 12px}
 .composition-editor__header h1{font-size:15px;line-height:1.4;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin:0 auto 0 0;font-weight:500}
 .composition-editor__save-state{color:var(--sh-dim,#999);font-size:11px;max-width:160px}
 .composition-editor__body{grid-row:3;display:grid;grid-template-columns:minmax(240px,var(--composition-library-width,288px)) minmax(240px,1fr) minmax(280px,var(--composition-inspector-width,320px));min-height:0;min-width:0;gap:12px;padding:12px 0}
@@ -34,7 +34,7 @@
 .composition-editor__panel-toggles{display:flex;align-items:center;gap:8px}
 .composition-editor__canvas[data-framing=true]{cursor:move;touch-action:none}
 .composition-editor__canvas[data-placement=true] [data-composition-layer]{cursor:move;touch-action:none}
-.composition-editor__canvas{display:flex;align-items:center;justify-content:center;flex:1;min-height:0;min-width:0;overflow:hidden;container-type:size;background:var(--sh-panel,#0a0a0a)}
+.composition-editor__canvas{position:relative;display:flex;align-items:center;justify-content:center;flex:1;min-height:0;min-width:0;overflow:hidden;container-type:size;background:var(--sh-panel,#0a0a0a)}
 .composition-stage{position:relative;width:min(100cqw,calc(100cqh * var(--preview-ratio)));height:min(100cqh,calc(100cqw / var(--preview-ratio)));max-width:100%;overflow:hidden;container-type:inline-size;isolation:isolate}
 .composition-stage__layer{position:absolute;width:100%;height:100%;transform-origin:center;overflow:hidden}
 .composition-stage__visual{position:relative;width:100%;height:100%;overflow:hidden}
@@ -62,8 +62,12 @@
 .composition-editor__play output{font-size:11px;font-variant-numeric:tabular-nums;color:var(--sh-dim,#aaa);white-space:nowrap}
 .composition-editor__play output>span:first-child{color:var(--sh-accent,#00bbb7)}
 .composition-editor__play-hint{justify-self:end;font-size:10px;color:var(--sh-dim,#aaa)}
-.composition-editor__error{grid-row:2;padding:8px 12px;background:#281f1f;color:#ffc3bd;display:flex;align-items:center;gap:12px}
+.composition-editor__feedback{grid-row:2;display:grid;gap:8px;min-width:0}
+.composition-editor__error{padding:8px 12px;background:#281f1f;color:#ffc3bd;display:flex;align-items:center;gap:12px}
 .composition-editor__error button{margin-left:auto}
+.composition-created{display:flex;align-items:center;flex-wrap:wrap;gap:8px;padding:8px 12px;background:var(--sh-surface,#202020);min-width:0}
+.composition-created p{flex:1;min-width:160px;overflow-wrap:anywhere;margin:0;line-height:1.6}
+.composition-created strong{font-weight:500}
 .composition-editor__dialog-actions{display:flex;justify-content:flex-end;flex-wrap:wrap;gap:8px;margin-top:20px}
 .composition-editor__state{display:flex;align-items:center;justify-content:center;gap:12px;min-height:300px}
 .composition-source h2{font-size:12px;font-weight:600;margin:0 0 8px}.composition-source h2 span{display:block;font-size:10px;font-weight:400;color:var(--sh-dim,#aaa);overflow-wrap:anywhere;margin-top:4px}

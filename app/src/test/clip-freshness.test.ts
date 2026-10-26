@@ -25,9 +25,17 @@ describe("Novo durante uma hora desde a criação", () => {
       expect(isClipNew({ ...base, createdAtMs })).toBe(false);
     }
   });
-  it("editar e reanalisar preserva a idade do clipe", () => {
+  it("reanalisar sem uma edição salva preserva a idade do clipe", () => {
     vi.spyOn(Date, "now").mockReturnValue(now);
     expect(isClipNew({ ...base, createdAtMs: now - 3_600_000, score: 90, review: "approved" })).toBe(false);
+  });
+  it("edição salva renova Novo por uma hora sem mudar a criação",()=>{
+    const edited={...base,createdAtMs:now-86400000,manuallyEdited:true,editedAtMs:now};
+    expect(isClipNew(edited,now)).toBe(true);
+    expect(isClipNew(edited,now+3599999)).toBe(true);
+    expect(isClipNew(edited,now+3600000)).toBe(false);
+    expect(edited.createdAtMs).toBe(now-86400000);
+    expect(isClipNew({...edited,manuallyEdited:false},now)).toBe(false);
   });
 });
 

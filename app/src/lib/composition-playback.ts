@@ -10,16 +10,27 @@ function matchesSourceAudio(video: CompositionItem, audio: CompositionItem): boo
     && video.sourceStartUs === audio.sourceStartUs && video.sourceEndUs === audio.sourceEndUs;
 }
 
+export function audioSourceVideo(document: Composition, audio: CompositionItem): CompositionItem | undefined {
+  if (audio.kind !== "audio" || !audio.followsMain) return undefined;
+  const matches = document.items.filter(item => matchesSourceAudio(item, audio));
+  if (matches.length !== 1) return undefined;
+  const video = matches[0];
+  const visualTrack = document.tracks.find(track => track.id === video.trackId);
+  const audioTrack = document.tracks.find(track => track.id === audio.trackId);
+  return visualTrack?.kind === "visual" && audioTrack?.kind === "audio"
+    && document.items.filter(item => matchesSourceAudio(video, item)).length === 1 ? video : undefined;
+}
+
 export function linkedSourceAudio(document: Composition, video: CompositionItem): CompositionItem | undefined {
   if (video.kind !== "video") return undefined;
   const visualTrack = document.tracks.find(track => track.id === video.trackId);
-  if (!visualTrack || visualTrack.hidden || visualTrack.muted) return undefined;
+  if (!visualTrack || visualTrack.kind !== "visual") return undefined;
   const matches = document.items.filter(item => matchesSourceAudio(video, item));
   if (matches.length !== 1) return undefined;
   const audio = matches[0];
   const track = document.tracks.find(value => value.id === audio.trackId);
   if (!track || track.hidden || track.muted || track.locked) return undefined;
-  return document.items.filter(item => matchesSourceAudio(item, audio)).length === 1 ? audio : undefined;
+  return audioSourceVideo(document, audio)?.id === video.id ? audio : undefined;
 }
 
 export function sourceVideoForAudio(document: Composition, audio: CompositionItem): CompositionItem | undefined {
@@ -30,7 +41,9 @@ export function sourceVideoForAudio(document: Composition, audio: CompositionIte
 export function activeItems(document: Composition, frame: number): CompositionItem[] {
   return document.items.filter(item => {
     const track = document.tracks.find(value => value.id === item.trackId);
-    return track && !track.hidden && !(item.kind === "audio" && (track.muted || item.settings.muted))
+    const owner = item.kind === "audio" ? audioSourceVideo(document, item) : undefined;
+    const sourceMuted = owner && document.tracks.find(value => value.id === owner.trackId)?.muted;
+    return track && !track.hidden && !(item.kind === "audio" && (track.muted || item.settings.muted || sourceMuted))
       && item.startFrame <= frame && itemEnd(item) > frame;
   }).sort((a,b) => document.tracks.findIndex(track=>track.id===a.trackId) - document.tracks.findIndex(track=>track.id===b.trackId));
 }

@@ -38,7 +38,7 @@ mod semantic;
 mod semantic_tests;
 mod source_anchors;
 pub mod split_framing;
-mod store;
+pub(crate) mod store;
 mod text_engine;
 #[cfg(test)]
 pub mod tracking;

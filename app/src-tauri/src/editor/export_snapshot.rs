@@ -1,5 +1,5 @@
 use super::{store::Snapshot, types::Composition};
-use crate::media_store::MediaStore;
+use crate::{media_source::ResolvedMedia, media_store::MediaStore};
 use std::{
     collections::{HashMap, HashSet},
     path::PathBuf,
@@ -29,52 +29,52 @@ pub fn freeze(saved: Option<&Snapshot>, proposed: &Composition) -> Result<Compos
     Ok(document)
 }
 
+pub struct ExportSources {
+    pub paths: HashMap<String, PathBuf>,
+    resolved: Vec<ResolvedMedia>,
+}
+
+impl ExportSources {
+    pub fn recheck(&self) -> Result<(), String> {
+        for source in &self.resolved {
+            source.recheck()?;
+        }
+        Ok(())
+    }
+}
+
 pub fn sources(
     media: &MediaStore,
     project_id: &str,
     document: &mut Composition,
-) -> Result<HashMap<String, PathBuf>, String> {
+) -> Result<ExportSources, String> {
     let used: HashSet<_> = document
         .items
         .iter()
         .map(|item| item.asset_id.clone())
         .collect();
     let mut paths = HashMap::new();
+    let mut resolved = Vec::new();
     for asset in document
         .assets
         .iter_mut()
         .filter(|asset| used.contains(&asset.id))
     {
-        let entry = media
-            .get(&asset.media_id)?
-            .ok_or_else(|| format!("A mídia {} não foi encontrada.", asset.name))?;
-        if !entry.project_ids.iter().any(|id| id == project_id) || entry.unavailable {
-            return Err(format!(
-                "A mídia {} não está disponível neste projeto.",
-                asset.name
-            ));
-        }
-        let path = media.files_dir().join(crate::media_tools::managed_filename(
-            &entry.sha256,
-            &entry.ext,
-        )?);
-        if !path.is_file() {
-            return Err(format!(
-                "O arquivo {} não está disponível. Reconecte a mídia antes de exportar.",
-                asset.name
-            ));
-        }
-        let analysis = entry
+        let source = media.resolve(&asset.media_id, Some(project_id))?;
+        let analysis = source
+            .entry
             .analysis
+            .as_ref()
             .ok_or_else(|| format!("A mídia {} ainda não foi analisada.", asset.name))?;
         asset.width = analysis.width;
         asset.height = analysis.height;
         asset.duration_us = analysis.duration_ms.saturating_mul(1000);
         asset.has_audio = Some(analysis.has_audio);
-        paths.insert(asset.id.clone(), path);
+        paths.insert(asset.id.clone(), source.path.clone());
+        resolved.push(source);
     }
     document.validate()?;
-    Ok(paths)
+    Ok(ExportSources { paths, resolved })
 }
 
 #[cfg(test)]

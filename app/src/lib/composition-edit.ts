@@ -1,5 +1,5 @@
 import { itemEnd, requireComposition } from "./composition";
-import { assertWritable, editId, linkedSelection, sliceItem } from "./composition-operations";
+import { assertWritable, editId, linkedSelection, removeEmptiedTracks, sliceItem } from "./composition-operations";
 import type { Composition } from "./composition-types";
 
 export function splitSelection(document: Composition, ids: string[], frame: number): Composition {
@@ -16,7 +16,7 @@ export function splitSelection(document: Composition, ids: string[], frame: numb
   return requireComposition({ ...document, items });
 }
 
-export function removeRange(document: Composition, start: number, end: number, ripple = true): Composition {
+export function removeRangeItems(document: Composition, start: number, end: number, ripple = true): Composition {
   if (!Number.isSafeInteger(start) || !Number.isSafeInteger(end) || start < 0 || end <= start) throw new Error("Intervalo inválido");
   const affected = document.items.filter(item => item.followsMain && itemEnd(item) > start && (ripple || item.startFrame < end));
   assertWritable(document, affected);
@@ -35,13 +35,17 @@ export function removeRange(document: Composition, start: number, end: number, r
   return requireComposition({ ...document, items });
 }
 
+export function removeRange(document: Composition, start: number, end: number, ripple = true): Composition {
+  return requireComposition(removeEmptiedTracks(document, removeRangeItems(document, start, end, ripple)));
+}
+
 export function removeSelection(document: Composition, ids: string[], ripple = true): Composition {
   const selected = linkedSelection(document, ids);
   assertWritable(document, selected);
   const primary = document.tracks.find(track => track.primary)!.id;
   const main = selected.filter(item => item.trackId === primary).sort((a, b) => b.startFrame - a.startFrame);
   let next = document;
-  for (const item of main) next = removeRange(next, item.startFrame, itemEnd(item), ripple);
+  for (const item of main) next = removeRangeItems(next, item.startFrame, itemEnd(item), ripple);
   const selectedIds = new Set(selected.map(item => item.id));
-  return requireComposition({ ...next, items: next.items.filter(item => !selectedIds.has(item.id)) });
+  return requireComposition(removeEmptiedTracks(document, { ...next, items: next.items.filter(item => !selectedIds.has(item.id)) }));
 }

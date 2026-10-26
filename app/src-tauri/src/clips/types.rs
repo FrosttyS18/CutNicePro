@@ -51,6 +51,8 @@ pub struct Clip {
     /// limpa o marcador. Geração não ressuscita clipe excluído.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub deleted: Option<bool>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub deleted_at_ms: Option<u64>,
     /// Motor que gerou ESTE clipe (atualização 19: biblioteca cumulativa
     /// mistura resultados históricos; a reanálise usa o motor de origem do
     /// próprio clipe, não o da última execução).

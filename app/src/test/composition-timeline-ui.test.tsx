@@ -37,7 +37,7 @@ describe("timeline da montagem", () => {
     });
     expect(pending.size).toBe(baseline);
   });
-  it("amplia seleção por Shift e cancela um arrasto sem criar edição",async()=>{
+  it("amplia seleção por Shift e cancela o trim sem pedir seek ou criar edição",async()=>{
     let document=fixture();const first=document.items[0].id;
     document=splitSelection(document,[first],20);
     document=splitSelection(document,[document.items.find(item=>item.kind==="video"&&item.startFrame===20)!.id],40);
@@ -54,7 +54,8 @@ describe("timeline da montagem", () => {
       window.dispatchEvent(new window.MouseEvent("pointerup",{clientX:200}));
     });
     expect(change).not.toHaveBeenCalled();
-    expect(preview).toHaveBeenLastCalledWith(null,10);
+    expect(preview).toHaveBeenLastCalledWith(null);
+    expect(preview.mock.calls.every(call=>call.length===1)).toBe(true);
   });
   it("limita alça pela fonte vinculada sem arredondar para fora",async()=>{
     const document=fixture();document.assets[0].durationUs=12_050_000;document.items[1].sourceEndUs=12_040_000;

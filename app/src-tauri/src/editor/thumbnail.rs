@@ -1,5 +1,8 @@
 use super::{export_snapshot, render_graph, render_plan::Window, store::EditorStore};
 mod jobs;
+#[cfg(test)]
+#[path = "thumbnail/reference_tests.rs"]
+mod reference_tests;
 use crate::{
     media_store::MediaStore,
     render::{encoder::Encoder, scratch::Scratch},
@@ -80,6 +83,8 @@ fn read(
             snapshot.document.revision == revision && !snapshot.deleted.unwrap_or(false)
         })
         .ok_or("A versão salva do clipe não está disponível")?;
+    let mut document = export_snapshot::freeze(Some(snapshot), &snapshot.document)?;
+    let sources = export_snapshot::sources(media, project_id, &mut document)?;
     let folder = base.join("cutnicepro/editor-thumbnails").join(project_id);
     let cache = folder.join(format!("{clip_id}.json"));
     if let Ok(bytes) = std::fs::read(&cache) {
@@ -88,16 +93,19 @@ fn read(
                 && cached.bytes.len() <= 2 * 1024 * 1024
                 && cached.bytes.starts_with(&[0xff, 0xd8])
             {
+                sources.recheck()?;
                 return Ok(cached.bytes);
             }
         }
     }
-    let mut document = export_snapshot::freeze(Some(snapshot), &snapshot.document)?;
-    let sources = export_snapshot::sources(media, project_id, &mut document)?;
-    let bytes = create(base, &document, &sources, control)?;
+    let bytes = create(base, &document, &sources.paths, control)?;
     control.check()?;
+    sources.recheck()?;
+    let _file_lock = crate::clip_trash::lock(base, project_id)?;
+    crate::clip_trash::ensure_live(base, project_id, clip_id)?;
     std::fs::create_dir_all(folder).map_err(|error| error.to_string())?;
     crate::file_output::atomic_write(&cache, |file| {
+        sources.recheck()?;
         serde_json::to_writer(
             file,
             &CachedThumbnail {

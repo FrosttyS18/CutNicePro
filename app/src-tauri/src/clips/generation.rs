@@ -340,6 +340,7 @@ mod tests {
             face_framing: None,
             created_at_ms: None,
             deleted: None,
+            deleted_at_ms: None,
             engine: None,
         };
         let mut clips = vec![
@@ -421,6 +422,7 @@ mod incremental_tests {
             face_framing: None,
             created_at_ms: None,
             deleted: None,
+            deleted_at_ms: None,
             engine: None,
         }
     }

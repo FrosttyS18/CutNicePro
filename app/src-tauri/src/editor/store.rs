@@ -26,6 +26,8 @@ pub struct Snapshot {
     pub review: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub deleted: Option<bool>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub deleted_at_ms: Option<u64>,
 }
 
 #[derive(Serialize, Deserialize)]
@@ -80,19 +82,36 @@ pub struct EditorStore {
     root: PathBuf,
 }
 
-pub(super) fn now() -> u64 {
+pub(crate) fn now() -> u64 {
     SystemTime::now()
         .duration_since(UNIX_EPOCH)
         .map(|value| value.as_millis() as u64)
         .unwrap_or(0)
 }
 
-pub(super) fn validate_target(project: &str, clip: Option<&str>) -> Result<(), String> {
+pub(crate) fn validate_target(project: &str, clip: Option<&str>) -> Result<(), String> {
     uuid::Uuid::parse_str(project).map_err(|_| "Identificador de projeto inválido")?;
     if clip.is_some_and(|value| {
         value.len() != 64 || !value.bytes().all(|byte| byte.is_ascii_hexdigit())
     }) {
         return Err("Identificador de clipe inválido".into());
+    }
+    Ok(())
+}
+
+pub(super) fn validate_new_clip(title: &str, document: &Composition) -> Result<(), String> {
+    document.validate()?;
+    let title = title.trim();
+    if title.is_empty() || title.chars().count() > 120 {
+        return Err("Informe um nome e selecione uma montagem com conteúdo".into());
+    }
+    if !document.items.iter().any(|item| {
+        matches!(
+            item.kind,
+            super::types::ItemKind::Video | super::types::ItemKind::Image
+        )
+    }) {
+        return Err("Selecione um intervalo com vídeo ou imagem para criar o clipe.".into());
     }
     Ok(())
 }
@@ -160,17 +179,49 @@ impl EditorStore {
             active_changed,
         )
     }
-    fn project_lock(&self, project: &str) -> Result<fs::File, String> {
-        validate_target(project, None)?;
-        let file = fs::OpenOptions::new()
-            .read(true)
-            .write(true)
-            .create(true)
-            .truncate(false)
-            .open(self.root.join(format!("{project}.lock")))
-            .map_err(|error| error.to_string())?;
-        fs2::FileExt::lock_exclusive(&file).map_err(|error| error.to_string())?;
-        Ok(file)
+    fn project_lock(&self, project: &str) -> Result<crate::clip_trash::ProjectLock, String> {
+        crate::clip_trash::lock(self.base(), project)
+    }
+
+    fn base(&self) -> &Path {
+        self.root
+            .parent()
+            .and_then(Path::parent)
+            .expect("editor root")
+    }
+
+    pub(super) fn ensure_live(
+        &self,
+        project: &str,
+        clip: Option<&str>,
+        related: &[ClipDraft],
+    ) -> Result<(), String> {
+        for id in clip
+            .into_iter()
+            .chain(related.iter().map(|draft| draft.clip_id.as_str()))
+        {
+            crate::clip_trash::ensure_live(self.base(), project, id)?;
+        }
+        Ok(())
+    }
+
+    pub(crate) fn trash_transaction<T>(
+        &self,
+        project: &str,
+        guard: &crate::clip_trash::ProjectLock,
+        action: impl FnOnce(&mut EditorProject) -> Result<T, String>,
+    ) -> Result<T, String> {
+        crate::clip_trash::verify_lock(guard, project)?;
+        let _guard = EDITOR_GATE
+            .lock()
+            .map_err(|_| "Armazenamento do editor indisponível")?;
+        let mut state = self.load_raw(project)?;
+        let before = serde_json::to_vec(&state).map_err(|error| error.to_string())?;
+        let result = action(&mut state)?;
+        if before != serde_json::to_vec(&state).map_err(|error| error.to_string())? {
+            write_json(&self.root.join(format!("{project}.json")), &state)?;
+        }
+        Ok(result)
     }
     pub fn open(base: &Path) -> Result<Self, String> {
         let root = base.join("cutnicepro/editor");
@@ -178,7 +229,7 @@ impl EditorStore {
         Ok(Self { root })
     }
 
-    fn load_inner(&self, project: &str) -> Result<EditorProject, String> {
+    fn load_raw(&self, project: &str) -> Result<EditorProject, String> {
         validate_target(project, None)?;
         let path = self.root.join(format!("{project}.json"));
         if !path.exists() {
@@ -216,6 +267,13 @@ impl EditorStore {
         Ok(state)
     }
 
+    fn load_inner(&self, project: &str) -> Result<EditorProject, String> {
+        let mut state = self.load_raw(project)?;
+        let purged = crate::clip_trash::tombstones(self.base(), project)?;
+        state.clips.retain(|id, _| !purged.contains(id));
+        Ok(state)
+    }
+
     pub fn load(&self, project: &str) -> Result<EditorProject, String> {
         let _guard = EDITOR_GATE
             .lock()
@@ -237,6 +295,7 @@ impl EditorStore {
             .lock()
             .map_err(|_| "Armazenamento do editor indisponível")?;
         let mut state = self.load_inner(project)?;
+        self.ensure_live(project, clip, &[])?;
         let previous = clip.and_then(|id| state.clips.get(id)).or_else(|| {
             if clip.is_none() {
                 state.project.as_ref()
@@ -271,6 +330,7 @@ impl EditorStore {
             created_at_ms: previous.and_then(|value| value.created_at_ms),
             review: previous.and_then(|value| value.review.clone()),
             deleted: previous.and_then(|value| value.deleted),
+            deleted_at_ms: previous.and_then(|value| value.deleted_at_ms),
         };
         if let Some(id) = clip {
             state.clips.insert(id.to_string(), snapshot.clone());
@@ -287,11 +347,8 @@ impl EditorStore {
         title: &str,
         mut document: Composition,
     ) -> Result<CreatedClip, String> {
-        document.validate()?;
+        validate_new_clip(title, &document)?;
         let title = title.trim();
-        if title.is_empty() || title.chars().count() > 120 || document.items.is_empty() {
-            return Err("Informe um nome e selecione uma montagem com conteúdo".into());
-        }
         let _file_lock = self.project_lock(project)?;
         let _guard = EDITOR_GATE
             .lock()
@@ -313,6 +370,7 @@ impl EditorStore {
             created_at_ms: Some(created),
             review: Some("pending".into()),
             deleted: None,
+            deleted_at_ms: None,
         };
         state.clips.insert(id.clone(), snapshot.clone());
         write_json(&self.root.join(format!("{project}.json")), &state)?;
@@ -330,20 +388,24 @@ impl EditorStore {
         if review.is_some_and(|value| !["pending", "approved", "rejected"].contains(&value)) {
             return Err("Revisão de clipe inválida".into());
         }
+        if let Some(deleted) = deleted {
+            crate::clip_trash::set_deleted(self.base(), project, clip, deleted, now())?;
+            if review.is_none() {
+                return self.load(project);
+            }
+        }
         let _file_lock = self.project_lock(project)?;
         let _guard = EDITOR_GATE
             .lock()
             .map_err(|_| "Armazenamento do editor indisponível")?;
         let mut state = self.load_inner(project)?;
+        self.ensure_live(project, Some(clip), &[])?;
         let snapshot = state
             .clips
             .get_mut(clip)
             .ok_or("Clipe salvo não encontrado")?;
         if let Some(review) = review {
             snapshot.review = Some(review.into());
-        }
-        if let Some(deleted) = deleted {
-            snapshot.deleted = Some(deleted);
         }
         write_json(&self.root.join(format!("{project}.json")), &state)?;
         Ok(state)
@@ -413,9 +475,16 @@ impl EditorStore {
         let path = self.recovery_path(project, clip)?;
         document.validate()?;
         validate_recovery(project, clip, &related)?;
+        let _file_lock = self.project_lock(project)?;
         let _guard = EDITOR_GATE
             .lock()
             .map_err(|_| "Armazenamento do editor indisponível")?;
+        for id in clip
+            .into_iter()
+            .chain(related.iter().map(|draft| draft.clip_id.as_str()))
+        {
+            crate::clip_trash::ensure_live(self.base(), project, id)?;
+        }
         write_json(
             &path,
             &Recovery {
@@ -435,11 +504,18 @@ impl EditorStore {
         if !path.exists() {
             return Ok(None);
         }
-        let recovery: Recovery =
+        let mut recovery: Recovery =
             serde_json::from_slice(&fs::read(path).map_err(|error| error.to_string())?)
                 .map_err(|error| error.to_string())?;
         recovery.document.validate()?;
         validate_recovery(project, clip, &recovery.related)?;
+        let purged = crate::clip_trash::tombstones(self.base(), project)?;
+        if clip.is_some_and(|id| purged.contains(id)) {
+            return Ok(None);
+        }
+        recovery
+            .related
+            .retain(|draft| !purged.contains(&draft.clip_id));
         Ok(Some(recovery))
     }
 

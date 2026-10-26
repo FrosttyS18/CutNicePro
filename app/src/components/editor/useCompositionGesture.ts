@@ -2,7 +2,6 @@ import { useEffect, useLayoutEffect, useRef, type KeyboardEvent, type PointerEve
 import { trimSelection } from "../../lib/composition-trim";
 import { moveSelectionToTrack } from "../../lib/composition-arrange";
 import { editId, linkedSelection } from "../../lib/composition-operations";
-import { itemEnd } from "../../lib/composition";
 import { scrollTimelineAtPointer, selectionForClick, trimDeltaBounds } from "../../lib/composition-gesture";
 import type { Composition, CompositionItem } from "../../lib/composition-types";
 
@@ -29,10 +28,18 @@ function dropTrack(element: HTMLElement | null, x: number, y: number, item: Comp
 
 export function useCompositionGesture(options: Props) {
   const cleanup = useRef<(() => void) | null>(null);
+  const pendingFocus = useRef<{ viewport: HTMLElement; itemId: string } | null>(null);
   const latest = useRef(options);
   const anchor = useRef<string | undefined>(undefined);
-  useLayoutEffect(() => { latest.current = options; }, [options]);
-  useEffect(() => () => cleanup.current?.(), []);
+  useLayoutEffect(() => {
+    latest.current = options;
+    const pending = pendingFocus.current;
+    pendingFocus.current = null;
+    if (!pending?.viewport.isConnected || globalThis.document.activeElement !== globalThis.document.body) return;
+    const target = [...pending.viewport.querySelectorAll<HTMLElement>("[data-composition-item]")].find(item => item.dataset.compositionItem === pending.itemId);
+    target?.focus({ preventScroll: true });
+  }, [options]);
+  useEffect(() => () => { cleanup.current?.(); pendingFocus.current = null; }, []);
   const begin = (event: PointerEvent<HTMLElement>, item: CompositionItem, edge?: "start" | "end") => {
     if (event.button !== 0 || event.isPrimary === false) return;
     event.preventDefault(); event.stopPropagation();
@@ -45,7 +52,8 @@ export function useCompositionGesture(options: Props) {
     if (track.locked || control || event.shiftKey) return;
     cleanup.current?.();
     const base = options.document;
-    const initialFrame = options.frame;
+    const focusedTarget = event.currentTarget;
+    const heldFocus = globalThis.document.activeElement === focusedTarget;
     const startX = event.clientX;
     const startY = event.clientY;
     const element = options.viewport?.current ?? null;
@@ -54,7 +62,6 @@ export function useCompositionGesture(options: Props) {
     let latestX = startX;
     let latestY = startY;
     let next = base;
-    let nextFrame = options.frame;
     let raf: number | null = null;
     let message = "";
     let dragged = false;
@@ -63,6 +70,11 @@ export function useCompositionGesture(options: Props) {
     const newTrackId = editId();
     const companionTrackIds = Object.fromEntries(base.tracks.map(value=>[value.id,editId()]));
     const magnetic = options.magnetic !== false;
+    const publishPreview = (value: Composition | null) => latest.current.onPreview(value);
+    const restoreFocus = () => {
+      if (heldFocus && !focusedTarget.isConnected && element && globalThis.document.activeElement === globalThis.document.body) pendingFocus.current = { viewport: element, itemId: item.id };
+    };
+    publishPreview(base);
     if (!edge && element) element.setAttribute("data-dragging", "true");
     const compute = () => {
       let delta = Math.round((latestX - startX + (element?.scrollLeft ?? 0) - startScroll) / scale);
@@ -72,18 +84,16 @@ export function useCompositionGesture(options: Props) {
           delta = Math.max(min, Math.min(max, delta));
           next = trimSelection(base, item.id, edge, delta, { magnetic });
         } else {
-          if (Math.hypot(latestX - startX, latestY - startY) < 3 && !delta) {next=base;nextFrame=initialFrame;message="";latest.current.onPreview(null,initialFrame);return;}
+          if (Math.hypot(latestX - startX, latestY - startY) < 3 && !delta) {next=base;message="";publishPreview(base);return;}
           dragged = true;
           next = moveSelectionToTrack(base, movingIds, Math.max(0, origin + delta), dropTrack(element, latestX, latestY, item), { magnetic, newTrackId, companionTrackIds });
         }
-        const moved = next.items.find(value => value.id === item.id);
-        nextFrame = moved ? edge === "end" ? itemEnd(moved) - 1 : moved.startFrame : options.frame;
-        latest.current.onPreview(next, nextFrame);
+        publishPreview(next);
         message = "";
       } catch (error) {
         const text = error instanceof Error ? error.message : "Não foi possível ajustar o trecho";
-        next = base; nextFrame = initialFrame;
-        latest.current.onPreview(null, initialFrame);
+        next = base;
+        publishPreview(base);
         message = text;
       }
     };
@@ -108,17 +118,28 @@ export function useCompositionGesture(options: Props) {
       cleanup.current = null;
       element?.removeAttribute("data-dragging");
     };
-    const cancel = () => { stop(); latest.current.onPreview(null, initialFrame); };
+    const cancel = () => { stop(); restoreFocus(); publishPreview(null); };
     const up = (upEvent: globalThis.PointerEvent) => {
       latestX = upEvent.clientX;
       latestY = upEvent.clientY;
       compute(); stop();
+      restoreFocus();
       if (!edge&&!dragged) latest.current.onSelect([item.id]);
       if (next !== base) latest.current.onChange(next);
-      latest.current.onPreview(null, nextFrame);
+      publishPreview(null);
       if (message) latest.current.onError(message);
     };
     const key = (keyEvent: globalThis.KeyboardEvent) => {
+      if (keyEvent.code === "Space" || keyEvent.key === " " || keyEvent.key === "Spacebar") {
+        if (keyEvent.defaultPrevented || keyEvent.isComposing || keyEvent.ctrlKey || keyEvent.metaKey || keyEvent.altKey || keyEvent.shiftKey) return;
+        const target = keyEvent.target instanceof HTMLElement ? keyEvent.target : globalThis.document.activeElement;
+        const scope = element?.closest("[data-editor-timeline]") ?? element;
+        const lostFocus = heldFocus && !focusedTarget.isConnected && target === globalThis.document.body;
+        if (!target || !lostFocus && !scope?.contains(target)) return;
+        if (target.closest('input,textarea,select,[contenteditable]:not([contenteditable="false"]),[role="textbox"],[role="dialog"],dialog,[role="menu"],[data-editor-viewer="source"]')
+          || globalThis.document.querySelector('dialog[open]:not([data-modeless]),[aria-modal="true"]')) return;
+        keyEvent.preventDefault(); keyEvent.stopImmediatePropagation(); return;
+      }
       if (keyEvent.key === "Escape") { keyEvent.preventDefault(); keyEvent.stopImmediatePropagation(); cancel(); }
     };
     window.addEventListener("pointermove", move);

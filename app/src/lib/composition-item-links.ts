@@ -20,7 +20,7 @@ export function sourceVideoForCaption(document: Composition, caption: Compositio
   const captionTrack = document.tracks.find(track => track.id === caption.trackId);
   if (!captionTrack || captionTrack.kind !== "caption" || captionTrack.hidden || captionTrack.locked) return undefined;
   const video = captionSourceVideo(document, caption);
-  return video && !document.tracks.find(track => track.id === video.trackId)?.hidden ? video : undefined;
+  return video;
 }
 
 export function linkedSourceCaptions(document: Composition, video: CompositionItem): CompositionItem[] {

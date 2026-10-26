@@ -1,7 +1,7 @@
 import { compositionDuration, itemEnd, requireComposition } from "./composition";
 import { assertWritable, editId, linkedSelection, openGap, sliceItem } from "./composition-operations";
 import { frameToSeconds, secondsToFrame } from "./composition-time";
-import { removeRange } from "./composition-edit";
+import { removeRangeItems } from "./composition-edit";
 import type { Composition, CompositionTrack } from "./composition-types";
 
 export function extractComposition(document: Composition, start: number, end: number): Composition {
@@ -123,7 +123,7 @@ export function moveSelection(document: Composition, ids: string[], at: number):
   }
   moving.push(...extras.map(item=>({...structuredClone(item),startFrame:item.startFrame-origin})));
   let remaining = {...document,items:document.items.filter(item=>!extraIds.has(item.id))};
-  for (const item of [...main].reverse()) remaining = removeRange(remaining, item.startFrame, itemEnd(item));
+  for (const item of [...main].reverse()) remaining = removeRangeItems(remaining, item.startFrame, itemEnd(item));
   const destination = at - main.filter(item => itemEnd(item) <= at).reduce((total,item)=>total+item.durationFrames,0);
   return insertComposition(remaining, { ...document, items: moving }, destination, true);
 }

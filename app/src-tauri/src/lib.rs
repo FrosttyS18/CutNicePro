@@ -3,14 +3,17 @@
 //! exposta por comandos IPC (`list_projects`, `create_project`, `open_project`
 //! e, desde a Fase 03B, os comandos de coleções — aditivos e retrocompatíveis).
 
+mod clip_trash;
 mod clips;
 mod editor;
 mod file_output;
 mod local_media_scheme;
 mod media_analyze;
 mod media_import;
+mod media_output_guard;
 mod media_preview;
 mod media_proxy;
+mod media_source;
 mod media_store;
 mod media_tools;
 mod processing;
@@ -25,9 +28,9 @@ use std::sync::Arc;
 
 use media_analyze::MediaAnalysis;
 use media_import::ImportJobs;
-use media_store::{MediaEntry, MediaStore, ReconcileOutcome};
+use media_store::{MediaEntryDto, MediaStore, ReconcileOutcome};
 use storage::{CollectionMeta, CollectionStore, ProjectMeta, Store};
-use tauri::{AppHandle, Emitter, Manager};
+use tauri::{AppHandle, Manager};
 
 fn app_data_base(app: &AppHandle) -> Result<std::path::PathBuf, String> {
     app.path()
@@ -43,12 +46,9 @@ fn collection_store_of(app: &AppHandle) -> Result<CollectionStore, String> {
     CollectionStore::open(&app_data_base(app)?)
 }
 
-fn media_store_of(app: &AppHandle) -> Result<MediaStore, String> {
-    MediaStore::open(&app_data_base(app)?)
-}
-
-fn free_space(path: &std::path::Path) -> Option<u64> {
-    fs2::available_space(path).ok()
+fn media_store_of(app: &AppHandle) -> Result<tauri::State<'_, MediaStore>, String> {
+    app.try_state::<MediaStore>()
+        .ok_or_else(|| "Armazenamento de mídia indisponível.".into())
 }
 
 // ---- M2A: importação persistente + análise ----
@@ -62,127 +62,80 @@ async fn import_media(
     asset_kind: Option<editor::types::MediaKind>,
 ) -> Result<String, String> {
     tauri::async_runtime::spawn_blocking(move || {
-        let store = media_store_of(&app)?;
-        let jobs = app.state::<Arc<ImportJobs>>();
-        let src = PathBuf::from(&src_path);
-        let original_name = src
-            .file_name()
-            .map(|n| n.to_string_lossy().to_string())
-            .unwrap_or_else(|| "video".into());
-        let ext = asset_kind
-            .as_ref()
-            .map_or_else(
-                || media_import::allowed_ext(&original_name),
-                |kind| media_import::allowed_editor_ext(&original_name, kind),
-            )
-            .ok_or_else(|| "Formato não suportado para o tipo de mídia escolhido.".to_string())?;
-        if !src.is_file() {
-            return Err(format!("arquivo não encontrado: {src_path}"));
-        }
-        let job_id = match job_id {
-            Some(value) => uuid::Uuid::parse_str(&value)
-                .map_err(|_| "identificador de importação inválido".to_string())?
-                .to_string(),
-            None => uuid::Uuid::new_v4().to_string(),
-        };
-        let staged = store.files_dir().join(format!("{job_id}.part"));
-        let cancel = jobs.register(&job_id);
-        let total = std::fs::metadata(&src).map(|m| m.len()).unwrap_or(0);
-        let report = |bytes| {
-            let _ = app.emit(
-                "import://progress",
-                media_import::ImportProgress {
-                    job_id: job_id.clone(),
-                    bytes_copied: bytes,
-                    total_bytes: total,
-                },
-            );
-        };
-        report(0);
-        let result = (|| -> Result<String, String> {
-            let (size, sha) =
-                media_import::copy_with_hash(&src, &staged, &cancel, &report, &|p| free_space(p))
-                    .map_err(|error| error.message())?;
-            if cancel.load(std::sync::atomic::Ordering::SeqCst) {
-                return Err("importação cancelada".into());
-            }
-            let entry = store.publish(&staged, &sha, size, &ext, &original_name, &project_id)?;
-            let analysis_err = match media_analyze::detect_fftools() {
-                Some(tools) => {
-                    let final_path = store.files_dir().join(format!("{sha}.{ext}"));
-                    match jobs.analyze(
-                        &job_id,
-                        &tools,
-                        &final_path,
-                        asset_kind
-                            .as_ref()
-                            .unwrap_or(&editor::types::MediaKind::Video),
-                        &store.files_dir(),
-                    ) {
-                        Ok(analysis) => {
-                            store.store_analysis(&entry.media_id, analysis)?;
-                            None
-                        }
-                        Err(error) => Some(error),
-                    }
-                }
-                None => Some("FFmpeg não encontrado — análise de mídia indisponível".into()),
-            };
-            if cancel.load(std::sync::atomic::Ordering::SeqCst) {
-                return Err("importação cancelada".into());
-            }
-            let entry = store.get(&entry.media_id)?.unwrap_or(entry);
-            let mut payload = serde_json::to_value(&entry).map_err(|error| error.to_string())?;
-            if let Some(error) = analysis_err {
-                payload["analysisError"] = serde_json::Value::String(error);
-            }
-            let _ = app.emit("import://done", &payload);
-            Ok(payload.to_string())
-        })();
-        jobs.finish(&job_id);
-        if result.is_err() {
-            let _ = std::fs::remove_file(&staged);
-        }
-        result
+        let job_id = job_id.unwrap_or_else(|| uuid::Uuid::new_v4().to_string());
+        uuid::Uuid::parse_str(&job_id).map_err(|_| "Identificador de importação inválido.")?;
+        media_import::commands::run(
+            &app,
+            &project_id,
+            &PathBuf::from(src_path),
+            &job_id,
+            asset_kind,
+        )
     })
     .await
     .map_err(|error| format!("falha na tarefa de importação: {error}"))?
 }
 
 #[tauri::command]
+async fn relink_media(
+    app: AppHandle,
+    project_id: String,
+    media_id: String,
+    src_path: String,
+    job_id: String,
+) -> Result<MediaEntryDto, String> {
+    uuid::Uuid::parse_str(&job_id).map_err(|_| "Identificador de importação inválido.")?;
+    tauri::async_runtime::spawn_blocking(move || {
+        media_import::commands::relink(
+            &app,
+            &project_id,
+            &media_id,
+            &PathBuf::from(src_path),
+            &job_id,
+        )
+    })
+    .await
+    .map_err(|error| format!("Falha ao localizar mídia: {error}"))?
+}
+#[tauri::command]
 fn cancel_import(app: AppHandle, job_id: String) -> Result<bool, String> {
     Ok(app.state::<Arc<ImportJobs>>().cancel(&job_id))
 }
 
 #[tauri::command]
-fn link_media(app: AppHandle, media_id: String, project_id: String) -> Result<MediaEntry, String> {
-    media_store_of(&app)?.link_project(&media_id, &project_id)
+fn link_media(
+    app: AppHandle,
+    media_id: String,
+    project_id: String,
+) -> Result<MediaEntryDto, String> {
+    let store = media_store_of(&app)?;
+    let source = store.resolve(&media_id, None)?;
+    let entry = store.link_project(&media_id, &project_id)?;
+    source.recheck()?;
+    store.dto(&entry)
 }
 
 #[tauri::command]
-fn get_media(app: AppHandle, media_id: String) -> Result<Option<MediaEntry>, String> {
-    media_store_of(&app)?.get(&media_id)
+fn get_media(app: AppHandle, media_id: String) -> Result<Option<MediaEntryDto>, String> {
+    let store = media_store_of(&app)?;
+    store
+        .get(&media_id)?
+        .map(|entry| store.dto(&entry))
+        .transpose()
 }
 
 #[tauri::command]
 fn analyze_media(app: AppHandle, media_id: String) -> Result<MediaAnalysis, String> {
     let store = media_store_of(&app)?;
-    let entry = store
-        .get(&media_id)?
-        .ok_or_else(|| "mídia não encontrada".to_string())?;
-    if entry.unavailable {
-        return Err("arquivo de mídia ausente do disco".into());
-    }
-    if let Some(a) = entry.analysis {
-        return Ok(a);
+    let source = store.resolve(&media_id, None)?;
+    if let Some(analysis) = &source.entry.analysis {
+        return Ok(analysis.clone());
     }
     let tools = media_analyze::detect_fftools().ok_or_else(|| {
         "FFmpeg não encontrado — instale-o e tente novamente (gyan.dev / winget)".to_string()
     })?;
-    let path = store
-        .files_dir()
-        .join(format!("{}.{}", entry.sha256, entry.ext));
-    let a = media_analyze::analyze(&tools, &path)?;
+    let a = media_analyze::analyze(&tools, &source.path)?;
+    source.recheck()?;
     store.store_analysis(&media_id, a.clone())?;
     Ok(a)
 }
@@ -318,6 +271,7 @@ pub fn run() {
             add_project_to_collection,
             remove_project_from_collection,
             import_media,
+            relink_media,
             cancel_import,
             link_media,
             get_media,
@@ -339,6 +293,8 @@ pub fn run() {
             clips::commands::review_clip,
             clips::commands::delete_clip,
             clips::commands::restore_clip,
+            clip_trash::commands::purge_clip,
+            clip_trash::commands::cleanup_clip_trash,
             clips::commands::generate_clips,
             clips::commands::analyze_clip,
             clips::split_framing::suggest_split_screen,

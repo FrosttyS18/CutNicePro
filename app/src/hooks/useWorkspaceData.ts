@@ -12,17 +12,26 @@ import {
 import { createWorkspace } from "../lib/workspace";
 import type { UploadSource, WorkspaceData } from "../lib/workspace-types";
 import { captureClipEdits } from "../lib/clip-workspace";
+import { subscribeMediaRelinked } from "../services/media-relink-events";
+import { canRelinkMedia, unavailableMediaMessage } from "../lib/media-availability";
 
 export function useWorkspaceData(id: string) {
   const [data, setData] = useState(() => readWorkspace(id));
   const [localUrl, setLocalUrl] = useState(() => getSessionMedia(id));
   const [notice, setNotice] = useState<{ text: string; error: boolean } | null>(null);
   const [saved,setSaved] = useState(() => JSON.stringify(data));
+  const [mediaReload,setMediaReload] = useState(0);
+  const [mediaEntry,setMediaEntry] = useState<ipc.MediaEntryDto | null>(null);
   const source = useVideoSource();
   const latest = useRef(data);
   // sync pós-render (deferred): change() e acceptTranscript() fazem o sync
   // SINCRONO em contexto de evento; este cobre qualquer setData direto
   useEffect(() => { latest.current = data; }, [data]);
+  useEffect(() => subscribeMediaRelinked(mediaId => {
+    if (latest.current.media?.mediaId !== mediaId) return;
+    setLocalUrl(null);
+    setMediaReload(value => value + 1);
+  }), []);
   const acceptTranscript = useCallback((record: TranscriptRecord) => {
     const current = latest.current;
     if (record.mediaId !== current.media?.mediaId) return;
@@ -35,26 +44,30 @@ export function useWorkspaceData(id: string) {
 
   useEffect(() => {
     const mediaId = data.media?.mediaId;
-    if (!mediaId || localUrl) return;
+    if (!mediaId) return;
     let disposed = false;
     void (async () => {
       try {
         const entry = await ipc.getMedia(mediaId);
         if (disposed) return;
+        setMediaEntry(entry);
         if (!entry || entry.unavailable) {
+          setLocalUrl(null);
           setNotice({
-            text: entry?.unavailable
-              ? "O arquivo de mídia está ausente do disco. Reconecte o vídeo original."
-              : "Não foi possível encontrar este vídeo. Importe o arquivo novamente.",
+            text: unavailableMediaMessage(entry, data.media?.name ?? "Vídeo"),
             error: true,
           });
           return;
         }
-        const url = ipc.mediaUrl(entry);
+        const baseUrl = ipc.mediaUrl(entry);
+        const url = mediaReload ? `${baseUrl}?relink=${mediaReload}` : baseUrl;
         attachPersistedMedia(id, mediaId, url);
         setLocalUrl(url);
+        setNotice(null);
       } catch {
         if (!disposed) {
+          setMediaEntry(null);
+          setLocalUrl(null);
           setNotice({
             text: "Não foi possível abrir este vídeo. Reabra o projeto para tentar novamente.",
             error: true,
@@ -64,7 +77,7 @@ export function useWorkspaceData(id: string) {
     })();
     return () => { disposed = true; };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data.media?.mediaId, id]);
+  }, [data.media?.mediaId, id, mediaReload]);
 
   function change(next: WorkspaceData) {
     const captured = captureClipEdits(next);
@@ -108,5 +121,6 @@ export function useWorkspaceData(id: string) {
     if (loaded) connect({ kind: "local", video: loaded });
   }
 
-  return { data, localUrl, notice, source, dirty: saved !== JSON.stringify(data), change, save, connect, selectFile, acceptTranscript };
+  const currentMediaEntry = mediaEntry?.mediaId === data.media?.mediaId ? mediaEntry : null;
+  return { data, localUrl, mediaEntry:currentMediaEntry, canRelink:canRelinkMedia(currentMediaEntry), notice, source, dirty: saved !== JSON.stringify(data), change, save, connect, selectFile, acceptTranscript };
 }

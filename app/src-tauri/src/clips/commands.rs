@@ -15,21 +15,17 @@ pub(crate) fn media(
     app: &AppHandle,
     project: &str,
     media: &str,
-) -> Result<(crate::media_store::MediaEntry, f64), String> {
+) -> Result<(crate::media_source::ResolvedMedia, f64), String> {
     uuid::Uuid::parse_str(project).map_err(|_| "projeto inválido")?;
-    let entry = app
-        .state::<MediaStore>()
-        .get(media)?
-        .filter(|m| !m.unavailable && m.project_ids.iter().any(|p| p == project))
-        .ok_or("O vídeo está indisponível. Reconecte o arquivo original.")?;
-    crate::media_tools::managed_filename(&entry.sha256, &entry.ext)?;
-    let duration = entry
+    let source = app.state::<MediaStore>().resolve(media, Some(project))?;
+    let duration = source
+        .entry
         .analysis
         .as_ref()
         .map(|a| a.duration_ms as f64 / 1000.0)
         .filter(|d| d.is_finite() && *d > 0.0)
         .ok_or("Não foi possível ler a duração do vídeo. Importe o arquivo novamente.")?;
-    Ok((entry, duration))
+    Ok((source, duration))
 }
 #[tauri::command]
 pub fn get_clips(
@@ -37,7 +33,7 @@ pub fn get_clips(
     project_id: String,
     media_id: String,
 ) -> Result<Option<ClipCollection>, String> {
-    let (_, duration) = media(&app, &project_id, &media_id)?;
+    let (_source, duration) = media(&app, &project_id, &media_id)?;
     let mut value = store::load(
         &crate::app_data_base(&app)?,
         &project_id,
@@ -70,7 +66,7 @@ pub fn get_project_clips(
 ) -> Result<Option<ClipCollection>, String> {
     let mut value = store::read(&crate::app_data_base(&app)?, &project_id)?;
     if let Some(ref mut collection) = value {
-        let (_, duration) = media(&app, &project_id, &collection.media_id)?;
+        let (_source, duration) = media(&app, &project_id, &collection.media_id)?;
         store::validate(collection, duration)?;
         presentation(&app, &project_id, collection);
     }
@@ -93,7 +89,7 @@ pub fn review_clip(
     review: Review,
 ) -> Result<ClipCollection, String> {
     let _lease = app.state::<Arc<ProcessingGate>>().acquire()?;
-    let (_, duration) = media(&app, &project_id, &media_id)?;
+    let (_source, duration) = media(&app, &project_id, &media_id)?;
     let base = crate::app_data_base(&app)?;
     let mut value = store::load(&base, &project_id, &media_id, duration)?
         .ok_or("Gere os cortes antes de revisar.")?;
@@ -119,7 +115,7 @@ pub async fn generate_clips(
     // técnicos; personalizado valida duração/quantidade informadas.
     let options = options.resolve()?;
     let lease = app.state::<Arc<ProcessingGate>>().acquire()?;
-    let (entry, duration) = media(&app, &project_id, &media_id)?;
+    let (source, duration) = media(&app, &project_id, &media_id)?;
     let base = crate::app_data_base(&app)?;
     // Falta de recurso do motor selecionado deve abortar ANTES de abrir job.
     text_engine::Engine::discover(&base, options.quality())?;
@@ -135,10 +131,6 @@ pub async fn generate_clips(
     if let Some(snapshot) = jobs.stage(&job_id, "analyzing") {
         let _ = app.emit("clips://job", snapshot);
     }
-    let path = app
-        .state::<MediaStore>()
-        .files_dir()
-        .join(format!("{}.{}", entry.sha256, entry.ext));
     let task_jobs = jobs.clone();
     let task_id = job_id.clone();
     let task_app = app.clone();
@@ -152,7 +144,7 @@ pub async fn generate_clips(
                 generation::Request {
                     project: &project_id,
                     media: &media_id,
-                    source: &path,
+                    source: &source.path,
                     duration,
                     speech: &transcript.segments,
                     options: &options,
@@ -166,6 +158,7 @@ pub async fn generate_clips(
             )
         })();
         task_jobs.finish(&task_id, result, |value| {
+            source.recheck()?;
             store::save(&base, &project_id, value, duration)
         })
     })
@@ -192,7 +185,7 @@ pub async fn analyze_clip(
     job_id: String,
 ) -> Result<ClipCollection, String> {
     let lease = app.state::<Arc<ProcessingGate>>().acquire()?;
-    let (_, duration) = media(&app, &project_id, &media_id)?;
+    let (source, duration) = media(&app, &project_id, &media_id)?;
     let base = crate::app_data_base(&app)?;
     let mut collection =
         store::load(&base, &project_id, &media_id, duration)?.ok_or("Corte não encontrado.")?;
@@ -233,6 +226,7 @@ pub async fn analyze_clip(
             Ok(collection)
         })();
         task_jobs.finish(&task_id, result, |value| {
+            source.recheck()?;
             store::save(&base, &project_id, value, duration)
         })
     })
@@ -282,18 +276,28 @@ fn set_deleted(
     deleted: bool,
 ) -> Result<ClipCollection, String> {
     let _lease = app.state::<Arc<ProcessingGate>>().acquire()?;
-    let (_, duration) = media(&app, &project_id, &media_id)?;
     let base = crate::app_data_base(&app)?;
-    let mut value = store::load(&base, &project_id, &media_id, duration)?
-        .ok_or("Gere os cortes antes de gerenciá-los.")?;
+    if !crate::storage::Store::open(&base)?
+        .load()?
+        .iter()
+        .any(|project| project.id == project_id)
+    {
+        return Err("Projeto não encontrado".into());
+    }
+    let mut value =
+        store::read(&base, &project_id)?.ok_or("Gere os cortes antes de gerenciá-los.")?;
+    if value.media_id != media_id {
+        return Err("Mídia do clipe inválida".into());
+    }
+    crate::clip_trash::set_deleted(
+        &base,
+        &project_id,
+        &clip_id,
+        deleted,
+        crate::editor::store::now(),
+    )?;
+    value = store::read(&base, &project_id)?.ok_or("Corte não encontrado")?;
     presentation(&app, &project_id, &mut value);
-    let clip = value
-        .clips
-        .iter_mut()
-        .find(|c| c.id == clip_id)
-        .ok_or("Corte não encontrado.")?;
-    clip.deleted = deleted.then_some(true);
-    store::save(&base, &project_id, &value, duration)?;
     Ok(value)
 }
 

@@ -23,12 +23,14 @@ export interface Clip { id: string; start: number; end: number; title: string; s
   multimodal?: MultimodalEvidence;
   /** Criação real (ms-epoch); ausente em legados = nunca inventado. */
   createdAtMs?: number;
+  editedAtMs?: number;
   /** Assinatura da janela da transcrição que alimentou a análise (invalidação granular, atualização 19). */
   analysisSignature?: string;
   /** Análise DESATUALIZADA (upd 20): preservada para recuperação, mas NÃO é avaliação válida do texto atual. */
   analysisStale?: boolean;
   /** Exclusão recuperável: `true` sai da experiência; nada é apagado e a restauração desfaz. */
   deleted?: boolean;
+  deletedAtMs?: number;
   /** Motor que gerou este clipe (biblioteca cumulativa mistura resultados históricos). */
   engine?: ClipEngine }
 export interface ClipCollection { version: 1; mediaId: string; transcriptHash: string; clips: Clip[]; engine?: ClipEngine }
@@ -61,6 +63,7 @@ export function parseClips(value: unknown): ClipCollection {
           && typeof c.multimodal.framing.source === "string"))
         && (c.createdAtMs === undefined || (Number.isFinite(c.createdAtMs) && c.createdAtMs > 0))))
       && (c.deleted === undefined || typeof c.deleted === "boolean")
+      && (c.deletedAtMs === undefined || (Number.isSafeInteger(c.deletedAtMs) && c.deletedAtMs > 0))
       && (c.engine === undefined || validEngine(c.engine))
       && ["pending", "approved", "rejected"].includes(c.review))) throw new Error("Cortes inválidos.");
   return v as ClipCollection;
@@ -205,8 +208,14 @@ export function relativeTime(fromMs: number, nowMs: number): string {
 
 export const CLIP_NEW_WINDOW_MS = 60 * 60 * 1000;
 
+export function clipChangedAt(clip:Clip):number|undefined {
+  const created=Number.isSafeInteger(clip.createdAtMs)&&Number(clip.createdAtMs)>0?clip.createdAtMs:undefined;
+  const edited=(clip.manuallyEdited||clip.origin==="manual")&&Number.isSafeInteger(clip.editedAtMs)&&Number(clip.editedAtMs)>0?clip.editedAtMs:undefined;
+  return edited===undefined?created:Math.max(created??0,edited);
+}
+
 export function isClipNew(clip: Clip, nowMs = Date.now()): boolean {
-  const created = clip.createdAtMs;
+  const created = clipChangedAt(clip);
   return typeof created === "number" && Number.isFinite(created) && created > 0
     && nowMs >= created && nowMs - created < CLIP_NEW_WINDOW_MS;
 }

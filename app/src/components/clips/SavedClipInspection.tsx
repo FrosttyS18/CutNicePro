@@ -38,8 +38,8 @@ export function SavedClipInspection({ entry, onClose, onEdit, onChanged }: Props
           error={null} onSeek={seconds => playback.seek(secondsToFrame(seconds, document.fps))} onAnalyze={() => {}} />
         <div className="clip-inspection__actions">
           <button type="button" className="upload-primary" disabled={exporter.busy || clips.busy} onClick={() => onEdit(entry.project.id, clip)}>Editar clipe</button>
-          <button type="button" className="flow-button" disabled={exporter.busy || clips.busy} onClick={() => void download()}>Baixar vídeo</button>
-          <button type="button" className="flow-button" disabled={exporter.busy || clips.busy} onClick={() => void clips.remove(clip.id).then(ok => { if (ok) { onChanged?.("Clipe excluído."); onClose(); } })}>Excluir clipe</button>
+          <button type="button" className="flow-button dialog-action--secondary" disabled={exporter.busy || clips.busy} onClick={() => void download()}>Baixar vídeo</button>
+          <button type="button" className="flow-button dialog-action--danger" disabled={exporter.busy || clips.busy} onClick={() => void clips.remove(clip.id).then(ok => { if (ok) { onChanged?.("Clipe excluído."); onClose(); } })}>Excluir clipe</button>
           {(clips.error || exporter.error) && <p role="alert">{clips.error ?? exporter.error}</p>}
           {notice && <p role="status">{notice}</p>}
         </div>

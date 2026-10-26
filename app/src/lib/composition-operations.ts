@@ -15,6 +15,13 @@ export function assertWritable(document: Composition, items: CompositionItem[]):
   if (items.some(item => locked.has(item.trackId))) throw new Error("A operação altera uma faixa bloqueada");
 }
 
+export function removeEmptiedTracks(before: Composition, next: Composition): Composition {
+  const occupiedBefore = new Set(before.items.map(item => item.trackId));
+  const occupiedAfter = new Set(next.items.map(item => item.trackId));
+  const tracks = next.tracks.filter(track => track.primary || track.locked || !occupiedBefore.has(track.id) || occupiedAfter.has(track.id));
+  return tracks.length === next.tracks.length ? next : { ...next, tracks };
+}
+
 export function sliceItem(item: CompositionItem, from: number, to: number, fps: FrameRate, startFrame: number, id = item.id, groupId = item.groupId): CompositionItem {
   return {
     ...item, id, groupId, startFrame, durationFrames: to - from,

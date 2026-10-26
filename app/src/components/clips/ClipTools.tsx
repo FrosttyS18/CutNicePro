@@ -59,7 +59,7 @@ export function ClipTools({ controller: c, settings, ready, disabled, onSave, on
   const busy = c.busy || disabled || preparing;
   return <div className="clip-tools">
     <button type="button" className="flow-button" disabled={busy || !ready} onClick={() => setDialog("generate")}><ScissorsIcon size={18} aria-hidden="true"/>Gerar cortes</button>
-    {!libraryView && c.collection && <button type="button" className="flow-button" disabled={busy} onClick={() => void (async () => { if (await onSave()) onShowClips(); })()}><FilmStripIcon size={18} aria-hidden="true"/>Cortes ({c.collection.clips.filter(clip=>clip.review !== "rejected" && !clip.deleted).length})</button>}
+    {!libraryView && c.collection && <button type="button" className="flow-button" disabled={busy} onClick={() => void (async () => { if (await onSave()) onShowClips(); })()}><FilmStripIcon size={18} aria-hidden="true"/>Cortes ({c.collection.clips.filter(clip=>!clip.deleted).length})</button>}
     {!libraryView && activeClipId && <button type="button" className="flow-button" disabled={busy} onClick={onFullVideo}><FilmStripIcon size={18} aria-hidden="true"/>Voltar ao vídeo completo</button>}
     {!libraryView && <button type="button" className="flow-button" disabled={busy} onClick={() => void exportVideo(ready ? settings : { ...settings, captionModel: 0 },activeClip)}><DownloadSimpleIcon size={18} aria-hidden="true"/>Exportar vídeo</button>}
     {!ready && <p className="flow-muted">Transcreva o vídeo para encontrar cortes e adicionar legendas.</p>}

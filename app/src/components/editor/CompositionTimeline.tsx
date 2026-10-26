@@ -1,7 +1,7 @@
-import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type PointerEvent as ReactPointerEvent, type ReactNode } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type PointerEvent as ReactPointerEvent, type ReactNode,type RefObject } from "react";
 import { compositionDuration } from "../../lib/composition";
 import { linkedSelection } from "../../lib/composition-operations";
-import { linkedSourceAudio, sourceVideoForAudio } from "../../lib/composition-playback";
+import { audioSourceVideo, linkedSourceAudio, sourceVideoForAudio } from "../../lib/composition-playback";
 import { sourceVideoForCaption } from "../../lib/composition-item-links";
 import { frameToSeconds } from "../../lib/composition-time";
 import { scrollTimelineAtPointer } from "../../lib/composition-gesture";
@@ -11,10 +11,16 @@ import { ArrowsHorizontalIcon } from "@phosphor-icons/react/dist/csr/ArrowsHoriz
 import { MagnetIcon } from "@phosphor-icons/react/dist/csr/Magnet";
 import { EditorAction } from "./EditorAction";
 import { CompositionCursorControl } from "./CompositionCursorControl";
-import { CompositionTrackLane, type TimelinePreviewData } from "./CompositionTrackLane";
+import { CompositionTimelineCursor } from "./CompositionTimelineCursor";
+import { CompositionAddMenu } from "./CompositionAddMenu";
+import type { EditorMenuItem } from "./EditorMenu";
+import { CompositionTrackLane, type CompositionTrackPatch, type TimelinePreviewData } from "./CompositionTrackLane";
 import { useCompositionGesture } from "./useCompositionGesture";
 import { useTimelineWheelZoom, type TimelineZoomPointer } from "./useTimelineWheelZoom";
-import type { Composition } from "../../lib/composition-types";
+import type { Composition, CompositionItem } from "../../lib/composition-types";
+import { compositionDropTarget,containsDropPoint,type CompositionDropPoint } from "../../lib/composition-drop-geometry";
+import type { CompositionDropTarget } from "../../lib/composition-asset-drop";
+import type { CompositionTimelineDropController } from "../../lib/composition-drop-controller";
 import "./composition-timeline.css";
 
 export interface CompositionRange { start: number; end: number }
@@ -26,77 +32,133 @@ interface Props {
   onPreview: (document: Composition | null, frame?: number) => void; onError: (message: string) => void;
   onContext?: (event: React.MouseEvent, id: string) => void;
   onTrackContext?:(event:React.MouseEvent,id:string)=>void;
+  onTrackChange?: (id: string, patch: CompositionTrackPatch) => void;
   toolbar?:ReactNode;
   magnetic?:boolean;
   onMagneticChange?:(enabled:boolean)=>void;
+  startAddItems?:EditorMenuItem[]; endAddItems?:EditorMenuItem[];
+  additionsDisabled?:boolean; onAddOpen?:()=>void;
+  dropController?:RefObject<CompositionTimelineDropController|null>;
 }
-function fitScale(width:number,duration:number):number{return Math.max(1e-6,(Math.max(193,width)-192)/Math.max(1,duration));}
-function zoomBounds(width:number,duration:number):[number,number]{
-  const minimum=Math.min(fitScale(width,duration),Math.max(1e-6,16/Math.max(1,duration),fitScale(width,duration)/16));
+function fitScale(width:number,duration:number,inset:number):number{const padding=144+inset*2;return Math.max(1e-6,(Math.max(padding+1,width)-padding)/Math.max(1,duration));}
+function zoomBounds(width:number,duration:number,inset:number):[number,number]{
+  const minimum=Math.min(fitScale(width,duration,inset),Math.max(1e-6,16/Math.max(1,duration),fitScale(width,duration,inset)/16));
   return [minimum,Math.max(minimum,Math.min(20,16_000_000/Math.max(1,duration)))];
 }
 export function CompositionTimeline(props: Props) {
   const { document, frame, selected, onSelect, onSeek } = props;
   const duration = compositionDuration(document);
+  const inset=props.startAddItems||props.endAddItems?48:24;
+  const extent = Math.max(duration,frame);
   const timeline=useRef<HTMLElement>(null);
   const viewport = useRef<HTMLDivElement>(null);
-  const [width,setWidth] = useState(900);
+  const [{width,height},setViewportSize] = useState({width:900,height:0});
   const [scroll,setScroll] = useState(0);
+  const [focusedTrack,setFocusedTrack] = useState<string|null>(null);
   const [localMagnetic,setLocalMagnetic]=useState(true);
   const magnetic=props.magnetic??localMagnetic;
-  const [scale,setScale] = useState(()=>(900-144-48)/Math.max(duration,document.fps.numerator/document.fps.denominator*10));
+  const [scale,setScale] = useState(()=>(900-144-inset*2)/Math.max(extent,document.fps.numerator/document.fps.denominator*10));
   const dragCleanup=useRef<(()=>void)|null>(null);
   const latest=useRef(props);
   const fitted=useRef(false);
   const pendingScroll=useRef<number|null>(null);
+  const pendingItemFocus=useRef<string|null>(null);
+  const [dropMarker,setDropMarker]=useState<{target:CompositionDropTarget;top:number;height:number}|null>(null);
+  useLayoutEffect(()=>{
+    const ref=props.dropController,element=viewport.current;
+    if(!ref||!element)return;
+    const geometry=()=>({rect:element.getBoundingClientRect(),scrollLeft:element.scrollLeft,inset,scale,
+      newTrack:element.querySelector<HTMLElement>('[data-drop-new-track]')?.getBoundingClientRect(),
+      lanes:[...element.querySelectorAll<HTMLElement>('[data-composition-track]')].flatMap(lane=>{
+        const track=document.tracks.find(track=>track.id===lane.dataset.compositionTrack);
+        return track?[{rect:lane.getBoundingClientRect(),trackId:track.id,kind:track.kind,locked:track.locked}]:[];
+      })});
+    const resolve=(point:CompositionDropPoint,kind:Composition["assets"][number]["kind"])=>compositionDropTarget(geometry(),point,kind);
+    const clear=()=>{element.removeAttribute("data-dragging");setDropMarker(current=>current?null:current);};
+    const controller:CompositionTimelineDropController={contains:point=>containsDropPoint(element.getBoundingClientRect(),point),resolve,clear,
+      hover:(point,kind)=>{
+        if(!containsDropPoint(element.getBoundingClientRect(),point)){clear();return null;}
+        element.setAttribute("data-dragging","true");scrollTimelineAtPointer(element,point.x);
+        const current=geometry(),target=compositionDropTarget(current,point,kind);
+        const rect=target?.trackId===null?current.newTrack:current.lanes.find(lane=>lane.trackId===target?.trackId)?.rect;
+        const content=element.querySelector<HTMLElement>('.composition-timeline__content')?.getBoundingClientRect();
+        if(!target||!rect||!content){setDropMarker(value=>value?null:value);return null;}
+        const top=rect.top-content.top,height=rect.bottom-rect.top;
+        setDropMarker(value=>value?.target.frame===target.frame&&value.target.trackId===target.trackId&&value.top===top&&value.height===height?value:{target,top,height});
+        return target;
+      }};
+    ref.current=controller;
+    return()=>{if(ref.current===controller)ref.current=null;element.removeAttribute("data-dragging");};
+  },[props.dropController,document,scale,inset]);
   useLayoutEffect(()=>{latest.current=props;},[props]);
   useLayoutEffect(()=>{
     if(pendingScroll.current===null||!viewport.current)return;
     viewport.current.scrollLeft=pendingScroll.current;
     pendingScroll.current=null;
   },[scale,scroll]);
+  useLayoutEffect(()=>{
+    if(!pendingItemFocus.current)return;
+    const id=pendingItemFocus.current;
+    pendingItemFocus.current=null;
+    const item=[...viewport.current?.querySelectorAll<HTMLElement>('[data-composition-item]')??[]].find(element=>element.dataset.compositionItem===id);
+    item?.focus({preventScroll:true});
+  },[scale,scroll]);
   useEffect(()=>()=>dragCleanup.current?.(),[]);
   const gesture = useCompositionGesture({ ...props, magnetic, scale, viewport });
   const zoomTo=(next:number,left:number,available:number)=>{
-    const offset=Math.max(0,Math.min(Math.max(0,192+duration*next-available),left));
+    const offset=Math.max(0,Math.min(Math.max(0,144+inset*2+extent*next-available),left));
     pendingScroll.current=offset;
     setScale(next);setScroll(offset);
   };
   const anchoredZoom = (next: number, pointer?:TimelineZoomPointer) => {
     fitted.current=true;
     const available=viewport.current?.clientWidth||width;
-    const [minimum,maximum]=zoomBounds(available,duration);
+    const [minimum,maximum]=zoomBounds(available,extent,inset);
     next=Math.max(minimum,Math.min(maximum,next));
     if(next===scale)return;
     const left=viewport.current?.scrollLeft??scroll;
-    const cursor=168+frame*scale-left;
+    const cursor=144+inset+frame*scale-left;
     const bounds=viewport.current?.getBoundingClientRect();
     const point=pointer&&bounds?pointer.x-bounds.left:null;
     const inside=point!==null&&point>=144&&point<=available&&pointer&&bounds&&pointer.y>=bounds.top&&pointer.y<=bounds.bottom;
     const anchor=inside?point:cursor>=144&&cursor<=available?cursor:144+(available-144)/2;
-    const at=(left+anchor-168)/scale;
-    zoomTo(next,168+at*next-anchor,available);
+    const at=(left+anchor-144-inset)/scale;
+    zoomTo(next,144+inset+at*next-anchor,available);
   };
   const changeZoom=(direction:number,pointer?:TimelineZoomPointer)=>anchoredZoom(scale*1.5**direction,pointer);
   useTimelineWheelZoom(timeline,changeZoom);
-  const [sliderMinimum,sliderMaximum]=zoomBounds(width,duration);
+  const [sliderMinimum,sliderMaximum]=zoomBounds(width,extent,inset);
   const sliderValue=sliderMaximum===sliderMinimum?0:Math.max(0,Math.min(100,Math.log(scale/sliderMinimum)/Math.log(sliderMaximum/sliderMinimum)*100));
   const fitZoom = () => {
     fitted.current=true;
     const available=viewport.current?.clientWidth||width;
-    zoomTo(fitScale(available,duration),0,available);
+    zoomTo(fitScale(available,extent,inset),0,available);
+  };
+  const revealItem=(item:CompositionItem)=>{
+    const available=viewport.current?.clientWidth||width;
+    const [minimum,maximum]=zoomBounds(available,extent,inset);
+    const next=Math.max(minimum,Math.min(maximum,Math.max(scale,96/item.durationFrames)));
+    fitted.current=true;
+    pendingItemFocus.current=item.id;
+    onSelect([item.id]);
+    zoomTo(next,144+inset+(item.startFrame+item.durationFrames/2)*next-(144+(available-144)/2),available);
   };
   const fitInitial=useCallback(()=>{
     const available=viewport.current?.clientWidth??0;
-    const frames=compositionDuration(latest.current.document);
-    if(fitted.current||available<=192||frames===0)return;
+    const frames=Math.max(compositionDuration(latest.current.document),latest.current.frame);
+    if(fitted.current||available<=144+inset*2||frames===0)return;
     fitted.current=true;
-    setScale((available-144-48)/frames);
-  },[]);
+    setScale((available-144-inset*2)/frames);
+  },[inset]);
   useEffect(()=>{
     const element=viewport.current;
     if(!element)return;
-    const measure=()=>{if(element.clientWidth>0){setWidth(element.clientWidth);fitInitial();}};
+    const measure=()=>{
+      const width=element.clientWidth,height=element.clientHeight;
+      if(width<=0)return;
+      setViewportSize(size=>size.width===width&&size.height===height?size:{width,height});
+      fitInitial();
+    };
     const observer=typeof ResizeObserver!=="undefined" ? new ResizeObserver(measure):null;
     observer?.observe(element);
     const raf=window.requestAnimationFrame(measure);
@@ -106,6 +168,7 @@ export function CompositionTimeline(props: Props) {
   useEffect(fitInitial,[duration,fitInitial]);
   const selectedIds=useMemo(()=>new Set(linkedSelection(document,selected).map(item=>item.id)),[document,selected]);
   const sourceAudio=useMemo(()=>new Set(document.items.filter(item=>item.kind==="video"&&linkedSourceAudio(document,item)).map(item=>item.id)),[document]);
+  const sourceAudioTracks=useMemo(()=>new Set(document.items.filter(item=>item.kind==="audio").map(item=>audioSourceVideo(document,item)?.trackId).filter((id):id is string=>Boolean(id))),[document]);
   const sourceCaptions=useMemo(()=>{
     const videos=new Set<string>(),captions=new Set<string>();
     for(const item of document.items){if(item.kind!=="caption")continue;const video=sourceVideoForCaption(document,item);if(video){videos.add(video.id);captions.add(item.id);}}
@@ -113,16 +176,17 @@ export function CompositionTimeline(props: Props) {
   },[document]);
   const lanes=useMemo(()=>{
     const rank=(track:Composition["tracks"][number])=>track.kind==="caption"?0:track.kind==="audio"?3:track.primary?2:1;
-    return document.tracks.map((track,index)=>({track,index,items:document.items.filter(item=>item.trackId===track.id&&!sourceCaptions.captions.has(item.id)&&!(item.kind==="audio"&&sourceVideoForAudio(document,item)))}))
-      .filter(lane=>lane.track.kind==="visual"||lane.items.length>0)
+    const occupiedTracks=new Set(document.items.map(item=>item.trackId));
+    return document.tracks.map((track,index)=>({track,index,items:document.items.filter(item=>item.trackId===track.id&&(focusedTrack===track.id||!sourceCaptions.captions.has(item.id)&&!(item.kind==="audio"&&sourceVideoForAudio(document,item))))}))
+      .filter(lane=>occupiedTracks.has(lane.track.id)?lane.track.kind==="visual"||lane.items.length>0:lane.track.primary||lane.track.locked||focusedTrack===lane.track.id)
       .sort((left,right)=>rank(left.track)-rank(right.track)||(rank(left.track)===1?right.index-left.index:left.index-right.index));
-  },[document,sourceCaptions]);
-  const contentWidth=Math.max(width-144,48+duration*scale);
+  },[document,sourceCaptions,focusedTrack]);
+  const contentWidth=Math.max(width-144,inset*2+extent*scale);
   const secondsStep=[.1,.25,.5,1,2,5,10,15,30,60,120,300,600,1800].find(step=>step*document.fps.numerator/document.fps.denominator*scale>=90)??3600;
   const tickFrames=secondsStep*document.fps.numerator/document.fps.denominator;
-  const firstTick=Math.max(0,Math.floor((scroll-24)/scale/tickFrames));
+  const firstTick=Math.max(0,Math.floor((scroll-inset)/scale/tickFrames));
   const ticks=Array.from({length:Math.ceil((width-144)/scale/tickFrames)+2},(_,index)=>(firstTick+index)*tickFrames).filter(value=>value*scale<=contentWidth);
-  const frameAt=(x:number)=>Math.max(0,Math.min(duration,Math.round((x-(viewport.current?.getBoundingClientRect().left??0)-144-24+(viewport.current?.scrollLeft??scroll))/scale)));
+  const frameAt=(x:number)=>Math.max(0,Math.min(duration,Math.round((x-(viewport.current?.getBoundingClientRect().left??0)-144-inset+(viewport.current?.scrollLeft??scroll))/scale)));
   const beginScrub=(event:ReactPointerEvent<HTMLElement>,rangeMode:boolean)=>{
     if(event.button!==0||duration===0)return;
     event.preventDefault();event.stopPropagation();event.currentTarget.focus({preventScroll:true});dragCleanup.current?.();
@@ -150,31 +214,37 @@ export function CompositionTimeline(props: Props) {
       </div>
       <div className="composition-timeline__zoom-controls" role="group" aria-label="Zoom da timeline">
         <EditorAction compact label="Diminuir zoom" tooltip="Diminuir zoom (−)" disabled={scale<=sliderMinimum*(1+1e-9)} icon={<MinusIcon size={15} aria-hidden="true"/>} onClick={()=>changeZoom(-1)}/>
-        <input type="range" aria-label="Zoom da linha do tempo" min={0} max={100} step={1} value={sliderValue} aria-valuetext={`${Math.round(scale/fitScale(width,duration)*100)}%`}
+        <input type="range" aria-label="Zoom da linha do tempo" min={0} max={100} step={1} value={sliderValue} aria-valuetext={`${Math.round(scale/fitScale(width,extent,inset)*100)}%`}
           onInput={event=>{const value=event.currentTarget.valueAsNumber;if(Number.isFinite(value))anchoredZoom(sliderMinimum*(sliderMaximum/sliderMinimum)**(Math.max(0,Math.min(100,value))/100));}}/>
         <EditorAction compact label="Aumentar zoom" tooltip="Aumentar zoom (+)" disabled={scale>=sliderMaximum*(1-1e-9)} icon={<PlusIcon size={15} aria-hidden="true"/>} onClick={()=>changeZoom(1)}/>
         <EditorAction compact label="Ajustar à largura" icon={<ArrowsHorizontalIcon size={15} aria-hidden="true"/>} onClick={fitZoom}/>
       </div>
     </div>
-    <div ref={viewport} className="composition-timeline__viewport" onScroll={event=>setScroll(event.currentTarget.scrollLeft)}>
+    <div className="composition-timeline__scroll-area">
+      <div ref={viewport} className="composition-timeline__viewport" onScroll={event=>setScroll(event.currentTarget.scrollLeft)}>
       <div className="composition-timeline__content" style={{width:144+contentWidth}}>
         <div className="composition-ruler"><div className="composition-track__label">Tempo de saída</div><div className="composition-ruler__ticks" style={{width:contentWidth}}
           onPointerDown={event=>beginScrub(event,false)}>
-          {ticks.map(value=><span key={value} style={{left:24+value*scale}}>{new Date(frameToSeconds(value,document.fps)*1000).toISOString().slice(11,19)}</span>)}
+          {ticks.map(value=><span key={value} style={{left:inset+value*scale}}>{new Date(frameToSeconds(value,document.fps)*1000).toISOString().slice(11,19)}</span>)}
         </div></div>
         <div className="composition-timeline__new-track" data-drop-new-track role="region" aria-label="Nova camada de vídeo"><span>Solte para criar uma camada</span></div>
         <div className="composition-timeline__lanes" onPointerDownCapture={event=>{
-          if((event.target as HTMLElement).closest('.composition-track__label'))return;
+          if((event.target as HTMLElement).closest('.composition-track__label,.composition-track__add'))return;
           if(props.mode==="range"){beginScrub(event,true);return;}
           if(!(event.target as HTMLElement).closest('[data-composition-item],button')){onSelect([]);beginScrub(event,false);}
         }}>
           {lanes.map(({track,items})=><CompositionTrackLane key={track.id} track={track} items={items} assets={document.assets} fps={document.fps} sourceAudio={sourceAudio} sourceCaptions={sourceCaptions.videos}
-            scale={scale} width={contentWidth} startPixel={scroll} visibleWidth={width-144} selected={selectedIds} previews={props.previews}
-            onBegin={gesture.begin} onEdgeKey={gesture.keyboard} onSelect={onSelect} onTrackContext={props.onTrackContext} onContext={(event,item)=>props.onContext?.(event,item.id)}/>)}
+            scale={scale} width={contentWidth} inset={inset} startPixel={scroll} visibleWidth={width-144} selected={selectedIds} previews={props.previews}
+            startAddition={track.primary&&props.startAddItems?<CompositionAddMenu label="Adicionar no início" items={props.startAddItems} disabled={props.additionsDisabled||track.locked} onOpen={props.onAddOpen}/>:undefined}
+            endAddition={track.primary&&props.endAddItems?<CompositionAddMenu label="Adicionar no fim" items={props.endAddItems} disabled={props.additionsDisabled||track.locked} onOpen={props.onAddOpen}/>:undefined}
+            onBegin={gesture.begin} onEdgeKey={gesture.keyboard} onSelect={onSelect} onReveal={revealItem} onTrackContext={props.onTrackContext} onTrackChange={props.onTrackChange} onTrackFocus={setFocusedTrack} canMuteSource={sourceAudioTracks.has(track.id)} onContext={(event,item)=>props.onContext?.(event,item.id)}/>)}
         </div>
-        {props.range && <div className="composition-range" aria-label="Intervalo marcado" style={{left:144+24+props.range.start*scale,width:(props.range.end-props.range.start)*scale}}/>}
-        <div className="composition-playhead" aria-label="Cursor da montagem" style={{left:144+24+frame*scale}}><button type="button" aria-label="Arrastar cursor da montagem" onPointerDown={event=>beginScrub(event,false)}/></div>
+        {props.range && <div className="composition-range" aria-label="Intervalo marcado" style={{left:144+inset+props.range.start*scale,width:(props.range.end-props.range.start)*scale}}/>}
+        {dropMarker&&<div className="composition-range" aria-label="Ponto de inserção" style={{left:144+inset+dropMarker.target.frame*scale,width:2,top:dropMarker.top,height:dropMarker.height,bottom:"auto"}}/>}
       </div>
+      </div>
+      <CompositionTimelineCursor frame={frame} duration={duration} left={144+inset+frame*scale-scroll} width={width} height={height}
+        onSeek={onSeek} onPointerDown={event=>beginScrub(event,false)}/>
     </div>
   </section>;
 }

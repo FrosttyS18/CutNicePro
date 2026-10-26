@@ -1,7 +1,6 @@
 import { itemEnd, requireComposition } from "./composition";
-import { removeRange } from "./composition-edit";
 import { canRecoverSourceAtOrigin, trimDeltaBounds, type TrimOptions } from "./composition-gesture";
-import { assertWritable, linkedSelection, openGap, sliceItem } from "./composition-operations";
+import { assertWritable, linkedSelection, removeEmptiedTracks, sliceItem } from "./composition-operations";
 import { frameToUs } from "./composition-time";
 import type { Composition } from "./composition-types";
 
@@ -33,7 +32,7 @@ export function trimSelectionAtPlayhead(document: Composition, ids: string[], fr
     if (from === 0 && to === item.durationFrames) return [item];
     return [sliceItem(item, from, to, document.fps, item.startFrame + from)];
   });
-  return requireComposition({ ...document, items });
+  return requireComposition(removeEmptiedTracks(document, { ...document, items }));
 }
 
 export function trimSelection(document: Composition, id: string, edge: "start" | "end", delta: number, options: TrimOptions = {}): Composition {
@@ -57,10 +56,20 @@ export function trimSelection(document: Composition, id: string, edge: "start" |
     if (durationFrames < 1 || startFrame < 0 || sourceStartUs < 0 || sourceEndUs > asset.durationUs) throw new Error("O ajuste ultrapassa os limites da fonte");
     return { ...value, durationFrames, sourceStartUs, sourceEndUs, startFrame };
   });
-  if (ripple && durationChange < 0) {
-    return removeRange(document, itemEnd(item) + delta, itemEnd(item));
-  }
-  const next = ripple ? openGap(document, recovery ? 0 : itemEnd(item), durationChange) : document;
   const replacements = new Map(changed.map(value => [value.id, value]));
-  return requireComposition({ ...next, items: next.items.map(value => replacements.get(value.id) ?? value) });
+  const offsets = new Map<string, number>(), groups = new Map<string, number>();
+  if (ripple) for (const value of document.items.filter(value => value.trackId === item.trackId)) {
+    const offset = !replacements.has(value.id) && value.startFrame >= itemEnd(item) ? durationChange : 0;
+    if (offset && !value.followsMain) throw new Error("Um trecho fixo na faixa principal impede este ajuste. Desative o ímã para ajustar sem mover a sequência.");
+    if (groups.has(value.groupId) && groups.get(value.groupId) !== offset) throw new Error("O grupo não pode ser ajustado sem separar seus itens");
+    offsets.set(value.id, offset); groups.set(value.groupId, offset);
+  }
+  const items = document.items.map(value => {
+    const replacement = replacements.get(value.id);
+    if (replacement) return replacement;
+    const offset = offsets.get(value.id) ?? (value.followsMain ? groups.get(value.groupId) : undefined) ?? 0;
+    return offset ? { ...value, startFrame: value.startFrame + offset } : value;
+  });
+  assertWritable(document, items.filter((value, index) => value !== document.items[index]));
+  return requireComposition({ ...document, items });
 }

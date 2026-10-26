@@ -16,6 +16,8 @@ interface Props {
   onRedo: () => void; onTogglePlay: () => void; enabled?: boolean;
   scope?:RefObject<HTMLElement|null>;
 }
+const commandInputSelector='input,textarea,select,[contenteditable="true"],[role="dialog"],dialog,[role="menu"],[data-editor-viewer="source"]';
+const playbackInputSelector=`${commandInputSelector},[contenteditable]:not([contenteditable="false"]),[role="textbox"]`;
 export function useCompositionCommands(props: Props) {
   const latest=useRef(props);
   useLayoutEffect(()=>{latest.current=props;},[props]);
@@ -76,14 +78,26 @@ export function useCompositionCommands(props: Props) {
   const trimLeft=useCallback(()=>trimAt("left"),[trimAt]);
   const trimRight=useCallback(()=>trimAt("right"),[trimAt]);
   useEffect(()=>{
+    const modalOpen=()=>Boolean(document.querySelector('dialog[open]:not([data-modeless]),[aria-modal="true"]'));
+    const captureSpace=(event:KeyboardEvent)=>{
+      const current=latest.current;
+      if(event.key!==" "||current.enabled===false||event.defaultPrevented||event.isComposing||event.ctrlKey||event.metaKey||event.altKey||event.shiftKey)return;
+      const target=event.target instanceof HTMLElement?event.target:null;
+      if(!target||!current.scope?.current?.contains(target)||!target.closest('[data-editor-timeline]')||target.closest(playbackInputSelector)||modalOpen())return;
+      event.preventDefault();event.stopPropagation();
+      if(!event.repeat)current.onTogglePlay();
+    };
     const handle=(event:KeyboardEvent)=>{
       const current=latest.current;
       if(current.enabled===false || event.defaultPrevented)return;
       const target=event.target instanceof HTMLElement ? event.target : null;
       if(current.scope?.current && !current.scope.current.contains(target) && !current.scope.current.contains(document.activeElement))return;
-      if(target?.closest('input,textarea,select,[contenteditable="true"],[role="dialog"],dialog,[role="menu"],[data-editor-viewer="source"]'))return;
+      if(target?.closest(commandInputSelector))return;
       const key=event.key.toLowerCase(); const control=event.ctrlKey||event.metaKey;
-      if(key===" "&&target?.closest('button,[role="button"],a[href]'))return;
+      if(key===" "){
+        if(event.isComposing||control||event.altKey||event.shiftKey||target?.closest(`${playbackInputSelector},button,[role="button"],a[href]`)||modalOpen())return;
+        if(event.repeat){event.preventDefault();return;}
+      }
       let action:(()=>unknown)|undefined;
       if(control){
         if(key==="d")action=duplicate;
@@ -104,8 +118,9 @@ export function useCompositionCommands(props: Props) {
       else if((key==="arrowleft"||key==="arrowright") && target?.closest('[data-editor-timeline]'))action=()=>current.onSeek(Math.max(0,Math.min(compositionDuration(current.document),current.frame+(key==="arrowleft"?-1:1)*(event.shiftKey?10:1))));
       if(action){event.preventDefault();void action();}
     };
+    window.addEventListener("keydown",captureSpace,true);
     window.addEventListener("keydown",handle);
-    return()=>window.removeEventListener("keydown",handle);
+    return()=>{window.removeEventListener("keydown",captureSpace,true);window.removeEventListener("keydown",handle);};
   },[copy,cut,duplicate,paste,pasteInSequence,remove,split,trimLeft,trimRight]);
   const canTrim=props.enabled!==false&&canTrimSelectionAtPlayhead(props.document,props.selected,props.frame);
   return {copy,cut,paste,pasteInSequence,duplicate,remove,split,canPaste,trimLeft,trimRight,canTrimLeft:canTrim,canTrimRight:canTrim};

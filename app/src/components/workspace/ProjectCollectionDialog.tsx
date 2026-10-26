@@ -27,7 +27,7 @@ export function ProjectCollectionDialog({projectId,onClose,onChanged}:Props) {
       {!selected&&<label>Nome da coleção<input type="text" maxLength={80} value={name} onChange={e=>setName(e.target.value)}/></label>}
     </fieldset>}
     {error&&<p className="upload-message upload-message--error" role="alert">{error}</p>}
-    <div className="project-delete-actions"><button type="button" className="flow-button" disabled={busy} onClick={onClose}>Cancelar</button>
+    <div className="project-delete-actions"><button type="button" className="flow-button dialog-action--secondary" disabled={busy} onClick={onClose}>Cancelar</button>
       <button type="button" className="upload-primary" disabled={busy||loading||(!selected&&!name.trim())} onClick={()=>void add()}>{busy?"Adicionando…":"Adicionar"}</button></div>
   </FlowDialog>;
 }

@@ -3,11 +3,13 @@ import type { LibraryClip } from "../lib/clip-library";
 import type { ProjectMeta } from "../lib/types";
 import { mergeEditorClips } from "../lib/clip-library";
 import { loadEditorState } from "../lib/composition-persistence";
+import { cleanupClipTrash } from "../lib/clip-trash";
 
 export async function loadProjectClipLibrary(project: ProjectMeta) {
+  const cleaned=await cleanupClipTrash(project.id).then(()=>true,()=>false);
   const [legacy, editor] = await Promise.allSettled([getProjectClips(project.id), loadEditorState(project.id)]);
   return { entries: mergeEditorClips(project, legacy.status === "fulfilled" ? legacy.value : null, editor.status === "fulfilled" ? editor.value : null),
-    failed: legacy.status === "rejected" || editor.status === "rejected" };
+    failed: !cleaned || legacy.status === "rejected" || editor.status === "rejected" };
 }
 
 /** Falha de UM projeto não pode esconder os demais (goal-recuperacao

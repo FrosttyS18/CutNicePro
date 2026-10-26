@@ -114,15 +114,9 @@ fn generate(
 
 #[tauri::command]
 pub async fn timeline_preview(app: AppHandle, media_id: String) -> Result<Preview, String> {
-    let entry = app
-        .state::<MediaStore>()
-        .get(&media_id)?
-        .filter(|m| !m.unavailable)
-        .ok_or("Vídeo indisponível. Importe o arquivo novamente.")?;
-    if entry.sha256.len() != 64 || !entry.sha256.chars().all(|c| c.is_ascii_hexdigit()) {
-        return Err("Não foi possível abrir este vídeo. Importe o arquivo novamente.".into());
-    }
-    let analysis = entry
+    let source = app.state::<MediaStore>().resolve(&media_id, None)?;
+    let analysis = source
+        .entry
         .analysis
         .as_ref()
         .ok_or("Não foi possível ler a duração deste vídeo.")?;
@@ -133,21 +127,19 @@ pub async fn timeline_preview(app: AppHandle, media_id: String) -> Result<Previe
     let has_audio = analysis.has_audio;
     let has_video = !analysis.video_codec.is_empty();
     let base = crate::app_data_base(&app)?;
-    let path = app
-        .state::<MediaStore>()
-        .files_dir()
-        .join(format!("{}.{}", entry.sha256, entry.ext));
     let jobs = app.state::<Arc<PreviewJobs>>().inner().clone();
     tauri::async_runtime::spawn_blocking(move || {
-        generate(
+        let preview = generate(
             &base,
-            &path,
-            &entry.sha256,
+            &source.path,
+            &source.entry.sha256,
             duration,
             has_audio,
             has_video,
             &jobs,
-        )
+        )?;
+        source.recheck()?;
+        Ok(preview)
     })
     .await
     .map_err(|e| e.to_string())?

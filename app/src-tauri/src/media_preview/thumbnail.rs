@@ -82,10 +82,8 @@ pub async fn clip_thumbnail(
         return Err("Posição de miniatura inválida.".into());
     }
     let store = app.state::<MediaStore>();
-    let entry = store
-        .get(&media_id)?
-        .filter(|m| !m.unavailable)
-        .ok_or("Vídeo indisponível.")?;
+    let source = store.resolve(&media_id, None)?;
+    let entry = &source.entry;
     let analysis = entry.analysis.as_ref().ok_or("Vídeo sem análise.")?;
     let duration = analysis.duration_ms as f64 / 1000.0;
     if time >= duration
@@ -95,9 +93,6 @@ pub async fn clip_thumbnail(
         return Err("Posição de miniatura inválida.".into());
     }
     let (width, height) = (analysis.width, analysis.height);
-    let source = store
-        .files_dir()
-        .join(format!("{}.{}", entry.sha256, entry.ext));
     let cache = crate::app_data_base(&app)?
         .join("cutnicepro/thumbnails")
         .join(format!(
@@ -117,7 +112,9 @@ pub async fn clip_thumbnail(
         } else {
             "ffmpeg"
         });
-        generate(&ffmpeg, &source, &cache, time, &jobs.control).map(|bytes| Thumbnail {
+        let bytes = generate(&ffmpeg, &source.path, &cache, time, &jobs.control)?;
+        source.recheck()?;
+        Ok(Thumbnail {
             bytes,
             width,
             height,

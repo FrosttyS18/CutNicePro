@@ -14,9 +14,9 @@ export function NavigationGuardProvider({ children }: { children: ReactNode }) {
       <p>Seu rascunho ainda não foi confirmado.</p>
       {state.error && <p role="alert">{state.error}</p>}
       <div className="unsaved-navigation__actions">
-        <button type="button" className="flow-button" disabled={state.busy} onClick={guard.cancel}>Continuar editando</button>
-        <button type="button" className="flow-button" disabled={state.busy} onClick={() => void guard.confirm("discard")}>Descartar e sair</button>
-        <button type="button" className="flow-button" disabled={state.busy} onClick={() => void guard.confirm("save")}>{state.busy ? "Aguarde…" : "Salvar e sair"}</button>
+        <button type="button" className="flow-button dialog-action--secondary" disabled={state.busy} onClick={guard.cancel}>Continuar editando</button>
+        <button type="button" className="flow-button dialog-action--danger" disabled={state.busy} onClick={() => void guard.confirm("discard")}>Descartar e sair</button>
+        <button type="button" className="flow-button dialog-action--primary" disabled={state.busy} onClick={() => void guard.confirm("save")}>{state.busy ? "Aguarde…" : "Salvar e sair"}</button>
       </div>
     </FlowDialog>
   </NavigationGuardContext>;

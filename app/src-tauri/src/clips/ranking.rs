@@ -117,6 +117,7 @@ pub fn select(
                 face_framing: None,
                 created_at_ms: None,
                 deleted: None,
+                deleted_at_ms: None,
                 engine: None,
             };
             if best.as_ref().is_none_or(|old| {

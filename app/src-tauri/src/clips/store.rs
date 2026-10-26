@@ -81,6 +81,15 @@ pub fn load(
 }
 
 pub fn read(base: &Path, project: &str) -> Result<Option<ClipCollection>, String> {
+    let purged = crate::clip_trash::tombstones(base, project)?;
+    let mut value = read_raw(base, project)?;
+    if let Some(collection) = &mut value {
+        collection.clips.retain(|clip| !purged.contains(&clip.id));
+    }
+    Ok(value)
+}
+
+pub(crate) fn read_raw(base: &Path, project: &str) -> Result<Option<ClipCollection>, String> {
     match std::fs::read(path(base, project)?) {
         Ok(bytes) => {
             let value: ClipCollection = serde_json::from_slice(&bytes)
@@ -98,12 +107,41 @@ pub fn save(
     duration: f64,
 ) -> Result<(), String> {
     validate(value, duration)?;
+    let guard = crate::clip_trash::lock(base, project)?;
+    let purged = crate::clip_trash::tombstones(base, project)?;
+    if value.clips.iter().any(|clip| purged.contains(&clip.id)) {
+        return Err(
+            "Um clipe desta operação foi excluído permanentemente. Atualize a biblioteca.".into(),
+        );
+    }
+    let mut value = value.clone();
+    if let Some(previous) = read_raw(base, project)? {
+        for clip in &mut value.clips {
+            if let Some(before) = previous.clips.iter().find(|before| before.id == clip.id) {
+                clip.deleted = before.deleted;
+                clip.deleted_at_ms = before.deleted_at_ms;
+            }
+        }
+    }
+    write_locked(base, project, &value, &guard)
+}
+
+pub(crate) fn write_locked(
+    base: &Path,
+    project: &str,
+    value: &ClipCollection,
+    guard: &crate::clip_trash::ProjectLock,
+) -> Result<(), String> {
+    crate::clip_trash::verify_lock(guard, project)?;
     let target = path(base, project)?;
+    let bytes = serde_json::to_vec(value).map_err(|error| error.to_string())?;
+    if std::fs::read(&target).is_ok_and(|current| current == bytes) {
+        return Ok(());
+    }
     std::fs::create_dir_all(target.parent().ok_or("pasta inválida")?).map_err(|e| e.to_string())?;
     crate::file_output::atomic_write(&target, |file| {
         use std::io::Write;
-        file.write_all(&serde_json::to_vec(value).map_err(|e| e.to_string())?)
-            .map_err(|e| e.to_string())
+        file.write_all(&bytes).map_err(|e| e.to_string())
     })
 }
 pub fn remove(base: &Path, project: &str) -> Result<(), String> {
@@ -178,6 +216,7 @@ mod tests {
                 face_framing: None,
                 created_at_ms: None,
                 deleted: None,
+                deleted_at_ms: None,
                 engine: None,
             }],
         };

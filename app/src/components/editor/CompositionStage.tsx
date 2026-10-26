@@ -118,7 +118,8 @@ export function CompositionStage({document,frame,playing,media,onError,onReady}:
       const key=`${item.trackId}:${item.assetId}`;
       const original=linkedSourceAudio(document,item);
       const originalTrack=document.tracks.find(track=>track.id===original?.trackId);
-      const volume=original && originalTrack && !originalTrack.hidden && !originalTrack.muted && !original.settings.muted ? original.settings.volume : 0;
+      const visualTrack=document.tracks.find(track=>track.id===item.trackId);
+      const volume=original && originalTrack && !visualTrack?.muted && !originalTrack.hidden && !originalTrack.muted && !original.settings.muted ? original.settings.volume : 0;
       return item.kind==="audio" ? <Audio key={key} {...props} engine={audio}/> : <div key={key} className="composition-stage__layer" data-composition-layer={item.id} style={placementStyle(item.placement)}><Visual {...props} engine={audio} volume={volume}/><CompositionCaptions {...captionProps} items={captions.filter(caption=>owners.get(caption.id)===item.id)}/></div>;
     })}
     <CompositionCaptions {...captionProps} items={captions.filter(caption=>!owners.get(caption.id))}/>

@@ -59,11 +59,11 @@ it.each(["hidden", "locked"] as const)("mantém faixa de legenda %s acessível s
   expect(linkedSourceCaptions(document, video)).toEqual([]);
 });
 
-it("vídeo oculto e pareamento ambíguo não escondem legendas independentes", () => {
+it("ocultar o vídeo preserva seu vínculo e pareamento ambíguo mantém legendas independentes", () => {
   const document = fixture(), video = document.items.find(item => item.kind === "video")!;
   const caption = document.items.find(item => item.kind === "caption")!;
   document.tracks.find(track => track.id === video.trackId)!.hidden = true;
-  expect(sourceVideoForCaption(document, caption)).toBeUndefined();
+  expect(sourceVideoForCaption(document, caption)).toBe(video);
   document.tracks.find(track => track.id === video.trackId)!.hidden = false;
   document.tracks.push({ ...document.tracks[0], id: "V2", primary: false });
   document.items.push({ ...video, id: "outro-video", trackId: "V2" });

@@ -15,6 +15,7 @@ interface Props {
 
 export function SplitPreview({ video, layout, localUrl, filter, scrub, scrubTime }: Props) {
   const canvas = useRef<HTMLCanvasElement>(null);
+  const scrubSourceTime = scrub ? scrubTime : undefined;
   useEffect(() => {
     const element = video.current;
     const target = canvas.current;
@@ -35,7 +36,7 @@ export function SplitPreview({ video, layout, localUrl, filter, scrub, scrubTime
       const height = scrub?.height ?? element.videoHeight;
       if (width < 2 || height < 2) return;
       context.clearRect(0, 0, target.width, target.height);
-      const active = splitLayoutAt(layout, scrub && scrubTime !== undefined ? scrubTime : sourceTime);
+      const active = splitLayoutAt(layout, scrubSourceTime !== undefined ? scrubSourceTime : sourceTime);
       target.dataset.mode = active ? "split" : "single";
       if (!active) return;
       [active.top, active.bottom].forEach((panel, index) => {
@@ -70,7 +71,7 @@ export function SplitPreview({ video, layout, localUrl, filter, scrub, scrubTime
       element.removeEventListener("play", play);
       element.removeEventListener("pause", pause);
     };
-  }, [video, localUrl, layout, scrub, scrubTime]);
+  }, [video, localUrl, layout, scrub, scrubSourceTime]);
   return <canvas ref={canvas} width={540} height={960} className="split-preview" data-mode="single"
     style={{ filter } as CSSProperties} role="img" aria-label={layout.shots ? "Prévia com composição por cena" : "Prévia com dois painéis empilhados"}/>;
 }

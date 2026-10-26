@@ -20,7 +20,7 @@ async function mount(){
   const importVideo=vi.fn();
   view=await reactHost(<CompositionEditorBody projectId="p" document={document} frame={0} playing={false} selected={[]} sourceUrl="blob:source" legacy={legacy}
     onChange={onChange} onSeek={noop} onPause={noop} onError={noop} onPreviews={noop} onPreview={noop}
-    previews={{source:{frames:["blob:thumbnail"],peaks:[]}}} addItems={[{label:"Vídeo na faixa principal",icon:null,onSelect:importVideo}]} transport={<button type="button">Reproduzir montagem</button>}/>);
+    previews={{source:{frames:["blob:thumbnail"],peaks:[]}}} onImportMedia={importVideo} transport={<button type="button">Reproduzir montagem</button>}/>);
   return {onChange,importVideo};
 }
 async function click(label:string){
@@ -66,7 +66,7 @@ describe("organização modular do editor",()=>{
     expect(view!.host.querySelector(".editor-inspector")).not.toBeNull();
     expect(onChange).not.toHaveBeenCalled();
   });
-  it("ajusta a biblioteca com teclado e importa pelo menu existente",async()=>{
+  it("ajusta a biblioteca com teclado e abre a importação sem menu de faixa",async()=>{
     const {importVideo}=await mount();
     const separator=view!.host.querySelector<HTMLElement>('[role="separator"][aria-label="Redimensionar biblioteca"]')!;
     expect(separator).not.toBeNull();
@@ -74,8 +74,7 @@ describe("organização modular do editor",()=>{
     await act(async()=>separator.dispatchEvent(new window.KeyboardEvent("keydown",{key:"ArrowRight",bubbles:true,cancelable:true})));
     expect(Number(separator.getAttribute("aria-valuenow"))).toBeGreaterThan(initial);
     await click("Importar mídia");
-    const option=Array.from(globalThis.document.querySelectorAll<HTMLButtonElement>('[role="menuitem"]')).find(button=>button.textContent==="Vídeo na faixa principal")!;
-    await act(async()=>option.click());
+    expect(globalThis.document.querySelector('[role="menu"]')).toBeNull();
     expect(importVideo).toHaveBeenCalledOnce();
   });
 });

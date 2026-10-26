@@ -1,16 +1,4 @@
-//! Scheme `cnplocal` — serve a MÍDIA PERSISTENTE DO USUÁRIO (M2A) ao WebView.
-//! Padrão do `media_proxy.rs` (03B.6, intocado): no Windows o scheme é servido
-//! como `http://cnplocal.localhost/<sha256>.<ext>`. Whitelist = hashes do
-//! índice de mídia; Range/206 para seek; ACAO:* para os canvases de
-//! miniaturas (filmstrip usa crossOrigin="anonymous").
-//!
-//! Atualização 20: Range pede SÓ os bytes do intervalo (seek + read_exact),
-//! sem carregar o arquivo inteiro na memória. A leitura integral permanece
-//! apenas no caminho SEM Range (carga inicial), pois o responder do Tauri
-//! exige o corpo completo.
-
 use std::io::{Read, Seek, SeekFrom};
-use std::path::PathBuf;
 
 use tauri::http::{header, Request, Response, StatusCode};
 use tauri::{AppHandle, Manager, Wry};
@@ -119,34 +107,77 @@ fn serve(app: &AppHandle, request: &Request<Vec<u8>>) -> Response<Vec<u8>> {
             "store de mídia indisponível",
         );
     };
+    serve_store(&store, request)
+}
+
+fn serve_store(store: &MediaStore, request: &Request<Vec<u8>>) -> Response<Vec<u8>> {
     let name = request
         .uri()
         .path()
         .trim_start_matches('/')
         .to_ascii_lowercase();
-    let Some((sha, ext)) = name.rsplit_once('.') else {
-        return error_response(StatusCode::NOT_FOUND, "mídia fora do índice");
-    };
-    if sha.len() != 64 || !sha.chars().all(|c| c.is_ascii_hexdigit()) {
+    let by_id = name.strip_prefix("media/");
+    let filename = by_id.unwrap_or(&name);
+    if filename.contains('/') || filename.contains('\\') {
         return error_response(StatusCode::NOT_FOUND, "identificador de mídia inválido");
     }
-    let entry = match store.find(sha) {
-        Ok(Some(e)) if !e.unavailable => e,
-        Ok(Some(_)) => {
-            return error_response(
-                StatusCode::NOT_FOUND,
-                "arquivo de mídia ausente do disco (marcada indisponível)",
-            )
+    let Some((identifier, ext)) = filename.rsplit_once('.') else {
+        return error_response(StatusCode::NOT_FOUND, "mídia fora do índice");
+    };
+    let entry = if by_id.is_some() {
+        if uuid::Uuid::parse_str(identifier).is_err() {
+            return error_response(StatusCode::NOT_FOUND, "identificador de mídia inválido");
         }
-        _ => return error_response(StatusCode::NOT_FOUND, "mídia fora do índice"),
+        store.get(identifier).ok().flatten()
+    } else {
+        if identifier.len() != 64 || !identifier.bytes().all(|byte| byte.is_ascii_hexdigit()) {
+            return error_response(StatusCode::NOT_FOUND, "identificador de mídia inválido");
+        }
+        let entries = match store.entries() {
+            Ok(entries) => entries,
+            Err(_) => return error_response(StatusCode::NOT_FOUND, "índice de mídia indisponível"),
+        };
+        let matching: Vec<_> = entries
+            .into_iter()
+            .filter(|entry| entry.sha256 == identifier && entry.ext == ext)
+            .collect();
+        let managed: Vec<_> = matching
+            .iter()
+            .filter(|entry| matches!(entry.storage, crate::media_store::MediaStorage::Managed))
+            .collect();
+        if managed.len() == 1 {
+            managed.first().map(|entry| (*entry).clone())
+        } else if matching.len() == 1 {
+            matching.into_iter().next()
+        } else {
+            None
+        }
+    };
+    let Some(entry) = entry else {
+        return error_response(
+            StatusCode::NOT_FOUND,
+            "mídia fora do índice ou rota ambígua; use o identificador da mídia",
+        );
     };
     if entry.ext != ext {
         return error_response(StatusCode::NOT_FOUND, "extensão não corresponde à mídia");
     }
-    let path: PathBuf = store.files_dir().join(&name);
-    serve_file(&path, ext, request)
+    let source = match store.resolve(&entry.media_id, None) {
+        Ok(source) => source,
+        Err(error) => return error_response(StatusCode::CONFLICT, &error),
+    };
+    let file = match source.guard.file.try_clone() {
+        Ok(file) => file,
+        Err(_) => return error_response(StatusCode::INTERNAL_SERVER_ERROR, "leitura indisponível"),
+    };
+    let response = serve_handle(file, ext, request);
+    if let Err(error) = source.recheck() {
+        return error_response(StatusCode::CONFLICT, &error);
+    }
+    response
 }
 
+#[cfg(test)]
 fn serve_file(path: &std::path::Path, ext: &str, request: &Request<Vec<u8>>) -> Response<Vec<u8>> {
     let file = match std::fs::File::open(path) {
         Ok(f) => f,
@@ -157,6 +188,10 @@ fn serve_file(path: &std::path::Path, ext: &str, request: &Request<Vec<u8>>) -> 
             )
         }
     };
+    serve_handle(file, ext, request)
+}
+
+fn serve_handle(file: std::fs::File, ext: &str, request: &Request<Vec<u8>>) -> Response<Vec<u8>> {
     let len = match file.metadata() {
         Ok(m) => m.len(),
         Err(_) => {
@@ -252,7 +287,84 @@ fn error_response(code: StatusCode, msg: &str) -> Response<Vec<u8>> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use std::path::PathBuf;
     use tauri::http::HeaderMap;
+
+    #[test]
+    fn legacy_sha_route_keeps_its_managed_source_when_reference_has_same_digest() {
+        let fixture = crate::media_store::reference_tests::Fixture::new();
+        let store = fixture.store();
+        let original = fixture.source("new.mp4", b"abc");
+        let verified = crate::media_import::verify_reference(
+            &original,
+            &std::sync::atomic::AtomicBool::new(false),
+            &|_| {},
+            std::time::Duration::from_secs(10),
+        )
+        .unwrap();
+        let part = store.files_dir().join("legacy.part");
+        std::fs::write(&part, b"abc").unwrap();
+        store
+            .publish(
+                &part,
+                &verified.sha256,
+                3,
+                "mp4",
+                "legacy.mp4",
+                "legacy-project",
+            )
+            .unwrap();
+        store
+            .publish_reference(&verified, "mp4", "new.mp4", "new-project", None)
+            .unwrap();
+        let request = Request::builder()
+            .uri(format!("http://cnplocal.localhost/{}.mp4", verified.sha256))
+            .body(Vec::new())
+            .unwrap();
+        let response = serve_store(&store, &request);
+        assert_eq!(response.status(), StatusCode::OK);
+        assert_eq!(response.body(), b"abc");
+    }
+
+    #[test]
+    fn registered_reference_serves_original_range_and_blocks_changed_source() {
+        let fixture = crate::media_store::reference_tests::Fixture::new();
+        let original = fixture.source("vídeo com espaços.mp4", b"0123456789");
+        let checked = crate::media_import::verify_reference(
+            &original,
+            &std::sync::atomic::AtomicBool::new(false),
+            &|_| {},
+            std::time::Duration::from_secs(10),
+        )
+        .unwrap();
+        let store = fixture.store();
+        let entry = store
+            .publish_reference(&checked, "mp4", "vídeo com espaços.mp4", "p1", None)
+            .unwrap();
+        drop(checked);
+        let request = Request::builder()
+            .uri(format!(
+                "http://cnplocal.localhost/media/{}.mp4?reload=1",
+                entry.media_id
+            ))
+            .header(header::RANGE, "bytes=3-6")
+            .body(Vec::new())
+            .unwrap();
+        let response = serve_store(&store, &request);
+        assert_eq!(response.status(), StatusCode::PARTIAL_CONTENT);
+        assert_eq!(response.body(), b"3456");
+        assert_eq!(response.headers()[header::CONTENT_RANGE], "bytes 3-6/10");
+        let outside = Request::builder()
+            .uri("http://cnplocal.localhost/media/not-registered.mp4")
+            .body(Vec::new())
+            .unwrap();
+        assert_eq!(
+            serve_store(&store, &outside).status(),
+            StatusCode::NOT_FOUND
+        );
+        std::fs::write(&original, b"different content").unwrap();
+        assert_eq!(serve_store(&store, &request).status(), StatusCode::CONFLICT);
+    }
 
     fn headers_with(range: &str) -> HeaderMap {
         let mut h = HeaderMap::new();

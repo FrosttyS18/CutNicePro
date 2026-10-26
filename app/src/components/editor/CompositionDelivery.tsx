@@ -1,10 +1,10 @@
-import { useRef, useState } from "react";
+import { useId, useRef, useState } from "react";
 import { DownloadSimpleIcon } from "@phosphor-icons/react/dist/csr/DownloadSimple";
 import { FilmStripIcon } from "@phosphor-icons/react/dist/csr/FilmStrip";
 import { useCompositionExport } from "../../hooks/useCompositionExport";
 import { compositionDuration } from "../../lib/composition";
 import { extractComposition } from "../../lib/composition-insert";
-import { frameToSeconds, secondsToFrame } from "../../lib/composition-time";
+import { formatCompositionTimecode, parseCompositionRange } from "../../lib/composition-timecode";
 import { createManualClip } from "../../lib/composition-persistence";
 import type { Composition } from "../../lib/composition-types";
 import { FlowDialog } from "../workspace/FlowDialog";
@@ -24,10 +24,12 @@ interface Props {
   onPause: () => void;
   onError: (message: string) => void;
   onNotice: (message: string) => void;
+  onCreated?: (title: string) => void;
 }
 
 export function CompositionDelivery(props: Props) {
   const exporter = useCompositionExport(props.projectId);
+  const id = useId();
   const [confirmExport, setConfirmExport] = useState(false);
   const [creating, setCreating] = useState(false);
   const [dialog, setDialog] = useState(false);
@@ -58,8 +60,8 @@ export function CompositionDelivery(props: Props) {
   function openManual() {
     props.onPause();
     setName(`${props.title} - clipe`);
-    setStart(String(frameToSeconds(props.range?.start ?? 0, props.document.fps)));
-    setEnd(String(frameToSeconds(props.range?.end ?? duration, props.document.fps)));
+    setStart(formatCompositionTimecode(props.range?.start ?? 0, props.document.fps));
+    setEnd(formatCompositionTimecode(props.range?.end ?? duration, props.document.fps));
     setLocalError(null);
     setDialog(true);
   }
@@ -70,12 +72,13 @@ export function CompositionDelivery(props: Props) {
     setCreating(true);
     setLocalError(null);
     try {
-      const from = secondsToFrame(Number(start), props.document.fps);
-      const to = secondsToFrame(Number(end), props.document.fps);
-      const fragment = extractComposition(structuredClone(props.document), from, to);
+      if (!name.trim()) throw new Error("Informe um nome para o clipe.");
+      const range = parseCompositionRange(start, end, duration, props.document.fps);
+      const fragment = extractComposition(structuredClone(props.document), range.start, range.end);
       await createManualClip(props.projectId, name.trim(), fragment);
       setDialog(false);
-      props.onNotice("Clipe manual criado nos clipes deste projeto.");
+      props.onNotice("Clipe criado nos clipes deste projeto.");
+      props.onCreated?.(name.trim());
     } catch (error) {
       setLocalError(error instanceof Error ? error.message : String(error));
     } finally { pending.current = false; setCreating(false); }
@@ -90,7 +93,7 @@ export function CompositionDelivery(props: Props) {
     }}/>
     <FlowDialog open={confirmExport} title="Salvar antes de exportar?" busy={props.saving} onClose={() => setConfirmExport(false)}>
       <p>Confirme as alterações para exportar a montagem que está vendo.</p>
-      <div className="composition-editor__dialog-actions"><button type="button" className="flow-button" onClick={() => setConfirmExport(false)}>Cancelar</button><button type="button" className="flow-button" disabled={props.saving} onClick={() => void exportSaved(true)}>Salvar e exportar</button></div>
+      <div className="composition-editor__dialog-actions"><button type="button" className="flow-button dialog-action--secondary" onClick={() => setConfirmExport(false)}>Cancelar</button><button type="button" className="flow-button dialog-action--primary" disabled={props.saving} onClick={() => void exportSaved(true)}>Salvar e exportar</button></div>
     </FlowDialog>
     <FlowDialog open={exporter.busy} title="Exportando vídeo" busy allowCloseWhileBusy onClose={() => void exporter.cancel()}>
       <p role="status">{exporter.job?.progress ? `Renderizando ${exporter.job.progress}%` : "Preparando exportação…"}</p>
@@ -98,13 +101,16 @@ export function CompositionDelivery(props: Props) {
       <div className="composition-editor__dialog-actions"><button type="button" className="flow-button" onClick={() => void exporter.cancel()}>Cancelar exportação</button></div>
       {exporter.error && <p role="alert">{exporter.error}</p>}
     </FlowDialog>
-    <FlowDialog open={dialog} title="Criar clipe manual" busy={creating} onClose={() => setDialog(false)}>
-      <div className="composition-editor__clip-fields">
-        <label>Nome do clipe<input className="flow-input" value={name} maxLength={120} disabled={creating} onChange={event => setName(event.target.value)}/></label>
-        <div className="composition-editor__clip-range"><label>Início na montagem (s)<input className="flow-input" inputMode="decimal" value={start} disabled={creating} onChange={event => setStart(event.target.value)}/></label><label>Fim na montagem (s)<input className="flow-input" inputMode="decimal" value={end} disabled={creating} onChange={event => setEnd(event.target.value)}/></label></div>
-      </div>
-      {localError && <p role="alert">{localError}</p>}
-      <div className="composition-editor__dialog-actions"><button type="button" className="flow-button" disabled={creating} onClick={() => setDialog(false)}>Cancelar</button><button type="button" className="flow-button" disabled={creating || !name.trim()} onClick={() => void create()}>{creating ? "Criando…" : "Criar clipe"}</button></div>
+    <FlowDialog open={dialog} title="Criar clipe" busy={creating} onClose={() => setDialog(false)}>
+      <form onSubmit={event => { event.preventDefault(); void create(); }}>
+        <div className="composition-editor__clip-fields">
+          <label>Nome do clipe<input className="flow-input" name="clipName" autoComplete="off" value={name} maxLength={120} disabled={creating} onChange={event => setName(event.target.value)}/></label>
+          <div className="composition-editor__clip-range"><label>Início na montagem<input className="flow-input" name="clipStart" autoComplete="off" placeholder="00:00.000" aria-describedby={`${id}-time-hint`} value={start} disabled={creating} onChange={event => setStart(event.target.value)}/></label><label>Fim na montagem<input className="flow-input" name="clipEnd" autoComplete="off" placeholder="00:00.000" aria-describedby={`${id}-time-hint`} value={end} disabled={creating} onChange={event => setEnd(event.target.value)}/></label></div>
+        </div>
+        <p className="flow-muted" id={`${id}-time-hint`}>Use 00:00.000 ou 00:00:00.000. O recorte se ajusta ao quadro mais próximo.</p>
+        {localError && <p role="alert">{localError}</p>}
+        <div className="composition-editor__dialog-actions"><button type="button" className="flow-button dialog-action--secondary" disabled={creating} onClick={() => setDialog(false)}>Cancelar</button><button type="submit" className="flow-button dialog-action--primary" disabled={creating || !name.trim()}>{creating ? "Criando…" : "Criar clipe"}</button></div>
+      </form>
     </FlowDialog>
   </>;
 }

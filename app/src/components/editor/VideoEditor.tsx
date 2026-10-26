@@ -36,6 +36,7 @@ interface Props {
   onChange: (data: WorkspaceData) => void;
   onSave: () => Promise<boolean> | boolean;
   onBack: () => void;
+  onShowClips?: () => void;
   transcriptionControls?: ReactNode;
   transcribing?: boolean;
   /** Cortes do projeto — usados por "Aplicar a todos os cortes" (commit único, desfazível). */

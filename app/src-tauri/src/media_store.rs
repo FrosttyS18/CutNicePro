@@ -1,17 +1,17 @@
-//! Mídia persistente do usuário — Fatia 1 (M2A).
-//!
-//! Índice `media/index.json` é a única fonte da verdade; arquivos vivem em
-//! `media/files/<sha256>.<ext>`. Toda mutação do índice passa pelo Mutex de
-//! processo (ver `with_index`). Reconcile na inicialização ADOTA arquivos
-//! finais sem entrada (nunca apaga), remove apenas `.part` de jobs mortos e
-//! suspende a limpeza se o índice estiver corrompido.
-
 use std::fs;
 use std::path::{Path, PathBuf};
 use std::sync::Mutex;
 use std::time::{SystemTime, UNIX_EPOCH};
 
 use serde::{Deserialize, Serialize};
+mod dto;
+mod reference;
+use crate::media_source::SourceStamp;
+pub use dto::MediaEntryDto;
+use reference::{valid_filename, validate_entry};
+
+#[cfg(test)]
+pub(crate) mod reference_tests;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -40,12 +40,40 @@ pub struct MediaEntry {
     pub analysis: Option<MediaAnalysis>,
     #[serde(default)]
     pub unavailable: bool,
+    #[serde(default)]
+    pub storage: MediaStorage,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
+#[serde(tag = "kind", rename_all = "lowercase", deny_unknown_fields)]
+pub enum MediaStorage {
+    #[default]
+    Managed,
+    Reference {
+        path: PathBuf,
+        stamp: SourceStamp,
+    },
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct MediaIndex {
+    #[serde(default = "legacy_index_version")]
+    pub version: u32,
     pub entries: Vec<MediaEntry>,
+}
+
+fn legacy_index_version() -> u32 {
+    1
+}
+
+impl Default for MediaIndex {
+    fn default() -> Self {
+        Self {
+            version: 2,
+            entries: Vec::new(),
+        }
+    }
 }
 
 pub struct MediaStore {
@@ -96,17 +124,34 @@ impl MediaStore {
         }
         let raw = fs::read_to_string(&path)
             .map_err(|e| format!("falha ao ler {}: {e}", path.display()))?;
-        serde_json::from_str(&raw).map_err(|e| format!("índice de mídia corrompido: {e}"))
+        let index: MediaIndex =
+            serde_json::from_str(&raw).map_err(|e| format!("índice de mídia corrompido: {e}"))?;
+        if ![1, 2].contains(&index.version) {
+            return Err(format!(
+                "versão do índice de mídia não suportada: {}",
+                index.version
+            ));
+        }
+        for entry in &index.entries {
+            validate_entry(entry)?;
+            if index.version == 1 && !matches!(entry.storage, MediaStorage::Managed) {
+                return Err("índice legado com localização de mídia incompatível".into());
+            }
+        }
+        Ok(index)
     }
 
     fn save_index(&self, index: &MediaIndex) -> Result<(), String> {
         let path = self.index_path();
-        let tmp = self.root.join("index.json.tmp");
-        let body = serde_json::to_string_pretty(index)
+        let mut versioned = index.clone();
+        versioned.version = 2;
+        let body = serde_json::to_string_pretty(&versioned)
             .map_err(|e| format!("falha ao serializar índice de mídia: {e}"))?;
-        fs::write(&tmp, body).map_err(|e| format!("falha ao gravar índice de mídia: {e}"))?;
-        fs::rename(&tmp, &path).map_err(|e| format!("falha ao finalizar índice de mídia: {e}"))?;
-        Ok(())
+        crate::file_output::atomic_write(&path, |file| {
+            use std::io::Write;
+            file.write_all(body.as_bytes())
+                .map_err(|error| error.to_string())
+        })
     }
 
     /// Toda mutação do índice serializada: load → mutate → save sob o lock.
@@ -124,6 +169,7 @@ impl MediaStore {
         Ok(out)
     }
 
+    #[cfg(test)]
     pub fn find(&self, sha256: &str) -> Result<Option<MediaEntry>, String> {
         let index = self.load_index()?;
         Ok(index.entries.into_iter().find(|e| e.sha256 == sha256))
@@ -138,6 +184,7 @@ impl MediaStore {
     /// `<sha256>.<ext>` e cria/atualiza a entrada com o vínculo do projeto.
     /// Deduplicação natural: corpo já existente → o novo é descartado e a
     /// entrada existente ganha o project_id (se ainda não tinha).
+    #[cfg(test)]
     pub fn publish(
         &self,
         staged_part: &Path,
@@ -182,6 +229,7 @@ impl MediaStore {
                     project_ids: vec![project_id.to_string()],
                     analysis: None,
                     unavailable: false,
+                    storage: MediaStorage::Managed,
                 };
                 index.entries.push(e.clone());
                 e
@@ -233,18 +281,20 @@ impl MediaStore {
             if e.project_ids.iter().any(|p| p == project_id) {
                 e.project_ids.retain(|p| p != project_id);
                 if e.project_ids.is_empty() {
-                    let p = self.files_dir().join(format!("{}.{}", e.sha256, e.ext));
-                    match fs::remove_file(&p) {
-                        Ok(()) => {}
-                        Err(e) if e.kind() == std::io::ErrorKind::NotFound => {}
-                        Err(e) => return Err(format!("não foi possível remover o vídeo: {e}")),
+                    if matches!(e.storage, MediaStorage::Managed) {
+                        let p = self.registered_path(&e)?;
+                        match fs::remove_file(&p) {
+                            Ok(()) => {}
+                            Err(e) if e.kind() == std::io::ErrorKind::NotFound => {}
+                            Err(e) => return Err(format!("não foi possível remover o vídeo: {e}")),
+                        }
+                        removed_files.push(
+                            p.file_name()
+                                .unwrap_or_default()
+                                .to_string_lossy()
+                                .to_string(),
+                        );
                     }
-                    removed_files.push(
-                        p.file_name()
-                            .unwrap_or_default()
-                            .to_string_lossy()
-                            .to_string(),
-                    );
                     continue;
                 }
             }
@@ -258,6 +308,10 @@ impl MediaStore {
     /// Reconcile de inicialização (AC-R1). `live_parts` = caminhos de `.part`
     /// com job vivo neste processo (em inicialização, nenhum).
     pub fn reconcile(&self, live_parts: &[PathBuf]) -> Result<ReconcileOutcome, String> {
+        let _guard = self
+            .index_lock
+            .lock()
+            .map_err(|_| "lock do índice de mídia envenenado")?;
         // Índice ilegível → limpeza suspensa com causa (nada é tocado).
         let mut index = match self.load_index() {
             Ok(i) => i,
@@ -294,14 +348,17 @@ impl MediaStore {
                 if name.ends_with(".part") {
                     continue;
                 }
-                let known = index
-                    .entries
-                    .iter()
-                    .any(|e| format!("{}.{}", e.sha256, e.ext) == name);
+                let known = index.entries.iter().any(|e| {
+                    matches!(e.storage, MediaStorage::Managed)
+                        && format!("{}.{}", e.sha256, e.ext) == name
+                });
                 if known {
                     continue;
                 }
-                if let Some((sha, ext)) = name.rsplit_once('.') {
+                if let Some((sha, ext)) = name
+                    .rsplit_once('.')
+                    .filter(|(sha, ext)| valid_filename(sha, ext))
+                {
                     let meta = fs::metadata(self.files_dir().join(&name)).ok();
                     index.entries.push(MediaEntry {
                         media_id: uuid::Uuid::new_v4().to_string(),
@@ -313,6 +370,7 @@ impl MediaStore {
                         project_ids: Vec::new(),
                         analysis: None,
                         unavailable: false,
+                        storage: MediaStorage::Managed,
                     });
                     adopted += 1;
                     dirty = true;
@@ -325,8 +383,7 @@ impl MediaStore {
             if e.unavailable {
                 continue;
             }
-            let p = self.files_dir().join(format!("{}.{}", e.sha256, e.ext));
-            if !p.exists() {
+            if self.resolve_entry(e.clone()).is_err() {
                 e.unavailable = true;
                 marked_unavailable += 1;
                 dirty = true;
@@ -496,5 +553,24 @@ mod tests {
             other => panic!("esperado Suspended, veio {other:?}"),
         }
         assert!(s.files_dir().join("dead.part").exists(), "limpeza suspensa");
+    }
+
+    #[test]
+    fn future_index_version_preserves_index_and_suspends_cleanup() {
+        let base = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+            .join("target/test-reference-import")
+            .join(uuid::Uuid::new_v4().to_string());
+        let store = MediaStore::open(&base).unwrap();
+        let raw = br#"{"version":999,"entries":[]}"#;
+        fs::write(store.index_path(), raw).unwrap();
+        fs::write(store.files_dir().join("interrupted.part"), b"preserve").unwrap();
+        assert!(store.get("anything").is_err());
+        assert!(matches!(
+            store.reconcile(&[]).unwrap(),
+            ReconcileOutcome::Suspended(_)
+        ));
+        assert_eq!(fs::read(store.index_path()).unwrap(), raw);
+        assert!(store.files_dir().join("interrupted.part").is_file());
+        fs::remove_dir_all(base).unwrap();
     }
 }

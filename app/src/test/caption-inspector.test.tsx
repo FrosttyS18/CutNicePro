@@ -32,7 +32,7 @@ describe("inspetor do editor (atualização 15 — anatomia SupoClip)", () => {
     const html = renderToStaticMarkup(<EditorInspector panel="reframe" settings={defaultEditorSettings()} onPanel={noop} onSettings={noop} />);
     expect(html).toContain("Original"); expect(html).toContain("Vertical"); expect(html).toContain("Quadrado");
     expect(html).toContain("Preencher quadro"); expect(html).toContain("Vídeo completo");
-    expect(html).toContain("Zoom:"); expect(html).toContain("1×"); expect(html).toContain("Posição horizontal"); expect(html).toContain("Posição vertical");
+    expect(html).toContain('aria-label="Zoom"'); expect(html).toContain('step="0.01"'); expect(html).toContain("Posição horizontal"); expect(html).toContain("Posição vertical");
     expect(html).toContain("Centralizar assunto");
   });
   it("aba Áudio: volume até 200% e silenciar exportação; aba Efeitos com reset", () => {

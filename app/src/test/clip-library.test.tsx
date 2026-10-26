@@ -17,7 +17,7 @@ const entries: LibraryClip[] = ["Davy Jones","Outro projeto"].map((name,index) =
 describe("biblioteca de clipes e controles compartilhados", () => {
   it("combina projetos e filtra sem alterar os dados originais", () => {
     expect(visibleClips(entries,"all","score").map(item => item.project.name)).toEqual(["Outro projeto","Davy Jones"]);
-    expect(visibleClips(entries,"approved","score").map(item => item.project.id)).toEqual(["p1"]);
+    expect(visibleClips(entries,"active","score").map(item => item.project.id)).toEqual(["p1","p0"]);
     expect(visibleClips(entries,"all","duration")[0].project.id).toBe("p1");
     expect(entries[0].project.id).toBe("p0");
   });

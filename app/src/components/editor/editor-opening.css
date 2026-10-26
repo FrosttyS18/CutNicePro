@@ -1,0 +1,17 @@
+.editor-opening {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--cnp-space-6, 24px);
+  min-height: 300px;
+  min-width: 0;
+  padding: var(--cnp-space-6, 24px);
+  color: var(--ink, #e6e7e8);
+  text-align: center;
+}
+.editor-opening > div { max-width: 480px; min-width: 0; }
+.editor-opening h1 { margin: 0; font-size: 18px; font-weight: 500; line-height: 1.5; }
+.editor-opening p { margin: var(--cnp-space-3, 12px) 0 0; color: var(--sh-dim, #aaa); font-size: 13px; line-height: 1.6; overflow-wrap: anywhere; }
+.editor-opening progress { display: block; width: min(100%, 240px); height: 4px; margin: var(--cnp-space-6, 24px) auto 0; accent-color: var(--ink, #e6e7e8); }

@@ -32,7 +32,7 @@ export function ProcessingDialog({ open, id, busy, title, status, progress: meas
       <p>{cancelDescription}</p>
       {cancelState === "error" && <p role="alert">Não foi possível cancelar. Tente novamente.</p>}
       <div className="transcription-confirm__actions"><button type="button" className="upload-primary" disabled={cancelling} onClick={() => setCancelState("running")} autoFocus>Continuar</button>
-        <button type="button" className="flow-button" disabled={cancelling} onClick={() => void cancel()}>{cancelling ? "Cancelando…" : cancelAction}</button></div>
+        <button type="button" className="flow-button dialog-action--secondary" disabled={cancelling} onClick={() => void cancel()}>{cancelling ? "Cancelando…" : cancelAction}</button></div>
     </div> : busy ? <>
       <div className="transcription-progress" aria-busy="true"><div className="thinking-orb" aria-hidden="true"><i/><i/><i/></div>
         <button type="button" className="thinking-motion-toggle" aria-label={motionPaused ? "Retomar animação" : "Pausar animação"} title={motionPaused ? "Retomar animação" : "Pausar animação"}

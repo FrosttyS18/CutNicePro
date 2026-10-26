@@ -8,6 +8,7 @@ import { useTranscription } from "../hooks/useTranscription";
 import type { TranscriptRecord } from "../lib/transcription";
 import { defaultEditorSettings } from "../lib/workspace";
 import { reactHost } from "./react-host";
+import { nativeMediaFixture } from "./fixtures/native-media-entry";
 
 vi.mock("@tauri-apps/api/core", () => ({ invoke: vi.fn() }));
 vi.mock("@tauri-apps/api/event", () => ({ listen: vi.fn(async () => vi.fn()) }));
@@ -82,7 +83,7 @@ describe("referências sincronizadas após confirmar a renderização", () => {
     const old = vi.fn(), current = vi.fn();
     mounted = await reactHost(<Transcription mediaId="m" receive={old} />);
     await mounted.render(<Transcription mediaId="m" receive={current} />);
-    await act(async () => { resolveMedia({ unavailable: false, analysis: { hasAudio: true } }); });
+    await act(async () => { resolveMedia({ ...nativeMediaFixture.referenceAvailable, mediaId: "m", projectIds: ["p"] }); });
     expect(current).toHaveBeenCalledWith(record);
     expect(old).not.toHaveBeenCalled();
     expect(JSON.parse(mounted.host.textContent!)).toMatchObject({ loaded: true, ready: true });

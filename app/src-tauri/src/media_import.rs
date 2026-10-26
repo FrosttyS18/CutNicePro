@@ -1,16 +1,21 @@
-//! Job de importação de mídia (M2A): cópia em stream com integridade
-//! (bytes == stat inicial + SHA-256 dos bytes escritos + re-stat da origem),
-//! cancelamento por job e eventos de progresso REAIS (bytes).
-
 use std::collections::HashMap;
+#[cfg(test)]
 use std::fs;
+#[cfg(test)]
 use std::io::{Read, Write};
 use std::path::{Path, PathBuf};
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::{Arc, Mutex};
+#[cfg(test)]
 use std::time::UNIX_EPOCH;
 
+#[cfg(test)]
 use sha2::{Digest, Sha256};
+pub mod commands;
+mod reference;
+pub use reference::{verify_reference, VerifiedReference};
+#[cfg(test)]
+mod commit_tests;
 
 const CHUNK: usize = 4 * 1024 * 1024;
 
@@ -20,8 +25,12 @@ pub struct ImportProgress {
     pub job_id: String,
     pub bytes_copied: u64,
     pub total_bytes: u64,
+    pub bytes_processed: u64,
+    pub phase: &'static str,
+    pub storage_kind: &'static str,
 }
 
+#[cfg(test)]
 #[derive(Debug, Clone, serde::Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct SourceStat {
@@ -29,6 +38,7 @@ pub struct SourceStat {
     pub modified_ms: u64,
 }
 
+#[cfg(test)]
 fn stat_source(p: &Path) -> Result<SourceStat, String> {
     let md = fs::metadata(p).map_err(|e| format!("arquivo de origem inacessível: {e}"))?;
     if !md.is_file() {
@@ -87,10 +97,19 @@ impl ImportJobs {
         }
     }
 
+    #[cfg(test)]
     pub fn register(&self, job_id: &str) -> Arc<AtomicBool> {
+        self.start(job_id)
+            .expect("identificador de job de teste duplicado")
+    }
+
+    pub fn start(&self, job_id: &str) -> Result<Arc<AtomicBool>, String> {
         let flag = Arc::new(AtomicBool::new(false));
         let process = Arc::new(crate::transcription::process::ProcessControl::default());
         let mut cancels = self.cancels.lock().unwrap();
+        if cancels.contains_key(job_id) {
+            return Err("Já existe uma importação com este identificador.".into());
+        }
         if self.closed.load(Ordering::SeqCst) {
             flag.store(true, Ordering::SeqCst);
             process.cancel();
@@ -102,7 +121,26 @@ impl ImportJobs {
                 process,
             },
         );
-        flag
+        Ok(flag)
+    }
+
+    pub fn commit<T>(
+        &self,
+        job_id: &str,
+        write: impl FnOnce() -> Result<T, String>,
+    ) -> Result<T, String> {
+        let mut jobs = self
+            .cancels
+            .lock()
+            .map_err(|_| "Estado de importação indisponível.")?;
+        let job = jobs.get(job_id).ok_or("Importação não encontrada.")?;
+        if job.cancel.load(Ordering::SeqCst) {
+            jobs.remove(job_id);
+            return Err("importação cancelada".into());
+        }
+        let result = write();
+        jobs.remove(job_id);
+        result
     }
 
     pub fn cancel(&self, job_id: &str) -> bool {
@@ -177,6 +215,7 @@ impl ImportJobs {
 }
 
 /// Estado de origem para verificação de mudança durante a cópia.
+#[cfg(test)]
 #[derive(Clone, Copy)]
 struct OriginStamp {
     size: u64,
@@ -187,7 +226,9 @@ struct OriginStamp {
 pub enum ImportError {
     Cancelled,
     SourceChanged,
+    #[cfg(test)]
     DiskFull,
+    TimedOut,
     Io(String),
 }
 
@@ -198,13 +239,16 @@ impl ImportError {
             ImportError::SourceChanged => {
                 "o arquivo de origem foi modificado durante a importação".into()
             }
+            #[cfg(test)]
             ImportError::DiskFull => "espaço em disco insuficiente para importar".into(),
+            ImportError::TimedOut => "Tempo limite da verificação do arquivo excedido.".into(),
             ImportError::Io(e) => format!("falha de E/S durante a importação: {e}"),
         }
     }
 }
 
 /// Cópia com hash dos bytes escritos. Retorna (bytes, sha256_hex).
+#[cfg(test)]
 pub fn copy_with_hash(
     src: &Path,
     staged_part: &Path,
@@ -360,7 +404,9 @@ mod tests {
         match res {
             Err(ImportError::SourceChanged) => {}
             Err(ImportError::Io(e)) => panic!("io inesperado: {e}"),
-            Err(ImportError::Cancelled) | Err(ImportError::DiskFull) => {
+            Err(ImportError::Cancelled)
+            | Err(ImportError::DiskFull)
+            | Err(ImportError::TimedOut) => {
                 panic!("esperado SourceChanged, veio outra causa")
             }
             Ok((n, _)) => panic!(

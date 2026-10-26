@@ -2,6 +2,11 @@ import { useLayoutEffect, useRef, useState } from "react";
 import { defaultSplitScreen, isSplitScreen, splitLayoutAt, updateSplitPanel } from "../../lib/split-screen";
 import type { EditorSettings, SplitPanel } from "../../lib/workspace-types";
 import { suggestSplitFraming, type SplitFramingSource } from "../../services/split-framing";
+import { RectangleIcon } from "@phosphor-icons/react/dist/csr/Rectangle";
+import { RowsIcon } from "@phosphor-icons/react/dist/csr/Rows";
+import { CrosshairIcon } from "@phosphor-icons/react/dist/csr/Crosshair";
+import { EditorAction } from "./EditorAction";
+import { InspectorNumberField } from "./InspectorNumberField";
 import "./SplitScreenControls.css";
 
 interface Props {
@@ -24,18 +29,11 @@ function contextKey(source: SplitFramingSource | undefined, ratio: EditorSetting
 function PanelControls({ position, panel, onChange }: { position: "cima" | "baixo"; panel: SplitPanel; onChange: (patch: Partial<SplitPanel>) => void }) {
   return <fieldset className="split-screen__panel">
     <legend>Pessoa de {position}</legend>
-    {([
-      { key: "x", label: "Posição horizontal", min: 0, max: 100, step: 1, unit: "%" },
-      { key: "y", label: "Posição vertical", min: 0, max: 100, step: 1, unit: "%" },
-      { key: "zoom", label: "Zoom", min: 1, max: 3, step: 0.01, unit: "×" },
-    ] as const).map(field => <label key={field.key} className="studio-field studio-range">
-      <span className="studio-field__label">{field.label}
-        <strong>{field.key === "zoom" ? panel[field.key].toFixed(2) : Math.round(panel[field.key])}{field.unit}</strong>
-      </span>
-      <input type="range" name={`split-${position}-${field.key}`} aria-label={`${field.label} da pessoa de ${position}`}
-        min={field.min} max={field.max} step={field.step} value={panel[field.key]}
-        onChange={event => onChange({ [field.key]: Number(event.target.value) })} />
-    </label>)}
+    <div className="reframe-number-grid">
+      <InspectorNumberField label={`Posição horizontal da pessoa de ${position}`} caption="Horizontal" name={`split-${position}-x`} value={panel.x} min={0} max={100} unit="%" onChange={x => onChange({ x })}/>
+      <InspectorNumberField label={`Posição vertical da pessoa de ${position}`} caption="Vertical" name={`split-${position}-y`} value={panel.y} min={0} max={100} unit="%" onChange={y => onChange({ y })}/>
+      <InspectorNumberField label={`Zoom da pessoa de ${position}`} caption="Zoom" name={`split-${position}-zoom`} value={panel.zoom} min={1} max={3} step={.01} clickStep={.1} unit="×" onChange={zoom => onChange({ zoom })}/>
+    </div>
   </fieldset>;
 }
 
@@ -43,6 +41,8 @@ export function SplitScreenControls({ settings, source, sourceTime, onSettings }
   const layout = settings.ratio === "9:16" && isSplitScreen(settings.splitScreen) ? settings.splitScreen : null;
   const at = sourceTime ?? source?.start ?? 0;
   const active = layout ? splitLayoutAt(layout, at) : null;
+  const shot = layout?.shots?.find(value => at >= value.sourceStart && at < value.sourceEnd);
+  const panelKey = shot ? `${shot.sourceStart}:${shot.sourceEnd}` : "static";
   const key = contextKey(source, settings.ratio, settings.splitScreen);
   const request = useRef(0);
   const [feedback, setFeedback] = useState<Feedback | null>(null);
@@ -82,13 +82,13 @@ export function SplitScreenControls({ settings, source, sourceTime, onSettings }
   };
 
   return <div className="split-screen-controls">
-    <div className="studio-field">
+    <div className="reframe-panel__head">
       <span className="studio-field__label">Composição</span>
       <div className="studio-toggle-group split-screen__composition" role="group" aria-label="Composição do vídeo">
-        <button type="button" className="studio-toggle studio-toggle--wide" aria-pressed={!layout}
-          onClick={() => { if (layout) changeManually({ splitScreen: null }); }}>Quadro único</button>
-        <button type="button" className="studio-toggle studio-toggle--wide" aria-pressed={Boolean(layout)}
-          onClick={() => { if(!layout?.faceValidated)changeManually({...(settings.ratio!=="9:16"?{ratio:"9:16"}:{}),splitScreen:{version:1,top:layout?.top??defaultSplitScreen().top,bottom:layout?.bottom??defaultSplitScreen().bottom,faceValidated:true}}); }}>Duas pessoas (empilhadas)</button>
+        <EditorAction compact label="Quadro único" icon={<RectangleIcon size={18} aria-hidden="true"/>} pressed={!layout}
+          onClick={() => { if (layout) changeManually({ splitScreen: null }); }}/>
+        <EditorAction compact label="Duas pessoas (empilhadas)" tooltip="Duas pessoas empilhadas em 9:16, com ajustes independentes" icon={<RowsIcon size={18} aria-hidden="true"/>} pressed={Boolean(layout)}
+          onClick={() => { if(!layout?.faceValidated)changeManually({...(settings.ratio!=="9:16"?{ratio:"9:16"}:{}),splitScreen:{version:1,top:layout?.top??defaultSplitScreen().top,bottom:layout?.bottom??defaultSplitScreen().bottom,faceValidated:true}}); }}/>
       </div>
     </div>
     <div className="split-screen__automatic">
@@ -98,16 +98,16 @@ export function SplitScreenControls({ settings, source, sourceTime, onSettings }
         aria-live="polite">{currentFeedback.message}</p>}
     </div>
     {layout && <>
-      <p>{layout.shots ? "A composição acompanha as cenas. Closes permanecem em quadro único." : "Dois enquadramentos no formato vertical 9:16. Ajuste cada pessoa separadamente."}</p>
+      {layout.shots&&<p>A composição acompanha as cenas. Closes permanecem em quadro único.</p>}
       <div className="split-screen__automatic">
         <button type="button" className="flow-button" disabled={busy || !source} onClick={() => { void locate(); }}>
+          <CrosshairIcon size={16} aria-hidden="true"/>
           {busy ? "Localizando…" : "Localizar duas pessoas"}
         </button>
-        <p>A busca analisa este trecho no dispositivo.</p>
       </div>
       {active ? <>
-        <PanelControls position="cima" panel={active.top} onChange={patch => changePanel("top", patch)} />
-        <PanelControls position="baixo" panel={active.bottom} onChange={patch => changePanel("bottom", patch)} />
+        <PanelControls key={`top:${panelKey}`} position="cima" panel={active.top} onChange={patch => changePanel("top", patch)} />
+        <PanelControls key={`bottom:${panelKey}`} position="baixo" panel={active.bottom} onChange={patch => changePanel("bottom", patch)} />
       </> : <p>Neste ponto há um quadro único. Avance até uma cena com duas pessoas para ajustar seus painéis.</p>}
     </>}
   </div>;

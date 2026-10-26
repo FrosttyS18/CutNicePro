@@ -1,4 +1,4 @@
-use crate::{file_output, media_store::MediaStore, storage::Store};
+use crate::{media_store::MediaStore, storage::Store};
 use std::{
     io::Write,
     path::{Path, PathBuf},
@@ -7,16 +7,7 @@ use tauri::{AppHandle, Manager};
 use tauri_plugin_dialog::DialogExt;
 
 pub(crate) fn destination_allowed(base: &Path, destination: &Path) -> Result<(), String> {
-    let parent = destination
-        .parent()
-        .ok_or("destino inválido")?
-        .canonicalize()
-        .map_err(|e| e.to_string())?;
-    let managed = base.canonicalize().map_err(|e| e.to_string())?;
-    if parent.starts_with(managed) {
-        return Err("escolha outra pasta para salvar".into());
-    }
-    Ok(())
+    crate::media_output_guard::check(base, destination)
 }
 pub(crate) fn filename(name: &str, ext: &str) -> String {
     let name: String = name
@@ -46,10 +37,8 @@ pub async fn export_project_file(
             .find(|p| p.id == id)
             .ok_or("projeto indisponível")?;
         let store = app.state::<MediaStore>();
-        let entry = store
-            .get(&media_id)?
-            .filter(|m| !m.unavailable && m.project_ids.contains(&id))
-            .ok_or("vídeo indisponível")?;
+        let resolved = store.resolve(&media_id, Some(&id))?;
+        let entry = &resolved.entry;
         let extension = match kind.as_str() {
             "video" => entry.ext.as_str(),
             "srt" => "srt",
@@ -90,30 +79,22 @@ pub async fn export_project_file(
             destination.set_extension(extension);
         }
         destination_allowed(&base, &destination)?;
-        if let Some(text) = text {
-            file_output::atomic_write(&destination, |file| {
+        resolved.recheck()?;
+        let prepared = crate::media_output_guard::prepare(&base, &destination, |file| {
+            if let Some(text) = text {
                 file.write_all(text.as_bytes()).map_err(|e| e.to_string())
-            })?;
-        } else {
-            if entry.sha256.len() != 64
-                || !entry.sha256.chars().all(|c| c.is_ascii_hexdigit())
-                || crate::media_import::allowed_ext(&format!("video.{}", entry.ext)).is_none()
-            {
-                return Err("vídeo inválido".into());
-            }
-            let source = store
-                .files_dir()
-                .join(format!("{}.{}", entry.sha256, entry.ext));
-            file_output::atomic_write(&destination, |file| {
-                let mut input = std::fs::File::open(&source).map_err(|e| e.to_string())?;
+            } else {
+                let mut input = std::fs::File::open(&resolved.path).map_err(|e| e.to_string())?;
                 let size = input.metadata().map_err(|e| e.to_string())?.len();
                 let copied = std::io::copy(&mut input, file).map_err(|e| e.to_string())?;
                 if copied != size {
                     return Err("cópia incompleta".into());
                 }
                 Ok(())
-            })?;
-        }
+            }
+        })?;
+        resolved.recheck()?;
+        prepared.commit()?;
         Ok(true)
     })
     .await

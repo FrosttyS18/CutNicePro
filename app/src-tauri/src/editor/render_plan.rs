@@ -13,6 +13,51 @@ pub fn source_time(document: &Composition, item: &Item, frame: u64) -> f64 {
         .min(item.source_end_us as f64 / 1_000_000.0)
 }
 
+fn source_audio_pair(document: &Composition, video: &Item, audio: &Item) -> bool {
+    video.kind == ItemKind::Video
+        && audio.kind == ItemKind::Audio
+        && audio.follows_main
+        && video.asset_id == audio.asset_id
+        && video.group_id == audio.group_id
+        && video.start_frame == audio.start_frame
+        && video.duration_frames == audio.duration_frames
+        && video.source_start_us == audio.source_start_us
+        && video.source_end_us == audio.source_end_us
+        && document
+            .tracks
+            .iter()
+            .any(|track| track.id == video.track_id && track.kind == "visual")
+        && document
+            .tracks
+            .iter()
+            .any(|track| track.id == audio.track_id && track.kind == "audio")
+}
+
+fn source_audio_muted(document: &Composition, audio: &Item) -> bool {
+    let mut videos = document
+        .items
+        .iter()
+        .filter(|video| source_audio_pair(document, video, audio));
+    let Some(video) = videos.next() else {
+        return false;
+    };
+    if videos.next().is_some()
+        || !document
+            .tracks
+            .iter()
+            .any(|track| track.id == video.track_id && track.muted)
+    {
+        return false;
+    }
+    document
+        .items
+        .iter()
+        .filter(|candidate| source_audio_pair(document, video, candidate))
+        .take(2)
+        .count()
+        == 1
+}
+
 pub fn active(document: &Composition, frame: u64) -> Vec<&Item> {
     let mut result = Vec::new();
     for track in &document.tracks {
@@ -26,7 +71,8 @@ pub fn active(document: &Composition, frame: u64) -> Vec<&Item> {
         }) {
             if item.kind == ItemKind::Audio
                 && (track.muted
-                    || item.settings.get("muted").and_then(|value| value.as_bool()) == Some(true))
+                    || item.settings.get("muted").and_then(|value| value.as_bool()) == Some(true)
+                    || source_audio_muted(document, item))
             {
                 continue;
             }

@@ -1,12 +1,12 @@
 import { useState, type ReactNode } from "react";
 import { AppSelect } from "../AppSelect";
-import { editorAspectRatios, type ToolId } from "../upload/tools";
+import type { ToolId } from "../upload/tools";
 import { captionFonts, captionPresets, effectiveCaptionStyle, type CaptionStyle } from "../../lib/captions";
 import { DEFAULT_EFFECTS } from "../../lib/workspace";
 import type { EditorEffects, EditorSettings } from "../../lib/workspace-types";
-import { isSplitScreen } from "../../lib/split-screen";
 import type { SplitFramingSource } from "../../services/split-framing";
-import { SplitScreenControls } from "./SplitScreenControls";
+import { ReframePanel } from "./ReframePanel";
+import { StudioColorField as ColorField } from "./StudioColorField";
 import { ClosedCaptioningIcon } from "@phosphor-icons/react/dist/csr/ClosedCaptioning";
 import { CropIcon } from "@phosphor-icons/react/dist/csr/Crop";
 import { PaletteIcon } from "@phosphor-icons/react/dist/csr/Palette";
@@ -14,12 +14,12 @@ import { SpeakerHighIcon } from "@phosphor-icons/react/dist/csr/SpeakerHigh";
 import { BookmarkSimpleIcon } from "@phosphor-icons/react/dist/csr/BookmarkSimple";
 import { FolderOpenIcon } from "@phosphor-icons/react/dist/csr/FolderOpen";
 import { CheckSquareIcon } from "@phosphor-icons/react/dist/csr/CheckSquare";
-import { ArrowsInIcon } from "@phosphor-icons/react/dist/csr/ArrowsIn";
 import { ArrowCounterClockwiseIcon } from "@phosphor-icons/react/dist/csr/ArrowCounterClockwise";
 import { CaretDownIcon } from "@phosphor-icons/react/dist/csr/CaretDown";
 
 export type EditorPanel = "captions" | "reframe" | "audio" | "effects";
 interface Props {
+  contextKey?: string;
   panel: EditorPanel;
   settings: EditorSettings;
   onPanel: (panel: EditorPanel) => void;
@@ -47,18 +47,6 @@ function SwitchRow({ id, label, checked, onChange }: { id: string; label: ReactN
   );
 }
 
-function ColorField({ label, inputLabel, value, onChange }: { label: string; inputLabel: string; value: string; onChange: (value: string) => void }) {
-  return (
-    <div className="studio-field">
-      <span className="studio-field__label">{label}</span>
-      <div className="studio-color">
-        <input aria-label={inputLabel} type="color" value={value} onChange={(event) => onChange(event.target.value)} />
-        <span className="studio-color__value">{value.toUpperCase()}</span>
-      </div>
-    </div>
-  );
-}
-
 function RangeField({ label, value, min, max, step = 1, unit = "", onChange, inputLabel }:
   { label: string; value: number; min: number; max: number; step?: number; unit?: string; onChange: (value: number) => void; inputLabel: string }) {
   return (
@@ -69,12 +57,7 @@ function RangeField({ label, value, min, max, step = 1, unit = "", onChange, inp
   );
 }
 
-const RATIO_LABELS: Record<string, { ratio: string; name: string }> = {
-  "9:16": { ratio: "9:16", name: "Vertical" }, "1:1": { ratio: "1:1", name: "Quadrado" },
-  original: { ratio: "Src", name: "Original" }, "16:9": { ratio: "16:9", name: "Paisagem" }, "4:5": { ratio: "4:5", name: "Retrato" },
-};
-
-export function EditorInspector({ panel, settings, onPanel, onSettings, onApplyAll, onApplyMontage, applyAllUnavailableReason, source, sourceTime, reframeContent }: Props) {
+export function EditorInspector({ contextKey, panel, settings, onPanel, onSettings, onApplyAll, onApplyMontage, applyAllUnavailableReason, source, sourceTime, reframeContent }: Props) {
   const panels: { id: EditorPanel; label: string }[] = [
     { id: "captions", label: "Legendas" }, { id: "reframe", label: "Enquadrar" },
     { id: "audio", label: "Áudio" }, { id: "effects", label: "Efeitos" },
@@ -90,7 +73,6 @@ export function EditorInspector({ panel, settings, onPanel, onSettings, onApplyA
   const setEffect = (change: Partial<EditorEffects>) => onSettings({ effects: { ...effects, ...change } });
   const enabled = settings.captionModel > 0;
   const saveKey = "cnp-caption-style";
-  const split = settings.ratio === "9:16" && isSplitScreen(settings.splitScreen);
   return (
     <aside className="editor-inspector" aria-label="Ferramentas do editor">
       <nav className="studio-tabs" aria-label="Abas de edição">{panels.map((item) => {
@@ -223,50 +205,10 @@ export function EditorInspector({ panel, settings, onPanel, onSettings, onApplyA
             <button type="button" className="flow-button" disabled={!settings.text} onClick={() => onSettings({ text: "" })}>Remover texto</button>
           </section>
         </>
-        : panel === "reframe" ? <>
+        : panel === "reframe" ? <div className="reframe-tools">
           {reframeContent}
-          <section className="studio-section">
-            <h2>Enquadramento</h2>
-            <p>{split ? "Ajuste os dois enquadramentos nos controles abaixo." : "Arraste o vídeo na prévia para manter o assunto em foco."}</p>
-            <div className="studio-field">
-              <span className="studio-field__label">Proporção</span>
-              <div className="studio-toggle-group" role="group" aria-label="Proporção do vídeo">
-                {editorAspectRatios.map((ratio) => (
-                  <button type="button" key={ratio} className="studio-toggle" aria-pressed={settings.ratio === ratio}
-                    aria-label={RATIO_LABELS[ratio].name}
-                    onClick={() => onSettings(ratio === "9:16" ? { ratio } : { ratio, splitScreen: null })}>
-                    <span className="studio-toggle__value">{RATIO_LABELS[ratio].ratio}</span>
-                    <span className="studio-toggle__name">{RATIO_LABELS[ratio].name}</span>
-                  </button>
-                ))}
-              </div>
-            </div>
-            <SplitScreenControls settings={settings} source={source} sourceTime={sourceTime} onSettings={onSettings} />
-            {!split && <div className="studio-field">
-              <span className="studio-field__label">Ajuste</span>
-              <div className="studio-toggle-group" role="group" aria-label="Ajuste do vídeo">
-                <button type="button" className="studio-toggle studio-toggle--wide" aria-pressed={settings.fit === "cover"}
-                  onClick={() => onSettings({ fit: "cover" })}>Preencher quadro</button>
-                <button type="button" className="studio-toggle studio-toggle--wide" aria-pressed={settings.fit === "contain"}
-                  onClick={() => onSettings({ fit: "contain" })}>Vídeo completo</button>
-              </div>
-            </div>}
-            <ColorField label="Fundo" inputLabel="Cor de fundo" value={settings.background} onChange={background => onSettings({ background })} />
-          </section>
-          {!split && <><hr className="studio-separator" />
-          <section className="studio-section">
-            <h2>Posição</h2>
-            <RangeField label="Zoom" inputLabel="Zoom" value={settings.zoom ?? 1} min={1} max={3} step={0.01} unit="×"
-              onChange={(zoom) => onSettings({ zoom })} />
-            <RangeField label="Posição horizontal" inputLabel="Posição horizontal" value={settings.focalPoint?.x ?? 50} min={0} max={100} unit="%"
-              onChange={(x) => onSettings({ focalPoint: { x, y: settings.focalPoint?.y ?? 50 } })} />
-            <RangeField label="Posição vertical" inputLabel="Posição vertical" value={settings.focalPoint?.y ?? 50} min={0} max={100} unit="%"
-              onChange={(y) => onSettings({ focalPoint: { x: settings.focalPoint?.x ?? 50, y } })} />
-            <button type="button" className="flow-button" onClick={() => onSettings({ focalPoint: { x: 50, y: 50 }, zoom: 1 })}>
-              <ArrowsInIcon size={16} aria-hidden="true"/>Centralizar assunto
-            </button>
-          </section></>}
-        </>
+          <ReframePanel key={contextKey} settings={settings} onSettings={onSettings} source={source} sourceTime={sourceTime}/>
+        </div>
         : panel === "audio" ? <>
           <section className="studio-section">
             <h2>Áudio</h2>

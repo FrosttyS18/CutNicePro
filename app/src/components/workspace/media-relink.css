@@ -1,0 +1,7 @@
+.media-relink { display:grid; gap:8px; min-width:0; }
+.media-relink__actions { display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
+.media-relink p { margin:0; overflow-wrap:anywhere; }
+.media-relink__progress { width:100%; height:4px; appearance:none; border:0; border-radius:4px; overflow:hidden; background:var(--line); }
+.media-relink__progress::-webkit-progress-bar { background:var(--line); }
+.media-relink__progress::-webkit-progress-value { background:var(--sh-accent); }
+.media-relink__progress::-moz-progress-bar { background:var(--sh-accent); }

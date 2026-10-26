@@ -398,6 +398,11 @@ button {
   gap: var(--cnp-space-3);
 }
 
+.modal .btn--primary { background: #ffffff; color: #0a0a0a; border: 0; }
+.modal .btn--primary:hover:not(:disabled) { background: #e5e5e5; color: #0a0a0a; }
+.modal .btn--ghost { background: #202020; color: #b3b3b3; border: 0; }
+.modal .btn--ghost:hover:not(:disabled) { background: #2b2b2b; color: #ffffff; }
+
 /* ── Acessibilidade de foco (regra permanente, atualização 15) ──────────────
    Foco visível é para CONTROLE POR TECLADO; clique de mouse NUNCA desenha anel
    de foco. O modality tracker (data-input-modality) distingue os dois. */

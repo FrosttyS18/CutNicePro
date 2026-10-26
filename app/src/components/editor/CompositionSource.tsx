@@ -7,8 +7,8 @@ import { formatMediaTime } from "../../lib/workspace";
 import { frameToSeconds, secondsToFrame } from "../../lib/composition-time";
 import type { CompositionAsset, FrameRate } from "../../lib/composition-types";
 
-interface Props { asset:CompositionAsset; url:string|null; fps?:FrameRate; onInsert:(start:number,end:number)=>void; onActivate:()=>void }
-export function CompositionSource({asset,url,fps={numerator:30,denominator:1},onInsert,onActivate}:Props){
+interface Props { asset:CompositionAsset; url:string|null; fps?:FrameRate; onInsert:(start:number,end:number)=>void; onActivate:()=>void; insertLabel?:string }
+export function CompositionSource({asset,url,fps={numerator:30,denominator:1},onInsert,onActivate,insertLabel="Adicionar no cursor"}:Props){
   const ref=useRef<HTMLVideoElement>(null);
   const duration=asset.durationUs/1e6;
   const [time,setTime]=useState(0);
@@ -45,7 +45,7 @@ export function CompositionSource({asset,url,fps={numerator:30,denominator:1},on
       <div className="composition-source__marks"><button type="button" className="flow-button" onClick={markStart}>Início (I) <output>{formatMediaTime(start)}</output></button><button type="button" className="flow-button" onClick={markEnd}>Fim (O) <output>{formatMediaTime(end)}</output></button></div>
     </>}
     {error && <p role="alert" className="upload-message--error">{error}</p>}
-    <EditorAction label="Adicionar no cursor" icon={<PlusIcon size={16}/>} disabled={!url || asset.kind!=="image" && end<=start} onClick={()=>{ref.current?.pause();onInsert(start,end);}}/>
+    <EditorAction label={insertLabel} icon={<PlusIcon size={16}/>} disabled={!url || asset.kind!=="image" && end<=start} onClick={()=>{ref.current?.pause();onInsert(start,end);}}/>
     <p className="flow-muted">Os pontos da fonte não alteram a montagem até você adicionar.</p>
   </section>;
 }

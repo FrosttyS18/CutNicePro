@@ -12,22 +12,27 @@
 .clip-project-group > header { display: flex; flex-wrap: wrap; align-items: baseline; gap: 12px; margin-bottom: 18px; }
 .clip-project-group > header h3 { min-width: 0; overflow-wrap: anywhere; margin: 0; font-size: 16px; font-weight: 500; }
 .clip-project-group > header > span { color: #999; font-size: 12px; }
+.clip-project-group__toggle { display: inline-flex; align-items: center; justify-content: center; flex: none; width: 30px; height: 30px; padding: 0; border: 0; border-radius: 6px; background: transparent; color: #eee; cursor: pointer; align-self: center; }
+.clip-project-group__toggle:hover { background: #292929; }
+.clip-project-group__toggle[aria-expanded="false"] svg { transform: rotate(-90deg); }
+.clip-gallery[hidden] { display: none; }
 .clip-card__duration { position: absolute; right: 8px; bottom: 8px; padding: 3px 7px; background: #101010dd; border-radius: 5px; font-size: 11px; }
 .clip-card__caption { position: absolute; left: 5%; right: 5%; bottom: 17%; container-type: inline-size; text-align: center; pointer-events: none; }
 .clip-card__caption[data-position="top"] { bottom: auto; top: 10%; }
 .clip-card__caption[data-position="middle"] { bottom: auto; top: 50%; transform: translateY(-50%); }
 .clip-card__play { position: absolute; inset: 0; display: grid; place-content: center; opacity: 0; background: #0003; transition: opacity 120ms; }
 .clip-card__open:hover .clip-card__play, .clip-card__open:focus-visible .clip-card__play { opacity: 1; }
-.clip-card__meta { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin: 12px 0 7px; }
+.clip-card__meta { display: flex; justify-content: space-between; align-items: center; gap: 8px; min-height: 38px; margin: 12px 0 7px; }
 .clip-card__meta > strong { font-size: 25px; color: var(--sh-accent); }
 .clip-card__meta small { font-size: 11px; color: #999; margin-left: 3px; font-weight: 400; }
 .clip-card__meta > span, .clip-card__project { font-size: 11px; color: #999; }
-.clip-card__title { padding: 0; background: none; border: 0; color: #f2f2f2; font: inherit; font-size: 13px; line-height: 1.65; text-align: left; cursor: pointer; }
+.clip-card__title { width: 100%; height: 3.3em; padding: 0; background: none; border: 0; color: #f2f2f2; font: inherit; font-size: 13px; line-height: 1.65; text-align: left; cursor: pointer; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; overflow: hidden; overflow-wrap: anywhere; }
+.clip-card__title-tooltip { overflow-wrap: anywhere; }
 /* atualização 19 — ações diretas no card (Editar/Baixar/Excluir): vizinhança
    de botões com gap mínimo de 8px (proibição de layout 5); sem contornos
    extras em caixa (proibição 1) — separação por espaçamento */
 .clip-card__actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
-.clip-card__actions .flow-button { font-size: 11px; padding: 6px 10px; }
+.clip-card__actions .editor-action__button--compact { width: 34px; min-height: 34px; padding: 8px; }
 .clip-card[data-deleted="true"] .clip-card__open { opacity: .45; }
 .clip-library p[role="status"] .flow-button { margin-left: 8px; padding: 4px 10px; font-size: 11px; }
 /* upd 20 — executor de download com problema declarado (mídia/falha/bloqueio) */

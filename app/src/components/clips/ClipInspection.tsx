@@ -86,8 +86,8 @@ function LegacyClipInspection({ entry,onClose,onEdit,onChanged }: Props) {
           error={ownAnalysis && controller.job?.state === "failed" ? clipMessage(controller.job.error) : null} onSeek={seek}
           onAnalyze={() => void controller.analyze(clip.id).then(() => onChanged?.())}/>
         <div className="clip-inspection__actions"><button type="button" className="upload-primary" disabled={controller.busy} onClick={() => onEdit(entry.project.id,clip)}>Editar clipe</button>
-          <button type="button" className="flow-button" disabled={controller.busy} onClick={() => void controller.exportVideo(settings,clip.id)}>Baixar vídeo</button>
-          <button type="button" className="flow-button" disabled={controller.busy} onClick={() => void remove()}>Excluir clipe</button>
+          <button type="button" className="flow-button dialog-action--secondary" disabled={controller.busy} onClick={() => void controller.exportVideo(settings,clip.id)}>Baixar vídeo</button>
+          <button type="button" className="flow-button dialog-action--danger" disabled={controller.busy} onClick={() => void remove()}>Excluir clipe</button>
           {(error || controller.error || media.error) && <p role="alert">{error ?? controller.error ?? media.error}</p>}{controller.notice && <p role="status">{controller.notice}</p>}
         </div>
       </div>

@@ -4,6 +4,7 @@ import { useCompositionMedia } from "../hooks/useCompositionMedia";
 import type { CompositionAsset } from "../lib/composition-types";
 import type { MediaEntryDto } from "../lib/ipc";
 import { reactHost } from "./react-host";
+import { notifyMediaRelinked } from "../services/media-relink-events";
 
 vi.mock("../lib/ipc",()=>({getMedia:vi.fn(),mediaUrl:vi.fn(()=>"http://cnplocal.localhost/available.mp4")}));
 const ipc=await import("../lib/ipc");
@@ -29,7 +30,7 @@ it("não cria URL para mídia marcada indisponível e orienta reconexão",async(
 it("resolve mídia disponível pelo contrato de URL existente",async()=>{
   vi.mocked(ipc.getMedia).mockResolvedValue(available);
   view=await reactHost(<Probe/>);
-  expect(entries.asset).toEqual({url:"http://cnplocal.localhost/available.mp4",error:null});
+  expect(entries.asset).toEqual({url:"http://cnplocal.localhost/available.mp4",error:null,entry:available});
   expect(ipc.mediaUrl).toHaveBeenCalledWith(available);
 });
 it("resposta antiga não substitui o erro da nova mídia após trocar a fonte",async()=>{
@@ -45,4 +46,28 @@ it("preserva a URL de sessão já fornecida sem nova consulta",async()=>{
   view=await reactHost(<Probe sourceUrl="blob:session"/>);
   expect(entries.asset).toEqual({url:"blob:session",error:null});
   expect(ipc.getMedia).not.toHaveBeenCalled();expect(ipc.mediaUrl).not.toHaveBeenCalled();
+});
+it("recarrega o original reconectado sem manter o erro anterior",async()=>{
+  vi.mocked(ipc.getMedia).mockResolvedValueOnce({...available,unavailable:true}).mockResolvedValue(available);
+  view=await reactHost(<Probe/>);
+  expect(entries.asset.url).toBeNull();
+  await act(async()=>{notifyMediaRelinked("media");});
+  expect(entries.asset.error).toBeNull();
+  expect(entries.asset.url).toContain("available.mp4");
+  expect(ipc.getMedia).toHaveBeenCalledTimes(2);
+});
+it("reconexão de outra mídia não refaz a resolução da seleção atual",async()=>{
+  vi.mocked(ipc.getMedia).mockResolvedValue(available);
+  view=await reactHost(<Probe/>);
+  await act(async()=>{notifyMediaRelinked("other");});
+  expect(ipc.getMedia).toHaveBeenCalledTimes(1);
+});
+it("reconexão substitui a URL de sessão e não ressuscita listeners desmontados",async()=>{
+  vi.mocked(ipc.getMedia).mockResolvedValue(available);
+  view=await reactHost(<Probe sourceUrl="http://old-source.mp4"/>);
+  await act(async()=>{notifyMediaRelinked("media");});
+  expect(entries.asset.url).toContain("available.mp4");
+  await view.close();view=undefined;
+  await act(async()=>{notifyMediaRelinked("media");});
+  expect(ipc.getMedia).toHaveBeenCalledTimes(1);
 });

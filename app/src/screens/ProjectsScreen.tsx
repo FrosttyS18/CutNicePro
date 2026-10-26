@@ -10,6 +10,7 @@ import { ClipGallery } from "../components/clips/ClipGallery";
 import { ClipInspection } from "../components/clips/ClipInspection";
 import { ClipDownload } from "../components/clips/ClipDownload";
 import { deleteClip, restoreClip } from "../lib/clips";
+import { clipRestoreFailure, purgeClip } from "../lib/clip-trash";
 import type { LibraryClip } from "../lib/clip-library";
 import type { Clip } from "../lib/clips";
 import { updateEditorClip } from "../lib/composition-persistence";
@@ -47,14 +48,14 @@ export function ProjectsScreen({ projects, loading, error, onRetry, onCreate, on
 
   const tabs = [
     { id: "all", label: `Todos (${projects.length})` },
-    { id: "clips", label: library.error ? "Clipes" : library.loading ? "Clipes (…)" : `Clipes (${library.entries.filter(entry=>entry.clip.review !== "rejected" && !entry.clip.deleted).length})` },
+    { id: "clips", label: library.error ? "Clipes" : library.loading ? "Clipes (…)" : `Clipes (${library.entries.filter(entry=>!entry.clip.deleted).length})` },
   ];
 
   async function exclude(entry: LibraryClip) {
     try {
       if (entry.composition) await updateEditorClip(entry.project.id, entry.clip.id, { deleted: true });
       else await deleteClip(entry.project.id,entry.mediaId,entry.clip.id);
-      setClipNotice("Clipe excluído."); setUndoDelete({ entry }); library.reload();
+      setClipNotice("Clipe movido para a lixeira por 7 dias."); setUndoDelete({ entry }); library.reload();
     } catch { setClipNotice("Não foi possível excluir o clipe. Tente novamente."); }
   }
   async function undo() {
@@ -64,7 +65,7 @@ export function ProjectsScreen({ projects, loading, error, onRetry, onCreate, on
       if (entry.composition) await updateEditorClip(entry.project.id, entry.clip.id, { deleted: false });
       else await restoreClip(entry.project.id,entry.mediaId,entry.clip.id);
       setClipNotice("Clipe restaurado."); setUndoDelete(null); library.reload();
-    } catch { setClipNotice("Não foi possível restaurar o clipe. Tente novamente."); }
+    } catch(error) { setClipNotice(clipRestoreFailure(error)); }
   }
 
   return (
@@ -84,11 +85,12 @@ export function ProjectsScreen({ projects, loading, error, onRetry, onCreate, on
       )}
 
       {tab === "clips" ? (
-        <ClipGallery entries={library.entries} loading={library.loading} error={library.error} notice={clipNotice ?? library.partial} onRetry={library.reload} onInspect={setInspecting} showProject
+        <ClipGallery active={active&&tab==="clips"} entries={library.entries} loading={library.loading} error={library.error} notice={clipNotice ?? library.partial} onRetry={library.reload} onInspect={setInspecting} showProject
           onEdit={entry => { rememberScroll(); if (onEditClip) onEditClip(entry.project.id,entry.clip,entry.mediaId); else onOpen(entry.project.id); }}
           onDownload={entry => setDownloading(entry)}
+          onPurge={async entry=>{await purgeClip(entry.project.id,entry.mediaId,entry.clip.id);setUndoDelete(null);setClipNotice("Clipe excluído permanentemente.");library.reload();}}
           onDelete={entry => void exclude(entry)}
-          onRestore={entry => { void (async () => { try { if (entry.composition) await updateEditorClip(entry.project.id, entry.clip.id, { deleted: false }); else await restoreClip(entry.project.id,entry.mediaId,entry.clip.id); setClipNotice("Clipe restaurado."); library.reload(); } catch { setClipNotice("Não foi possível restaurar o clipe. Tente novamente."); } })(); }}
+          onRestore={entry => { void (async () => { try { if (entry.composition) await updateEditorClip(entry.project.id, entry.clip.id, { deleted: false }); else await restoreClip(entry.project.id,entry.mediaId,entry.clip.id); setClipNotice("Clipe restaurado."); library.reload(); } catch(error) { setClipNotice(clipRestoreFailure(error)); } })(); }}
           undoDelete={undoDelete ? { onUndo: () => void undo() } : null}/>
       ) : (
         <div className="card-grid">

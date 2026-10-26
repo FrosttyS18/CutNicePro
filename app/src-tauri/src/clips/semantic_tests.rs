@@ -88,6 +88,7 @@ fn changed_transcript_invalidates_analysis_and_review_without_changing_clip_form
             face_framing: None,
             created_at_ms: None,
             deleted: None,
+            deleted_at_ms: None,
             engine: None,
         }],
     };

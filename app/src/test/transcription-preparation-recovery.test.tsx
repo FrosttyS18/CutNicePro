@@ -5,10 +5,12 @@ import { useTranscription } from "../hooks/useTranscription";
 import { PreparationRecoveryNotice } from "../components/workspace/PreparationRecoveryNotice";
 import { beginPreparation, completePreparation, readPreparation, setPreparationOutcome } from "../services/project-preparation-state";
 import { reactHost } from "./react-host";
+import { nativeMediaFixture } from "./fixtures/native-media-entry";
 
 vi.mock("@tauri-apps/api/core", () => ({ invoke: vi.fn() }));
 vi.mock("@tauri-apps/api/event", () => ({ listen: vi.fn(async () => () => {}) }));
 let mounted: Awaited<ReturnType<typeof reactHost>> | undefined;
+const media = { ...nativeMediaFixture.referenceAvailable, mediaId: "m", projectIds: ["p"] };
 afterEach(async () => { await mounted?.close(); mounted = undefined; vi.clearAllMocks(); });
 
 it("aviso persiste na reabertura, some ao concluir e não reinicia ASR", async () => {
@@ -28,7 +30,7 @@ it("aviso persiste na reabertura, some ao concluir e não reinicia ASR", async (
 
 it("resultado de outra mídia mantém o registro do retry como falha recuperável", async () => {
   vi.mocked(invoke).mockImplementation(async command => {
-    if (command === "get_media") return { unavailable: false, analysis: { hasAudio: true } };
+    if (command === "get_media") return media;
     if (command === "transcription_status") return { available: true, model: "turbo", error: null };
     if (command === "transcribe_project") return { version: 1, mediaId: "other", language: "pt", model: "turbo", segments: [] };
     return null;
@@ -46,7 +48,7 @@ it("resultado de outra mídia mantém o registro do retry como falha recuperáve
 it("retry correspondente limpa registro só depois de receber a transcrição persistida", async () => {
   let finish!: (record: unknown) => void;
   vi.mocked(invoke).mockImplementation(async command => {
-    if (command === "get_media") return { unavailable: false, analysis: { hasAudio: true } };
+    if (command === "get_media") return media;
     if (command === "transcription_status") return { available: true, model: "turbo", error: null };
     if (command === "transcribe_project") return new Promise(resolve => { finish = resolve; });
     return null;
