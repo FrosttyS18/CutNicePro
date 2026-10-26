@@ -9,6 +9,11 @@ export function useClipLibrary(projects: ProjectMeta[]) {
   const [error,setError] = useState<string | null>(null);
   const [partial,setPartial] = useState<string | null>(null);
   const [revision,setRevision] = useState(0);
+  useEffect(() => {
+    const reload = () => setRevision(value => value + 1);
+    window.addEventListener("cnp:editor-saved", reload);
+    return () => window.removeEventListener("cnp:editor-saved", reload);
+  }, []);
   const [request,setRequest] = useState({projects,revision});
   if (request.projects !== projects || request.revision !== revision) {
     setRequest({projects,revision});

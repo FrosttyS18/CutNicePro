@@ -21,7 +21,7 @@ function reads(){vi.mocked(invoke).mockImplementation(async command=>command==="
 describe("fluxo de clipes com efeitos e cliques do React",()=>{
   it("abrir corte salvo não inicia geração nem análise",async()=>{
     reads();mounted=await reactHost(<ClipInspection entry={entry} onClose={()=>undefined} onEdit={()=>undefined}/>);
-    expect(vi.mocked(invoke).mock.calls.map(([name])=>name)).toEqual(["get_clips","clips_job"]);
+    expect(vi.mocked(invoke).mock.calls.map(([name])=>name)).toEqual(["get_clips","load_editor_project","clips_job"]);
     expect(mounted.host.textContent).toContain("Analisar trecho");
   });
   it("exclui (recuperável), informa e fecha somente depois de persistir",async()=>{
@@ -62,7 +62,7 @@ describe("fluxo de clipes com efeitos e cliques do React",()=>{
     {name:"geração em andamento é restaurada ao voltar ao projeto",operation:"generate" as const,state:"running" as const,visible:true},
     {name:"falha antiga não reaparece ao abrir cortes salvos",operation:"generate" as const,state:"failed" as const,visible:false},
   ])("$name",async({operation,state,visible})=>{
-    const controller={collection:null,job:{jobId:"j",projectId:"p",state,stage:"analyzing" as const,progress:0,error:null},operation,
+    const controller={collection:null,snapshots:{},job:{jobId:"j",projectId:"p",state,stage:"analyzing" as const,progress:0,error:null},operation,
       ownedJob:false,busy:state === "running",loading:false,error:null,notice:null,generate:vi.fn(async()=>({status:"completed"} as const)),analyze:vi.fn(async()=>({status:"completed"} as const)),exportVideo:vi.fn(async()=>({status:"completed"} as const)),review:vi.fn(async()=>true),remove:vi.fn(async()=>true),restore:vi.fn(async()=>true),cancel:vi.fn(async()=>true),reload:vi.fn()};
     mounted=await reactHost(<ClipTools controller={controller} settings={defaultEditorSettings()} ready disabled={false} onSave={async()=>true} onShowClips={()=>undefined} onFullVideo={()=>undefined}/>);
     expect(Boolean(mounted.host.querySelector("dialog[open]"))).toBe(visible);
@@ -71,7 +71,7 @@ describe("fluxo de clipes com efeitos e cliques do React",()=>{
 
 describe("geração incremental e mensagens do diálogo (atualização 19)",()=>{
   function controller(collection:import("../lib/clips").ClipCollection|null){
-    return {collection,job:null,operation:undefined as never,ownedJob:false,busy:false,loading:false,error:null,notice:null,
+    return {collection,snapshots:{},job:null,operation:undefined as never,ownedJob:false,busy:false,loading:false,error:null,notice:null,
       generate:vi.fn(async()=>({status:"completed"} as const)),analyze:vi.fn(async()=>({status:"completed"} as const)),exportVideo:vi.fn(async()=>({status:"completed"} as const)),review:vi.fn(async()=>true),remove:vi.fn(async()=>true),restore:vi.fn(async()=>true),cancel:vi.fn(async()=>true),reload:vi.fn()};
   }
   /** O botão da barra E o de confirmação têm o mesmo rótulo ("Gerar cortes"):

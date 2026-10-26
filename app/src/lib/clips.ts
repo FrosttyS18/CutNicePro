@@ -14,7 +14,10 @@ export interface ClipAnalysis { title: string; summary: string; criteria: {label
 export type ClipFit = "cover" | "contain";
 export interface FaceFraming { status: "stable" | "ambiguous" | "noFaces" | "unavailable"; samples: number; x?: number; y?: number; confidence?: number }
 export interface MultimodalEvidence { frames: number[]; visual: string; audioEvents: string[]; boundaryAdjustments: [number, number]; backend: string; framing?: { cx: number; cy: number; source: string } }
-export interface Clip { id: string; start: number; end: number; title: string; score: number; reasons: string[]; review: ClipReview; format?: AspectRatio; fit?: ClipFit; analysis?: ClipAnalysis; analysisError?: string;
+export interface Clip { id: string; start: number; end: number; title: string; score: number | null; reasons: string[]; review: ClipReview; format?: AspectRatio; fit?: ClipFit; analysis?: ClipAnalysis; analysisError?: string;
+  origin?: "manual";
+  manuallyEdited?: boolean;
+  originalScore?: number;
   faceFraming?: FaceFraming;
   /** Evidências multimodais realmente recebidas (M3): frames/áudio com timestamps. */
   multimodal?: MultimodalEvidence;
@@ -41,7 +44,7 @@ export function parseClips(value: unknown): ClipCollection {
   if (v.version !== 1 || typeof v.mediaId !== "string" || typeof v.transcriptHash !== "string" || !Array.isArray(v.clips)
     || !v.clips.every(c => c && typeof c.id === "string" && /^[a-f\d]{64}$/i.test(c.id) && !ids.has(c.id) && Boolean(ids.add(c.id))
       && Number.isFinite(c.start) && Number.isFinite(c.end) && c.start >= 0 && c.end > c.start && typeof c.title === "string" && c.title.length > 0
-      && Number.isInteger(c.score) && c.score >= 0 && c.score <= 100 && Array.isArray(c.reasons) && c.reasons.every(r => typeof r === "string")
+      && typeof c.score === "number" && Number.isInteger(c.score) && c.score >= 0 && c.score <= 100 && Array.isArray(c.reasons) && c.reasons.every(r => typeof r === "string")
       && (c.format === undefined || ["16:9","9:16","1:1","4:5"].includes(c.format))
       && (c.fit === undefined || ["cover","contain"].includes(c.fit))
       && (c.faceFraming === undefined || validFaceFraming(c.faceFraming))

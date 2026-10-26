@@ -216,3 +216,20 @@ e ASR-BENCHMARK-2026-10-19.md. Compartilhamento continua adiado.
 03L (2026-10-19): JRN-003/006/007/008/009/010; FR-008/009/010/011/012/013/014/016/017/022; BR-019..023/026..031, refinadas por BR-03L-01..05 e AC-03L-01..06 em SOURCE-CLIP-ISOLATION-SPEC.md. VideoPreview original → ProjectOverview; clip-workspace/workspace-store → isolamento por corte; Options.format → Clip.format/ID → ClipFormatPicker/ClipPoster/inspeção/editor/render. clip-transcript/ClipTranscript → parágrafos com seek por tempos existentes. semantic/analysis_types → geração/analyze_clip → ClipDetails; gate, esquema JSON, validação de citações e invalidação de aprovação/análise após mudança do texto. Testes novos source-clip-isolation (9), semantic_tests (3 contratos + 1 motor real), ranking (1), refinement_contract (1 sobre seis saídas ASR reais). Total único da entrega: 229 aprovados (145 frontend/84 Rust); sem execução da UI Tauri ou aprovação estética. ASR permanece PARTIAL, sem alegar WER contra referência humana ou qualidade de 98%.
 
 03M (2026-10-19): JRN-003/006/007/008/009/010; FR-008..014/016/022; BR-019..023/026..031, com regras locais BR-03M-01..05 e AC-03M-01..08 em CLIP-PIPELINE-RELIABILITY-SPEC.md. ClipInspection/useClips/ClipTools → abertura/revisão e posse do job → sete casos clip-flow; JobSnapshot.operation → restauração explícita da operação; selection → cobertura semântica; evidence → citações e IDs; generation → tolerância a falha individual; text_engine → Vulkan/CPU sequenciais; scene_regions → decodificação delimitada; checkpoints/chunk_text/runner → retomada e tempos absolutos; encoder/pipeline → NVENC/libx264. 152 casos frontend e 95 nativos únicos aprovados; dois testes históricos ignorados não reexecutados. Relatório de limites/aceites: CLIP-PIPELINE-RELIABILITY-REVIEW.md; estética PENDING HUMAN APPROVAL.
+
+## Rastreabilidade — editor básico completo (2026-10-26)
+
+Plano aprovado: docs/engineering/EDITOR-BASIC-IMPLEMENTATION-PLAN.md. Estado IN PROGRESS; critérios abaixo não representam PASS executado.
+
+| Aceite | Regra | Jornada e evidência exigida |
+|---|---|---|
+| AC-EDITOR-01 | BR-EDITOR-01 | JRN-009: editar sem autosave, Salvar, reabrir exatamente; falha mantém rascunho; recuperar/descartar sem sobrescrita. |
+| AC-EDITOR-02 | BR-EDITOR-02 | JRN-009: trim além do corte da IA, dividir/copiar/duplicar/reordenar/inserir vídeo/imagem/áudio; prévia e fonte distintas. |
+| AC-EDITOR-02, refinamento 2026-10-26 | BR-EDITOR-02 | JRN-009: painéis modulares, biblioteca de miniaturas, Fonte/Montagem alternadas na mesma área; áudio original integrado por padrão e pausa sincronizada durante carregamento/busca. Testes composition-editor-layout, composition-timeline-layout, composition-stage-lifecycle, composition-stage-ready, composition-buffering e composition-source-strict; aceite normal/visual permanece humano. |
+| AC-EDITOR-02/03, feedback manual seguinte | BR-EDITOR-02/03 | JRN-009: snap ao religar ímã, largura contida, Ctrl+roda, tag CC vinculada, seleção de uma camada e Q/W no cursor. Testes composition-screen, composition-timeline-viewport, composition-item-links, composition-timeline-caption-fold, composition-trim-playhead e composition-commands-trim; sem inferir aceite visual dos testes. |
+| AC-EDITOR-03 | BR-EDITOR-03 | JRN-009: remoção interna com/sem ripple; sincronismo, interseções, fixos, bloqueados, Undo/Redo e um commit por gesto. |
+| AC-EDITOR-04 | BR-EDITOR-04 | JRN-008/009: mesmo clipe atualizado sem ranking; novo manual no projeto correto; biblioteca atualiza duração/miniatura sem trocar IDs. |
+| AC-EDITOR-05 | BR-EDITOR-05 | JRN-003/004/007: nome→importação→ASR→visão geral; erro/cancelamento/não há fala; chegada de ASR não substitui rascunho. |
+| AC-EDITOR-06 | BR-EDITOR-06 | JRN-010: botão real→destino→render da revisão salva→MP4 equivalente; cancelamento/falha/sem espaço sem saída falsa. |
+
+Desempenho transversal: vídeo real de 796.580.866 bytes/1080p59,94; primeiro envio/reabertura, 200 navegações e dez trocas; p95 cursor≤50ms/frame preparado≤250ms. Medições reais pendentes; testes de unidade não comprovam esses limites. Aprovação visual exclusiva do mantenedor.

@@ -1,0 +1,37 @@
+{
+  "status": "PARTIAL",
+  "goal": "editor-basico-2026-10-26",
+  "head": "ec38a8530835baa6d25779d2dd4e0a4162f64ea5",
+  "branch": "codex/editor-basico-20261026",
+  "frontend": { "files": 113, "passed": 644, "failed": 0 },
+  "native": { "passed": 289, "failed": 0, "ignored": 33 },
+  "lint": "PASS, zero avisos",
+  "buildFrontend": "PASS, tsc e Vite sem avisos",
+  "buildNative": "PASS, target padrao",
+  "nativeExecutable": "C:\\CutNicePro\\app\\src-tauri\\target\\debug\\cutnicepro.exe",
+  "nativeExecutableSizeBytes": 26190336,
+  "nativeExecutableModifiedAtEnvironment": "2026-10-26 09:05:58",
+  "graphifyIndexedCommit": "df1186b94d0362af6815397e7cd30efee8e1be3e",
+  "graphifyCoverage": "Indice remoto defasado, complementado pela fonte e diff locais",
+  "evidence": ["m5-shared-media-clock.log", "m5-stress-embedded-audio.log", "m2-timeline-toolbar-compact.log", "m6-arrange-trim-domain.log", "m6-trim-origin-recovery.log"],
+  "controlledChecks": {
+    "sourceAndStageStrictMode": "PASS",
+    "sharedBufferingClock": "PASS",
+    "sourceAudioEmbedded": "PASS",
+    "spatialDragWithoutCopies": "PASS",
+    "overlayDuplicatePaste": "PASS",
+    "trimLeftAndOriginRecovery": "PASS",
+    "captionBatchExplicitSaveUndoRecovery": "PASS"
+  },
+  "pending": [
+    "Teste da jornada completa na instancia normal pelo mantenedor",
+    "Primeiro envio e reabertura do video de 797 MB no WebView",
+    "p95 de cursor e apresentacao, RSS e VRAM reais",
+    "Compatibilidade WebView de GET grande sem Range",
+    "Aceite visual e de uso pelo mantenedor"
+  ],
+  "userDataMutationsByAgent": false,
+  "commitsCreated": 0,
+  "pushExecuted": false,
+  "goalComplete": false
+}

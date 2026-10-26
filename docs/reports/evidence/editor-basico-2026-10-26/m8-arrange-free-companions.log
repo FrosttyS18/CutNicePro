@@ -1,0 +1,14 @@
+
+ RUN  v2.1.9 C:/CutNicePro/app
+
+ ✓ src/test/composition-arrange.test.ts (10 tests) 17ms
+ ✓ src/test/composition-playback.test.ts (10 tests) 9ms
+ ✓ src/test/composition-arrange-companions.test.ts (6 tests) 20ms
+ ✓ src/test/composition-links.test.ts (4 tests) 25ms
+ ✓ src/test/composition-spatial-gesture.test.tsx (3 tests) 545ms
+
+ Test Files  5 passed (5)
+      Tests  33 passed (33)
+   Start at  10:02:20
+   Duration  2.42s (transform 490ms, setup 0ms, collect 2.03s, tests 616ms, environment 1ms, prepare 1.23s)
+

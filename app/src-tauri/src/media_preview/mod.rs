@@ -42,6 +42,7 @@ fn generate(
     sha: &str,
     duration: f64,
     has_audio: bool,
+    has_video: bool,
     jobs: &PreviewJobs,
 ) -> Result<Preview, String> {
     let _serial = jobs.serial.lock().map_err(|_| "prévia indisponível")?;
@@ -52,7 +53,7 @@ fn generate(
     if let Ok(json) = std::fs::read(&cache) {
         if let Ok(data) = serde_json::from_slice::<Preview>(&json) {
             if data.version == 2
-                && data.frames.len() == 24
+                && data.frames.len() == if has_video { 24 } else { 0 }
                 && (!has_audio || !data.peaks.is_empty())
             {
                 return Ok(data);
@@ -70,7 +71,7 @@ fn generate(
     let scratch = Scratch(root.join(uuid::Uuid::new_v4().to_string()));
     std::fs::create_dir_all(&scratch.0).map_err(|e| e.to_string())?;
     let mut frames = Vec::new();
-    for i in 0..24 {
+    for i in 0..if has_video { 24 } else { 0 } {
         let image = scratch.0.join(format!("{i}.jpg"));
         let cmd = ffmpeg::thumbnail(&ffmpeg, media, &image, i, 24, duration);
         jobs.control.run(cmd, &scratch.0.join("preview.log"))?;
@@ -84,10 +85,13 @@ fn generate(
         let pcm = scratch.0.join("audio.pcm");
         let cmd = ffmpeg::audio(&ffmpeg, media, &pcm);
         jobs.control.run(cmd, &scratch.0.join("audio.log"))?;
-        analysis::peaks(
-            &std::fs::read(pcm).map_err(|e| e.to_string())?,
+        let input = std::fs::File::open(pcm).map_err(|e| e.to_string())?;
+        let bytes = input.metadata().map_err(|e| e.to_string())?.len();
+        analysis::peaks_reader(
+            input,
+            bytes,
             (duration * 120.0).ceil().min(300_000.0) as usize,
-        )
+        )?
     } else {
         vec![]
     };
@@ -127,6 +131,7 @@ pub async fn timeline_preview(app: AppHandle, media_id: String) -> Result<Previe
         return Err("Duração do vídeo inválida.".into());
     }
     let has_audio = analysis.has_audio;
+    let has_video = !analysis.video_codec.is_empty();
     let base = crate::app_data_base(&app)?;
     let path = app
         .state::<MediaStore>()
@@ -134,8 +139,101 @@ pub async fn timeline_preview(app: AppHandle, media_id: String) -> Result<Previe
         .join(format!("{}.{}", entry.sha256, entry.ext));
     let jobs = app.state::<Arc<PreviewJobs>>().inner().clone();
     tauri::async_runtime::spawn_blocking(move || {
-        generate(&base, &path, &entry.sha256, duration, has_audio, &jobs)
+        generate(
+            &base,
+            &path,
+            &entry.sha256,
+            duration,
+            has_audio,
+            has_video,
+            &jobs,
+        )
     })
     .await
     .map_err(|e| e.to_string())?
+}
+
+#[cfg(test)]
+mod editor_media_integration {
+    use super::*;
+
+    #[test]
+    #[ignore = "requires FFmpeg installed"]
+    fn audio_and_image_use_real_files_with_bounded_audio_preview() {
+        let tools =
+            crate::media_analyze::detect_fftools().expect("FFmpeg de integração indisponível");
+        let exe = tools.ffprobe.with_file_name(if cfg!(windows) {
+            "ffmpeg.exe"
+        } else {
+            "ffmpeg"
+        });
+        let root = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+            .join("target/test-editor-preview")
+            .join(uuid::Uuid::new_v4().to_string());
+        std::fs::create_dir_all(&root).unwrap();
+        let _cleanup = Scratch(root.clone());
+        let control = ProcessControl::default();
+        let audio = root.join("voice.wav");
+        let mut command = std::process::Command::new(&exe);
+        command
+            .args([
+                "-nostdin",
+                "-v",
+                "error",
+                "-y",
+                "-f",
+                "lavfi",
+                "-i",
+                "sine=frequency=440:duration=0.25",
+                "-c:a",
+                "pcm_s16le",
+            ])
+            .arg(&audio);
+        control.run(command, &root.join("fixture.log")).unwrap();
+        let analysis = crate::media_analyze::analyze_for_kind(
+            &tools,
+            &audio,
+            &crate::editor::types::MediaKind::Audio,
+        )
+        .unwrap();
+        assert_eq!(analysis.duration_ms, 250);
+        assert!(analysis.has_audio);
+        assert_eq!(analysis.width, 0);
+        let jobs = PreviewJobs::default();
+        let preview = generate(&root, &audio, "fixture-audio", 0.25, true, false, &jobs).unwrap();
+        assert!(preview.frames.is_empty());
+        assert!(preview.peaks.iter().any(|value| *value > 0.01));
+        let cached = generate(&root, &audio, "fixture-audio", 0.25, true, false, &jobs).unwrap();
+        assert_eq!(cached.peaks, preview.peaks);
+        let image = root.join("image.png");
+        let mut command = std::process::Command::new(exe);
+        command
+            .args([
+                "-nostdin",
+                "-v",
+                "error",
+                "-y",
+                "-f",
+                "lavfi",
+                "-i",
+                "color=c=red:s=320x180",
+                "-frames:v",
+                "1",
+                "-threads",
+                "1",
+            ])
+            .arg(&image);
+        control.run(command, &root.join("image.log")).unwrap();
+        let analysis = crate::media_analyze::analyze_for_kind(
+            &tools,
+            &image,
+            &crate::editor::types::MediaKind::Image,
+        )
+        .unwrap();
+        assert_eq!(
+            (analysis.width, analysis.height, analysis.duration_ms),
+            (320, 180, 0)
+        );
+        assert!(!analysis.has_audio);
+    }
 }

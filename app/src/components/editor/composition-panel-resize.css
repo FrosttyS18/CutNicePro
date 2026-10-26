@@ -1,0 +1,3 @@
+.composition-panel-resize { position: absolute; z-index: 8; top: -5px; left: 0; right: 0; height: 10px; cursor: ns-resize; touch-action: none; outline: none; }
+.composition-panel-resize::after { content: ""; position: absolute; width: 100%; height: 1px; top: 4px; left: 0; background: var(--sh-divider, #414141); }
+.composition-panel-resize:hover::after, html[data-input-modality="keyboard"] .composition-panel-resize:focus-visible::after { background: var(--sh-accent, #00bbb7); }

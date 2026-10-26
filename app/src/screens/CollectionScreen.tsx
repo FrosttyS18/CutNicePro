@@ -105,6 +105,7 @@ interface CollectionScreenProps {
   onOpen: (projectId: string) => void;
   onDelete: (projectId: string) => Promise<void>;
   onCollectionsChanged?: () => Promise<void>;
+  onCreate?: () => void;
 }
 
 type InnerTab = "all" | "projects" | "clips";
@@ -125,6 +126,7 @@ export function CollectionScreen({
   onOpen,
   onDelete,
   onCollectionsChanged,
+  onCreate,
 }: CollectionScreenProps) {
   const [tab, setTab] = useState<InnerTab>("all");
   const [addOpen, setAddOpen] = useState(false);
@@ -157,6 +159,7 @@ export function CollectionScreen({
           </p>
         </div>
         <div className="coll-head__spacer" />
+        {onCreate && <button type="button" className="flow-button" onClick={onCreate}>Criar projeto</button>}
       </div>
 
       <TabBar tabs={tabs} active={tab} onSelect={(id) => setTab(id as InnerTab)} compact />

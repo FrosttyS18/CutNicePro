@@ -14,11 +14,12 @@ export function ClipDetails({clip,transcript,time,loading,analyzing,error,onSeek
   const [view,setView] = useState<"analysis" | "transcript">("analysis");
   // upd 20: nota e critérios exigem análise VÁLIDA; desatualizada nunca é
   // publicada como avaliação concluída do texto atual
-  const valid = clip.analysis && !clip.analysisStale;
+  const manual = clip.origin === "manual" || clip.manuallyEdited;
+  const valid = !manual && clip.analysis && !clip.analysisStale;
   return <section className="clip-inspection__details" aria-label="Detalhes do clipe">
     <header><h3>{clip.title}</h3><p>{formatPlaybackTime(from)} — {formatPlaybackTime(to)} · {Math.round(to-from)} s</p>
-      {valid && <strong className="clip-inspection__score">{clip.score}<small>/100</small></strong>}
-      {clip.faceFraming && <p className="flow-muted">{
+      {manual ? <p>{clip.origin === "manual" ? "Manual" : "Editado manualmente"}</p> : valid && <strong className="clip-inspection__score">{clip.score}<small>/100</small></strong>}
+      {!manual && clip.faceFraming && <p className="flow-muted">{
         clip.faceFraming.status === "stable" ? "Rosto detectado para o enquadramento inicial."
           : clip.faceFraming.status === "ambiguous" ? "Sem um rosto principal definido. Você pode ajustar o enquadramento no editor."
           : clip.faceFraming.status === "noFaces" ? "Nenhum rosto seguro para ajustar; enquadramento original mantido."
@@ -30,7 +31,7 @@ export function ClipDetails({clip,transcript,time,loading,analyzing,error,onSeek
       <button type="button" aria-pressed={view === "transcript"} onClick={() => setView("transcript")}>Transcrição</button>
     </div>
     <div className="clip-details__scroll">
-      {view === "analysis" ? valid ? <>
+      {view === "analysis" ? manual ? <p>Esta montagem foi salva manualmente e não tem nota de ranking.</p> : valid ? <>
         <p>{clip.analysis!.summary}</p>
         {clip.analysis!.criteria.map(item => <section className="clip-criterion" key={item.label}>
           <h4>{item.label}<span>{item.score}<small>/100</small></span></h4><p>{item.explanation}</p><blockquote>{item.evidence}</blockquote>

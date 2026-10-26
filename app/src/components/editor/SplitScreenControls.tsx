@@ -1,5 +1,5 @@
 import { useLayoutEffect, useRef, useState } from "react";
-import { isSplitScreen, splitLayoutAt, updateSplitPanel } from "../../lib/split-screen";
+import { defaultSplitScreen, isSplitScreen, splitLayoutAt, updateSplitPanel } from "../../lib/split-screen";
 import type { EditorSettings, SplitPanel } from "../../lib/workspace-types";
 import { suggestSplitFraming, type SplitFramingSource } from "../../services/split-framing";
 import "./SplitScreenControls.css";
@@ -88,12 +88,12 @@ export function SplitScreenControls({ settings, source, sourceTime, onSettings }
         <button type="button" className="studio-toggle studio-toggle--wide" aria-pressed={!layout}
           onClick={() => { if (layout) changeManually({ splitScreen: null }); }}>Quadro único</button>
         <button type="button" className="studio-toggle studio-toggle--wide" aria-pressed={Boolean(layout)}
-          disabled={!source || busy} onClick={() => { void locate(); }}>Duas pessoas (empilhadas)</button>
+          onClick={() => { if(!layout?.faceValidated)changeManually({...(settings.ratio!=="9:16"?{ratio:"9:16"}:{}),splitScreen:{version:1,top:layout?.top??defaultSplitScreen().top,bottom:layout?.bottom??defaultSplitScreen().bottom,faceValidated:true}}); }}>Duas pessoas (empilhadas)</button>
       </div>
     </div>
     <div className="split-screen__automatic">
-      {!layout && <p>O split só é aplicado quando duas pessoas podem ser separadas no mesmo quadro.</p>}
-      {!source && <p role="status">Conecte um vídeo local para localizar duas pessoas e aplicar o split.</p>}
+      {!layout && <p>Escolha duas pessoas para ajustar os painéis manualmente.</p>}
+      {!source && <p role="status">Conecte um vídeo local para usar a localização automática. O ajuste manual continua disponível.</p>}
       {currentFeedback && <p className="split-screen__feedback" role={currentFeedback.state === "error" ? "alert" : "status"}
         aria-live="polite">{currentFeedback.message}</p>}
     </div>

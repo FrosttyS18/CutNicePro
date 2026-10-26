@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import type { ProjectMeta } from "../lib/types";
 import { formatCompactDate } from "../lib/format";
 import { TabBar } from "../components/TabBar";
@@ -12,6 +12,8 @@ import { ClipDownload } from "../components/clips/ClipDownload";
 import { deleteClip, restoreClip } from "../lib/clips";
 import type { LibraryClip } from "../lib/clip-library";
 import type { Clip } from "../lib/clips";
+import { updateEditorClip } from "../lib/composition-persistence";
+import { useViewScroll } from "../hooks/useViewScroll";
 
 interface Props {
   projects: ProjectMeta[];
@@ -23,6 +25,7 @@ interface Props {
   onDelete: (id: string) => Promise<void>;
   onCollectionsChanged?: () => Promise<void>;
   onEditClip?: (projectId: string, clip: Clip, mediaId: string) => void;
+  active?: boolean;
 }
 
 type LibraryTab = "all" | "clips";
@@ -32,7 +35,9 @@ type LibraryTab = "all" | "clips";
  * Abas Todos/Clipes, card tracejado de criação e cards de projeto com
  * miniatura, badge "Novo" (nunca aberto) e data de atualização.
  */
-export function ProjectsScreen({ projects, loading, error, onRetry, onCreate, onOpen, onDelete, onCollectionsChanged, onEditClip }: Props) {
+export function ProjectsScreen({ projects, loading, error, onRetry, onCreate, onOpen, onDelete, onCollectionsChanged, onEditClip, active=true }: Props) {
+  const libraryPane=useRef<HTMLDivElement>(null);
+  const rememberScroll=useViewScroll(libraryPane,active);
   const [tab, setTab] = useState<LibraryTab>("all");
   const library = useClipLibrary(projects);
   const [inspecting,setInspecting] = useState<LibraryClip | null>(null);
@@ -47,7 +52,8 @@ export function ProjectsScreen({ projects, loading, error, onRetry, onCreate, on
 
   async function exclude(entry: LibraryClip) {
     try {
-      await deleteClip(entry.project.id,entry.mediaId,entry.clip.id);
+      if (entry.composition) await updateEditorClip(entry.project.id, entry.clip.id, { deleted: true });
+      else await deleteClip(entry.project.id,entry.mediaId,entry.clip.id);
       setClipNotice("Clipe excluído."); setUndoDelete({ entry }); library.reload();
     } catch { setClipNotice("Não foi possível excluir o clipe. Tente novamente."); }
   }
@@ -55,13 +61,14 @@ export function ProjectsScreen({ projects, loading, error, onRetry, onCreate, on
     if (!undoDelete) return;
     const { entry } = undoDelete;
     try {
-      await restoreClip(entry.project.id,entry.mediaId,entry.clip.id);
+      if (entry.composition) await updateEditorClip(entry.project.id, entry.clip.id, { deleted: false });
+      else await restoreClip(entry.project.id,entry.mediaId,entry.clip.id);
       setClipNotice("Clipe restaurado."); setUndoDelete(null); library.reload();
     } catch { setClipNotice("Não foi possível restaurar o clipe. Tente novamente."); }
   }
 
   return (
-    <div className="lib">
+    <div className="lib" ref={libraryPane} hidden={!active} inert={!active}>
       <TabBar tabs={tabs} active={tab} onSelect={(id) => setTab(id as LibraryTab)} />
 
       {error && (
@@ -78,10 +85,10 @@ export function ProjectsScreen({ projects, loading, error, onRetry, onCreate, on
 
       {tab === "clips" ? (
         <ClipGallery entries={library.entries} loading={library.loading} error={library.error} notice={clipNotice ?? library.partial} onRetry={library.reload} onInspect={setInspecting} showProject
-          onEdit={entry => { if (onEditClip) onEditClip(entry.project.id,entry.clip,entry.mediaId); else onOpen(entry.project.id); }}
+          onEdit={entry => { rememberScroll(); if (onEditClip) onEditClip(entry.project.id,entry.clip,entry.mediaId); else onOpen(entry.project.id); }}
           onDownload={entry => setDownloading(entry)}
           onDelete={entry => void exclude(entry)}
-          onRestore={entry => { void (async () => { try { await restoreClip(entry.project.id,entry.mediaId,entry.clip.id); setClipNotice("Clipe restaurado."); library.reload(); } catch { setClipNotice("Não foi possível restaurar o clipe. Tente novamente."); } })(); }}
+          onRestore={entry => { void (async () => { try { if (entry.composition) await updateEditorClip(entry.project.id, entry.clip.id, { deleted: false }); else await restoreClip(entry.project.id,entry.mediaId,entry.clip.id); setClipNotice("Clipe restaurado."); library.reload(); } catch { setClipNotice("Não foi possível restaurar o clipe. Tente novamente."); } })(); }}
           undoDelete={undoDelete ? { onUndo: () => void undo() } : null}/>
       ) : (
         <div className="card-grid">
@@ -119,7 +126,7 @@ export function ProjectsScreen({ projects, loading, error, onRetry, onCreate, on
         </div>
       )}
       {inspecting && <ClipInspection key={`${inspecting.project.id}:${inspecting.clip.id}`} entry={inspecting} onClose={() => setInspecting(null)} onChanged={notice=>{setClipNotice(notice ?? null);library.reload();}}
-        onEdit={(projectId,clip) => { setInspecting(null); if (onEditClip) onEditClip(projectId,clip,inspecting.mediaId); else onOpen(projectId); }}/>}
+        onEdit={(projectId,clip) => { rememberScroll(); setInspecting(null); if (onEditClip) onEditClip(projectId,clip,inspecting.mediaId); else onOpen(projectId); }}/>}
       {downloading && <ClipDownload entry={downloading} onClose={() => setDownloading(null)} onChanged={() => setClipNotice("Vídeo exportado.")}/>}
     </div>
   );

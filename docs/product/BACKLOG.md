@@ -334,3 +334,9 @@ Correções solicitadas implementadas nos fluxos existentes de projeto, geraçã
 ### Atualização 2026-10-19 — 03M: confiabilidade do pipeline em revisão
 
 Correção autorizada do fluxo existente: consulta não gera/analisa automaticamente; revisão persiste antes de fechar, com filtro ativo e consulta a rejeitados. Seleção semântica deixa de receber só candidatos pré-filtrados por heurística; todo texto é lido em janelas. Checkpoints de transcrição e sondagem de GPU/encoder implementados e exercitados localmente. EPIC-006/008/009 continuam IN REVIEW. Não concluir qualidade editorial, visão multimodal, precisão ASR ou distribuição dos runtimes por existirem testes aprovados. AC-03M-01..08 e evidências no SPEC/REVIEW de confiabilidade; funcionalidades multimodais/API comercial não acrescentadas ao escopo desta entrega.
+
+## Execução aprovada — editor básico completo (2026-10-26)
+
+Prioridade atual do mantenedor; EPIC-008 e jornadas 003/004/007–010. Plano vinculante: docs/engineering/EDITOR-BASIC-IMPLEMENTATION-PLAN.md. M0 regressão de leitura/seek; M1 domínio/salvamento/recuperação; M2 timeline e comandos; M3 mídias/camadas/áudio/legendas/render; M4 jornada/biblioteca; M5 aceite integrado. Estado IN PROGRESS, não concluído. Regras BR-EDITOR-01..06 e AC-EDITOR-01..06. Preservar trabalhos de IA/editorial e demais pendências; nenhuma tarefa anterior é encerrada por esta inclusão.
+
+Feedback de 2026-10-26: reprodução/modularidade corrigidas em código e verificações controladas; refinamento subsequente acrescenta ímã, drag entre camadas, trim inicial correto e duplicação/colagem sobreposta, com zoom compacto. Suíte integrada atual: TS 644/644 e Rust 289/289 executados + 33 opt-in ignorados; builds padrão/lint limpos. Estado continua IN PROGRESS: testar a jornada normal e o vídeo de 797 MB, medir p95/RSS/VRAM e obter aceite humano. Testes não encerram esses gates.

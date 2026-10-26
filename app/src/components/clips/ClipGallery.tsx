@@ -56,7 +56,7 @@ export function ClipGallery({ entries, loading, error, notice, showProject, onRe
     {notice && <p role="status">{notice}{undoDelete && <button type="button" className="flow-button" onClick={undoDelete.onUndo}>Desfazer</button>}</p>}
     {loading && <p role="status">Carregando clipes…</p>}
     {error && <div role="alert"><p>{error}</p><button type="button" className="flow-button" onClick={onRetry}>Tentar novamente</button></div>}
-    {!loading && !error && !visible.length && <div className="lib__empty"><h3>{entries.length ? "Nenhum clipe neste filtro" : "Nenhum clipe ainda"}</h3><p>{entries.length ? "Escolha outro filtro para ver seus clipes." : "Abra um projeto e escolha Gerar cortes para começar."}</p></div>}
+    {!loading && !error && !visible.length && <div className="lib__empty"><h3>{entries.length ? "Nenhum clipe neste filtro" : "Nenhum clipe ainda"}</h3><p>{entries.length ? "Escolha outro filtro para ver seus clipes." : "Abra um projeto para criar um clipe da montagem ou gerar cortes."}</p></div>}
     {showProject ? <div className="clip-project-groups">{groups.map(group =>
       <section className="clip-project-group" key={group.project.id} aria-label={`Clipes de ${group.project.name}`}>
         <header><h3>{group.project.name}</h3><span>{group.entries.length} {group.entries.length === 1 ? "clipe" : "clipes"}</span></header>

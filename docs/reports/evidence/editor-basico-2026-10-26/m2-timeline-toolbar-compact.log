@@ -1,0 +1,37 @@
+M2 - Compact timeline controls - 2026-10-26
+
+Changed: CompositionTimeline.tsx, CompositionToolbar.tsx, CompositionCursorControl.tsx, composition-timeline.css and related timeline tests.
+Cause: the old selector .composition-timeline__zoom > span applied margin-right:auto to every EditorAction wrapper, spreading the zoom buttons across the row.
+Behavior: optional toolbar slot at left; main-track magnet with P tooltip; readable clock opens the precise-frame popover; right-hand minus/range/plus/fit group; custom 3px slider track, 8x11px white thumb with 2px radius (WebKit and Gecko). Existing keyboard modality focus rules retained.
+New props: toolbar?: ReactNode; magnetic?: boolean (default true); onMagneticChange?: (enabled: boolean) => void.
+Visual track order: captions, non-primary visuals in reverse document order, primary visual, independent audio. The document track order is not mutated.
+Drop target: data-drop-new-track, 24px, before lane rows; helper shown only under viewport[data-dragging=true].
+RED: composition-timeline-toolbar.test.tsx reproduced 3 failures (missing zoom group, missing magnet, incorrect visual order).
+GREEN: 19 related tests passed: toolbar 3, zoom 2, layout 2, timeline UI 9, design-system controls 3.
+Final focused repeat after slider-anchor assertion: 5 tests passed (toolbar 3 + zoom 2).
+
+
+> cutnicepro-app@0.19.0 test
+> vitest run --run src/test/composition-timeline-zoom.test.tsx src/test/composition-timeline-toolbar.test.tsx
+
+
+ RUN  v2.1.9 C:/CutNicePro/app
+
+ ✓ src/test/composition-timeline-toolbar.test.tsx (3 tests) 117ms
+ ✓ src/test/composition-timeline-zoom.test.tsx (2 tests) 139ms
+
+ Test Files  2 passed (2)
+      Tests  5 passed (5)
+   Start at  09:20:10
+   Duration  1.87s (transform 198ms, setup 0ms, collect 2.48s, tests 256ms, environment 0ms, prepare 326ms)
+
+
+
+TypeScript: npx tsc --noEmit exit 0.
+Lint: targeted ESLint of Timeline, Toolbar, CursorControl and related tests exit 0.
+Graphify: remote legacy EditorTimeline impact consulted; indexed df1186b remains stale. Current CompositionTimeline, gesture hook and track lane read locally; no index update.
+FUNCTIONAL STATUS: PASS within tested DOM/state contracts.
+REGRESSION STATUS: PASS for 19 related cases; full suite/build not run.
+VISUAL STATUS: PENDING HUMAN APPROVAL.
+No GUI automation, commits, dependencies or saved-data changes.
+

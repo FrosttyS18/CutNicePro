@@ -62,6 +62,13 @@ afterEach(async () => {
 });
 
 describe("regressão da reversão da transcrição (edição + save no mesmo ciclo)", () => {
+  it("reabre mídia gerenciada sem baixar o arquivo inteiro para um Blob", async () => {
+    seedWorkspace("stream-source");
+    const { ref, host } = await mountProbe("stream-source");
+    mounted = host;
+    expect(ref.current!.localUrl).toBe("cnplocal://media-1");
+    expect(fetch).not.toHaveBeenCalled();
+  });
   it("salva a versão EDITADA quando change() e save() acontecem antes do próximo render", async () => {
     seedWorkspace("p1");
     const { ref, host } = await mountProbe("p1");

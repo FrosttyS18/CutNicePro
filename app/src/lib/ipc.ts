@@ -5,6 +5,40 @@
 import { invoke } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
 import type { CollectionIcon, CollectionMeta, ProjectMeta } from "./types";
+import type { Composition } from "./composition-types";
+
+export function loadEditorProject(projectId: string): Promise<unknown> {
+  return invoke("load_editor_project", { projectId });
+}
+export function exportEditorDocument(projectId: string, clipId: string | null, jobId: string, document: Composition): Promise<boolean> {
+  return invoke("export_editor_document", { projectId, clipId, jobId, document });
+}
+export function getEditorThumbnail(projectId: string, clipId: string, revision: number): Promise<number[]> {
+  return invoke("get_editor_thumbnail", { projectId, clipId, revision });
+}
+export function createEditorClip(projectId: string, title: string, document: Composition): Promise<unknown> {
+  return invoke("create_editor_clip", { projectId, title, document });
+}
+export function updateEditorClipMetadata(projectId: string, clipId: string, changes: { review?: "pending" | "approved" | "rejected"; deleted?: boolean }): Promise<unknown> {
+  return invoke("update_editor_clip_metadata", { projectId, clipId, ...changes });
+}
+export function saveEditorDocument(projectId: string, clipId: string | null, document: Composition, expectedRevision: number): Promise<unknown> {
+  return invoke("save_editor_document", { projectId, clipId, document, expectedRevision });
+}
+export interface EditorRelatedDraftDto { clipId: string; expectedRevision: number; document: Composition; baseDocument?: Composition }
+export function saveEditorBatch(projectId: string, clipId: string | null, document: Composition, expectedRevision: number, related: EditorRelatedDraftDto[], activeChanged = true): Promise<unknown> {
+  const targets = related.map(({ clipId, expectedRevision, document }) => ({ clipId, expectedRevision, document }));
+  return invoke("save_editor_batch", { projectId, clipId, document, expectedRevision, related: targets, activeChanged });
+}
+export function saveEditorRecovery(projectId: string, clipId: string | null, document: Composition, baseRevision: number, related?: EditorRelatedDraftDto[]): Promise<void> {
+  return invoke("save_editor_recovery", { projectId, clipId, document, baseRevision, ...(related?.length ? { related } : {}) });
+}
+export function getEditorRecovery(projectId: string, clipId: string | null): Promise<unknown> {
+  return invoke("get_editor_recovery", { projectId, clipId });
+}
+export function discardEditorRecovery(projectId: string, clipId: string | null): Promise<void> {
+  return invoke("discard_editor_recovery", { projectId, clipId });
+}
 
 export async function listProjects(): Promise<ProjectMeta[]> {
   return invoke<ProjectMeta[]>("list_projects");
@@ -86,6 +120,7 @@ export async function importMedia(
   srcPath: string,
   onProgress: (copied: number, total: number) => void,
   signal?: AbortSignal,
+  assetKind?: "video"|"image"|"audio",
 ): Promise<ImportedMedia> {
   const checkCancelled = () => {
     if (signal?.aborted) throw new DOMException("Importação cancelada.", "AbortError");
@@ -113,7 +148,7 @@ export async function importMedia(
   try {
     checkCancelled();
     signal?.addEventListener("abort", requestCancel, { once: true });
-    const raw = await invoke<string>("import_media", { projectId, srcPath, jobId });
+    const raw = await invoke<string>("import_media", { projectId, srcPath, jobId, ...(assetKind ? {assetKind} : {}) });
     if (cancellationError) throw new Error(`Falha ao solicitar cancelamento: ${String(cancellationError)}`);
     checkCancelled();
     const payload: unknown = JSON.parse(raw);

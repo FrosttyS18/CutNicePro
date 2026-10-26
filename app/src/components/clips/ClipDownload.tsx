@@ -5,6 +5,7 @@ import { readWorkspace } from "../../services/workspace-store";
 import { useClips } from "../../hooks/useClips";
 import { clipMessage, isolatedClipSettings } from "../../lib/clips";
 import type { LibraryClip } from "../../lib/clip-library";
+import { SavedClipDownload } from "./SavedClipDownload";
 
 interface Props { entry: LibraryClip; onClose: () => void; onChanged?: (notice?: string) => void }
 
@@ -17,6 +18,9 @@ interface Props { entry: LibraryClip; onClose: () => void; onChanged?: (notice?:
  * e não deixa o executor invisível ou preso.
  */
 export function ClipDownload({ entry,onClose,onChanged }: Props) {
+  return entry.composition ? <SavedClipDownload entry={entry} onClose={onClose} onChanged={onChanged} /> : <LegacyClipDownload entry={entry} onClose={onClose} onChanged={onChanged} />;
+}
+function LegacyClipDownload({ entry,onClose,onChanged }: Props) {
   const media = useClipMedia(entry.project.id,entry.mediaId);
   const controller = useClips(entry.project.id,entry.mediaId);
   const [dismissed,setDismissed] = useState<string | null>(null);

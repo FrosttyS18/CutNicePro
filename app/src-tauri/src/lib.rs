@@ -4,6 +4,7 @@
 //! e, desde a Fase 03B, os comandos de coleções — aditivos e retrocompatíveis).
 
 mod clips;
+mod editor;
 mod file_output;
 mod local_media_scheme;
 mod media_analyze;
@@ -58,6 +59,7 @@ async fn import_media(
     project_id: String,
     src_path: String,
     job_id: Option<String>,
+    asset_kind: Option<editor::types::MediaKind>,
 ) -> Result<String, String> {
     tauri::async_runtime::spawn_blocking(move || {
         let store = media_store_of(&app)?;
@@ -67,9 +69,13 @@ async fn import_media(
             .file_name()
             .map(|n| n.to_string_lossy().to_string())
             .unwrap_or_else(|| "video".into());
-        let ext = media_import::allowed_ext(&original_name).ok_or_else(|| {
-            "formato de vídeo não suportado (use mp4, m4v, mov, webm, mkv ou avi)".to_string()
-        })?;
+        let ext = asset_kind
+            .as_ref()
+            .map_or_else(
+                || media_import::allowed_ext(&original_name),
+                |kind| media_import::allowed_editor_ext(&original_name, kind),
+            )
+            .ok_or_else(|| "Formato não suportado para o tipo de mídia escolhido.".to_string())?;
         if !src.is_file() {
             return Err(format!("arquivo não encontrado: {src_path}"));
         }
@@ -104,7 +110,10 @@ async fn import_media(
             let analysis_err = match media_analyze::detect_fftools() {
                 Some(tools) => {
                     let final_path = store.files_dir().join(format!("{sha}.{ext}"));
-                    match media_analyze::analyze(&tools, &final_path) {
+                    match asset_kind.as_ref().map_or_else(
+                        || media_analyze::analyze(&tools, &final_path),
+                        |kind| media_analyze::analyze_for_kind(&tools, &final_path, kind),
+                    ) {
                         Ok(analysis) => {
                             store.store_analysis(&entry.media_id, analysis)?;
                             None
@@ -282,6 +291,16 @@ pub fn run() {
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![
+            editor::commands::load_editor_project,
+            editor::manual_commands::create_editor_clip,
+            editor::manual_commands::update_editor_clip_metadata,
+            editor::thumbnail::get_editor_thumbnail,
+            editor::export_command::export_editor_document,
+            editor::commands::save_editor_document,
+            editor::batch_commands::save_editor_batch,
+            editor::commands::save_editor_recovery,
+            editor::commands::get_editor_recovery,
+            editor::commands::discard_editor_recovery,
             list_projects,
             create_project,
             open_project,
@@ -320,10 +339,7 @@ pub fn run() {
             render::commands::export_video
         ])
         .on_window_event(|window, event| {
-            if matches!(
-                event,
-                tauri::WindowEvent::CloseRequested { .. } | tauri::WindowEvent::Destroyed
-            ) {
+            if matches!(event, tauri::WindowEvent::Destroyed) {
                 window
                     .state::<Arc<transcription::TranscriptionJobs>>()
                     .cancel(None);

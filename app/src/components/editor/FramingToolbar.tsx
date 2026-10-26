@@ -11,7 +11,6 @@ export function FramingToolbar({ framing, onFraming }: Props) {
   return (
     <div className="framing-toolbar">
       <button type="button" className="flow-button framing-toolbar__frame" aria-pressed={framing}
-        title="Enquadrar: mover o vídeo dentro do quadro arrastando a prévia (imagem); legendas ficam no lugar"
         onClick={() => onFraming(!framing)}>
         <CropIcon size={16} aria-hidden="true"/>{framing ? "Concluir enquadramento" : "Enquadrar"}
       </button>

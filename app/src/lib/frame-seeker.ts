@@ -1,149 +1,146 @@
-/**
- * FrameSeeker — decodifica frames individuais via WebCodecs (mediabunny)
- * para scrub instantâneo na timeline. Inspirado no VideoCache do OpenCut
- * Classic (rev cf5e79e, services/video-cache/service.ts, MIT).
- *
- * O elemento <video> precisa decodar TODOS os frames do keyframe até o
- * alvo (60-300 frames por seek em H.264 1080p) — o FrameSeeker usa o
- * demuxer do mediabunny para posicionar no frame exato e decodificar
- * apenas esse. Canvas resultado é desenhado por cima do <video> durante
- * o arrasto; o vídeo continua para playback/áudio/exportação.
- */
-import { Input, ALL_FORMATS, BlobSource, CanvasSink, type WrappedCanvas } from "mediabunny";
+import { Input, ALL_FORMATS, BlobSource, UrlSource, CanvasSink, type WrappedCanvas } from "mediabunny";
 
-/** Sem pool, o mediabunny cria HTMLCanvasElement no main thread; OffscreenCanvas cobre o tipo union da lib. */
 export type ScrubCanvas = HTMLCanvasElement | OffscreenCanvas;
-
+type MediaInput = Blob | string;
 interface SinkData {
+  source: MediaInput;
   input: Input;
   sink: CanvasSink;
   iterator: AsyncGenerator<WrappedCanvas, void, unknown> | null;
-  currentFrame: WrappedCanvas | null;
-  nextFrame: WrappedCanvas | null;
-  lastTime: number;
-  prefetching: boolean;
-  prefetchPromise: Promise<void> | null;
+  frame: WrappedCanvas | null;
+  chain: Promise<unknown>;
+  closed: boolean;
+}
+interface PendingSink {
+  source: MediaInput;
+  input: Input | null;
+  promise: Promise<SinkData | null>;
 }
 
 export class FrameSeeker {
   private sinks = new Map<string, SinkData>();
-  private initPromises = new Map<string, Promise<void>>();
-  private frameChain = new Map<string, Promise<unknown>>();
-  private seekGenerations = new Map<string, number>();
+  private pending = new Map<string, PendingSink>();
+  private requests = new Map<string, number>();
+  private sequence = 0;
+  private disposed = false;
 
-  /** Decodifica o frame no tempo pedido; só o pedido MAIS RECENTE vence. */
-  async getFrameAt(mediaId: string, blob: Blob, time: number): Promise<ScrubCanvas | null> {
-    await this.#ensureSink(mediaId, blob);
-    const data = this.sinks.get(mediaId);
+  async getFrameAt(mediaId: string, source: MediaInput, time: number): Promise<ScrubCanvas | null> {
+    if (this.disposed || !Number.isFinite(time) || time < 0) return null;
+    const previousSource = this.sinks.get(mediaId)?.source ?? this.pending.get(mediaId)?.source;
+    if (previousSource !== undefined && previousSource !== source) this.dispose(mediaId);
+    const request = ++this.sequence;
+    this.requests.set(mediaId, request);
+    const data = await this.ensureSink(mediaId, source);
     if (!data) return null;
-
-    const generation = (this.seekGenerations.get(mediaId) ?? 0) + 1;
-    this.seekGenerations.set(mediaId, generation);
-
-    // encadeia: só processa se for o pedido mais recente
-    const previous = this.frameChain.get(mediaId) ?? Promise.resolve();
-    const current = previous.then(() => {
-      if (this.seekGenerations.get(mediaId) !== generation) {
-        return data.currentFrame?.canvas ?? null; // obsoleto → mantém atual
-      }
-      return this.#resolve(data, time);
+    const current = () => !this.disposed && !data.closed && this.requests.get(mediaId) === request;
+    const result = data.chain.catch(() => null).then(async () => {
+      if (!current()) return null;
+      const frame = await this.resolve(data, time);
+      return current() ? frame?.canvas ?? null : null;
     });
-    this.frameChain.set(mediaId, current.catch(() => {}));
-    return current;
+    data.chain = result;
+    return result;
   }
 
-  dispose(mediaId?: string) {
-    if (mediaId) {
+  dispose(mediaId?: string): void {
+    if (mediaId !== undefined) {
+      this.requests.delete(mediaId);
+      const pending = this.pending.get(mediaId);
+      if (pending?.input) { pending.input.dispose(); pending.input = null; }
+      this.pending.delete(mediaId);
       const data = this.sinks.get(mediaId);
-      if (data) { try { data.input.dispose?.(); } catch { /* best-effort */ } this.sinks.delete(mediaId); }
-      this.initPromises.delete(mediaId);
-      this.frameChain.delete(mediaId);
-      this.seekGenerations.delete(mediaId);
-    } else {
-      for (const data of this.sinks.values()) { try { data.input.dispose?.(); } catch { /* best-effort */ } }
-      this.sinks.clear(); this.initPromises.clear(); this.frameChain.clear(); this.seekGenerations.clear();
-    }
-  }
-
-  async #ensureSink(mediaId: string, blob: Blob): Promise<void> {
-    if (this.sinks.has(mediaId)) return;
-    let init = this.initPromises.get(mediaId);
-    if (!init) {
-      init = (async () => {
-        const input = new Input({ source: new BlobSource(blob), formats: ALL_FORMATS });
-        const track = await input.getPrimaryVideoTrack();
-        if (!track) throw new Error("sem faixa de vídeo");
-        const sink = new CanvasSink(track);
-        this.sinks.set(mediaId, { input, sink, iterator: null, currentFrame: null, nextFrame: null, lastTime: -Infinity, prefetching: false, prefetchPromise: null });
-      })();
-      this.initPromises.set(mediaId, init);
-    }
-    await init;
-  }
-
-  async #resolve(data: SinkData, time: number): Promise<ScrubCanvas | null> {
-    // 1) frame atual é válido?
-    if (data.currentFrame && this.#isValid(data.currentFrame, time)) {
-      this.#startPrefetch(data);
-      return data.currentFrame.canvas;
-    }
-    // 2) nextFrame (prefetch) é válido?
-    if (data.nextFrame && data.nextFrame.timestamp <= time * 1e6) {
-      data.currentFrame = data.nextFrame; data.nextFrame = null;
-      this.#startPrefetch(data);
-      if (this.#isValid(data.currentFrame, time)) return data.currentFrame.canvas;
-    }
-    // 3) busca sequencial (próximo, <2s à frente) — mais rápido que re-seek
-    if (data.iterator && data.currentFrame && time >= data.lastTime && time < data.lastTime + 2.0) {
-      const frame = await this.#iterateTo(data, time);
-      if (frame) { this.#startPrefetch(data); return frame.canvas; }
-    }
-    // 4) seek completo (salto distante)
-    const frame = await this.#seekTo(data, time);
-    if (frame) this.#startPrefetch(data);
-    return frame?.canvas ?? null;
-  }
-
-  #isValid(frame: WrappedCanvas, time: number): boolean {
-    const ts = frame.timestamp / 1e6; // µs → s
-    return time >= ts && time < ts + (frame.duration ?? 33_000) / 1e6;
-  }
-
-  async #iterateTo(data: SinkData, targetTime: number): Promise<WrappedCanvas | null> {
-    if (!data.iterator) return null;
-    try {
-      for (;;) {
-        if (data.prefetching && data.prefetchPromise) await data.prefetchPromise;
-        if (data.nextFrame && data.nextFrame.timestamp <= targetTime * 1e6 + 50_000) {
-          data.currentFrame = data.nextFrame; data.nextFrame = null;
-        } else {
-          const { value: frame, done } = await data.iterator.next();
-          if (done || !frame) break;
-          data.currentFrame = frame;
-        }
-        if (!data.currentFrame) break;
-        data.lastTime = data.currentFrame.timestamp / 1e6;
-        if (this.#isValid(data.currentFrame, targetTime)) return data.currentFrame;
-        if (data.currentFrame.timestamp / 1e6 > targetTime + 1.0) break;
+      if (data) {
+        data.closed = true;
+        void data.iterator?.return().catch(() => undefined);
+        data.input.dispose();
+        this.sinks.delete(mediaId);
       }
-    } catch { data.iterator = null; }
-    return null;
+      return;
+    }
+    this.disposed = true;
+    for (const id of this.sinks.keys()) this.dispose(id);
+    for (const id of this.pending.keys()) this.dispose(id);
+    this.requests.clear();
+    this.pending.clear();
   }
 
-  async #seekTo(data: SinkData, time: number): Promise<WrappedCanvas | null> {
+  private async ensureSink(mediaId: string, source: MediaInput): Promise<SinkData | null> {
+    const existing = this.sinks.get(mediaId);
+    if (existing) {
+      this.sinks.delete(mediaId);
+      this.sinks.set(mediaId, existing);
+      return existing;
+    }
+    const initializing = this.pending.get(mediaId);
+    if (initializing) return initializing.promise;
+    const slot: PendingSink = { source, input: null, promise: Promise.resolve(null) };
+    this.pending.set(mediaId, slot);
+    slot.promise = (async () => {
+      try {
+        const input = new Input({
+          source: typeof source === "string"
+            ? new UrlSource(source, { maxCacheSize: 16 * 1024 * 1024, parallelism: 1, getRetryDelay: attempt => attempt < 2 ? 0.2 : null })
+            : new BlobSource(source),
+          formats: ALL_FORMATS,
+        });
+        slot.input = input;
+        const track = await input.getPrimaryVideoTrack();
+        if (this.disposed || this.pending.get(mediaId) !== slot) {
+          if (slot.input) { slot.input.dispose(); slot.input = null; }
+          return null;
+        }
+        if (!track) throw new Error("Sem faixa de vídeo");
+        const width = Math.min(track.displayWidth, Math.round(1280 * track.displayWidth / Math.max(track.displayWidth, track.displayHeight)));
+        const data: SinkData = {
+          source, input, sink: new CanvasSink(track, { width, poolSize: 3 }),
+          iterator: null, frame: null, chain: Promise.resolve(), closed: false,
+        };
+        while (this.sinks.size >= 2) {
+          const oldest = this.sinks.keys().next().value;
+          if (oldest === undefined) break;
+          this.dispose(oldest);
+        }
+        this.sinks.set(mediaId, data);
+        slot.input = null;
+        return data;
+      } catch (error) {
+        if (slot.input) { slot.input.dispose(); slot.input = null; }
+        if (this.disposed || this.pending.get(mediaId) !== slot) return null;
+        throw error;
+      } finally {
+        if (this.pending.get(mediaId) === slot) this.pending.delete(mediaId);
+      }
+    })();
+    return slot.promise;
+  }
+
+  private contains(frame: WrappedCanvas, time: number): boolean {
+    return time + 1e-8 >= frame.timestamp && time < frame.timestamp + frame.duration - 1e-8;
+  }
+
+  private async resolve(data: SinkData, time: number): Promise<WrappedCanvas | null> {
+    if (data.frame && this.contains(data.frame, time)) return data.frame;
     try {
+      if (data.iterator && data.frame && time >= data.frame.timestamp && time < data.frame.timestamp + 2) {
+        for (let count = 0; count < 240; count++) {
+          const { value, done } = await data.iterator.next();
+          if (done || data.closed) break;
+          data.frame = value;
+          if (this.contains(value, time)) return value;
+          if (value.timestamp > time) break;
+        }
+      }
+      await data.iterator?.return();
+      if (data.closed) return null;
       data.iterator = data.sink.canvases(time);
-      const { value: frame } = await data.iterator.next();
-      if (frame) { data.currentFrame = frame; data.lastTime = frame.timestamp / 1e6; }
-      return frame ?? null;
-    } catch { data.iterator = null; return null; }
-  }
-
-  #startPrefetch(data: SinkData) {
-    if (data.prefetching || data.nextFrame || !data.iterator) return;
-    data.prefetching = true;
-    data.prefetchPromise = data.iterator.next().then(({ value: frame }) => {
-      data.nextFrame = frame ?? null;
-    }).catch(() => {}).finally(() => { data.prefetching = false; });
+      const { value, done } = await data.iterator.next();
+      data.frame = !done && !data.closed ? value : null;
+      return data.frame;
+    } catch {
+      await data.iterator?.return().catch(() => undefined);
+      data.iterator = null;
+      data.frame = null;
+      return null;
+    }
   }
 }

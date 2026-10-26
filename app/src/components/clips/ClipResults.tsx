@@ -13,7 +13,7 @@ export function ClipResults({ clips, busy, onOpen, onExport, onReview }: Props) 
   const [filter, setFilter] = useState<"all" | ClipReview>("all");
   const [sort, setSort] = useState("score");
   const [saving, setSaving] = useState<string | null>(null);
-  const visible = clips.filter(clip => filter === "all" || clip.review === filter).sort((a,b) => sort === "score" ? b.score-a.score : sort === "duration" ? (a.end-a.start)-(b.end-b.start) : a.start-b.start);
+  const visible = clips.filter(clip => filter === "all" || clip.review === filter).sort((a,b) => sort === "score" ? (b.score ?? -1)-(a.score ?? -1) : sort === "duration" ? (a.end-a.start)-(b.end-b.start) : a.start-b.start);
   async function review(clip: Clip, next: ClipReview) {
     setSaving(clip.id);
     try { await onReview(clip.id, clip.review === next ? "pending" : next); } finally { setSaving(null); }
@@ -25,7 +25,9 @@ export function ClipResults({ clips, busy, onOpen, onExport, onReview }: Props) 
     <p className="flow-muted">Potencial estimado. Aprove os cortes que deseja exportar.</p>
     {!visible.length && <p>{clips.length ? "Nenhum corte neste filtro." : "Não encontramos trechos com a duração escolhida. Experimente uma duração menor."}</p>}
     <ol className="clip-list">{visible.map(clip => <li key={clip.id} data-review={clip.review}>
-      <div className="clip-score" aria-label={`Potencial estimado: ${clip.score} de 100`}><strong>{clip.score}</strong><span>/100</span></div>
+      <div className="clip-score" aria-label={clip.score === null ? clip.origin === "manual" ? "Manual" : "Editado manualmente" : `Potencial estimado: ${clip.score} de 100`}>
+        {clip.score === null ? <strong>{clip.origin === "manual" ? "Manual" : "Editado manualmente"}</strong> : <><strong>{clip.score}</strong><span>/100</span></>}
+      </div>
       <div className="clip-details"><h3>{clip.title}</h3><p>{formatPlaybackTime(clip.start)} — {formatPlaybackTime(clip.end)} · {Math.round(clip.end-clip.start)} s</p>
         <ul>{clip.reasons.map(reason => <li key={reason}>{reason}</li>)}</ul>
         <div className="clip-actions"><button type="button" className="flow-button" disabled={busy} onClick={() => onOpen(clip)}><PlayIcon size={16} aria-hidden="true"/>Ver e editar</button>

@@ -12,9 +12,13 @@ import type { LibraryClip } from "../../lib/clip-library";
 import "./clip-library.css";
 import { ClipDetails } from "./ClipDetails";
 import { effectiveSegments, planDuration, snapSeek, toOutputTime, toSourceTime, segmentIndexAt } from "../../lib/edit-plan";
+import { SavedClipInspection } from "./SavedClipInspection";
 
 interface Props { entry: LibraryClip; onClose: () => void; onEdit: (projectId: string, clip: Clip) => void; onChanged?: (notice?: string) => void }
 export function ClipInspection({ entry,onClose,onEdit,onChanged }: Props) {
+  return entry.composition ? <SavedClipInspection entry={entry} onClose={onClose} onEdit={onEdit} onChanged={onChanged} /> : <LegacyClipInspection entry={entry} onClose={onClose} onEdit={onEdit} onChanged={onChanged} />;
+}
+function LegacyClipInspection({ entry,onClose,onEdit,onChanged }: Props) {
   const media = useClipMedia(entry.project.id,entry.mediaId);
   const preferences = readWorkspace(entry.project.id).clipEdits?.[entry.clip.id];
   const controller = useClips(entry.project.id,entry.mediaId);

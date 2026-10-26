@@ -1,0 +1,17 @@
+
+ RUN  v2.1.9 C:/CutNicePro/app
+
+stdout | src/test/media-react-lifecycle-stress.test.tsx > Stage real atravessa 200 seeks e 10 projetos sem reter Input, iterador ou AudioContext
+M5_STAGE_RESOURCES {"seeks":200,"projectChanges":10,"inputs":11,"disposed":11,"liveInputs":0,"maximumInputs":1,"iterators":210,"closedIterators":210,"liveIterators":0,"audio":{"contexts":10,"closed":10,"live":0,"maximum":1,"sources":10,"disconnectedSources":10,"gains":10,"disconnectedGains":10,"mediaAcquired":11,"mediaReleased":11}}
+
+stdout | src/test/media-react-lifecycle-stress.test.tsx > 10 trocas da timeline e miniatura descartam respostas tardias e revogam todas as URLs
+M5_PREVIEW_URLS {"projects":10,"created":20,"revoked":20,"invalidRevoke":0,"maximum":4,"observers":10,"closedObservers":10,"nativePending":0,"liveUrls":0,"nativeCalls":20}
+
+ ✓ src/test/media-react-lifecycle-stress.test.tsx (2 tests) 435ms
+   ✓ Stage real atravessa 200 seeks e 10 projetos sem reter Input, iterador ou AudioContext 390ms
+
+ Test Files  1 passed (1)
+      Tests  2 passed (2)
+   Start at  05:46:47
+   Duration  2.79s (transform 225ms, setup 0ms, collect 1.63s, tests 435ms, environment 0ms, prepare 296ms)
+

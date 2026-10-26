@@ -12,6 +12,7 @@ node_modules/
 
 # Arquivos de trabalho das skills
 .taste-skill/
+.superpowers/
 
 # Log de auditoria dos hooks (runtime, não versionar)
 .zcode/hooks/audit/

@@ -30,6 +30,8 @@ pub fn delete(base: &Path, media: &MediaStore, id: &str) -> Result<(), String> {
     }
     media.remove_project(&id)?;
     crate::clips::commands::remove(base, &id)?;
+    crate::editor::manual_commands::remove_project(base, &id)?;
+    crate::editor::thumbnail::remove_project(base, &id)?;
     std::fs::remove_file(pending).map_err(|e| e.to_string())?;
     Ok(())
 }

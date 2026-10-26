@@ -1,0 +1,59 @@
+{
+  "goal": "Editor básico completo e jornada de projetos",
+  "taskDate": "2026-10-26",
+  "state": "ACTIVE/PARTIAL",
+  "base": "ec38a8530835baa6d25779d2dd4e0a4162f64ea5",
+  "branch": "codex/editor-basico-20261026",
+  "graphIndex": "df1186b94d0362af6815397e7cd30efee8e1be3e",
+  "frontend": {
+    "passed": 434,
+    "files": 71
+  },
+  "rust": {
+    "passed": 268,
+    "ignored": 33,
+    "additionalIgnoredRealMediaRun": {
+      "passed": 1,
+      "fixture": "PNG + WAV 250ms + waveform + cache"
+    }
+  },
+  "checks": {
+    "typecheck": "PASS",
+    "eslint": "PASS",
+    "viteBuild": "PASS, no warnings",
+    "cargoCheckAllTargets": "PASS",
+    "rustfmt": "PASS",
+    "diffCheck": "PASS for tracked files"
+  },
+  "chunksKB": {
+    "initial": 368.6,
+    "editor": 175.34
+  },
+  "implementedScope": [
+    "normal editor route uses composition session and output timeline",
+    "Source viewer and source-range insertion",
+    "explicit save/recovery/leave dialog",
+    "trim/split/range/delete/ripple/duplicate/copy/paste/reorder",
+    "track lock/hide/mute and guarded keyboard focus",
+    "manual split and canvas framing gesture",
+    "local word-timed caption overrides",
+    "optional managed import for image/audio/video",
+    "audio gain through shared Web Audio context",
+    "bounded native waveform reader"
+  ],
+  "runtime": {
+    "normalApp": "NOT VERIFIED",
+    "largeVideoSeeks": "NOT MEASURED",
+    "newCompositionExport": "NOT IMPLEMENTED",
+    "legacyFFmpegRegression": "PASS"
+  },
+  "pending": [
+    "remaining M2 selection/shared clipboard/precise controls/performance polish",
+    "M3 overlay transforms/native composition render/export/parity",
+    "M4 preparation/navigation/manual clips/library",
+    "M0/M5 real large-video performance and full normal-app acceptance"
+  ],
+  "userDataChanged": false,
+  "commitsCreated": 0,
+  "pushed": false
+}

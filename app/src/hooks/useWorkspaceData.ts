@@ -7,7 +7,6 @@ import {
   attachSessionMedia,
   getSessionMedia,
   readWorkspace,
-  registerMediaBlob,
   saveWorkspace,
 } from "../services/workspace-store";
 import { createWorkspace } from "../lib/workspace";
@@ -34,12 +33,6 @@ export function useWorkspaceData(id: string) {
     else setNotice({ text: "Não foi possível atualizar este projeto. Reabra o projeto para continuar.", error: true });
   }, [id]);
 
-  // M2A: workspace com mídia PERSISTENTE (mediaId) reconecta sozinho ao
-  // reabrir o projeto — sem reenviar arquivo e sem "Reconectar original".
-  // Atualização 20: mídia persistente vira BLOB URL (uma leitura via
-  // cnplocal; depois TODO seek/scrub é nativo do browser, sem IPC por
-  // Range — mesma arquitetura do OpenCut: URL.createObjectURL(file)).
-  // O scheme cnplocal permanece para autenticação/carga inicial apenas.
   useEffect(() => {
     const mediaId = data.media?.mediaId;
     if (!mediaId || localUrl) return;
@@ -57,17 +50,9 @@ export function useWorkspaceData(id: string) {
           });
           return;
         }
-        const schemeUrl = ipc.mediaUrl(entry);
-        // UMA leitura integral via cnplocal → Blob → browser gerencia
-        // nativamente daqui em diante (seek, buffer, decode — zero IPC)
-        const response = await fetch(schemeUrl);
-        if (!response.ok) throw new Error("falha ao carregar mídia");
-        const blob = await response.blob();
-        if (disposed) return; // trocou de projeto durante o fetch
-        const blobUrl = URL.createObjectURL(blob);
-        registerMediaBlob(mediaId, blob);
-        attachPersistedMedia(id, mediaId, blobUrl);
-        setLocalUrl(blobUrl);
+        const url = ipc.mediaUrl(entry);
+        attachPersistedMedia(id, mediaId, url);
+        setLocalUrl(url);
       } catch {
         if (!disposed) {
           setNotice({

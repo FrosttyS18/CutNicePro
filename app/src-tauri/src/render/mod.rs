@@ -1,6 +1,7 @@
-mod ass;
+pub(crate) mod ass;
 pub mod commands;
-mod encoder;
+pub(crate) mod encoder;
+pub(crate) mod fonts;
 // pub(crate): o laboratório da atualização 19 (clips/pipeline_tests)
 // verifica exportação de clipe da biblioteca cumulativa pelo pipeline real
 pub(crate) mod pipeline;

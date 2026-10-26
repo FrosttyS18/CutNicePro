@@ -260,3 +260,17 @@ stateDiagram-v2
 ## Extensão de implementação 03M — IN REVIEW, 2026-10-19
 
 BR-03M-01..05 refinam BR-019..023/026..031 sem renumerar as 50 regras canônicas: abertura somente de leitura; revisão confirmada e reversível sem excluir mídia compartilhada; falha de análise individual identificada sem nota falsa; retomada por blocos validados sem substituir resultado publicado após falha; processamento exclusivo com fallback sequencial e saída verificada. Texto completo e AC-03M-01..08: docs/engineering/CLIP-PIPELINE-RELIABILITY-SPEC.md. Evidências funcionais no REVIEW correspondente não substituem aprovação do mantenedor.
+
+## Extensão aprovada — editor básico completo (2026-10-26)
+
+Vínculo: JRN-003/004/007/008/009/010; plano EDITOR-BASIC-IMPLEMENTATION-PLAN. Regras aprovadas pelo mantenedor, implementação em andamento.
+
+- BR-EDITOR-01: o editor altera um rascunho; somente Salvar confirma a montagem. Recuperação é separada e nunca substitui o salvo silenciosamente.
+- BR-EDITOR-02: tempo da fonte e tempo da montagem são independentes. Repetição, reordenação, múltiplas mídias e montagem vazia são válidas; original preservado.
+- Refinamento de BR-EDITOR-02 pelo feedback de 2026-10-26: áudio original permanece integrado ao vídeo por padrão; extração ou áudio adicional são explícitos. Biblioteca e propriedades podem expandir/recolher, com uma única prévia central alternando Fonte/Montagem; comandos do projeto não ocupam a transcrição. Uma mídia em espera congela reprodução conjunta e relógio, sem avanço silencioso.
+- BR-EDITOR-03: remover na faixa principal fecha espaço por padrão e remapeia elementos associados; manter espaço/fixar no tempo são opções explícitas. Faixas bloqueadas impedem operações que as alterem.
+- Refinamento de BR-EDITOR-03 pelo feedback posterior de 2026-10-26: ímã desligado permite posicionar com lacunas; ligado reordena blocos sem fabricar partes. Aparar a esquerda mantém o fim fixo, exceto recuperar fonte anterior na origem zero. Ctrl+D/ Ctrl+V sobrepõem em camada acima; colagem em sequência é explícita (Ctrl+Shift+V). Arrasto entre faixas move identidades existentes e confirma uma ação; colisões não enfraquecem a proibição de sobreposição na mesma faixa.
+- Correção do teste manual seguinte: religar o ímã reencaixa a principal em zero no rascunho, com Undo/Save explícitos; Ctrl+roda usa zoom local e largura não pode escapar do editor. Legendas da fonte têm indicação CC no vídeo, sem apagar os itens salvos. Clique simples isola a camada; Ctrl/Shift continuam permitindo seleção múltipla. Q/W aparam apenas os visuais selecionados e vínculos, sem remover outras camadas.
+- BR-EDITOR-04: salvar edição de corte da IA mantém o ID e projeto, identifica edição manual e retira a nota corrente. Criar clipe manual salva somente o novo clipe, sem confirmar a montagem do projeto.
+- BR-EDITOR-05: importação e ASR precedem a visão geral; falha/cancelamento de ASR preserva mídia e permite edição manual. IA continua usando a fonte original; correções de legenda do clipe são locais.
+- BR-EDITOR-06: exportação usa uma revisão salva imutável; falha/cancelamento não publica parcial nem apaga saída anterior. Novo dura uma hora desde criação, independentemente de abertura.

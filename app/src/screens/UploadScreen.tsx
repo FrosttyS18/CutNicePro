@@ -3,6 +3,8 @@ import type { ProjectMeta } from "../lib/types";
 import { LocalFilePicker, type SelectedUploadFile } from "../components/upload/LocalFilePicker";
 import { UploadOptionsFields } from "../components/upload/UploadOptionsFields";
 import { PreparationDialog } from "../components/upload/PreparationDialog";
+import { ProjectNameDialog } from "../components/upload/ProjectNameDialog";
+import type { PreparationProgress } from "../lib/project-preparation";
 import { RecentProjects } from "../components/upload/RecentProjects";
 import { mediaProjectName } from "../lib/media-name";
 import type { UploadSource, UploadOptions } from "../lib/workspace-types";
@@ -19,7 +21,7 @@ interface Props {
   onDelete: (id: string) => Promise<void>;
   onCollectionsChanged?: () => Promise<void>;
   onCreate: (source: UploadSource, options: UploadOptions) => Promise<void>;
-  onFilePath?: (path: string, name: string, options: UploadOptions, onProgress: (copied: number, total: number) => void, signal?: AbortSignal) => Promise<void>;
+  onFilePath?: (path: string, name: string, options: UploadOptions, onProgress: (copied: number, total: number) => void, signal?: AbortSignal, onPreparation?: (progress: PreparationProgress) => void) => Promise<void>;
 }
 
 export function UploadScreen(props: Props) {
@@ -27,12 +29,14 @@ export function UploadScreen(props: Props) {
   const operation = useRef<AbortController | null>(null);
   const [selected, setSelected] = useState<SelectedUploadFile | null>(null);
   const [name, setName] = useState("");
+  const [naming, setNaming] = useState(false);
   const [options, setOptions] = useState<UploadOptions>({ tool: "editor", model: 0, ratio: "16:9", fit: "contain" });
   const [creating, setCreating] = useState(false);
   const [cancelling, setCancelling] = useState(false);
   const [cancelled, setCancelled] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [progress, setProgress] = useState<{ copied: number; total: number } | null>(null);
+  const [preparation, setPreparation] = useState<PreparationProgress | null>(null);
   useEffect(() => {
     heading.current?.focus({ preventScroll: true });
     return () => operation.current?.abort();
@@ -56,10 +60,14 @@ export function UploadScreen(props: Props) {
     setCancelled(false);
     setCancelling(false);
     setProgress(null);
+    setPreparation({ stage: "validating", percent: null, remainingSeconds: null });
+    setNaming(false);
     try {
       await props.onFilePath(selected.path, name.trim(), options, (copied, total) => {
         if (operation.current === controller && !controller.signal.aborted) setProgress({ copied, total });
-      }, controller.signal);
+      }, controller.signal, (next) => {
+        if (operation.current === controller && !controller.signal.aborted) setPreparation(next);
+      });
     } catch (cause) {
       if (cause instanceof Error && cause.name === "AbortError") setCancelled(true);
       else setError(cause instanceof Error ? cause.message : String(cause));
@@ -78,10 +86,10 @@ export function UploadScreen(props: Props) {
       <header className="upload-sr-only">
         <h1 ref={heading} id="upload-heading" tabIndex={-1}>Novo projeto</h1>
       </header>
-      <form onSubmit={(event) => { event.preventDefault(); void startImport(); }} aria-busy={creating}>
-        <LocalFilePicker selected={selected} disabled={creating} onSelect={select} name={name} onName={setName}>
+      <form onSubmit={(event) => { event.preventDefault(); if (error) void startImport(); else setNaming(true); }} aria-busy={creating}>
+        <LocalFilePicker selected={selected} disabled={creating} onSelect={select}>
           <UploadOptionsFields options={options} disabled={creating} onChange={setOptions} />
-          <button type="submit" className="upload-send" disabled={!selected || !name.trim() || creating} aria-label={error ? "Tentar novamente" : "Importar vídeo"} title={error ? "Tentar novamente" : "Importar vídeo"}>
+          <button type="submit" className="upload-send" disabled={!selected || creating} aria-label={error ? "Tentar novamente" : "Importar vídeo"}>
             <ArrowUpIcon size={20} aria-hidden="true"/><span className="upload-sr-only">{creating ? "Importando…" : error ? "Tentar novamente" : "Importar vídeo"}</span>
           </button>
         </LocalFilePicker>
@@ -91,7 +99,9 @@ export function UploadScreen(props: Props) {
       <p className="upload-composer__note">MP4, MOV, WEBM, MKV, M4V ou AVI. O arquivo original é preservado. Processamento local.</p>
     </div></div>
     <RecentProjects {...props} />
+    <ProjectNameDialog open={naming} name={name} onName={setName} onClose={() => setNaming(false)} onCreate={() => void startImport()} />
     <PreparationDialog open={creating} busy={creating} error={null} progress={progress} name={selected?.name ?? "Vídeo"}
+      preparation={preparation}
       cancelling={cancelling} onClose={() => {}} onRetry={() => void startImport()}
       onCancel={() => { if (!cancelling) { setCancelling(true); operation.current?.abort(); } }} />
   </section>;

@@ -1,0 +1,11 @@
+
+ RUN  v2.1.9 C:/CutNicePro/app
+
+ ✓ src/test/composition-buffering.test.tsx (5 tests) 138ms
+ ✓ src/test/composition-stage-ready.test.tsx (3 tests) 100ms
+
+ Test Files  2 passed (2)
+      Tests  8 passed (8)
+   Start at  05:16:13
+   Duration  2.30s (transform 228ms, setup 0ms, collect 2.94s, tests 237ms, environment 0ms, prepare 582ms)
+

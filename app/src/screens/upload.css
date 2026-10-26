@@ -29,7 +29,10 @@
 .upload-picker__placeholder { flex: 1; min-width: 0; padding: 8px 0; border: 0; background: transparent; color: var(--sh-dim); font: inherit; font-size: 14px; line-height: 1.5; text-align: left; cursor: pointer; }
 .upload-picker__selection { flex: 1; min-width: 0; }
 .upload-picker__selection input { display: block; width: 100%; min-width: 0; padding: 0; border: 0; background: transparent; color: var(--ink); font: inherit; font-size: 14px; }
-.upload-picker__selection > span { display: block; margin-top: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--sh-dim); font-size: 10px; }
+.upload-picker__selection > span { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--ink); font-size: 14px; }
+.upload-name-dialog__field { display: flex; flex-direction: column; gap: 8px; margin-top: 20px; font-size: 12px; }
+.upload-name-dialog__field input { min-width: 0; min-height: 40px; padding: 8px 12px; border: 1px solid var(--sh-divider); border-radius: 8px; background: var(--sh-surface); color: var(--ink); font: inherit; }
+.upload-name-dialog__actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; margin-top: 20px; }
 .upload-composer__toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
 .upload-chip, .upload-option-chip { display: inline-flex; flex: none; align-items: center; gap: 7px; min-height: 32px; border: 1px solid var(--sh-divider); border-radius: 999px; color: var(--ink); background: transparent; font: inherit; font-size: 11px; }
 .upload-chip { padding: 5px 12px; cursor: pointer; }

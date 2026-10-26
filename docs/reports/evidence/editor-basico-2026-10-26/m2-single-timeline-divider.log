@@ -1,0 +1,88 @@
+M2 - Single timeline divider - 2026-10-26
+
+Reference inspected: C:/Users/adcka/AppData/Local/Temp/codex-clipboard-1377a879-89e6-4742-8fa8-8b538167c39b.png.
+Cause: editor timeline wrapper border-top plus inner CompositionTimeline border-top, separated by wrapper padding-top:8px, with a separate short resize grip.
+Correction: remove wrapper top border/padding and override the inner top border only when embedded under the editor wrapper. The existing resize element draws the sole 1px full-width divider; its 10px pointer area, keyboard focus color and all resize behavior are retained.
+Changed only: composition-panel-resize.css, composition-editor.css, composition-panel-resize.test.tsx. CompositionPanelResize.tsx logic untouched. No Timeline/zoom/toolbar edits.
+Structural test boundary: CSS computed-style/rule contracts and one accessible separator; no claim of rendered visual approval.
+
+RED:
+
+> cutnicepro-app@0.19.0 test
+> vitest run --run src/test/composition-panel-resize.test.tsx
+
+
+ RUN  v2.1.9 C:/CutNicePro/app
+
+ ❯ src/test/composition-panel-resize.test.tsx (4 tests | 1 failed) 125ms
+   × altura do painel da timeline > mantém uma única divisão visual sem bordas duplicadas entre prévia e timeline 46ms
+     → expected 1 to be +0 // Object.is equality
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/test/composition-panel-resize.test.tsx > altura do painel da timeline > mantém uma única divisão visual sem bordas duplicadas entre prévia e timeline
+AssertionError: expected 1 to be +0 // Object.is equality
+
+- Expected
++ Received
+
+- 0
++ 1
+
+ ❯ src/test/composition-panel-resize.test.tsx:54:49
+     52|     const outer=window.getComputedStyle(mounted.host.querySelector(".c…
+     53|     const inner=window.getComputedStyle(mounted.host.querySelector(".c…
+     54|     expect(parseFloat(outer.borderTopWidth)||0).toBe(0);expect(parseFl…
+       |                                                 ^
+     55|     expect(parseFloat(outer.paddingTop)||0).toBe(0);
+     56|     const rules=Array.from(globalThis.document.styleSheets).flatMap(sh…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 3 passed (4)
+   Start at  10:00:19
+   Duration  1.94s (transform 65ms, setup 0ms, collect 1.21s, tests 125ms, environment 0ms, prepare 237ms)
+
+
+
+GREEN / ADJACENT RUN:
+
+> cutnicepro-app@0.19.0 test
+> vitest run --run src/test/composition-panel-resize.test.tsx src/test/composition-timeline-viewport.test.tsx
+
+
+ RUN  v2.1.9 C:/CutNicePro/app
+
+ ✓ src/test/composition-panel-resize.test.tsx (4 tests) 89ms
+ ❯ src/test/composition-timeline-viewport.test.tsx (4 tests | 1 failed) 275ms
+   × Ctrl+roda para nos limites e nunca faz os vídeos desaparecerem 46ms
+     → expected 608 to be close to 38, received difference is 570, but expected 5e-7
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/test/composition-timeline-viewport.test.tsx > Ctrl+roda para nos limites e nunca faz os vídeos desaparecerem
+AssertionError: expected 608 to be close to 38, received difference is 570, but expected 5e-7
+ ❯ src/test/composition-timeline-viewport.test.tsx:65:45
+     63|   const {viewport,duration,onChange}=await mount();
+     64|   for(let index=0;index<40;index++)await act(async()=>{viewport.dispat…
+     65|   expect(pixelsPerFrame(duration)*duration).toBeCloseTo(38,6);
+       |                                             ^
+     66|   expect(viewport.scrollLeft).toBe(0);
+     67|   const minus=view!.host.querySelector<HTMLButtonElement>('[aria-label…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  1 failed | 7 passed (8)
+   Start at  10:00:37
+   Duration  2.22s (transform 231ms, setup 0ms, collect 2.56s, tests 364ms, environment 0ms, prepare 443ms)
+
+
+
+OWN FUNCTIONAL STATUS: PASS (resize 4/4 including pointer final position, Escape, cleanup, keyboard bounds and single-divider CSS contract).
+ESLint: CompositionPanelResize.tsx and its test exit 0.
+ADJACENT REGRESSION STATUS: PARTIAL (viewport 3/4; the concurrently introduced zoom-limit case expected 38px and received 608px while root was updating zoom bounds). Reported to root; no changes to its Timeline/viewport test.
+VISUAL STATUS: PENDING HUMAN APPROVAL.
+No GUI, build, dependency, saved-data changes or commits.
+

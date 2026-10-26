@@ -6,8 +6,13 @@ import type { WorkspaceData } from "../../lib/workspace-types";
 import { isolatedClipSettings } from "../../lib/clips";
 import { loadClipThumbnail, type ClipThumbnail } from "../../services/clip-thumbnails";
 import { effectiveSegments, planDuration } from "../../lib/edit-plan";
+import { SavedCompositionPoster } from "./SavedCompositionPoster";
 
 export const ClipPoster = memo(function ClipPoster({ entry, workspace }: { entry: LibraryClip; workspace: WorkspaceData }) {
+  return entry.composition ? <SavedCompositionPoster entry={entry} /> : <LegacyClipPoster entry={entry} workspace={workspace} />;
+});
+
+function LegacyClipPoster({ entry, workspace }: { entry: LibraryClip; workspace: WorkspaceData }) {
   const root = useRef<HTMLSpanElement>(null);
   const [sample, setSample] = useState<(ClipThumbnail & { mediaId: string; time: number }) | null>(null);
   const [unavailable, setUnavailable] = useState(false);
@@ -37,4 +42,4 @@ export const ClipPoster = memo(function ClipPoster({ entry, workspace }: { entry
     {settings.captionModel > 0 && cue && <span className="clip-card__caption" data-position={style.position}><CaptionVisual cue={cue} style={style} ratio={Number(settings.ratio.split(":")[0]) / Number(settings.ratio.split(":")[1])} /></span>}
     <span className="clip-card__duration">{Math.round(planDuration(effectiveSegments(settings, workspace.media?.duration ?? entry.clip.end)))} s</span>
   </span>;
-});
+}

@@ -1,0 +1,107 @@
+M2 - Timeline zoom anchor - 2026-10-26
+
+Scope: CompositionTimeline.tsx and composition-timeline-zoom.test.tsx only.
+Rule: retain the playhead's viewport pixel if visible in the time area (after the fixed 144 px track label). Otherwise retain the time at the center of the visible time area. Clamp to real content limits; fit resets horizontal scroll to zero. Selection, source audio fold, first-fit state, native media and saved data are unchanged.
+Graphify remote before/after: repository 281bc29a-456d-4f9d-acb2-c8e905916f25, EditorTimeline impact at df1186b; snapshot is stale and describes the legacy symbol. Current CompositionTimeline and local consumers/tests read directly. No index update/upload.
+
+RED COMMAND: npm test -- --run src/test/composition-timeline-zoom.test.tsx
+
+> cutnicepro-app@0.19.0 test
+> vitest run --run src/test/composition-timeline-zoom.test.tsx
+
+
+ RUN  v2.1.9 C:/CutNicePro/app
+
+ ❯ src/test/composition-timeline-zoom.test.tsx (2 tests | 2 failed) 112ms
+   × preserva a posição visível do cursor ao aumentar e diminuir zoom após rolar 81ms
+     → expected 612 to be close to 384, received difference is 228, but expected 5e-7
+   × preserva o tempo central se o cursor está fora da vista e Ajustar retorna à origem 30ms
+     → expected 1214.9122807017543 to be close to 1822.3684210526317, received difference is 607.4561403508774, but expected 5e-7
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/test/composition-timeline-zoom.test.tsx > preserva a posição visível do cursor ao aumentar e diminuir zoom após rolar
+AssertionError: expected 612 to be close to 384, received difference is 228, but expected 5e-7
+ ❯ src/test/composition-timeline-zoom.test.tsx:35:61
+     33|   const before=cursorPixel(viewport);
+     34|   expect(before).toBeGreaterThan(144);expect(before).toBeLessThan(800);
+     35|   await zoom("Aumentar zoom");expect(cursorPixel(viewport)).toBeCloseT…
+       |                                                             ^
+     36|   await zoom("Diminuir zoom");expect(cursorPixel(viewport)).toBeCloseT…
+     37|   expect(item.getAttribute("data-selected")).toBe("true");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/test/composition-timeline-zoom.test.tsx > preserva o tempo central se o cursor está fora da vista e Ajustar retorna à origem
+AssertionError: expected 1214.9122807017543 to be close to 1822.3684210526317, received difference is 607.4561403508774, but expected 5e-7
+ ❯ src/test/composition-timeline-zoom.test.tsx:47:48
+     45|   const center=()=> (viewport.scrollLeft+(800-144)/2-24)/(parseFloat(i…
+     46|   const before=center();
+     47|   await zoom("Aumentar zoom");expect(center()).toBeCloseTo(before,6);
+       |                                                ^
+     48|   await zoom("Diminuir zoom");expect(center()).toBeCloseTo(before,6);
+     49|   await zoom("Ajustar à largura");expect(viewport.scrollLeft).toBe(0);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+ Test Files  1 failed (1)
+      Tests  2 failed (2)
+   Start at  05:29:18
+   Duration  1.59s (transform 143ms, setup 0ms, collect 1.04s, tests 112ms, environment 0ms, prepare 158ms)
+
+
+
+GREEN COMMAND: npm test -- --run src/test/composition-timeline-zoom.test.tsx src/test/composition-timeline-layout.test.tsx src/test/composition-timeline-ui.test.tsx
+
+> cutnicepro-app@0.19.0 test
+> vitest run --run src/test/composition-timeline-zoom.test.tsx src/test/composition-timeline-layout.test.tsx src/test/composition-timeline-ui.test.tsx
+
+
+ RUN  v2.1.9 C:/CutNicePro/app
+
+ ✓ src/test/composition-timeline-zoom.test.tsx (2 tests) 127ms
+ ✓ src/test/composition-timeline-layout.test.tsx (2 tests) 101ms
+ ✓ src/test/composition-timeline-ui.test.tsx (9 tests) 246ms
+
+ Test Files  3 passed (3)
+      Tests  13 passed (13)
+   Start at  05:29:57
+   Duration  2.00s (transform 219ms, setup 0ms, collect 3.84s, tests 474ms, environment 0ms, prepare 514ms)
+
+
+
+ESLINT COMMAND: npx eslint src/components/editor/CompositionTimeline.tsx src/test/composition-timeline-zoom.test.tsx
+Exit code: 0
+(no diagnostics)
+
+TYPECHECK COMMAND: npx tsc --noEmit
+Exit code: 1
+Concurrent batch-caption implementation was still being introduced; errors below are outside this timeline slice.
+src/test/composition-batch-session.test.ts(12,62): error TS2339: Property 'saveBatch' does not exist on type 'CompositionPersistence'.
+src/test/composition-batch-session.test.ts(12,84): error TS7006: Parameter 'document' implicitly has an 'any' type.
+src/test/composition-batch-session.test.ts(12,94): error TS7006: Parameter 'revision' implicitly has an 'any' type.
+src/test/composition-batch-session.test.ts(12,104): error TS7006: Parameter 'related' implicitly has an 'any' type.
+src/test/composition-batch-session.test.ts(12,113): error TS7006: Parameter 'activeChanged' implicitly has an 'any' type.
+src/test/composition-batch-session.test.ts(14,45): error TS7006: Parameter 'draft' implicitly has an 'any' type.
+src/test/composition-batch-session.test.ts(21,11): error TS2339: Property 'applyBatch' does not exist on type 'CompositionSession'.
+src/test/composition-batch-session.test.ts(22,18): error TS2339: Property 'relatedDrafts' does not exist on type 'CompositionSession'.
+src/test/composition-batch-session.test.ts(23,69): error TS2339: Property 'relatedDrafts' does not exist on type 'CompositionSession'.
+src/test/composition-batch-session.test.ts(24,34): error TS2339: Property 'relatedDrafts' does not exist on type 'CompositionSession'.
+src/test/composition-batch-session.test.ts(26,18): error TS2339: Property 'relatedDrafts' does not exist on type 'CompositionSession'.
+src/test/composition-batch-session.test.ts(31,11): error TS2339: Property 'applyBatch' does not exist on type 'CompositionSession'.
+src/test/composition-batch-session.test.ts(33,34): error TS2339: Property 'relatedDrafts' does not exist on type 'CompositionSession'.
+src/test/composition-batch-session.test.ts(35,34): error TS2339: Property 'relatedDrafts' does not exist on type 'CompositionSession'.
+src/test/composition-batch-session.test.ts(42,11): error TS2339: Property 'applyBatch' does not exist on type 'CompositionSession'.
+src/test/composition-batch-session.test.ts(44,60): error TS2339: Property 'relatedDrafts' does not exist on type 'CompositionSession'.
+src/test/composition-batch-session.test.ts(51,78): error TS2339: Property 'saveBatch' does not exist on type 'CompositionPersistence'.
+src/test/composition-batch-session.test.ts(53,66): error TS2339: Property 'applyBatch' does not exist on type 'CompositionSession'.
+src/test/composition-batch-session.test.ts(57,86): error TS2339: Property 'relatedDrafts' does not exist on type 'CompositionSession'.
+src/test/composition-batch.test.ts(2,37): error TS2307: Cannot find module '../lib/composition-batch' or its corresponding type declarations.
+src/test/composition-batch.test.ts(25,48): error TS7006: Parameter 'item' implicitly has an 'any' type.
+
+
+FUNCTIONAL STATUS: PASS for the tested DOM/state contracts (13 related tests).
+REGRESSION STATUS: PASS within the 13 related tests; no full suite.
+VISUAL STATUS: PENDING HUMAN APPROVAL.
+Native runtime/manual application validation not performed in this slice.
+

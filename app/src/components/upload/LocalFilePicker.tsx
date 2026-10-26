@@ -11,14 +11,12 @@ interface Props {
   selected: SelectedUploadFile | null;
   disabled: boolean;
   onSelect: (file: SelectedUploadFile) => void;
-  name: string;
-  onName: (name: string) => void;
   children: ReactNode;
 }
 
 const extensions = ["mp4", "m4v", "mov", "webm", "mkv", "avi"];
 
-export function LocalFilePicker({ selected, disabled, onSelect, name, onName, children }: Props) {
+export function LocalFilePicker({ selected, disabled, onSelect, children }: Props) {
   const [error, setError] = useState<string | null>(null);
   const [dragging, setDragging] = useState(false);
   const [choosing, setChoosing] = useState(false);
@@ -72,8 +70,7 @@ export function LocalFilePicker({ selected, disabled, onSelect, name, onName, ch
         <FileVideoIcon size={20} aria-hidden="true" />
       </button>
       {selected ? <div className="upload-picker__selection">
-        <input aria-label="Nome do projeto" value={name} maxLength={80} disabled={disabled} onChange={event => onName(event.target.value)} />
-        <span title={selected.name}>{selected.name}</span>
+        <span>{selected.name}</span>
       </div> : <button type="button" className="upload-picker__placeholder" onClick={() => void choose()} disabled={disabled || choosing}>
         Solte um arquivo de vídeo ou escolha no computador
       </button>}

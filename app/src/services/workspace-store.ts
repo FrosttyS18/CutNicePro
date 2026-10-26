@@ -4,6 +4,8 @@ import { validSegmentWords } from "../lib/transcript-text";
 import { isCaptionStyle } from "../lib/captions";
 import { isSplitScreen } from "../lib/split-screen";
 import { editorAspectRatios } from "../components/upload/tools";
+import { isEditorSettings as validSettings } from "../lib/editor-settings-validation";
+import { removeProjectPreparation } from "./project-preparation-state";
 
 const key = (id: string) => `cnp.workspace.v1.${id}`;
 const backupKey = (id: string) => `cnp.workspace.backup.${id}`;
@@ -11,27 +13,6 @@ const sessionMedia = new Map<string, { file: File; url: string }>();
 
 /** Limites de contrato (espelham app/src-tauri/src/render/settings.rs). */
 const LIMITES = { volume: [0, 2], zoom: [1, 3], brightness: [40, 180], contrast: [40, 180], saturation: [0, 220], blur: [0, 8], hue: [-180, 180] } as const;
-
-function numeroNo(value: unknown, [min, max]: readonly [number, number]): boolean {
-  return typeof value === "number" && Number.isFinite(value) && value >= min && value <= max;
-}
-
-function validSettings(settings: EditorSettings | undefined): boolean {
-  return Boolean(settings && editorAspectRatios.includes(settings.ratio as (typeof editorAspectRatios)[number]) && ["contain", "cover"].includes(settings.fit)
-    && (settings.splitScreen == null || (settings.ratio === "9:16" && isSplitScreen(settings.splitScreen)))
-    && Number.isInteger(settings.captionModel) && settings.captionModel >= 0 && settings.captionModel <= 9
-    && (settings.captionStyle === undefined || isCaptionStyle(settings.captionStyle))
-    && (settings.focalPoint === undefined || [settings.focalPoint.x,settings.focalPoint.y].every(v => Number.isFinite(v) && v >= 0 && v <= 100))
-    && (settings.zoom === undefined || numeroNo(settings.zoom, LIMITES.zoom))
-    && (settings.effects === undefined || (settings.effects
-      && numeroNo(settings.effects.brightness, LIMITES.brightness) && numeroNo(settings.effects.contrast, LIMITES.contrast)
-      && numeroNo(settings.effects.saturation, LIMITES.saturation) && numeroNo(settings.effects.blur, LIMITES.blur)
-      && numeroNo(settings.effects.hue, LIMITES.hue)))
-    && typeof settings.text === "string" && settings.text.length <= 240
-    && numeroNo(settings.volume, LIMITES.volume) && typeof settings.muted === "boolean"
-    && /^#[0-9a-f]{6}$/i.test(settings.background) && Number.isFinite(settings.trimStart) && settings.trimStart >= 0
-    && (settings.trimEnd === null || (Number.isFinite(settings.trimEnd) && settings.trimEnd >= settings.trimStart)));
-}
 
 const clamp = (value: number, [min, max]: readonly [number, number]) => Math.min(max, Math.max(min, value));
 const cor6 = (value: unknown): string => (typeof value === "string" && /^#[0-9a-f]{6}$/i.test(value) ? value : "#000000");
@@ -245,6 +226,7 @@ export function releaseSessionMedia(): void {
 export function removeWorkspace(id: string): void {
   localStorage.removeItem(key(id));
   localStorage.removeItem(backupKey(id));
+  removeProjectPreparation(id);
   const media = sessionMedia.get(id);
   if (media) URL.revokeObjectURL(media.url);
   sessionMedia.delete(id);

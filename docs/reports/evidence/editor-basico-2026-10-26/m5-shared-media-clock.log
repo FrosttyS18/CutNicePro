@@ -1,0 +1,17 @@
+
+ RUN  v2.1.9 C:/CutNicePro/app
+
+ ✓ src/test/composition-audio.test.ts (3 tests) 6ms
+ ✓ src/test/composition-clock.test.ts (5 tests) 6ms
+ ✓ src/test/composition-buffering.test.tsx (6 tests) 183ms
+ ✓ src/test/composition-stage-reuse.test.tsx (2 tests) 83ms
+ ✓ src/test/composition-stage-lifecycle.test.tsx (8 tests) 172ms
+ ✓ src/test/composition-stage-ready.test.tsx (5 tests) 210ms
+ ✓ src/test/editor-source-flow.test.tsx (9 tests) 1669ms
+   ✓ amplia, desfaz, refaz, salva, reabre e prepara a mesma revisão de montagem 341ms
+
+ Test Files  7 passed (7)
+      Tests  38 passed (38)
+   Start at  05:35:07
+   Duration  5.40s (transform 1.55s, setup 0ms, collect 10.50s, tests 2.33s, environment 1ms, prepare 1.78s)
+

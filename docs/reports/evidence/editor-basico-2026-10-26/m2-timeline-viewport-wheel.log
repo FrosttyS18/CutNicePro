@@ -1,0 +1,111 @@
+M2 - Timeline width containment and Ctrl+wheel - 2026-10-26
+
+Scope: CompositionTimeline.tsx, useTimelineWheelZoom.ts, composition-editor.css, composition-timeline.css, composition-timeline-viewport.test.tsx.
+Static cause: editor grid had no explicit minmax(0,1fr) column; timeline grid/flex chain kept automatic intrinsic minimums while ruler content had an explicit zoomed pixel width. This can enlarge the grid column and push the canvas/control row. Confirmed in source; native pixel geometry was not measured in this slice.
+Correction: explicit zero-minimum editor column; min-width:0/max-width:100% in timeline wrapper/root/viewport/control row; scrolling belongs to ruler viewport; responsive control row uses a separate grid group. Buttons remain present.
+Ctrl+wheel: non-passive listener on timeline section only, preventDefault only with Ctrl+nonzero vertical delta, viewport pointer anchor when inside; current playhead/visible center fallback outside viewport. Plain wheel behavior retained; listener removed on unmount; current slider updates via shared scale state.
+Test harness boundary: Happy DOM WheelEvent omits ctrlKey/clientX/clientY constructor fields, so tests explicitly define those native-event fields. CSS is read from source because Vitest's CSS module stub does not supply computed styles. The CSS test checks resolved style contracts, not rendered pixel bounds or visual approval.
+
+INITIAL RED:
+
+> cutnicepro-app@0.19.0 test
+> vitest run --run src/test/composition-timeline-viewport.test.tsx
+
+
+ RUN  v2.1.9 C:/CutNicePro/app
+
+ ❯ src/test/composition-timeline-viewport.test.tsx (3 tests | 2 failed) 166ms
+   × Ctrl+roda aplica zoom no ponteiro sem zoom do navegador e atualiza o slider 104ms
+     → expected false to be true // Object.is equality
+   × limita o mínimo intrínseco do grid e mantém a rolagem na régua 31ms
+     → expected '' to be 'minmax(0,1fr)' // Object.is equality
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/test/composition-timeline-viewport.test.tsx > Ctrl+roda aplica zoom no ponteiro sem zoom do navegador e atualiza o slider
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ src/test/composition-timeline-viewport.test.tsx:35:34
+     33|   const event=new window.WheelEvent("wheel",{ctrlKey:true,deltaY:-100,…
+     34|   await act(async()=>{viewport.dispatchEvent(event);});
+     35|   expect(event.defaultPrevented).toBe(true);
+       |                                  ^
+     36|   expect((viewport.scrollLeft+pointer-168)/pixelsPerFrame(duration)).t…
+     37|   expect(slider.valueAsNumber).toBeGreaterThan(before);expect(onChange…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/test/composition-timeline-viewport.test.tsx > limita o mínimo intrínseco do grid e mantém a rolagem na régua
+AssertionError: expected '' to be 'minmax(0,1fr)' // Object.is equality
+
+- Expected
++ Received
+
+- minmax(0,1fr)
+
+ ❯ src/test/composition-timeline-viewport.test.tsx:52:56
+     50|   expect(parseFloat(view!.host.querySelector<HTMLElement>(".compositio…
+     51|   const editor=window.getComputedStyle(view!.host.querySelector(".comp…
+     52|   expect(editor.gridTemplateColumns.replace(/\s/g,"")).toBe("minmax(0,…
+       |                                                        ^
+     53|   for(const selector of [".composition-editor__timeline",".composition…
+     54|     const style=window.getComputedStyle(view!.host.querySelector(selec…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 1 passed (3)
+   Start at  09:34:48
+   Duration  1.80s (transform 158ms, setup 0ms, collect 1.15s, tests 166ms, environment 0ms, prepare 179ms)
+
+
+
+RELATED GREEN:
+
+> cutnicepro-app@0.19.0 test
+> vitest run --run src/test/composition-timeline-viewport.test.tsx src/test/composition-timeline-zoom.test.tsx src/test/composition-timeline-toolbar.test.tsx
+
+
+ RUN  v2.1.9 C:/CutNicePro/app
+
+ ✓ src/test/composition-timeline-toolbar.test.tsx (3 tests) 136ms
+ ✓ src/test/composition-timeline-zoom.test.tsx (2 tests) 161ms
+ ✓ src/test/composition-timeline-viewport.test.tsx (3 tests) 197ms
+
+ Test Files  3 passed (3)
+      Tests  8 passed (8)
+   Start at  09:37:00
+   Duration  2.42s (transform 357ms, setup 0ms, collect 4.70s, tests 495ms, environment 1ms, prepare 819ms)
+
+
+
+FINAL FOCUSED GREEN (with pointer fallback and listener cleanup assertions):
+
+> cutnicepro-app@0.19.0 test
+> vitest run --run src/test/composition-timeline-viewport.test.tsx
+
+
+ RUN  v2.1.9 C:/CutNicePro/app
+
+ ✓ src/test/composition-timeline-viewport.test.tsx (3 tests) 200ms
+
+ Test Files  1 passed (1)
+      Tests  3 passed (3)
+   Start at  09:37:53
+   Duration  2.01s (transform 184ms, setup 0ms, collect 1.34s, tests 200ms, environment 0ms, prepare 184ms)
+
+
+
+TypeScript: npx tsc --noEmit exit 0.
+ESLint: Timeline, wheel hook and viewport test exit 0.
+FUNCTIONAL STATUS: PASS for tested DOM/event/style contracts.
+REGRESSION STATUS: PASS for 8 related cases (viewport 3 + zoom 2 + compact toolbar 3); no full suite.
+VISUAL STATUS: PENDING HUMAN APPROVAL.
+No GUI, native build, saved-data mutation, dependencies or commits in this slice.
+

@@ -56,6 +56,19 @@ pub fn allowed_ext(name: &str) -> Option<String> {
     }
 }
 
+pub fn allowed_editor_ext(name: &str, kind: &crate::editor::types::MediaKind) -> Option<String> {
+    use crate::editor::types::MediaKind;
+    let ext = name.rsplit_once('.')?.1.to_ascii_lowercase();
+    let supported = match kind {
+        MediaKind::Video => return allowed_ext(name),
+        MediaKind::Image => ["png", "jpg", "jpeg", "webp"].contains(&ext.as_str()),
+        MediaKind::Audio => {
+            ["wav", "mp3", "m4a", "aac", "ogg", "opus", "flac"].contains(&ext.as_str())
+        }
+    };
+    supported.then_some(ext)
+}
+
 pub struct ImportJobs {
     cancels: Mutex<HashMap<String, Arc<AtomicBool>>>,
 }
@@ -320,5 +333,21 @@ mod tests {
         assert_eq!(allowed_ext("b.mkv").as_deref(), Some("mkv"));
         assert_eq!(allowed_ext("c.txt"), None);
         assert_eq!(allowed_ext("noext"), None);
+    }
+
+    #[test]
+    fn editor_formats_do_not_expand_the_original_video_upload() {
+        use crate::editor::types::MediaKind;
+        assert_eq!(
+            allowed_editor_ext("cover.PNG", &MediaKind::Image).as_deref(),
+            Some("png")
+        );
+        assert_eq!(
+            allowed_editor_ext("voice.wav", &MediaKind::Audio).as_deref(),
+            Some("wav")
+        );
+        assert!(allowed_editor_ext("script.svg", &MediaKind::Image).is_none());
+        assert!(allowed_editor_ext("video.mp4", &MediaKind::Audio).is_none());
+        assert!(allowed_ext("cover.png").is_none());
     }
 }

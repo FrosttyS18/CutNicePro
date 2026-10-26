@@ -4,6 +4,7 @@ import { getMedia } from "../lib/ipc";
 import * as engine from "../lib/transcription";
 import type { TranscriptRecord, TranscriptionJob } from "../lib/transcription";
 import { transcriptionMessage } from "../lib/transcription-feedback";
+import { beginPreparation, completePreparation, setPreparationOutcome } from "../services/project-preparation-state";
 
 export function useTranscription(projectId: string, mediaId: string | undefined, onRecord: (record: TranscriptRecord) => void) {
   const [job, setJob] = useState<TranscriptionJob | null>(null);
@@ -30,15 +31,18 @@ export function useTranscription(projectId: string, mediaId: string | undefined,
     let off: (() => void) | undefined;
     const applyRecord = async (jobId?: string) => {
       const record = await engine.readTranscript(projectId, mediaId);
+      if (record && record.mediaId !== mediaId) throw new Error("Não foi possível sincronizar a transcrição com o vídeo.");
       if (!disposed && record && (!jobId || appliedJob.current !== jobId)) {
         if (jobId) appliedJob.current = jobId;
         receiver.current(record);
+        if (jobId) completePreparation(projectId, mediaId, jobId);
       }
     };
     void (async () => {
       const stop = await listen<unknown>("transcription://job", event => {
         if (disposed || !engine.isTranscriptionJob(event.payload) || event.payload.projectId !== projectId) return;
         setJob(event.payload);
+        if (event.payload.state === "failed" || event.payload.state === "cancelled") setPreparationOutcome(projectId, mediaId, event.payload.jobId, event.payload.state, transcriptionMessage(event.payload.error ?? "Transcrição cancelada"));
         if (event.payload.state === "completed") void applyRecord(event.payload.jobId).catch(e => { if (!disposed) setError(transcriptionMessage(e)); });
       });
       if (disposed) { stop(); return; }
@@ -48,7 +52,7 @@ export function useTranscription(projectId: string, mediaId: string | undefined,
       if (engine.isTranscriptionJob(active) && active.projectId === projectId) setJob(active);
       if (!media || media.unavailable) throw new Error("O vídeo não está disponível no disco.");
       if (!media.analysis?.hasAudio) throw new Error("Este vídeo não tem áudio analisado para transcrever.");
-      await applyRecord();
+      await applyRecord(engine.isTranscriptionJob(active) && active.projectId === projectId && active.state === "completed" ? active.jobId : undefined);
       if (disposed) return;
       setReady(status.available);
       setProfiles(status.profiles ?? [{id:"turbo",available:status.available}]);
@@ -62,22 +66,28 @@ export function useTranscription(projectId: string, mediaId: string | undefined,
     if (!mediaId || !ready || job?.state === "running") return;
     const jobId = crypto.randomUUID();
     const startedEpoch = epoch.current;
+    if (!beginPreparation(projectId, mediaId, jobId)) { setError("Não foi possível registrar a preparação. Seu projeto foi mantido. Tente novamente."); return; }
     setError(null);
     setJob({ jobId, projectId, state: "running", stage: "extracting", error: null, progress: 0 });
     try {
       const record = await engine.transcribeProject(projectId, mediaId, jobId,profile,processor);
       if (epoch.current !== startedEpoch) return;
+      if (record.mediaId !== mediaId) throw new Error("Não foi possível sincronizar a transcrição com o vídeo.");
       if (appliedJob.current !== jobId) {
         appliedJob.current = jobId;
         receiver.current(record);
       }
       setJob({ jobId, projectId, state: "completed", stage: "saving", error: null, progress: 100 });
+      completePreparation(projectId, mediaId, jobId);
     } catch (e) {
       if (epoch.current !== startedEpoch || identity.current.projectId !== projectId || identity.current.mediaId !== mediaId) return;
       const latest = await engine.getTranscriptionJob().catch(() => null);
       if (epoch.current !== startedEpoch) return;
-      if (engine.isTranscriptionJob(latest) && latest.jobId === jobId) setJob(latest);
-      else { setJob(null); setError(transcriptionMessage(e)); }
+      if (engine.isTranscriptionJob(latest) && latest.jobId === jobId) {
+        setJob(latest);
+        if (latest.state === "failed" || latest.state === "cancelled") setPreparationOutcome(projectId, mediaId, jobId, latest.state, transcriptionMessage(e));
+      }
+      else { setJob(null); setError(transcriptionMessage(e)); setPreparationOutcome(projectId, mediaId, jobId, "failed", transcriptionMessage(e)); }
     }
   }
 

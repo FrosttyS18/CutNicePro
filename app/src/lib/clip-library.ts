@@ -1,12 +1,36 @@
-import type { Clip, ClipReview } from "./clips";
+import type { Clip, ClipCollection, ClipReview } from "./clips";
 import type { ProjectMeta } from "./types";
+import type { CompositionSnapshot, EditorProjectState } from "./composition-persistence";
+import { compositionDuration } from "./composition";
+import { frameToSeconds } from "./composition-time";
 
-export interface LibraryClip { project: ProjectMeta; mediaId: string; clip: Clip }
+export interface LibraryClip { project: ProjectMeta; mediaId: string; clip: Clip; composition?: CompositionSnapshot }
 export type LibraryFilter = "active" | "all" | "deleted" | ClipReview;
 /** Nota válida = análise presente e NÃO desatualizada (upd 20): nota antiga
  *  nunca ordena como avaliação editorial concluída. */
 function editorialScore(clip: Clip): number {
-  return clip.analysis && !clip.analysisStale ? clip.score : -1;
+  return clip.analysis && !clip.analysisStale && !clip.manuallyEdited && clip.origin !== "manual" ? clip.score ?? -1 : -1;
+}
+export function mergeEditorClips(project: ProjectMeta, collection: ClipCollection | null, state: EditorProjectState | null): LibraryClip[] {
+  const entries = new Map((collection?.clips ?? []).map(clip => [clip.id, { project, mediaId: collection!.mediaId, clip } as LibraryClip]));
+  for (const [id, snapshot] of Object.entries(state?.clips ?? {})) {
+    const previous = entries.get(id);
+    if (!previous && snapshot.origin !== "manual") continue;
+    const duration = frameToSeconds(compositionDuration(snapshot.document), snapshot.document.fps);
+    const clip: Clip = previous ? { ...previous.clip } : { id, start: 0, end: duration, title: snapshot.title!, score: null, reasons: [], review: "pending", origin: "manual", createdAtMs: snapshot.createdAtMs };
+    clip.manuallyEdited = snapshot.manuallyEdited;
+    if (snapshot.manuallyEdited || snapshot.origin === "manual") {
+      if (typeof clip.score === "number") clip.originalScore = clip.score;
+      clip.score = null;
+    }
+    clip.end = clip.start + duration;
+    clip.format = snapshot.document.settings.ratio;
+    clip.fit = snapshot.document.settings.fit;
+    clip.review = snapshot.review ?? clip.review;
+    clip.deleted = snapshot.deleted ?? clip.deleted;
+    entries.set(id, { project, mediaId: previous?.mediaId ?? snapshot.document.assets[0]?.mediaId ?? "", clip, composition: snapshot });
+  }
+  return [...entries.values()];
 }
 export function visibleClips(entries: LibraryClip[], filter: LibraryFilter, sort: string): LibraryClip[] {
   return entries.filter(({ clip }) => filter === "all" || (filter === "active" ? clip.review !== "rejected" && !clip.deleted : filter === "deleted" ? clip.deleted === true : clip.review === filter && !clip.deleted)).sort((a,b) => {

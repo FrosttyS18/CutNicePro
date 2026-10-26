@@ -12,13 +12,15 @@ const entry = {mediaId:"m",sha256:"b".repeat(64),ext:"mp4",originalName:"Vídeo.
 describe("biblioteca persistente e mídia do corte",()=>{
   it("lista todos os projetos sem depender de preferência ou mídia ativa do navegador",async()=>{
     vi.stubGlobal("localStorage",{getItem:()=>{throw new Error("must not read workspace");}});
-    vi.mocked(invoke).mockImplementation(async(_command,args)=>({version:1,mediaId:(args as {projectId:string}).projectId+"-media",transcriptHash:"hash",clips:[clip]}));
+    vi.mocked(invoke).mockImplementation(async(command,args)=>command === "load_editor_project" ? { version: 1, project: null, clips: {} } : ({version:1,mediaId:(args as {projectId:string}).projectId+"-media",transcriptHash:"hash",clips:[clip]}));
     const projects=["p","q"].map(id=>({id,name:id,created_at_ms:0,updated_at_ms:0,last_opened_at_ms:null}));
     const { entries: result, failed }=await loadClipLibrary(projects);
     expect(result.map(value=>[value.project.id,value.mediaId])).toEqual([["p","p-media"],["q","q-media"]]);
     expect(failed).toEqual([]);
     expect(invoke).toHaveBeenNthCalledWith(1,"get_project_clips",{projectId:"p"});
-    expect(invoke).toHaveBeenNthCalledWith(2,"get_project_clips",{projectId:"q"});
+    expect(invoke).toHaveBeenCalledWith("get_project_clips",{projectId:"q"});
+    expect(invoke).toHaveBeenCalledWith("load_editor_project",{projectId:"p"});
+    expect(invoke).toHaveBeenCalledWith("load_editor_project",{projectId:"q"});
   });
   it("recupera fonte e transcrição e abre edição sem preferências anteriores",async()=>{
     const values=new Map<string,string>();vi.stubGlobal("localStorage",{getItem:(key:string)=>values.get(key)??null,setItem:(key:string,value:string)=>values.set(key,value)});
@@ -32,10 +34,10 @@ describe("biblioteca persistente e mídia do corte",()=>{
     await expect(loadClipMedia("p","m")).rejects.toThrow("indisponível");
     // um projeto falha, o outro continua visível; falha é informada, não oculta
     const good = {version:1,mediaId:"q-media",transcriptHash:"hash",clips:[clip]};
-    vi.mocked(invoke).mockImplementation(async(_command,args)=>{
+    vi.mocked(invoke).mockImplementation(async(command,args)=>{
       const {projectId} = args as {projectId:string};
       if (projectId === "p") throw new Error("read failure");
-      return good;
+      return command === "load_editor_project" ? { version: 1, project: null, clips: {} } : good;
     });
     const projects=["p","q"].map(id=>({id,name:id,created_at_ms:0,updated_at_ms:0,last_opened_at_ms:null}));
     const { entries, failed } = await loadClipLibrary(projects);

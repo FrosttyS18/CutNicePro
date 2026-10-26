@@ -63,6 +63,14 @@ fn parse_fps(rate: &str) -> f64 {
 
 /// Roda o ffprobe no arquivo e devolve a análise tipada.
 pub fn analyze(fftools: &FfTools, media_path: &std::path::Path) -> Result<MediaAnalysis, String> {
+    analyze_for_kind(fftools, media_path, &crate::editor::types::MediaKind::Video)
+}
+
+pub fn analyze_for_kind(
+    fftools: &FfTools,
+    media_path: &std::path::Path,
+    kind: &crate::editor::types::MediaKind,
+) -> Result<MediaAnalysis, String> {
     let out = Command::new(&fftools.ffprobe)
         .args([
             "-v",
@@ -78,8 +86,60 @@ pub fn analyze(fftools: &FfTools, media_path: &std::path::Path) -> Result<MediaA
     if !out.status.success() {
         return Err("ffprobe não conseguiu analisar o arquivo (formato não suportado?)".into());
     }
-    parse_probe_output(&out.stdout)
+    parse_probe_for_kind(&out.stdout, kind)
         .ok_or_else(|| "saída do ffprobe em formato inesperado".to_string())
+}
+
+pub fn parse_probe_for_kind(
+    json: &[u8],
+    kind: &crate::editor::types::MediaKind,
+) -> Option<MediaAnalysis> {
+    use crate::editor::types::MediaKind;
+    if *kind == MediaKind::Video {
+        return parse_probe_output(json);
+    }
+    let probe: FfProbeOutput = serde_json::from_slice(json).ok()?;
+    match kind {
+        MediaKind::Image => {
+            let image = probe
+                .streams
+                .iter()
+                .find(|stream| stream.codec_type.as_deref() == Some("video"))?;
+            let (width, height) = (image.width?, image.height?);
+            if width == 0 || height == 0 {
+                return None;
+            }
+            Some(MediaAnalysis {
+                duration_ms: 0,
+                width,
+                height,
+                video_codec: image.codec_name.clone().unwrap_or_default(),
+                audio_codec: None,
+                has_audio: false,
+                fps: 0.0,
+            })
+        }
+        MediaKind::Audio => {
+            let audio = probe
+                .streams
+                .iter()
+                .find(|stream| stream.codec_type.as_deref() == Some("audio"))?;
+            let duration: f64 = probe.format?.duration?.parse().ok()?;
+            if !duration.is_finite() || duration <= 0.0 {
+                return None;
+            }
+            Some(MediaAnalysis {
+                duration_ms: (duration * 1000.0).round() as u64,
+                width: 0,
+                height: 0,
+                video_codec: String::new(),
+                audio_codec: audio.codec_name.clone(),
+                has_audio: true,
+                fps: 0.0,
+            })
+        }
+        MediaKind::Video => None,
+    }
 }
 
 pub fn parse_probe_output(json: &[u8]) -> Option<MediaAnalysis> {
@@ -117,6 +177,27 @@ pub fn parse_probe_output(json: &[u8]) -> Option<MediaAnalysis> {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn editor_images_and_audio_have_real_metadata_without_fake_video() {
+        use crate::editor::types::MediaKind;
+        let image =
+            br#"{"streams":[{"codec_type":"video","codec_name":"png","width":640,"height":480}]}"#;
+        let parsed = parse_probe_for_kind(image, &MediaKind::Image).unwrap();
+        assert_eq!(
+            (parsed.width, parsed.height, parsed.duration_ms),
+            (640, 480, 0)
+        );
+        assert!(!parsed.has_audio);
+        let audio=br#"{"streams":[{"codec_type":"audio","codec_name":"pcm_s16le"}],"format":{"duration":"2.5"}}"#;
+        let parsed = parse_probe_for_kind(audio, &MediaKind::Audio).unwrap();
+        assert_eq!(parsed.duration_ms, 2500);
+        assert_eq!(parsed.width, 0);
+        assert!(parsed.has_audio);
+        assert!(parse_probe_for_kind(image, &MediaKind::Audio).is_none());
+        assert!(parse_probe_for_kind(audio, &MediaKind::Image).is_none());
+        assert!(parse_probe_output(audio).is_none());
+    }
 
     const SAMPLE: &str = r#"{
       "streams": [

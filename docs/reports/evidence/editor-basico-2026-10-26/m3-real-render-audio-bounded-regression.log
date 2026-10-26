@@ -1,0 +1,11 @@
+   Compiling cutnicepro v0.19.0 (C:\CutNicePro\app\src-tauri)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 31.54s
+     Running unittests src\lib.rs (target\debug\deps\cutnicepro_lib-ef42451951a20ff4.exe)
+
+running 3 tests
+test editor::render_tests::real_split_and_local_caption_use_saved_source_positions ... ok
+test editor::render_tests::real_image_audio_only_and_one_frame_exports_preserve_duration_and_tail ... ok
+test editor::render_tests::real_composition_preserves_repetition_layer_placement_and_audio ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 315 filtered out; finished in 7.10s
+

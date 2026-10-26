@@ -23,10 +23,12 @@ export function ClipCard({ entry, workspace, now, showProject, onInspect, onEdit
       <ClipPoster entry={entry} workspace={workspace} />
       <span className="clip-card__play"><PlayIcon size={22} weight="fill" aria-hidden="true" /></span>
       {isClipNew(clip, now) && <span className="clip-card__new" aria-label="Novo clipe">Novo</span>}
-      {clip.createdAtMs !== undefined && <span className="clip-card__when" title={new Date(clip.createdAtMs).toLocaleString()}>{relativeTime(clip.createdAtMs, now)}</span>}
+      {clip.createdAtMs !== undefined && <span className="clip-card__when" aria-label={`Criado em ${new Date(clip.createdAtMs).toLocaleString()}`}>{relativeTime(clip.createdAtMs, now)}</span>}
     </button>
     <div className="clip-card__meta">
-      {clip.analysisError ? <span>Análise pendente</span>
+      {clip.origin === "manual" ? <span>Manual</span>
+        : clip.manuallyEdited ? <span>Editado manualmente</span>
+        : clip.analysisError ? <span>Análise pendente</span>
         : clip.analysisStale ? <span>Análise desatualizada</span>
         : clip.analysis ? <strong aria-label={`Nota estimada: ${clip.score} de 100`}>{clip.score}<small>/100</small></strong>
         : <span>Sem análise</span>}

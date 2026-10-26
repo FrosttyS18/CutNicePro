@@ -59,20 +59,31 @@ async function slider(label: string, value: string) {
 }
 
 describe("composição de duas pessoas no inspetor", () => {
-  it("não inventa um segundo painel quando não há duas pessoas confirmadas", async () => {
+  it("permite composição manual sem exigir detecção facial",async()=>{
+    const ui=await inspector({...defaultEditorSettings(),ratio:"9:16"},null);
+    await ui.click("Duas pessoas (empilhadas)");
+    expect(ui.onSettings).toHaveBeenCalledWith({splitScreen:expect.objectContaining({version:1,faceValidated:true})});
+    expect(ui.host.querySelector('input[name="split-cima-x"]')).not.toBeNull();
+    expect(suggestSplitScreen).not.toHaveBeenCalled();
+  });
+  it("detecção inconclusiva preserva o enquadramento manual escolhido", async () => {
     suggestSplitScreen.mockResolvedValue({ status: "manual", message: "Não encontramos duas pessoas no mesmo quadro." });
     const ui = await inspector(defaultEditorSettings());
     await ui.click("Duas pessoas (empilhadas)");
+    ui.onSettings.mockClear();
+    await ui.click("Localizar duas pessoas");
     expect(suggestSplitScreen).toHaveBeenCalledWith(source);
     expect(ui.onSettings).not.toHaveBeenCalled();
     expect(ui.host.textContent).toContain("Não encontramos duas pessoas no mesmo quadro.");
-    expect(ui.host.querySelector('input[name="split-cima-x"]')).toBeNull();
+    expect(ui.host.querySelector('input[name="split-cima-x"]')).not.toBeNull();
   });
-  it("ativa 9:16 somente com duas regiões detectadas e limpa ao trocar proporção", async () => {
+  it("ativa 9:16 manualmente, aceita regiões detectadas e limpa ao trocar proporção", async () => {
     suggestSplitScreen.mockResolvedValue(found);
     const ui = await inspector({ ...defaultEditorSettings(), ratio: "16:9" });
     await ui.click("Duas pessoas (empilhadas)");
-    expect(ui.onSettings).toHaveBeenLastCalledWith({ ratio: "9:16", splitScreen: found.layout });
+    expect(ui.onSettings).toHaveBeenLastCalledWith({ ratio: "9:16", splitScreen: expect.objectContaining({faceValidated:true}) });
+    await ui.click("Localizar duas pessoas");
+    expect(ui.onSettings).toHaveBeenLastCalledWith({ splitScreen: found.layout });
     expect(ui.host.querySelector('button[aria-label="Vertical"]')?.getAttribute("aria-pressed")).toBe("true");
     await act(async () => { ui.host.querySelector<HTMLButtonElement>('button[aria-label="Quadrado"]')!.click(); });
     expect(ui.onSettings).toHaveBeenLastCalledWith({ ratio: "1:1", splitScreen: null });

@@ -18,6 +18,8 @@ use tauri::{UriSchemeContext, UriSchemeResponder};
 
 use crate::media_store::MediaStore;
 
+const MAX_RESPONSE_BYTES: u64 = 4 * 1024 * 1024;
+
 fn content_type(ext: &str) -> &'static str {
     match ext {
         "mp4" | "m4v" => "video/mp4",
@@ -25,6 +27,15 @@ fn content_type(ext: &str) -> &'static str {
         "mkv" => "video/x-matroska",
         "mov" => "video/quicktime",
         "avi" => "video/x-msvideo",
+        "png" => "image/png",
+        "jpg" | "jpeg" => "image/jpeg",
+        "webp" => "image/webp",
+        "wav" => "audio/wav",
+        "mp3" => "audio/mpeg",
+        "m4a" => "audio/mp4",
+        "aac" => "audio/aac",
+        "ogg" | "opus" => "audio/ogg",
+        "flac" => "audio/flac",
         _ => "application/octet-stream",
     }
 }
@@ -46,7 +57,10 @@ fn parse_range(headers: &tauri::http::HeaderMap, len: u64) -> Option<(u64, u64)>
             return None;
         }
         let start = len.saturating_sub(n);
-        Some((start, len - 1))
+        Some((
+            start,
+            (len - 1).min(start.saturating_add(MAX_RESPONSE_BYTES - 1)),
+        ))
     } else {
         let start: u64 = a.parse().ok()?;
         let end = if b.is_empty() {
@@ -54,8 +68,12 @@ fn parse_range(headers: &tauri::http::HeaderMap, len: u64) -> Option<(u64, u64)>
         } else {
             b.parse().ok()?
         };
-        if start <= end && end < len {
-            Some((start, end))
+        if start <= end && start < len {
+            Some((
+                start,
+                end.min(len - 1)
+                    .min(start.saturating_add(MAX_RESPONSE_BYTES - 1)),
+            ))
         } else {
             None
         }
@@ -70,6 +88,10 @@ fn media_response(
     let mut b = Response::builder()
         .status(status)
         .header(header::ACCESS_CONTROL_ALLOW_ORIGIN, "*")
+        .header(
+            header::ACCESS_CONTROL_EXPOSE_HEADERS,
+            "Content-Range, Content-Length, Accept-Ranges",
+        )
         .header(header::ACCEPT_RANGES, "bytes")
         .header(header::CACHE_CONTROL, "private, no-store");
     for (k, v) in extra {
@@ -84,7 +106,7 @@ pub fn handle(
     responder: UriSchemeResponder,
 ) {
     let app = ctx.app_handle().clone();
-    tauri::async_runtime::spawn(async move {
+    tauri::async_runtime::spawn_blocking(move || {
         let resp = serve(&app, &request);
         responder.respond(resp);
     });
@@ -122,8 +144,11 @@ fn serve(app: &AppHandle, request: &Request<Vec<u8>>) -> Response<Vec<u8>> {
         return error_response(StatusCode::NOT_FOUND, "extensão não corresponde à mídia");
     }
     let path: PathBuf = store.files_dir().join(&name);
+    serve_file(&path, ext, request)
+}
 
-    let file = match std::fs::File::open(&path) {
+fn serve_file(path: &std::path::Path, ext: &str, request: &Request<Vec<u8>>) -> Response<Vec<u8>> {
+    let file = match std::fs::File::open(path) {
         Ok(f) => f,
         Err(_) => {
             return error_response(
@@ -140,7 +165,38 @@ fn serve(app: &AppHandle, request: &Request<Vec<u8>>) -> Response<Vec<u8>> {
     };
     let ctype = content_type(ext);
 
-    match parse_range(request.headers(), len) {
+    if request.method() == tauri::http::Method::HEAD {
+        return media_response(
+            StatusCode::OK,
+            Vec::new(),
+            vec![
+                (header::CONTENT_TYPE, ctype.to_string()),
+                (header::CONTENT_LENGTH, len.to_string()),
+            ],
+        );
+    }
+    if request.method() != tauri::http::Method::GET {
+        return error_response(StatusCode::METHOD_NOT_ALLOWED, "método não suportado");
+    }
+    let range = parse_range(request.headers(), len);
+    if request.headers().contains_key(header::RANGE) && range.is_none() {
+        return media_response(
+            StatusCode::RANGE_NOT_SATISFIABLE,
+            Vec::new(),
+            vec![
+                (header::CONTENT_RANGE, format!("bytes */{len}")),
+                (header::CONTENT_LENGTH, "0".into()),
+            ],
+        );
+    }
+    if range.is_none() && len > MAX_RESPONSE_BYTES {
+        return error_response(
+            StatusCode::BAD_REQUEST,
+            "mídias grandes exigem leitura parcial com Range",
+        );
+    }
+
+    match range {
         Some((s, e)) => {
             // LER SOMENTE O INTERVALO: posiciona no início e lê os bytes
             // pedidos — sem carregar o resto do arquivo na memória
@@ -222,8 +278,106 @@ mod tests {
         );
         // inválidos
         assert_eq!(parse_range(&headers_with("bytes=999-0"), len), None);
-        assert_eq!(parse_range(&headers_with("bytes=0-1000"), len), None);
+        assert_eq!(parse_range(&headers_with("bytes=1000-1001"), len), None);
         assert_eq!(parse_range(&headers_with("bytes=abc"), len), None);
         assert_eq!(parse_range(&HeaderMap::new(), len), None);
+    }
+
+    #[test]
+    fn range_aberto_em_video_grande_tem_leitura_limitada() {
+        let len = 796_580_866;
+        assert_eq!(
+            parse_range(&headers_with("bytes=0-"), len),
+            Some((0, 4 * 1024 * 1024 - 1))
+        );
+        assert_eq!(
+            parse_range(&headers_with("bytes=500000000-"), len),
+            Some((500000000, 500000000 + 4 * 1024 * 1024 - 1))
+        );
+    }
+
+    fn fixture_file() -> PathBuf {
+        let dir = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("target/test-media");
+        std::fs::create_dir_all(&dir).unwrap();
+        let path = dir.join(format!("{}.mp4", uuid::Uuid::new_v4()));
+        std::fs::write(&path, b"0123456789").unwrap();
+        path
+    }
+
+    #[test]
+    fn range_invalido_nao_retorna_o_arquivo_inteiro() {
+        let path = fixture_file();
+        let request = Request::builder()
+            .header(header::RANGE, "bytes=99-")
+            .body(Vec::new())
+            .unwrap();
+        let response = serve_file(&path, "mp4", &request);
+        std::fs::remove_file(path).unwrap();
+        assert_eq!(response.status(), StatusCode::RANGE_NOT_SATISFIABLE);
+        assert_eq!(response.headers()[header::CONTENT_RANGE], "bytes */10");
+    }
+
+    #[test]
+    fn head_retorna_metadados_sem_carregar_corpo() {
+        let path = fixture_file();
+        let request = Request::builder().method("HEAD").body(Vec::new()).unwrap();
+        let response = serve_file(&path, "mp4", &request);
+        std::fs::remove_file(path).unwrap();
+        assert_eq!(response.status(), StatusCode::OK);
+        assert_eq!(response.headers()[header::CONTENT_LENGTH], "10");
+        assert!(response.body().is_empty());
+    }
+
+    #[test]
+    fn leitura_parcial_preserva_conteudo_e_headers() {
+        let path = fixture_file();
+        let request = Request::builder()
+            .header(header::RANGE, "bytes=3-6")
+            .body(Vec::new())
+            .unwrap();
+        let response = serve_file(&path, "mp4", &request);
+        std::fs::remove_file(path).unwrap();
+        assert_eq!(response.status(), StatusCode::PARTIAL_CONTENT);
+        assert_eq!(response.body(), b"3456");
+        assert_eq!(response.headers()[header::CONTENT_RANGE], "bytes 3-6/10");
+        assert!(response
+            .headers()
+            .contains_key(header::ACCESS_CONTROL_EXPOSE_HEADERS));
+    }
+
+    #[test]
+    fn range_com_fim_alem_do_arquivo_retorna_os_bytes_disponiveis() {
+        let path = fixture_file();
+        let request = Request::builder()
+            .header(header::RANGE, "bytes=3-999")
+            .body(Vec::new())
+            .unwrap();
+        let response = serve_file(&path, "mp4", &request);
+        std::fs::remove_file(path).unwrap();
+        assert_eq!(response.status(), StatusCode::PARTIAL_CONTENT);
+        assert_eq!(response.body(), b"3456789");
+        assert_eq!(response.headers()[header::CONTENT_RANGE], "bytes 3-9/10");
+        assert_eq!(response.headers()[header::CONTENT_LENGTH], "7");
+        assert_eq!(
+            parse_range(&headers_with("bytes=0-1000"), 1000),
+            Some((0, 999))
+        );
+        assert_eq!(parse_range(&headers_with("bytes=0-0"), 0), None);
+    }
+
+    #[test]
+    fn video_grande_sem_range_nao_aloca_o_arquivo_inteiro() {
+        let path = fixture_file();
+        std::fs::OpenOptions::new()
+            .write(true)
+            .open(&path)
+            .unwrap()
+            .set_len(5 * 1024 * 1024)
+            .unwrap();
+        let request = Request::builder().body(Vec::new()).unwrap();
+        let response = serve_file(&path, "mp4", &request);
+        std::fs::remove_file(path).unwrap();
+        assert_eq!(response.status(), StatusCode::BAD_REQUEST);
+        assert!(response.body().len() < 1024);
     }
 }

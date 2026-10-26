@@ -1,0 +1,16 @@
+
+ RUN  v2.1.9 C:/CutNicePro/app
+
+ ✓ src/test/composition-gesture-limits.test.ts (4 tests) 6ms
+ ✓ src/test/composition-trim-free.test.ts (9 tests) 11ms
+ ✓ src/test/composition-edit.test.ts (14 tests) 17ms
+ ✓ src/test/composition-trim-playhead.test.ts (6 tests) 12ms
+ ✓ src/test/composition-links.test.ts (4 tests) 31ms
+ ✓ src/test/composition-commands-trim.test.tsx (3 tests) 102ms
+ ✓ src/test/composition-commands.test.tsx (9 tests) 159ms
+
+ Test Files  7 passed (7)
+      Tests  49 passed (49)
+   Start at  09:43:09
+   Duration  2.17s (transform 504ms, setup 0ms, collect 3.76s, tests 339ms, environment 1ms, prepare 1.76s)
+

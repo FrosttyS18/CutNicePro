@@ -18,13 +18,13 @@ import type { Clip } from "../../lib/clips";
 import type { EditorSettings, WorkspaceData } from "../../lib/workspace-types";
 import { VideoPreview } from "../workspace/VideoPreview";
 import { FrameSeeker, type ScrubCanvas } from "../../lib/frame-seeker";
-import { getMediaBlob } from "../../services/workspace-store";
 import { effectiveSegments, nextBoundary, snapSeek } from "../../lib/edit-plan";
 import { TranscriptPanel } from "../workspace/TranscriptPanel";
 import { EditorTimeline } from "./EditorTimeline";
 import { EditorInspector, panelForTool } from "./EditorInspector";
 import { usePlaybackShortcut } from "../../hooks/usePlaybackShortcut";
 import { FramingToolbar } from "./FramingToolbar";
+import { CompositionEditor } from "./CompositionEditor";
 
 interface Props {
   projectId?: string;
@@ -34,7 +34,7 @@ interface Props {
   localUrl: string | null;
   dirty: boolean;
   onChange: (data: WorkspaceData) => void;
-  onSave: () => Promise<boolean> | boolean | void;
+  onSave: () => Promise<boolean> | boolean;
   onBack: () => void;
   transcriptionControls?: ReactNode;
   transcribing?: boolean;
@@ -42,7 +42,11 @@ interface Props {
   allClips?: Clip[];
 }
 
-export function VideoEditor({ projectId, title, activeClip, data, localUrl, dirty, onChange, onSave, onBack, transcriptionControls, transcribing, allClips }: Props) {
+export function VideoEditor(props:Props) {
+  return props.projectId ? <CompositionEditor {...props} projectId={props.projectId}/> : <LegacyVideoEditor {...props}/>;
+}
+
+function LegacyVideoEditor({ projectId, title, activeClip, data, localUrl, dirty, onChange, onSave, onBack, transcriptionControls, transcribing, allClips }: Props) {
   const video = useRef<HTMLVideoElement>(null);
   const serialize = useCallback(
     (value: WorkspaceData) =>
@@ -52,6 +56,7 @@ export function VideoEditor({ projectId, title, activeClip, data, localUrl, dirt
   interface EditSnapshot { settings: EditorSettings; transcript: WorkspaceData["transcript"]; clipEdits?: Record<string, EditorSettings> }
   const history = useEditHistory<EditSnapshot>({ settings: data.settings, transcript: data.transcript, clipEdits: data.clipEdits }, serialize as (value: EditSnapshot) => string);
   const [saveState, setSaveState] = useState<"saved" | "saving" | "error" | "dirty">("saved");
+  const [toastGeracao, setToastGeracao] = useState(0);
   const dataRef = useRef(data);
   const saveRef = useRef(onSave);
   // desfazer/refazer: o snapshot guarda apenas {settings, transcript,
@@ -86,35 +91,23 @@ export function VideoEditor({ projectId, title, activeClip, data, localUrl, dirt
     },
     [onChange, history],
   );
-  // autosave serializado: nunca sobrescreve gravação mais nova por antiga
   const saving = useRef(false);
-  const pending = useRef(false);
   const runSave = useCallback(async () => {
-    if (saving.current) { pending.current = true; return; }
+    if (saving.current) return;
     saving.current = true;
     try {
-      for (;;) {
-        pending.current = false;
-        setSaveState("saving");
-        const ok = await Promise.resolve(saveRef.current());
-        if (!ok) { setSaveState("error"); return; }
-        if (!pending.current) break;
-      }
+      setSaveState("saving");
+      const ok = await Promise.resolve(saveRef.current());
+      if (!ok) { setSaveState("error"); return; }
       setSaveState("saved");
       setToastGeracao(g => g + 1);
+    } catch {
+      setSaveState("error");
     } finally {
       saving.current = false;
     }
   }, []);
-  useEffect(() => {
-    if (!dirty) return;
-    const timer = window.setTimeout(() => void runSave(), 1200);
-    return () => window.clearTimeout(timer);
-  }, [dirty, data, runSave]);
   const displayStatus = dirty && saveState === "saved" ? "dirty" : saveState;
-  // status de salvamento vira TOAST temporário (pedido upd 15: nada de texto
-  // fixo na UI); a auto-soma é feita por animação CSS (sem timer em effect)
-  const [toastGeracao, setToastGeracao] = useState(0);
   const changeSettings = (settings: Partial<EditorSettings>) => changeWithHistory({ ...data, settings: { ...data.settings, ...settings } }, "settings");
   const acceptSplitVerification = useCallback((patch: Partial<EditorSettings>) => {
     const current = dataRef.current;
@@ -153,10 +146,11 @@ export function VideoEditor({ projectId, title, activeClip, data, localUrl, dirt
       if (key === "z" && !event.shiftKey) { event.preventDefault(); history.undo(); }
       else if (key === "z" && event.shiftKey) { event.preventDefault(); history.redo(); }
       else if (key === "y") { event.preventDefault(); history.redo(); }
+      else if (key === "s") { event.preventDefault(); if (dirty) void runSave(); }
     };
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
-  }, [framing, history]);
+  }, [framing, history, dirty, runSave]);
   // arraste do vídeo no modo Enquadrar (imagem) ou da legenda na aba Legendas
   const onCanvasPointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
     if (event.button !== 0) return;
@@ -241,7 +235,12 @@ export function VideoEditor({ projectId, title, activeClip, data, localUrl, dirt
   const [scrub, setScrub] = useState<{ canvas: ScrubCanvas; localUrl: string; sourceTime: number } | null>(null);
   // troca de mídia invalida o overlay por derivação (canvas de outra fonte não aparece)
   const scrubCanvas = scrub && scrub.localUrl === localUrl ? scrub.canvas : null;
-  useEffect(() => () => seekerRef.current?.dispose(), []);
+  const seekRequest = useRef(0);
+  useEffect(() => () => {
+    seekRequest.current++;
+    seekerRef.current?.dispose();
+    seekerRef.current = null;
+  }, [localUrl]);
   useEffect(() => {
     const element = video.current;
     if (!element) return;
@@ -255,7 +254,7 @@ export function VideoEditor({ projectId, title, activeClip, data, localUrl, dirt
         clearScrub(); // <video> alcançou o alvo — deixa o frame nativo aparecer
       }
     };
-    const onPlay = () => clearScrub();
+    const onPlay = () => { seekRequest.current++; clearScrub(); };
     element.addEventListener("seeked", onSeeked);
     element.addEventListener("play", onPlay);
     return () => { element.removeEventListener("seeked", onSeeked); element.removeEventListener("play", onPlay); };
@@ -271,16 +270,16 @@ export function VideoEditor({ projectId, title, activeClip, data, localUrl, dirt
     // frame instantâneo durante scrub (pausado): só quando há Blob registrado
     const mediaId = data.media?.mediaId;
     if (mediaId && video.current.paused) {
-      const blob = getMediaBlob(mediaId);
-      if (blob) {
+      if (localUrl) {
         const url = localUrl;
+        const request = ++seekRequest.current;
         seekerRef.current ??= new FrameSeeker();
-        void seekerRef.current.getFrameAt(mediaId, blob, next).then((canvas) => {
+        void seekerRef.current.getFrameAt(mediaId, url, next).then((canvas) => {
           // aplica só se ainda faz sentido: mesma mídia E o <video> ainda
           // não alcançou o alvo (resolução tardia não ressuscita o overlay)
           const element = video.current;
           const videoCaughtUp = element && !element.seeking && Math.abs(element.currentTime - next) < 0.05;
-          if (canvas && url !== null && url === localUrl && !videoCaughtUp) setScrub({ canvas, localUrl: url, sourceTime: next });
+          if (canvas && request === seekRequest.current && element?.paused && !videoCaughtUp) setScrub({ canvas, localUrl: url, sourceTime: next });
         }).catch(() => { /* mantém overlay anterior ou nenhum */ });
       }
     }
@@ -358,7 +357,7 @@ export function VideoEditor({ projectId, title, activeClip, data, localUrl, dirt
           <span role="status" data-testid="editor-save-status" className="sr-only">
             {displayStatus === "saving" ? "Salvando…" : displayStatus === "error" ? "Falha ao salvar" : displayStatus === "dirty" ? "Alterações não salvas" : "Alterações salvas"}
           </span>
-          {displayStatus === "saved" && (
+          {displayStatus === "saved" && toastGeracao > 0 && (
             <div key={`ok-${toastGeracao}`} className="editor-toast editor-toast--ok" role="status" data-testid="editor-toast">
               <svg width="15" height="15" viewBox="0 0 256 256" fill="#4ade80" aria-hidden="true"><path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm45.66,85.66-56,56a8,8,0,0,1-11.32,0l-24-24a8,8,0,0,1,11.32-11.32L112,148.69l50.34-50.35a8,8,0,0,1,11.32,11.32Z"></path></svg>
               <span>Alterações salvas</span>
@@ -383,7 +382,7 @@ export function VideoEditor({ projectId, title, activeClip, data, localUrl, dirt
             const { [data.activeClipId!]: _descartado, ...demaisEdicoes } = data.clipEdits ?? {};
             changeWithHistory({ ...data, clipEdits: demaisEdicoes, settings: isolatedClipSettings(activeClip, undefined, data.media) }, "restore");
           }} title="Restaurar corte original (descarta o rascunho deste corte)" aria-label="Restaurar corte original"><ArrowBendUpLeftIcon size={18} aria-hidden="true"/></button>}
-          <button type="button" className="editor-icon-button" disabled={!dirty} onClick={() => void runSave()} title="Salvar agora" aria-label="Salvar agora"><FloppyDiskIcon size={18} aria-hidden="true"/></button>
+          <button type="button" className="flow-button" disabled={!dirty || displayStatus === "saving"} onClick={() => void runSave()} aria-label="Salvar"><FloppyDiskIcon size={18} aria-hidden="true"/>Salvar</button>
         </div>
         </header>
       <div className="editor-layout" style={{ ["--transcript-width" as string]: `${layout.transcriptWidth}px`, ["--inspector-width" as string]: `${layout.inspectorWidth}px` }}>

@@ -26,8 +26,11 @@ interface Props {
   onSettings: (settings: Partial<EditorSettings>) => void;
   source?: SplitFramingSource;
   sourceTime?: number;
+  reframeContent?: ReactNode;
   /** Aplica o estilo de legenda atual a todos os cortes do projeto (não destrutivo). */
   onApplyAll?: (model: number, style: CaptionStyle) => Promise<void>;
+  onApplyMontage?: (model: number, style: CaptionStyle) => Promise<void>;
+  applyAllUnavailableReason?: string;
 }
 
 export function panelForTool(tool: ToolId): EditorPanel { return tool === "reframe" ? "reframe" : "captions"; }
@@ -71,7 +74,7 @@ const RATIO_LABELS: Record<string, { ratio: string; name: string }> = {
   original: { ratio: "Src", name: "Original" }, "16:9": { ratio: "16:9", name: "Paisagem" }, "4:5": { ratio: "4:5", name: "Retrato" },
 };
 
-export function EditorInspector({ panel, settings, onPanel, onSettings, onApplyAll, source, sourceTime }: Props) {
+export function EditorInspector({ panel, settings, onPanel, onSettings, onApplyAll, onApplyMontage, applyAllUnavailableReason, source, sourceTime, reframeContent }: Props) {
   const panels: { id: EditorPanel; label: string }[] = [
     { id: "captions", label: "Legendas" }, { id: "reframe", label: "Enquadrar" },
     { id: "audio", label: "Áudio" }, { id: "effects", label: "Efeitos" },
@@ -79,6 +82,7 @@ export function EditorInspector({ panel, settings, onPanel, onSettings, onApplyA
   const icons = { captions: ClosedCaptioningIcon, reframe: CropIcon, audio: SpeakerHighIcon, effects: PaletteIcon };
   const [notice, setNotice] = useState<string | null>(null);
   const [applying, setApplying] = useState(false);
+  const [applyingMontage,setApplyingMontage] = useState(false);
   const [todosEstilos, setTodosEstilos] = useState(false);
   const caption = effectiveCaptionStyle(settings.captionModel, settings.captionStyle);
   const setCaption = (change: Partial<CaptionStyle>) => onSettings({ captionStyle: { ...caption, ...change } });
@@ -124,7 +128,7 @@ export function EditorInspector({ panel, settings, onPanel, onSettings, onApplyA
               })}
             </div>
             <button type="button" className="studio-toggle-estilos" aria-expanded={todosEstilos}
-              aria-label={todosEstilos ? "Mostrar menos estilos" : "Ver todos os 10 estilos"} title="Todos os estilos"
+              aria-label={todosEstilos ? "Mostrar menos estilos" : "Ver todos os 10 estilos"}
               onClick={() => setTodosEstilos(current => !current)}>
               <CaretDownIcon size={18} aria-hidden="true"/>
             </button>
@@ -191,16 +195,22 @@ export function EditorInspector({ panel, settings, onPanel, onSettings, onApplyA
                   } else setNotice("Salve um estilo primeiro.");
                 } catch { setNotice("Não foi possível carregar o estilo salvo."); }
               }}><FolderOpenIcon size={16} aria-hidden="true"/>Carregar estilo</button>
-              <button type="button" className="flow-button studio-span-2" disabled={applying || !onApplyAll}
+              {onApplyMontage&&<button type="button" className="flow-button studio-span-2" disabled={applyingMontage||applying}
+                onClick={async()=>{setApplyingMontage(true);try{await onApplyMontage(settings.captionModel,caption);setNotice("Estilo aplicado à montagem. Salve para confirmar.");}
+                  catch{setNotice("Não foi possível aplicar o estilo à montagem.");}finally{setApplyingMontage(false);}}}>
+                <CheckSquareIcon size={16} aria-hidden="true"/>{applyingMontage?"Aplicando…":"Aplicar estilo à montagem"}
+              </button>}
+              <button type="button" className="flow-button studio-span-2" disabled={applying || applyingMontage || !onApplyAll}
                 onClick={async () => {
                   setApplying(true);
-                  try { await onApplyAll!(settings.captionModel, caption); setNotice("Estilo aplicado a todos os cortes."); }
+                  try { await onApplyAll!(settings.captionModel, caption); setNotice("Estilo preparado nos cortes. Salve para confirmar."); }
                   catch { setNotice("Não foi possível aplicar a todos os cortes."); }
                   finally { setApplying(false); }
                 }}>
                 <CheckSquareIcon size={16} aria-hidden="true"/>{applying ? "Aplicando…" : "Aplicar a todos os cortes"}
               </button>
             </div>
+            {!onApplyAll&&applyAllUnavailableReason&&<p className="flow-muted">{applyAllUnavailableReason}</p>}
             {notice && <p className="studio-notice" role="status">{notice}</p>}
           </section>
           <hr className="studio-separator" />
@@ -214,6 +224,7 @@ export function EditorInspector({ panel, settings, onPanel, onSettings, onApplyA
           </section>
         </>
         : panel === "reframe" ? <>
+          {reframeContent}
           <section className="studio-section">
             <h2>Enquadramento</h2>
             <p>{split ? "Ajuste os dois enquadramentos nos controles abaixo." : "Arraste o vídeo na prévia para manter o assunto em foco."}</p>

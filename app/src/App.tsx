@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState, type SetStateAction } from "react";
 import * as ipc from "./lib/ipc";
 import type { CollectionMeta, ProjectMeta } from "./lib/types";
 import { sortProjects } from "./lib/projects";
@@ -17,7 +17,10 @@ import {
 } from "./services/workspace-store";
 import { createWorkspace, sourceName } from "./lib/workspace";
 import { importedProjectDisplayName } from "./lib/media-name";
-import { importProject, ImportRollbackError } from "./services/import-project";
+import { ImportRollbackError } from "./services/import-project";
+import { prepareProject } from "./services/prepare-project";
+import { readPreparation, reconcilePreparations } from "./services/project-preparation-state";
+import type { PreparationProgress } from "./lib/project-preparation";
 import type { UploadSource, UploadOptions } from "./lib/workspace-types";
 import { AppShell, type ProjectsSub } from "./components/shell/AppShell";
 import type { Crumb } from "./components/shell/Breadcrumb";
@@ -29,14 +32,18 @@ import { UploadScreen } from "./screens/UploadScreen";
 import { ProjectsScreen } from "./screens/ProjectsScreen";
 import { CollectionsScreen } from "./screens/CollectionsScreen";
 import { CollectionScreen } from "./screens/CollectionScreen";
+import { NavigationGuardProvider } from "./components/NavigationGuardProvider";
+import { useNavigationGuard } from "./hooks/useNavigationGuard";
+import { useWindowNavigationGuard } from "./hooks/useWindowNavigationGuard";
+import type { ProjectEditorOrigin } from "./lib/project-navigation";
 
 type Route =
   | { kind: "home" }
-  | { kind: "upload" }
+  | { kind: "upload"; collectionId?: string }
   | { kind: "projects" }
   | { kind: "collections" }
   | { kind: "collection"; id: string }
-  | { kind: "project"; id: string; view?: "overview" | "editor" };
+  | { kind: "project"; id: string; view?: "overview" | "editor"; editorOrigin?: ProjectEditorOrigin };
 
 interface LoadState {
   status: "loading" | "ready" | "error";
@@ -51,10 +58,20 @@ interface CollectionsState {
 }
 
 export default function App() {
+  return <NavigationGuardProvider><AppContent /></NavigationGuardProvider>;
+}
+
+function AppContent() {
   const [bootReady, setBootReady] = useState(false);
   const splash = useSplashPhase(bootReady);
 
-  const [route, setRoute] = useState<Route>({ kind: "home" });
+  const [route, updateRoute] = useState<Route>({ kind: "home" });
+  const navigation = useNavigationGuard()!;
+  const setRoute = useCallback((next: SetStateAction<Route>) => {
+    void navigation.requestNavigation(() => updateRoute(next));
+  }, [navigation]);
+  const activeRoute = useRef(route);
+  useLayoutEffect(() => { activeRoute.current = route; }, [route]);
   const [load, setLoad] = useState<LoadState>({
     status: "loading",
     projects: [],
@@ -67,7 +84,9 @@ export default function App() {
   });
   const [collectionDialogOpen, setCollectionDialogOpen] = useState(false);
   const [actionError, setActionError] = useState<string | null>(null);
+  useWindowNavigationGuard(navigation, setActionError);
   const [actionNotice, setActionNotice] = useState<string | null>(null);
+  const [preparedProjectId, setPreparedProjectId] = useState<string | null>(null);
   const [expanded, setExpanded] = useState(() => loadSidebarExpanded());
   useEffect(() => () => releaseSessionMedia(), []);
 
@@ -75,6 +94,9 @@ export default function App() {
       const projects = result.map((project) => ({ ...project,
         name: importedProjectDisplayName(project.name, readWorkspace(project.id).media?.name) }));
       setLoad({ status: "ready", projects, error: null });
+      void reconcilePreparations(projects.map(project => project.id)).then(result => {
+        if (result.failed.length) setActionNotice("Não foi possível verificar algumas preparações anteriores. Seus projetos foram mantidos.");
+      }).catch(() => setActionNotice("Não foi possível verificar a preparação anterior. Seus projetos foram mantidos."));
     }).catch((e: unknown) => {
       setLoad({
         status: "error",
@@ -120,10 +142,12 @@ export default function App() {
   }
 
   async function handleOpenProject(id: string) {
-    const opened = await ipc.openProject(id);
-    setActionError(null);
-    await refreshProjects();
-    setRoute({ kind: "project", id: opened.id });
+    return navigation.requestNavigation(async () => {
+      const opened = await ipc.openProject(id);
+      setActionError(null);
+      await refreshProjects();
+      updateRoute({ kind: "project", id: opened.id, view: "overview" });
+    });
   }
 
   async function handleCreateFromMedia(source: UploadSource, options: UploadOptions) {
@@ -141,13 +165,30 @@ export default function App() {
     options: UploadOptions,
     onProgress: (copied: number, total: number) => void,
     signal?: AbortSignal,
+    onPreparation?: (progress: PreparationProgress) => void,
   ): Promise<void> {
     try {
-      const project = await importProject(path, name, options, onProgress, signal);
+      const prepared = await prepareProject(path, name, options, onProgress, signal, onPreparation);
+      const { project } = prepared;
+      let notice = prepared.notice;
+      if (route.kind === "upload" && route.collectionId) {
+        try {
+          await ipc.addProjectToCollection(route.collectionId, project.id);
+          await refreshCollections();
+        } catch {
+          notice = [notice, "O projeto foi criado, mas não foi possível adicioná-lo à coleção. Use Adicionar projeto para tentar novamente."].filter(Boolean).join(" ");
+        }
+      }
       setActionError(null);
-      setActionNotice(project.importNotice ?? null);
+      const stillPreparing = activeRoute.current === route;
+      if (stillPreparing && notice === prepared.notice) {
+        try { if (readPreparation(project.id)) notice = null; }
+        catch { notice = prepared.notice; }
+      }
+      setPreparedProjectId(stillPreparing ? null : project.id);
+      setActionNotice(notice ?? (stillPreparing ? null : "Projeto preparado e disponível em Meus projetos."));
       setLoad((current) => ({ ...current, status: "ready", error: null, projects: [...current.projects, project] }));
-      setRoute({ kind: "project", id: project.id, view: options.tool === "clips" ? "overview" : "editor" });
+      if (stillPreparing) setRoute({ kind: "project", id: project.id, view: "overview" });
     } catch (error) {
       if (error instanceof ImportRollbackError) {
         setActionError(error.message);
@@ -163,13 +204,15 @@ export default function App() {
   }
 
   async function handleDeleteProject(id: string) {
-    await ipc.deleteProject(id);
-    removeWorkspace(id);
-    setLoad(current => ({ ...current, projects: current.projects.filter(project => project.id !== id) }));
-    setCollectionsLoad(current => ({ ...current, collections: current.collections.map(collection => ({
-      ...collection, project_ids: collection.project_ids.filter(projectId => projectId !== id),
-    })) }));
-    setRoute(current => current.kind === "project" && current.id === id ? { kind: "projects" } : current);
+    await navigation.requestNavigation(async () => {
+      await ipc.deleteProject(id);
+      removeWorkspace(id);
+      setLoad(current => ({ ...current, projects: current.projects.filter(project => project.id !== id) }));
+      setCollectionsLoad(current => ({ ...current, collections: current.collections.map(collection => ({
+        ...collection, project_ids: collection.project_ids.filter(projectId => projectId !== id),
+      })) }));
+      updateRoute(current => current.kind === "project" && current.id === id ? { kind: "projects" } : current);
+    });
   }
 
   async function handleCreateCollection(name: string, icon: "heart" | "archive-box") {
@@ -235,8 +278,8 @@ export default function App() {
                 { label: currentProject?.name ?? "Projeto" },
               ];
 
-  const guard = (fn: () => Promise<void>) =>
-    fn().catch((e) =>
+  const guard = (fn: () => Promise<unknown>) =>
+    fn().then(() => undefined).catch((e) =>
       setActionError(e instanceof Error ? e.message : String(e)),
     );
 
@@ -262,7 +305,8 @@ export default function App() {
           </div>
         )}
         {actionNotice && <div className="workspace-notice" role="status"><p>{actionNotice}</p>
-          <button type="button" className="flow-text-button" onClick={() => setActionNotice(null)}>Fechar aviso</button></div>}
+          {preparedProjectId && <button type="button" className="flow-button" onClick={() => void guard(() => handleOpenProject(preparedProjectId))}>Abrir projeto</button>}
+          <button type="button" className="flow-text-button" onClick={() => { setActionNotice(null); setPreparedProjectId(null); }}>Fechar aviso</button></div>}
 
         {route.kind === "home" && <HomeScreen onCreate={goUpload} />}
 
@@ -275,9 +319,16 @@ export default function App() {
             onOpen={(id) => void guard(() => handleOpenProject(id))} onViewAll={() => goProjects("all")} />
         )}
 
-        {route.kind === "projects" && (
+        {(route.kind === "projects" || route.kind === "project" && route.editorOrigin === "library") && (
           <ProjectsScreen
-            onEditClip={(projectId,clip,mediaId) => void guard(async () => { await prepareClipEditing(projectId,mediaId,clip); await handleOpenProject(projectId); setRoute({kind: "project",id: projectId,view: "editor"}); })}
+            active={route.kind === "projects"}
+            onEditClip={(projectId,clip,mediaId) => void guard(() => navigation.requestNavigation(async () => {
+              await prepareClipEditing(projectId,mediaId,clip);
+              const opened=await ipc.openProject(projectId);
+              setActionError(null);
+              await refreshProjects();
+              updateRoute({kind:"project",id:opened.id,view:"editor",editorOrigin:"library"});
+            }))}
             onCollectionsChanged={refreshCollections}
             onDelete={handleDeleteProject}
             projects={sortProjects(load.projects)}
@@ -314,6 +365,7 @@ export default function App() {
               updatedAtMs={currentCollection.updated_at_ms}
               projects={projectsOf(currentCollection, load.projects)}
               allProjects={load.projects}
+              onCreate={() => setRoute({ kind: "upload", collectionId: currentCollection.id })}
               onAdd={(projectId) =>
                 void guard(() => handleAddToCollection(currentCollection.id, projectId))
               }
@@ -339,6 +391,8 @@ export default function App() {
               onDelete={() => handleDeleteProject(currentProject.id)}
               project={currentProject}
               initialView={route.view}
+              initialEditorOrigin={route.editorOrigin}
+              onReturnToLibrary={() => updateRoute({kind:"projects"})}
               onRename={(name) => handleRenameProject(currentProject.id, name)}
               onImport={goUpload}
             />
