@@ -1,0 +1,65 @@
+╔════════════════════════════════════════════╗
+║       CUTNICEPRO — ZCODE REPORT            ║
+╚════════════════════════════════════════════╝
+TASK
+  Name: Estado de espera da meta de usabilidade
+  Status: BLOCKED — depende do teste manual na sessão normal.
+  Scope: preservar o objetivo integral e interromper continuações sem evidência nova.
+  Objective: envio centralizado; trim funcional; ampliação persistida; split distinto.
+  Result: goal atualizado para blocked após três turnos com a mesma dependência externa.
+  FUNCTIONAL STATUS: PARTIAL. REGRESSION STATUS: não reexecutado; último escopo PASS.
+  VISUAL STATUS: PENDING HUMAN APPROVAL.
+IMPLEMENTATION
+  Completed: auditoria do bloqueio e atualização da continuidade.
+  Not completed: comprovação manual dos percursos na sessão normal.
+  Changes: somente documentação/relatório e estado do goal.
+  Architecture impact: nenhum.
+FILES
+  Created: relatório histórico desta espera.
+  Modified: C:/CutNicePro/docs/engineering/ENGINE-HANDOFF.md;
+    C:/CutNicePro/docs/engineering/USABILITY-IMPLEMENTATION-PLAN.md;
+    C:/CutNicePro/docs/reports/LATEST.txt.
+  Deleted: nenhum. Unexpected changes: nenhuma identificada; pendências preservadas.
+VALIDATION
+  Typecheck/Lint/Unit/Integration/Regression: nenhuma nova execução.
+  Visual tests: não executados. Runtime verification: nenhuma nova execução.
+  Total passed/failed/skipped: zero testes iniciados neste turno.
+HOOKS / HARNESS
+  Hooks active: não presumidos. PreToolUse/PostToolUse/Stop/Baseline: não usados como aceite.
+  Gate result: falta evidência manual. Evidence: relatórios anteriores e matriz do plano.
+MCP / SKILLS
+  Tools used: estado do goal, leitura documental/Git.
+  Connection status: Graphify não necessário para esta atualização documental.
+  Failures: nenhuma nova. Pending activation: nenhuma.
+GIT
+  Branch: codex/usabilidade-editor-envio-split.
+  HEAD: df1186b94d0362af6815397e7cd30efee8e1be3e.
+  Latest commit: Corrigir análise de clipes e aprimorar a interface.
+  Commits created: nenhum. Push: NOT EXECUTED.
+  Remote: origin → FrosttyS18/CutNicePro. Working tree: MODIFIED + UNTRACKED.
+  Pending files: preservados; inventário no relatório técnico de14:41.
+EVIDENCE
+  Commands executed: get_goal/update_goal; leitura dos relatórios e plano; git status.
+  Relevant logs: C:/CutNicePro/docs/reports/history/2026-10-25_144115-usabilidade-timeline-split-cenas.txt;
+    C:/CutNicePro/docs/reports/history/2026-10-25_144750-auditoria-aceite-usabilidade.txt.
+  Screenshots/Test artifacts: nenhum novo.
+  Reproduction details: o teste manual não foi informado; não é espera de processo ativo.
+ISSUES
+  Bugs found: nenhum novo. Unresolved failures: aceite manual não comprovado.
+  Regressions: não avaliadas novamente. Risks: testes técnicos não provam o percurso completo.
+  Blockers: retorno do mantenedor, que prefere executar o teste manual.
+FINAL
+  Delivery status: BLOCKED; não concluído e sem redução de escopo.
+  Requirements met: implementação/evidências técnicas anteriores preservadas.
+  Remaining work: confirmar o comportamento na sessão normal.
+  User action required: executar os três testes abaixo e informar o resultado.
+  Restart required: nenhuma nova build criada. Ready for next task: aguarda retorno manual.
+REPORT
+  Latest file: C:/CutNicePro/docs/reports/LATEST.txt.
+  Historical file: C:/CutNicePro/docs/reports/history/2026-10-25_144931-meta-usabilidade-aguarda-teste.txt
+GUIA DO MANTENEDOR — O QUE MUDOU E COMO TESTAR
+  O que mudou: somente o estado da meta; as correções continuam na build padrão.
+  1. Conferir o envio centralizado e importar um vídeo.
+  2. Ampliar um corte além do fim escolhido pela IA; salvar, reabrir e baixar.
+  3. wardigs-corte01:43,72–03:03,90,9:16/Preencher → Duas pessoas:
+     esperado split até01:52,95 e quadro único nos closes seguintes.

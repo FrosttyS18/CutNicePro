@@ -56,4 +56,13 @@ describe("configurações do clipe preservam a edição salva (upd 20)", () => {
     expect(opened.settings.captionModel).toBe(0);
     expect(opened.activeClipId).toBe(clip.id);
   });
+
+  it("ampliação manual usa a mídia original ao reabrir e preparar download", () => {
+    const data: WorkspaceData = { version: 2, media: { kind: "local", name: "Fonte.mp4", videoId: null, url: null, width: 1920, height: 1080, duration: 180 },
+      transcript: [], transcriptMode: "empty", settings: defaultEditorSettings(), tool: "editor", clipEdits: { [clip.id]: saved({ trimStart: 5, trimEnd: 90 }) } };
+    const opened = openClipWorkspace(data, clip);
+    expect([opened.settings.trimStart, opened.settings.trimEnd]).toEqual([5, 90]);
+    expect(isolatedClipSettings(clip, data.clipEdits![clip.id], data.media)).toMatchObject({ trimStart: 5, trimEnd: 90 });
+    expect(isolatedClipSettings(clip, saved({ trimStart: -5, trimEnd: 999 }), data.media)).toMatchObject({ trimStart: 0, trimEnd: 180 });
+  });
 });

@@ -6,9 +6,12 @@ mod encoder;
 pub(crate) mod pipeline;
 pub(crate) mod scratch;
 pub(crate) mod settings;
+pub(crate) mod split_screen;
 
 mod fill_matrix;
 #[cfg(test)]
 mod integration;
+#[cfg(test)]
+mod split_screen_tests;
 #[cfg(test)]
 mod tests;

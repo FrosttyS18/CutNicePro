@@ -9,6 +9,26 @@ import type { EditPlan, EditSegment, EditorSettings } from "./workspace-types";
 /** Duração mínima de um segmento/intervalo (paridade do render: 0,05 s). */
 export const MIN_SEGMENT = 0.05;
 
+export type TrimEdge = "start" | "end";
+
+export function trimLimits(segments: EditSegment[], index: number, edge: TrimEdge, duration: number): { min: number; max: number } | null {
+  const segment = segments[index];
+  if (!segment || !planIsValid(segments, duration)) return null;
+  const minimum = MIN_SEGMENT + Number.EPSILON * Math.max(1, segment.sourceEnd);
+  return edge === "start"
+    ? { min: segments[index - 1]?.sourceEnd ?? 0, max: Math.max(segment.sourceStart, segment.sourceEnd - minimum) }
+    : { min: Math.min(segment.sourceEnd, segment.sourceStart + minimum), max: segments[index + 1]?.sourceStart ?? duration };
+}
+
+export function trimSegment(segments: EditSegment[], index: number, edge: TrimEdge, value: number, duration: number): EditSegment[] | null {
+  const limits = trimLimits(segments, index, edge, duration);
+  if (!limits || !Number.isFinite(value)) return null;
+  const key = edge === "start" ? "sourceStart" : "sourceEnd";
+  const next = Math.max(limits.min, Math.min(limits.max, value));
+  if (next === segments[index][key]) return segments;
+  return segments.map((segment, position) => position === index ? { ...segment, [key]: next } : segment);
+}
+
 export function normalizePlan(plan: EditPlan | null | undefined): EditSegment[] {
   return [...(plan?.segments ?? [])]
     .filter((s) => Number.isFinite(s.sourceStart) && Number.isFinite(s.sourceEnd))
@@ -21,6 +41,7 @@ export function planIsValid(segments: EditSegment[], duration: number): boolean 
   if (!Number.isFinite(duration) || duration <= 0 || segments.length === 0) return false;
   let previousEnd = -Infinity;
   for (const s of segments) {
+    if (!Number.isFinite(s.sourceStart) || !Number.isFinite(s.sourceEnd)) return false;
     if (s.sourceStart < 0 || s.sourceEnd > duration + 1e-6) return false;
     if (s.sourceEnd - s.sourceStart < MIN_SEGMENT) return false;
     if (s.sourceStart < previousEnd - 1e-6) return false; // sobreposição

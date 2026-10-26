@@ -1,13 +1,39 @@
 import { describe, expect, it } from "vitest";
 import {
   MIN_SEGMENT, effectiveSegments, nextBoundary, normalizePlan, planDuration,
-  planIsValid, removeAt, segmentIndexAt, snapSeek, splitAt, toOutputTime, toSourceTime,
+  planIsValid, removeAt, segmentIndexAt, snapSeek, splitAt, toOutputTime, toSourceTime, trimLimits, trimSegment,
 } from "../lib/edit-plan";
 import type { EditorSettings } from "../lib/workspace-types";
 
 const settings = (over: Partial<EditorSettings> = {}): EditorSettings => ({
   ratio: "9:16", fit: "cover", captionModel: 0, text: "", volume: 1, muted: false,
   background: "#000000", trimStart: 10, trimEnd: 40, ...over,
+});
+
+describe("EditPlan v1 — aparar sem sobrepor trechos", () => {
+  const segments = [{ sourceStart: 10, sourceEnd: 20 }, { sourceStart: 30, sourceEnd: 40 }];
+  it("limita o início/fim pelos vizinhos e mantém os objetos não alterados", () => {
+    expect(trimLimits(segments, 1, "start", 100)?.min).toBe(20);
+    expect(trimLimits(segments, 0, "end", 100)?.max).toBe(30);
+    const trimmed = trimSegment(segments, 1, "start", -90, 100)!;
+    expect(trimmed).toEqual([segments[0], { sourceStart: 20, sourceEnd: 40 }]);
+    expect(trimmed[0]).toBe(segments[0]);
+    expect(segments[1].sourceStart).toBe(30);
+  });
+  it("mantém o mínimo do render apesar do arredondamento binário", () => {
+    const end = trimSegment(segments, 0, "end", -1, 100)!;
+    const start = trimSegment(segments, 1, "start", 1000, 100)!;
+    expect(planIsValid(end, 100)).toBe(true);
+    expect(planIsValid(start, 100)).toBe(true);
+    expect(end[0].sourceEnd - end[0].sourceStart).toBeCloseTo(MIN_SEGMENT, 10);
+    expect(start[1].sourceEnd - start[1].sourceStart).toBeCloseTo(MIN_SEGMENT, 10);
+  });
+  it("rejeita tempo ou plano inválido e mantém identidade em um no-op", () => {
+    expect(trimSegment(segments, 0, "start", NaN, 100)).toBeNull();
+    expect(trimSegment(segments, -1, "start", 10, 100)).toBeNull();
+    expect(trimSegment([{ sourceStart: NaN, sourceEnd: 20 }], 0, "end", 30, 100)).toBeNull();
+    expect(trimSegment(segments, 0, "start", 10, 100)).toBe(segments);
+  });
 });
 
 describe("EditPlan v1 — normalização e validação", () => {

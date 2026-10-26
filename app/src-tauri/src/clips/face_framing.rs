@@ -54,13 +54,13 @@ struct Response {
     peak_working_set_bytes: u64,
 }
 
-struct Python {
+pub(super) struct Python {
     executable: PathBuf,
     packages: Option<PathBuf>,
 }
 
 impl Python {
-    fn command(&self, worker: &Path) -> Command {
+    pub(super) fn command(&self, worker: &Path) -> Command {
         let mut command = Command::new(&self.executable);
         command.args(["-I", "-B"]);
         if let Some(packages) = &self.packages {
@@ -73,7 +73,7 @@ impl Python {
     }
 }
 
-fn python(base: &Path) -> Option<Python> {
+pub(super) fn python(base: &Path) -> Option<Python> {
     let path = std::env::var_os("CNP_FACE_PYTHON")
         .map(PathBuf::from)
         .unwrap_or_else(|| {

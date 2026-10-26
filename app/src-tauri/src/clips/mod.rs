@@ -37,6 +37,7 @@ mod semantic;
 #[cfg(test)]
 mod semantic_tests;
 mod source_anchors;
+pub mod split_framing;
 mod store;
 mod text_engine;
 #[cfg(test)]

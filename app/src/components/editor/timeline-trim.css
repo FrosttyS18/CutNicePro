@@ -1,0 +1,87 @@
+.editor-timeline .timeline-seek-surface {
+  position: relative;
+  touch-action: none;
+  outline: none;
+}
+
+html[data-input-modality="keyboard"] .editor-timeline .timeline-surface:has(.timeline-seek-surface:focus-visible) .timeline-playhead i {
+  outline: 2px solid var(--sh-accent);
+  outline-offset: 2px;
+}
+
+.editor-timeline .timeline-segments {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  cursor: default;
+}
+
+.editor-timeline .timeline-segment {
+  position: absolute;
+  height: 100%;
+  container-type: inline-size;
+  container-name: timeline-segment;
+  border: 1px solid transparent;
+}
+
+.editor-timeline .timeline-segment__select {
+  position: absolute;
+  inset: 0;
+  min-width: 0;
+  padding: 0 8px;
+  border: 0;
+  border-radius: 3px;
+  overflow: hidden;
+  background: transparent;
+  color: var(--sh-dim);
+  font: inherit;
+  font-size: 11px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  pointer-events: none;
+}
+
+.editor-timeline .timeline-segment__select:hover,
+.editor-timeline .timeline-segment[data-selected="true"] .timeline-segment__select {
+  background: transparent;
+  color: var(--sh-accent);
+}
+
+.editor-timeline .timeline-segment[data-selected="true"] .timeline-segment__select {
+  box-shadow: inset 0 2px var(--sh-accent), inset 0 -2px var(--sh-accent);
+}
+
+.editor-timeline .timeline-trim-handle {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 12px;
+  padding: 0;
+  border: 0;
+  border-radius: 3px;
+  background: var(--sh-surface);
+  color: var(--sh-accent);
+  cursor: ew-resize;
+  touch-action: none;
+  pointer-events: auto;
+  z-index: 3;
+}
+
+.editor-timeline .timeline-trim-handle--start { right: 100%; }
+.editor-timeline .timeline-trim-handle--end { left: 100%; }
+.editor-timeline .timeline-trim-handle:hover { background: var(--sh-accent); color: var(--sh-panel); }
+.editor-timeline .timeline-trim-handle span { display: block; width: 2px; height: 16px; margin: auto; background: currentColor; }
+.editor-timeline .timeline-trim :is(input, select) { min-height: 32px; padding-inline: 12px; }
+.editor-timeline .timeline-trim select { max-width: 140px; border: 1px solid var(--sh-divider); border-radius: 5px; background: var(--sh-panel); color: inherit; font: inherit; }
+.editor-timeline .timeline-plan-actions { flex-wrap: wrap; gap: 8px; }
+
+.editor-timeline .timeline-surface { position: relative; }
+.editor-timeline .timeline-scroll { padding-inline: 12px; }
+.editor-timeline .timeline-media { position: relative; }
+.editor-timeline .timeline-track { position: relative; }
+.timeline-heading { display: flex; align-items: center; gap: 16px; min-width: 0; }
+.editor-timeline .timeline-heading h2 { margin: 0; }
+.timeline-edit-actions { display: flex; align-items: center; gap: 8px; }
+.timeline-precision { margin-top: 10px; color: var(--sh-dim); font-size: 11px; }
+.timeline-precision summary { display: inline-flex; align-items: center; gap: 7px; padding: 4px 0; cursor: pointer; }
+.timeline-precision .timeline-trim { border: 0; padding: 0; }

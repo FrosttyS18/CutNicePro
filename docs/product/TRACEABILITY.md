@@ -1,5 +1,11 @@
 # CutNicePro — Traceability
 
+## Usabilidade em revisão — 2026-10-25
+
+JRN-004/009/010, FR-005/011/013/014 e os aceites AC-016..022/050..055 citados no BACKLOG: UploadScreen → import-project → import_media/workspace-store; VideoEditor → EditorTimeline/TimelineSurface/useTimelineTrim → EditPlan/clips → inspeção/export; SplitScreenControls → split-framing → worker/split_worker → SplitScreenSettings.shots → SplitPreview e render::composition_windows/geometry_at. Plano/aceites da fatia em USABILITY-IMPLEMENTATION-PLAN.md; estado/evidências em ENGINE-HANDOFF.
+
+BR-USAB-01: a duração original limita a ampliação manual, sem usar a fronteira da IA como teto. BR-USAB-02: um gesto confirma uma edição; cancelamento não salva o draft. BR-USAB-03: split aplica somente pares confirmados da cena/área visível, sem repetir um participante nos closes. AC-USAB-01: ampliar/desfazer/refazer/salvar/reabrir mantém os mesmos intervalos no download. AC-USAB-02: a seleção coincide com miniaturas/áudio em larguras distintas e ambas as alças permanecem acessíveis. AC-USAB-03: par → close → par produz a mesma composição na prévia e MP4, com áudio/ASS/vãos preservados. Testes automatizados e worker real registrados; interação/estética na sessão normal continuam PENDING HUMAN APPROVAL.
+
 > Conexões explícitas Jornada ↔ Regra ↔ Requisito ↔ História ↔ Aceite ↔ Validação.
 > Registros só apontam para elementos existentes (auditado por script — §Auditoria).
 > Referência não resolvida = pendência declarada, nunca preenchida com invenção.

@@ -18,7 +18,7 @@ pub fn arguments(
     duration: f64,
     has_audio: bool,
 ) -> Result<Vec<std::ffi::OsString>, String> {
-    let segments = settings.effective_segments(duration)?;
+    let segments = settings.composition_windows(duration)?;
     let (start, end) = match segments.as_slice() {
         [only] => (only.source_start, only.source_end),
         _ => return Err("argumentos de um único segmento exigem plano único".into()),
@@ -48,7 +48,7 @@ pub(super) fn window_arguments(
     encoder: Encoder,
     captions: &str,
 ) -> Result<Vec<std::ffi::OsString>, String> {
-    if end - start < 0.05 {
+    if !start.is_finite() || !end.is_finite() || end - start < 0.05 {
         return Err("Revise o intervalo e a duração do corte e tente novamente.".into());
     }
     let mut args: Vec<std::ffi::OsString> = [
@@ -73,7 +73,7 @@ pub(super) fn window_arguments(
         .unwrap_or_default();
     let filter = format!(
         "{},{}ass=filename={captions}:fontsdir=fonts",
-        settings.geometry()?,
+        settings.geometry_at(start + (end - start) / 2.0)?,
         effects
     );
     args.extend(
@@ -141,7 +141,7 @@ pub fn run(
     control: &ProcessControl,
     mut progress: impl FnMut(u8),
 ) -> Result<(Scratch, PathBuf), String> {
-    let windows = settings.effective_segments(duration)?;
+    let windows = settings.composition_windows(duration)?;
     let total: f64 = windows.iter().map(|w| w.duration()).sum();
     if total < 0.05 {
         return Err("Revise o intervalo e a duração do corte e tente novamente.".into());

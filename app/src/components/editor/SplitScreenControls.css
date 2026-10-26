@@ -1,0 +1,45 @@
+.split-screen-controls {
+  display: grid;
+  gap: 16px;
+  min-width: 0;
+}
+
+.split-screen__composition {
+  flex-wrap: wrap;
+}
+
+.split-screen__composition .studio-toggle {
+  min-width: 100px;
+  padding: 8px 12px;
+}
+
+.split-screen__automatic {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+}
+
+.split-screen__automatic .flow-button {
+  justify-self: start;
+}
+
+.split-screen__panel {
+  border: 0;
+  display: grid;
+  gap: 12px;
+  margin: 0;
+  min-width: 0;
+  padding: 0;
+}
+
+.split-screen__panel legend {
+  color: var(--ink);
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  padding: 0;
+}
+
+.split-screen__feedback {
+  overflow-wrap: anywhere;
+}

@@ -1,4 +1,5 @@
 import type { EditorEffects, UploadSource, WorkspaceData, EditorSettings, UploadOptions } from "./workspace-types";
+import { isSplitScreen } from "./split-screen";
 
 export const DEFAULT_EFFECTS: EditorEffects = { brightness: 100, contrast: 100, saturation: 100, blur: 0, hue: 0 };
 
@@ -16,6 +17,14 @@ export function sourceName(source: UploadSource): string {
   return Array.from(name.trim() || "Novo projeto").slice(0, 80).join("");
 }
 
+export function initialEditorSettings(options: UploadOptions, duration: number | null): EditorSettings {
+  if (options.splitScreen != null && (options.ratio !== "9:16" || !isSplitScreen(options.splitScreen))) {
+    throw new Error("A composição com dois painéis precisa do formato 9:16 e posições válidas.");
+  }
+  return { ...defaultEditorSettings(), ratio: options.ratio, fit: options.fit ?? "contain", captionModel: options.model,
+    trimEnd: duration, ...(options.splitScreen ? { splitScreen: options.splitScreen } : {}) };
+}
+
 export function createWorkspace(source: UploadSource, options: UploadOptions): WorkspaceData {
   const media = source.kind === "local" ? {
     kind: "local" as const, name: source.video.file.name, videoId: null, url: null,
@@ -24,7 +33,7 @@ export function createWorkspace(source: UploadSource, options: UploadOptions): W
     width: null, height: null, duration: null };
   return {
     version: 2, media, transcriptMode: "empty", tool: options.tool,
-    settings: { ...defaultEditorSettings(), ratio: options.ratio, captionModel: options.model, trimEnd: media.duration },
+    settings: initialEditorSettings(options, media.duration),
     transcript: [],
   };
 }

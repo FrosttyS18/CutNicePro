@@ -8,6 +8,7 @@ interface Props {
   /** M2A: progresso REAL da cópia (bytes) — null quando indeterminado. */
   progress?: { copied: number; total: number } | null;
   onCancel?: () => void;
+  cancelling?: boolean;
   onClose: () => void;
   onRetry: () => void;
 }
@@ -23,6 +24,7 @@ export function PreparationDialog({
   error,
   progress = null,
   onCancel,
+  cancelling = false,
   onClose,
   onRetry,
 }: Props) {
@@ -46,8 +48,8 @@ export function PreparationDialog({
             />
             <p className="flow-muted" role="status">{label}</p>
             {onCancel && (
-              <button type="button" className="flow-button flow-wide" onClick={onCancel}>
-                Cancelar importação
+              <button type="button" className="flow-button flow-wide" onClick={onCancel} disabled={cancelling}>
+                {cancelling ? "Cancelando…" : "Cancelar importação"}
               </button>
             )}
           </>

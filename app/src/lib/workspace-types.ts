@@ -53,10 +53,37 @@ export interface EditPlan {
   segments: EditSegment[];
 }
 
+export interface SplitPanel {
+  x: number;
+  y: number;
+  zoom: number;
+}
+
+export interface SplitScreenSettings {
+  version: 1;
+  faceValidated?: boolean;
+  top: SplitPanel;
+  bottom: SplitPanel;
+  shots?: SplitShot[];
+}
+
+export interface SplitShot extends EditSegment {
+  top: SplitPanel;
+  bottom: SplitPanel;
+}
+
+export interface SplitViewport {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
+
 export interface EditorSettings {
   ratio: AspectRatio;
   fit: "contain" | "cover";
   focalPoint?: { x: number; y: number };
+  splitScreen?: SplitScreenSettings | null;
   /** Ampliação da imagem (1–3); combinada com fit/foco na prévia e na exportação. */
   zoom?: number;
   effects?: EditorEffects;
@@ -89,4 +116,6 @@ export interface UploadOptions {
   tool: ToolId;
   model: number;
   ratio: AspectRatio;
+  fit?: "contain" | "cover";
+  splitScreen?: SplitScreenSettings | null;
 }

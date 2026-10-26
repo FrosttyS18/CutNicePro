@@ -107,7 +107,7 @@ export function ProjectWorkspace({ project, initialView = "overview", onRename, 
           onDelete={entry => { void clips.remove(entry.clip.id).then(ok => { if (ok) { setClipNotice("Clipe excluído."); setUndoDelete({ clipId: entry.clip.id }); } }); }}
           onRestore={entry => { void clips.restore(entry.clip.id).then(ok => { if (ok) { setClipNotice("Clipe restaurado."); setUndoDelete(null); } }); }}
           undoDelete={undoDelete ? { onUndo: () => { const clipId = undoDelete.clipId; void clips.restore(clipId).then(ok => { if (ok) { setClipNotice("Clipe restaurado."); setUndoDelete(null); } }); } } : null}/>
-      </> : <VideoEditor key={`${workspace.data.tool}:${activeClip ?? "video"}`} title={project.name} activeClip={activeClip ? clips.collection?.clips.find(clip => clip.id === activeClip) : undefined} data={workspace.data} localUrl={workspace.localUrl} dirty={workspace.dirty}
+      </> : <VideoEditor projectId={project.id} key={`${workspace.data.tool}:${activeClip ?? "video"}`} title={project.name} activeClip={activeClip ? clips.collection?.clips.find(clip => clip.id === activeClip) : undefined} data={workspace.data} localUrl={workspace.localUrl} dirty={workspace.dirty}
         onChange={workspace.change} onSave={workspace.save} onBack={() => setView("overview")} transcriptionControls={<>{transcriptionControls}{clipTools}</>}transcribing={transcription.busy || clips.busy}
         allClips={clips.collection?.clips} />}
       <ClipFeedback job={clips.job} ownedJob={clips.ownedJob} notice={clips.notice}/>

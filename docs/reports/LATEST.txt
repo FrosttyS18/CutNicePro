@@ -1,117 +1,65 @@
 ╔════════════════════════════════════════════╗
 ║       CUTNICEPRO — ZCODE REPORT            ║
 ╚════════════════════════════════════════════╝
-
 TASK
-  Name: Versões sobrepostas e teto de 16 cortes
-  Status: PARTIAL — regra implementada; qualidade editorial ainda falha.
-  Scope: permitir versões sobrepostas/contidas, elevar 12→16 e preservar dados.
-  Objective: retirar exclusão temporal sem dispensar qualidade por versão.
-  Result: ranking, dedupe, reparo, bordas/cenas, UI e lote facial atualizados.
-    Teste integral gerou 3 cortes; não demonstrou aumento de cobertura.
-
+  Name: Estado de espera da meta de usabilidade
+  Status: BLOCKED — depende do teste manual na sessão normal.
+  Scope: preservar o objetivo integral e interromper continuações sem evidência nova.
+  Objective: envio centralizado; trim funcional; ampliação persistida; split distinto.
+  Result: goal atualizado para blocked após três turnos com a mesma dependência externa.
+  FUNCTIONAL STATUS: PARTIAL. REGRESSION STATUS: não reexecutado; último escopo PASS.
+  VISUAL STATUS: PENDING HUMAN APPROVAL.
 IMPLEMENTATION
-  Completed: teto 16 no automático/personalizado e descoberta/schema;
-    versões sobrepostas admitidas, inclusive em reparos. Somente mesmo
-    ID ou formato/limites idênticos são deduplicados no job (tolerância 1 ms).
-    Bordas independentes; corrigido limite facial que rejeitaria 13–16.
-  Not completed: seleção equivalente ao Opus; histórias/títulos fiéis.
-  Changes: seleção por nota/prioridade substitui otimização de intervalos
-    disjuntos. Publicidade secundária e critérios editoriais preservados.
-  Architecture impact: sem dependência, modelo novo, redesenho ou migração;
-    EditPlan interno não muda. Biblioteca não recebe teto acumulado.
-
+  Completed: auditoria do bloqueio e atualização da continuidade.
+  Not completed: comprovação manual dos percursos na sessão normal.
+  Changes: somente documentação/relatório e estado do goal.
+  Architecture impact: nenhum.
 FILES
-  Created: docs/reports/evidence/overlapping-variants-2026-10-25.json;
-    este histórico; controles no laboratório ignorado.
-  Modified: clips/{selection,novelty,types,editorial_repair,generation,
-    borders,scene_regions,face_framing,semantic_tests,feedback_runtime_tests}.rs;
-    discover-auto-prompt.txt; discover-prompt.txt; ClipTools.tsx; clips.ts;
-    clip-flow.test.tsx; tools/face-framing/{worker,test_worker}.py;
-    ENGINE-HANDOFF, TOOLING, BUSINESS-RULES, PRODUCT-BRAIN, TRACEABILITY,
-    BACKLOG, OPEN-SOURCE-ENGINE-RESEARCH e LATEST.txt.
-  Deleted: nenhum arquivo preexistente.
-  Unexpected changes: NONE; alterações anteriores preservadas.
-
+  Created: relatório histórico desta espera.
+  Modified: C:/CutNicePro/docs/engineering/ENGINE-HANDOFF.md;
+    C:/CutNicePro/docs/engineering/USABILITY-IMPLEMENTATION-PLAN.md;
+    C:/CutNicePro/docs/reports/LATEST.txt.
+  Deleted: nenhum. Unexpected changes: nenhuma identificada; pendências preservadas.
 VALIDATION
-  Typecheck: PASS. Lint: PASS, TS tocados com max-warnings 0.
-  Unit tests: Rust 209/209; frontend 261/261; Python 5/5.
-    RED→GREEN para sobreposição, 16/17, reparo, campo, bordas e lote facial.
-    Teste reforçado depois: 20 versões sobrepostas persistem/reabrem com
-    JSON idêntico, PASS direcionado; biblioteca pode ultrapassar 16.
-  Integration tests: vídeo inteiro 599,098 s/334 segmentos; salvar/reabrir
-    idênticos, 2 registros antigos do lab preservados; 3 MP4s reais em
-    278,88 s, áudio/1080×1920 e durações conferidos por ffprobe.
-  Regression tests: suítes PASS; gate editorial nativo FAIL (<4 cortes).
-  Visual tests: não executados; VISUAL STATUS: PENDING HUMAN APPROVAL.
-  Runtime verification: teto 16 confirmado, zero pares sobrepostos
-    produzidos pelo modelo; T-PAP ainda perde a explicação posterior.
-    Controle de prompt curto: 5 propostas, citações/intervalos ruins;
-    não adotado. Primeira tentativa interrompida para corrigir revisão.
-  Total passed: 475 testes das suítes; mais persistência direcionada.
-  Total failed: 1 gate editorial nativo. Total skipped: 25 opt-in na suíte.
-  FUNCTIONAL STATUS: PARTIAL. REGRESSION STATUS: FAIL no gate editorial.
-
+  Typecheck/Lint/Unit/Integration/Regression: nenhuma nova execução.
+  Visual tests: não executados. Runtime verification: nenhuma nova execução.
+  Total passed/failed/skipped: zero testes iniciados neste turno.
 HOOKS / HARNESS
-  Hooks active / PreToolUse / PostToolUse / Stop: não invocados pelo Codex.
-  Baseline: testes diretos, sem atribuir aprovação ao hook.
-  Gate result: regra técnica verificada; qualidade editorial FAIL.
-  Evidence: .tooling/test-output/overlap16-*.log e JSON em FILES.
-
+  Hooks active: não presumidos. PreToolUse/PostToolUse/Stop/Baseline: não usados como aceite.
+  Gate result: falta evidência manual. Evidence: relatórios anteriores e matriz do plano.
 MCP / SKILLS
-  Tools used: Graphify remoto, skills de planejamento/TDD/frontend e revisão
-    independente de leitura. Dois achados corrigidos e revistos.
-  Connection status: wesley-s-workspace / FrosttyS18/CutNicePro,
-    índice 499d263 antes/depois; fonte local cobre mudanças não indexadas.
-  Failures: nenhum bloqueio externo. Pending activation: nenhuma.
-
+  Tools used: estado do goal, leitura documental/Git.
+  Connection status: Graphify não necessário para esta atualização documental.
+  Failures: nenhuma nova. Pending activation: nenhuma.
 GIT
-  Branch: main
-  HEAD: 499d2633897d36e4fd0a00e5b55805013e30516b
-  Latest commit: docs(engine): registrar comparação Opus e entrega validada
+  Branch: codex/usabilidade-editor-envio-split.
+  HEAD: df1186b94d0362af6815397e7cd30efee8e1be3e.
+  Latest commit: Corrigir análise de clipes e aprimorar a interface.
   Commits created: nenhum. Push: NOT EXECUTED.
-  Remote: origin → FrosttyS18/CutNicePro; main.
-  Working tree: MODIFIED + UNTRACKED.
-  Pending files: FILES acima e pendências herdadas da rodada anterior;
-    citações longas/evidência Ministral preservadas, sem commit automático.
-
+  Remote: origin → FrosttyS18/CutNicePro. Working tree: MODIFIED + UNTRACKED.
+  Pending files: preservados; inventário no relatório técnico de14:41.
 EVIDENCE
-  Commands executed: cargo test/build --offline --locked; cargo fmt check;
-    npm run build; npm test; eslint; unittest Python; ffprobe; diff check.
-  Relevant logs: overlap16-final-rust-v2.log, overlap16-native-v2.log.
-  Screenshots: nenhuma. Test artifacts: JSON em FILES e MP4s no lab.
-  Reproduction details: transcrição integral, Qwen3.5-4B/32K, nenhuma nuvem;
-    avaliação simulada nos testes determinísticos, inferência real no lab.
-
+  Commands executed: get_goal/update_goal; leitura dos relatórios e plano; git status.
+  Relevant logs: C:/CutNicePro/docs/reports/history/2026-10-25_144115-usabilidade-timeline-split-cenas.txt;
+    C:/CutNicePro/docs/reports/history/2026-10-25_144750-auditoria-aceite-usabilidade.txt.
+  Screenshots/Test artifacts: nenhum novo.
+  Reproduction details: o teste manual não foi informado; não é espera de processo ativo.
 ISSUES
-  Bugs found: bloqueios temporais na seleção/reparo/bordas e lote facial 12.
-  Unresolved failures: descoberta insuficiente, T-PAP incompleto e redação.
-  Regressions: gate editorial continua reprovado; não declarar estabilidade
-    ou ganho de qualidade com base apenas nas suítes aprovadas.
-  Risks: teto não é quota; 16 versões não são 16 assuntos distintos.
-  Blockers: nenhum externo. Quatro cortes reais do mantenedor intactos.
-
+  Bugs found: nenhum novo. Unresolved failures: aceite manual não comprovado.
+  Regressions: não avaliadas novamente. Risks: testes técnicos não provam o percurso completo.
+  Blockers: retorno do mantenedor, que prefere executar o teste manual.
 FINAL
-  Delivery status: PARTIAL; nova regra disponível na build padrão.
-  Requirements met: sobreposição/containment e teto 16, contratos testados.
-  Remaining work: melhorar histórias/limites e validar qualidade no app.
-  User action required: roteiro funcional abaixo; sem aceite editorial pedido.
-  Restart required: reabrir pelo comando habitual para assegurar build atual.
-  Ready for next task: sim; qualidade geral continua pendente.
-  Build: C:/CutNicePro/app/src-tauri/target/debug/cutnicepro.exe
-  SHA256: DEB570A5DFCE103C7BA47AE33CB21DBE9461343B7B34B70B9BB0E4F87829E13B
-
+  Delivery status: BLOCKED; não concluído e sem redução de escopo.
+  Requirements met: implementação/evidências técnicas anteriores preservadas.
+  Remaining work: confirmar o comportamento na sessão normal.
+  User action required: executar os três testes abaixo e informar o resultado.
+  Restart required: nenhuma nova build criada. Ready for next task: aguarda retorno manual.
 REPORT
-  Latest file: docs/reports/LATEST.txt
-  Historical file: docs/reports/history/2026-10-25_061918_sobreposicoes-teto16.txt
-
+  Latest file: C:/CutNicePro/docs/reports/LATEST.txt.
+  Historical file: C:/CutNicePro/docs/reports/history/2026-10-25_144931-meta-usabilidade-aguarda-teste.txt
 GUIA DO MANTENEDOR — O QUE MUDOU E COMO TESTAR
-  1. Abra pelo comando habitual; em Gerar cortes → Personalizada, confira
-     que Quantidade máxima aceita até 16, sem mudança de layout.
-  2. Gere no vídeo inteiro. Esperado: cortes antigos preservados; versões
-     novas podem compartilhar tempo. Quantidade depende das propostas válidas.
-  3. Confira começo/fim/título e Preencher no download de qualquer novo corte.
-     Registre falhas; a geração automática ainda não atingiu o aceite editorial.
-  Amostras do lab não foram inseridas como projetos na biblioteca normal.
-
-END OF REPORT
+  O que mudou: somente o estado da meta; as correções continuam na build padrão.
+  1. Conferir o envio centralizado e importar um vídeo.
+  2. Ampliar um corte além do fim escolhido pela IA; salvar, reabrir e baixar.
+  3. wardigs-corte01:43,72–03:03,90,9:16/Preencher → Duas pessoas:
+     esperado split até01:52,95 e quadro único nos closes seguintes.

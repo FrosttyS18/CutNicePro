@@ -3,6 +3,9 @@ import type { EditorSettings, SourceDescriptor } from "../../lib/workspace-types
 import { effectiveCaptionStyle, type CaptionCue } from "../../lib/captions";
 import { CaptionVisual } from "../editor/CaptionVisual";
 import type { ScrubCanvas } from "../../lib/frame-seeker";
+import { isSplitScreen } from "../../lib/split-screen";
+import { SplitPreview } from "./SplitPreview";
+import { SplitPlayback } from "./SplitPlayback";
 import "../editor/captions.css";
 
 interface Props {
@@ -16,8 +19,10 @@ interface Props {
   nativeControls?: boolean;
   onTogglePlay?: () => void;
   original?: boolean;
+  disableSurfacePlayback?: boolean;
   /** Canvas com frame decodificado via WebCodecs (scrub instantâneo). */
   scrubCanvas?: ScrubCanvas | null;
+  scrubTime?: number;
 }
 
 function previewFilter(effects: EditorSettings["effects"]): string | undefined {
@@ -31,7 +36,7 @@ function previewFilter(effects: EditorSettings["effects"]): string | undefined {
   return parts.length ? parts.join(" ") : undefined;
 }
 
-export function VideoPreview({ media, localUrl, settings, videoRef, onTime, onDuration, cue, nativeControls=true, onTogglePlay, original=false, scrubCanvas }: Props) {
+export function VideoPreview({ media, localUrl, settings, videoRef, onTime, onDuration, cue, nativeControls=true, onTogglePlay, original=false, scrubCanvas, scrubTime, disableSurfacePlayback=false }: Props) {
   const fallback = useRef<HTMLVideoElement>(null);
   const ref = videoRef ?? fallback;
   const [error, setError] = useState(false);
@@ -66,13 +71,14 @@ export function VideoPreview({ media, localUrl, settings, videoRef, onTime, onDu
     : ratioNumber(settings.ratio);
   const caption = effectiveCaptionStyle(settings.captionModel, settings.captionStyle);
   const zoom = original ? 1 : (settings.zoom ?? 1);
+  const split = !original && settings.ratio === "9:16" && isSplitScreen(settings.splitScreen) && settings.splitScreen.faceValidated ? settings.splitScreen : null;
   return (
-    <div className="workspace-preview" data-original={original} style={{ aspectRatio: ratio, background: original ? "#000000" : settings.background,
+    <div className="workspace-preview" data-original={original} data-split={Boolean(split)} style={{ aspectRatio: ratio, background: original ? "#000000" : settings.background,
       "--preview-ratio": ratio } as CSSProperties}>
       {media?.kind === "youtube" && media.videoId ? <iframe
         src={`https://www.youtube-nocookie.com/embed/${media.videoId}`} title="Vídeo de origem no YouTube"
         allow="fullscreen; picture-in-picture" allowFullScreen referrerPolicy="strict-origin-when-cross-origin" />
-        : localUrl ? <video ref={ref} key={localUrl} src={localUrl} crossOrigin="anonymous" controls={nativeControls} playsInline preload="metadata"
+        : localUrl ? <video ref={ref} key={localUrl} src={localUrl} crossOrigin="anonymous" controls={nativeControls && !split} playsInline preload="metadata"
           style={{ objectFit: original ? "contain" : settings.fit, objectPosition: original ? "50% 50%" : `${settings.focalPoint?.x ?? 50}% ${settings.focalPoint?.y ?? 50}%`,
             transform: zoom !== 1 ? `scale(${zoom})` : undefined,
             filter: original ? undefined : previewFilter(settings.effects) }} aria-label={`Prévia de ${media?.name ?? "vídeo"}`}
@@ -84,7 +90,7 @@ export function VideoPreview({ media, localUrl, settings, videoRef, onTime, onDu
             if (Number.isFinite(event.currentTarget.duration)) onDuration?.(event.currentTarget.duration);
           }} />
         : <div className="workspace-preview__empty"><span aria-hidden="true">▷</span><p>{media ? "Reconecte o vídeo deste projeto" : "Nenhum vídeo neste projeto"}</p></div>}
-      {localUrl && <button type="button" className="video-surface-toggle" data-native-controls={nativeControls} aria-label="Reproduzir ou pausar vídeo"
+      {localUrl && !disableSurfacePlayback && <button type="button" className="video-surface-toggle" data-native-controls={nativeControls} aria-label="Reproduzir ou pausar vídeo"
         tabIndex={-1} onClick={() => {
           ref.current?.focus({ preventScroll: true });
           if (onTogglePlay) { onTogglePlay(); return; }
@@ -92,8 +98,12 @@ export function VideoPreview({ media, localUrl, settings, videoRef, onTime, onDu
           if (element?.paused) void element.play().catch(() => setError(true)); else element?.pause();
         }}/>}
       {error && <p className="workspace-preview__error" role="alert">Não foi possível reproduzir este arquivo. Reconecte um vídeo compatível.</p>}
-      {!original && scrubCanvas && <canvas ref={(c) => { if (c && scrubCanvas.width > 0) { c.width = scrubCanvas.width; c.height = scrubCanvas.height; c.getContext("2d")?.drawImage(scrubCanvas, 0, 0); } }}
-        className="workspace-preview__scrub" aria-hidden="true" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: settings.fit, pointerEvents: "none", zIndex: 1 }}/>}
+      {split && localUrl && <SplitPreview video={ref} layout={split} localUrl={localUrl} filter={previewFilter(settings.effects)} scrub={scrubCanvas} scrubTime={scrubTime}/>}
+      {split && localUrl && nativeControls && <SplitPlayback video={ref} localUrl={localUrl} onToggle={onTogglePlay} onError={() => setError(true)}/>}
+      {!original && (!split || split.shots) && scrubCanvas && <canvas ref={(c) => { if (c && scrubCanvas.width > 0) { c.width = scrubCanvas.width; c.height = scrubCanvas.height; c.getContext("2d")?.drawImage(scrubCanvas, 0, 0); } }}
+        className="workspace-preview__scrub" aria-hidden="true" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: settings.fit,
+          objectPosition: `${settings.focalPoint?.x ?? 50}% ${settings.focalPoint?.y ?? 50}%`, transform: zoom !== 1 ? `scale(${zoom})` : undefined,
+          filter: previewFilter(settings.effects), pointerEvents: "none", zIndex: 1 }}/>}
       {!original && settings.text && <span className="workspace-preview__text">{settings.text}</span>}
       {!original && settings.captionModel>0 && cue && <div className="caption-overlay" data-position={caption.position}
           style={{ "--caption-y": `${Math.round((caption.y ?? 0.86) * 100)}%` } as CSSProperties} aria-label="Legenda">

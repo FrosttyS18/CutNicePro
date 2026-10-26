@@ -40,8 +40,8 @@ describe("editor e cortes sem navegador", () => {
     const preview=renderToStaticMarkup(<VideoPreview media={null} localUrl="http://cnplocal.localhost/media.mp4" settings={settings} nativeControls={false} onTogglePlay={noop}/>);
     expect(preview).toContain('aria-label="Reproduzir ou pausar vídeo"'); expect(preview).toContain("object-position:20% 70%");
     expect(preview).not.toContain('controls=""');
-    const toolbar=renderToStaticMarkup(<FramingToolbar settings={settings} framing={false} onSettings={noop} onFraming={noop} onFocusTrim={noop}/>);
-    expect(toolbar).toContain("Cortar tempo"); expect(toolbar).toContain("Enquadrar");
+    const toolbar=renderToStaticMarkup(<FramingToolbar framing={false} onFraming={noop}/>);
+    expect(toolbar).not.toContain("Cortar tempo"); expect(toolbar).toContain("Enquadrar");
     expect(toolbar).not.toContain('aria-label="Proporção do vídeo"'); expect(toolbar).not.toContain('aria-label="Ajuste do vídeo"');
   });
   it("rejeita dados de cortes fora do contrato e eventos de outro motor", () => {

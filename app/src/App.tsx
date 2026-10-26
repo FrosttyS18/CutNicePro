@@ -9,7 +9,6 @@ import { NewCollectionDialog } from "./components/NewCollectionDialog";
 import { ProjectWorkspace } from "./screens/ProjectWorkspace";
 import { prepareClipEditing } from "./services/clip-media";
 import {
-  attachPersistedMedia,
   attachSessionMedia,
   releaseSessionMedia,
   saveWorkspace,
@@ -17,7 +16,8 @@ import {
   removeWorkspace,
 } from "./services/workspace-store";
 import { createWorkspace, sourceName } from "./lib/workspace";
-import { mediaProjectName, importedProjectDisplayName } from "./lib/media-name";
+import { importedProjectDisplayName } from "./lib/media-name";
+import { importProject, ImportRollbackError } from "./services/import-project";
 import type { UploadSource, UploadOptions } from "./lib/workspace-types";
 import { AppShell, type ProjectsSub } from "./components/shell/AppShell";
 import type { Crumb } from "./components/shell/Breadcrumb";
@@ -67,6 +67,7 @@ export default function App() {
   });
   const [collectionDialogOpen, setCollectionDialogOpen] = useState(false);
   const [actionError, setActionError] = useState<string | null>(null);
+  const [actionNotice, setActionNotice] = useState<string | null>(null);
   const [expanded, setExpanded] = useState(() => loadSidebarExpanded());
   useEffect(() => () => releaseSessionMedia(), []);
 
@@ -134,59 +135,24 @@ export default function App() {
     setRoute({ kind: "project", id: project.id, view: "overview" });
   }
 
-  /**
-   * M2A: importação persistente transacional. O projeto é criado antes para
-   * dar contexto ao job; em falha o projeto PERMANECE (mídia UNAVAILABLE na
-   * prática) e a causa/ação sobe para a tela de upload — retry reusa o
-   * caminho. Progresso REAL por evento (bytes) — sem percentuais inventados.
-   */
   async function handleImportFromPath(
     path: string,
     name: string,
     options: UploadOptions,
     onProgress: (copied: number, total: number) => void,
+    signal?: AbortSignal,
   ): Promise<void> {
-    const project = await ipc.createProject(mediaProjectName(name || path));
     try {
-      const imported = await ipc.importMedia(project.id, path, onProgress);
-      const entry = imported.entry;
-      attachPersistedMedia(project.id, entry.mediaId, ipc.mediaUrl(entry));
-      const saved = saveWorkspace(project.id, {
-        version: 2,
-        media: {
-          kind: "local",
-          name: entry.originalName,
-          videoId: null,
-          url: null,
-          width: entry.analysis?.width ?? null,
-          height: entry.analysis?.height ?? null,
-          duration: entry.analysis ? entry.analysis.durationMs / 1000 : null,
-          mediaId: entry.mediaId,
-        },
-        transcript: [],
-        transcriptMode: "empty",
-        settings: {
-          ratio: options.ratio,
-          fit: "contain",
-          captionModel: options.model,
-          text: "",
-          volume: 1,
-          muted: false,
-          background: "#000000",
-          trimStart: 0,
-          trimEnd: null,
-        },
-        tool: options.tool,
-      });
-      if (!saved) setActionError("Projeto criado. As configurações da prévia não puderam ser salvas neste dispositivo.");
-      if (imported.analysisError) setActionError(`Projeto importado, mas a análise falhou: ${imported.analysisError}`);
+      const project = await importProject(path, name, options, onProgress, signal);
+      setActionError(null);
+      setActionNotice(project.importNotice ?? null);
       setLoad((current) => ({ ...current, status: "ready", error: null, projects: [...current.projects, project] }));
-      setRoute({ kind: "project", id: project.id, view: "overview" });
+      setRoute({ kind: "project", id: project.id, view: options.tool === "clips" ? "overview" : "editor" });
     } catch (error) {
-      // Projeto preservado sem mídia; sem página de projeto falso-sucesso.
-      setLoad((current) => current.status === "ready"
-        ? { ...current, projects: [...current.projects, project] }
-        : { status: "ready", projects: [project], error: null });
+      if (error instanceof ImportRollbackError) {
+        setActionError(error.message);
+        await refreshProjects();
+      }
       throw error instanceof Error ? error : new Error(String(error));
     }
   }
@@ -295,6 +261,8 @@ export default function App() {
             <ErrorBanner message={actionError} onDismiss={() => setActionError(null)} />
           </div>
         )}
+        {actionNotice && <div className="workspace-notice" role="status"><p>{actionNotice}</p>
+          <button type="button" className="flow-text-button" onClick={() => setActionNotice(null)}>Fechar aviso</button></div>}
 
         {route.kind === "home" && <HomeScreen onCreate={goUpload} />}
 

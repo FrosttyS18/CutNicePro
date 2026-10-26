@@ -145,9 +145,7 @@ describe("prévia da inspeção usa o intervalo EDITADO (upd 20)",()=>{
     storage.set("cnp.workspace.v1.p",JSON.stringify({version:2,media:null,transcript:[],transcriptMode:"empty",settings:defaultEditorSettings(),tool:"editor",clipEdits:{[entry.clip.id]:edited}}));
     vi.stubGlobal("localStorage",{getItem:(k:string)=>storage.get(k) ?? null,setItem:(k:string,v:string)=>storage.set(k,v),removeItem:(k:string)=>storage.delete(k)});
     const html=renderToStaticMarkup(<ClipInspection entry={entry} onClose={()=>undefined} onEdit={()=>undefined}/>);
-    // seek e controles respeitam 5–25 (intervalo editado), não 0–30 (clip)
-    expect(html).toContain('min="5"');
-    expect(html).toContain('max="25"');
+    expect(html).toMatch(/id="clip-inspection-seek"[^>]*min="0"[^>]*max="20"/);
     expect(html).toContain("· 20 s");
     expect(html).not.toContain("· 30 s");
     vi.unstubAllGlobals();

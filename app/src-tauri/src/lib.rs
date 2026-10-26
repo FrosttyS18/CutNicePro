@@ -53,96 +53,86 @@ fn free_space(path: &std::path::Path) -> Option<u64> {
 // ---- M2A: importação persistente + análise ----
 
 #[tauri::command]
-fn import_media(app: AppHandle, project_id: String, src_path: String) -> Result<String, String> {
-    let store = media_store_of(&app)?;
-    let jobs = app.state::<Arc<ImportJobs>>();
-    let src = PathBuf::from(&src_path);
-    let original_name = src
-        .file_name()
-        .map(|n| n.to_string_lossy().to_string())
-        .unwrap_or_else(|| "video".into());
-    let ext = media_import::allowed_ext(&original_name).ok_or_else(|| {
-        "formato de vídeo não suportado (use mp4, m4v, mov, webm, mkv ou avi)".to_string()
-    })?;
-    if !src.is_file() {
-        return Err(format!("arquivo não encontrado: {src_path}"));
-    }
-    let job_id = uuid::Uuid::new_v4().to_string();
-    let staged = store.files_dir().join(format!("{job_id}.part"));
-    let cancel = jobs.register(&job_id);
-    let _ = std::fs::remove_file(&staged);
-
-    let app2 = app.clone();
-    let job2 = job_id.clone();
-    let result = media_import::copy_with_hash(
-        &src,
-        &staged,
-        &cancel,
-        &|bytes| {
-            let total = std::fs::metadata(&src).map(|m| m.len()).unwrap_or(bytes);
-            let _ = app2.emit(
+async fn import_media(
+    app: AppHandle,
+    project_id: String,
+    src_path: String,
+    job_id: Option<String>,
+) -> Result<String, String> {
+    tauri::async_runtime::spawn_blocking(move || {
+        let store = media_store_of(&app)?;
+        let jobs = app.state::<Arc<ImportJobs>>();
+        let src = PathBuf::from(&src_path);
+        let original_name = src
+            .file_name()
+            .map(|n| n.to_string_lossy().to_string())
+            .unwrap_or_else(|| "video".into());
+        let ext = media_import::allowed_ext(&original_name).ok_or_else(|| {
+            "formato de vídeo não suportado (use mp4, m4v, mov, webm, mkv ou avi)".to_string()
+        })?;
+        if !src.is_file() {
+            return Err(format!("arquivo não encontrado: {src_path}"));
+        }
+        let job_id = match job_id {
+            Some(value) => uuid::Uuid::parse_str(&value)
+                .map_err(|_| "identificador de importação inválido".to_string())?
+                .to_string(),
+            None => uuid::Uuid::new_v4().to_string(),
+        };
+        let staged = store.files_dir().join(format!("{job_id}.part"));
+        let cancel = jobs.register(&job_id);
+        let total = std::fs::metadata(&src).map(|m| m.len()).unwrap_or(0);
+        let report = |bytes| {
+            let _ = app.emit(
                 "import://progress",
                 media_import::ImportProgress {
-                    job_id: job2.clone(),
+                    job_id: job_id.clone(),
                     bytes_copied: bytes,
                     total_bytes: total,
                 },
             );
-        },
-        &|p| free_space(p),
-    );
-    jobs.finish(&job_id);
-    match result {
-        Ok((size, sha)) => {
-            let entry: MediaEntry =
-                store.publish(&staged, &sha, size, &ext, &original_name, &project_id)?;
-            let detection = media_analyze::detect_fftools();
-            if let Some(ref t) = detection {
-                eprintln!("[m2a] ffprobe: {}", t.ffprobe.display());
-            } else {
-                eprintln!(
-                    "[m2a] ffprobe NAO encontrado (PATH={:?})",
-                    std::env::var("PATH")
-                        .unwrap_or_default()
-                        .chars()
-                        .take(120)
-                        .collect::<String>()
-                );
+        };
+        report(0);
+        let result = (|| -> Result<String, String> {
+            let (size, sha) =
+                media_import::copy_with_hash(&src, &staged, &cancel, &report, &|p| free_space(p))
+                    .map_err(|error| error.message())?;
+            if cancel.load(std::sync::atomic::Ordering::SeqCst) {
+                return Err("importação cancelada".into());
             }
-            let analysis_err = match detection {
+            let entry = store.publish(&staged, &sha, size, &ext, &original_name, &project_id)?;
+            let analysis_err = match media_analyze::detect_fftools() {
                 Some(tools) => {
                     let final_path = store.files_dir().join(format!("{sha}.{ext}"));
                     match media_analyze::analyze(&tools, &final_path) {
-                        Ok(a) => {
-                            let _ = store.store_analysis(&entry.media_id, a);
+                        Ok(analysis) => {
+                            store.store_analysis(&entry.media_id, analysis)?;
                             None
                         }
-                        Err(e) => Some(e),
+                        Err(error) => Some(error),
                     }
                 }
                 None => Some("FFmpeg não encontrado — análise de mídia indisponível".into()),
             };
-            // entrada atualizada (store_analysis grava no índice; o payload
-            // precisa refletir o estado final)
+            if cancel.load(std::sync::atomic::Ordering::SeqCst) {
+                return Err("importação cancelada".into());
+            }
             let entry = store.get(&entry.media_id)?.unwrap_or(entry);
-            let mut payload = serde_json::to_value(&entry).unwrap_or(serde_json::Value::Null);
-            if let Some(err) = analysis_err {
-                payload["analysisError"] = serde_json::Value::String(err);
+            let mut payload = serde_json::to_value(&entry).map_err(|error| error.to_string())?;
+            if let Some(error) = analysis_err {
+                payload["analysisError"] = serde_json::Value::String(error);
             }
             let _ = app.emit("import://done", &payload);
             Ok(payload.to_string())
-        }
-        Err(media_import::ImportError::Cancelled)
-        | Err(media_import::ImportError::SourceChanged)
-        | Err(media_import::ImportError::DiskFull) => {
+        })();
+        jobs.finish(&job_id);
+        if result.is_err() {
             let _ = std::fs::remove_file(&staged);
-            Err(result.unwrap_err().message())
         }
-        Err(media_import::ImportError::Io(msg)) => {
-            let _ = std::fs::remove_file(&staged);
-            Err(msg)
-        }
-    }
+        result
+    })
+    .await
+    .map_err(|error| format!("falha na tarefa de importação: {error}"))?
 }
 
 #[tauri::command]
@@ -326,6 +316,7 @@ pub fn run() {
             clips::commands::restore_clip,
             clips::commands::generate_clips,
             clips::commands::analyze_clip,
+            clips::split_framing::suggest_split_screen,
             render::commands::export_video
         ])
         .on_window_event(|window, event| {

@@ -5,6 +5,8 @@ import { loadClipThumbnail } from "../services/clip-thumbnails";
 import * as workspaceStore from "../services/workspace-store";
 import type { LibraryClip } from "../lib/clip-library";
 import { reactHost } from "./react-host";
+import { ClipPoster } from "../components/clips/ClipPoster";
+import { emptyWorkspace } from "../lib/workspace";
 
 vi.mock("@tauri-apps/api/core", () => ({ invoke: vi.fn() }));
 vi.mock("../services/clip-thumbnails", () => ({ loadClipThumbnail: vi.fn(async () => ({ src: "data:image/jpeg;base64,/9j/2Q==", width: 1920, height: 1080 })) }));
@@ -30,6 +32,16 @@ function entries(): LibraryClip[] {
 }
 
 describe("biblioteca não mantém decodificadores por card", () => {
+  it("a duração do card acompanha a ampliação manual salva", async () => {
+    vi.stubGlobal("IntersectionObserver", Viewport);
+    const entry = entries()[0];
+    const workspace = emptyWorkspace();
+    workspace.media = { kind: "local", name: "Fonte.mp4", videoId: null, url: null, width: 1920, height: 1080, duration: 100 };
+    workspace.clipEdits = { [entry.clip.id]: { ...workspace.settings, trimStart: 5, trimEnd: 90 } };
+    const view = await reactHost(<ClipPoster entry={entry} workspace={workspace}/>);
+    expect(view.host.querySelector(".clip-card__duration")?.textContent).toBe("85 s");
+    await view.close();
+  });
   it("27 cards usam imagens, carregam só ao se aproximar e não repetem no scroll", async () => {
     observers.length = 0;
     vi.stubGlobal("IntersectionObserver", Viewport);

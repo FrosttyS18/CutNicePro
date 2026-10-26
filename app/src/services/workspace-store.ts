@@ -2,6 +2,7 @@ import { emptyWorkspace, DEFAULT_EFFECTS } from "../lib/workspace";
 import type { EditorEffects, EditorSettings, UploadSource, WorkspaceData } from "../lib/workspace-types";
 import { validSegmentWords } from "../lib/transcript-text";
 import { isCaptionStyle } from "../lib/captions";
+import { isSplitScreen } from "../lib/split-screen";
 import { editorAspectRatios } from "../components/upload/tools";
 
 const key = (id: string) => `cnp.workspace.v1.${id}`;
@@ -17,6 +18,7 @@ function numeroNo(value: unknown, [min, max]: readonly [number, number]): boolea
 
 function validSettings(settings: EditorSettings | undefined): boolean {
   return Boolean(settings && editorAspectRatios.includes(settings.ratio as (typeof editorAspectRatios)[number]) && ["contain", "cover"].includes(settings.fit)
+    && (settings.splitScreen == null || (settings.ratio === "9:16" && isSplitScreen(settings.splitScreen)))
     && Number.isInteger(settings.captionModel) && settings.captionModel >= 0 && settings.captionModel <= 9
     && (settings.captionStyle === undefined || isCaptionStyle(settings.captionStyle))
     && (settings.focalPoint === undefined || [settings.focalPoint.x,settings.focalPoint.y].every(v => Number.isFinite(v) && v >= 0 && v <= 100))
@@ -71,9 +73,11 @@ function recuperarSettings(value: unknown): EditorSettings | null {
         hue: clamp(numeroOu(effectsBruto.hue, DEFAULT_EFFECTS.hue), LIMITES.hue),
       }
     : { ...DEFAULT_EFFECTS };
+  if (bruto.splitScreen != null && (ratio !== "9:16" || !isSplitScreen(bruto.splitScreen))) return null;
   const settings: EditorSettings = {
     ratio, fit, captionModel, captionStyle, focalPoint: focal, zoom, effects, text: texto,
     volume, muted, background: cor6(bruto.background), trimStart, trimEnd,
+    ...(bruto.splitScreen != null ? { splitScreen: bruto.splitScreen } : {}),
   };
   return validSettings(settings) ? settings : null;
 }
@@ -191,6 +195,9 @@ export function readWorkspace(id: string): WorkspaceData {
 }
 
 export function saveWorkspace(id: string, data: WorkspaceData): boolean {
+  const variants = [data.settings, data.videoSettings, ...Object.values(data.clipEdits ?? {})];
+  if (variants.some(settings => settings?.splitScreen != null
+    && (settings.ratio !== "9:16" || !isSplitScreen(settings.splitScreen)))) return false;
   try { localStorage.setItem(key(id), JSON.stringify(data)); return true; }
   catch { return false; }
 }

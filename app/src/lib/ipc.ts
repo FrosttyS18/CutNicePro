@@ -10,6 +10,10 @@ export async function listProjects(): Promise<ProjectMeta[]> {
   return invoke<ProjectMeta[]>("list_projects");
 }
 
+export function suggestSplitScreen(input: { projectId: string; mediaId: string; start: number; end: number; viewport?: import("./workspace-types").SplitViewport }): Promise<unknown> {
+  return invoke<unknown>("suggest_split_screen", input);
+}
+
 export async function createProject(name: string): Promise<ProjectMeta> {
   return invoke<ProjectMeta>("create_project", { name });
 }
@@ -59,18 +63,61 @@ export interface ImportedMedia {
   analysisError: string | null;
 }
 
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function isImportPayload(value: unknown): value is MediaEntryDto & { analysisError?: string | null } {
+  if (!isRecord(value)) return false;
+  const analysis = value.analysis;
+  const finite = (item: unknown) => typeof item === "number" && Number.isFinite(item) && item >= 0;
+  const validAnalysis = analysis == null || (isRecord(analysis)
+    && [analysis.durationMs, analysis.width, analysis.height, analysis.fps].every(finite)
+    && typeof analysis.videoCodec === "string" && (analysis.audioCodec === null || typeof analysis.audioCodec === "string")
+    && typeof analysis.hasAudio === "boolean");
+  return [value.mediaId, value.sha256, value.ext, value.originalName].every((item) => typeof item === "string" && item.length > 0)
+    && finite(value.sizeBytes) && finite(value.createdAtMs) && typeof value.unavailable === "boolean"
+    && Array.isArray(value.projectIds) && value.projectIds.every((item: unknown) => typeof item === "string")
+    && validAnalysis && (value.analysisError == null || typeof value.analysisError === "string");
+}
+
 export async function importMedia(
   projectId: string,
   srcPath: string,
   onProgress: (copied: number, total: number) => void,
+  signal?: AbortSignal,
 ): Promise<ImportedMedia> {
+  const checkCancelled = () => {
+    if (signal?.aborted) throw new DOMException("Importação cancelada.", "AbortError");
+  };
+  checkCancelled();
+  const jobId = crypto.randomUUID();
+  let active = true;
+  let cancellationError: unknown;
+  let registrationSeen = false;
+  const requestCancel = () => {
+    void cancelImport(jobId).catch((error: unknown) => { cancellationError = error; });
+  };
   const un = await listen<{ jobId: string; bytesCopied: number; totalBytes: number }>(
     "import://progress",
-    (e) => onProgress(e.payload.bytesCopied, e.payload.totalBytes),
+    (e) => {
+      if (!active || e.payload.jobId !== jobId) return;
+      if (signal?.aborted) {
+        if (!registrationSeen) requestCancel();
+      } else {
+        onProgress(e.payload.bytesCopied, e.payload.totalBytes);
+      }
+      registrationSeen = true;
+    },
   );
   try {
-    const raw = await invoke<string>("import_media", { projectId, srcPath });
-    const payload = JSON.parse(raw) as MediaEntryDto & { analysisError?: string };
+    checkCancelled();
+    signal?.addEventListener("abort", requestCancel, { once: true });
+    const raw = await invoke<string>("import_media", { projectId, srcPath, jobId });
+    if (cancellationError) throw new Error(`Falha ao solicitar cancelamento: ${String(cancellationError)}`);
+    checkCancelled();
+    const payload: unknown = JSON.parse(raw);
+    if (!isImportPayload(payload)) throw new Error("Resposta de importação inválida. Tente novamente.");
     return {
       entry: {
         mediaId: payload.mediaId,
@@ -85,7 +132,13 @@ export async function importMedia(
       },
       analysisError: payload.analysisError ?? null,
     };
+  } catch (error) {
+    if (cancellationError) throw Object.assign(new Error(`Falha ao solicitar cancelamento: ${String(cancellationError)}`), { cause: error });
+    checkCancelled();
+    throw error;
   } finally {
+    active = false;
+    signal?.removeEventListener("abort", requestCancel);
     un();
   }
 }

@@ -1,0 +1,74 @@
+CUTNICEPRO — ZCODE REPORT
+
+TASK
+  Name: Pausa editorial e metas de usabilidade
+  Status: PARTIAL; goal anterior PAUSED por pedido explícito.
+  Scope: interromper testes, registrar limites e planejar três frentes.
+  Result: pausa confirmada; zero inferências próprias ativas; metas propostas.
+  FUNCTIONAL STATUS: PARTIAL — novas funções não implementadas.
+  REGRESSION STATUS: PASS no código testado antes da pausa; sem teste de UI.
+  VISUAL STATUS: PENDING HUMAN APPROVAL.
+
+IMPLEMENTATION
+  Completed: estudo dirigido SupoClip/Opus; diagnóstico da timeline; três metas no backlog.
+  Not completed: seis histórias, calibração, nova tela, trim por arrasto e split screen.
+  Changes: documentação incremental; nenhum prompt alterado após a pausa.
+  Architecture impact: nenhum nesta organização; contratos novos serão planejados por meta.
+
+FILES
+  Created: docs/reports/history/2026-10-25_115431-pausa-modelo-metas-usabilidade.txt.
+  Modified: docs/engineering/ENGINE-HANDOFF.md; docs/product/BACKLOG.md;
+    docs/references/OPEN-SOURCE-ENGINE-RESEARCH.md; docs/reports/LATEST.txt.
+  Deleted: nenhum. Dados reais preservados.
+  Unexpected changes: commit do mantenedor detectado e preservado.
+
+VALIDATION
+  Unit/regression: última suíte antes da pausa 237 PASS, 0 FAIL, 32 opt-in.
+  Integration: FFmpeg real incluído nessa suíte; sem novo teste de split screen.
+  Typecheck/lint: frontend não alterado; não repetidos nesta etapa.
+  Format/diff: PASS. Visual/UI: não executados; responsabilidade do mantenedor.
+  Runtime: nenhuma nova entrega editorial ou nova capacidade validada.
+  Limite conhecido: Words incompletas em trim parcial não possuem alinhamento integral.
+
+HOOKS / HARNESS
+  Hooks/Stop/baseline: não invocados como prova de aceite.
+  Evidence: rust-suite-caption-trims.log e registros canônicos.
+
+MCP / SKILLS
+  Tools used: Graphify remoto, arquivos locais, web oficial, subagentes;
+    brainstorming, diagnóstico sistemático e verificação.
+  Connection: Graphify consultado em 9aeba498; HEAD atual df1186b;
+    defasagem complementada por leitura local, sem atualizar índice por upload.
+  Failures: envio de código/transcrição à Z.ai bloqueado pela revisão automática.
+    Consulta genérica sem esse conteúdo respondeu HTTP200; nenhuma integração de nuvem.
+  Pending activation: nenhuma necessária para este planejamento.
+
+GIT
+  Branch: main; HEAD: df1186b94d0362af6815397e7cd30efee8e1be3e.
+  Latest commit: Corrigir análise de clipes e aprimorar a interface (mantenedor).
+  Commits created: nenhum pelo agente. Push: NOT EXECUTED pelo agente.
+  Working tree: documentação MODIFIED/UNTRACKED; nenhum novo código de produto nesta organização.
+
+EVIDENCE / ISSUES
+  SupoClip: revisão72f1659, media/reframing.py e home-app.tsx; estudo estático.
+  Opus: documentação pública de layout e trim; algoritmo proprietário desconhecido.
+  Correção de interpretação: PUBG é interrompido pelo barulho do PC;
+    troca de assunto não demonstra defeito. Dois golds antigos são contestados.
+  Erros factuais de títulos continuam distintos; novas funcionalidades sem validação.
+
+FINAL
+  Delivery status: planejamento registrado; meta editorial pausada, sem conclusão fabricada.
+  Remaining work: detalhar e executar cada meta separadamente após direcionamento.
+  User action required: nenhuma validação de vídeos conhecidos como defeituosos.
+  Restart required: não para ler o planejamento. Ready for next task: planejamento disponível.
+
+REPORT
+  Latest file: docs/reports/LATEST.txt
+  Historical file: docs/reports/history/2026-10-25_115431-pausa-modelo-metas-usabilidade.txt
+
+GUIA DO MANTENEDOR — O QUE MUDOU E COMO TESTAR
+  Nenhuma nova interface para testar nesta etapa. As três metas estão no início do BACKLOG.
+  Critérios: envio local persistente; aparar/remover com prévia=export;
+    duas pessoas empilhadas com ajustes preservados. YouTube fica para outra meta.
+
+END OF REPORT

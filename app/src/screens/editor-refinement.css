@@ -59,7 +59,8 @@ html[data-input-modality="keyboard"] .transcript-word-popover :is(button, input)
 .playback-controls > output { min-width: 140px; color: var(--ink); font-size: 12px; font-variant-numeric: tabular-nums; }
 .playback-controls > output > span { color: var(--sh-dim); }
 .video-editor .timeline-zoom { justify-self: end; }
-@container (max-width: 800px) { .video-editor .editor-timeline > header { grid-template-columns: auto 1fr; } .editor-timeline > header > h2 { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); } .playback-controls { gap: 4px; } }
+@container (max-width: 800px) { .timeline-heading h2 { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); } .playback-controls { gap: 4px; } }
+@container (max-width: 600px) { .video-editor .editor-timeline > header { grid-template-columns: 1fr auto; } .video-editor .editor-timeline > header .playback-controls { grid-row: 2; grid-column: 1 / -1; } .video-editor .editor-timeline > header .timeline-zoom { grid-row: 1; grid-column: 2; } }
 .editor-timeline .timeline-trim { margin-top: 8px; }
 .video-surface-toggle { position: absolute; inset: 0; z-index: 1; border: 0; padding: 0; border-radius: inherit; background: transparent; cursor: pointer; }
 .video-surface-toggle[data-native-controls="true"] { bottom: 56px; border-radius: 10px 10px 0 0; }

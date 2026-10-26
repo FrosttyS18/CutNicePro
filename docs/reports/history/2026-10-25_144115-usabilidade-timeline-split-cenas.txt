@@ -1,0 +1,206 @@
+╔════════════════════════════════════════════╗
+║       CUTNICEPRO — ZCODE REPORT            ║
+╚════════════════════════════════════════════╝
+
+TASK
+  Name: Usabilidade — envio, trim e split por cena
+  Status: PARTIAL — implementação disponível; teste manual do mantenedor pendente.
+  Scope: corrigir o fluxo autorizado, estudar editores funcionais e preservar dados.
+  Objective: envio compacto; edição até os limites da fonte; duas pessoas reais no split.
+  Result: código corrigido, testes e build padrão prontos. Meta continua active.
+  FUNCTIONAL STATUS: PARTIAL (integração na sessão normal ainda não exercitada pelo mantenedor).
+  REGRESSION STATUS: PASS no escopo executado.
+  VISUAL STATUS: PENDING HUMAN APPROVAL.
+
+IMPLEMENTATION
+  Completed:
+  - Envio compacto centralizado, importação transacional, opções salvas e cancelamento.
+  - Trim sobre miniaturas/áudio; alças externas, sem deslocamento fixo da régua.
+    Cabeçalho agrupado; campos precisos secundários; commit único por gesto.
+  - Ampliação até a fonte original; desfazer/refazer; salvar/reabrir;
+    inspeção, duração do card e download respeitam EditPlan e os vãos removidos.
+  - Retirados “Corte simples” e “Cortar tempo” que confundiam/desfaziam o fluxo.
+  - Split por cena: shots opcionais; dois painéis apenas onde há par confirmado;
+    closes mantêm quadro único. Ajuste manual modifica somente a cena ativa.
+  - Prévia usa o tempo do frame apresentado; scrub conserva o instante associado.
+  - Estudados controladores, cálculo de limites e alças do OpenCut Classic
+    cf5e79e; componentes, ações e histórico do Twick 3044c23; estudo SupoClip
+    anterior reaplicado à separação por cena. Nenhum desses editores foi instalado.
+  Not completed: aceite do fluxo na sessão normal e aprovação visual humana.
+  Changes: contratos opcionais TS/IPC/Rust, worker local e render por janelas.
+  Architecture impact: motor/armazenamento preservados; sem novo modelo/dependência.
+
+FILES
+  Created: componentes/serviços/testes de envio, trim e split; split_worker.py;
+    plano de implementação; relatório histórico. Inventário pendente abaixo.
+  Modified: telas/editor/inspeção/contratos/render e documentos canônicos.
+  Deleted: nenhum arquivo do projeto, mídia ou dado do mantenedor.
+  Unexpected changes: nenhuma identificada; alterações anteriores preservadas.
+
+VALIDATION
+  Typecheck: PASS — npm run build.
+  Lint: PASS — npm run lint.
+  Unit tests: TS completa 358/358; após as últimas correções, focal 30/30
+    incluindo dois casos novos: 360 casos TS únicos verificados.
+    Rust: 244 PASS/32 ignored, mais módulo split_screen_tests 10/10 PASS.
+    Python: 25/25 PASS (agente delimitado).
+  Integration tests: PASS — FFmpeg real: split→close→outro split, áudio,
+    legendas rebaseadas, remoção interna e duração. Fixture pequena, sem mocks.
+  Regression tests: PASS nos consumidores cobertos; não garantia universal.
+  Visual tests: geometria objetiva em 2371/1280/800/390 px; estética pendente.
+  Runtime verification: worker no vídeo real wardigs-corte103,72–183,90s:
+    18 amostras, 26,25s, pico aproximado115MiB; par confirmado103,72–112,95s;
+    demais cenas SINGLE. Não confundir worker/FFmpeg com teste da UI Tauri.
+  Total passed: 639 casos únicos de código; provas reais separadas acima.
+  Total failed: 0 pendentes nas verificações finais.
+  Total skipped: 32 Rust opt-in, sem testes de LLM/rede nesta fatia.
+  Build: npm run build e cargo build PASS, sem warnings finais; cargo fmt PASS.
+
+HOOKS / HARNESS
+  Hooks active: hooks do ZCode não presumidos neste Codex.
+  PreToolUse/PostToolUse/Stop/Baseline: não usados como prova de aprovação.
+  Gate result: verificação técnica PASS; fluxo manual/visual pendente.
+  Evidence: testes reproduziram falhas antes das correções; mocks identificados.
+
+MCP / SKILLS
+  Tools used: Graphify remoto antes/depois; GitHub; pesquisa web;
+    debugging/TDD/frontend e revisão web-design-guidelines; agentes delimitados.
+  Connection status: wesley-s-workspace, FrosttyS18/CutNicePro, índice df1186b.
+  Failures: índice não contém alterações locais; leitura/diff complementaram.
+    Primeiro build encontrou executável em uso e warning de helper só de testes;
+    ambos resolvidos, build final padrão PASS. Consultas GitHub404 corrigidas.
+  Pending activation: nenhuma; não houve controle interativo de tela para testar.
+
+GIT
+  Branch: codex/usabilidade-editor-envio-split
+  HEAD: df1186b94d0362af6815397e7cd30efee8e1be3e
+  Latest commit: Corrigir análise de clipes e aprimorar a interface (mantenedor).
+  Commits created: nenhum. Push: NOT EXECUTED. Versão:0.19.0, sem bump.
+  Remote: origin → FrosttyS18/CutNicePro.
+  Working tree: MODIFIED + UNTRACKED; inventário abaixo, sem exclusões.
+
+EVIDENCE
+  Commands executed: npm run build; npm run lint; vitest; cargo build;
+    cargo fmt --check; cargo test --lib -- --skip render::split_screen_tests;
+    cargo test render::split_screen_tests --lib; unittest Python; probe local.
+  Relevant logs: C:/CutNicePro/.tooling/test-output/usability-current-vitest.json;
+    usability-review-fixes.json; split-frame-time-vitest.json (mesma pasta).
+  Screenshots: SSR isolado da timeline, sem controlar a sessão do mantenedor;
+    C:/CutNicePro/.tooling/test-output/timeline-layout/ (quatro larguras).
+  Test artifacts: C:/CutNicePro/.tooling/test-output/split-real-wardigs/
+    production-scenes-v2-result.json; fontes reais apenas lidas, nunca sobrescritas.
+  Reproduction details: barra ficava acima por offset fixo; split rejeitava todo
+    o intervalo por exigir exatamente dois rostos na fonte e em todas as amostras.
+
+ISSUES
+  Bugs found: limites IA versus fonte; trim/plano divergentes; posição da barra;
+    sobreposição de alças estreitas; painel invisível durante verificação;
+    recusa global de split em trecho com planos gerais e closes.
+  Unresolved failures: nenhum erro final de teste/build; validação manual pendente.
+  Regressions: nenhuma observada no escopo testado.
+  Risks: amostragem por cena não é tracking geral; pares ambíguos conservam quadro
+    único. Máximo64cenas/prazo60s. Interseção menor que0,05s recusa exportação
+    sem omitir/alongar mídia. Testes de componente incluem IPC simulado.
+  Blockers: nenhum de compilação; resultado visual pertence ao mantenedor.
+
+FINAL
+  Delivery status: PARTIAL, disponível para teste na build padrão.
+  Requirements met: implementação e verificações técnicas descritas acima.
+  Remaining work: confirmar os três percursos manuais abaixo.
+  User action required: testar na sessão normal; nenhum acesso remoto solicitado.
+  Restart required: build normal recompilada; processo35772 observado no caminho
+    C:/CutNicePro/app/src-tauri/target/debug/cutnicepro.exe.
+  SHA256: EB1D99F62A9B7FACE1905533DB4000D142079E16A9171DC19CE62D35A6B50F47
+  Ready for next task: após o retorno manual; calibração editorial continua pausada.
+
+REPORT
+  Latest file: C:/CutNicePro/docs/reports/LATEST.txt
+  Historical file: C:/CutNicePro/docs/reports/history/2026-10-25_144115-usabilidade-timeline-split-cenas.txt
+
+GUIA DO MANTENEDOR — O QUE MUDOU E COMO TESTAR
+  1. Enviar vídeo: confira a barra compacta centralizada; escolha arquivo e opções,
+     importe. Esperado: projeto acessível com a mídia e opções escolhidas.
+  2. Editar corte: arraste a borda além do fim escolhido pela IA; desfazer/refazer,
+     salvar, sair e reabrir, baixar. Esperado: mesmo intervalo ampliado; barra sobre
+     miniaturas/áudio e corte removido não toca na reprodução.
+  3. wardigs-corte: selecione01:43,72–03:03,90, formato9:16/Preencher; clique
+     “Duas pessoas (empilhadas)” e aguarde a análise. Esperado: dois participantes
+     centrais até01:52,95; closes seguintes em quadro único, também ao baixar.
+     Salve/reabra para conferir persistência. Nenhum projeto de teste oculto foi criado.
+
+INVENTÁRIO GIT PENDENTE — inclui arquivos preservados de etapas anteriores
+   M C:/CutNicePro/app/src-tauri/src/clips/face_framing.rs
+   M C:/CutNicePro/app/src-tauri/src/clips/mod.rs
+   M C:/CutNicePro/app/src-tauri/src/lib.rs
+   M C:/CutNicePro/app/src-tauri/src/render/mod.rs
+   M C:/CutNicePro/app/src-tauri/src/render/pipeline.rs
+   M C:/CutNicePro/app/src-tauri/src/render/settings.rs
+   M C:/CutNicePro/app/src/App.tsx
+   M C:/CutNicePro/app/src/components/clips/ClipInspection.tsx
+   M C:/CutNicePro/app/src/components/clips/ClipPoster.tsx
+   M C:/CutNicePro/app/src/components/editor/EditorInspector.tsx
+   M C:/CutNicePro/app/src/components/editor/EditorTimeline.tsx
+   M C:/CutNicePro/app/src/components/editor/FramingToolbar.tsx
+   M C:/CutNicePro/app/src/components/editor/TimelineSurface.tsx
+   M C:/CutNicePro/app/src/components/editor/VideoEditor.tsx
+   M C:/CutNicePro/app/src/components/upload/PreparationDialog.tsx
+   M C:/CutNicePro/app/src/components/workspace/VideoPreview.tsx
+   M C:/CutNicePro/app/src/lib/clips.ts
+   M C:/CutNicePro/app/src/lib/edit-plan.ts
+   M C:/CutNicePro/app/src/lib/ipc.ts
+   M C:/CutNicePro/app/src/lib/workspace-types.ts
+   M C:/CutNicePro/app/src/lib/workspace.ts
+   M C:/CutNicePro/app/src/screens/ProjectWorkspace.tsx
+   M C:/CutNicePro/app/src/screens/UploadScreen.tsx
+   M C:/CutNicePro/app/src/screens/editor-refinement.css
+   M C:/CutNicePro/app/src/screens/upload.css
+   M C:/CutNicePro/app/src/services/workspace-store.ts
+   M C:/CutNicePro/app/src/test/clip-flow.test.tsx
+   M C:/CutNicePro/app/src/test/clip-poster.test.tsx
+   M C:/CutNicePro/app/src/test/clip-settings.test.ts
+   M C:/CutNicePro/app/src/test/edit-plan.test.ts
+   M C:/CutNicePro/app/src/test/editor-autocut.test.tsx
+   M C:/CutNicePro/docs/engineering/ENGINE-HANDOFF.md
+   M C:/CutNicePro/docs/product/BACKLOG.md
+   M C:/CutNicePro/docs/product/TRACEABILITY.md
+   M C:/CutNicePro/docs/references/OPEN-SOURCE-ENGINE-RESEARCH.md
+   M C:/CutNicePro/docs/reports/LATEST.txt
+   M C:/CutNicePro/tools/face-framing/worker.py
+  ?? C:/CutNicePro/app/src-tauri/src/clips/split_framing.rs
+  ?? C:/CutNicePro/app/src-tauri/src/clips/split_framing_tests.rs
+  ?? C:/CutNicePro/app/src-tauri/src/render/split_screen.rs
+  ?? C:/CutNicePro/app/src-tauri/src/render/split_screen_tests.rs
+  ?? C:/CutNicePro/app/src/components/editor/SplitScreenControls.css
+  ?? C:/CutNicePro/app/src/components/editor/SplitScreenControls.tsx
+  ?? C:/CutNicePro/app/src/components/editor/TimelineSegments.tsx
+  ?? C:/CutNicePro/app/src/components/editor/timeline-trim.css
+  ?? C:/CutNicePro/app/src/components/editor/useTimelineTrim.ts
+  ?? C:/CutNicePro/app/src/components/upload/LocalFilePicker.tsx
+  ?? C:/CutNicePro/app/src/components/upload/UploadFramingMenu.tsx
+  ?? C:/CutNicePro/app/src/components/upload/UploadOptionsFields.tsx
+  ?? C:/CutNicePro/app/src/components/workspace/SplitPlayback.tsx
+  ?? C:/CutNicePro/app/src/components/workspace/SplitPreview.tsx
+  ?? C:/CutNicePro/app/src/components/workspace/split-preview.css
+  ?? C:/CutNicePro/app/src/hooks/useSplitVerification.ts
+  ?? C:/CutNicePro/app/src/lib/split-screen.ts
+  ?? C:/CutNicePro/app/src/services/import-project.ts
+  ?? C:/CutNicePro/app/src/services/split-framing.ts
+  ?? C:/CutNicePro/app/src/test/clip-inspection-plan.test.tsx
+  ?? C:/CutNicePro/app/src/test/editor-source-flow.test.tsx
+  ?? C:/CutNicePro/app/src/test/import-ipc.test.ts
+  ?? C:/CutNicePro/app/src/test/import-navigation.test.tsx
+  ?? C:/CutNicePro/app/src/test/import-project.test.ts
+  ?? C:/CutNicePro/app/src/test/split-controls.test.tsx
+  ?? C:/CutNicePro/app/src/test/split-framing.test.ts
+  ?? C:/CutNicePro/app/src/test/split-playback.test.tsx
+  ?? C:/CutNicePro/app/src/test/split-preview.test.tsx
+  ?? C:/CutNicePro/app/src/test/split-scenes.test.ts
+  ?? C:/CutNicePro/app/src/test/split-screen.test.ts
+  ?? C:/CutNicePro/app/src/test/timeline-trim.test.tsx
+  ?? C:/CutNicePro/app/src/test/upload-flow.test.tsx
+  ?? C:/CutNicePro/docs/engineering/USABILITY-IMPLEMENTATION-PLAN.md
+  ?? C:/CutNicePro/docs/reports/history/2026-10-25_115431-pausa-modelo-metas-usabilidade.txt
+  ?? C:/CutNicePro/tools/face-framing/split_worker.py
+  ?? C:/CutNicePro/tools/face-framing/test_split_worker.py
+  ?? C:/CutNicePro/docs/reports/history/2026-10-25_144115-usabilidade-timeline-split-cenas.txt
+

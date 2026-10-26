@@ -11,6 +11,7 @@ import { clipMessage, isolatedClipSettings, type Clip } from "../../lib/clips";
 import type { LibraryClip } from "../../lib/clip-library";
 import "./clip-library.css";
 import { ClipDetails } from "./ClipDetails";
+import { effectiveSegments, planDuration, snapSeek, toOutputTime, toSourceTime, segmentIndexAt } from "../../lib/edit-plan";
 
 interface Props { entry: LibraryClip; onClose: () => void; onEdit: (projectId: string, clip: Clip) => void; onChanged?: (notice?: string) => void }
 export function ClipInspection({ entry,onClose,onEdit,onChanged }: Props) {
@@ -26,12 +27,15 @@ export function ClipInspection({ entry,onClose,onEdit,onChanged }: Props) {
   const settings = isolatedClipSettings(clip,preferences,media.source?.media);
   // upd 20 (auditoria): limites EFETIVOS = intervalo editado salvo (dentro do
   // clipe); prévia, controles, transcrição e download usam os MESMOS limites
-  const from = settings.trimStart;
-  const to = settings.trimEnd ?? clip.end;
+  const windows = effectiveSegments(settings, media.source?.media.duration ?? clip.end);
+  const from = windows[0].sourceStart;
+  const to = windows[windows.length - 1].sourceEnd;
+  const duration = planDuration(windows);
+  const activeWindow = windows[Math.max(0, segmentIndexAt(windows, Math.min(time, to - 0.001)))];
   const allTranscript = media.source?.transcript ?? [];
-  const transcript = allTranscript.filter(segment => segment.start < to && segment.end > from);
+  const transcript = allTranscript.filter(segment => windows.some(window => segment.start < window.sourceEnd && segment.end > window.sourceStart));
   const ownAnalysis = controller.ownedJob && controller.operation === "analyze";
-  function seek(value: number) { const bounded=Math.max(from,Math.min(value,to)); if (video.current) video.current.currentTime=bounded; setTime(bounded); }
+  function seek(value: number) { const bounded=snapSeek(windows, Math.max(from,Math.min(value,to))); if (video.current) video.current.currentTime=bounded; setTime(bounded); }
   function toggle() {
     const player = video.current;
     if (!player) return;
@@ -62,15 +66,17 @@ export function ClipInspection({ entry,onClose,onEdit,onChanged }: Props) {
     }} busy={controller.busy && controller.ownedJob} allowCloseWhileBusy={ownAnalysis}>
       <div className="clip-inspection__body">
         <div className="clip-inspection__player"><VideoPreview media={media.source?.media ?? null} localUrl={media.source?.url ?? null} settings={settings} videoRef={video}
-          nativeControls={false} onTogglePlay={toggle} cue={captionCue(transcript,Math.min(time,to-0.001),undefined,{start:from,end:to})} onDuration={() => seek(from)}
+          nativeControls={false} onTogglePlay={toggle} cue={captionCue(transcript,Math.min(time,to-0.001),undefined,{start:activeWindow.sourceStart,end:activeWindow.sourceEnd})} onDuration={() => seek(from)}
           onTime={value => {
             if (value >= to) { video.current?.pause(); setPlaying(false); setTime(to); }
-            else if (value < from) seek(from); else setTime(value);
+            else if (value < from) seek(from);
+            else if (segmentIndexAt(windows, value) < 0) seek(value);
+            else setTime(value);
           }}/>
-          <PlaybackControls time={Math.max(0,time-from)} start={from} end={to} duration={to-from}
+          <PlaybackControls time={toOutputTime(windows, time)} start={from} end={to} duration={duration}
             playing={playing} enabled={Boolean(media.source)} onSeek={seek} onToggle={toggle}/>
           <label className="sr-only" htmlFor="clip-inspection-seek">Posição no clipe</label>
-          <input id="clip-inspection-seek" type="range" min={from} max={to} step={.05} value={time} onChange={event => seek(Number(event.target.value))}/>
+          <input id="clip-inspection-seek" type="range" min={0} max={duration} step={.05} value={toOutputTime(windows, time)} onChange={event => seek(toSourceTime(windows, Number(event.target.value)))}/>
         </div>
         <ClipDetails clip={clip} transcript={transcript} time={time} from={from} to={to} loading={media.loading || controller.loading} analyzing={controller.busy && ownAnalysis}
           error={ownAnalysis && controller.job?.state === "failed" ? clipMessage(controller.job.error) : null} onSeek={seek}

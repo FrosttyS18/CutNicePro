@@ -93,17 +93,20 @@ export function isClipJob(value: unknown): value is ClipJob {
  * trocado por outro modelo). Limites salvos fora do clipe são apenas
  * ajustados para dentro; ausentes usam os limites originais do clipe.
  */
-export function clipSettings(settings: EditorSettings, clip: Clip): EditorSettings {
+export function clipSettings(settings: EditorSettings, clip: Clip, sourceDuration?: number | null): EditorSettings {
+  const hasSource = sourceDuration != null && Number.isFinite(sourceDuration) && sourceDuration > 0;
+  const minimum = hasSource ? 0 : clip.start;
+  const maximum = hasSource ? sourceDuration : clip.end;
   const start = Number.isFinite(settings.trimStart)
-    ? Math.min(Math.max(settings.trimStart, clip.start), clip.end)
+    ? Math.min(Math.max(settings.trimStart, minimum), maximum)
     : clip.start;
   const end = settings.trimEnd !== null && Number.isFinite(settings.trimEnd)
-    ? Math.min(Math.max(settings.trimEnd, start), clip.end)
+    ? Math.min(Math.max(settings.trimEnd, start), maximum)
     : clip.end;
   return { ...settings, trimStart: start, trimEnd: end,
     captionStyle: effectiveCaptionStyle(settings.captionModel, settings.captionStyle) };
 }
-export function isolatedClipSettings(clip: Clip, saved?: EditorSettings, media?: Pick<SourceDescriptor,"width" | "height"> | null): EditorSettings {
+export function isolatedClipSettings(clip: Clip, saved?: EditorSettings, media?: Pick<SourceDescriptor,"width" | "height"> & Partial<Pick<SourceDescriptor,"duration">> | null): EditorSettings {
   const defaults = defaultEditorSettings();
   const sourceRatio = media?.width && media.height ? media.width/media.height : 16/9;
   const ratios: AspectRatio[] = ["16:9","9:16","1:1","4:5"];
@@ -113,7 +116,7 @@ export function isolatedClipSettings(clip: Clip, saved?: EditorSettings, media?:
   // histórico) e ENQUADRAMENTO AUTOMÁTICO por tracking (M4) quando houver;
   // com edição salva: tudo vem do que o usuário deixou — a edição manual
   // vence e desativa a automação para este corte.
-  if (saved) return clipSettings(saved, clip);
+  if (saved) return clipSettings(saved, clip, media?.duration);
   const fresh = { ...defaults, ratio: clip.format ?? fallback, fit: clip.fit ?? "contain", captionModel: 2 } as EditorSettings;
   if (clip.faceFraming?.status === "stable" && validFaceFraming(clip.faceFraming) && fresh.fit === "cover") {
     fresh.focalPoint = { x: clip.faceFraming.x! * 100, y: clip.faceFraming.y! * 100 };
@@ -135,6 +138,7 @@ export function renderSettings(settings: EditorSettings): EditorSettings & { seg
 }
 export function clipMessage(error: unknown): string {
   const text = String(error);
+  if (/confirme duas pessoas|localize.*duas pessoas/i.test(text)) return "Abra o clipe em Editar e confirme as duas pessoas em Enquadrar antes de exportar o split.";
   if (/cortes inválidos/i.test(text)) return "O aplicativo recebeu cortes em um formato inválido. Seus cortes salvos foram mantidos. Tente novamente.";
   if (/abertura.*fechamento/i.test(text)) return "Não foram aprovados cortes com abertura e fechamento completos nesta rodada. Seus cortes salvos foram mantidos. Tente outra faixa ou amplie a duração máxima.";
   if (/avaliar os trechos propostos/i.test(text)) return "Não foi possível aprovar os trechos propostos nesta rodada. Tente novamente ou escolha outra faixa do vídeo.";

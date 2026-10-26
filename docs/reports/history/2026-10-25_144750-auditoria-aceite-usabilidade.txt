@@ -1,0 +1,74 @@
+╔════════════════════════════════════════════╗
+║       CUTNICEPRO — ZCODE REPORT            ║
+╚════════════════════════════════════════════╝
+TASK
+  Name: Auditoria de conclusão da meta de usabilidade
+  Status: PARTIAL — falta o teste manual na sessão normal.
+  Scope: verificar os quatro requisitos contra o estado atual, sem nova implementação.
+  Objective: comprovar envio centralizado, trim utilizável, ampliação persistida e split correto.
+  Result: disponibilidade técnica confirmada; aceite manual ainda não comprovado.
+  FUNCTIONAL STATUS: PARTIAL. REGRESSION STATUS: PASS nos resultados já executados.
+  VISUAL STATUS: PENDING HUMAN APPROVAL.
+IMPLEMENTATION
+  Completed: auditoria requisito/evidência/limite registrada no plano existente.
+  Not completed: interação manual de envio, edição/salvamento/download e split real.
+  Changes: somente documentação de continuidade e relatório.
+  Architecture impact: nenhum.
+FILES
+  Created: relatório histórico desta auditoria.
+  Modified: C:/CutNicePro/docs/engineering/ENGINE-HANDOFF.md;
+    C:/CutNicePro/docs/engineering/USABILITY-IMPLEMENTATION-PLAN.md;
+    C:/CutNicePro/docs/reports/LATEST.txt.
+  Deleted: nenhum. Unexpected changes: nenhuma identificada; working tree preservada.
+VALIDATION
+  Typecheck/Lint/Unit/Integration/Regression: resultados anteriores inspecionados;
+    nenhuma repetição nesta auditoria. TS358/358 e focal posterior30/30 confirmados nos JSON.
+  Visual tests: geometria existente offset0 em2371/1280/800/390px; sem novo teste estético.
+  Runtime verification: executável e dist posteriores às fontes correspondentes;
+    processo35772 no caminho padrão. Worker real18amostras/26,25s/found confirmado no JSON.
+  Total passed: nenhum teste novo; verificações de disponibilidade acima.
+  Total failed: nenhum novo. Total skipped: nenhuma suíte iniciada.
+HOOKS / HARNESS
+  Hooks active: não presumidos. PreToolUse/PostToolUse/Stop/Baseline: não usados como aceite.
+  Gate result: implementação disponível; UI manual pendente.
+  Evidence: plano existente e resultados lidos, sem alegar reexecução.
+MCP / SKILLS
+  Tools used: leitura de fontes/artefatos/Git e controle de goal.
+  Connection status: Graphify não consultado novamente; sem alteração funcional.
+  Failures: nenhuma nova. Pending activation: nenhuma.
+GIT
+  Branch: codex/usabilidade-editor-envio-split.
+  HEAD: df1186b94d0362af6815397e7cd30efee8e1be3e.
+  Latest commit: Corrigir análise de clipes e aprimorar a interface.
+  Commits created: nenhum. Push: NOT EXECUTED.
+  Remote: origin → FrosttyS18/CutNicePro. Working tree: MODIFIED + UNTRACKED.
+  Pending files: preservados; inventário integral no relatório técnico anterior.
+EVIDENCE
+  Commands executed: git status; leitura das fontes/JSON; metadados/hash da build;
+    consulta do processo próprio. Nenhum controle interativo da interface.
+  Relevant logs: C:/CutNicePro/.tooling/test-output/usability-current-vitest.json;
+    usability-review-fixes.json; split-real-wardigs/production-scenes-v2-result.json.
+  Screenshots: nenhum novo. Test artifacts: nenhum novo.
+  Reproduction details: limites da comprovação registrados por requisito no plano.
+ISSUES
+  Bugs found: nenhum novo nesta auditoria.
+  Unresolved failures: falta comprovar os percursos na janela normal.
+  Regressions: não detectadas nesta leitura; não equivale a nova execução de testes.
+  Risks: testes de componente/worker/FFmpeg não substituem o percurso manual completo.
+  Blockers: retorno manual do mantenedor; primeira auditoria de espera após a entrega.
+FINAL
+  Delivery status: PARTIAL. Requirements met: implementação/evidências técnicas anteriores.
+  Remaining work: três testes manuais do guia anterior.
+  User action required: testar envio, ampliar/salvar/reabrir/baixar e split no wardigs-corte.
+  Restart required: nenhum novo build nesta auditoria; caminho padrão confirmado.
+  Ready for next task: meta continua active até o retorno manual.
+REPORT
+  Latest file: C:/CutNicePro/docs/reports/LATEST.txt.
+  Historical file: C:/CutNicePro/docs/reports/history/2026-10-25_144750-auditoria-aceite-usabilidade.txt
+  Relatório técnico anterior: C:/CutNicePro/docs/reports/history/2026-10-25_144115-usabilidade-timeline-split-cenas.txt.
+GUIA DO MANTENEDOR — O QUE MUDOU E COMO TESTAR
+  O que mudou nesta auditoria: nada na interface; confirmou-se que a build está atualizada.
+  1. Conferir o envio compacto no centro da tela e importar um arquivo.
+  2. Ampliar um corte além do fim da IA, salvar, sair/reabrir e baixar.
+  3. wardigs-corte01:43,72–03:03,90,9:16/Preencher → Duas pessoas:
+     esperado split até01:52,95, seguido por quadro único nos closes.

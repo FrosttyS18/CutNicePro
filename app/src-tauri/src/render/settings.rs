@@ -63,6 +63,7 @@ pub struct RenderSettings {
     pub ratio: String,
     pub fit: String,
     pub focal_point: Option<FocalPoint>,
+    pub split_screen: Option<super::split_screen::SplitScreen>,
     /// Ampliação 1–3 aplicada à imagem (paridade SupoClip).
     pub zoom: Option<f64>,
     pub effects: Option<Effects>,
@@ -140,6 +141,38 @@ impl CaptionStyle {
     }
 }
 impl RenderSettings {
+    pub fn composition_windows(&self, duration: f64) -> Result<Vec<RenderSegment>, String> {
+        self.validate(duration)?;
+        let segments = self.effective_segments(duration)?;
+        let Some(shots) = self
+            .split_screen
+            .as_ref()
+            .and_then(|layout| layout.shots.as_ref())
+        else {
+            return Ok(segments);
+        };
+        let mut windows = Vec::new();
+        for segment in segments {
+            let mut boundaries = vec![segment.source_start, segment.source_end];
+            for shot in shots {
+                for edge in [shot.source_start, shot.source_end] {
+                    if edge > segment.source_start && edge < segment.source_end {
+                        boundaries.push(edge);
+                    }
+                }
+            }
+            boundaries.sort_by(f64::total_cmp);
+            boundaries.dedup();
+            if boundaries.windows(2).any(|pair| pair[1] - pair[0] < 0.05) {
+                return Err("Uma mudança de composição deixou um trecho menor que 0,05 s. Ajuste o corte ou os limites da cena antes de exportar.".into());
+            }
+            windows.extend(boundaries.windows(2).map(|pair| RenderSegment {
+                source_start: pair[0],
+                source_end: pair[1],
+            }));
+        }
+        Ok(windows)
+    }
     /// Intervalos efetivos da composição: plano multi-segmento validado ou o
     /// intervalo único do trim (validate). Mesma semântica da prévia
     /// (`effectiveSegments` em edit-plan.ts) — os três consumidores
@@ -200,6 +233,16 @@ impl RenderSettings {
     }
     pub fn validate(&self, duration: f64) -> Result<(f64, f64), String> {
         self.dimensions()?;
+        if self
+            .split_screen
+            .as_ref()
+            .is_some_and(|layout| !layout.face_validated)
+        {
+            return Err(
+                "Localize e confirme duas pessoas no editor antes de exportar a tela dividida."
+                    .into(),
+            );
+        }
         let end = self.trim_end.unwrap_or(duration);
         if !["contain", "cover"].contains(&self.fit.as_str())
             || !color(&self.background)
@@ -214,6 +257,14 @@ impl RenderSettings {
                 .zoom
                 .is_some_and(|z| z > 1.0 && self.source_size().is_err())
             || self.effects.as_ref().is_some_and(|fx| !fx.valid())
+            || self.split_screen.as_ref().is_some_and(|layout| {
+                self.ratio != "9:16"
+                    || !layout.valid()
+                    || layout
+                        .shots
+                        .as_ref()
+                        .is_some_and(|shots| shots.iter().any(|shot| shot.source_end > duration))
+            })
             || self.focal_point.as_ref().is_some_and(|point| {
                 [point.x, point.y]
                     .iter()
@@ -244,7 +295,24 @@ impl RenderSettings {
      * excedente e letterbox posicionados pela mesma âncora. Sem dimensões de
      * origem, usa o filtro clássico (sem zoom).
      */
+    #[cfg(test)]
     pub fn geometry(&self) -> Result<String, String> {
+        self.geometry_at(self.trim_start)
+    }
+
+    pub fn geometry_at(&self, source_time: f64) -> Result<String, String> {
+        if let Some(layout) = &self.split_screen {
+            if self.ratio != "9:16" || !layout.valid() {
+                return Err(
+                    "Localize e confirme duas pessoas no editor antes de exportar a tela dividida."
+                        .into(),
+                );
+            }
+            if let Some(active) = layout.at(source_time) {
+                let (sw, sh) = self.source_size()?;
+                return active.geometry(sw, sh);
+            }
+        }
         let (width, height) = self.dimensions()?;
         let (fx, fy) = self.focal();
         let zoom = self.zoom.unwrap_or(1.0);

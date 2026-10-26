@@ -1,4 +1,6 @@
-import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { useSplitVerification } from "../../hooks/useSplitVerification";
+import { splitLayoutAt, splitViewport, updateSplitPanel } from "../../lib/split-screen";
 import { ArrowLeftIcon } from "@phosphor-icons/react/dist/csr/ArrowLeft";
 import { ArrowCounterClockwiseIcon } from "@phosphor-icons/react/dist/csr/ArrowCounterClockwise";
 import { ArrowClockwiseIcon } from "@phosphor-icons/react/dist/csr/ArrowClockwise";
@@ -25,6 +27,7 @@ import { usePlaybackShortcut } from "../../hooks/usePlaybackShortcut";
 import { FramingToolbar } from "./FramingToolbar";
 
 interface Props {
+  projectId?: string;
   title: string;
   activeClip?: Clip;
   data: WorkspaceData;
@@ -39,7 +42,7 @@ interface Props {
   allClips?: Clip[];
 }
 
-export function VideoEditor({ title, activeClip, data, localUrl, dirty, onChange, onSave, onBack, transcriptionControls, transcribing, allClips }: Props) {
+export function VideoEditor({ projectId, title, activeClip, data, localUrl, dirty, onChange, onSave, onBack, transcriptionControls, transcribing, allClips }: Props) {
   const video = useRef<HTMLVideoElement>(null);
   const serialize = useCallback(
     (value: WorkspaceData) =>
@@ -72,6 +75,11 @@ export function VideoEditor({ title, activeClip, data, localUrl, dirty, onChange
   }, [history, restoreFromSnapshot]);
   const changeWithHistory = useCallback(
     (next: WorkspaceData, group = "") => {
+      const previous = dataRef.current.settings;
+      if (next.settings.splitScreen?.faceValidated
+        && (next.settings.trimStart !== previous.trimStart || next.settings.trimEnd !== previous.trimEnd)) {
+        next = { ...next, settings: { ...next.settings, splitScreen: { ...next.settings.splitScreen, faceValidated: false } } };
+      }
       onChange(next);
       // commit recebe o SNAPSHOT novo (a fonte ainda não re-renderizou)
       history.commit({ settings: next.settings, transcript: next.transcript, clipEdits: next.clipEdits }, group);
@@ -108,12 +116,23 @@ export function VideoEditor({ title, activeClip, data, localUrl, dirty, onChange
   // fixo na UI); a auto-soma é feita por animação CSS (sem timer em effect)
   const [toastGeracao, setToastGeracao] = useState(0);
   const changeSettings = (settings: Partial<EditorSettings>) => changeWithHistory({ ...data, settings: { ...data.settings, ...settings } }, "settings");
+  const acceptSplitVerification = useCallback((patch: Partial<EditorSettings>) => {
+    const current = dataRef.current;
+    onChange({ ...current, settings: { ...current.settings, ...patch } });
+  }, [onChange]);
   const [time, setTime] = useState(0);
   const [duration, setDuration] = useState(data.media?.duration ?? null);
+  const splitSource = useMemo(() => projectId && localUrl && data.media?.kind === "local" && data.media.mediaId && duration
+    ? { projectId, mediaId: data.media.mediaId, start: data.settings.trimStart, end: data.settings.trimEnd ?? duration,
+      viewport: splitViewport(data.media.width, data.media.height, data.settings) } : undefined,
+  [projectId, localUrl, data.media, data.settings, duration]);
+  const splitNotice = useSplitVerification(data.settings, splitSource, acceptSplitVerification);
   const [playing, setPlaying] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [panel, setPanel] = useState(panelForTool(data.tool));
   const [framing, setFraming] = useState(false);
+  const canvasCleanup = useRef<(() => void) | null>(null);
+  useEffect(() => () => canvasCleanup.current?.(), []);
   const { layout, beginResize } = useEditorLayout();
   const canPlay = Boolean(localUrl);
   const activateFraming = (active: boolean) => {
@@ -141,7 +160,11 @@ export function VideoEditor({ title, activeClip, data, localUrl, dirty, onChange
   // arraste do vídeo no modo Enquadrar (imagem) ou da legenda na aba Legendas
   const onCanvasPointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
     if (event.button !== 0) return;
-    const rect = event.currentTarget.getBoundingClientRect();
+    const preview = event.currentTarget.querySelector<HTMLElement>(".workspace-preview");
+    if (!preview?.contains(event.target as Node)) return;
+    const rect = preview.getBoundingClientRect();
+    if (!rect.width || !rect.height) return;
+    canvasCleanup.current?.();
     if (!framing && panel === "captions") {
       const startY = event.clientY;
       const style = effectiveCaptionStyle(data.settings.captionModel, data.settings.captionStyle);
@@ -153,34 +176,42 @@ export function VideoEditor({ title, activeClip, data, localUrl, dirty, onChange
       const upCaption = () => {
         window.removeEventListener("pointermove", moveCaption);
         window.removeEventListener("pointerup", upCaption);
+        window.removeEventListener("pointercancel", upCaption);
+        canvasCleanup.current = null;
       };
       event.preventDefault();
       window.addEventListener("pointermove", moveCaption);
       window.addEventListener("pointerup", upCaption);
+      window.addEventListener("pointercancel", upCaption);
+      canvasCleanup.current = upCaption;
       return;
     }
-    if (!framing || data.settings.fit !== "cover") return;
+    if (!framing || (!data.settings.splitScreen && data.settings.fit !== "cover")) return;
     const startX = event.clientX;
     const startY = event.clientY;
     const base = { x: data.settings.focalPoint?.x ?? 50, y: data.settings.focalPoint?.y ?? 50 };
+    const split = data.settings.splitScreen;
+    const activeSplit = split?.faceValidated ? splitLayoutAt(split, time) : null;
+    const splitPanel = event.clientY - rect.top < rect.height / 2 ? "top" : "bottom";
     const move = (moveEvent: PointerEvent) => {
       const dx = ((moveEvent.clientX - startX) / rect.width) * 100;
       const dy = ((moveEvent.clientY - startY) / rect.height) * 100;
       const clamp100 = (value: number) => Math.min(100, Math.max(0, value));
-      changeSettings({ focalPoint: { x: clamp100(base.x - dx), y: clamp100(base.y - dy) } });
+      if (split && activeSplit) {
+        changeSettings({ splitScreen: updateSplitPanel(split, time, splitPanel, { x: clamp100(activeSplit[splitPanel].x - dx), y: clamp100(activeSplit[splitPanel].y - dy * 2) }) });
+      } else changeSettings({ focalPoint: { x: clamp100(base.x - dx), y: clamp100(base.y - dy) } });
     };
     const up = () => {
       window.removeEventListener("pointermove", move);
       window.removeEventListener("pointerup", up);
+      window.removeEventListener("pointercancel", up);
+      canvasCleanup.current = null;
     };
     event.preventDefault();
     window.addEventListener("pointermove", move);
     window.addEventListener("pointerup", up);
-  };
-  const focusTrim = () => {
-    setFraming(false);
-    document.querySelector("#editor-trim")?.scrollIntoView({ block: "center", behavior: "smooth" });
-    document.querySelector<HTMLInputElement>("#editor-trim input")?.focus();
+    window.addEventListener("pointercancel", up);
+    canvasCleanup.current = up;
   };
   useEffect(() => {
     const element = video.current;
@@ -207,7 +238,7 @@ export function VideoEditor({ title, activeClip, data, localUrl, dirty, onChange
   // overlay sai quando o frame do <video> alcança o alvo (seeked sem
   // pendentes) ou ao dar play.
   const seekerRef = useRef<FrameSeeker | null>(null);
-  const [scrub, setScrub] = useState<{ canvas: ScrubCanvas; localUrl: string } | null>(null);
+  const [scrub, setScrub] = useState<{ canvas: ScrubCanvas; localUrl: string; sourceTime: number } | null>(null);
   // troca de mídia invalida o overlay por derivação (canvas de outra fonte não aparece)
   const scrubCanvas = scrub && scrub.localUrl === localUrl ? scrub.canvas : null;
   useEffect(() => () => seekerRef.current?.dispose(), []);
@@ -233,9 +264,9 @@ export function VideoEditor({ title, activeClip, data, localUrl, dirty, onChange
     if (!video.current || !duration) return;
     // Plano de edição (M2): eixo da timeline continua no TEMPO DA FONTE; o
     // seek salta vãos para o próximo segmento (prévia composta).
-    const next = activeClip
-      ? snapSeek(effectiveSegments(data.settings, duration), clampTime(value, duration))
-      : clampTime(value, duration);
+    const bounded = clampTime(value, duration);
+    const next = !video.current.paused && (activeClip || data.settings.editPlan)
+      ? snapSeek(effectiveSegments(data.settings, duration), bounded) : bounded;
     setTime(next); // playhead sempre responde imediatamente
     // frame instantâneo durante scrub (pausado): só quando há Blob registrado
     const mediaId = data.media?.mediaId;
@@ -249,7 +280,7 @@ export function VideoEditor({ title, activeClip, data, localUrl, dirty, onChange
           // não alcançou o alvo (resolução tardia não ressuscita o overlay)
           const element = video.current;
           const videoCaughtUp = element && !element.seeking && Math.abs(element.currentTime - next) < 0.05;
-          if (canvas && url !== null && url === localUrl && !videoCaughtUp) setScrub({ canvas, localUrl: url });
+          if (canvas && url !== null && url === localUrl && !videoCaughtUp) setScrub({ canvas, localUrl: url, sourceTime: next });
         }).catch(() => { /* mantém overlay anterior ou nenhum */ });
       }
     }
@@ -268,7 +299,7 @@ export function VideoEditor({ title, activeClip, data, localUrl, dirty, onChange
     if(element.paused) {
       // Plano (M2): retomada sempre dentro da composição — vão/fim reinicia
       // no ponto coerente (próximo segmento ou primeiro segmento).
-      if (activeClip && duration) {
+      if ((activeClip || data.settings.editPlan) && duration) {
         const segments = effectiveSegments(data.settings, duration);
         const first = segments[0]?.sourceStart ?? data.settings.trimStart;
         const lastEnd = segments[segments.length - 1]?.sourceEnd ?? data.settings.trimEnd ?? duration;
@@ -363,9 +394,10 @@ export function VideoEditor({ title, activeClip, data, localUrl, dirty, onChange
             aria-label="Redimensionar transcrição (arraste)" title="Arraste para redimensionar a transcrição"
             onPointerDown={beginResize("transcript")}/>
         </div>
-        <div className="editor-stage"><FramingToolbar settings={data.settings} framing={framing} onSettings={changeSettings} onFraming={activateFraming} onFocusTrim={focusTrim}/>
+        <div className="editor-stage"><FramingToolbar framing={framing} onFraming={activateFraming}/>
+          {splitNotice && <p className="editor-stage__hint" role="status">{splitNotice}</p>}
           {framing && <p className="editor-stage__hint" role="status">Modo Enquadrar ativo: arraste o vídeo na prévia para reposicionar a imagem dentro do quadro. As legendas ficam no lugar. Esc ou "Concluir enquadramento" para sair.</p>}
-          <div className="editor-stage__canvas" data-framing={framing} onPointerDown={onCanvasPointerDown}><VideoPreview media={data.media} localUrl={localUrl} settings={data.settings} videoRef={video} cue={cue} nativeControls={false} onTogglePlay={togglePlay} scrubCanvas={scrubCanvas}
+          <div className="editor-stage__canvas" data-framing={framing} onPointerDown={onCanvasPointerDown}><VideoPreview media={data.media} localUrl={localUrl} settings={data.settings} videoRef={video} cue={cue} nativeControls={false} onTogglePlay={togglePlay} scrubCanvas={scrubCanvas} scrubTime={scrub?.sourceTime} disableSurfacePlayback={framing}
             onDuration={value => { setDuration(value); if (video.current && video.current.currentTime < data.settings.trimStart) { video.current.currentTime = data.settings.trimStart; setTime(data.settings.trimStart); } }} onTime={(value) => {
               // Autoridade do tempo (upd 20): durante um seek iniciado pelo
               // usuário, o browser dispara timeupdate com o tempo ANTIGO —
@@ -375,8 +407,11 @@ export function VideoEditor({ title, activeClip, data, localUrl, dirty, onChange
               // Plano de edição (M2): reprodução composta — ao atingir o fim
               // do segmento atual, salta para o início do próximo (o vão sai
               // da composição); no fim do último segmento, pausa.
-              if (activeClip && duration && video.current && !video.current.paused) {
+              if ((activeClip || data.settings.editPlan) && duration && video.current && !video.current.paused) {
                 const segments = effectiveSegments(data.settings, duration);
+                const snapped = snapSeek(segments, value);
+                const last = segments[segments.length - 1]?.sourceEnd ?? duration;
+                if (value < last && Math.abs(snapped - value) > 0.001) { seek(snapped); return; }
                 const boundary = nextBoundary(segments, value);
                 if (boundary && value >= boundary.from - 0.08) {
                   setTime(boundary.to);
@@ -402,6 +437,7 @@ export function VideoEditor({ title, activeClip, data, localUrl, dirty, onChange
             aria-label="Redimensionar ferramentas (arraste)" title="Arraste para redimensionar as ferramentas"
             onPointerDown={beginResize("inspector")}/>
           <EditorInspector panel={panel} settings={data.settings} onPanel={setPanel} onSettings={changeSettings}
+            source={splitSource} sourceTime={time}
             onApplyAll={applyCaptionsToAll} />
         </div>
       </div>
@@ -410,7 +446,8 @@ export function VideoEditor({ title, activeClip, data, localUrl, dirty, onChange
           aria-label="Redimensionar linha do tempo (arraste)" title="Arraste para redimensionar a linha do tempo"
           onPointerDown={beginResize("timeline")}/>
         <EditorTimeline mediaId={data.media?.mediaId} localUrl={localUrl} duration={duration} time={time} playing={playing} canPlay={canPlay} settings={data.settings} onSeek={seek}
-          onSettings={changeSettings} onTogglePlay={togglePlay} planEnabled={Boolean(activeClip)} />
+          onSettings={changeSettings} onTrimSettings={patch => changeWithHistory({ ...data, settings: { ...data.settings, ...patch } })}
+          onTogglePlay={togglePlay} planEnabled={Boolean(activeClip)} />
       </div>
     </section>
   );

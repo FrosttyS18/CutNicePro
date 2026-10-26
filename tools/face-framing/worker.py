@@ -5,7 +5,6 @@ import statistics
 import time
 from pathlib import Path
 
-
 def offsets(start, end):
     count = max(3, min(12, math.ceil((end - start) / 2.5)))
     margin = min(0.5, (end - start) / 4)
@@ -87,12 +86,25 @@ def summarize(samples, fraction):
 
 
 def validate_request(request):
+    if request.get("version") == 2:
+        from split_worker import validate_request as validate_split_request
+        validate_split_request(request)
+        return
     if request.get("version") != 1 or not isinstance(request.get("clips"), list) or len(request["clips"]) > 16:
         raise ValueError("Pedido de enquadramento inválido")
 
 
+def analyze_split(request):
+    from split_worker import analyze_split as analyze_split_scenes
+    result = analyze_split_scenes(request)
+    result["peakWorkingSetBytes"] = peak_working_set()
+    return result
+
+
 def analyze(request):
     validate_request(request)
+    if request["version"] == 2:
+        return analyze_split(request)
     import cv2
     cv2.setNumThreads(1)
     cv2.ocl.setUseOpenCL(False)
