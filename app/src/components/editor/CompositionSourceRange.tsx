@@ -2,6 +2,7 @@ import { useEffect, useRef, type KeyboardEvent, type PointerEvent } from "react"
 import { frameToSeconds, secondsToFrame } from "../../lib/composition-time";
 import { formatMediaTime } from "../../lib/workspace";
 import type { FrameRate } from "../../lib/composition-types";
+import { useSourceRangeZoom } from "./useSourceRangeZoom";
 
 interface Props {
   duration: number;
@@ -19,12 +20,18 @@ interface Props {
 
 export function CompositionSourceRange({ duration, fps, time, start, end, frames = [], kind, disabled, onSeek, onRange, onActivate }: Props) {
   const surface = useRef<HTMLDivElement>(null);
+  const viewport = useRef<HTMLDivElement>(null);
   const cleanup = useRef<(() => void) | null>(null);
+  const view = useSourceRangeZoom(viewport, duration, fps, () => !disabled && !cleanup.current);
   const step = Math.min(duration, frameToSeconds(1, fps));
   const clamp = (value: number) => Math.max(0, Math.min(duration, value));
   const percent = (value: number) => duration > 0 ? 100 * clamp(value) / duration : 0;
-  useEffect(() => () => cleanup.current?.(), []);
   useEffect(() => { if (disabled) cleanup.current?.(); }, [disabled]);
+  useEffect(() => () => cleanup.current?.(), [duration, fps.numerator, fps.denominator]);
+  const zoomed = view.width > 0 && view.contentWidth > view.width + 1;
+  const firstTile = Math.max(0, Math.floor(view.left / 84) - 1);
+  const lastTile = Math.min(Math.ceil(view.contentWidth / 84), Math.ceil((view.left + view.width) / 84) + 1);
+  const tiles = zoomed ? Array.from({ length: Math.max(0, lastTile - firstTile) }, (_, index) => firstTile + index) : [];
 
   const begin = (event: PointerEvent<HTMLElement>, edge?: "start" | "end") => {
     if (event.button !== 0 || disabled || duration <= 0) return;
@@ -37,7 +44,11 @@ export function CompositionSourceRange({ duration, fps, time, start, end, frames
     const originX = event.clientX;
     const pointerId = event.pointerId;
     const matches = (next: globalThis.PointerEvent) => !Number.isFinite(pointerId) || next.pointerId === pointerId;
-    const at = (clientX: number) => clamp(frameToSeconds(secondsToFrame(clamp((clientX - bounds.left) / bounds.width * duration), fps), fps));
+    const at = (clientX: number) => {
+      const measured = surface.current?.getBoundingClientRect();
+      const geometry = measured?.width ? measured : bounds;
+      return clamp(frameToSeconds(secondsToFrame(clamp((clientX - geometry.left) / geometry.width * duration), fps), fps));
+    };
     const anchor = at(originX);
     let dragged = false;
     const update = (clientX: number) => {
@@ -88,11 +99,16 @@ export function CompositionSourceRange({ duration, fps, time, start, end, frames
   };
 
   return <div className="composition-source-range" data-kind={kind} data-disabled={disabled || undefined}>
-    <div ref={surface} className="composition-source-range__track" role="slider" tabIndex={0} aria-label="Posição na fonte"
+    <div ref={viewport} className="composition-source-range__viewport" onScroll={view.onScroll}>
+    <div className="composition-source-range__content" style={{ width: view.contentWidth || "100%" }}>
+    <div ref={surface} className="composition-source-range__track" style={{ width: view.contentWidth || "100%" }} role="slider" tabIndex={0} aria-label="Posição na fonte"
       aria-valuemin={0} aria-valuemax={duration} aria-valuenow={time} aria-valuetext={formatMediaTime(time)} aria-disabled={disabled}
       onPointerDown={event => begin(event)}>
-      <div className="composition-source-range__frames" aria-hidden="true">
-        {kind === "video" && frames.length ? frames.map((frame, index) => <img key={`${index}:${frame}`} src={frame} alt="" draggable={false}/>)
+      <div className="composition-source-range__frames" data-zoomed={zoomed || undefined} aria-hidden="true">
+        {kind === "video" && frames.length ? zoomed ? tiles.map(tile => <img key={tile}
+          src={frames[Math.min(frames.length - 1, Math.floor(tile * 84 / view.contentWidth * frames.length))]}
+          style={{ left: tile * 84, width: Math.min(84, view.contentWidth - tile * 84) }} alt="" draggable={false}/>)
+          : frames.map((frame, index) => <img key={`${index}:${frame}`} src={frame} alt="" draggable={false}/>)
           : <span className="composition-source-range__empty">{kind === "audio" ? "Áudio · arraste para selecionar" : "Miniaturas indisponíveis · arraste para selecionar"}</span>}
       </div>
       <span className="composition-source-range__selection" aria-hidden="true" style={{ left: `${percent(start)}%`, width: `${percent(end - start)}%` }}/>
@@ -103,6 +119,8 @@ export function CompositionSourceRange({ duration, fps, time, start, end, frames
       aria-valuemin={edge === "start" ? 0 : start + step} aria-valuemax={edge === "start" ? end - step : duration}
       aria-valuenow={edge === "start" ? start : end} aria-valuetext={formatMediaTime(edge === "start" ? start : end)}
       style={{ left: `${percent(edge === "start" ? start : end)}%` }} onPointerDown={event => begin(event, edge)} onKeyDown={event => adjust(event, edge)}/>)}
-    <div className="composition-source-range__ruler" aria-hidden="true"><span>00:00</span><span>{formatMediaTime(duration)}</span></div>
+    </div></div>
+    <div className="composition-source-range__ruler" aria-hidden="true"><span>{formatMediaTime(view.contentWidth ? duration * view.left / view.contentWidth : 0)}</span>
+      <span>{formatMediaTime(view.contentWidth ? Math.min(duration, duration * (view.left + view.width) / view.contentWidth) : duration)}</span></div>
   </div>;
 }

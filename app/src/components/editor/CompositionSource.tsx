@@ -82,6 +82,6 @@ export function CompositionSource({ asset, url, frames, fps = { numerator: 30, d
       <EditorAction label={insertLabel} tooltip={insertLabel + (insertLabel==="Adicionar em nova camada"?" (Enter)":" em nova camada (Enter)")} icon={<PlusIcon size={16}/>} disabled={!canInsert} onClick={insert}/>
     </div>
     {message && <p role="alert" className="upload-message--error">{message}</p>}
-    <p id={hintId} className="flow-muted">{timed ? `Arraste nas miniaturas para marcar um trecho. Enter adiciona uma nova camada ${destination}.` : `Enter adiciona a imagem em uma nova camada ${destination}.`}</p>
+    <p id={hintId} className="flow-muted">{timed ? `Arraste nas miniaturas para marcar um trecho. Ctrl + rolagem ajusta o zoom. Enter adiciona uma nova camada ${destination}.` : `Enter adiciona a imagem em uma nova camada ${destination}.`}</p>
   </section>;
 }

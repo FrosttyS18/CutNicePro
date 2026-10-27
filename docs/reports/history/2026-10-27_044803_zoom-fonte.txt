@@ -1,0 +1,113 @@
+╔════════════════════════════════════════════╗
+║       CUTNICEPRO — ZCODE REPORT            ║
+╚════════════════════════════════════════════╝
+
+TASK
+  Name: Zoom na seleção de um trecho da fonte
+  Status: PARTIAL — aguardando seu teste manual.
+  Scope: somente Ctrl + rolagem nas miniaturas da fonte.
+  Objective: selecionar com precisão sem alterar a montagem pelo zoom.
+  Result: implementado e disponível na build padrão.
+  FUNCTIONAL STATUS: PASS no escopo automatizado.
+  REGRESSION STATUS: PASS nos testes relacionados executados.
+  VISUAL STATUS: PENDING HUMAN APPROVAL.
+
+IMPLEMENTATION
+  Completed: zoom ancorado no mouse, rolagem horizontal, limites
+    reversíveis e miniaturas limitadas à área visível.
+  Changes: mantém alças, seleção nos dois sentidos, Escape e Enter.
+    Resize e eventos rápidos de roda preservam os tempos corretos.
+  Architecture impact: reutiliza o listener existente e as miniaturas
+    recebidas; sem novo processamento de vídeo, dependências ou Rust.
+  Not completed: seu teste, commit, push e pausa posterior da meta.
+    Demais frentes ficam para depois, conforme solicitado.
+
+FILES
+  Created: app/src/components/editor/useSourceRangeZoom.ts;
+    app/src/test/composition-source-zoom.test.tsx; histórico deste relatório.
+  Modified: CompositionSource.tsx, CompositionSourceRange.tsx,
+    composition-source.css; ENGINE-HANDOFF.md; BUSINESS-RULES.md;
+    TRACEABILITY.md; docs/reports/LATEST.txt.
+  Deleted: nenhum. Unexpected changes: nenhuma alteração rastreável alheia.
+
+VALIDATION
+  Typecheck/build: PASS — npm run build, sem avisos.
+  Lint: PASS — quatro arquivos TS/TSX tocados, sem avisos.
+  Unit/Integration: PASS em ambiente DOM simulado.
+    Rodada relacionada: 49/49 em sete arquivos.
+    Após dois novos casos: 23/23 fonte/zoom.
+    Total: 51 casos distintos combinados, sem nova suíte integral de 51.
+  Regression tests: PASS nos consumidores executados.
+  Total failed: 0 na validação final.
+  Visual tests: SKIP — aprovação humana.
+  Total skipped: suíte Rust e gesto no app não repetidos/automatizados.
+  Runtime verification: build normal aberta, frontend e módulo novos
+    responderam HTTP 200; isso não comprova o gesto no aplicativo.
+  Build: C:/CutNicePro/app/src-tauri/target/debug/cutnicepro.exe.
+    Sem alteração nativa; mesmo hash 8EBE81B90BF2EB57BFDF5D64D89333367F01E053964786287DB2D18DF7E7C865.
+
+HOOKS / HARNESS
+  Hooks active/PreToolUse/PostToolUse/Stop/Baseline: não verificados.
+  Gate result: verificações explícitas acima; nenhum hook tratado como PASS.
+  Evidence: saídas dos comandos e testes versionados.
+
+MCP / SKILLS
+  Tools used: Graphify remoto, testes locais e revisão por subagente.
+    Aplicadas TDD e diretrizes frontend/minimalist do projeto.
+  Connection status: índice confirmado em 7e4056c, antes/depois da mudança.
+    Cadeia SourceRange → Source → EditorBody examinada.
+  Failures/Pending activation: nenhum bloqueio; alterações locais ainda
+    não publicadas e, portanto, fora do índice.
+
+GIT
+  Branch: main.
+  HEAD: 7e4056c1bd56f24908089e37db5393e9981d9828.
+  Latest commit: docs(editor): registrar validação de marcadores e faixas.
+  Commits created: nenhum.
+  Push: NOT EXECUTED — somente após seu OK.
+  Remote: origin → FrosttyS18/CutNicePro, main.
+  Working tree: MODIFIED + UNTRACKED.
+  Pending files: todos os arquivos listados em FILES.
+
+EVIDENCE
+  Commands executed: testes relacionados; ESLint; npm run build;
+    cargo build padrão; git diff --check; npm run tauri dev.
+  Relevant logs: dois testes adicionais reproduziram erro de tempo após
+    resize e perda de âncora em eventos agrupados; ambos passaram após fix.
+    Lint inicial corrigido com scrollTo, sem desabilitar a regra.
+  Screenshots: nenhuma. Test artifacts: testes listados em FILES.
+  Reproduction details: fonte ampliada → resize durante arraste;
+    cinco eventos de roda antes de redesenhar.
+
+ISSUES
+  Bugs found: escala antiga durante resize e âncora desatualizada em lote.
+  Unresolved failures: nenhuma nos testes finais.
+  Regressions: nenhuma observada no escopo executado.
+  Risks: miniaturas são amostras existentes; não imagens novas de cada frame.
+    Desempenho de mídia grande e demais pendências continuam abertos.
+  Blockers: nenhum para seu teste.
+
+FINAL
+  Delivery status: pronto para teste; aceite pendente.
+  Requirements met: implementação solicitada e validação técnica relacionada.
+  Remaining work: seu OK → commit → push → pausar a meta.
+  User action required: executar os três testes abaixo.
+  Restart required: não; app reaberto normalmente, no perfil habitual.
+  Ready for next task: aguardar seu retorno; outras frentes adiadas.
+
+REPORT
+  Latest file: C:/CutNicePro/docs/reports/LATEST.txt.
+  Historical file: C:/CutNicePro/docs/reports/history/2026-10-27_044803_zoom-fonte.txt.
+
+GUIA DO MANTENEDOR — O QUE MUDOU E COMO TESTAR
+  O que mudou: agora você amplia as miniaturas da fonte para marcar
+    trechos menores, usando Ctrl + rolagem.
+  1. Abra Escolher um trecho da fonte e use Ctrl + roda para ampliar
+     e reduzir até os limites. Esperado: faixa permanece utilizável.
+  2. Amplie, navegue pela barra horizontal e arraste uma seleção.
+     Ajuste as alças. Esperado: início/fim correspondem ao trecho escolhido.
+  3. Aperte Enter. Esperado: trecho em nova camada no cursor da montagem,
+     preservando o vídeo principal. O zoom sozinho não insere nem edita.
+  Após seu OK, farei commit, push e pausarei a meta.
+
+END OF REPORT
