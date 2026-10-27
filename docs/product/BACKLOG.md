@@ -6,6 +6,8 @@
 
 ## Auditoria de segurança — primeira passada, 2026-10-27
 
+Retomada da meta do editor autorizada posteriormente em2026-10-27: a pausa e a auditoria abaixo continuam registros históricos. Fonte visual/zoom corrigidos em `6f0e37b`, com161testes afetados/build/lint aprovados e uso normal ainda humano. Antes de iniciar a fila seguinte: publicar o checkpoint e confirmar o Graphify no commit novo. Próxima fatia: marcadores M/segundoM/duplo clique com nome/tempo/cor/excluir; abertura maior/central e principal acessível na base; renomear e colorir faixas. Referências do mantenedor e revisão pontual GPT-6.1 Terra orientam fidelidade, sem novos boxes/outlines nem aprovação estética automática. Nenhum destes três recursos foi implementado no checkpoint Complemento21.
+
 Estado **PARTIAL**, sem alteração funcional nem retomada da meta do editor. A skill oficial Cloudflare foi aplicada ao código `48aeca4`: zero vulnerabilidades confirmadas; uma hipótese de leitura `cnplocal` por origem remota exige validação independente das pré-condições e do runtime. Falta de Origin/CSP isoladamente não comprova vazamento. Continuidade e evidências no ENGINE-HANDOFF Complemento20 e no tooling.
 
 - Validar em ambiente descartável isolado se uma origem remota consegue ler somente uma mídia sintética registrada, distinguindo script controlado, seletor conhecido e políticas do WebView2. Nunca usar a sessão normal nem desabilitar segurança do navegador para obter resultado positivo.

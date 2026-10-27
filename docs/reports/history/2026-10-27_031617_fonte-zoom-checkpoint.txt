@@ -1,0 +1,133 @@
+╔════════════════════════════════════════════╗
+║       CUTNICEPRO — ZCODE REPORT            ║
+╚════════════════════════════════════════════╝
+
+TASK
+  Name: Fonte por miniaturas e zoom reversível — checkpoint antes da nova fila
+  Status: PARTIAL — fatia técnica concluída; uso normal/visual e nova fila pendentes.
+  Scope: botões+ sem colisão, seleção da fonte, Enter em nova camada e zoom.
+  Objective: corrigir a edição existente antes de ampliar a timeline.
+  Result: correções publicadas em 6f0e37b; próxima fatia aguarda Graphify.
+  FUNCTIONAL STATUS: PASS no escopo automatizado.
+  REGRESSION STATUS: PASS nos consumidores executados.
+  VISUAL STATUS: PENDING HUMAN APPROVAL.
+
+IMPLEMENTATION
+  Completed: miniaturas e seleção por arraste/alças; Enter em camada nova;
+    foco/atalhos da fonte; cancelamento; áudio/CC vinculados; cursor preservado.
+    Botão+ considera o marcador clicável; zoom não colapsa em1/2frames;
+    fit/reveal/resize/duração compartilham limites e respeitam gesto em curso.
+  Not completed: aceite manual; marcadores M, nomes/cores de faixas e
+    organização vertical da próxima fila. Meta integral permanece ACTIVE.
+  Changes: adaptação local dos módulos existentes, sem dependências/IPC novo.
+  Architecture impact: composição e persistência existentes preservadas;
+    novo seletor visual e cálculo de espaço separados, sem decoder adicional.
+
+FILES
+  Created: app/src/components/editor/{CompositionSourceRange.tsx,
+    composition-source.css,composition-track-layout.ts};
+    app/src/test/{composition-source-focus,composition-source-range}.test.tsx.
+  Modified: CompositionEditorBody.tsx,CompositionSource.tsx,
+    CompositionTimeline.tsx,CompositionTrackLane.tsx,composition-editor.css;
+    testes composition-compact-items,composition-source-{strict,target,ui},
+    composition-timeline-zoom; plano do editor, BUSINESS-RULES e TRACEABILITY.
+    Este checkpoint atualiza ENGINE-HANDOFF, BACKLOG e LATEST/history.
+  Deleted: nenhum arquivo. Regras CSS antigas da fonte removidas.
+  Unexpected changes: documentação da auditoria já existia; preservada e
+    registrada separadamente em d0d1d1c. Dados reais não foram alterados.
+
+VALIDATION
+  Typecheck: PASS — npm run build, tsc --noEmit.
+  Lint: PASS — ESLint dos13arquivos TS/TSX tocados, sem erros/avisos.
+  Unit tests: PASS — rodada final161/161 em20arquivos,6,39s.
+  Integration tests: PASS nos fluxos React com IPC/renderer controlados.
+  Regression tests: RED demonstrado para colisão, foco, overlay, zoom,
+    trim durante normalização, Enter durante gesto e play interrompido;
+    GREEN final. Não confundir mocks com jornada nativa.
+  Visual tests: SKIP — aprovação do mantenedor.
+  Runtime verification: React/Happy DOM; app real não operado pelo agente.
+  Build: tsc/Vite PASS sem avisos; cargo build padrão PASS,0,68s.
+  Total passed:161. Total failed:0 na rodada final.
+  Total skipped: sem contagem de suíte omitida; Rust não reexecutado,
+    pois os fontes nativos não mudaram; teste manual ainda pendente.
+  Falhas intermediárias: tipagem do RAF na fixture e aviso do hook corrigidos.
+    Não foram ocultados testes nem enfraquecidos critérios para obter PASS.
+
+HOOKS / HARNESS
+  Hooks active: sem comprovação de hooks ZCode neste cliente.
+  PreToolUse/PostToolUse/Stop: nenhum resultado presumido.
+  Baseline/Gate result: testes, lint, builds e diff verificados diretamente.
+  Evidence: testes versionados e ENGINE-HANDOFF Complemento21.
+
+MCP / SKILLS
+  Tools used: Graphify remoto; agentes focais de fonte e revisão do zoom;
+    systematic-debugging, TDD, verification-before-completion,
+    frontend-ui-engineering, minimalist-ui e cutnicepro-ux-writing.
+  Connection status: workspace wesley-s-workspace/FrosttyS18/CutNicePro;
+    índice pré/pós-consulta48aeca4, build5e80d294-6c2b-4dcd-9689-894383cd0368.
+  Failures: mudanças locais ainda não estão nesse índice; fonte/diff/testes
+    complementam a análise. Push não comprova indexação.
+  Pending activation: aguardar o commit publicado antes da próxima fatia.
+
+GIT
+  Snapshot: antes do commit documental deste checkpoint.
+  Branch: main.
+  HEAD:6f0e37b8f88963a9e9da390160576ef04cb99874.
+  Latest commit: fix(editor): corrigir zoom e seleção visual da fonte.
+  Commits created: d0d1d1c docs(auditoria): registrar revisão de segurança e pendências;
+    6f0e37b fix(editor): corrigir zoom e seleção visual da fonte.
+  Push: SUCCESS — origin/main avançou48aeca4→6f0e37b.
+  Remote: origin→https://github.com/FrosttyS18/CutNicePro.git; main.
+  Working tree: documentação deste checkpoint pendente de commit.
+  Pending files: ENGINE-HANDOFF.md,BACKLOG.md,LATEST.txt e este histórico.
+    O registro documental será publicado antes da análise da próxima fila.
+  Sem amend/rebase/force, exclusão de mídia ou mudança da versão0.19.0.
+
+EVIDENCE
+  Commands executed: npm test nos20arquivos relacionados; npx eslint
+    nos13TS/TSX; npm run build; cargo build --manifest-path app/src-tauri/Cargo.toml;
+    git diff --check; commits e git push origin main.
+  Relevant logs: rodada final161PASS; builds/lint exit0.
+  Screenshots: referências enviadas pelo mantenedor; sem controle de tela.
+  Test artifacts: testes versionados. Nenhum vídeo/projeto de laboratório criado.
+  Reproduction details: reduzir para1/2frames→revelar→zoom; marcar fonte→
+    Enter; cancelar/soltar gesto; confirmar em camada nova sem alterar principal.
+  Build padrão: C:/CutNicePro/app/src-tauri/target/debug/cutnicepro.exe.
+    SHA256 F2009DE1D17FE486C319E0A510E43E837CA7B5F86E0AAF3F86993AA6C3537D26.
+    Frontend final compilado em C:/CutNicePro/app/dist; nenhum target paralelo.
+
+ISSUES
+  Bugs found: colisão dos controles, foco de fonte incorreto, intervalo
+    de zoom colapsado, fit fora do teto e normalização durante trim.
+  Unresolved failures: nenhuma nos testes executados; falta teste humano.
+  Regressions: nenhuma nos161casos; sem garantia sobre áreas não exercitadas.
+  Risks: dados/contratos nativos inalterados não dispensam reteste no app.
+  Blockers: índice precisa alcançar a publicação antes da próxima mudança.
+
+FINAL
+  Delivery status: checkpoint técnico concluído; meta integral PARTIAL/ACTIVE.
+  Requirements met: fonte visual/Enter, nova camada e correções do zoom/+.
+  Remaining work: reteste manual e fila nova após indexação confirmada.
+  User action required: roteiro abaixo; nenhuma operação de tela solicitada.
+  Restart required: reabrir pelo comando habitual caso a instância esteja antiga.
+  Ready for next task: somente após Graphify atualizado.
+
+REPORT
+  Latest file: docs/reports/LATEST.txt.
+  Historical file: docs/reports/history/2026-10-27_031617_fonte-zoom-checkpoint.txt.
+
+GUIA DO MANTENEDOR — O QUE MUDOU E COMO TESTAR
+  O que mudou: marque o trecho nas miniaturas do original; Enter ou Adicionar
+    coloca esse trecho numa camada nova. Nada substitui o vídeo que já estava lá.
+  1. Abra Escolher trecho da fonte e arraste nas miniaturas.
+     Esperado: início/fim acompanham a seleção; timeline ainda não muda.
+  2. Solte e aperte Enter. Esperado: trecho em camada nova no cursor;
+     original preservado. Desfazer/Refazer deve remover/restaurar a inserção.
+  3. Reduza muito um trecho e dê duplo clique para ampliar.
+     Esperado: +,−,slider e Ctrl+roda continuam utilizáveis; botões de adicionar
+     não cobrem o marcador. Ajustar à largura não trava o zoom.
+  4. Arraste uma alça e cancele com Escape; depois salve/reabra.
+     Esperado: cancelamento preserva o corte anterior; só Salvar confirma.
+  A aparência final e a experiência na sessão normal ainda dependem de você.
+
+END OF REPORT
