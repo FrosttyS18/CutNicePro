@@ -69,3 +69,27 @@ it("arrastar asset importado cria uma camada no ponto solto sem mover cursor ou 
   expect(ipc.saveEditorDocument).not.toHaveBeenCalled();
   await action("Desfazer (Ctrl+Z)");expect(JSON.stringify(current.items)).toBe(before);expect(current.assets.some(asset=>asset.mediaId==="image")).toBe(true);
 });
+
+it.each([[true,0],[false,0],[false,600]] as const)("drop na área livre com principal vazia=%s e scroll=%s preserva o documento salvo",async(empty,scroll)=>{
+  await mount(empty?{...initial,items:[]}:initial);await action("Importar mídia");
+  const before=JSON.stringify(current.items),frame=view!.host.querySelector('[data-frame]')!.textContent;
+  const rect=(top:number,bottom:number)=>({left:0,right:900,top,bottom,width:900,height:bottom-top,x:0,y:top,toJSON:()=>({})});
+  const viewport=view!.host.querySelector<HTMLElement>('.composition-timeline__viewport')!;
+  Object.defineProperties(viewport,{getBoundingClientRect:{value:()=>rect(30,300)},clientWidth:{value:900},scrollWidth:{value:1200}});
+  viewport.scrollLeft=scroll;
+  view!.host.querySelector<HTMLElement>('.composition-ruler')!.getBoundingClientRect=()=>rect(30,70);
+  view!.host.querySelector<HTMLElement>('[data-composition-track="V1"]')!.getBoundingClientRect=()=>rect(240,300);
+  const card=view!.host.querySelector('[aria-label="Selecionar mídia: Imagem.png"]')!;
+  await act(async()=>card.dispatchEvent(new window.MouseEvent("pointerdown",{button:0,clientX:50,clientY:150,bubbles:true})));
+  await act(async()=>{window.dispatchEvent(new window.MouseEvent("pointermove",{clientX:522,clientY:180}));window.dispatchEvent(new window.MouseEvent("pointerup",{clientX:522,clientY:180}));});
+  const inserted=current.items.find(item=>item.kind==="image")!;
+  expect(inserted).toBeDefined();
+  expect(current.tracks.find(track=>track.id===inserted.trackId)?.primary).toBe(empty);
+  expect(view!.host.querySelector('[role="alert"]')).toBeNull();
+  expect(view!.host.querySelector('[data-frame]')!.textContent).toBe(frame);
+  await action("Desfazer (Ctrl+Z)");expect(JSON.stringify(current.items)).toBe(before);
+  await action("Refazer (Ctrl+Shift+Z)");await action("Salvar");
+  const saved=vi.mocked(ipc.saveEditorDocument).mock.lastCall![2];
+  await view!.close();view=undefined;await mount(saved);
+  expect(current.items.find(item=>item.id===inserted.id)).toEqual(inserted);
+});

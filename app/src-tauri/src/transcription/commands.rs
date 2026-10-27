@@ -34,7 +34,7 @@ pub fn transcription_status(app: AppHandle) -> Result<EngineStatus, String> {
 
 #[tauri::command]
 pub fn transcription_job(app: AppHandle) -> Option<JobSnapshot> {
-    app.state::<Arc<TranscriptionJobs>>().snapshot()
+    app.state::<Arc<TranscriptionJobs>>().legacy_snapshot()
 }
 
 #[tauri::command]
@@ -105,7 +105,10 @@ pub async fn transcribe_project(
     }
     let jobs = app.state::<Arc<TranscriptionJobs>>().inner().clone();
     let control = jobs.start(job_id.clone(), project_id.clone())?;
-    if let Some(s) = jobs.snapshot() {
+    if let Some(s) = jobs
+        .legacy_snapshot()
+        .filter(|value| value.job_id == job_id)
+    {
         let _ = app.emit("transcription://job", s);
     }
     let task_app = app.clone();
@@ -154,7 +157,10 @@ pub async fn transcribe_project(
             )
         }
     };
-    if let Some(s) = jobs.snapshot() {
+    if let Some(s) = jobs
+        .legacy_snapshot()
+        .filter(|value| value.job_id == job_id)
+    {
         let _ = app.emit("transcription://job", s);
     }
     if let Err(ref error) = outcome {

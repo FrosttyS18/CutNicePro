@@ -114,7 +114,8 @@ function recuperarWorkspace(value: unknown): WorkspaceData | null {
       media = mediaBruta as unknown as WorkspaceData["media"];
     }
   }
-  const recuperado: WorkspaceData = { version: 2, media, transcript, transcriptMode, settings, tool, videoSettings, clipEdits, activeClipId };
+  const recuperado: WorkspaceData = { version: 2, media, transcript, transcriptMode, settings, tool, videoSettings, clipEdits, activeClipId,
+    ...(typeof bruto.editorOnly === "boolean" ? { editorOnly: bruto.editorOnly } : {}) };
   return validWorkspace(recuperado) ? recuperado : null;
 }
 
@@ -122,6 +123,7 @@ function validWorkspace(value: unknown): value is WorkspaceData {
   if (!value || typeof value !== "object") return false;
   const data = value as Partial<WorkspaceData>;
   return (data.version === 1 || data.version === 2) && validSettings(data.settings) && ["demo", "empty", "real"].includes(data.transcriptMode ?? "")
+    && (data.editorOnly === undefined || typeof data.editorOnly === "boolean")
     && (data.videoSettings === undefined || validSettings(data.videoSettings))
     && (data.clipEdits === undefined || Boolean(data.clipEdits && typeof data.clipEdits === "object" && !Array.isArray(data.clipEdits)
       && Object.entries(data.clipEdits).every(([id,value]) => /^[a-f\d]{64}$/i.test(id) && validSettings(value))))

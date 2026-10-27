@@ -6,6 +6,10 @@ import { scrollTimelineAtPointer, selectionForClick, trimDeltaBounds } from "../
 import { compositionDropLane, containsDropPoint } from "../../lib/composition-drop-geometry";
 import type { Composition, CompositionItem } from "../../lib/composition-types";
 
+export interface CompositionTrackDropPreview {
+  trackId: string; frame: number; durationFrames: number; y: number; newTrack: boolean;
+}
+
 interface Props {
   document: Composition; scale: number; frame: number; selected: string[];
   onSelect: (ids: string[]) => void; onChange: (document: Composition) => void;
@@ -13,18 +17,32 @@ interface Props {
   onError: (message: string) => void;
   viewport?: RefObject<HTMLElement | null>;
   magnetic?: boolean;
+  onTrackDropPreview?: (value: CompositionTrackDropPreview | null) => void;
 }
 
-function dropTrack(element: HTMLElement | null, x: number, y: number, item: CompositionItem): string | null {
-  const point={x,y};
+function captureDropTracks(element: HTMLElement | null) {
   const lanes=[...element?.querySelectorAll<HTMLElement>("[data-composition-track]")??[]].map(candidate=>({
-    element:candidate,rect:candidate.getBoundingClientRect(),primary:candidate.dataset.primary==="true",
+    trackId:candidate.dataset.compositionTrack,kind:candidate.dataset.trackKind,
+    rect:candidate.getBoundingClientRect(),primary:candidate.dataset.primary==="true",
   }));
+  const rect=element?.getBoundingClientRect();
+  const contentTop=Math.max(rect?.top??0,element?.querySelector<HTMLElement>('.composition-ruler')?.getBoundingClientRect().bottom??(rect?.top??0)+40);
+  return {lanes,rect,contentTop,newTrack:element?.querySelector<HTMLElement>("[data-drop-new-track]")?.getBoundingClientRect(),scrollTop:element?.scrollTop??0};
+}
+
+function dropTrack(geometry: ReturnType<typeof captureDropTracks>, x: number, y: number, item: CompositionItem, originTrackId: string, deltaY: number, scrollTop: number): string | null | undefined {
+  const point={x,y},rect=geometry.rect;
+  if(rect&&rect.width>0&&rect.height>0&&(!containsDropPoint(rect,point)||x<rect.left+144||y<geometry.contentTop))return undefined;
+  if(Math.abs(deltaY)<12)return originTrackId;
+  const offset=scrollTop-geometry.scrollTop;
+  const shifted=(rect:DOMRect)=>({left:rect.left,right:rect.right,top:rect.top-offset,bottom:rect.bottom-offset});
+  const lanes=geometry.lanes.map(lane=>({...lane,rect:lane.primary?lane.rect:shifted(lane.rect)}));
   const target=compositionDropLane(lanes,point);
-  const zone = element?.querySelector<HTMLElement>("[data-drop-new-track]");
-  if (!target?.primary&&zone&&containsDropPoint(zone.getBoundingClientRect(),point)&&(item.kind==="video"||item.kind==="image")) return null;
+  const zone = geometry.newTrack;
+  if (!target?.primary&&zone&&containsDropPoint(shifted(zone),point)&&(item.kind==="video"||item.kind==="image")) return null;
   const kind = item.kind === "video" || item.kind === "image" ? "visual" : item.kind;
-  return target?.element.dataset.trackKind===kind ? target.element.dataset.compositionTrack??item.trackId : item.trackId;
+  if(!target)return kind==="visual"?null:undefined;
+  return target.kind===kind ? target.trackId??item.trackId : undefined;
 }
 
 export function useCompositionGesture(options: Props) {
@@ -58,6 +76,9 @@ export function useCompositionGesture(options: Props) {
     const startX = event.clientX;
     const startY = event.clientY;
     const element = options.viewport?.current ?? null;
+    const dropGeometry = captureDropTracks(element);
+    const initialLane = compositionDropLane(dropGeometry.lanes,{x:startX,y:startY});
+    const originTrackId = initialLane?.primary?initialLane.trackId??item.trackId:item.trackId;
     const startScroll = element?.scrollLeft ?? 0;
     const scale = options.scale;
     let latestX = startX;
@@ -72,6 +93,7 @@ export function useCompositionGesture(options: Props) {
     const companionTrackIds = Object.fromEntries(base.tracks.map(value=>[value.id,editId()]));
     const magnetic = options.magnetic !== false;
     const publishPreview = (value: Composition | null) => latest.current.onPreview(value);
+    const publishTrackDrop = (value: CompositionTrackDropPreview | null) => latest.current.onTrackDropPreview?.(value);
     const restoreFocus = () => {
       if (heldFocus && !focusedTarget.isConnected && element && globalThis.document.activeElement === globalThis.document.body) pendingFocus.current = { viewport: element, itemId: item.id };
     };
@@ -85,15 +107,30 @@ export function useCompositionGesture(options: Props) {
           delta = Math.max(min, Math.min(max, delta));
           next = trimSelection(base, item.id, edge, delta, { magnetic });
         } else {
-          if (Math.hypot(latestX - startX, latestY - startY) < 3 && !delta) {next=base;message="";publishPreview(base);return;}
+          if (Math.hypot(latestX - startX, latestY - startY) < 3 && !delta) {next=base;message="";publishTrackDrop(null);publishPreview(base);return;}
           dragged = true;
-          next = moveSelectionToTrack(base, movingIds, Math.max(0, origin + delta), dropTrack(element, latestX, latestY, item), { magnetic, newTrackId, companionTrackIds });
+          const scrollTop=element?.scrollTop??0;
+          const destination=dropTrack(dropGeometry, latestX, latestY, item, originTrackId, latestY-startY, scrollTop);
+          if(destination===undefined){next=base;message="";publishTrackDrop(null);publishPreview(base);return;}
+          next = moveSelectionToTrack(base, movingIds, Math.max(0, origin + delta), destination, { magnetic, newTrackId, companionTrackIds });
+          const placed=next.items.find(value=>value.id===item.id)!;
+          if(placed.trackId!==item.trackId){
+            const lane=dropGeometry.lanes.find(value=>value.trackId===placed.trackId);
+            const offset=scrollTop-dropGeometry.scrollTop;
+            const firstVisual=dropGeometry.lanes.filter(value=>value.kind==="visual").reduce((top,value)=>Math.min(top,value.rect.top-(value.primary?0:offset)),Number.POSITIVE_INFINITY);
+            const y=lane?(lane.rect.top+lane.rect.bottom)/2-(lane.primary?0:offset):Number.isFinite(firstVisual)?firstVisual-2:latestY;
+            const safeY=Math.max(dropGeometry.contentTop+6,Math.min(y,(dropGeometry.rect?.bottom??y+8)-8));
+            publishTrackDrop({trackId:placed.trackId,frame:placed.startFrame,durationFrames:placed.durationFrames,y:safeY,newTrack:!lane});
+            publishPreview(base);message="";return;
+          }
         }
+        publishTrackDrop(null);
         publishPreview(next);
         message = "";
       } catch (error) {
         const text = error instanceof Error ? error.message : "Não foi possível ajustar o trecho";
         next = base;
+        publishTrackDrop(null);
         publishPreview(base);
         message = text;
       }
@@ -102,7 +139,7 @@ export function useCompositionGesture(options: Props) {
       raf = null;
       const scrolled = scrollTimelineAtPointer(element, latestX);
       compute();
-      if (scrolled) raf = window.requestAnimationFrame(tick);
+      if (scrolled&&raf===null) raf = window.requestAnimationFrame(tick);
     };
     const move = (moveEvent: globalThis.PointerEvent) => {
       latestX = moveEvent.clientX;
@@ -115,21 +152,26 @@ export function useCompositionGesture(options: Props) {
       window.removeEventListener("pointerup", up);
       window.removeEventListener("pointercancel", cancel);
       window.removeEventListener("blur", cancel);
+      window.removeEventListener("resize", cancel);
       window.removeEventListener("keydown", key, true);
+      element?.removeEventListener("scroll", scroll);
       cleanup.current = null;
       element?.removeAttribute("data-dragging");
+      publishTrackDrop(null);
     };
     const cancel = () => { stop(); restoreFocus(); publishPreview(null); };
     const up = (upEvent: globalThis.PointerEvent) => {
       latestX = upEvent.clientX;
       latestY = upEvent.clientY;
       compute(); stop();
+      if(next!==base&&heldFocus&&element&&globalThis.document.activeElement===focusedTarget)pendingFocus.current={viewport:element,itemId:item.id};
       restoreFocus();
       if (!edge&&!dragged) latest.current.onSelect([item.id]);
       if (next !== base) latest.current.onChange(next);
       publishPreview(null);
       if (message) latest.current.onError(message);
     };
+    const scroll = () => { if(raf===null)raf=window.requestAnimationFrame(tick); };
     const key = (keyEvent: globalThis.KeyboardEvent) => {
       if (keyEvent.code === "Space" || keyEvent.key === " " || keyEvent.key === "Spacebar") {
         if (keyEvent.defaultPrevented || keyEvent.isComposing || keyEvent.ctrlKey || keyEvent.metaKey || keyEvent.altKey || keyEvent.shiftKey) return;
@@ -147,7 +189,9 @@ export function useCompositionGesture(options: Props) {
     window.addEventListener("pointerup", up);
     window.addEventListener("pointercancel", cancel);
     window.addEventListener("blur", cancel);
+    window.addEventListener("resize", cancel);
     window.addEventListener("keydown", key, true);
+    element?.addEventListener("scroll", scroll);
     cleanup.current = stop;
   };
   const keyboard = (event: KeyboardEvent<HTMLElement>, item: CompositionItem, edge: "start" | "end") => {

@@ -174,6 +174,10 @@ export async function getMedia(mediaId: string): Promise<MediaEntryDto | null> {
   return mediaEntry(payload);
 }
 
+export function revealEditorMedia(projectId: string, mediaId: string): Promise<void> {
+  return invoke<void>("reveal_editor_media", { projectId, mediaId });
+}
+
 export function analyzeMedia(mediaId: string): Promise<MediaAnalysisDto> {
   return invoke<MediaAnalysisDto>("analyze_media", { mediaId });
 }

@@ -300,3 +300,30 @@ Vínculo: JRN-009, FR-011/013, EPIC-008, AC-EDITOR-09 e `docs/engineering/EDITOR
 - A timeline abre com mais área e centraliza poucas faixas; sobreposições crescem acima e a principal fica acessível na base, com separação sutil de 1px. Régua, cursor e gestos compartilham o mesmo viewport. A principal fixa tem precedência no hit-test: faixas encobertas não recebem drops através dela, inclusive quando bloqueada ou incompatível com a mídia.
 
 Critérios e evidências: AC-EDITOR-09 em TRACEABILITY. O retorno do mantenedor sobre perda de foco de M após duplo clique → Excluir foi reproduzido em teste e recebeu correção com regressão automatizada aprovada; reteste desse fluxo no aplicativo normal e aprovação humana permanecem pendentes.
+
+### BR-EDITOR-10 — entrada direta e transcrição opcional (2026-10-27)
+
+- Editor na navegação abre montagem vazia, sem importar nem transcrever automaticamente. Cada edição persistida é identificável em Meus projetos e reabre no editor; uma entrada ainda vazia pode ser reutilizada somente sem mídia, clipes ou recuperação. Cliques concorrentes não duplicam projetos e a navegação respeita o rascunho atual.
+- Transcrição no editor é explícita e local, vinculada a projeto+mídia, independente do registro legado do vídeo principal. Imagem e vídeo sem áudio não iniciam ASR. Progresso, cancelamento, erro/retry e nenhuma fala encontrada têm estado claro. Troca/remoção de mídia e resultados tardios não aplicam texto a outro alvo.
+- Aplicar a transcrição atualiza o rascunho do asset e as legendas vinculadas, inclusive se a mídia ainda estiver só na biblioteca. Save/Undo e proteção de correções/faixas bloqueadas permanecem. Duplicar/reinserir reutiliza o texto e não inicia outro job.
+
+### BR-EDITOR-11 — reprodução, transformação e visualização da montagem (2026-10-27)
+
+Complemento26: troca de faixa de item existente mantém o documento-base inteiro durante o gesto. Linha transitória informa destino/tempo efetivo após colisões; somente soltar confirma o candidato. Faixas e companions não são criados/removidos a cada movimento. Soltura fora/régua/cabeçalho/tipo incompatível cancela, bloqueio continua respeitado, Escape/resize limpam o candidato e a rolagem recalcula a linha. Gesto horizontal e alças mantêm seus comportamentos aprovados. Shift na prévia foi confirmado pelo mantenedor; flick vertical aguarda reteste na build normal.
+
+Continuação Complemento25: drop na área útil livre usa principal somente quando vazia; principal ocupada cria nova camada, mesmo após seu fim. Faixa explícita livre aceita inserção, e colisões criam outra sem alterar itens existentes. Tipos/bloqueios e cabeçalhos são respeitados. Gesto de mover não muda de faixa por realimentação do layout provisório nem por oscilação vertical inferior a12px. Clique na mídia visível da prévia seleciona a ocorrência superior presente naquele ponto, sem seek/edição; vazio real desseleciona. Shift restringe movimento ao eixo dominante e não permite que o snap altere o eixo fixo. Alt mantém ajuste sem encaixe.
+
+
+
+Vínculo: JRN-009, FR-011/013, AC-EDITOR-11. O relógio acompanha toda a montagem, incluindo imagem/áudio depois do último vídeo. EOF nativo não é buffering; erro/seek/waiting real não são ignorados. Transformação de camada admite10–800%, com o mesmo contrato na prévia/render/armazenamento e custo contido no render. Exibição numérica tem até duas casas, sem perder precisão ao apenas focar/sair. Zoom/pan25–400% da prévia é somente navegação e nunca altera a exportação ou salva o rascunho; Ajustar restaura a câmera. Minimap, botão do meio/mão e teclado navegam sem mover o objeto. Troca de câmera cancela transformação pendente. Selecionar mídia disponível não oferece reconexão desnecessária; ausente mantém ação/erro acessível e rodapé sem sobreposição.
+
+Refinamento posterior de BR/AC-EDITOR-11,2026-10-27: ao mover objetos na prévia, alinhar centro e bordas correspondentes do quadro com tolerância6px visuais, independente do zoom; Alt ignora. Guias são transitórias e não alteram contrato/export/Undo por si. Clique primário no vazio limpa seleção/intervalo, sem seek/gravação; vídeo/imagem/alças/controles/minimapa e pan preservam a seleção. Testar quatro cantos, eixos independentes, posição inalcançável, zero arraste sem salto, cancelamento e guias removidas.
+
+### BR-EDITOR-12 — ações da biblioteca de mídias e compatibilidade do export (2026-10-27)
+
+Vínculo: JRN-009, FR-011/013, BR-EDITOR-02/06 e AC-EDITOR-12. O menu de contexto da mídia, acessível por botão direito ou teclado, oferece Excluir, Renomear e Abrir local do arquivo. Não insere mídia nem inicia arraste ao abrir.
+
+- Renomear altera apenas o nome exibido na edição, até120 caracteres Unicode, sem renomear o arquivo original. Cancelar não altera o documento; confirmar integra o rascunho, Desfazer/Refazer e Salvar.
+- Excluir remove o asset da edição e seus usos após confirmação explícita; informar a quantidade de trechos afetados. Não apagar o original, exports ou assets diferentes que referenciem os mesmos bytes. Preservar tempos das outras mídias, sem ripple. Bloqueio de qualquer uso impede a remoção inteira; cancelar ou falhar preserva a montagem. Resultado tardio de ASR não ressuscita a mídia.
+- Abrir local resolve o vínculo registrado de projeto+mídia no motor, verifica disponibilidade e abre somente sua pasta. Não aceitar caminho arbitrário da interface nem executar texto em shell. Falha é visível; retorno tardio de outra sessão não altera a interface atual.
+- Presets implícitos de legenda válidos no editor devem exportar com a mesma apresentação da prévia, inclusive sem itens de legenda. Completar o estilo somente na cópia do render; não regravar dados salvos nem enfraquecer a validação de estilos explícitos inválidos. A saída deve conservar vídeo, imagem e áudio posteriores ao último vídeo.

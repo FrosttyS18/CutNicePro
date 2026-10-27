@@ -70,6 +70,131 @@ fn fixture() -> Composition {
 }
 
 #[test]
+fn real_saved_implicit_editor_caption_preset_exports_video_image_audio_tail() {
+    let tools = crate::media_analyze::detect_fftools().expect("FFmpeg exigido para integração");
+    let exe = tools.ffprobe.with_file_name(if cfg!(windows) {
+        "ffmpeg.exe"
+    } else {
+        "ffmpeg"
+    });
+    let base = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+        .join("target/test-editor-implicit-caption");
+    let fixtures = Scratch::new(&base).unwrap();
+    let control = ProcessControl::default();
+    let source = fixtures.path.join("source.mp4");
+    execute(
+        &exe,
+        &[
+            "-f",
+            "lavfi",
+            "-i",
+            "color=c=red:s=160x90:r=10:d=2",
+            "-c:v",
+            "libx264",
+            "-threads",
+            "1",
+        ],
+        &source,
+        &control,
+        &fixtures.path.join("source.log"),
+    );
+    let image = fixtures.path.join("picture.png");
+    execute(
+        &exe,
+        &[
+            "-f",
+            "lavfi",
+            "-i",
+            "color=c=green:s=160x90",
+            "-frames:v",
+            "1",
+            "-threads",
+            "1",
+        ],
+        &image,
+        &control,
+        &fixtures.path.join("image.log"),
+    );
+    let voice = fixtures.path.join("voice.wav");
+    execute(
+        &exe,
+        &[
+            "-f",
+            "lavfi",
+            "-i",
+            "sine=frequency=440:duration=1",
+            "-c:a",
+            "pcm_s16le",
+        ],
+        &voice,
+        &control,
+        &fixtures.path.join("voice.log"),
+    );
+    let sources = HashMap::from([
+        ("source".into(), source),
+        ("picture".into(), image),
+        ("voice".into(), voice),
+    ]);
+    let mut document = fixture();
+    document.revision = 0;
+    document.settings["ratio"] = json!("original");
+    document.settings["captionModel"] = json!(1);
+    let mut video = document.items[0].clone();
+    video.duration_frames = 20;
+    video.source_end_us = 2_000_000;
+    let mut image = document
+        .items
+        .iter()
+        .find(|item| item.kind == super::types::ItemKind::Image)
+        .unwrap()
+        .clone();
+    image.start_frame = 19;
+    image.duration_frames = 10;
+    image.placement = None;
+    let mut audio = document
+        .items
+        .iter()
+        .find(|item| item.kind == super::types::ItemKind::Audio)
+        .unwrap()
+        .clone();
+    audio.start_frame = 19;
+    audio.duration_frames = 10;
+    audio.source_end_us = 1_000_000;
+    document.items = vec![video, image, audio];
+    for item in &mut document.items {
+        item.settings["captionModel"] = json!(1);
+        item.settings
+            .as_object_mut()
+            .unwrap()
+            .remove("captionStyle");
+    }
+    let project = uuid::Uuid::new_v4().to_string();
+    let store = super::store::EditorStore::open(&fixtures.path).unwrap();
+    let saved = store.save(&project, None, document, 0).unwrap();
+    let reopened = store.load(&project).unwrap().project.unwrap();
+    let before = serde_json::to_value(&reopened.document).unwrap();
+    let frozen = super::export_snapshot::freeze(Some(&reopened), &saved.document).unwrap();
+    let (rendered, output) =
+        super::render::run(&base, &frozen, &sources, &control, |_| {}).unwrap();
+    let metadata = crate::media_analyze::analyze(&tools, &output).unwrap();
+    assert!((metadata.duration_ms as i64 - 2900).abs() <= 100);
+    assert!(metadata.has_audio);
+    let main = pixel(&exe, &output, "0.5", "80", "44", &rendered.path);
+    assert!(main[0] > 180 && main[1] < 50);
+    let tail = pixel(&exe, &output, "2.5", "80", "44", &rendered.path);
+    assert!(tail[1] > 70 && tail[0] < 50);
+    let samples = std::fs::read(rendered.path.join("audio.f32")).unwrap();
+    let tail_sample = 120_000 * 8;
+    assert!(samples[tail_sample..tail_sample + 4800 * 8]
+        .chunks_exact(4)
+        .any(|bytes| f32::from_le_bytes(bytes.try_into().unwrap()).abs() > 0.01));
+    assert_eq!(
+        serde_json::to_value(&store.load(&project).unwrap().project.unwrap().document).unwrap(),
+        before
+    );
+}
+
+#[test]
 fn real_composition_preserves_repetition_layer_placement_and_audio() {
     let tools = crate::media_analyze::detect_fftools().expect("FFmpeg exigido para integração");
     let exe = tools.ffprobe.with_file_name(if cfg!(windows) {

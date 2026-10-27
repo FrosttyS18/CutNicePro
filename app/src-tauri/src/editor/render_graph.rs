@@ -1,6 +1,6 @@
 use super::{
     render_captions, render_media, render_plan,
-    types::{Composition, ItemKind},
+    types::{Composition, ItemKind, Placement},
 };
 use crate::render::{ass, encoder::Encoder};
 use std::{
@@ -8,6 +8,40 @@ use std::{
     ffi::OsString,
     path::{Path, PathBuf},
 };
+
+fn layer_transform(width: u32, height: u32, placement: &Placement) -> (String, f64, f64) {
+    let even = |value: f64| ((value.round() as i64) / 2 * 2).max(2) as u32;
+    let (scaled_width, scaled_height) = (
+        even(width as f64 * placement.scale),
+        even(height as f64 * placement.scale),
+    );
+    let (x, y) = (
+        width as f64 * placement.x / 100.0 - scaled_width as f64 / 2.0,
+        height as f64 * placement.y / 100.0 - scaled_height as f64 / 2.0,
+    );
+    if placement.scale <= 2.0 {
+        return (format!("scale={scaled_width}:{scaled_height}"), x, y);
+    }
+    let sx = scaled_width as f64 / width as f64;
+    let sy = scaled_height as f64 / height as f64;
+    let left = ((-x / sx).floor() - 1.0).clamp(0.0, width as f64 - 1.0) as u32;
+    let top = ((-y / sy).floor() - 1.0).clamp(0.0, height as f64 - 1.0) as u32;
+    let right =
+        (((width as f64 - x) / sx).ceil() + 1.0).clamp(left as f64 + 1.0, width as f64) as u32;
+    let bottom =
+        (((height as f64 - y) / sy).ceil() + 1.0).clamp(top as f64 + 1.0, height as f64) as u32;
+    let cropped_width = ((right - left) as f64 * sx).round().max(1.0) as u32;
+    let cropped_height = ((bottom - top) as f64 * sy).round().max(1.0) as u32;
+    (
+        format!(
+            "crop={}:{}:{left}:{top}:exact=1,scale={cropped_width}:{cropped_height}",
+            right - left,
+            bottom - top
+        ),
+        x + left as f64 * sx,
+        y + top as f64 * sy,
+    )
+}
 
 pub fn video(
     document: &Composition,
@@ -79,15 +113,7 @@ pub fn video(
             geometry = geometry.replace(&format!("[{label}]"), &format!("[layer{input}_{label}]"));
         }
         let placement = item.placement.clone().unwrap_or_default();
-        let even = |value: f64| ((value.round() as i64) / 2 * 2).max(2) as u32;
-        let (scaled_width, scaled_height) = (
-            even(width as f64 * placement.scale),
-            even(height as f64 * placement.scale),
-        );
-        let (x, y) = (
-            width as f64 * placement.x / 100.0 - scaled_width as f64 / 2.0,
-            height as f64 * placement.y / 100.0 - scaled_height as f64 / 2.0,
-        );
+        let (transform, x, y) = layer_transform(width, height, &placement);
         let effects = config
             .effects_filter()
             .map(|value| format!(",{value}"))
@@ -106,7 +132,7 @@ pub fn video(
                 caption_index += 1;
             }
         }
-        graph.push_str(&format!("[{input}:v]setpts=PTS-STARTPTS,fps={rate},format=rgba,{geometry}{effects}{captions},scale={scaled_width}:{scaled_height},colorchannelmixer=aa={}[layer{input}];[{current}][layer{input}]overlay=x={x}:y={y}:eof_action=pass:repeatlast=0[mix{input}];",placement.opacity));
+        graph.push_str(&format!("[{input}:v]setpts=PTS-STARTPTS,fps={rate},format=rgba,{geometry}{effects}{captions},{transform},colorchannelmixer=aa={}[layer{input}];[{current}][layer{input}]overlay=x={x}:y={y}:eof_action=pass:repeatlast=0[mix{input}];",placement.opacity));
         current = format!("mix{input}");
         input += 1;
     }

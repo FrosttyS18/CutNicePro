@@ -23,10 +23,16 @@ describe("posicionamento da sobreposição", () => {
     const document = fixture();
     expect(parseComposition(document)).toEqual(document);
     for (const placement of [null, {}, { x: 50, y: 50, scale: 0, opacity: 1 }, { x: 101, y: 50, scale: 1, opacity: 1 },
-      { x: 50, y: -1, scale: 1, opacity: 1 }, { x: 50, y: 50, scale: 2.1, opacity: 1 }, { x: 50, y: 50, scale: 1, opacity: 1.1 },
+      { x: 50, y: -1, scale: 1, opacity: 1 }, { x: 50, y: 50, scale: 8.1, opacity: 1 }, { x: 50, y: 50, scale: 1, opacity: 1.1 },
       { x: Number.NaN, y: 50, scale: 1, opacity: 1 }, { x: 50, y: 50, scale: 1, opacity: Number.POSITIVE_INFINITY }]) {
       expect(() => parseComposition({ ...document, items: [{ ...document.items[0], placement }] })).toThrow(/montagem/i);
     }
+  });
+
+  it("salva escala de até 800% e mantém o posicionamento ao reabrir", () => {
+    const document = fixture();
+    document.items[0].placement = { x: 25.455123, y: 71.239, scale: 8, opacity: 0.8 };
+    expect(parseComposition(JSON.parse(JSON.stringify(document)))).toEqual(document);
   });
 
   it("mantém centro, escala uniforme e opacidade na camada completa", async () => {

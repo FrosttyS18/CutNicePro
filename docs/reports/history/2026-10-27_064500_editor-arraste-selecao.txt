@@ -1,0 +1,111 @@
+╔════════════════════════════════════════════╗
+║       CUTNICEPRO — ZCODE REPORT            ║
+╚════════════════════════════════════════════╝
+
+TASK
+  Name: Arraste livre e seleção no editor
+  Status: PARTIAL — implementado/testado; reteste manual pendente.
+  Scope: drop na timeline, movimento entre faixas, seleção pela prévia e Shift.
+  Objective: corrigir os quatro comportamentos relatados, preservando a fila.
+  Result: build normal atualizada e aberta.
+  FUNCTIONAL STATUS: PARTIAL
+  REGRESSION STATUS: PASS no escopo automatizado
+  VISUAL STATUS: PENDING HUMAN APPROVAL
+
+IMPLEMENTATION
+  Completed:
+  - Soltar na área livre usa a principal vazia; com conteúdo, cria camada.
+    Faixa explícita livre recebe mídia; colisão cria outra sem sobrescrever.
+    Áudio tem faixa própria; bloqueios e tipos continuam respeitados.
+  - Arraste horizontal mantém faixa apesar da reorganização da prévia.
+    Movimento vertical deliberado continua disponível; cursor fica parado.
+  - Clique na mídia visível da prévia seleciona sua camada, inclusive cópias.
+    Margem transparente permite selecionar mídia visível por baixo.
+  - Shift restringe ao eixo horizontal/vertical; Alt ignora os encaixes.
+  Changes: geometria, inserção, gestos e ligação da seleção existentes.
+  Architecture impact: sem dependências, migração, versão ou contrato salvo novo.
+  Not completed: reteste dos novos gestos no aplicativo pelo mantenedor.
+    Snap e desseleção anteriores foram confirmados por ele.
+
+FILES
+  Created: composition-timeline-drop-controller.test.tsx; manifesto de evidência;
+    relatório histórico indicado abaixo.
+  Modified: CompositionTimeline.tsx, useCompositionGesture.ts,
+    composition-timeline.css, composition-drop-geometry.ts,
+    composition-asset-drop.ts, useCompositionFraming.ts,
+    CompositionPreviewViewport.tsx, CompositionEditorBody.tsx,
+    CompositionEditor.tsx; seis testes existentes relacionados;
+    plano do editor, ENGINE-HANDOFF Complemento25, Brain, backlog,
+    BUSINESS-RULES, TRACEABILITY e LATEST.txt.
+  Deleted: nenhum.
+  Unexpected changes: nenhuma identificada; trabalho anterior preservado.
+
+VALIDATION
+  Typecheck: PASS após corrigir Array.at em dois pontos de teste.
+  Lint: PASS — eslint integral.
+  Unit/integration/regression: 1295/1295 TS, 189 arquivos, 78,15s.
+    Reteste final de compatibilidade: 27/27, já incluídos no total.
+  Build: PASS — tsc/Vite sem warnings.
+  Diff check: PASS.
+  Rust: não alterado nem reexecutado nesta continuação.
+  Visual tests: SKIP — aprovação humana pendente.
+  Runtime verification: processo padrão e frontend HTTP200 confirmados;
+    interação real de arraste ainda não executada por automação.
+  Total passed: 1295 únicos; Total failed: 0 na rodada final; skipped TS: 0.
+
+HOOKS / HARNESS
+  Hooks/baseline externos: não auditados nesta continuação.
+  Gate result: testes DOM/contratos aprovados; não equivalem ao aceite WebView.
+  Evidence: manifesto indicado abaixo; testes reproduziram falhas antes do fix.
+
+MCP / SKILLS
+  Tools used: Graphify remoto, diagnóstico sistemático, TDD e três subagentes.
+  Connection status: consultas reais antes/depois em wesley-s-workspace,
+    FrosttyS18/CutNicePro; índice de8ed09.
+  Pending activation: nenhuma. Mudanças locais ainda não estão indexadas.
+
+GIT
+  Branch: main
+  HEAD: de8ed09878b540cfb838ed4eb966571f0cf49f54
+  Latest commit: docs(editor): registrar aceite e publicação do zoom
+  Commits created: nenhum. Push: NOT EXECUTED — sem nova autorização.
+  Remote: origin → FrosttyS18/CutNicePro.
+  Working tree: MODIFIED + UNTRACKED; inclui a entrega anterior preservada.
+
+EVIDENCE
+  Commands executed: vitest integral/afetados, npm run build, npm run lint,
+    git diff --check e npm run tauri dev -- --no-watch.
+  Test artifacts: docs/reports/evidence/editor-basico-2026-10-26/
+    editor-arraste-selecao-2026-10-27.json
+  Screenshots: nenhuma nova; sem controle interativo do PC.
+  Reproduction: drop rejeitado no vazio, troca involuntária de faixa,
+    seleção/Shift ausentes e wrapper transparente reproduzidos em testes.
+
+ISSUES
+  Revisão independente corrigiu clique interceptado pela camada superior.
+  A regressão da principal fixa bloqueada apareceu nos testes e foi corrigida.
+  Unresolved failures: nenhuma automatizada no escopo final.
+  Risks: novos gestos Windows/WebView e desempenho com vídeo grande pendentes.
+  Blockers: nenhum.
+
+FINAL
+  Delivery status: PARTIAL por reteste manual; meta integral segue ativa.
+  Requirements met: implementação e testes dos quatro pedidos.
+  Remaining work: confirmação manual; demais partes antigas continuam adiadas.
+  Restart required: NÃO — build normal já aberta:
+    C:/CutNicePro/app/src-tauri/target/debug/cutnicepro.exe
+    Perfil normal, frontend1420; processo34608 na verificação.
+  Ready for next task: após feedback desta fatia.
+
+REPORT
+  Latest file: docs/reports/LATEST.txt
+  Historical file: docs/reports/history/2026-10-27_064500_editor-arraste-selecao.txt
+
+GUIA DO MANTENEDOR — O QUE MUDOU E COMO TESTAR
+  1. Arraste mídia para uma área livre da timeline: vazia usa a principal;
+     ocupada cria outra camada. Depois desfaça/refaça e salve.
+  2. Mova um trecho rapidamente na horizontal: deve manter a faixa e o cursor.
+     Arraste verticalmente de propósito: deve permitir mudar de camada.
+  3. Clique no vídeo/imagem da prévia: seleciona a camada correspondente.
+     Arraste com Shift: mantém um eixo. Alt permite ignorar o encaixe.
+     Clique no vazio: limpa a seleção.

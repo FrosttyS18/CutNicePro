@@ -108,6 +108,7 @@ export interface WorkspaceData {
   settings: EditorSettings;
   tool: ToolId;
   activeClipId?: string;
+  editorOnly?: boolean;
   videoSettings?: EditorSettings;
   clipEdits?: Record<string, EditorSettings>;
 }

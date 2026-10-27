@@ -1,0 +1,149 @@
+╔════════════════════════════════════════════╗
+║       CUTNICEPRO — ZCODE REPORT            ║
+╚════════════════════════════════════════════╝
+
+TASK
+  Name: Editor direto e correções da fila, incluindo snap/deseleção
+  Status: PARTIAL — implementação/testes fechados; teste normal pendente
+  Scope: BR/AC-EDITOR-10/11, JRN-009; sem retomar pesquisas antigas
+  Objective: abrir editor vazio e estabilizar os pedidos adicionais
+  Result: build padrão aberta; nenhuma aprovação visual presumida
+  FUNCTIONAL STATUS: PARTIAL no aplicativo; contratos/testes PASS
+  REGRESSION STATUS: PASS no escopo executado
+  VISUAL STATUS: PENDING HUMAN APPROVAL
+
+IMPLEMENTATION
+  Completed:
+    Editor na navegação; edição visível em Meus projetos.
+    Importação sem ASR automático; transcrição local opcional por mídia.
+    Aplicar transcrição respeita rascunho/Salvar/Undo/locks/correções.
+    Reprodução cruza EOF do vídeo para imagem/áudio e lacunas.
+    Escala da camada até800%; campos com até duas casas sem perda por foco.
+    Render acima200% recorta área visível antes de ampliar.
+    Prévia25–400%, Ctrl+rolagem, pan/minimapa/Ajustar, sem alterar export.
+    Snap centro/bordas/cantos,6px visuais; Alt permite ajuste livre.
+    Guias transitórias; clique no vazio limpa seleção real sem seek/save.
+    Rodapé sem reconexão desnecessária ou ações coladas.
+  Not completed: aceite WebView/ASR real/visual e desempenho com797MB.
+  Changes: sem dependências, versão nova, modelos ou alteração de dados reais.
+  Architecture impact: três comandos ASR e sidecars por projeto+mídia;
+    gate/runner/processos existentes; câmera/guias só na interface.
+
+FILES
+  Raiz: C:/CutNicePro. Inventário nominal também no JSON de evidências.
+  Created:
+    app/src-tauri/src/editor/: render_placement_tests.rs
+    app/src-tauri/src/transcription/: editor_commands.rs, editor_store.rs
+    app/src/components/editor/: CompositionPreviewViewport.tsx, EditorTranscriptionControls.tsx, composition-preview-viewport.css, usePreviewViewport.ts
+    app/src/components/shell/: EditorRailButton.tsx
+    app/src/hooks/: useEditorTranscription.ts
+    app/src/lib/: composition-preview-snap.ts, editor-transcription.ts, preview-viewport.ts
+    app/src/services/: direct-editor.ts
+    app/src/test/: composition-media-footer.test.tsx, composition-playback-tail.test.tsx, composition-preview-snap.test.ts, composition-preview-viewport.test.tsx, direct-editor-navigation.test.tsx, direct-editor-service.test.tsx, editor-transcription-contract.test.ts, editor-transcription-freshness.test.tsx, editor-transcription-hook.test.tsx, editor-transcription-ui.test.tsx, preview-viewport.test.ts
+    docs/reports/evidence/editor-basico-2026-10-26/: editor-direto-fila-2026-10-27.json
+    docs/reports/history/2026-10-27_060146_editor-direto-fila.txt
+  Modified:
+    app/src-tauri/src/editor/: mod.rs, render_graph.rs, tests.rs, types.rs
+    app/src-tauri/src/: lib.rs, project_delete.rs
+    app/src-tauri/src/transcription/: commands.rs, jobs.rs, mod.rs, types.rs
+    app/src/: App.tsx
+    app/src/components/editor/: CompositionEditor.tsx, CompositionEditorBody.tsx, CompositionMediaLibrary.tsx, CompositionPlacementControls.tsx, CompositionSelection.tsx, InspectorNumberField.tsx, composition-editor.css, useCompositionFraming.ts
+    app/src/components/shell/: AppShell.tsx
+    app/src/hooks/: useCompositionMediaReadiness.ts
+    app/src/lib/: composition-captions.ts, composition-clock.ts, composition-media-geometry.ts, composition-placement.ts, project-navigation.ts, workspace-types.ts
+    app/src/screens/: ProjectWorkspace.tsx
+    app/src/services/: workspace-store.ts
+    app/src/test/: composition-body-placement.test.tsx, composition-captions.test.ts, composition-clock.test.ts, composition-framing-gesture.test.tsx, composition-media-geometry.test.ts, composition-placement.test.tsx, composition-screen.test.tsx, reframe-numeric-controls.test.tsx
+    docs/engineering/: EDITOR-BASIC-IMPLEMENTATION-PLAN.md, ENGINE-HANDOFF.md
+    docs/product/: BACKLOG.md, BUSINESS-RULES.md, PRODUCT-BRAIN.md, TRACEABILITY.md
+    docs/reports/LATEST.txt
+  Deleted: NENHUM
+  Unexpected changes: NONE
+
+VALIDATION
+  Typecheck: PASS — tsc, pelo npm run build
+  Lint: PASS — integral e arquivos finais afetados
+  Unit tests: PASS —1267 TS em188arquivos;374 Rust
+  Integration tests: PASS — FFmpeg/armazenamento reais em fixtures;
+    entrada/ASR/playback/gestos com DOM e contratos controlados
+  Regression tests: PASS — suítes completas, sem enfraquecer critérios
+  Visual tests: SKIP — aprovação humana
+  Runtime verification: executável normal ativo e HTTP1420=200;
+    novas interações e inferência ASR ainda não validadas manualmente
+  Total passed:1641   Total failed finais:0   Total skipped:33 opt-in Rust
+  Logs de corrupção em fixtures antigas são intencionais; build sem avisos.
+
+HOOKS / HARNESS
+  Hooks active / PreToolUse / PostToolUse / Stop / Baseline:
+    harness do ZCode não auditado nem executado nesta sessão Codex
+  Gate result: técnico PASS; aceite normal pendente
+  Evidence: manifesto JSON e testes versionáveis da tarefa
+
+MCP / SKILLS
+  Tools used: Graphify remoto pre/post, testes, lint, compilação;
+    debugging/TDD, frontend/minimalist, revisão independente e verificação
+  Connection status: wesley-s-workspace / FrosttyS18/CutNicePro;
+    índice de8ed09,2026-10-27T08:10:33.923631Z; código novo só local
+  Failures: nenhum bloqueio de ferramenta pendente
+  Pending activation: nenhuma; sem controle interativo do PC
+
+GIT
+  Branch: main
+  HEAD: de8ed09878b540cfb838ed4eb966571f0cf49f54
+  Latest commit: docs(editor): registrar aceite e publicação do zoom
+  Commits created: NENHUM nesta tarefa
+  Push: NOT EXECUTED nesta tarefa
+  Remote: origin → FrosttyS18/CutNicePro; main
+  Working tree: MODIFIED + UNTRACKED
+  Pending files: todos os fontes/testes/docs acima, ainda não publicados
+
+EVIDENCE
+  Commands executed: npm test -- --maxWorkers=2 --minWorkers=1;
+    cargo test --lib; npm run lint; npm run build; git diff --check;
+    npm run tauri dev -- --no-watch
+  Relevant logs: testes RED reproduziram descarte de UUID, cache ASR antigo,
+    EOF congelado e ausência de deseleção; verificações finais passaram.
+  Screenshots: referências do mantenedor; nenhuma captura nova
+  Test artifacts: docs/reports/evidence/editor-basico-2026-10-26/editor-direto-fila-2026-10-27.json
+  Reproduction details: vídeo42.459s encerra antes do frame1274;
+    agora o teste segue até1380/46s. Snap/deseleção preservam cursor/rascunho.
+
+ISSUES
+  Bugs found: EOF confundido com espera; limite200%; campos longos;
+    rodapé sobreposto; UUID recusado pelo ASR; resultado antigo aplicável.
+  Unresolved failures: nenhuma automatizada pertinente
+  Regressions: nenhuma encontrada nas suítes/revisão; sem garantia universal
+  Risks: ASR real e UI normal pendentes; export ampliado tem tolerância
+    médiaRGB<8 em comparação de fixture por codec/arredondamento.
+  Blockers: nenhum para teste manual
+
+FINAL
+  Delivery status: pronto para teste normal; meta integral não concluída
+  Requirements met: código e contratos da fatia, testes e build padrão
+  Remaining work: teste humano, correção de eventual retorno e publicação autorizada
+  User action required: testes abaixo
+  Restart required: NÃO — build normal já reaberta
+  Ready for next task: aguarda resultado desta entrega
+
+REPORT
+  Latest file: C:/CutNicePro/docs/reports/LATEST.txt
+  Historical file: C:/CutNicePro/docs/reports/history/2026-10-27_060146_editor-direto-fila.txt
+
+GUIA DO MANTENEDOR — O QUE MUDOU E COMO TESTAR
+  O que mudou: a fila desta rodada está implementada na build normal:
+    C:/CutNicePro/app/src-tauri/target/debug/cutnicepro.exe
+  1. Clique Editor → importar mídia: abre vazio, sem transcrever sozinho.
+     Arraste para a timeline. Salve e reabra por Meus projetos.
+  2. Aba Transcrição → escolha mídia → Transcrever → Aplicar transcrição.
+     Salve/reabra. Se o estilo estiver desligado, ative-o para ver legendas.
+  3. Coloque imagem e áudio após o fim de um vídeo e dê play antes da emenda:
+     cursor/reprodução devem continuar até o fim desses itens.
+  4. Na prévia, amplie/reduza com Ctrl+rolagem e navegue no minimapa.
+     Ajustar restaura a visão. Escala da mídia é independente, até800%.
+  5. Arraste o objeto perto do centro/bordas: encaixe e linhas discretas.
+     Alt ignora. Clique no vazio: seleção some também da timeline,
+     sem mover cursor. Alças, zoom e minimapa mantêm a seleção.
+  6. Selecione duas mídias disponíveis na biblioteca: ações sem sobreposição;
+     Localizar arquivo original aparece somente quando indisponível.
+
+END OF REPORT

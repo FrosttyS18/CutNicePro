@@ -40,3 +40,34 @@ it("destina à principal fixa quando ela encobre outras faixas ou a zona de nova
   expect(compositionDropTarget({...sticky,lanes:sticky.lanes.map(lane=>lane.primary?{...lane,locked:true}:lane)},{x:492,y:230},"video")).toBeNull();
   expect(compositionDropTarget(sticky,{x:492,y:230},"audio")).toBeNull();
 });
+
+it("aceita toda área útil vazia e usa a principal em vez de exigir a faixa azul",()=>{
+  const expanded={...geometry,lanes:geometry.lanes.map((lane,index)=>({...lane,primary:index===0}))};
+  for(const y of [160,190,400,480]){
+    expect(compositionDropTarget(expanded,{x:492,y},"video")).toEqual({frame:400,trackId:"V1"});
+    expect(compositionDropTarget(expanded,{x:492,y},"image")).toEqual({frame:400,trackId:"V1"});
+    expect(compositionDropTarget(expanded,{x:492,y},"audio")).toEqual({frame:400,trackId:null});
+  }
+});
+
+it("área vazia sem principal utilizável cria camada e mantém drop explícito bloqueado",()=>{
+  const locked={...geometry,lanes:geometry.lanes.map((lane,index)=>({...lane,primary:index===0,locked:true}))};
+  expect(compositionDropTarget(locked,{x:492,y:420},"image")).toEqual({frame:400,trackId:null});
+  expect(compositionDropTarget(locked,{x:492,y:230},"image")).toBeNull();
+  expect(compositionDropTarget({...geometry,lanes:[]},{x:492,y:420},"video")).toEqual({frame:400,trackId:null});
+});
+
+it("canvas vazio cria camada quando a principal já tem conteúdo mesmo após o fim",()=>{
+  const occupied={...geometry,lanes:geometry.lanes.map((lane,index)=>({...lane,primary:index===0,occupied:index===0}))};
+  expect(compositionDropTarget(occupied,{x:492,y:420},"video")).toEqual({frame:400,trackId:null});
+  expect(compositionDropTarget(occupied,{x:492,y:420},"image")).toEqual({frame:400,trackId:null});
+  expect(compositionDropTarget(occupied,{x:492,y:230},"video")).toEqual({frame:400,trackId:"V1"});
+});
+
+it("exclui régua e cabeçalho da área útil sem perder cálculo de scroll",()=>{
+  const content={...geometry,contentTop:154,lanes:geometry.lanes.map((lane,index)=>({...lane,primary:index===0}))};
+  expect(compositionDropTarget(content,{x:492,y:120},"image")).toBeNull();
+  expect(compositionDropTarget(content,{x:492,y:153},"image")).toBeNull();
+  expect(compositionDropTarget(content,{x:492,y:154},"image")).toEqual({frame:400,trackId:"V1"});
+  expect(compositionDropTarget({...content,scrollLeft:0},{x:244,y:154},"image")).toEqual({frame:0,trackId:"V1"});
+});

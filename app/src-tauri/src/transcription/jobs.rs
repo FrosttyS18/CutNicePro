@@ -1,9 +1,13 @@
-use super::{process::ProcessControl, types::JobSnapshot};
+use super::{
+    process::ProcessControl,
+    types::{EditorTranscriptionJob, JobSnapshot},
+};
 use std::sync::{Arc, Mutex};
 
 struct ActiveJob {
     snapshot: JobSnapshot,
     control: Arc<ProcessControl>,
+    editor_media_id: Option<String>,
 }
 
 #[derive(Default)]
@@ -21,6 +25,28 @@ impl TranscriptionJobs {
         project_id: String,
         operation: Option<&str>,
     ) -> Result<Arc<ProcessControl>, String> {
+        self.start_scoped(job_id, project_id, operation, None)
+    }
+    pub fn start_editor(
+        &self,
+        job_id: String,
+        project_id: String,
+        media_id: String,
+    ) -> Result<Arc<ProcessControl>, String> {
+        self.start_scoped(
+            job_id,
+            project_id,
+            Some("editor-transcription"),
+            Some(media_id),
+        )
+    }
+    fn start_scoped(
+        &self,
+        job_id: String,
+        project_id: String,
+        operation: Option<&str>,
+        editor_media_id: Option<String>,
+    ) -> Result<Arc<ProcessControl>, String> {
         uuid::Uuid::parse_str(&job_id).map_err(|_| "identificador de job inválido")?;
         let mut active = self.active.lock().map_err(|_| "fila indisponível")?;
         if active
@@ -32,6 +58,7 @@ impl TranscriptionJobs {
         let control = Arc::new(ProcessControl::default());
         *active = Some(ActiveJob {
             control: control.clone(),
+            editor_media_id,
             snapshot: JobSnapshot {
                 job_id,
                 project_id,
@@ -50,6 +77,32 @@ impl TranscriptionJobs {
             .ok()?
             .as_ref()
             .map(|j| j.snapshot.clone())
+    }
+    pub fn legacy_snapshot(&self) -> Option<JobSnapshot> {
+        self.active
+            .lock()
+            .ok()?
+            .as_ref()
+            .filter(|job| job.editor_media_id.is_none())
+            .map(|job| job.snapshot.clone())
+    }
+    pub fn editor_snapshot(
+        &self,
+        project: &str,
+        media: Option<&str>,
+    ) -> Option<EditorTranscriptionJob> {
+        let active = self.active.lock().ok()?;
+        let job = active
+            .as_ref()
+            .filter(|job| job.snapshot.project_id == project)?;
+        let media_id = job
+            .editor_media_id
+            .as_ref()
+            .filter(|id| media.is_none_or(|expected| *id == expected))?;
+        Some(EditorTranscriptionJob {
+            job: job.snapshot.clone(),
+            media_id: media_id.clone(),
+        })
     }
     pub fn edit<T>(&self, persist: impl FnOnce() -> Result<T, String>) -> Result<T, String> {
         let active = self.active.lock().map_err(|_| "fila indisponível")?;
@@ -126,6 +179,57 @@ impl TranscriptionJobs {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn editor_jobs_are_scoped_by_project_and_media_and_hidden_from_legacy() {
+        let jobs = TranscriptionJobs::default();
+        let id = uuid::Uuid::new_v4().to_string();
+        jobs.start_editor(id.clone(), "project-a".into(), "media-a".into())
+            .unwrap();
+        assert!(jobs.legacy_snapshot().is_none());
+        assert!(jobs.editor_snapshot("project-b", None).is_none());
+        assert!(jobs.editor_snapshot("project-a", Some("media-b")).is_none());
+        let snapshot = jobs.editor_snapshot("project-a", None).unwrap();
+        assert_eq!(snapshot.media_id, "media-a");
+        assert_eq!(snapshot.job.job_id, id);
+        let json = serde_json::to_value(snapshot).unwrap();
+        assert_eq!(json["projectId"], "project-a");
+        assert_eq!(json["mediaId"], "media-a");
+        assert_eq!(json["state"], "running");
+        assert!(json.get("job").is_none());
+        jobs.cancel(Some(&id));
+    }
+    #[test]
+    fn editor_jobs_share_concurrency_cancellation_and_retry_with_legacy() {
+        let jobs = TranscriptionJobs::default();
+        let id = uuid::Uuid::new_v4().to_string();
+        jobs.start_editor(id.clone(), "project".into(), "media".into())
+            .unwrap();
+        assert!(jobs
+            .start(uuid::Uuid::new_v4().to_string(), "other".into())
+            .is_err());
+        assert!(jobs
+            .start_editor(
+                uuid::Uuid::new_v4().to_string(),
+                "project".into(),
+                "other".into()
+            )
+            .is_err());
+        assert!(jobs.cancel(Some(&id)));
+        assert!(jobs
+            .finish(&id, Ok(()), |_| panic!(
+                "cancelled editor jobs cannot persist"
+            ))
+            .is_err());
+        assert_eq!(
+            jobs.editor_snapshot("project", None).unwrap().job.state,
+            "cancelled"
+        );
+        let legacy = uuid::Uuid::new_v4().to_string();
+        jobs.start(legacy.clone(), "project".into()).unwrap();
+        assert!(jobs.editor_snapshot("project", None).is_none());
+        assert_eq!(jobs.legacy_snapshot().unwrap().job_id, legacy);
+        jobs.cancel(Some(&legacy));
+    }
     #[test]
     fn serializes_jobs_and_cancel_preserves_previous_result() {
         let jobs = TranscriptionJobs::default();

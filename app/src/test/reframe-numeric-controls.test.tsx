@@ -53,12 +53,12 @@ it("confirma ajustes precisos por teclado sem converter vazio em zero ou arredon
   const change = await inspector({ ...defaultEditorSettings(), focalPoint: { x: 44.375, y: 62.5 }, zoom: 1.237 });
   const x = field("Posição horizontal");
   expect(x.type).toBe("number");
-  expect(x.value).toBe("44.375");
-  expect(field("Zoom").value).toBe("1.237");
+  expect(x.value).toBe("44.38");
+  expect(field("Zoom").value).toBe("1.24");
   await draft(x, "");
   await key(x, "Enter");
   expect(change).not.toHaveBeenCalled();
-  expect(x.value).toBe("44.375");
+  expect(x.value).toBe("44.38");
   await draft(x, "-20");
   expect(change).not.toHaveBeenCalled();
   await key(x, "Enter");
@@ -68,6 +68,34 @@ it("confirma ajustes precisos por teclado sem converter vazio em zero ou arredon
   await draft(field("Zoom"), "1.75");
   await blur(field("Zoom"));
   expect(change).toHaveBeenLastCalledWith({ zoom: 1.75 });
+});
+
+it("apresenta duas casas sem arredondar o estado ao focar e sair ou ajustar por seta", async () => {
+  const change = vi.fn();
+  mounted = await reactHost(<InspectorNumberField label="Valor preciso" caption="Horizontal" value={25.455123456} min={0} max={100} onChange={change}/>);
+  const input = field("Valor preciso");
+  expect(input.value).toBe("25.46");
+  await act(async () => { input.focus(); });
+  await blur(input);
+  expect(change).not.toHaveBeenCalled();
+  await key(input, "ArrowUp");
+  expect(change).toHaveBeenLastCalledWith(26.455123456);
+  change.mockClear();
+  await mounted.click("Aumentar Valor preciso");
+  expect(change).toHaveBeenLastCalledWith(26.455123456);
+  await draft(input, "25.45");
+  await draft(input, "25.46");
+  await key(input, "Enter");
+  expect(change).toHaveBeenLastCalledWith(25.46);
+});
+
+it("permite ampliar a camada a 800% pelo mesmo controle de escala", async () => {
+  const change = vi.fn();
+  mounted = await reactHost(<CompositionPlacementControls disabled={false} cropping={false} onChange={change}/>);
+  const input = field("Escala da sobreposição");
+  await draft(input, "800");
+  await key(input, "Enter");
+  expect(change).toHaveBeenLastCalledWith({ x: 50, y: 50, scale: 8, opacity: 1 });
 });
 
 it("edita somente a pessoa e a cena ativas no split", async () => {

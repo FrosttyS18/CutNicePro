@@ -36,4 +36,20 @@ describe("relógio da montagem",()=>{
     synchronizeMedia(media,12,true);
     expect(media.play).not.toHaveBeenCalled();
   });
+  it("preserva o último quadro no EOF sem reiniciar a fonte e permite voltar a um ponto anterior",()=>{
+    const media={readyState:2,currentTime:42.459,duration:42.459,ended:true,paused:true,seeking:false,play:vi.fn(async()=>undefined),pause:vi.fn()};
+    synchronizeMedia(media,42.433333,true);
+    expect(media.currentTime).toBe(42.459);
+    expect(media.play).not.toHaveBeenCalled();
+    synchronizeMedia(media,20,true);
+    expect(media.currentTime).toBe(20);
+    expect(media.play).toHaveBeenCalledOnce();
+  });
+  it("seek pausado junto ao EOF conserva a precisão em vez de segurar o último quadro",()=>{
+    const media={readyState:2,currentTime:42.459,duration:42.459,ended:true,paused:true,seeking:false,play:vi.fn(async()=>undefined),pause:vi.fn()};
+    synchronizeMedia(media,42.433333,false);
+    expect(media.currentTime).toBe(42.433333);
+    expect(media.play).not.toHaveBeenCalled();
+    expect(media.pause).toHaveBeenCalledOnce();
+  });
 });

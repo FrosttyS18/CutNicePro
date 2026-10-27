@@ -1,1 +1,1 @@
-export type ProjectEditorOrigin = "overview" | "clips" | "library";
+export type ProjectEditorOrigin = "overview" | "clips" | "library" | "editor";

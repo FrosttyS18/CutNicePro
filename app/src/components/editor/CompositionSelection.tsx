@@ -7,11 +7,11 @@ import type { Composition, CompositionItem } from "../../lib/composition-types";
 import "./composition-selection.css";
 
 export interface CompositionSelectionProps {
-  document: Composition; item: CompositionItem | undefined; frame: number; containerRef: RefObject<HTMLElement | null>; disabled?: boolean;
+  document: Composition; item: CompositionItem | undefined; frame: number; containerRef: RefObject<HTMLElement | null>; disabled?: boolean; measurementKey?: string;
   onPointerDown: (event: ReactPointerEvent<HTMLElement>, action?: CompositionFramingAction) => void;
 }
 
-export function CompositionSelection({ document, item, frame, containerRef, disabled = false, onPointerDown }: CompositionSelectionProps) {
+export function CompositionSelection({ document, item, frame, containerRef, disabled = false, measurementKey, onPointerDown }: CompositionSelectionProps) {
   const [stageBox, setStageBox] = useState<MediaRect | null>(null);
   const track = document.tracks.find(value => value.id === item?.trackId);
   const asset = document.assets.find(value => value.id === item?.assetId);
@@ -31,7 +31,7 @@ export function CompositionSelection({ document, item, frame, containerRef, disa
     const observer = typeof ResizeObserver === "undefined" ? null : new ResizeObserver(measure);
     observer?.observe(container); observer?.observe(stage); window.addEventListener("resize", measure); measure();
     return () => { observer?.disconnect(); window.removeEventListener("resize", measure); };
-  }, [containerRef, enabled]);
+  }, [containerRef, enabled, measurementKey]);
   if (!enabled || !item || !asset || !stageBox) return null;
   const output = compositionOutputSize(document);
   const layout = item.settings.splitScreen;

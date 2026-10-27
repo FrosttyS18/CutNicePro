@@ -3,6 +3,8 @@ import type { Composition, CompositionAsset, CompositionPlacement } from "./comp
 import type { EditorSettings } from "./workspace-types";
 
 export const DEFAULT_PLACEMENT: Readonly<CompositionPlacement> = { x: 50, y: 50, scale: 1, opacity: 1 };
+export const MIN_COMPOSITION_SCALE = 0.1;
+export const MAX_COMPOSITION_SCALE = 8;
 
 export function isCompositionPlacement(value: unknown): value is CompositionPlacement {
   if (!value || typeof value !== "object") return false;
@@ -10,7 +12,7 @@ export function isCompositionPlacement(value: unknown): value is CompositionPlac
   const between = (number: unknown, minimum: number, maximum: number) => typeof number === "number" && Number.isFinite(number)
     && number >= minimum && number <= maximum;
   return between(placement.x, 0, 100) && between(placement.y, 0, 100)
-    && between(placement.scale, 0.1, 2) && between(placement.opacity, 0, 1);
+    && between(placement.scale, MIN_COMPOSITION_SCALE, MAX_COMPOSITION_SCALE) && between(placement.opacity, 0, 1);
 }
 
 export function placementStyle(placement: CompositionPlacement = DEFAULT_PLACEMENT): CSSProperties {

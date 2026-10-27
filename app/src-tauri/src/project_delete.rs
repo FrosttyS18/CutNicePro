@@ -28,6 +28,7 @@ pub fn delete(base: &Path, media: &MediaStore, id: &str) -> Result<(), String> {
         Err(e) if e.kind() == std::io::ErrorKind::NotFound => {}
         Err(e) => return Err(format!("não foi possível remover a transcrição: {e}")),
     }
+    crate::transcription::editor_store::remove_project(base, &id)?;
     media.remove_project(&id)?;
     crate::clips::commands::remove(base, &id)?;
     crate::editor::manual_commands::remove_project(base, &id)?;
@@ -72,6 +73,41 @@ pub fn delete_project(app: AppHandle, id: String) -> Result<(), String> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn deletion_removes_only_editor_transcripts_of_the_deleted_project() {
+        let base = std::env::temp_dir().join(format!(
+            "cnp-delete-editor-transcript-{}",
+            uuid::Uuid::new_v4()
+        ));
+        let projects = Store::open(&base).unwrap();
+        let a = projects.create_project("A").unwrap();
+        let b = projects.create_project("B").unwrap();
+        let media = MediaStore::open(&base).unwrap();
+        let record = crate::transcription::types::Transcript {
+            version: 1,
+            media_id: "a".repeat(64),
+            language: "pt".into(),
+            model: "turbo".into(),
+            segments: vec![],
+        };
+        crate::transcription::editor_store::save(&base, &a.id, &record.media_id, &record, 2.0)
+            .unwrap();
+        crate::transcription::editor_store::save(&base, &b.id, &record.media_id, &record, 2.0)
+            .unwrap();
+        delete(&base, &media, &a.id).unwrap();
+        assert!(
+            crate::transcription::editor_store::load(&base, &a.id, &record.media_id)
+                .unwrap()
+                .is_none()
+        );
+        assert!(
+            crate::transcription::editor_store::load(&base, &b.id, &record.media_id)
+                .unwrap()
+                .is_some()
+        );
+        assert_eq!(projects.load().unwrap()[0].id, b.id);
+        std::fs::remove_dir_all(base).unwrap();
+    }
     #[test]
     fn deletion_is_idempotent_and_preserves_original_and_shared_media() {
         let base = std::env::temp_dir().join(format!("cnp-delete-{}", uuid::Uuid::new_v4()));

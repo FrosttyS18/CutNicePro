@@ -18,14 +18,14 @@ function fixture() {
   return document;
 }
 async function setup(original=fixture(),anchorId=original.items[0].id) {
-  const change = vi.fn(), error = vi.fn(), previewed = vi.fn();
+  const change = vi.fn(), error = vi.fn(), previewed = vi.fn(), trackDrop = vi.fn();
   function Harness() {
     const viewport = useRef<HTMLDivElement>(null);
     const [saved, setSaved] = useState(original), [preview, setPreview] = useState<Composition | null>(null);
     const document = preview ?? saved;
     const gesture = useCompositionGesture({ document, scale: 1, frame: 0, selected: [anchorId], magnetic: false, viewport,
       onSelect: vi.fn(), onChange: next => { change(next); setSaved(next); }, onError: error,
-      onPreview: next => { previewed(next); setPreview(next); } });
+      onPreview: next => { previewed(next); setPreview(next); }, onTrackDropPreview: trackDrop });
     return <div ref={viewport} data-viewport>
       <div data-drop-new-track />
       {document.tracks.filter(track => track.kind === "visual").map(track => <div key={track.id} data-composition-track={track.id} data-track-kind="visual" data-primary={track.primary}>
@@ -34,15 +34,15 @@ async function setup(original=fixture(),anchorId=original.items[0].id) {
     </div>;
   }
   mounted = await reactHost(<Harness />);
-  const rect = (top: number, bottom: number) => ({ left: 0, right: 1000, top, bottom, width: 1000, height: bottom - top, x: 0, y: top, toJSON: () => ({}) });
+  const rect = (top: number, bottom: number, left = 0) => ({ left, right: 1000, top, bottom, width: 1000 - left, height: bottom - top, x: left, y: top, toJSON: () => ({}) });
   const viewport = mounted.host.querySelector<HTMLElement>("[data-viewport]")!;
   viewport.getBoundingClientRect = () => rect(0, 400);
   Object.defineProperty(viewport, "clientWidth", { configurable: true, value: 1000 });
   Object.defineProperty(viewport, "scrollWidth", { configurable: true, value: 3000 });
-  mounted.host.querySelector<HTMLElement>("[data-drop-new-track]")!.getBoundingClientRect = () => rect(40, 64);
-  mounted.host.querySelector<HTMLElement>('[data-composition-track="V1"]')!.getBoundingClientRect = () => rect(100, 160);
-  mounted.host.querySelector<HTMLElement>('[data-composition-track="above"]')!.getBoundingClientRect = () => rect(200, 260);
-  return { original, change, error, previewed };
+  mounted.host.querySelector<HTMLElement>("[data-drop-new-track]")!.getBoundingClientRect = () => rect(40, 64, 168);
+  mounted.host.querySelector<HTMLElement>('[data-composition-track="V1"]')!.getBoundingClientRect = () => rect(100, 160, 168);
+  mounted.host.querySelector<HTMLElement>('[data-composition-track="above"]')!.getBoundingClientRect = () => rect(200, 260, 168);
+  return { original, change, error, previewed, trackDrop };
 }
 async function begin(id?:string) {
   const item = mounted!.host.querySelector<HTMLElement>(id?`[data-composition-item="${id}"]`:"[data-composition-item]")!;
@@ -72,32 +72,95 @@ it("arrastar para outra faixa muda a camada sem duplicar o vídeo", async () => 
   expect(saved.items).toHaveLength(original.items.length);
   expect(saved.items.find(item => item.id === original.items[0].id)).toMatchObject({ trackId: "above", startFrame: 60 });
 });
-it("uma nova camada conserva identidade durante previews e confirma uma única edição", async () => {
-  const { original, change, error, previewed } = await setup();
+it("uma nova camada mantém a base durante o indicador e confirma uma única edição", async () => {
+  const { original, change, error, previewed, trackDrop } = await setup();
+  const node = mounted!.host.querySelector("[data-composition-item]");
   await begin();
   for (let index = 1; index <= 6; index++) await move(300 + index * 10, 50);
   expect(change).not.toHaveBeenCalled();
+  expect(mounted!.host.querySelector("[data-composition-item]")).toBe(node);
+  expect(node?.closest("[data-composition-track]")?.getAttribute("data-composition-track")).toBe("V1");
+  expect([...mounted!.host.querySelectorAll("[data-composition-track]")].map(value => value.getAttribute("data-composition-track"))).toEqual(["V1", "above"]);
+  expect(previewed.mock.calls.every(([value]) => value === null || JSON.stringify(value) === JSON.stringify(original))).toBe(true);
+  const indicators = trackDrop.mock.calls.map(([value]) => value).filter(value => value !== null);
+  expect(indicators.length).toBeGreaterThan(1);
+  expect(new Set(indicators.map(value => value.trackId)).size).toBe(1);
+  expect(indicators[indicators.length-1]).toMatchObject({ newTrack: true, frame: 60, durationFrames: 300 });
   await release(360, 50);
   expect(change).toHaveBeenCalledOnce(); expect(error).not.toHaveBeenCalled();
   const saved = change.mock.calls[0][0] as Composition;
-  const trackIds = previewed.mock.calls.flatMap(call => { const value = call[0] as Composition | null; return value ? value.tracks.filter(track => !original.tracks.some(old => old.id === track.id)).map(track => track.id) : []; });
-  expect(trackIds.length).toBeGreaterThan(1); expect(new Set(trackIds).size).toBe(1);
   expect(saved.tracks).toHaveLength(original.tracks.length + 1);
+  expect(saved.items[0].trackId).toBe(indicators[indicators.length-1].trackId);
   expect(saved.items.map(item => item.id)).toEqual(original.items.map(item => item.id));
+  expect(trackDrop).toHaveBeenLastCalledWith(null);
 });
 it("um vídeo movido para cima sobrepõe o de baixo com áudio estável em faixa própria",async()=>{
   const source=fixture(),original=splitSelection(source,[source.items[0].id],150);
   const moving=original.items.find(item=>item.kind==="video"&&item.startFrame===150)!;
-  const {change,error,previewed}=await setup(original,moving.id);
-  await begin(moving.id);
-  for(let index=1;index<=6;index++)await move(300-index*25,230);
-  await release(150,230);
+  const {change,error,previewed,trackDrop}=await setup(original,moving.id);
+  await act(async()=>{mounted!.host.querySelector<HTMLElement>(`[data-composition-item="${moving.id}"]`)!.dispatchEvent(new window.MouseEvent("pointerdown",{button:0,clientX:400,clientY:130,bubbles:true}));});
+  for(let index=1;index<=6;index++)await move(400-index*25,230);
+  expect(previewed.mock.calls.every(([value])=>value===null||JSON.stringify(value)===JSON.stringify(original))).toBe(true);
+  expect(trackDrop).toHaveBeenLastCalledWith(expect.objectContaining({trackId:"above",frame:0,durationFrames:150,newTrack:false}));
+  await release(250,230);
   expect(change).toHaveBeenCalledOnce();expect(error).not.toHaveBeenCalled();
   const result=change.mock.calls[0][0] as Composition;
   expect(result.items.find(item=>item.id===moving.id)).toMatchObject({startFrame:0,trackId:"above",sourceStartUs:5_000_000});
   expect(result.items.map(item=>item.id)).toEqual(original.items.map(item=>item.id));
-  const trackIds=previewed.mock.calls.flatMap(call=>{const value=call[0] as Composition|null;return value?value.tracks.filter(track=>!original.tracks.some(old=>old.id===track.id)).map(track=>track.id):[];});
-  expect(trackIds.length).toBeGreaterThan(1);expect(new Set(trackIds).size).toBe(1);
+  const companion=original.items.find(item=>item.kind==="audio"&&item.groupId===moving.groupId)!;
+  const audio=result.items.find(item=>item.id===companion.id)!;
+  expect(audio).toMatchObject({startFrame:0,durationFrames:150,sourceStartUs:5_000_000,sourceEndUs:10_000_000});
+  expect(audio.trackId).not.toBe(companion.trackId);
+  expect(result.tracks.filter(track=>!original.tracks.some(old=>old.id===track.id))).toHaveLength(1);
+  expect(trackDrop).toHaveBeenLastCalledWith(null);
+});
+
+it("o indicador usa o tempo efetivo permitido por colisões em vez do deslocamento bruto",async()=>{
+  const original=fixture();
+  original.items.push({...structuredClone(original.items[0]),id:"obstacle",trackId:"above",groupId:"obstacle",followsMain:false,durationFrames:100,sourceEndUs:3_333_333});
+  const {change,error,trackDrop}=await setup(original);
+  await begin();await move(360,230);
+  expect(trackDrop).toHaveBeenLastCalledWith(expect.objectContaining({trackId:"above",frame:100,durationFrames:300,newTrack:false}));
+  await release(360,230);
+  expect(error).not.toHaveBeenCalled();expect(change).toHaveBeenCalledOnce();
+  const saved=change.mock.calls[0][0] as Composition;
+  expect(saved.items[0]).toMatchObject({trackId:"above",startFrame:100});
+  expect(saved.items.find(item=>item.id==="obstacle")).toEqual(original.items.find(item=>item.id==="obstacle"));
+});
+
+it("pointerup sem rAF confirma somente o último destino vertical",async()=>{
+  const {original,change,error,trackDrop}=await setup();
+  await begin();
+  await act(async()=>{
+    window.dispatchEvent(new window.MouseEvent("pointermove",{clientX:330,clientY:50}));
+    window.dispatchEvent(new window.MouseEvent("pointerup",{clientX:390,clientY:230}));
+  });
+  expect(error).not.toHaveBeenCalled();expect(change).toHaveBeenCalledOnce();
+  const saved=change.mock.calls[0][0] as Composition;
+  expect(saved.items[0]).toMatchObject({trackId:"above",startFrame:90});
+  expect(saved.items.map(item=>item.id)).toEqual(original.items.map(item=>item.id));
+  expect(saved.tracks).toEqual(original.tracks);
+  expect(trackDrop).toHaveBeenLastCalledWith(null);
+});
+
+it.each(["Escape","resize"])("retornar à origem e cancelar por %s remove indicador sem criar faixa ou edição",async reason=>{
+  const {original,change,error,trackDrop}=await setup();
+  const node=mounted!.host.querySelector("[data-composition-item]");
+  await begin();await move(360,50);await move(360,230);await move(300,130);
+  expect(trackDrop).toHaveBeenLastCalledWith(null);
+  expect(mounted!.host.querySelector("[data-composition-item]")).toBe(node);
+  await act(async()=>{window.dispatchEvent(reason==="Escape"?new window.KeyboardEvent("keydown",{key:"Escape",cancelable:true}):new window.Event("resize"));});
+  await release(360,230);
+  expect(change).not.toHaveBeenCalled();expect(error).not.toHaveBeenCalled();
+  expect(trackDrop).toHaveBeenLastCalledWith(null);
+  expect([...mounted!.host.querySelectorAll("[data-composition-track]")].map(value=>value.getAttribute("data-composition-track"))).toEqual(original.tracks.filter(track=>track.kind==="visual").map(track=>track.id));
+});
+
+it.each([[1100,230],[360,20],[20,230]])("soltar fora, na régua ou no gutter (%s,%s) cancela o destino vertical anterior",async(x,y)=>{
+  const {change,error,trackDrop}=await setup();
+  await begin();await move(360,230);await release(x,y);
+  expect(change).not.toHaveBeenCalled();expect(error).not.toHaveBeenCalled();
+  expect(trackDrop).toHaveBeenLastCalledWith(null);
 });
 
 it("o corpo da principal fixa recebe o arraste mesmo sobrepondo uma faixa anterior no DOM",async()=>{

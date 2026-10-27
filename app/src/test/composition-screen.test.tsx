@@ -13,7 +13,7 @@ vi.mock("../lib/ipc",()=>({
   mediaUrl:vi.fn(()=>"http://cnplocal.localhost/source.mp4"),
   saveEditorDocument:vi.fn(async(_p:string,_c:string|null,document:Composition,revision:number)=>({document:{...document,revision:revision+1},manuallyEdited:true,editedAtMs:10})),
 }));
-vi.mock("../components/editor/CompositionStage",()=>({CompositionStage:()=> <div>Prévia</div>}));
+vi.mock("../components/editor/CompositionStage",()=>({CompositionStage:()=> <div className="composition-stage"><div data-composition-layer="source-0-video">Prévia</div></div>}));
 vi.mock("../components/editor/CompositionSource",()=>({CompositionSource:()=> <div>Fonte</div>}));
 vi.mock("../components/editor/EditorInspector",()=>({EditorInspector:()=>null,panelForTool:()=>"captions"}));
 vi.mock("../hooks/useTimelinePreview",()=>({useTimelinePreview:()=>({frames:[],peaks:[],error:null})}));
@@ -22,6 +22,60 @@ let mounted:Awaited<ReturnType<typeof reactHost>>|undefined;
 afterEach(async()=>{await mounted?.close();mounted=undefined;vi.clearAllMocks();});
 function fixture(){const data=emptyWorkspace();data.media={kind:"local",mediaId:"source",name:"source.mp4",duration:10,width:1920,height:1080,videoId:null,url:null};data.activeClipId="a".repeat(64);return data;}
 describe("editor normal conectado à montagem",()=>{
+  it("área vazia da prévia limpa a seleção real sem editar, salvar ou mover o cursor",async()=>{
+    const change=vi.fn(),save=vi.fn();
+    mounted=await reactHost(<VideoEditor projectId="project" title="Projeto" data={fixture()} localUrl="source.mp4" dirty={false} onChange={change} onSave={save} onBack={vi.fn()}/>);
+    const canvas=mounted.host.querySelector<HTMLElement>(".composition-editor__canvas")!;
+    const stage=mounted.host.querySelector<HTMLElement>(".composition-stage")!;
+    vi.spyOn(canvas,"getBoundingClientRect").mockReturnValue({left:0,top:0,width:800,height:600} as DOMRect);
+    vi.spyOn(stage,"getBoundingClientRect").mockReturnValue({left:80,top:120,width:640,height:360} as DOMRect);
+    await act(async()=>mounted!.host.querySelector<HTMLButtonElement>('[aria-label="Posição precisa"]')!.click());
+    const frame=mounted.host.querySelector<HTMLInputElement>('[aria-label="Cursor da montagem em frames"]')!;
+    await act(async()=>{Object.getOwnPropertyDescriptor(Object.getPrototypeOf(frame),"value")!.set!.call(frame,"100");frame.dispatchEvent(new window.Event("input",{bubbles:true}));});
+    const video=mounted.host.querySelector<HTMLElement>('[data-kind="video"][data-composition-item]')!;
+    await act(async()=>video.dispatchEvent(new window.KeyboardEvent("keydown",{key:"Enter",bubbles:true})));
+    expect(video.getAttribute("data-selected")).toBe("true");
+    expect(mounted.host.querySelector("[data-composition-selection]")).not.toBeNull();
+    const duplicate=mounted.host.querySelector<HTMLButtonElement>('[aria-label="Duplicar (Ctrl+D)"]')!;
+    expect(duplicate.getAttribute("aria-disabled")).toBe("false");
+    const time=mounted.host.querySelector('[aria-label="Tempo da montagem"]')!.textContent;
+    expect(time).toContain("00:03");
+    await act(async()=>canvas.dispatchEvent(new window.MouseEvent("pointerdown",{button:0,clientX:20,clientY:20,bubbles:true})));
+    expect(mounted.host.querySelector('[data-composition-item][data-selected="true"]')).toBeNull();
+    expect(mounted.host.querySelector("[data-composition-selection]")).toBeNull();
+    for(const label of ["Duplicar (Ctrl+D)","Copiar (Ctrl+C)","Excluir e fechar espaço (Delete)"]){
+      expect(mounted.host.querySelector(`[aria-label="${label}"]`)?.getAttribute("aria-disabled")).toBe("true");
+    }
+    expect(mounted.host.querySelector('[aria-label="Tempo da montagem"]')!.textContent).toBe(time);
+    expect(mounted.host.querySelector('[data-testid="editor-save-status"]')?.textContent).toContain("Versão salva");
+    expect(change).not.toHaveBeenCalled();expect(save).not.toHaveBeenCalled();expect(ipc.saveEditorDocument).not.toHaveBeenCalled();
+    expect(ipc.saveEditorRecovery).not.toHaveBeenCalled();
+  });
+  it("controles, minimapa e botões não primários preservam a seleção na prévia",async()=>{
+    mounted=await reactHost(<VideoEditor projectId="project" title="Projeto" data={fixture()} localUrl="source.mp4" dirty={false} onChange={vi.fn()} onSave={vi.fn()} onBack={vi.fn()}/>);
+    const canvas=mounted.host.querySelector<HTMLElement>(".composition-editor__canvas")!;
+    const stage=mounted.host.querySelector<HTMLElement>(".composition-stage")!;
+    vi.spyOn(canvas,"getBoundingClientRect").mockReturnValue({left:0,top:0,width:800,height:600} as DOMRect);
+    vi.spyOn(stage,"getBoundingClientRect").mockReturnValue({left:80,top:120,width:640,height:360} as DOMRect);
+    await act(async()=>window.dispatchEvent(new window.Event("resize")));
+    const video=mounted.host.querySelector<HTMLElement>('[data-kind="video"][data-composition-item]')!;
+    await act(async()=>video.dispatchEvent(new window.KeyboardEvent("keydown",{key:"Enter",bubbles:true})));
+    const time=mounted.host.querySelector('[aria-label="Tempo da montagem"]')!.textContent;
+    const zoom=mounted.host.querySelector<HTMLButtonElement>('[aria-label="Ampliar prévia"]')!;
+    await act(async()=>{zoom.dispatchEvent(new window.MouseEvent("pointerdown",{button:0,bubbles:true}));zoom.click();zoom.click();zoom.click();});
+    expect(video.getAttribute("data-selected")).toBe("true");
+    const map=mounted.host.querySelector<HTMLButtonElement>('[aria-label="Navegar na prévia ampliada"]')!;
+    expect(map).not.toBeNull();
+    await act(async()=>{map.dispatchEvent(new window.MouseEvent("pointerdown",{button:0,bubbles:true}));window.dispatchEvent(new window.MouseEvent("pointerup",{button:0}));});
+    expect(video.getAttribute("data-selected")).toBe("true");
+    await act(async()=>canvas.dispatchEvent(new window.MouseEvent("pointerdown",{button:2,bubbles:true})));
+    expect(video.getAttribute("data-selected")).toBe("true");
+    await act(async()=>{canvas.dispatchEvent(new window.MouseEvent("pointerdown",{button:1,bubbles:true}));window.dispatchEvent(new window.MouseEvent("pointerup",{button:1}));});
+    expect(video.getAttribute("data-selected")).toBe("true");
+    expect(mounted.host.querySelector('[aria-label="Tempo da montagem"]')!.textContent).toBe(time);
+    expect(mounted.host.querySelector('[data-testid="editor-save-status"]')?.textContent).toContain("Versão salva");
+    expect(ipc.saveEditorDocument).not.toHaveBeenCalled();expect(ipc.saveEditorRecovery).not.toHaveBeenCalled();
+  });
   it("controles diretos editam a faixa correta com histórico e reabrem as flags salvas sem alterar mutes individuais",async()=>{
     const data=fixture();data.transcript=[{id:"s",start:0,end:5,text:"Legenda preservada"}];
     const original=compositionFromLegacy(data);

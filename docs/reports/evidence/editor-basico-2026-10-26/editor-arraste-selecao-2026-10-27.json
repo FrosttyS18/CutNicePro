@@ -1,0 +1,503 @@
+{
+  "scope": "Drop livre, gesto estável, seleção da prévia e Shift por eixo",
+  "date": "2026-10-27",
+  "functionalStatus": "PARTIAL",
+  "regressionStatus": "PASS",
+  "visualStatus": "PENDING HUMAN APPROVAL",
+  "head": "de8ed09878b540cfb838ed4eb966571f0cf49f54",
+  "graphify": {
+    "workspace": "wesley-s-workspace",
+    "repository": "FrosttyS18/CutNicePro",
+    "commit": "de8ed09878b540cfb838ed4eb966571f0cf49f54",
+    "build": "a3c2370e-add3-4233-b1bc-2ae26bba2bf3",
+    "unpublishedChangesCovered": false,
+    "localComplement": "Source, diff and tests"
+  },
+  "verification": {
+    "fullTsSuite": {
+      "passed": 1295,
+      "failed": 0,
+      "files": 189,
+      "durationSeconds": 78.15
+    },
+    "finalCompatibilityRetest": {
+      "passed": 27,
+      "failed": 0,
+      "additionalUniqueTests": 0
+    },
+    "typecheck": "PASS",
+    "viteBuild": "PASS",
+    "eslintFull": "PASS",
+    "diffCheck": "PASS",
+    "rust": "Not changed or repeated in this continuation",
+    "initialFailuresCorrected": [
+      "Drop rejected outside narrow new-track zone",
+      "Horizontal jitter and changing preview layout selected another track",
+      "Preview selection and Shift axis constraint absent",
+      "Transparent upper wrapper intercepted lower visible media",
+      "Sticky locked primary protection regression in affected suite",
+      "Array.at in tests not supported by configured TypeScript target"
+    ]
+  },
+  "runtime": {
+    "command": "npm run tauri dev -- --no-watch",
+    "executable": "C:/CutNicePro/app/src-tauri/target/debug/cutnicepro.exe",
+    "pidAtVerification": 34608,
+    "frontendHttpStatus": 200,
+    "profile": "normal",
+    "interactiveTests": "Pending maintainer; no PC automation"
+  },
+  "humanFeedback": "Mantenedor confirmou snap, desseleção, Shift e estabilidade vertical; menu e export desta continuação aguardam reteste normal.",
+  "review": "Three delegated tasks; independent review corrected wrapper routing; final finite review found no further demonstrated P1/P2",
+  "commitsCreated": 0,
+  "pushExecuted": false,
+  "limitations": [
+    "No new real WebView drag interaction",
+    "No native Windows drop retest",
+    "No large-video performance measurement"
+  ],
+  "flickContinuation": {
+    "status": "PASS no comportamento confirmado pelo mantenedor",
+    "humanFeedback": "Funcionou: arraste vertical estável, linha de destino, Escape e Espaço.",
+    "affectedTestsPassed": 88,
+    "affectedTestFiles": 8,
+    "finalRetestPassed": 31,
+    "finalRetestIncludedIn88": true,
+    "typecheck": "PASS",
+    "viteBuild": "PASS",
+    "eslint": "PASS",
+    "nativeInteractiveRetest": "Confirmação específica do mantenedor recebida; sem automação do PC.",
+    "pidAtVerification": 43404,
+    "frontendHttpStatus": 200,
+    "graphIndex": "de8ed09878b540cfb838ed4eb966571f0cf49f54",
+    "fullSuiteRepeated": false,
+    "rustChanged": false
+  },
+  "publicationContinuation": {
+    "scope": "Consolidação da fila, menu das mídias e correção do export",
+    "date": "2026-10-27",
+    "functionalStatus": "PARTIAL: novos fluxos no aplicativo aguardam mantenedor",
+    "regressionStatus": "PASS",
+    "visualStatus": "PENDING HUMAN APPROVAL",
+    "ts": {
+      "files": 192,
+      "failed": 0,
+      "passed": 1347,
+      "durationSeconds": 82.94
+    },
+    "rust": {
+      "failed": 0,
+      "passed": 382,
+      "durationSeconds": 9.59,
+      "ignored": 33
+    },
+    "build": "tsc/Vite e cargo dev PASS sem warnings",
+    "eslint": "PASS",
+    "runtime": {
+      "sha256": "9D4DA8F3C9E1730F1622E101C89BCE3364DB4A0D06781E7ECC4B1B2BFD0ECED6",
+      "frontendStatus": 200,
+      "pid": 36228,
+      "profile": "normal",
+      "executable": "C:/CutNicePro/app/src-tauri/target/debug/cutnicepro.exe",
+      "note": "Tauri dev compilou; abertura sem permissão completa falhou no WebView. Mesmo executável aberto com permissões adequadas, reutilizando servidor1420 confirmado; nenhum novo target/perfil."
+    },
+    "export": {
+      "fix": "Resolver presets1–9 somente na cópia do render",
+      "uiRetest": "Pending maintainer",
+      "realFixture": "2.9s salva/reaberta; vídeo seguido de imagem+áudio; duração,pixels,áudio da cauda e snapshot preservado",
+      "red": "Preset implícito1 sem estilo recusado pelo RenderSettings.validate"
+    },
+    "mediaMenu": {
+      "operations": [
+        "Excluir da edição",
+        "Renomear nome exibido",
+        "Abrir local do arquivo"
+      ],
+      "tests": "20 UI +22 domínio +2 IPC +4 nativos, incluídos nas suítes finais",
+      "originalFiles": "Preservados; testes não abrem Explorer",
+      "focusRegression": "Dois RED reproduzidos; CtrlZ funciona após excluir última mídia ou com mídia restante"
+    },
+    "graphify": {
+      "unpublishedChangesCovered": false,
+      "repository": "FrosttyS18/CutNicePro",
+      "complement": "Fonte, diff e testes locais",
+      "commit": "de8ed09878b540cfb838ed4eb966571f0cf49f54",
+      "workspace": "wesley-s-workspace"
+    },
+    "limitations": [
+      "Sem automação interativa; reteste normal do menu/export pendente",
+      "ASR real e desempenho797MB não medidos nesta continuação",
+      "Diferença estática herdada entre escala de fonte da prévia e ASS em retrato; não medida ou corrigida"
+    ],
+    "files": [
+      {
+        "path": "app/src-tauri/src/editor/mod.rs",
+        "status": "modified"
+      },
+      {
+        "path": "app/src-tauri/src/editor/render_graph.rs",
+        "status": "modified"
+      },
+      {
+        "path": "app/src-tauri/src/editor/render_media.rs",
+        "status": "modified"
+      },
+      {
+        "path": "app/src-tauri/src/editor/render_tests.rs",
+        "status": "modified"
+      },
+      {
+        "path": "app/src-tauri/src/editor/tests.rs",
+        "status": "modified"
+      },
+      {
+        "path": "app/src-tauri/src/editor/types.rs",
+        "status": "modified"
+      },
+      {
+        "path": "app/src-tauri/src/lib.rs",
+        "status": "modified"
+      },
+      {
+        "path": "app/src-tauri/src/project_delete.rs",
+        "status": "modified"
+      },
+      {
+        "path": "app/src-tauri/src/transcription/commands.rs",
+        "status": "modified"
+      },
+      {
+        "path": "app/src-tauri/src/transcription/jobs.rs",
+        "status": "modified"
+      },
+      {
+        "path": "app/src-tauri/src/transcription/mod.rs",
+        "status": "modified"
+      },
+      {
+        "path": "app/src-tauri/src/transcription/types.rs",
+        "status": "modified"
+      },
+      {
+        "path": "app/src/App.tsx",
+        "status": "modified"
+      },
+      {
+        "path": "app/src/components/editor/CompositionEditor.tsx",
+        "status": "modified"
+      },
+      {
+        "path": "app/src/components/editor/CompositionEditorBody.tsx",
+        "status": "modified"
+      },
+      {
+        "path": "app/src/components/editor/CompositionMediaLibrary.tsx",
+        "status": "modified"
+      },
+      {
+        "path": "app/src/components/editor/CompositionPlacementControls.tsx",
+        "status": "modified"
+      },
+      {
+        "path": "app/src/components/editor/CompositionSelection.tsx",
+        "status": "modified"
+      },
+      {
+        "path": "app/src/components/editor/CompositionTimeline.tsx",
+        "status": "modified"
+      },
+      {
+        "path": "app/src/components/editor/InspectorNumberField.tsx",
+        "status": "modified"
+      },
+      {
+        "path": "app/src/components/editor/composition-editor.css",
+        "status": "modified"
+      },
+      {
+        "path": "app/src/components/editor/composition-timeline.css",
+        "status": "modified"
+      },
+      {
+        "path": "app/src/components/editor/useCompositionFraming.ts",
+        "status": "modified"
+      },
+      {
+        "path": "app/src/components/editor/useCompositionGesture.ts",
+        "status": "modified"
+      },
+      {
+        "path": "app/src/components/shell/AppShell.tsx",
+        "status": "modified"
+      },
+      {
+        "path": "app/src/hooks/useCompositionMediaReadiness.ts",
+        "status": "modified"
+      },
+      {
+        "path": "app/src/lib/composition-asset-drop.ts",
+        "status": "modified"
+      },
+      {
+        "path": "app/src/lib/composition-captions.ts",
+        "status": "modified"
+      },
+      {
+        "path": "app/src/lib/composition-clock.ts",
+        "status": "modified"
+      },
+      {
+        "path": "app/src/lib/composition-drop-geometry.ts",
+        "status": "modified"
+      },
+      {
+        "path": "app/src/lib/composition-media-geometry.ts",
+        "status": "modified"
+      },
+      {
+        "path": "app/src/lib/composition-placement.ts",
+        "status": "modified"
+      },
+      {
+        "path": "app/src/lib/ipc.ts",
+        "status": "modified"
+      },
+      {
+        "path": "app/src/lib/project-navigation.ts",
+        "status": "modified"
+      },
+      {
+        "path": "app/src/lib/workspace-types.ts",
+        "status": "modified"
+      },
+      {
+        "path": "app/src/screens/ProjectWorkspace.tsx",
+        "status": "modified"
+      },
+      {
+        "path": "app/src/services/workspace-store.ts",
+        "status": "modified"
+      },
+      {
+        "path": "app/src/test/composition-asset-drop.test.ts",
+        "status": "modified"
+      },
+      {
+        "path": "app/src/test/composition-body-placement.test.tsx",
+        "status": "modified"
+      },
+      {
+        "path": "app/src/test/composition-captions.test.ts",
+        "status": "modified"
+      },
+      {
+        "path": "app/src/test/composition-clock.test.ts",
+        "status": "modified"
+      },
+      {
+        "path": "app/src/test/composition-drop-geometry.test.ts",
+        "status": "modified"
+      },
+      {
+        "path": "app/src/test/composition-framing-gesture.test.tsx",
+        "status": "modified"
+      },
+      {
+        "path": "app/src/test/composition-library-flow.test.tsx",
+        "status": "modified"
+      },
+      {
+        "path": "app/src/test/composition-media-geometry.test.ts",
+        "status": "modified"
+      },
+      {
+        "path": "app/src/test/composition-move-cursor.test.tsx",
+        "status": "modified"
+      },
+      {
+        "path": "app/src/test/composition-placement.test.tsx",
+        "status": "modified"
+      },
+      {
+        "path": "app/src/test/composition-screen.test.tsx",
+        "status": "modified"
+      },
+      {
+        "path": "app/src/test/composition-spatial-gesture.test.tsx",
+        "status": "modified"
+      },
+      {
+        "path": "app/src/test/reframe-numeric-controls.test.tsx",
+        "status": "modified"
+      },
+      {
+        "path": "docs/engineering/EDITOR-BASIC-IMPLEMENTATION-PLAN.md",
+        "status": "modified"
+      },
+      {
+        "path": "docs/engineering/ENGINE-HANDOFF.md",
+        "status": "modified"
+      },
+      {
+        "path": "docs/product/BACKLOG.md",
+        "status": "modified"
+      },
+      {
+        "path": "docs/product/BUSINESS-RULES.md",
+        "status": "modified"
+      },
+      {
+        "path": "docs/product/PRODUCT-BRAIN.md",
+        "status": "modified"
+      },
+      {
+        "path": "docs/product/TRACEABILITY.md",
+        "status": "modified"
+      },
+      {
+        "path": "app/src-tauri/src/editor/render_placement_tests.rs",
+        "status": "created"
+      },
+      {
+        "path": "app/src-tauri/src/media_reveal.rs",
+        "status": "created"
+      },
+      {
+        "path": "app/src-tauri/src/transcription/editor_commands.rs",
+        "status": "created"
+      },
+      {
+        "path": "app/src-tauri/src/transcription/editor_store.rs",
+        "status": "created"
+      },
+      {
+        "path": "app/src/components/editor/CompositionMediaActions.tsx",
+        "status": "created"
+      },
+      {
+        "path": "app/src/components/editor/CompositionPreviewViewport.tsx",
+        "status": "created"
+      },
+      {
+        "path": "app/src/components/editor/EditorTranscriptionControls.tsx",
+        "status": "created"
+      },
+      {
+        "path": "app/src/components/editor/composition-preview-viewport.css",
+        "status": "created"
+      },
+      {
+        "path": "app/src/components/editor/usePreviewViewport.ts",
+        "status": "created"
+      },
+      {
+        "path": "app/src/components/shell/EditorRailButton.tsx",
+        "status": "created"
+      },
+      {
+        "path": "app/src/hooks/useEditorTranscription.ts",
+        "status": "created"
+      },
+      {
+        "path": "app/src/lib/composition-assets.ts",
+        "status": "created"
+      },
+      {
+        "path": "app/src/lib/composition-preview-snap.ts",
+        "status": "created"
+      },
+      {
+        "path": "app/src/lib/editor-transcription.ts",
+        "status": "created"
+      },
+      {
+        "path": "app/src/lib/preview-viewport.ts",
+        "status": "created"
+      },
+      {
+        "path": "app/src/services/direct-editor.ts",
+        "status": "created"
+      },
+      {
+        "path": "app/src/test/composition-assets.test.ts",
+        "status": "created"
+      },
+      {
+        "path": "app/src/test/composition-media-actions.test.tsx",
+        "status": "created"
+      },
+      {
+        "path": "app/src/test/composition-media-footer.test.tsx",
+        "status": "created"
+      },
+      {
+        "path": "app/src/test/composition-playback-tail.test.tsx",
+        "status": "created"
+      },
+      {
+        "path": "app/src/test/composition-preview-snap.test.ts",
+        "status": "created"
+      },
+      {
+        "path": "app/src/test/composition-preview-viewport.test.tsx",
+        "status": "created"
+      },
+      {
+        "path": "app/src/test/composition-timeline-drop-controller.test.tsx",
+        "status": "created"
+      },
+      {
+        "path": "app/src/test/direct-editor-navigation.test.tsx",
+        "status": "created"
+      },
+      {
+        "path": "app/src/test/direct-editor-service.test.tsx",
+        "status": "created"
+      },
+      {
+        "path": "app/src/test/editor-transcription-contract.test.ts",
+        "status": "created"
+      },
+      {
+        "path": "app/src/test/editor-transcription-freshness.test.tsx",
+        "status": "created"
+      },
+      {
+        "path": "app/src/test/editor-transcription-hook.test.tsx",
+        "status": "created"
+      },
+      {
+        "path": "app/src/test/editor-transcription-ui.test.tsx",
+        "status": "created"
+      },
+      {
+        "path": "app/src/test/preview-viewport.test.ts",
+        "status": "created"
+      },
+      {
+        "path": "app/src/test/reveal-editor-media-ipc.test.ts",
+        "status": "created"
+      },
+      {
+        "path": "docs/reports/evidence/editor-basico-2026-10-26/editor-arraste-selecao-2026-10-27.json",
+        "status": "created"
+      },
+      {
+        "path": "docs/reports/evidence/editor-basico-2026-10-26/editor-direto-fila-2026-10-27.json",
+        "status": "created"
+      },
+      {
+        "path": "docs/reports/history/2026-10-27_060146_editor-direto-fila.txt",
+        "status": "created"
+      },
+      {
+        "path": "docs/reports/history/2026-10-27_064500_editor-arraste-selecao.txt",
+        "status": "created"
+      },
+      {
+        "path": "docs/reports/history/2026-10-27_070506_editor-arraste-vertical.txt",
+        "status": "created"
+      }
+    ]
+  }
+}

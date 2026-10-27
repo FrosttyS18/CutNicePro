@@ -92,10 +92,20 @@ it.each([
   if (!magnetic) await click("Ímã da faixa principal");
   await begin(); await move(delta, y);
   expect(time()).toBe("00:00:02.500");
-  expect(item().dataset.startFrame).toBe(String(start));
+  if(y===130)expect(item().dataset.startFrame).toBe(String(start));
+  else{
+    expect(item().dataset.startFrame).toBe("0");
+    expect(item().closest('[data-composition-track]')?.getAttribute("data-composition-track")).toBe("V1");
+    const indicator=view!.host.querySelector<HTMLElement>(".composition-timeline__track-drop")!;
+    expect(indicator).not.toBeNull();expect(indicator.dataset.startFrame).toBe(String(start));
+    if(y===230)expect(indicator.dataset.dropTrack).toBe("V2");
+    else expect(["V1","V2"]).not.toContain(indicator.dataset.dropTrack);
+  }
   if (y !== 130) expect((await space(false)).defaultPrevented).toBe(true);
   await release(delta, y);
   expect(time()).toBe("00:00:02.500");
+  expect(item().dataset.startFrame).toBe(String(start));
+  expect(view!.host.querySelector(".composition-timeline__track-drop")).toBeNull();
   await click("Desfazer (Ctrl+Z)");
   expect(item().dataset.startFrame).toBe("0"); expect(time()).toBe("00:00:02.500");
   await click("Refazer (Ctrl+Shift+Z)");
@@ -168,6 +178,68 @@ it("destino bloqueado mantém o objeto e o cursor sem confirmar edição", async
   expect(view!.host.querySelector('[data-composition-track="V1"]')!.contains(item())).toBe(true);
   expect(view!.host.querySelector('[role="alert"]')).not.toBeNull();
   expect(view!.host.querySelector('[aria-label="Desfazer (Ctrl+Z)"]')?.getAttribute("aria-disabled")).toBe("true");
+});
+
+it("arraste horizontal não troca de camada quando a prévia desloca as faixas", async () => {
+  await mount(); await click("Ímã da faixa principal"); await begin(); await move(60);
+  const first = view!.host.querySelector<HTMLElement>('[data-composition-track="V1"]')!;
+  const second = view!.host.querySelector<HTMLElement>('[data-composition-track="V2"]')!;
+  const rect = (top: number, bottom: number) => ({ left: 0, right: 840, top, bottom, width: 840, height: bottom-top, x: 0, y: top, toJSON: () => ({}) });
+  first.getBoundingClientRect = () => rect(200, 260);
+  second.getBoundingClientRect = () => rect(100, 160);
+  await move(120); await release(120);
+  expect(first.contains(item())).toBe(true);
+  expect(item().dataset.startFrame).toBe("120");
+  expect(time()).toBe("00:00:02.500");
+});
+
+it("pequena oscilação vertical no arraste rápido junto à borda mantém a camada", async () => {
+  await mount(); await click("Ímã da faixa principal");
+  view!.host.querySelector<HTMLElement>('[data-composition-track="V2"]')!.getBoundingClientRect = () => ({ left:0,right:840,top:64,bottom:100,width:840,height:36,x:0,y:64,toJSON:()=>({}) });
+  await act(async () => item().dispatchEvent(new window.MouseEvent("pointerdown", { button:0,clientX:300,clientY:101,bubbles:true })));
+  await move(180, 98); await release(180, 98);
+  expect(item().closest('[data-composition-track]')?.getAttribute("data-composition-track")).toBe("V1");
+  expect(item().dataset.startFrame).toBe("180");
+});
+
+it("nova camada mantém a mesma identidade se o layout mudar durante o gesto", async () => {
+  await mount(); await click("Ímã da faixa principal"); await begin(); await move(60, 50);
+  const node=item();
+  expect(node.closest<HTMLElement>('[data-composition-track]')!.dataset.compositionTrack).toBe("V1");
+  const track=view!.host.querySelector<HTMLElement>(".composition-timeline__track-drop")!.dataset.dropTrack;
+  expect(["V1","V2"]).not.toContain(track);
+  view!.host.querySelector<HTMLElement>('[data-drop-new-track]')!.getBoundingClientRect = () => ({ left:0,right:840,top:100,bottom:124,width:840,height:24,x:0,y:100,toJSON:()=>({}) });
+  await move(120, 50);
+  expect(item()).toBe(node);
+  expect(view!.host.querySelector<HTMLElement>(".composition-timeline__track-drop")!.dataset.dropTrack).toBe(track);
+  await release(120, 50);
+  expect(item().closest<HTMLElement>('[data-composition-track]')!.dataset.compositionTrack).toBe(track);
+  expect(view!.host.querySelectorAll('[data-composition-item][data-kind="video"]')).toHaveLength(2);
+  expect(time()).toBe("00:00:02.500");
+});
+
+it("o arraste vertical rápido mantém objeto, faixas e cursor estáveis até a confirmação",async()=>{
+  await mount();await click("Ímã da faixa principal");
+  const node=item(),tracks=[...view!.host.querySelectorAll('[data-composition-track]')].map(value=>value.getAttribute("data-composition-track"));
+  await begin();
+  for(const[x,y]of[[340,230],[380,50],[420,230],[460,50],[480,230]]){
+    await move(x-300,y);
+    expect(item()).toBe(node);expect(node.isConnected).toBe(true);
+    expect(node.closest('[data-composition-track]')?.getAttribute("data-composition-track")).toBe("V1");
+    expect(node.dataset.startFrame).toBe("0");
+    expect([...view!.host.querySelectorAll('[data-composition-track]')].map(value=>value.getAttribute("data-composition-track"))).toEqual(tracks);
+    expect(time()).toBe("00:00:02.500");
+    expect(view!.host.querySelector(".composition-timeline__track-drop")).not.toBeNull();
+  }
+  await release(180,230);
+  expect(item().closest('[data-composition-track]')?.getAttribute("data-composition-track")).toBe("V2");
+  expect(item().dataset.startFrame).toBe("180");expect(time()).toBe("00:00:02.500");
+  expect(globalThis.document.activeElement).toBe(item());
+  await space(false);expect(view!.host.querySelector('[aria-label="Pausar montagem"]')).not.toBeNull();
+  await space(false);expect(view!.host.querySelector('[aria-label="Reproduzir montagem"]')).not.toBeNull();
+  await click("Desfazer (Ctrl+Z)");expect(item().dataset.startFrame).toBe("0");
+  await click("Refazer (Ctrl+Shift+Z)");expect(item().dataset.startFrame).toBe("180");
+  expect(time()).toBe("00:00:02.500");
 });
 
 it.each(["confirmar", "cancelar"])("o foco acompanha o objeto remontado e Space funciona após %s sem refocus", async ending => {

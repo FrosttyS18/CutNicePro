@@ -115,6 +115,8 @@ pub struct Placement {
     pub scale: f64,
     pub opacity: f64,
 }
+pub const MIN_PLACEMENT_SCALE: f64 = 0.1;
+pub const MAX_PLACEMENT_SCALE: f64 = 8.0;
 impl Default for Placement {
     fn default() -> Self {
         Self {
@@ -132,7 +134,7 @@ impl Placement {
             .all(|value| value.is_finite())
             && (0.0..=100.0).contains(&self.x)
             && (0.0..=100.0).contains(&self.y)
-            && (0.1..=2.0).contains(&self.scale)
+            && (MIN_PLACEMENT_SCALE..=MAX_PLACEMENT_SCALE).contains(&self.scale)
             && (0.0..=1.0).contains(&self.opacity)
     }
 }

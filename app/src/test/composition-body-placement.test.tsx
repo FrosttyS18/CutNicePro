@@ -17,7 +17,7 @@ const bootstrap = await vi.hoisted(async () => {
 vi.mock("../hooks/useCompositionMedia", () => ({ useCompositionMedia: () => ({ image: { url: "image.png", error: null } }) }));
 vi.mock("../hooks/useTimelinePreview", () => ({ useTimelinePreview: () => ({ frames: [], peaks: [], error: null }) }));
 vi.mock("../components/editor/CompositionSource", () => ({ CompositionSource: () => null }));
-vi.mock("../components/editor/CompositionStage", () => ({ CompositionStage: () => <div className="composition-stage"><div data-composition-layer="logo"><img alt="Marca" /></div></div> }));
+vi.mock("../components/editor/CompositionStage", () => ({ CompositionStage: ({ document }: { document: Composition }) => <div className="composition-stage">{document.items.filter(item => item.kind === "video" || item.kind === "image").map(item => <div key={item.id} data-composition-layer={item.id}><img alt={item.id}/></div>)}</div> }));
 vi.mock("../components/workspace/TranscriptPanel", () => ({ TranscriptPanel: ({ currentTime }: { currentTime: number }) => <output data-transcript-time={currentTime}>{currentTime}</output> }));
 
 let mounted: Awaited<ReturnType<typeof reactHost>> | undefined;
@@ -39,6 +39,49 @@ function editor(document: Composition, change = vi.fn(), preview = vi.fn(), fram
 }
 
 describe("controles e gesto de sobreposição", () => {
+  it("seleciona pela prévia sem seleção da timeline e sem salvar ou reposicionar o cursor", async () => {
+    const document = fixture(), select = vi.fn(), change = vi.fn(), seek = vi.fn();
+    mounted = await reactHost(<CompositionEditorBody projectId="project" document={document} frame={0} playing={false} selected={[]} sourceUrl={null}
+      legacy={emptyWorkspace()} onChange={change} onPreview={vi.fn()} onSeek={seek} onPause={vi.fn()} onError={vi.fn()} onPreviews={vi.fn()} onSelect={select}/>);
+    const stage = mounted.host.querySelector<HTMLElement>(".composition-stage")!;
+    vi.spyOn(stage, "getBoundingClientRect").mockReturnValue({ left: 0, top: 0, width: 400, height: 200 } as DOMRect);
+    await act(async () => {
+      stage.querySelector("img")!.dispatchEvent(new window.PointerEvent("pointerdown", { button: 0, clientX: 200, clientY: 100, pointerId: 4, bubbles: true }));
+      window.dispatchEvent(new window.PointerEvent("pointerup", { clientX: 200, clientY: 100, pointerId: 4 }));
+    });
+    expect(select).toHaveBeenCalledWith("logo");
+    expect(change).not.toHaveBeenCalled();
+    expect(seek).not.toHaveBeenCalled();
+  });
+
+  it.each([true, false])("a margem do wrapper superior escolhe a mídia inferior (%s) antes de decidir desseleção", async hasBase => {
+    const document = fixture(), select = vi.fn(), clear = vi.fn(), change = vi.fn(), seek = vi.fn();
+    document.items[0].placement = { x: 50, y: 50, scale: 0.4, opacity: 1 };
+    if (hasBase) document.items.push({ ...structuredClone(document.items[0]), id: "base", trackId: "V1", groupId: "base", placement: { x: 50, y: 50, scale: 1, opacity: 1 } });
+    mounted = await reactHost(<CompositionEditorBody projectId="project" document={document} frame={0} playing={false} selected={["logo"]} sourceUrl={null}
+      legacy={emptyWorkspace()} onChange={change} onPreview={vi.fn()} onSeek={seek} onPause={vi.fn()} onError={vi.fn()} onPreviews={vi.fn()} onSelect={select} onClearSelection={clear}/>);
+    const stage = mounted.host.querySelector<HTMLElement>(".composition-stage")!;
+    vi.spyOn(stage, "getBoundingClientRect").mockReturnValue({ left: 0, top: 0, width: 400, height: 200 } as DOMRect);
+    await act(async () => {
+      stage.querySelector('[data-composition-layer="logo"]')!.dispatchEvent(new window.PointerEvent("pointerdown", { button: 0, clientX: 20, clientY: 100, pointerId: 4, bubbles: true }));
+      window.dispatchEvent(new window.PointerEvent("pointerup", { clientX: 20, clientY: 100, pointerId: 4 }));
+    });
+    if (hasBase) { expect(select).toHaveBeenLastCalledWith("base"); expect(clear).not.toHaveBeenCalled(); }
+    else { expect(select).not.toHaveBeenCalled(); expect(clear).toHaveBeenCalledOnce(); }
+    expect(change).not.toHaveBeenCalled();
+    expect(seek).not.toHaveBeenCalled();
+  });
+
+  it("amplia a visualização sem salvar transformação ou criar alteração no rascunho", async () => {
+    const document = fixture(), change = vi.fn(), preview = vi.fn();
+    mounted = await reactHost(editor(document, change, preview));
+    await mounted.click("Ampliar prévia");
+    expect(change).not.toHaveBeenCalled();
+    expect(preview).not.toHaveBeenCalled();
+    expect(document.items[0].placement).toBeUndefined();
+    expect(mounted.host.querySelector<HTMLElement>(".composition-editor__canvas")!.dataset.previewZoom).toBe("1.25");
+  });
+
   it("permite transformar a mídia selecionada também na faixa principal", async () => {
     const document = fixture();
     document.items[0].trackId = document.tracks.find(track => track.primary)!.id;
@@ -115,9 +158,14 @@ describe("controles e gesto de sobreposição", () => {
 describe("transcrição durante reprodução contínua", () => {
   it("atualiza o tempo com frequência limitada sem aguardar o cursor parar", async () => {
     vi.useFakeTimers({ toFake: ["setTimeout", "clearTimeout", "setInterval", "clearInterval"] });
-    const document = fixture();
+    const legacy = emptyWorkspace();
+    legacy.media = { kind: "local", mediaId: "source", name: "Entrevista.mp4", duration: 10, width: 1920, height: 1080, videoId: null, url: null };
+    legacy.transcript = [{ id: "speech", start: 0, end: 8, text: "Uma fala durante a reprodução.", words: [{ text: "Uma fala durante a reprodução.", start: 0, end: 8 }] }];
+    const document = compositionFromLegacy(legacy, { fps: 30 });
+    document.items.find(item => item.kind === "video")!.id = "logo";
     mounted = await reactHost(editor(document));
     await mounted.click("Transcrição");
+    expect(mounted.host.querySelector("[data-transcript-time]")).not.toBeNull();
     for (const frame of [30, 60, 90, 120]) {
       await mounted.render(editor(document, vi.fn(), vi.fn(), frame));
       await act(async () => { await vi.advanceTimersByTimeAsync(50); });

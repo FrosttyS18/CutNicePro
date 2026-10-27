@@ -22,15 +22,18 @@ import { CropIcon } from "@phosphor-icons/react/dist/csr/Crop";
 import { EditorAction } from "./EditorAction";
 import { EditorInspector, type EditorPanel } from "./EditorInspector";
 import { CompositionStage } from "./CompositionStage";
-import { CompositionSelection } from "./CompositionSelection";
+import { CompositionPreviewViewport } from "./CompositionPreviewViewport";
 import { CompositionSource } from "./CompositionSource";
 import { useCompositionFraming } from "./useCompositionFraming";
 import { CompositionPlacementControls } from "./CompositionPlacementControls";
 import { CompositionSidePanel } from "./CompositionSidePanel";
 import { CompositionMediaLibrary } from "./CompositionMediaLibrary";
+import { CompositionMediaActions, type CompositionMediaMenu } from "./CompositionMediaActions";
 import { CompositionPreviewLoader } from "./CompositionPreviewLoader";
+import { EditorTranscriptionControls } from "./EditorTranscriptionControls";
 import { TranscriptPanel } from "../workspace/TranscriptPanel";
 import type { Composition, CompositionAsset, CompositionPlacement } from "../../lib/composition-types";
+import type { CompositionSnapGuides } from "../../lib/composition-preview-snap";
 import type { EditorSettings, TranscriptWord, WorkspaceData } from "../../lib/workspace-types";
 import type { TimelinePreviewData } from "./CompositionTrackLane";
 
@@ -38,17 +41,23 @@ interface Props {projectId:string;document:Composition;frame:number;playing:bool
   onChange:(document:Composition)=>void;onSeek:(frame:number)=>void;onPause:()=>void;onError:(message:string)=>void;
   onPreviews:(id:string,data:TimelinePreviewData)=>void;
   onReady?:(ready:boolean)=>void;
+  onClearSelection?:()=>void;
+  onSelect?:(id:string)=>void;
+  onSelectionChange?:(ids:string[])=>void;
   onPreview:(document:Composition|null)=>void;
   transcriptionControls?:ReactNode;canApplyCaptions?:boolean;onApplyCaptions?:()=>unknown;
   onApplyAll?:(model:number,style:CaptionStyle)=>Promise<void>;
   previews?:Record<string,TimelinePreviewData>;transport?:ReactNode;sourceRequest?:CompositionSourceRequest;
   onImportMedia?:()=>void;importDisabled?:boolean;libraryDropActive?:boolean;onAssetDrag?:(event:PointerEvent<HTMLElement>,asset:CompositionAsset)=>void;
 }
-export function CompositionEditorBody({projectId,document,frame,playing,selected,sourceId,sourceUrl,legacy,onChange,onSeek,onPause,onError,onPreviews,onPreview,onReady,transcriptionControls,canApplyCaptions,onApplyCaptions,onApplyAll,previews={},transport,sourceRequest={id:0,target:"cursor"},onImportMedia,importDisabled,libraryDropActive,onAssetDrag}:Props){
+export function CompositionEditorBody({projectId,document,frame,playing,selected,sourceId,sourceUrl,legacy,onChange,onSeek,onPause,onError,onPreviews,onPreview,onReady,onClearSelection,onSelect,onSelectionChange,transcriptionControls,canApplyCaptions,onApplyCaptions,onApplyAll,previews={},transport,sourceRequest={id:0,target:"cursor"},onImportMedia,importDisabled,libraryDropActive,onAssetDrag}:Props){
   const media=useCompositionMedia(document.assets,sourceId,sourceUrl);
   const [tab,setTab]=useState<"media"|"transcript">("media");
   const [source,setSource]=useState<string|null>(document.assets[0]?.id??null);
   const [sourceOpen,setSourceOpen]=useState(false);
+  const mediaScope=`${projectId}:${legacy.activeClipId??""}`;
+  const [mediaMenu,setMediaMenu]=useState<(CompositionMediaMenu&{scope:string})|null>(null);
+  const closeMediaMenu=useCallback(()=>setMediaMenu(null),[]);
   const [libraryOpen,setLibraryOpen]=useState(true);
   const [inspectorOpen,setInspectorOpen]=useState(true);
   const [libraryWidth,setLibraryWidth]=useState(288);
@@ -57,10 +66,22 @@ export function CompositionEditorBody({projectId,document,frame,playing,selected
   const [sourceIntent,setSourceIntent]=useState<{projectId:string;assetId:string;target:CompositionInsertionTarget}|null>(null);
   const panelId=useId();
   const stage=useRef<HTMLDivElement>(null);
+  const restoreMediaFocus=useRef(false);
+  useEffect(()=>{
+    if(!restoreMediaFocus.current)return;
+    restoreMediaFocus.current=false;
+    const card=stage.current?.parentElement?.querySelector<HTMLButtonElement>('[data-composition-library] .composition-media__asset[aria-pressed="true"]');
+    const editor=stage.current?.closest<HTMLElement>('[data-testid="video-editor"]');
+    (card??editor??stage.current)?.focus({preventScroll:true});
+  },[document.assets]);
   const focusSource=useCallback(()=>{stage.current?.querySelector<HTMLElement>(".composition-source")?.focus({preventScroll:true});},[]);
   const canvas=useRef<HTMLDivElement>(null);
   const [panel,setPanel]=useState<EditorPanel>("captions");
   const [framing,setFraming]=useState(false);
+  const [viewportRevision,setViewportRevision]=useState(0);
+  const viewportChanged=useCallback(()=>setViewportRevision(value=>value+1),[]);
+  const [snapGuides,setSnapGuides]=useState<CompositionSnapGuides>({});
+  const updateSnapGuides=useCallback((next:CompositionSnapGuides)=>setSnapGuides(previous=>previous.x===next.x&&previous.y===next.y?previous:next),[]);
   const entries=useMemo(()=>montageTranscript(document),[document]);
   const [transcriptFrame,setTranscriptFrame]=useState(frame);
   const latestFrame=useRef(frame);
@@ -89,6 +110,12 @@ export function CompositionEditorBody({projectId,document,frame,playing,selected
   const selectSource=(asset:CompositionAsset)=>{if(asset.id!==sourceAsset?.id)setSourceIntent(null);setSource(asset.id);};
   const openSource=(asset:CompositionAsset)=>{onPause();selectSource(asset);setSourceOpen(true);if(viewingSource&&asset.id===sourceAsset?.id)focusSource();};
   const closeSource=()=>{setSourceIntent(null);setSourceOpen(false);stage.current?.focus({preventScroll:true});};
+  const removedAsset=(assetId:string,next:Composition)=>{
+    restoreMediaFocus.current=true;
+    const removed=new Set(document.items.filter(value=>value.assetId===assetId).map(value=>value.id));
+    if(selected.some(id=>removed.has(id))){onSelectionChange?.(selected.filter(id=>!removed.has(id)));setFraming(false);}
+    if(sourceAsset?.id===assetId){setSource(next.assets[0]?.id??null);setSourceOpen(false);setSourceIntent(null);}
+  };
   const insertSource=(asset:CompositionAsset,start=0,end=asset.durationUs/1e6,target:CompositionInsertionTarget="cursor",mode:"sequence"|"overlay"="sequence")=>{
     try{onPause();const insert=mode==="overlay"?overlayComposition:insertComposition;onChange(insert(document,fragmentFromAsset(document,asset,start,end,asset.mediaId!==sourceId||document.items.some(value=>value.kind==="audio"&&value.assetId===asset.id)),resolveInsertionFrame(document,target,frame)));setSourceIntent(null);return true;}
     catch(error){onError(error instanceof Error?error.message:"Não foi possível adicionar a fonte");return false;}
@@ -104,7 +131,7 @@ export function CompositionEditorBody({projectId,document,frame,playing,selected
   const pauseForFraming=()=>{onPause();if(playing)onSeek(frame);};
   const pointer=useCompositionFraming({document,item:framing?item:selectedVisual,time:item?sourceTimeAt(item,frame,document.fps):0,
     frame,playing,selectionKey:selected.join("|"),stageRef:canvas,onPause:pauseForFraming,
-    enabled:framing||Boolean(selectedVisual),mode:framing?"crop":"placement",onPreview,onChange,onError});
+    enabled:!viewingSource&&(framing||Boolean(selectedVisual)||Boolean(onSelect)),mode:framing?"crop":"placement",viewportRevision,onSelect,onSnapGuides:updateSnapGuides,onPreview,onChange,onError});
   const changePlacement=(placement:CompositionPlacement)=>{
     if(!selectedVisual)return;
     if(itemTrack?.locked){onError("A faixa selecionada está bloqueada");return;}
@@ -146,15 +173,17 @@ export function CompositionEditorBody({projectId,document,frame,playing,selected
       </div>
       <div role="tabpanel" id={`${panelId}-media`} aria-labelledby={`${panelId}-media-tab`} hidden={tab!=="media"} className="composition-editor__sources">
         <CompositionMediaLibrary projectId={projectId} assets={document.assets} selectedId={sourceAsset?.id} previews={previews} media={media} onImport={onImportMedia} importDisabled={importDisabled} dropActive={libraryDropActive} onAssetDrag={onAssetDrag}
-          onSelect={selectSource} onOpen={openSource} onInsert={asset=>insertSource(asset)}/>
+          onSelect={selectSource} onOpen={openSource} onInsert={asset=>insertSource(asset)} onContext={(asset,point)=>setMediaMenu({assetId:asset.id,...point,scope:mediaScope})}/>
+        <CompositionMediaActions key={mediaScope} projectId={projectId} document={document} menu={mediaMenu?.scope===mediaScope?mediaMenu:null} disabled={importDisabled} media={media}
+          onClose={closeMediaMenu} onChange={onChange} onRemoved={removedAsset} onPause={onPause} onError={onError}/>
       </div>
       <div role="tabpanel" id={`${panelId}-transcript`} aria-labelledby={`${panelId}-transcript-tab`} hidden={tab!=="transcript"} className="composition-editor__transcript">
-        {!entries.length&&transcriptionControls}
-        {canApplyCaptions&&onApplyCaptions&&<div className="studio-section"><p className="flow-muted">A transcrição da fonte está disponível. Aplicar adiciona uma edição ao rascunho atual.</p>
+        {transcriptionControls ? !entries.length && transcriptionControls : tab === "transcript" && <EditorTranscriptionControls projectId={projectId} document={document} preferredAssetId={selected.length ? itemAsset?.id : sourceAsset?.id} onChange={onChange} onPause={onPause} onError={onError}/>}
+        {transcriptionControls&&canApplyCaptions&&onApplyCaptions&&<div className="studio-section"><p className="flow-muted">A transcrição da fonte está disponível. Aplicar adiciona uma edição ao rascunho atual.</p>
           <EditorAction label="Aplicar legendas à montagem" icon={<ClosedCaptioningIcon size={16} aria-hidden="true"/>} onClick={()=>{onPause();onApplyCaptions();}}/>
         </div>}
         {item&&<p className="flow-muted" role="status">{itemAsset?.name} · {formatMediaTime(frameToSeconds(item.startFrame,document.fps))}–{formatMediaTime(frameToSeconds(item.startFrame+item.durationFrames,document.fps))} na montagem</p>}
-        <TranscriptPanel segments={transcriptSegments} contextKey={transcriptItemId} demo={false} currentTime={frameToSeconds(transcriptFrame,document.fps)} canSeek generated={legacy.transcriptMode==="real"} onSeek={seekTranscript} onText={editCaption}/>
+        {(transcriptionControls || transcriptSegments.length > 0) && <TranscriptPanel segments={transcriptSegments} contextKey={transcriptItemId} demo={false} currentTime={frameToSeconds(transcriptFrame,document.fps)} canSeek generated={legacy.transcriptMode==="real"} onSeek={seekTranscript} onText={editCaption}/>}
       </div>
       </aside>
     </CompositionSidePanel>}
@@ -166,10 +195,9 @@ export function CompositionEditorBody({projectId,document,frame,playing,selected
       </div></div>
       {viewingSource&&sourceAsset ? <div className="composition-editor__source-view"><CompositionSource key={sourceAsset.id} asset={sourceAsset} fps={document.fps} frames={previews[sourceAsset.id]?.frames} url={media[sourceAsset.id]?.url??null} onActivate={onPause} insertLabel={insertionTargetLabel(sourceTarget)} target={sourceTarget}
         onInsert={(start,end)=>{if(insertSource(sourceAsset,start,end,sourceTarget,"overlay"))closeSource();}}/></div>
-        : <div ref={canvas} className="composition-editor__canvas" data-framing={framing} data-placement={Boolean(selectedVisual)&&!framing} onPointerDown={pointer}>
+        : <CompositionPreviewViewport canvasRef={canvas} document={document} frame={frame} item={selectedVisual} framing={framing} snapGuides={snapGuides} onPointerDown={pointer} onViewChange={viewportChanged} onDeselect={()=>{setFraming(false);onClearSelection?.();}}>
           <CompositionStage document={document} frame={frame} playing={playing} media={media} onError={onError} onReady={onReady}/>
-          <CompositionSelection document={document} item={selectedVisual} frame={frame} containerRef={canvas} onPointerDown={pointer}/>
-        </div>}
+        </CompositionPreviewViewport>}
       <div className="composition-editor__preview-status">{document.assets.filter(asset=>document.items.some(item=>item.assetId===asset.id)||viewingSource&&asset.id===sourceAsset?.id).map(asset=><CompositionPreviewLoader key={asset.id} asset={asset} imageUrl={media[asset.id]?.url} onData={onPreviews}/>)}</div>
       {!viewingSource&&transport&&<div className="composition-editor__viewer-transport">{transport}</div>}
     </div>

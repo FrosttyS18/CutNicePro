@@ -1,0 +1,90 @@
+╔════════════════════════════════════════════╗
+║       CUTNICEPRO — ZCODE REPORT            ║
+╚════════════════════════════════════════════╝
+
+TASK
+  Name: Estabilidade do arraste vertical
+  Status: PARTIAL — correção testada; reteste manual pendente.
+  Scope/Objective: substituir o flick por indicação clara do destino.
+  Result: build normal atualizada e aberta.
+  FUNCTIONAL STATUS: PARTIAL
+  REGRESSION STATUS: PASS nos testes relacionados
+  VISUAL STATUS: PENDING HUMAN APPROVAL
+
+IMPLEMENTATION
+  Completed: durante a troca vertical, as faixas permanecem estáveis.
+    Uma linha indica destino e posição; a mudança acontece só ao soltar.
+    Áudio/legendas vinculados são preservados.
+  Cancelar, soltar fora, na régua ou no cabeçalho não confirma a mudança.
+    Escape e redimensionamento cancelam; rolagem atualiza a indicação.
+  Preservados: arraste horizontal, alças, cursor, foco, Espaço e histórico.
+  Architecture impact: sem dependências, migração, nova build paralela ou Rust.
+  Not completed: confirmação do flick no aplicativo normal pelo mantenedor.
+    Shift na prévia já recebeu confirmação funcional.
+
+FILES
+  Modified: useCompositionGesture.ts, CompositionTimeline.tsx,
+    composition-timeline.css; testes spatial-gesture e move-cursor;
+    plano, ENGINE-HANDOFF Complemento26, Brain, backlog, regras,
+    rastreabilidade, manifesto existente e LATEST.txt.
+  Created: relatório histórico indicado abaixo.
+  Deleted: nenhum. Unexpected changes: nenhuma identificada.
+  Dois blocos documentais duplicados foram consolidados, preservando as regras.
+
+VALIDATION
+  TDD inicial: 13 falhas reproduzidas em 42 testes.
+  Rodada final: 88/88 testes relacionados, oito arquivos; zero falhas/ignorados.
+  Reteste após ajuste de lint: 31/31, incluídos nos 88.
+  Typecheck/build/lint/diff-check: PASS; build sem warnings.
+  Sem nova suíte integral ou execução Rust nesta continuação.
+  Visual/runtime interativo: pendente; processo normal e HTTP200 confirmados.
+  Não confundir testes DOM com aprovação do comportamento no WebView.
+
+HOOKS / HARNESS
+  Hooks externos: não auditados. Testes pelos runners existentes.
+  Gate: técnico aprovado no escopo; uso normal ainda pendente.
+
+MCP / SKILLS
+  Graphify remoto consultado antes/depois; diagnóstico sistemático e TDD.
+  Dois subagentes: testes de comportamento e revisão independente.
+  Índice de8ed09; alterações locais continuam fora do grafo publicado.
+
+GIT
+  Branch: main
+  HEAD: de8ed09878b540cfb838ed4eb966571f0cf49f54
+  Latest commit: docs(editor): registrar aceite e publicação do zoom
+  Commits: nenhum. Push: NOT EXECUTED.
+  Remote: origin → FrosttyS18/CutNicePro.
+  Working tree: MODIFIED + UNTRACKED; trabalho anterior preservado.
+
+EVIDENCE
+  Vitest afetados, npm run build, npm run lint e git diff --check.
+  Manifesto: docs/reports/evidence/editor-basico-2026-10-26/
+    editor-arraste-selecao-2026-10-27.json, seção flickContinuation.
+  Sem novas capturas nem controle interativo do PC.
+  Revisão finita não encontrou outro P1/P2 concreto nesta correção.
+
+ISSUES
+  Causa: a prévia criava/removia faixas e elementos vinculados durante o gesto.
+  Candidato agora fica separado da montagem até a soltura.
+  Falhas finais automatizadas: nenhuma.
+  Risco/pendência: reteste manual do flick; metas amplas de desempenho adiadas.
+
+FINAL
+  Delivery status: PARTIAL por reteste; meta integral permanece ativa.
+  Requirements met: implementação e testes do indicador e estabilidade.
+  Remaining work/User action: teste abaixo. Sem retomada dos estudos adiados.
+  Restart required: NÃO — build normal já aberta, perfil normal:
+    C:/CutNicePro/app/src-tauri/target/debug/cutnicepro.exe
+    PID43404 e frontend1420 HTTP200 na verificação.
+  Ready for next task: após feedback deste ajuste.
+
+REPORT
+  Latest: docs/reports/LATEST.txt
+  History: docs/reports/history/2026-10-27_070506_editor-arraste-vertical.txt
+
+GUIA DO MANTENEDOR — O QUE MUDOU E COMO TESTAR
+  1. Arraste rapidamente um trecho para cima: deve aparecer a linha de destino,
+     sem criar/remover faixas durante o movimento. Solte para confirmar.
+  2. Repita e pressione Escape: deve cancelar. Confira também Desfazer/Refazer
+     e Espaço depois de confirmar o movimento.

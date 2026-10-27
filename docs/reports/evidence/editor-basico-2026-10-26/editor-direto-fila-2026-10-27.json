@@ -1,0 +1,332 @@
+{
+  "task": "editor-direto-fila-2026-10-27",
+  "head": "de8ed09878b540cfb838ed4eb966571f0cf49f54",
+  "version": "0.19.0",
+  "requirements": [
+    "BR-EDITOR-10",
+    "AC-EDITOR-10",
+    "BR-EDITOR-11",
+    "AC-EDITOR-11"
+  ],
+  "validation": {
+    "typescript": {
+      "passed": 1267,
+      "failed": 0,
+      "files": 188,
+      "command": "npm test -- --maxWorkers=2 --minWorkers=1"
+    },
+    "rust": {
+      "passed": 374,
+      "failed": 0,
+      "ignored": 33,
+      "total": 407,
+      "command": "cargo test --lib"
+    },
+    "lint": "PASS: npm run lint + affected final files",
+    "build": "PASS: npm run build; npm run tauri dev -- --no-watch",
+    "runtime": {
+      "path": "C:/CutNicePro/app/src-tauri/target/debug/cutnicepro.exe",
+      "frontend": 1420,
+      "health": 200,
+      "acceptance": "PENDING MANUAL TEST"
+    },
+    "render": "Real FFmpeg fixtures 1x/2x/8x/3.5x+opacity/transparent/offscreen; mean RGB tolerance <8",
+    "asr": "Contracts/storage/jobs only; no real inference",
+    "visual": "PENDING HUMAN APPROVAL"
+  },
+  "graphify": {
+    "workspace": "wesley-s-workspace",
+    "repo": "FrosttyS18/CutNicePro",
+    "commit": "de8ed09878b540cfb838ed4eb966571f0cf49f54",
+    "build": "a3c2370e-add3-4233-b1bc-2ae26bba2bf3",
+    "indexedAt": "2026-10-27T08:10:33.923631Z",
+    "localChanges": "NOT INDEXED; source/diff/tests complement graph"
+  },
+  "reviews": {
+    "fixed": [
+      "UUID media ID rejected by ASR hash-only validation",
+      "old ASR cache applicable during replacement read/failure"
+    ],
+    "remainingScopedP1P2": "none found by static review; not a guarantee"
+  },
+  "laterRequests": {
+    "snap": "center/edges/corners; 6 visual pixels; Alt bypass; transient guides; move only",
+    "deselect": "primary blank click clears actual selected/range without seek/save; handles/controls/map/pan retain selection"
+  },
+  "files": [
+    {
+      "status": " M",
+      "path": "app/src-tauri/src/editor/mod.rs"
+    },
+    {
+      "status": " M",
+      "path": "app/src-tauri/src/editor/render_graph.rs"
+    },
+    {
+      "status": " M",
+      "path": "app/src-tauri/src/editor/tests.rs"
+    },
+    {
+      "status": " M",
+      "path": "app/src-tauri/src/editor/types.rs"
+    },
+    {
+      "status": " M",
+      "path": "app/src-tauri/src/lib.rs"
+    },
+    {
+      "status": " M",
+      "path": "app/src-tauri/src/project_delete.rs"
+    },
+    {
+      "status": " M",
+      "path": "app/src-tauri/src/transcription/commands.rs"
+    },
+    {
+      "status": " M",
+      "path": "app/src-tauri/src/transcription/jobs.rs"
+    },
+    {
+      "status": " M",
+      "path": "app/src-tauri/src/transcription/mod.rs"
+    },
+    {
+      "status": " M",
+      "path": "app/src-tauri/src/transcription/types.rs"
+    },
+    {
+      "status": " M",
+      "path": "app/src/App.tsx"
+    },
+    {
+      "status": " M",
+      "path": "app/src/components/editor/CompositionEditor.tsx"
+    },
+    {
+      "status": " M",
+      "path": "app/src/components/editor/CompositionEditorBody.tsx"
+    },
+    {
+      "status": " M",
+      "path": "app/src/components/editor/CompositionMediaLibrary.tsx"
+    },
+    {
+      "status": " M",
+      "path": "app/src/components/editor/CompositionPlacementControls.tsx"
+    },
+    {
+      "status": " M",
+      "path": "app/src/components/editor/CompositionSelection.tsx"
+    },
+    {
+      "status": " M",
+      "path": "app/src/components/editor/InspectorNumberField.tsx"
+    },
+    {
+      "status": " M",
+      "path": "app/src/components/editor/composition-editor.css"
+    },
+    {
+      "status": " M",
+      "path": "app/src/components/editor/useCompositionFraming.ts"
+    },
+    {
+      "status": " M",
+      "path": "app/src/components/shell/AppShell.tsx"
+    },
+    {
+      "status": " M",
+      "path": "app/src/hooks/useCompositionMediaReadiness.ts"
+    },
+    {
+      "status": " M",
+      "path": "app/src/lib/composition-captions.ts"
+    },
+    {
+      "status": " M",
+      "path": "app/src/lib/composition-clock.ts"
+    },
+    {
+      "status": " M",
+      "path": "app/src/lib/composition-media-geometry.ts"
+    },
+    {
+      "status": " M",
+      "path": "app/src/lib/composition-placement.ts"
+    },
+    {
+      "status": " M",
+      "path": "app/src/lib/project-navigation.ts"
+    },
+    {
+      "status": " M",
+      "path": "app/src/lib/workspace-types.ts"
+    },
+    {
+      "status": " M",
+      "path": "app/src/screens/ProjectWorkspace.tsx"
+    },
+    {
+      "status": " M",
+      "path": "app/src/services/workspace-store.ts"
+    },
+    {
+      "status": " M",
+      "path": "app/src/test/composition-body-placement.test.tsx"
+    },
+    {
+      "status": " M",
+      "path": "app/src/test/composition-captions.test.ts"
+    },
+    {
+      "status": " M",
+      "path": "app/src/test/composition-clock.test.ts"
+    },
+    {
+      "status": " M",
+      "path": "app/src/test/composition-framing-gesture.test.tsx"
+    },
+    {
+      "status": " M",
+      "path": "app/src/test/composition-media-geometry.test.ts"
+    },
+    {
+      "status": " M",
+      "path": "app/src/test/composition-placement.test.tsx"
+    },
+    {
+      "status": " M",
+      "path": "app/src/test/composition-screen.test.tsx"
+    },
+    {
+      "status": " M",
+      "path": "app/src/test/reframe-numeric-controls.test.tsx"
+    },
+    {
+      "status": " M",
+      "path": "docs/engineering/EDITOR-BASIC-IMPLEMENTATION-PLAN.md"
+    },
+    {
+      "status": " M",
+      "path": "docs/engineering/ENGINE-HANDOFF.md"
+    },
+    {
+      "status": " M",
+      "path": "docs/product/BACKLOG.md"
+    },
+    {
+      "status": " M",
+      "path": "docs/product/BUSINESS-RULES.md"
+    },
+    {
+      "status": " M",
+      "path": "docs/product/PRODUCT-BRAIN.md"
+    },
+    {
+      "status": " M",
+      "path": "docs/product/TRACEABILITY.md"
+    },
+    {
+      "status": "??",
+      "path": "app/src-tauri/src/editor/render_placement_tests.rs"
+    },
+    {
+      "status": "??",
+      "path": "app/src-tauri/src/transcription/editor_commands.rs"
+    },
+    {
+      "status": "??",
+      "path": "app/src-tauri/src/transcription/editor_store.rs"
+    },
+    {
+      "status": "??",
+      "path": "app/src/components/editor/CompositionPreviewViewport.tsx"
+    },
+    {
+      "status": "??",
+      "path": "app/src/components/editor/EditorTranscriptionControls.tsx"
+    },
+    {
+      "status": "??",
+      "path": "app/src/components/editor/composition-preview-viewport.css"
+    },
+    {
+      "status": "??",
+      "path": "app/src/components/editor/usePreviewViewport.ts"
+    },
+    {
+      "status": "??",
+      "path": "app/src/components/shell/EditorRailButton.tsx"
+    },
+    {
+      "status": "??",
+      "path": "app/src/hooks/useEditorTranscription.ts"
+    },
+    {
+      "status": "??",
+      "path": "app/src/lib/composition-preview-snap.ts"
+    },
+    {
+      "status": "??",
+      "path": "app/src/lib/editor-transcription.ts"
+    },
+    {
+      "status": "??",
+      "path": "app/src/lib/preview-viewport.ts"
+    },
+    {
+      "status": "??",
+      "path": "app/src/services/direct-editor.ts"
+    },
+    {
+      "status": "??",
+      "path": "app/src/test/composition-media-footer.test.tsx"
+    },
+    {
+      "status": "??",
+      "path": "app/src/test/composition-playback-tail.test.tsx"
+    },
+    {
+      "status": "??",
+      "path": "app/src/test/composition-preview-snap.test.ts"
+    },
+    {
+      "status": "??",
+      "path": "app/src/test/composition-preview-viewport.test.tsx"
+    },
+    {
+      "status": "??",
+      "path": "app/src/test/direct-editor-navigation.test.tsx"
+    },
+    {
+      "status": "??",
+      "path": "app/src/test/direct-editor-service.test.tsx"
+    },
+    {
+      "status": "??",
+      "path": "app/src/test/editor-transcription-contract.test.ts"
+    },
+    {
+      "status": "??",
+      "path": "app/src/test/editor-transcription-freshness.test.tsx"
+    },
+    {
+      "status": "??",
+      "path": "app/src/test/editor-transcription-hook.test.tsx"
+    },
+    {
+      "status": "??",
+      "path": "app/src/test/editor-transcription-ui.test.tsx"
+    },
+    {
+      "status": "??",
+      "path": "app/src/test/preview-viewport.test.ts"
+    },
+    {
+      "status": "??",
+      "path": "docs/reports/evidence/editor-basico-2026-10-26/editor-direto-fila-2026-10-27.json"
+    }
+  ],
+  "commits": [],
+  "push": "NOT EXECUTED"
+}

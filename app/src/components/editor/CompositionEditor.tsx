@@ -210,7 +210,7 @@ export function CompositionEditor({projectId,title,data,localUrl,onBack,onShowCl
     </div>
     <CompositionEditorBody projectId={projectId} document={document} frame={Math.min(playback.frame,Math.max(0,duration-1))} playing={playback.playing} selected={selected} sourceId={data.media?.mediaId} sourceUrl={localUrl} legacy={data}
       onChange={change} onSeek={playback.seek} onPause={playback.pause} onError={report} onPreviews={onPreviews} onPreview={setPreview} transcriptionControls={transcriptionControls} canApplyCaptions={editor.canApplyCaptions} onApplyCaptions={editor.applyCaptions} onApplyAll={allClips?.length?applyAll:undefined}
-      previews={previews} sourceRequest={sourceRequest}
+      previews={previews} sourceRequest={sourceRequest} onClearSelection={()=>{setSelected([]);setRange(null);}} onSelect={id=>{setSelected([id]);setRange(null);}} onSelectionChange={ids=>{setSelected(ids);setRange(null);}}
       onImportMedia={()=>{playback.pause();void importer.pickLibrary();}} importDisabled={additionsBlocked} libraryDropActive={mediaDrop.libraryDropActive} onAssetDrag={mediaDrop.beginAssetDrag}
       onReady={setReady} transport={<CompositionPlaybackControls frame={playback.frame} duration={duration} fps={document.fps} playing={playback.playing} buffering={playback.buffering} onToggle={playback.toggle} onSeek={playback.seek}/>}/>
     <div className="composition-editor__timeline" data-editor-viewer="montage" tabIndex={0}>

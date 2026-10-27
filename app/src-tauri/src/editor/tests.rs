@@ -47,6 +47,20 @@ fn empty_composition_is_valid_and_unknown_contract_fields_are_rejected() {
     assert!(serde_json::from_value::<Composition>(invalid).is_err());
 }
 
+#[test]
+fn placement_accepts_eight_times_scale_and_rejects_invalid_limits() {
+    for scale in [0.1, 1.0, 2.0, 4.0, 8.0] {
+        let value = json!({"x":25.455123,"y":71.239,"scale":scale,"opacity":0.8});
+        let placement: super::types::Placement = serde_json::from_value(value.clone()).unwrap();
+        assert!(placement.valid(), "escala recusada: {scale}");
+        assert_eq!(serde_json::to_value(placement).unwrap(), value);
+    }
+    for scale in [0.0, 0.09, 8.01, f64::INFINITY, f64::NAN] {
+        let placement = super::types::Placement { scale, ..Default::default() };
+        assert!(!placement.valid());
+    }
+}
+
 fn marker_document() -> serde_json::Value {
     let mut value = serde_json::to_value(fixture()).unwrap();
     value["markers"] = json!([{"id":"marker","name":"Marcador","frame":900,"color":"#00C2BE"}]);

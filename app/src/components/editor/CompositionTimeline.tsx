@@ -17,7 +17,7 @@ import { CompositionMarkers } from "./CompositionMarkers";
 import type { EditorMenuItem } from "./EditorMenu";
 import { CompositionTrackLane, type CompositionTrackPatch, type TimelinePreviewData } from "./CompositionTrackLane";
 import { trackDisplayEnd } from "./composition-track-layout";
-import { useCompositionGesture } from "./useCompositionGesture";
+import { useCompositionGesture, type CompositionTrackDropPreview } from "./useCompositionGesture";
 import { useTimelineWheelZoom, type TimelineZoomPointer } from "./useTimelineWheelZoom";
 import type { Composition, CompositionItem } from "../../lib/composition-types";
 import { compositionDropTarget,containsDropPoint,type CompositionDropPoint } from "../../lib/composition-drop-geometry";
@@ -65,6 +65,10 @@ export function CompositionTimeline(props: Props) {
   const [scroll,setScroll] = useState(0);
   const [focusedTrack,setFocusedTrack] = useState<string|null>(null);
   const [gesturing,setGesturing]=useState(false);
+  const [trackDrop,setTrackDrop]=useState<(CompositionTrackDropPreview&{top:number})|null>(null);
+  const previewTrackDrop=useCallback((value:CompositionTrackDropPreview|null)=>{
+    setTrackDrop(value?{...value,top:value.y-(viewport.current?.getBoundingClientRect().top??0)}:null);
+  },[]);
   const [localMagnetic,setLocalMagnetic]=useState(true);
   const magnetic=props.magnetic??localMagnetic;
   const [scale,setScale] = useState(()=>fitScale(900,Math.max(extent,document.fps.numerator/document.fps.denominator*10),inset));
@@ -78,10 +82,11 @@ export function CompositionTimeline(props: Props) {
     const ref=props.dropController,element=viewport.current;
     if(!ref||!element)return;
     const geometry=()=>({rect:element.getBoundingClientRect(),scrollLeft:element.scrollLeft,inset,scale,
+      contentTop:Math.max(element.getBoundingClientRect().top,element.querySelector<HTMLElement>('.composition-ruler')?.getBoundingClientRect().bottom??0),
       newTrack:element.querySelector<HTMLElement>('[data-drop-new-track]')?.getBoundingClientRect(),
       lanes:[...element.querySelectorAll<HTMLElement>('[data-composition-track]')].flatMap(lane=>{
         const track=document.tracks.find(track=>track.id===lane.dataset.compositionTrack);
-        return track?[{rect:lane.getBoundingClientRect(),trackId:track.id,kind:track.kind,locked:track.locked,primary:track.primary}]:[];
+        return track?[{rect:lane.getBoundingClientRect(),trackId:track.id,kind:track.kind,locked:track.locked,primary:track.primary,occupied:document.items.some(item=>item.trackId===track.id)}]:[];
       })});
     const resolve=(point:CompositionDropPoint,kind:Composition["assets"][number]["kind"])=>compositionDropTarget(geometry(),point,kind);
     const clear=()=>{element.removeAttribute("data-dragging");setDropMarker(current=>current?null:current);};
@@ -90,7 +95,9 @@ export function CompositionTimeline(props: Props) {
         if(!containsDropPoint(element.getBoundingClientRect(),point)){clear();return null;}
         element.setAttribute("data-dragging","true");scrollTimelineAtPointer(element,point.x);
         const current=geometry(),target=compositionDropTarget(current,point,kind);
-        const rect=target?.trackId===null?current.newTrack:current.lanes.find(lane=>lane.trackId===target?.trackId)?.rect;
+        const availableHeight=Math.max(0,current.rect.bottom-current.contentTop),markerHeight=Math.min(56,availableHeight);
+        const markerTop=Math.max(current.contentTop,Math.min(point.y-markerHeight/2,current.rect.bottom-markerHeight));
+        const rect=target?.trackId===null?{top:markerTop,bottom:markerTop+markerHeight}:current.lanes.find(lane=>lane.trackId===target?.trackId)?.rect;
         const content=element.querySelector<HTMLElement>('.composition-timeline__content')?.getBoundingClientRect();
         if(!target||!rect||!content){setDropMarker(value=>value?null:value);return null;}
         const top=rect.top-content.top,height=rect.bottom-rect.top;
@@ -115,7 +122,7 @@ export function CompositionTimeline(props: Props) {
   },[scale,scroll]);
   useEffect(()=>()=>dragCleanup.current?.(),[]);
   const previewGesture=useCallback((next:Composition|null,at?:number)=>{setGesturing(next!==null);if(at===undefined)onPreview(next);else onPreview(next,at);},[onPreview]);
-  const gesture = useCompositionGesture({ ...props, onPreview:previewGesture, magnetic, scale, viewport });
+  const gesture = useCompositionGesture({ ...props, onPreview:previewGesture, onTrackDropPreview:previewTrackDrop, magnetic, scale, viewport });
   const contentWidthAt=useCallback((next:number,available:number)=>Math.max(available-144,inset*2+extent*next,
     props.endAddItems?trackDisplayEnd(primaryItems,next,inset)+12+28+8:0),[extent,inset,primaryItems,props.endAddItems]);
   const zoomTo=useCallback((next:number,left:number,available:number)=>{
@@ -248,7 +255,7 @@ export function CompositionTimeline(props: Props) {
           {ticks.map(value=><span key={value} style={{left:inset+value*scale}}>{new Date(frameToSeconds(value,document.fps)*1000).toISOString().slice(11,19)}</span>)}
           {props.onMarkerEdit&&<CompositionMarkers markers={document.markers??[]} fps={document.fps} inset={inset} scale={scale} scroll={scroll} width={width} onSeek={onSeek} onEdit={props.onMarkerEdit}/>}
         </div></div>
-        <div className="composition-timeline__new-track" data-drop-new-track role="region" aria-label="Nova camada de vídeo"><span>Solte para criar uma camada</span></div>
+        <div className="composition-timeline__new-track" data-drop-new-track role="region" aria-label="Nova camada de vídeo"/>
         <div className="composition-timeline__lanes" onPointerDownCapture={event=>{
           if((event.target as HTMLElement).closest('.composition-track__label,.composition-track__add'))return;
           if(props.mode==="range"){beginScrub(event,true);return;}
@@ -264,6 +271,10 @@ export function CompositionTimeline(props: Props) {
         {dropMarker&&<div className="composition-range" aria-label="Ponto de inserção" style={{left:144+inset+dropMarker.target.frame*scale,width:2,top:dropMarker.top,height:dropMarker.height,bottom:"auto"}}/>}
       </div>
       </div>
+      {trackDrop&&<div className="composition-timeline__track-drop" role="status" aria-label={trackDrop.newTrack?"Soltar em nova camada":"Soltar na faixa de destino"}
+        data-drop-track={trackDrop.trackId} data-start-frame={trackDrop.frame} style={{top:trackDrop.top}}>
+        <span style={{left:144+inset+trackDrop.frame*scale-scroll}}/>
+      </div>}
       <CompositionTimelineCursor frame={frame} duration={duration} left={144+inset+frame*scale-scroll} width={width} height={height}
         onSeek={onSeek} onPointerDown={event=>beginScrub(event,false)}/>
     </div>

@@ -3,8 +3,9 @@ import { IconHome, IconProjects, IconSettings, IconSidePanel } from "../icons";
 import { Breadcrumb, type Crumb } from "./Breadcrumb";
 import avatarUrl from "../../assets/avatar-perfil.png";
 import logoSidebarUrl from "../../assets/logo-sidebar.svg";
+import { EditorRailButton } from "./EditorRailButton";
 
-export type ShellSection = "home" | "projects";
+export type ShellSection = "home" | "projects" | "editor";
 export type ProjectsSub = "all" | "collections" | "upload";
 
 interface Props {
@@ -15,6 +16,8 @@ interface Props {
   crumbs: Crumb[];
   onNavigateHome: () => void;
   onNavigateProjects: (sub: ProjectsSub) => void;
+  onNavigateEditor: () => void;
+  openingEditor?: boolean;
   children: ReactNode;
 }
 
@@ -32,6 +35,8 @@ export function AppShell({
   crumbs,
   onNavigateHome,
   onNavigateProjects,
+  onNavigateEditor,
+  openingEditor = false,
   children,
 }: Props) {
   return (
@@ -58,6 +63,7 @@ export function AppShell({
         >
           <IconProjects size={24} />
         </button>
+        <EditorRailButton active={section === "editor"} busy={openingEditor} onClick={onNavigateEditor}/>
         <div className="rail__spacer" />
         <button type="button" className="rail__btn rail__btn--disabled" disabled aria-label="Configurações" title="Configurações">
           <IconSettings size={24} />
@@ -84,7 +90,10 @@ export function AppShell({
               Início
             </button>
           </>
-        ) : (
+        ) : section === "editor" ? <>
+          <h2 className="side-panel__title">Editor</h2>
+          <button type="button" className="side-panel__pill side-panel__pill--active" aria-current="page" disabled={openingEditor} onClick={onNavigateEditor}>Editor</button>
+        </> : (
           <>
             <h2 className="side-panel__title">Meus Projetos</h2>
             <button type="button"

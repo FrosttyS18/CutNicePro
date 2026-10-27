@@ -72,10 +72,10 @@ export function ProjectWorkspace({ project, initialView = "overview", initialEdi
     setView("editor");
   }
   function leaveEditor() {
-    if (editorOrigin === "library" && onReturnToLibrary) onReturnToLibrary();
+    if ((editorOrigin === "library" || editorOrigin === "editor") && onReturnToLibrary) onReturnToLibrary();
     else setView(editorOrigin === "clips" ? "clips" : "overview");
   }
-  const editorBackLabel = editorOrigin === "library" && onReturnToLibrary ? "Voltar à biblioteca" : editorOrigin === "clips" ? "Voltar aos clipes" : "Voltar ao projeto";
+  const editorBackLabel = editorOrigin === "editor" ? "Voltar aos projetos" : editorOrigin === "library" && onReturnToLibrary ? "Voltar à biblioteca" : editorOrigin === "clips" ? "Voltar aos clipes" : "Voltar ao projeto";
   return (
     <div className={view === "editor" ? "project-workspace project-workspace--editing" : "project-workspace"}>
       {view === "overview" ? <>
@@ -112,7 +112,7 @@ export function ProjectWorkspace({ project, initialView = "overview", initialEdi
       </div>}
       {view === "editor" && <EditorOpenBoundary key={`${workspace.data.tool}:${activeClip ?? "video"}`} onBack={leaveEditor} backLabel={editorBackLabel}>
         <Suspense fallback={<EditorLoading onBack={leaveEditor} backLabel={editorBackLabel} />}><VideoEditor projectId={project.id} title={project.name} activeClip={activeClip ? clips.collection?.clips.find(clip => clip.id === activeClip) : undefined} data={workspace.data} localUrl={workspace.localUrl} dirty={workspace.dirty}
-          onChange={workspace.change} onSave={workspace.save} onBack={leaveEditor} transcriptionControls={workspace.data.transcript.length ? undefined : transcriptionControls} transcribing={transcription.busy || clips.busy}
+          onChange={workspace.change} onSave={workspace.save} onBack={leaveEditor} transcribing={transcription.busy || clips.busy}
           allClips={clips.collection?.clips} onShowClips={()=>{clips.reload();setView("clips");}} /></Suspense>
       </EditorOpenBoundary>}
       <ClipFeedback job={clips.job} ownedJob={clips.ownedJob} notice={clips.notice}/>

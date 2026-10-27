@@ -42,6 +42,14 @@ pub struct JobSnapshot {
     pub operation: Option<String>,
 }
 
+#[derive(Clone, Debug, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct EditorTranscriptionJob {
+    #[serde(flatten)]
+    pub job: JobSnapshot,
+    pub media_id: String,
+}
+
 #[derive(Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct EngineStatus {

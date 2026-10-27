@@ -36,7 +36,8 @@ export function useCompositionMediaReadiness(
         source.report(!failed && current && image.complete && image.naturalWidth > 0);
       } else {
         const media = element as HTMLMediaElement;
-        source.report(!failed && !blocked && !media.error && current && media.readyState >= 3 && !media.seeking);
+        const available = media.ended ? media.readyState >= 2 : !blocked && media.readyState >= 3;
+        source.report(!failed && !media.error && current && available && !media.seeking);
       }
     };
     const markFailed = () => { failed = true; latched = true; source.report(false); };
@@ -47,7 +48,7 @@ export function useCompositionMediaReadiness(
       if (["load", "loadedmetadata", "loadeddata", "canplay", "canplaythrough", "playing", "seeked"].includes(event.type)) { blocked = false; if (!latched) failed = false; }
       check();
     };
-    const events = ["load", "error", "emptied", "loadedmetadata", "loadeddata", "canplay", "canplaythrough", "waiting", "stalled", "seeking", "seeked", "pause", "playing"];
+    const events = ["load", "error", "emptied", "loadedmetadata", "loadeddata", "canplay", "canplaythrough", "waiting", "stalled", "seeking", "seeked", "pause", "playing", "ended"];
     events.forEach(event => element.addEventListener(event, update));
     probe.current = check; fail.current = markFailed; reset.current = resetFailure; check();
     return () => {

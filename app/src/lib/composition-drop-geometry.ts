@@ -3,9 +3,9 @@ import type { CompositionDropTarget } from "./composition-asset-drop";
 
 export interface CompositionDropPoint{x:number;y:number}
 interface Rect{left:number;right:number;top:number;bottom:number}
-interface Lane{rect:Rect;trackId:string;kind:"visual"|"audio"|"caption";locked:boolean;primary?:boolean}
+interface Lane{rect:Rect;trackId:string;kind:"visual"|"audio"|"caption";locked:boolean;primary?:boolean;occupied?:boolean}
 export interface CompositionDropGeometry{
-  rect:Rect;scrollLeft:number;inset:number;scale:number;lanes:Lane[];newTrack?:Rect;
+  rect:Rect;scrollLeft:number;inset:number;scale:number;lanes:Lane[];newTrack?:Rect;contentTop?:number;
 }
 export function containsDropPoint(rect:Rect,point:CompositionDropPoint):boolean{
   return rect.right>rect.left&&rect.bottom>rect.top&&point.x>=rect.left&&point.x<rect.right&&point.y>=rect.top&&point.y<rect.bottom;
@@ -19,10 +19,14 @@ export function compositionDropLane<T extends {rect:Rect;primary?:boolean}>(lane
 }
 export function compositionDropTarget(geometry:CompositionDropGeometry,point:CompositionDropPoint,kind:MediaKind):CompositionDropTarget|null{
   if(!containsDropPoint(geometry.rect,point)||point.x<geometry.rect.left+144||!Number.isFinite(geometry.scale)||geometry.scale<=0)return null;
+  if(geometry.contentTop!==undefined&&(!Number.isFinite(geometry.contentTop)||point.y<geometry.contentTop))return null;
   const frame=Math.round((point.x-geometry.rect.left+geometry.scrollLeft-144-geometry.inset)/geometry.scale);
   if(!Number.isSafeInteger(frame))return null;
   const lane=compositionDropLane(geometry.lanes,point);
-  if(!lane?.primary&&geometry.newTrack&&containsDropPoint(geometry.newTrack,point))return {frame:Math.max(0,frame),trackId:null};
-  if(!lane||lane.locked||lane.kind!==(kind==="audio"?"audio":"visual"))return null;
+  if(!lane){
+    const primary=kind!=="audio"?geometry.lanes.find(candidate=>candidate.primary&&candidate.kind==="visual"&&!candidate.locked&&!candidate.occupied):undefined;
+    return {frame:Math.max(0,frame),trackId:primary?.trackId??null};
+  }
+  if(lane.locked||lane.kind!==(kind==="audio"?"audio":"visual"))return null;
   return {frame:Math.max(0,frame),trackId:lane.trackId};
 }

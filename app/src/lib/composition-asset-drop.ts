@@ -27,22 +27,25 @@ export function insertAssetAtTarget(document:Composition,asset:CompositionAsset,
   const fragment=fragmentFromAsset(registered,source);
   const anchor=fragment.items[0];
   if(!Number.isSafeInteger(target.frame+anchor.durationFrames))throw new Error("Tempo de destino inválido");
+  const end=target.frame+anchor.durationFrames;
   const kind=source.kind==="audio"?"audio":"visual";
   const tracks=[...registered.tracks];
+  const addDestination=(above?:CompositionTrack):CompositionTrack=>{
+    const track:CompositionTrack={id:editId(),name:kind==="audio"?"Áudio":"Sobreposição",kind,primary:false,locked:false,hidden:false,muted:false};
+    const index=above?tracks.indexOf(above)+1:kind==="visual"?tracks.reduce((last,value,index)=>value.kind==="visual"?index+1:last,0):tracks.length;
+    tracks.splice(index,0,track);
+    return track;
+  };
   let destination:CompositionTrack;
   if(target.trackId===null){
-    destination={id:editId(),name:kind==="audio"?"Áudio":"Sobreposição",kind,primary:false,locked:false,hidden:false,muted:false};
-    const index=kind==="visual"?tracks.reduce((last,track,index)=>track.kind==="visual"?index+1:last,0):tracks.length;
-    tracks.splice(index,0,destination);
+    destination=addDestination();
   }else{
     const found=tracks.find(track=>track.id===target.trackId);
     if(!found)throw new Error("A faixa de destino não existe mais");
     if(found.locked)throw new Error("A faixa de destino está bloqueada");
     if(!trackAccepts(found,anchor))throw new Error("A faixa de destino não é compatível com esta mídia");
-    destination=found;
+    destination=freeAt(registered.items,found.id,target.frame,end)?found:addDestination(found);
   }
-  const end=target.frame+anchor.durationFrames;
-  if(!freeAt(registered.items,destination.id,target.frame,end))throw new Error("Escolha um espaço livre nesta faixa ou outra camada");
   const items=[...registered.items];
   for(const item of fragment.items){
     let track=destination;

@@ -1,4 +1,4 @@
-import { DEFAULT_PLACEMENT } from "../../lib/composition-placement";
+import { DEFAULT_PLACEMENT, MAX_COMPOSITION_SCALE, MIN_COMPOSITION_SCALE } from "../../lib/composition-placement";
 import type { CompositionPlacement } from "../../lib/composition-types";
 import { ArrowCounterClockwiseIcon } from "@phosphor-icons/react/dist/csr/ArrowCounterClockwise";
 import { EditorAction } from "./EditorAction";
@@ -25,7 +25,7 @@ export function CompositionPlacementControls({ placement = DEFAULT_PLACEMENT, di
       <div className="reframe-number-grid reframe-number-grid--two">
         <InspectorNumberField label={`Posição horizontal da ${subject}`} caption="Horizontal" value={placement.x} min={0} max={100} unit="%" disabled={disabled} onChange={x => update({ x })}/>
         <InspectorNumberField label={`Posição vertical da ${subject}`} caption="Vertical" value={placement.y} min={0} max={100} unit="%" disabled={disabled} onChange={y => update({ y })}/>
-        <InspectorNumberField label={`Escala da ${subject}`} caption="Escala" value={placement.scale*100} min={10} max={200} unit="%" disabled={disabled} onChange={scale => update({ scale: scale/100 })}/>
+        <InspectorNumberField label={`Escala da ${subject}`} caption="Escala" value={placement.scale*100} min={MIN_COMPOSITION_SCALE*100} max={MAX_COMPOSITION_SCALE*100} unit="%" disabled={disabled} onChange={scale => update({ scale: scale/100 })}/>
         <InspectorNumberField label={`Opacidade da ${subject}`} caption="Opacidade" value={placement.opacity*100} min={0} max={100} unit="%" disabled={disabled} onChange={opacity => update({ opacity: opacity/100 })}/>
       </div>
     </section>

@@ -1,5 +1,9 @@
 # CutNicePro — Backlog
 
+Continuação vigente2026-10-27: arraste vertical confirmado pelo mantenedor; publicar fila autorizada e pausar. Complemento27 inclui menu de mídias (Excluir/Renomear/Abrir local) e correção do preset implícito que impedia exportar Nova edição.1347TS/382Rust aprovados,33opt-in ignorados; build/lint PASS. Reteste normal do menu/export, ASR real, vídeo797MB e pesquisas amplas permanecem pendentes. BR/AC-EDITOR-12 e handoff governam a continuidade. Achado estático herdado para futura investigação: fórmulas de escala de fonte da prévia/ASS diferem em retrato; sem medição de saída ou correção nesta fatia.
+
+Atualização vigente2026-10-27 — entrada direta no Editor e correções da fila implementadas, em teste humano. Ícone Editor abre montagem vazia identificável em Meus projetos; ASR é explícito por mídia, sem iniciar na importação. EOF→imagem/áudio, escala800%/campos, zoom/pan/minimapa somente de visualização e rodapé de mídia corrigidos. Contratos BR/AC-EDITOR-10/11, JRN-009; evidências e limites no ENGINE-HANDOFF Complemento24. Suítes1267TS/374Rust passaram,33opt-in ignorados; build normal recompilada, sem commit/push. Aceite WebView/ASR real/visual e797MB pendentes. Pesquisa ampla anterior continua adiada; esta entrega não encerra o editor integral. Refinamento adicional da mesma fatia: snap visual/magnético de centros e bordas ao arrastar, com Alt para ajuste livre, e clique no vazio limpando a seleção real sem mover cursor ou gravar. Ver BR/AC-EDITOR-11 e Complemento24.
+
 > Derivado de Problema → Jornada → Requisito → Regra → Épico → História → Aceite.
 > Priorização MoSCoW justificada por valor/dependência/risco. Sem estimativas de horas
 > inventadas (dependem de avaliação técnica). Há código implementado e itens ainda PLANNED; IN REVIEW não equivale a aceite do mantenedor. Estado operacional e histórico de entregas são distintos.

@@ -5,6 +5,7 @@ import { compositionFromLegacy } from "../lib/composition-legacy";
 import { visualContentStyle } from "../lib/composition-placement";
 import { emptyWorkspace } from "../lib/workspace";
 import type { Composition } from "../lib/composition-types";
+import type { CompositionSnapGuides } from "../lib/composition-preview-snap";
 import { reactHost } from "./react-host";
 
 const bootstrap = await vi.hoisted(async () => {
@@ -29,11 +30,12 @@ function fixture(fit: "contain" | "cover" = "contain", primary = true): Composit
   return value;
 }
 
-interface CanvasProps { value: Composition; mode?: "crop" | "placement"; frame?: number; playing?: boolean; preview: (value: Composition | null) => void; change: (value: Composition) => void; pause: () => void; error: (message: string) => void }
-function Canvas({ value, mode = "crop", frame = 0, playing = false, preview, change, pause, error }: CanvasProps) {
+interface CanvasProps { value: Composition; mode?: "crop" | "placement"; frame?: number; playing?: boolean; viewportRevision?: number; selectedId?: string | null; onSelect?: (id: string) => void; onSnapGuides?: (guides: CompositionSnapGuides) => void; preview: (value: Composition | null) => void; change: (value: Composition) => void; pause: () => void; error: (message: string) => void }
+function Canvas({ value, mode = "crop", frame = 0, playing = false, viewportRevision, selectedId, onSelect, onSnapGuides, preview, change, pause, error }: CanvasProps) {
   const container = useRef<HTMLDivElement>(null);
-  const pointer = useCompositionFraming({ document: value, item: value.items[0], time: 0, frame, playing, onPause: pause, stageRef: container, enabled: true, mode, onPreview: preview, onChange: change, onError: error });
-  return <div ref={container} onPointerDown={pointer}><div className="composition-stage"><div data-composition-layer="visual"><img alt="Original" /></div></div>
+  const item = selectedId === undefined ? value.items[0] : value.items.find(value => value.id === selectedId);
+  const pointer = useCompositionFraming({ document: value, item, time: 0, frame, playing, viewportRevision, selectionKey: selectedId === undefined ? undefined : selectedId ?? "", onSelect, onSnapGuides, onPause: pause, stageRef: container, enabled: true, mode, onPreview: preview, onChange: change, onError: error });
+  return <div ref={container} onPointerDown={pointer}><div className="composition-stage">{value.items.filter(value => value.kind === "image" || value.kind === "video").map(value => <div key={value.id} data-composition-layer={value.id}><img alt={value.id}/></div>)}</div>
     <span data-composition-selection="visual" data-test-corner onPointerDown={event => pointer(event, "se")} /></div>;
 }
 
@@ -152,5 +154,108 @@ describe("geometria e lifecycle do gesto na prévia", () => {
     expect(state.preview).toHaveBeenLastCalledWith(null);
     await state.up(75, 60);
     expect(state.change).not.toHaveBeenCalled();
+  });
+
+  it("cancela a transformação pendente ao navegar no zoom da prévia", async () => {
+    const state = await setup(fixture(), "placement");
+    await state.down(); await state.move(70, 80);
+    await mounted!.render(<Canvas {...state.props} viewportRevision={1} />);
+    expect(state.preview).toHaveBeenLastCalledWith(null);
+    await state.up(75, 60);
+    expect(state.change).not.toHaveBeenCalled();
+  });
+
+  it("encaixa no centro ao arrastar, confirma uma vez e remove as guias ao soltar", async () => {
+    const value = fixture(); value.items[0].placement = { x: 45, y: 45, scale: 1, opacity: 1 };
+    const state = await setup(value, "placement"), guides = vi.fn();
+    await mounted!.render(<Canvas {...state.props} onSnapGuides={guides}/>);
+    await state.down(); await state.up(57, 102);
+    expect(guides).toHaveBeenCalledWith({ x: 540, y: 960 });
+    expect(guides).toHaveBeenLastCalledWith({});
+    expect(state.change).toHaveBeenCalledOnce();
+    expect((state.change.mock.calls[0][0] as Composition).items[0].placement).toEqual({ x: 50, y: 50, scale: 1, opacity: 1 });
+    expect(state.preview).toHaveBeenLastCalledWith(null);
+  });
+
+  it("Alt permite ajuste livre perto do centro e um clique sem arrastar não desloca o objeto", async () => {
+    const value = fixture(); value.items[0].placement = { x: 48, y: 48, scale: 1, opacity: 1 };
+    const state = await setup(value, "placement"), guides = vi.fn();
+    await mounted!.render(<Canvas {...state.props} onSnapGuides={guides}/>);
+    await state.down(); await state.up(54, 96);
+    expect(state.change).not.toHaveBeenCalled();
+    await state.down();
+    await act(async () => { window.dispatchEvent(new window.PointerEvent("pointerup", { pointerId: 4, clientX: 57, clientY: 99, altKey: true })); });
+    const placement = (state.change.mock.calls[0][0] as Composition).items[0].placement!;
+    expect(placement.x).toBeCloseTo(48 + 3 / 108 * 100);
+    expect(placement.y).toBeCloseTo(48 + 3 / 192 * 100);
+    expect(guides).not.toHaveBeenCalledWith({ x: 540, y: 960 });
+  });
+
+  it.each([[20, 4, 50 + 20 / 108 * 100, 48], [4, -20, 50, 48 - 20 / 192 * 100]])("Shift prende o eixo dominante (%s,%s) e não encaixa o eixo fixo", async (dx, dy, expectedX, expectedY) => {
+    const value = fixture(); value.items[0].placement = { x: 50, y: 48, scale: 0.5, opacity: 1 };
+    const state = await setup(value, "placement");
+    await state.down();
+    await act(async () => { window.dispatchEvent(new window.PointerEvent("pointerup", { pointerId: 4, clientX: 54 + dx, clientY: 96 + dy, shiftKey: true })); });
+    const placement = (state.change.mock.calls[0][0] as Composition).items[0].placement!;
+    expect(placement.x).toBeCloseTo(expectedX, 8);
+    expect(placement.y).toBeCloseTo(expectedY, 8);
+  });
+
+  it("pressionar e soltar Shift no gesto trava e libera o movimento sem perder Alt", async () => {
+    const state = await setup(fixture(), "placement");
+    await state.down();
+    await act(async () => { window.dispatchEvent(new window.PointerEvent("pointermove", { pointerId: 4, clientX: 74, clientY: 100, altKey: true })); });
+    await act(async () => { window.dispatchEvent(new window.KeyboardEvent("keydown", { key: "Shift", altKey: true })); });
+    const locked = state.preview.mock.lastCall![0] as Composition;
+    expect(locked.items[0].placement!.y).toBe(50);
+    await act(async () => { window.dispatchEvent(new window.KeyboardEvent("keyup", { key: "Shift", altKey: true })); });
+    const free = state.preview.mock.lastCall![0] as Composition;
+    expect(free.items[0].placement!.y).toBeCloseTo(50 + 4 / 192 * 100, 8);
+    await act(async () => { window.dispatchEvent(new window.PointerEvent("pointerup", { pointerId: 4, clientX: 74, clientY: 100, altKey: true })); });
+    expect(state.change).toHaveBeenCalledOnce();
+  });
+
+  it("seleciona a occurrence visível acima, mesmo quando a caixa selecionada pertence à principal", async () => {
+    const value = fixture("cover");
+    value.tracks.push({ ...value.tracks[0], id: "V2", primary: false });
+    value.items.push({ ...structuredClone(value.items[0]), id: "overlay", trackId: "V2", groupId: "overlay", placement: { x: 75, y: 50, scale: 0.5, opacity: 1 } });
+    const state = await setup(value, "placement"), select = vi.fn();
+    await mounted!.render(<Canvas {...state.props} selectedId="visual" onSelect={select}/>);
+    await state.down(80, 96);
+    expect(select).toHaveBeenLastCalledWith("overlay");
+    await mounted!.render(<Canvas {...state.props} selectedId="overlay" onSelect={select}/>);
+    await act(async () => { window.dispatchEvent(new window.PointerEvent("pointerup", { pointerId: 4, clientX: 90, clientY: 96, altKey: true })); });
+    const changed = state.change.mock.calls[0][0] as Composition;
+    expect(changed.items[0]).toEqual(value.items[0]);
+    expect(changed.items[1].placement!.x).toBeCloseTo(75 + 10 / 108 * 100, 8);
+  });
+
+  it("seleciona a mídia sem seleção anterior e um clique simples não altera a montagem", async () => {
+    const state = await setup(fixture(), "placement"), select = vi.fn();
+    await mounted!.render(<Canvas {...state.props} selectedId={null} onSelect={select}/>);
+    await state.down(); await state.up(54, 96);
+    expect(select).toHaveBeenLastCalledWith("visual");
+    expect(state.change).not.toHaveBeenCalled();
+  });
+
+  it.each(["hidden", "transparent", "outside"])("não escolhe a sobreposição %s no ponto da mídia principal", async reason => {
+    const value = fixture("cover");
+    value.tracks.push({ ...value.tracks[0], id: "V2", primary: false, hidden: reason === "hidden" });
+    value.items.push({ ...structuredClone(value.items[0]), id: "overlay", trackId: "V2", groupId: "overlay", startFrame: reason === "outside" ? 60 : 0, placement: { x: 50, y: 50, scale: 0.5, opacity: reason === "transparent" ? 0 : 1 } });
+    const state = await setup(value, "placement"), select = vi.fn();
+    await mounted!.render(<Canvas {...state.props} selectedId={null} onSelect={select}/>);
+    await state.down(); await state.up(54, 96);
+    expect(select).toHaveBeenLastCalledWith("visual");
+    expect(state.change).not.toHaveBeenCalled();
+  });
+
+  it("permite selecionar para inspecionar a camada bloqueada sem iniciar transformação", async () => {
+    const value = fixture("cover"); value.tracks[0].locked = true;
+    const state = await setup(value, "placement"), select = vi.fn();
+    await mounted!.render(<Canvas {...state.props} selectedId={null} onSelect={select}/>);
+    await state.down(); await state.up(70, 96);
+    expect(select).toHaveBeenLastCalledWith("visual");
+    expect(state.change).not.toHaveBeenCalled();
+    expect(state.pause).not.toHaveBeenCalled();
   });
 });

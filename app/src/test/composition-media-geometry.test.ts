@@ -52,6 +52,15 @@ describe("geometria de interação da mídia", () => {
     expect(resizeCompositionPlacement(geometry, initial, "se", { x: 500, y: 300 })).toEqual(initial);
   });
 
+  it("amplia uma camada já posicionada acima de 200% sem inverter a alça", () => {
+    const initial = { ...placement, scale: 3 };
+    const geometry = compositionMediaGeometry(asset, settings, output, initial)!;
+    const next = resizeCompositionPlacement(geometry, initial, "se", { x: 270, y: 152 });
+    expect(next.scale).toBeCloseTo(3.25, 8);
+    expect(next.x).toBeGreaterThan(initial.x);
+    expect(next.y).toBeGreaterThan(initial.y);
+  });
+
   it("não cria bounds de mídia sem dimensões confiáveis", () => {
     expect(compositionMediaGeometry({ ...asset, width: 0 }, settings, output)).toBeNull();
   });

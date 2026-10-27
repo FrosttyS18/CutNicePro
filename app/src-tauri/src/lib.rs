@@ -13,6 +13,7 @@ mod media_import;
 mod media_output_guard;
 mod media_preview;
 mod media_proxy;
+mod media_reveal;
 mod media_source;
 mod media_store;
 mod media_tools;
@@ -275,6 +276,7 @@ pub fn run() {
             cancel_import,
             link_media,
             get_media,
+            media_reveal::reveal_editor_media,
             analyze_media,
             remove_project_media,
             media_reconcile,
@@ -284,6 +286,9 @@ pub fn run() {
             transcription::commands::get_transcript,
             transcription::commands::save_transcript,
             transcription::commands::transcribe_project,
+            transcription::editor_commands::get_editor_media_transcription,
+            transcription::editor_commands::get_editor_media_transcription_job,
+            transcription::editor_commands::transcribe_editor_media,
             media_preview::timeline_preview,
             media_preview::thumbnail::clip_thumbnail,
             clips::commands::get_clips,

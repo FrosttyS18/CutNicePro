@@ -14,10 +14,12 @@ export class CompositionClock {
   }
   pause(now:number,duration:number){this.frame=this.read(now,duration);this.running=false;}
 }
-type MediaClock=Pick<HTMLMediaElement,"currentTime"|"paused"|"seeking"|"play"|"pause"> & Partial<Pick<HTMLMediaElement,"readyState">>;
+type MediaClock=Pick<HTMLMediaElement,"currentTime"|"paused"|"seeking"|"play"|"pause"> & Partial<Pick<HTMLMediaElement,"readyState"|"ended"|"duration">>;
 export function synchronizeMedia(media:MediaClock,time:number,playing:boolean):Promise<void>|undefined {
   if(!playing)media.pause();
   if(media.readyState!==undefined && media.readyState<1)return;
+  const duration=media.duration;
+  if(playing && media.ended && typeof duration==="number" && Number.isFinite(duration) && time>=duration-.12)return;
   if(Math.abs(media.currentTime-time)>(playing?.12:.001))media.currentTime=time;
   if(playing&&media.seeking)return;
   if(playing && media.paused)return media.play();

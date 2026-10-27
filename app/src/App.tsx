@@ -36,9 +36,12 @@ import { NavigationGuardProvider } from "./components/NavigationGuardProvider";
 import { useNavigationGuard } from "./hooks/useNavigationGuard";
 import { useWindowNavigationGuard } from "./hooks/useWindowNavigationGuard";
 import type { ProjectEditorOrigin } from "./lib/project-navigation";
+import { openEmptyEditor } from "./services/direct-editor";
+import { EditorLoading } from "./components/editor/EditorOpening";
 
 type Route =
   | { kind: "home" }
+  | { kind: "editor" }
   | { kind: "upload"; collectionId?: string }
   | { kind: "projects" }
   | { kind: "collections" }
@@ -89,6 +92,8 @@ function AppContent() {
   const [actionNotice, setActionNotice] = useState<string | null>(null);
   const [preparedProjectId, setPreparedProjectId] = useState<string | null>(null);
   const [expanded, setExpanded] = useState(() => loadSidebarExpanded());
+  const [openingEditor, setOpeningEditor] = useState(false);
+  const creatingEditor = useRef(false);
   useEffect(() => () => releaseSessionMedia(), []);
 
   const loadProjects = useCallback(() => ipc.listProjects().then(result => {
@@ -147,7 +152,30 @@ function AppContent() {
       const opened = await ipc.openProject(id);
       setActionError(null);
       await refreshProjects();
-      updateRoute({ kind: "project", id: opened.id, view: "overview" });
+      updateRoute(readWorkspace(opened.id).editorOnly
+        ? { kind: "project", id: opened.id, view: "editor", editorOrigin: "editor" }
+        : { kind: "project", id: opened.id, view: "overview" });
+    });
+  }
+
+  async function handleOpenEditor() {
+    if (creatingEditor.current || route.kind === "project" && route.editorOrigin === "editor") return;
+    await navigation.requestNavigation(async () => {
+      if (creatingEditor.current) return;
+      creatingEditor.current = true; setOpeningEditor(true); setActionError(null);
+      const requestedFrom = activeRoute.current;
+      updateRoute({ kind: "editor" });
+      try {
+        const project = await openEmptyEditor(load.projects);
+        setLoad(current => ({ ...current, status: "ready", error: null, projects: [...current.projects.filter(entry => entry.id !== project.id), project] }));
+        if (activeRoute.current === requestedFrom || activeRoute.current.kind === "editor") {
+          updateRoute({ kind: "project", id: project.id, view: "editor", editorOrigin: "editor" });
+        } else setActionNotice("Sua edição está disponível em Meus projetos.");
+      } catch (error) {
+        await refreshProjects();
+        if (activeRoute.current === requestedFrom || activeRoute.current.kind === "editor") updateRoute({ kind: "home" });
+        throw error;
+      } finally { creatingEditor.current = false; setOpeningEditor(false); }
     });
   }
 
@@ -244,7 +272,7 @@ function AppContent() {
       ? collectionsLoad.collections.find((c) => c.id === route.id) ?? null
       : null;
 
-  const section = route.kind === "home" ? "home" : "projects";
+  const section = route.kind === "home" ? "home" : route.kind === "editor" || route.kind === "project" && route.editorOrigin === "editor" ? "editor" : "projects";
   const projectsSub: ProjectsSub =
     route.kind === "upload" ? "upload"
     : route.kind === "collections" || route.kind === "collection"
@@ -259,6 +287,8 @@ function AppContent() {
   const crumbs: Crumb[] =
     route.kind === "home"
       ? [{ label: "Home", navigate: goHome }, { label: "Início" }]
+      : route.kind === "editor" ? [{ label: "Editor" }, { label: "Nova edição" }]
+      : route.kind === "project" && route.editorOrigin === "editor" ? [{ label: "Editor" }, { label: currentProject?.name ?? "Edição" }]
       : route.kind === "upload"
         ? [{ label: "Meus Projetos", navigate: () => goProjects("all") }, { label: "Enviar novo projeto" }]
       : route.kind === "projects"
@@ -299,6 +329,8 @@ function AppContent() {
         crumbs={crumbs}
         onNavigateHome={goHome}
         onNavigateProjects={goProjects}
+        onNavigateEditor={() => void guard(handleOpenEditor)}
+        openingEditor={openingEditor}
       >
         {actionError && (
           <div className="panel-error">
@@ -310,6 +342,7 @@ function AppContent() {
           <button type="button" className="flow-text-button" onClick={() => { setActionNotice(null); setPreparedProjectId(null); }}>Fechar aviso</button></div>}
 
         {route.kind === "home" && <HomeScreen onCreate={goUpload} />}
+        {route.kind === "editor" && <EditorLoading onBack={goHome} backLabel="Voltar ao início"/>}
 
         {route.kind === "upload" && (
           <UploadScreen projects={orderedProjects} loading={load.status === "loading"}

@@ -1,4 +1,4 @@
-import { DEFAULT_PLACEMENT, visualContentStyle } from "./composition-placement";
+import { DEFAULT_PLACEMENT, MAX_COMPOSITION_SCALE, MIN_COMPOSITION_SCALE, visualContentStyle } from "./composition-placement";
 import type { CompositionAsset, CompositionPlacement } from "./composition-types";
 import type { EditorSettings } from "./workspace-types";
 
@@ -49,7 +49,7 @@ export function resizeCompositionPlacement(
   const anchor = { x: bounds.left + (east ? 0 : bounds.width), y: bounds.top + (south ? 0 : bounds.height) };
   const offset = { x: visible.left + (east ? 0 : visible.width) - output.width / 2,
     y: visible.top + (south ? 0 : visible.height) - output.height / 2 };
-  let minimum = 0.1, maximum = 2;
+  let minimum = MIN_COMPOSITION_SCALE, maximum = MAX_COMPOSITION_SCALE;
   for (const [fixed, local, size] of [[anchor.x, offset.x, output.width], [anchor.y, offset.y, output.height]]) {
     if (Math.abs(local) < 1e-8) continue;
     const first = fixed / local, second = (fixed - size) / local;

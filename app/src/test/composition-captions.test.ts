@@ -4,10 +4,24 @@ import { compositionFromLegacy } from "../lib/composition-legacy";
 import { montageTranscript } from "../lib/composition-playback";
 import { emptyWorkspace } from "../lib/workspace";
 import { captionPresets } from "../lib/captions";
+import { fragmentFromAsset } from "../lib/composition-source";
 
 const transcript=[{id:"s",start:1,end:2,text:"Fonte original",words:[{text:"Fonte",start:1,end:1.5},{text:"original",start:1.5,end:2}]}];
 function fixture(){const data=emptyWorkspace();data.media={kind:"local",mediaId:"source",name:"source.mp4",duration:10,width:1920,height:1080,videoId:null,url:null};data.settings.trimStart=1;data.settings.trimEnd=3;return compositionFromLegacy(data);}
 describe("legendas explícitas na montagem",()=>{
+  it("guarda a transcrição da mídia ainda na biblioteca e reutiliza ao inserir sem alterar as demais",()=>{
+    const document=fixture();
+    document.items=[];
+    document.assets.push({...document.assets[0],id:"other",mediaId:"other",name:"Outro.mp4"});
+    expect(hasCaptionTranscriptUpdate(document,"source",transcript)).toBe(true);
+    const next=applyCaptionTranscript(document,"source",transcript);
+    expect(next.items).toEqual([]);
+    expect(next.assets[0].transcript).toEqual(transcript);
+    expect(next.assets[1].transcript).toEqual([]);
+    expect(document.assets[0].transcript).toEqual([]);
+    expect(fragmentFromAsset(next,next.assets[0]).items.some(item=>item.kind==="caption")).toBe(true);
+    expect(hasCaptionTranscriptUpdate(next,"source",transcript)).toBe(false);
+  });
   it("adiciona legendas vinculadas ao recorte sem modificar a fonte ou itens existentes",()=>{
     const document=fixture();document.settings.text="Rascunho";const before=structuredClone(document);
     expect(hasCaptionTranscriptUpdate(document,"source",transcript)).toBe(true);

@@ -24,15 +24,15 @@ function intersects(source: CompositionItem, transcript: TranscriptSegment[]): b
 export function hasCaptionTranscriptUpdate(document: Composition, mediaId: string, transcript: TranscriptSegment[]): boolean {
   if (!transcript.length) return false;
   const sources = captionSources(document, mediaId).filter(item => intersects(item, transcript));
-  if (!sources.length) return false;
   const key = JSON.stringify(transcript);
-  return sources.some(item => !hasCaption(document, item) || JSON.stringify(document.assets.find(asset => asset.id === item.assetId)!.transcript) !== key);
+  return document.assets.some(asset => asset.mediaId === mediaId && asset.kind !== "image" && JSON.stringify(asset.transcript) !== key)
+    || sources.some(item => !hasCaption(document, item));
 }
 
 export function applyCaptionTranscript(document: Composition, mediaId: string, transcript: TranscriptSegment[]): Composition {
   if (!hasCaptionTranscriptUpdate(document, mediaId, transcript)) return document;
   const sources = captionSources(document, mediaId);
-  const assets = new Set(sources.map(item => item.assetId));
+  const assets = new Set(document.assets.filter(asset => asset.mediaId === mediaId && asset.kind !== "image").map(asset => asset.id));
   const existing = document.items.filter(item => item.kind === "caption" && assets.has(item.assetId));
   const incomingIds = new Set(transcript.map(segment => segment.id));
   if (existing.some(item => Object.keys(item.captionEdits).some(id => !incomingIds.has(id)))) {

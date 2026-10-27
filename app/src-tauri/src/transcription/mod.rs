@@ -1,6 +1,8 @@
 mod checkpoints;
 mod chunk_text;
 pub mod commands;
+pub mod editor_commands;
+pub(crate) mod editor_store;
 pub(crate) mod export;
 mod gpu;
 mod jobs;
