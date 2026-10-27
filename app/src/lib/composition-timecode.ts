@@ -12,10 +12,16 @@ export function formatCompositionTimecode(frame: number, fps: FrameRate): string
 
 function parseMilliseconds(value: string): number {
   const match = /^(?:(\d{2,}):)?([0-5]\d):([0-5]\d)(?:\.(\d{1,3}))?$/.exec(value.trim());
-  if (!match) throw new Error("Use o formato 00:00.000 ou 00:00:00.000 para início e fim.");
+  if (!match) throw new Error("Use o formato 00:00.000 ou 00:00:00.000.");
   const total = Number(match[1] ?? 0) * 3_600_000 + Number(match[2]) * 60_000 + Number(match[3]) * 1000 + Number((match[4] ?? "").padEnd(3, "0"));
   if (!Number.isSafeInteger(total)) throw new Error("Tempo fora do formato permitido. Informe um intervalo menor.");
   return total;
+}
+
+export function parseCompositionPosition(value: string, fps: FrameRate): number {
+  const frame = secondsToFrame(parseMilliseconds(value) / 1000, fps);
+  if (!Number.isSafeInteger(frame) || frame < 0) throw new Error("Posição fora do intervalo de quadros permitido.");
+  return frame;
 }
 
 export function parseCompositionRange(start: string, end: string, duration: number, fps: FrameRate): { start: number; end: number } {

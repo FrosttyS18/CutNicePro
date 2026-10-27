@@ -28,7 +28,7 @@ async function setup(original=fixture(),anchorId=original.items[0].id) {
       onPreview: next => { previewed(next); setPreview(next); } });
     return <div ref={viewport} data-viewport>
       <div data-drop-new-track />
-      {document.tracks.filter(track => track.kind === "visual").map(track => <div key={track.id} data-composition-track={track.id} data-track-kind="visual">
+      {document.tracks.filter(track => track.kind === "visual").map(track => <div key={track.id} data-composition-track={track.id} data-track-kind="visual" data-primary={track.primary}>
         {document.items.filter(item => item.trackId === track.id).map(item => <div key={item.id} data-composition-item={item.id} onPointerDown={event => gesture.begin(event, item)}>Trecho</div>)}
       </div>)}
     </div>;
@@ -98,4 +98,29 @@ it("um vídeo movido para cima sobrepõe o de baixo com áudio estável em faixa
   expect(result.items.map(item=>item.id)).toEqual(original.items.map(item=>item.id));
   const trackIds=previewed.mock.calls.flatMap(call=>{const value=call[0] as Composition|null;return value?value.tracks.filter(track=>!original.tracks.some(old=>old.id===track.id)).map(track=>track.id):[];});
   expect(trackIds.length).toBeGreaterThan(1);expect(new Set(trackIds).size).toBe(1);
+});
+
+it("o corpo da principal fixa recebe o arraste mesmo sobrepondo uma faixa anterior no DOM",async()=>{
+  const original=fixture();
+  original.tracks.sort((left,right)=>Number(left.primary)-Number(right.primary));
+  const {change,error}=await setup(original);
+  const overlay=mounted!.host.querySelector<HTMLElement>('[data-composition-track="above"]')!;
+  overlay.getBoundingClientRect=mounted!.host.querySelector<HTMLElement>('[data-composition-track="V1"]')!.getBoundingClientRect;
+  await begin();await release(360,130);
+  expect(error).not.toHaveBeenCalled();
+  const next=change.mock.calls[0][0] as Composition;
+  expect(next.items[0]).toMatchObject({trackId:"V1",startFrame:60});
+});
+
+it("uma principal fixa bloqueada impede soltar na camada encoberta",async()=>{
+  const original=fixture();
+  original.items[0].trackId="above";
+  original.tracks.find(track=>track.primary)!.locked=true;
+  original.tracks.sort((left,right)=>Number(left.primary)-Number(right.primary));
+  const {change,error}=await setup(original);
+  const overlay=mounted!.host.querySelector<HTMLElement>('[data-composition-track="above"]')!;
+  overlay.getBoundingClientRect=mounted!.host.querySelector<HTMLElement>('[data-composition-track="V1"]')!.getBoundingClientRect;
+  await begin();await release(360,130);
+  expect(change).not.toHaveBeenCalled();
+  expect(error).toHaveBeenCalledOnce();
 });

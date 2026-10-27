@@ -1,8 +1,19 @@
 import { describe, expect, it } from "vitest";
-import { formatCompositionTimecode, parseCompositionRange } from "../lib/composition-timecode";
+import { formatCompositionTimecode, parseCompositionPosition, parseCompositionRange } from "../lib/composition-timecode";
 import { fpsFromRate } from "../lib/composition-time";
 
 describe("tempo legível do intervalo da montagem", () => {
+  it.each([24000 / 1001, 30, 60])("converte posição isolada sem limitar ao fim da montagem em %s fps", rate => {
+    const fps = fpsFromRate(rate);
+    for (const frame of [0, 1, 59, 14359, 108001]) {
+      expect(parseCompositionPosition(formatCompositionTimecode(frame, fps), fps)).toBe(frame);
+    }
+  });
+
+  it.each(["", "-00:01.000", "00:60.000", "00:01.0001", "999999999999999999999:00:00.000"])("recusa posição inválida %s", value => {
+    expect(() => parseCompositionPosition(value, fpsFromRate(30))).toThrow();
+  });
+
   it.each([24000 / 1001, 30, 60])("preserva os frames selecionados em %s fps", rate => {
     const fps = fpsFromRate(rate);
     for (const start of [1, 59, 14359, 86158]) {

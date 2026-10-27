@@ -37,6 +37,11 @@ import { linkedSelection } from "../../lib/composition-operations";
 import { audioSourceVideo } from "../../lib/composition-playback";
 import { resolveInsertionFrame, type CompositionInsertionTarget, type CompositionSourceRequest } from "../../lib/composition-insertion-target";
 import { useEditorNavigationGuard } from "../../hooks/useEditorNavigationGuard";
+import { useCompositionMarkers } from "../../hooks/useCompositionMarkers";
+import { CompositionMarkerEditor } from "./CompositionMarkerEditor";
+import { CompositionTrackDetails } from "./CompositionTrackDetails";
+import { BookmarkSimpleIcon } from "@phosphor-icons/react/dist/csr/BookmarkSimple";
+import { PencilSimpleIcon } from "@phosphor-icons/react/dist/csr/PencilSimple";
 import { FlowDialog } from "../workspace/FlowDialog";
 import type { WorkspaceData } from "../../lib/workspace-types";
 import type { Composition } from "../../lib/composition-types";
@@ -51,7 +56,7 @@ interface Props {projectId:string;title:string;data:WorkspaceData;localUrl:strin
 export function CompositionEditor({projectId,title,data,localUrl,onBack,onShowClips,transcriptionControls,allClips}:Props){
   const editor=useCompositionEditor({projectId,clipId:data.activeClipId??null},data);
   const [selected,setSelected]=useState<string[]>([]);
-  const [timelineHeight,setTimelineHeight]=useState(260);
+  const [timelineHeight,setTimelineHeight]=useState(340);
   const [range,setRange]=useState<CompositionRange|null>(null);
   const [mode,setMode]=useState<"select"|"range">("select");
   const [magnetic,setMagnetic]=useState(true);
@@ -63,6 +68,7 @@ export function CompositionEditor({projectId,title,data,localUrl,onBack,onShowCl
   const [created,setCreated]=useState<{projectId:string;title:string}|null>(null);
   const [menu,setMenu]=useState<{x:number;y:number;id:string}|null>(null);
   const [trackMenu,setTrackMenu]=useState<{x:number;y:number;id:string}|null>(null);
+  const [trackDetails,setTrackDetails]=useState<{x:number;y:number;id:string}|null>(null);
   const [notice,setNotice]=useState("");
   const [previews,setPreviews]=useState<Record<string,TimelinePreviewData>>({});
   const [sourceRequest,setSourceRequest]=useState<CompositionSourceRequest>({id:0,target:"cursor"});
@@ -129,13 +135,15 @@ export function CompositionEditor({projectId,title,data,localUrl,onBack,onShowCl
     enabled:Boolean(editor.document)&&!preview&&!leave&&!editor.recovery&&!editor.loading&&!editor.saving&&!importer.busy,
     onPause:playback.pause,onError:report,onPath:(path,intent)=>{void importer.importPath(path,intent);},
     onAsset:(asset,target)=>{if(!editor.document)return;try{change(insertAssetAtTarget(editor.document,asset,target));}catch(error){report(error instanceof Error?error.message:"Não foi possível adicionar esta mídia.");}}});
+  const markers=useCompositionMarkers({document:editor.document,frame:playback.frame,scope:root,
+    enabled:Boolean(document)&&!preview&&!leave&&!editor.recovery&&!importer.busy&&!editor.saving,onChange:change,onPause:playback.pause,onError:report});
   const commands=useCompositionCommands({document:editor.document??{version:1,revision:0,fps,settings:data.settings,assets:[],tracks:[],items:[]},selected,frame:playback.frame,range,
     scope:root,
-    onChange:change,onSelect:setSelected,onRange:setRange,onSeek:playback.seek,onError:report,onSave:save,onUndo:editor.undo,onRedo:editor.redo,onTogglePlay:playback.toggle,enabled:Boolean(document)&&!preview&&!leave&&!editor.recovery&&!importer.busy});
+    onChange:change,onSelect:setSelected,onRange:setRange,onSeek:playback.seek,onError:report,onSave:save,onUndo:editor.undo,onRedo:editor.redo,onTogglePlay:playback.toggle,onMarker:markers.mark,enabled:Boolean(document)&&!preview&&!leave&&!editor.recovery&&!importer.busy});
   useEffect(()=>{
     const keys=(event:KeyboardEvent)=>{
       if(root.current&&!root.current.contains(globalThis.document.activeElement))return;
-      if(event.defaultPrevented||event.ctrlKey||event.metaKey||(event.target instanceof HTMLElement && event.target.closest('input,textarea,[contenteditable="true"],dialog,[role="menu"],[data-editor-viewer="source"]')))return;
+      if(event.defaultPrevented||event.isComposing||event.repeat||event.ctrlKey||event.metaKey||event.altKey||event.shiftKey||(event.target instanceof HTMLElement && event.target.closest('input,textarea,[contenteditable="true"],dialog,[role="dialog"],[role="menu"],[data-editor-viewer="source"]')))return;
       if(event.key.toLowerCase()==="r")changeMode("range");else if(event.key.toLowerCase()==="v")changeMode("select");else if(event.key.toLowerCase()==="p"){event.preventDefault();changeMagnetic(!magnetic);}
     };
     window.addEventListener("keydown",keys);return()=>window.removeEventListener("keydown",keys);
@@ -144,6 +152,7 @@ export function CompositionEditor({projectId,title,data,localUrl,onBack,onShowCl
   const onPreviews=useCallback((id:string,value:TimelinePreviewData)=>setPreviews(current=>current[id]?.frames===value.frames?current:{...current,[id]:value}),[]);
   const closeMenu=useCallback(()=>setMenu(null),[]);
   const closeTrackMenu=useCallback(()=>setTrackMenu(null),[]);
+  const closeTrackDetails=useCallback(()=>setTrackDetails(null),[]);
   const previewChange=useCallback((next:Composition|null,frame?:number)=>{playback.pause();setPreview(next);if(frame!==undefined)playback.seek(frame);},[playback]);
   const additionsBlocked=Boolean(preview)||leave||Boolean(editor.recovery)||importer.busy||editor.saving;
   const primaryLocked=Boolean(document?.tracks.find(track=>track.primary)?.locked);
@@ -161,6 +170,7 @@ export function CompositionEditor({projectId,title,data,localUrl,onBack,onShowCl
   const item=document.items.find(value=>value.id===(menu?.id??selected[0]));
   const track=document.tracks.find(value=>value.id===trackMenu?.id);
   const trackItems:EditorMenuItem[]=track?[
+    {label:"Nome e cor da faixa",icon:<PencilSimpleIcon size={17}/>,onSelect:()=>{setTrackDetails({id:track.id,x:trackMenu!.x,y:trackMenu!.y});}},
     {label:track.locked?"Desbloquear faixa":"Bloquear faixa",icon:<LockSimpleIcon size={17}/>,onSelect:()=>changeTrack(track.id,{locked:!track.locked})},
     track.kind==="audio"?{label:track.muted?"Ouvir faixa":"Silenciar faixa",icon:<SpeakerSlashIcon size={17}/>,onSelect:()=>changeTrack(track.id,{muted:!track.muted})}
       :{label:track.hidden?"Mostrar faixa":"Ocultar faixa",icon:<EyeSlashIcon size={17}/>,onSelect:()=>changeTrack(track.id,{hidden:!track.hidden})},
@@ -207,12 +217,15 @@ export function CompositionEditor({projectId,title,data,localUrl,onBack,onShowCl
       <CompositionPanelResize value={timelineHeight} onChange={setTimelineHeight} containerRef={root}/>
       <CompositionTimeline document={document} frame={playback.frame} selected={selected} mode={mode} range={range} previews={previews} onSelect={setSelected} onRange={setRange} onSeek={playback.seek} onChange={change} onPreview={previewChange} onError={report} magnetic={magnetic} onMagneticChange={changeMagnetic} onTrackChange={preview?undefined:changeTrack}
         startAddItems={additionItems("start")} endAddItems={additionItems("end")} additionsDisabled={additionsBlocked||primaryLocked} onAddOpen={playback.pause} dropController={timelineDrop}
-        toolbar={<CompositionToolbar mode={mode} onMode={changeMode} selected={Boolean(selected.length)} range={Boolean(range)} commands={commands} addItems={addItems}/>}
+        onMarkerEdit={markers.edit}
+        toolbar={<><CompositionToolbar mode={mode} onMode={changeMode} selected={Boolean(selected.length)} range={Boolean(range)} commands={commands} addItems={addItems}/><EditorAction compact label="Adicionar marcador (M)" icon={<BookmarkSimpleIcon size={17}/>} onClick={markers.mark} disabled={additionsBlocked}/></>}
         onTrackContext={(event,id)=>{playback.pause();const rect=event.currentTarget.getBoundingClientRect();setMenu(null);setTrackMenu({x:rect.left,y:rect.bottom+8,id});}}
         onContext={(event,id)=>{playback.pause();setSelected([id]);setTrackMenu(null);setMenu({x:event.clientX,y:event.clientY,id});}}/>
     </div>
     {menu && <EditorMenu label="Ações do item" x={menu.x} y={menu.y} items={contextItems} onClose={closeMenu}/>}
     {trackMenu && <EditorMenu label="Opções da faixa" x={trackMenu.x} y={trackMenu.y} items={trackItems} onClose={closeTrackMenu}/>}
+    {markers.marker&&markers.point&&<CompositionMarkerEditor key={markers.marker.id} marker={markers.marker} fps={document.fps} x={markers.point.x} y={markers.point.y} onApply={markers.apply} onClose={markers.close} onRemove={markers.remove}/>}
+    {trackDetails&&document.tracks.some(track=>track.id===trackDetails.id)&&<CompositionTrackDetails key={trackDetails.id} track={document.tracks.find(track=>track.id===trackDetails.id)!} x={trackDetails.x} y={trackDetails.y} onClose={closeTrackDetails} onChange={patch=>{changeTrack(trackDetails.id,patch);closeTrackDetails();}}/>}
     <FlowDialog open={importer.busy} title={importer.kind==="image"?"Adicionando imagem":importer.kind==="audio"?"Adicionando áudio":"Adicionando vídeo"} busy allowCloseWhileBusy onClose={importer.cancel}>
       <p role="status">{importer.progress?importer.progress.copied<importer.progress.total?`Verificando arquivo ${Math.round(importer.progress.copied/Math.max(1,importer.progress.total)*100)}%` : "Analisando mídia…":"Preparando importação…"}</p>
       {importer.progress && <progress max={importer.progress.total||1} value={importer.progress.copied} aria-label="Progresso da verificação"/>}

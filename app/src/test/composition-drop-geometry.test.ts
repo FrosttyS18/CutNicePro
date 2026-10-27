@@ -29,3 +29,14 @@ it("converte physical em CSS uma vez em DPI e zoom diferentes",()=>{
   expect(physicalDropPoint({x:1,y:2},0)).toBeNull();
   expect(physicalDropPoint({x:Infinity,y:2},1)).toBeNull();
 });
+
+it("destina à principal fixa quando ela encobre outras faixas ou a zona de nova camada",()=>{
+  const overlap={left:100,right:1500,top:200,bottom:260};
+  const sticky:CompositionDropGeometry={...geometry,newTrack:overlap,lanes:[
+    {...geometry.lanes[1],locked:false,rect:overlap},
+    {...geometry.lanes[0],primary:true,rect:overlap},
+  ]};
+  expect(compositionDropTarget(sticky,{x:492,y:230},"video")).toEqual({frame:400,trackId:"V1"});
+  expect(compositionDropTarget({...sticky,lanes:sticky.lanes.map(lane=>lane.primary?{...lane,locked:true}:lane)},{x:492,y:230},"video")).toBeNull();
+  expect(compositionDropTarget(sticky,{x:492,y:230},"audio")).toBeNull();
+});

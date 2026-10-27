@@ -44,7 +44,7 @@ it("exibe camadas pela ordem visual e mantém a ordem do documento",async()=>{
   for(const trackId of ["V2","V3"])document.items.push({...structuredClone(video),id:`item-${trackId}`,trackId,groupId:`group-${trackId}`});
   const before=document.tracks.map(track=>track.id);
   view=await reactHost(<CompositionTimeline document={document} frame={0} selected={[]} mode="select" range={null} onSelect={noop} onRange={noop} onSeek={noop} onChange={noop} onPreview={noop} onError={noop}/>);
-  expect(Array.from(view.host.querySelectorAll(".composition-track__label>strong")).map(label=>label.textContent)).toEqual(["Camada 3","Camada 2","Principal","Áudio da fonte"]);
+  expect(Array.from(view.host.querySelectorAll(".composition-track__label>strong")).map(label=>label.textContent)).toEqual(["Camada 3","Camada 2","Áudio da fonte","Principal"]);
   expect(document.tracks.map(track=>track.id)).toEqual(before);
   expect(view.host.querySelector('[data-drop-new-track][aria-label="Nova camada de vídeo"]')).not.toBeNull();
 });

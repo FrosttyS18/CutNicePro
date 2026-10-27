@@ -1,5 +1,7 @@
 # CutNicePro — Product Brain (índice permanente)
 
+Direção vigente de 2026-10-27: meta do editor retomada, ACTIVE/PARTIAL. Após publicação do checkpoint `b709235` e confirmação do Graphify remoto, marcadores M/segundo M/duplo clique, metadados nome/cor de faixa e organização da timeline foram implementados/testados, em revisão humana. Contrato BR-EDITOR-09, aceites AC-EDITOR-09, JRN-009/EPIC-008; detalhe no BUSINESS-RULES/TRACEABILITY/BACKLOG e em `docs/engineering/EDITOR-BASIC-IMPLEMENTATION-PLAN.md`. Anotações absolutas/pós-fim não alteram duração/render; extrair filtra/rebasa; nomes têm limite de 120 caracteres Unicode, contador/clamp na UI e validação TypeScript/Rust, sempre como texto JSX literal. Principal centralizada com poucas faixas e acessível na base, sem hit-test através dela. Checkpoint: suíte integral 1.160 TS, 359 Rust aprovados/33 opt-in ignorados e build/lint aprovados. Perda de foco após duplo clique → Excluir foi reproduzida/corrigida, com 34/34 testes afetados e um caso novo: 1.161 únicos cobertos ao combinar evidências, sem nova suíte integral. Terra realizou três passagens sobre fixtures e não encontrou colisões no escopo final; estética e uso normal continuam humanos. Jornada normal, vídeo de 797MB, recursos/desempenho e gates M0/M5/M6/M7 permanecem abertos; a pausa abaixo é histórica. Continuidade efetiva permanece no ENGINE-HANDOFF.
+
 Pedido de encerramento da rodada2026-10-26: concluir a fila de imagens/trechos curtos, lixeira7dias, importação/arraste e tempo/Novo após edição; publicar commits e pausar a meta. Retomada preserva as lacunas M0/M5/M6/M7 do plano e exige novo comando do mantenedor. Filtros atuais: Ativos, Todos e Lixeira; regras antigas de aprovação não escondem conteúdo. Detalhes e estado efetivo no Complemento19 do ENGINE-HANDOFF, sem inferir aceite visual.
 
 Direção aprovada em 2026-10-26: editor básico completo e jornada de projetos, com salvamento explícito, montagem independente da fonte, múltiplas mídias/faixas, legendas preservadas e exportação da revisão salva. Especificação vinculante: `docs/engineering/EDITOR-BASIC-IMPLEMENTATION-PLAN.md`. Execução IN PROGRESS, M0–M5 e M6 de estudo comparativo profundo do editor CapCut acrescentado expressamente pelo mantenedor; nenhuma aprovação visual ou conclusão do editor inferida de testes do domínio. M6 cobre mapa de funções, caminhos de importação/timeline/prévia/camadas e comparação por marcos equivalentes, sem autorizar recursos extras automaticamente. BR-EDITOR-01..06 e AC-EDITOR-01..06 nos documentos canônicos abaixo; continuidade no ENGINE-HANDOFF. A melhoria editorial do modelo continua fora desta meta.
@@ -42,11 +44,11 @@ processamento local verificável. Também um case profissional de Product Design
 |---|---|---|
 | Requisitos | docs/product/PRD.md | FR-001..029, NFR-001..007 |
 | Jornadas | docs/product/USER-JOURNEYS.md | JRN-001..014 |
-| Regras de negócio + estados | docs/product/BUSINESS-RULES.md | BR-001..050 |
+| Regras de negócio + estados | docs/product/BUSINESS-RULES.md | BR-001..050; extensões BR-EDITOR-01..09 |
 | Arquitetura da informação | docs/product/INFORMATION-ARCHITECTURE.md | — |
 | Decisões | docs/product/DECISIONS.md | DEC-001..014 |
-| Backlog | docs/product/BACKLOG.md | EPIC-001..012, US-001..037, AC-001..093 |
-| Rastreabilidade | docs/product/TRACEABILITY.md | — |
+| Backlog | docs/product/BACKLOG.md | EPIC-001..012, US-001..037, AC-001..093; extensão do EPIC-008 |
+| Rastreabilidade | docs/product/TRACEABILITY.md | AC-EDITOR-09; aceites e evidências das demais extensões |
 | UX fundação (Fase 01) | docs/product/UX-FOUNDATION.md | §8 direção proposta |
 | Marca | docs/brand/BRAND-FOUNDATION.md + design/tokens/ | — |
 | UI Kit / diretrizes | docs/design/UI-KIT-ARCHITECTURE.md, NEXT-REVISION-GUIDELINES.md | — |

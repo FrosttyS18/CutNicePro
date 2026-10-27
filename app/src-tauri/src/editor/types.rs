@@ -51,6 +51,41 @@ pub struct Track {
     pub locked: bool,
     pub hidden: bool,
     pub muted: bool,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "present_option"
+    )]
+    pub color: Option<String>,
+}
+
+#[derive(Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
+pub struct Marker {
+    pub id: String,
+    pub name: String,
+    pub frame: u64,
+    pub color: String,
+}
+
+fn present_option<'de, D, T>(deserializer: D) -> Result<Option<T>, D::Error>
+where
+    D: serde::Deserializer<'de>,
+    T: Deserialize<'de>,
+{
+    T::deserialize(deserializer).map(Some)
+}
+
+fn valid_color(value: &str) -> bool {
+    value.len() == 7
+        && value.starts_with('#')
+        && value.as_bytes()[1..].iter().all(u8::is_ascii_hexdigit)
+}
+
+const COMPOSITION_NAME_LIMIT: usize = 120;
+
+fn valid_name(value: &str) -> bool {
+    !value.trim().is_empty() && value.chars().count() <= COMPOSITION_NAME_LIMIT
 }
 
 #[derive(Clone, Serialize, Deserialize)]
@@ -151,6 +186,12 @@ pub struct Composition {
     pub assets: Vec<Asset>,
     pub tracks: Vec<Track>,
     pub items: Vec<Item>,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "present_option"
+    )]
+    pub markers: Option<Vec<Marker>>,
 }
 
 pub fn render_settings(value: &Value) -> Result<crate::render::settings::RenderSettings, String> {
@@ -195,8 +236,13 @@ impl Composition {
         }
         if self.tracks.iter().any(|track| {
             track.id.is_empty()
+                || !valid_name(&track.name)
                 || !["visual", "audio", "caption"].contains(&track.kind.as_str())
                 || (track.primary && track.kind != "visual")
+                || track
+                    .color
+                    .as_ref()
+                    .is_some_and(|color| !valid_color(color))
         }) || self.assets.iter().any(|asset| {
             asset.id.is_empty()
                 || asset.media_id.is_empty()
@@ -204,6 +250,20 @@ impl Composition {
                 || asset.duration_us > 9_007_199_254_740_991
         }) {
             return Err(invalid());
+        }
+        if let Some(markers) = &self.markers {
+            let mut ids = HashSet::new();
+            let mut frames = HashSet::new();
+            if markers.iter().any(|marker| {
+                marker.id.trim().is_empty()
+                    || !valid_name(&marker.name)
+                    || marker.frame > 9_007_199_254_740_991
+                    || !valid_color(&marker.color)
+                    || !ids.insert(&marker.id)
+                    || !frames.insert(marker.frame)
+            }) {
+                return Err("Marcadores inválidos".into());
+            }
         }
         let mut ids = HashSet::new();
         for item in &self.items {

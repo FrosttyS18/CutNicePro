@@ -13,6 +13,27 @@ fn fixture() -> Composition {
         ]})).unwrap()
 }
 
+#[test]
+fn marker_metadata_does_not_change_render_duration_or_windows() {
+    let original = fixture();
+    let expected: Vec<_> = super::render_plan::windows(&original)
+        .unwrap()
+        .iter()
+        .map(|window| (window.start, window.end))
+        .collect();
+    let mut value = serde_json::to_value(&original).unwrap();
+    value["markers"] = json!([{"id":"late","name":"Depois do fim","frame":900,"color":"#00C2BE"}]);
+    value["tracks"][0]["color"] = json!("#A078E8");
+    let decorated: Composition = serde_json::from_value(value).unwrap();
+    assert_eq!(decorated.duration_frames(), original.duration_frames());
+    let windows: Vec<_> = super::render_plan::windows(&decorated)
+        .unwrap()
+        .iter()
+        .map(|window| (window.start, window.end))
+        .collect();
+    assert_eq!(windows, expected);
+}
+
 fn source_audio_fixture() -> Composition {
     let mut document = fixture();
     document.tracks.push(serde_json::from_value(json!({"id":"A1","name":"Audio","kind":"audio","primary":false,"locked":true,"hidden":false,"muted":false})).unwrap());

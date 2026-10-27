@@ -3,6 +3,7 @@ import { trimSelection } from "../../lib/composition-trim";
 import { moveSelectionToTrack } from "../../lib/composition-arrange";
 import { editId, linkedSelection } from "../../lib/composition-operations";
 import { scrollTimelineAtPointer, selectionForClick, trimDeltaBounds } from "../../lib/composition-gesture";
+import { compositionDropLane, containsDropPoint } from "../../lib/composition-drop-geometry";
 import type { Composition, CompositionItem } from "../../lib/composition-types";
 
 interface Props {
@@ -15,15 +16,15 @@ interface Props {
 }
 
 function dropTrack(element: HTMLElement | null, x: number, y: number, item: CompositionItem): string | null {
-  const contains = (candidate: HTMLElement) => {
-    const rect = candidate.getBoundingClientRect();
-    return rect.width > 0 && rect.height > 0 && x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom;
-  };
+  const point={x,y};
+  const lanes=[...element?.querySelectorAll<HTMLElement>("[data-composition-track]")??[]].map(candidate=>({
+    element:candidate,rect:candidate.getBoundingClientRect(),primary:candidate.dataset.primary==="true",
+  }));
+  const target=compositionDropLane(lanes,point);
   const zone = element?.querySelector<HTMLElement>("[data-drop-new-track]");
-  if (zone && contains(zone) && (item.kind === "video" || item.kind === "image")) return null;
+  if (!target?.primary&&zone&&containsDropPoint(zone.getBoundingClientRect(),point)&&(item.kind==="video"||item.kind==="image")) return null;
   const kind = item.kind === "video" || item.kind === "image" ? "visual" : item.kind;
-  const lane = element && [...element.querySelectorAll<HTMLElement>("[data-composition-track]")].find(candidate => candidate.dataset.trackKind === kind && contains(candidate));
-  return lane?.dataset.compositionTrack ?? item.trackId;
+  return target?.element.dataset.trackKind===kind ? target.element.dataset.compositionTrack??item.trackId : item.trackId;
 }
 
 export function useCompositionGesture(options: Props) {

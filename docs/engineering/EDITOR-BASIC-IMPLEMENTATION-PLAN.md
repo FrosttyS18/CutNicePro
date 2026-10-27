@@ -211,6 +211,17 @@ O desenho definitivo deverá mostrar também estados vazio, carregando, erro, se
 
 ### Fonte e montagem são tempos diferentes
 
+#### Próxima fatia aprovada — marcadores e organização da timeline (2026-10-27)
+
+Pré-condição cumprida: correções anteriores e checkpoint publicados em `b7092359faeb03828d0b59b6f7206d7aee0485b0`; Graphify confirmou o mesmo commit em2026-10-27T06:22:30Z, build `715902a7-a6b0-4ba8-9db5-e07ef5dd5d1d`. A meta foi reaberta pelo mantenedor. Referências visuais enviadas governam anatomia e hierarquia, com o design system próprio preservado. Terra realiza leitura delimitada da referência e comparação final, sem ciclo estético ou uso rotineiro do PC.
+
+- Marcadores são anotações em frames da montagem, sem alterar vídeo/áudio, duração ou saída exportada. M cria; segundoM no mesmo instante abre o existente; clique duplo também abre nome/tempo/cor/exclusão. Um por frame, ID estável; apagar o último preserva `markers:[]` no salvamento. Nome até120caracteres Unicode, corHEX válida e paleta curta na UI. Metadados opcionais mantêm projetos anteriores compatíveis.
+- O editor do marcador é um popover compacto junto ao marcador: campos Nome/Posição, cinco cores e ações Concluir/Excluir. Escape/clique externo cancela o rascunho; entrada inválida mantém o formulário. Foco/IME/repetição/modificadores não podem disparar M indevidamente. Undo/Redo e Salvar/reabrir seguem a sessão existente.
+- Marcadores permanecem em tempo absoluto após trim/ripple, inclusive depois do novo fim, sem apagar notas nem esticar exportação; continuam acessíveis na régua. Criar clipe filtra/rebasa os do intervalo. Colar/duplicar mídia não multiplica anotações da timeline.
+- Nome/cor da faixa são editáveis pelo menu próprio, com confirmação e cancelamento; visual usa indicador e tom discreto, sem alterar a ordem real de composição ou a mídia. Identidade da principal não depende do texto escolhido.
+- Timeline inicia mais alta, com poucas faixas centralizadas; sobreposições crescem acima e a principal permanece acessível na base. Um único viewport mantém régua/cursor/gestos alinhados emX/Y. Faixas encobertas pela principal fixada não recebem drops através dela, inclusive se o alvo estiver bloqueado.
+- Implementação: contratosTS/Rust e operações puras → popovers/atalho/régua → metadados/faixas/layout/hit-test → testes de persistência/gestos/zoom e builds → comparação objetiva Terra → reteste humano. Não redesenhar ferramentas ou adicionar recursos ausentes da referência por consequência desta fatia.
+
 Refinamento autorizado em 2026-10-27 (JRN-009, BR-EDITOR-02/03, AC-EDITOR-02/03): **Escolher trecho da fonte** usa uma faixa de miniaturas do arquivo original, com seleção por arraste como a ferramenta R e alças para ajustar os dois limites. O slider isolado e as ações empilhadas são substituídos por essa seleção visual e uma barra única. Marcar não altera a montagem; Enter ou Adicionar confirma uma vez e insere em **nova camada**, no cursor ou no destino início/fim que abriu a operação, sem deslocar nem aparar os itens existentes. Salvar continua explícito; áudio e CC acompanham o vídeo pelos vínculos atuais. Adição rápida da biblioteca e importação mantêm seus contratos anteriores.
 
 Plano desta fatia, sem retomar a pesquisa/goal integral pausado:

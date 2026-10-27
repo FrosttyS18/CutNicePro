@@ -1,4 +1,4 @@
-import { memo, useEffect, useRef, type KeyboardEvent, type PointerEvent, type ReactNode } from "react";
+import { memo, useEffect, useRef, type CSSProperties, type KeyboardEvent, type PointerEvent, type ReactNode } from "react";
 import { DotsThreeIcon } from "@phosphor-icons/react/dist/csr/DotsThree";
 import { LockSimpleIcon } from "@phosphor-icons/react/dist/csr/LockSimple";
 import { LockSimpleOpenIcon } from "@phosphor-icons/react/dist/csr/LockSimpleOpen";
@@ -11,9 +11,10 @@ import type { CompositionAsset, CompositionItem, CompositionTrack, FrameRate } f
 import { EditorAction } from "./EditorAction";
 import { CompositionCompactItem } from "./CompositionCompactItem";
 import { compactItemThreshold, trackDisplayEnd } from "./composition-track-layout";
+import { useEditorTooltip } from "../../hooks/useEditorTooltip";
 
 export interface TimelinePreviewData { frames: string[]; peaks: number[] }
-export type CompositionTrackPatch = Partial<Pick<CompositionTrack, "locked" | "hidden" | "muted">>;
+export type CompositionTrackPatch = Partial<Pick<CompositionTrack, "locked" | "hidden" | "muted" | "name" | "color">>;
 interface Props {
   track: CompositionTrack; items: CompositionItem[]; assets: CompositionAsset[]; fps: FrameRate;
   width: number; scale: number; startPixel: number; visibleWidth: number; selected: Set<string>;
@@ -50,10 +51,14 @@ function Waveform({ item, asset, peaks, width }: { item: CompositionItem; asset:
 }
 
 export const CompositionTrackLane = memo(function CompositionTrackLane({ track, items, assets, fps, width, scale, startPixel, visibleWidth, selected, previews = {}, sourceAudio, sourceCaptions, onBegin, onEdgeKey, onSelect, onReveal, onContext,onTrackContext,onTrackChange,onTrackFocus,canMuteSource=false,inset=24,startAddition,endAddition }: Props) {
-  return <div className="composition-track" role="group" aria-label={`Faixa ${track.name}`} data-kind={track.kind} data-track-kind={track.kind} data-composition-track={track.id} data-locked={track.locked}
+  const nameAnchor=useRef<HTMLElement>(null);
+  const nameTooltip=useEditorTooltip(nameAnchor,track.name);
+  return <div className="composition-track" role="group" aria-label={`Faixa ${track.name}`} data-kind={track.kind} data-track-kind={track.kind} data-composition-track={track.id} data-locked={track.locked} data-primary={track.primary} data-color={Boolean(track.color)||undefined}
+    style={track.color?{"--composition-track-color":track.color} as CSSProperties:undefined}
     onFocusCapture={() => onTrackFocus?.(track.id)} onBlurCapture={event => { if (!event.currentTarget.contains(event.relatedTarget)) onTrackFocus?.(null); }}>
     <div className="composition-track__label">
-      <span>{track.id.length < 8 ? track.id : track.kind === "audio" ? "A" : track.kind === "caption" ? "C" : "V"}</span><strong>{track.name}</strong>
+      <span>{track.color&&<span data-track-color aria-hidden="true"/>}{track.id.length < 8 ? track.id : track.kind === "audio" ? "A" : track.kind === "caption" ? "C" : "V"}</span>
+      <strong ref={nameAnchor} tabIndex={0} aria-describedby={nameTooltip.descriptionId} {...nameTooltip.trigger}>{track.name}</strong>{nameTooltip.portal}
       <div className="composition-track__actions" role="group" aria-label={`Controles da faixa ${track.name}`}>
         <EditorAction compact label={`Bloquear faixa ${track.name}`} tooltip={`${track.locked ? "Desbloquear" : "Bloquear"} faixa ${track.name}`} pressed={track.locked} disabled={!onTrackChange}
           icon={track.locked ? <LockSimpleIcon size={16} aria-hidden="true"/> : <LockSimpleOpenIcon size={16} aria-hidden="true"/>} onClick={() => onTrackChange?.(track.id, { locked: !track.locked })}/>

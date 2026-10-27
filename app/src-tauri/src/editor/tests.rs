@@ -47,6 +47,151 @@ fn empty_composition_is_valid_and_unknown_contract_fields_are_rejected() {
     assert!(serde_json::from_value::<Composition>(invalid).is_err());
 }
 
+fn marker_document() -> serde_json::Value {
+    let mut value = serde_json::to_value(fixture()).unwrap();
+    value["markers"] = json!([{"id":"marker","name":"Marcador","frame":900,"color":"#00C2BE"}]);
+    value["tracks"][0]["color"] = json!("#A078E8");
+    value
+}
+
+#[test]
+fn composition_names_limit_tracks_and_markers_without_interpreting_literal_text() {
+    for name in [
+        "".to_string(),
+        " \t\n ".to_string(),
+        "A".repeat(121),
+        "𐐀".repeat(121),
+    ] {
+        let mut track = marker_document();
+        track["tracks"][0]["name"] = json!(name);
+        assert!(serde_json::from_value::<Composition>(track)
+            .unwrap()
+            .validate()
+            .is_err());
+        let mut marker = marker_document();
+        marker["markers"][0]["name"] = json!(name);
+        assert!(serde_json::from_value::<Composition>(marker)
+            .unwrap()
+            .validate()
+            .is_err());
+    }
+    for name in [
+        "A".repeat(120),
+        "𐐀".repeat(120),
+        "<script>alert(1)</script>".to_string(),
+        "<img src=x onerror=alert(1)>".to_string(),
+    ] {
+        let mut value = marker_document();
+        value["tracks"][0]["name"] = json!(name);
+        value["markers"][0]["name"] = json!(name);
+        let encoded = serde_json::to_string(&value).unwrap();
+        let parsed: Composition = serde_json::from_str(&encoded).unwrap();
+        parsed.validate().unwrap();
+        assert_eq!(serde_json::to_value(parsed).unwrap(), value);
+    }
+    let mut media = marker_document();
+    media["assets"] = json!([{"id":"asset","mediaId":"media","name":"a".repeat(250),"kind":"video","durationUs":1,"width":1,"height":1,"transcript":[]}]);
+    serde_json::from_value::<Composition>(media)
+        .unwrap()
+        .validate()
+        .unwrap();
+}
+
+#[test]
+fn marker_contract_preserves_legacy_absence_empty_and_valid_metadata() {
+    let legacy = serde_json::to_value(fixture()).unwrap();
+    assert!(legacy.get("markers").is_none());
+    assert!(legacy["tracks"][0].get("color").is_none());
+    let value = marker_document();
+    let document: Composition = serde_json::from_value(value.clone()).unwrap();
+    document.validate().unwrap();
+    assert_eq!(document.duration_frames(), 0);
+    assert_eq!(serde_json::to_value(document).unwrap(), value);
+    let mut empty = marker_document();
+    empty["markers"] = json!([]);
+    let parsed: Composition = serde_json::from_value(empty.clone()).unwrap();
+    parsed.validate().unwrap();
+    assert_eq!(serde_json::to_value(parsed).unwrap(), empty);
+    let mut unicode = marker_document();
+    unicode["markers"][0]["name"] = json!("𐐀".repeat(120));
+    serde_json::from_value::<Composition>(unicode)
+        .unwrap()
+        .validate()
+        .unwrap();
+}
+
+#[test]
+fn marker_contract_rejects_invalid_values_and_duplicate_identity_or_frame() {
+    for markers in [json!(null), json!({}), json!([null])] {
+        let mut value = marker_document();
+        value["markers"] = markers;
+        assert!(serde_json::from_value::<Composition>(value).is_err());
+    }
+    for (key, invalid) in [
+        ("id", json!("")),
+        ("name", json!("")),
+        ("name", json!("  ")),
+        ("name", json!("𐐀".repeat(121))),
+        ("frame", json!(-1)),
+        ("frame", json!(1.5)),
+        ("frame", json!(9_007_199_254_740_992u64)),
+        ("color", json!("teal")),
+        ("color", json!("#fff")),
+        ("color", json!("#000000;display:none")),
+    ] {
+        let mut value = marker_document();
+        value["markers"][0][key] = invalid;
+        if let Ok(document) = serde_json::from_value::<Composition>(value) {
+            assert!(document.validate().is_err(), "accepted invalid {key}");
+        }
+    }
+    for duplicate in [
+        json!({"id":"marker","name":"Outro","frame":901,"color":"#00C2BE"}),
+        json!({"id":"other","name":"Outro","frame":900,"color":"#00C2BE"}),
+    ] {
+        let mut value = marker_document();
+        value["markers"].as_array_mut().unwrap().push(duplicate);
+        let document: Composition = serde_json::from_value(value).unwrap();
+        assert!(document.validate().is_err());
+    }
+    for color in [json!("red"), json!("#fff"), json!("#12345678"), json!(null)] {
+        let mut value = marker_document();
+        value["tracks"][0]["color"] = color;
+        if let Ok(document) = serde_json::from_value::<Composition>(value) {
+            assert!(document.validate().is_err());
+        }
+    }
+}
+
+#[test]
+fn marker_store_preserves_project_clip_and_recovery_independently() {
+    let base = directory();
+    let project = uuid::Uuid::new_v4().to_string();
+    let clip = "a".repeat(64);
+    let store = EditorStore::open(&base).unwrap();
+    let document: Composition = serde_json::from_value(marker_document()).unwrap();
+    let saved = store.save(&project, None, document.clone(), 0).unwrap();
+    store.save(&project, Some(&clip), fixture(), 0).unwrap();
+    store
+        .save_recovery(&project, Some(&clip), document, 1)
+        .unwrap();
+    let reopened = EditorStore::open(&base).unwrap();
+    let state = reopened.load(&project).unwrap();
+    assert_eq!(
+        serde_json::to_value(state.project.unwrap().document).unwrap(),
+        serde_json::to_value(saved.document).unwrap()
+    );
+    assert!(serde_json::to_value(&state.clips[&clip].document)
+        .unwrap()
+        .get("markers")
+        .is_none());
+    let recovery = reopened.recovery(&project, Some(&clip)).unwrap().unwrap();
+    assert_eq!(
+        serde_json::to_value(recovery.document).unwrap()["markers"],
+        marker_document()["markers"]
+    );
+}
+
 #[test]
 fn atomic_save_reopen_revision_and_conflict_preserve_previous_document() {
     let base = directory();

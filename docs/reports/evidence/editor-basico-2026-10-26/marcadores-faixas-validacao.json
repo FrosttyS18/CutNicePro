@@ -1,0 +1,14 @@
+{
+  "date": "2026-10-27",
+  "scope": "marcadores, organização das faixas, nomes limitados e foco após exclusão",
+  "graphBefore": {"repository":"FrosttyS18/CutNicePro","commit":"b7092359faeb03828d0b59b6f7206d7aee0485b0","build":"715902a7-a6b0-4ba8-9db5-e07ef5dd5d1d"},
+  "typescript": {"fullSuite":{"files":176,"passed":1160,"failed":0},"afterFocusFix":{"files":4,"passed":34,"failed":0,"newCases":1},"combinedUnique":1161},
+  "rust": {"passed":359,"failed":0,"ignoredOptIn":33,"includesRealFfmpegFixtures":true},
+  "build": {"frontend":"PASS","lint":"PASS","nativeCanonical":"PASS","warnings":0,"binarySha256":"8EBE81B90BF2EB57BFDF5D64D89333367F01E053964786287DB2D18DF7E7C865"},
+  "regressions": ["dblclick-delete-M reproduced before fix, passed after focus fallback", "preview cancellation preserves the original single-argument callback", "sticky main track blocks hits behind it", "optional metadata round-trip and extract rebasing", "literal HTML payloads do not create HTML nodes in name/tooltip", "input limits count Unicode code points"],
+  "visual": {"model":"gpt-6.1-terra","boundedPasses":3,"environment":"synthetic headless fixture with actual React components","finalCollisionCheck":"no collision observed in captured scope","humanApproval":"PENDING","viewport":[1440,800],"layers":50,"mainBoundsY":[720,784],"viewportBoundsY":[388,784],"headerHit":"V1","documentHorizontalOverflow":false,"popupSize":[320,245],"counter":"19/120 caracteres","fixtureStylesOmissionCorrected":true},
+  "localArtifacts": ".tooling/research/ui-markers (ignored; screenshots, fixture and logs)",
+  "cleanup": {"headlessBrowser":"closed","fixtureServer1435":"stopped"},
+  "limitations": ["not a new full suite of1161 tests", "native normal UI and final visual acceptance remain manual", "not a global security certification", "post-end marker single click seeks only within playable duration; double click/Enter edits original time", "global editor gates and performance on797MB remain open"],
+  "references": ["https://react.dev/reference/react-dom/components/common", "https://cheatsheetseries.owasp.org/cheatsheets/Cross_Site_Scripting_Prevention_Cheat_Sheet.html"]
+}

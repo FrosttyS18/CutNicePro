@@ -1,4 +1,6 @@
 import type { Composition, CompositionItem, CompositionTrack } from "./composition-types";
+import { isCompositionColor, isCompositionMarkers } from "./composition-markers";
+import { isCompositionName } from "./composition-text";
 
 export function compositionDuration(document: Composition): number {
   return Math.max(0, ...document.items.map(item => item.startFrame + item.durationFrames));
@@ -23,6 +25,7 @@ export function validateComposition(document: Composition): string[] {
   if (assets.size !== document.assets.length || tracks.size !== document.tracks.length) errors.push("Identidade duplicada");
   if (document.tracks.filter(track => track.primary && track.kind === "visual").length !== 1) errors.push("Faixa principal inválida");
   if (new Set(document.items.map(item => item.id)).size !== document.items.length) errors.push("Identidade de item duplicada");
+  if (document.markers !== undefined && !isCompositionMarkers(document.markers)) errors.push("Marcadores inválidos");
   for (const asset of document.assets) {
     if (!asset.id || !asset.mediaId || !asset.name || !integer(asset.durationUs, 0)) errors.push("Mídia inválida");
   }
@@ -36,6 +39,8 @@ export function validateComposition(document: Composition): string[] {
     if (asset && ((item.kind === "video" || item.kind === "image") ? item.kind !== asset.kind : asset.kind === "image")) errors.push("Tipo de mídia incompatível");
   }
   for (const track of document.tracks) {
+    if (!isCompositionName(track.name)) errors.push("Nome de faixa inválido");
+    if (track.color !== undefined && !isCompositionColor(track.color)) errors.push("Cor de faixa inválida");
     const items = document.items.filter(item => item.trackId === track.id).sort((a, b) => a.startFrame - b.startFrame);
     if (items.some((item, index) => index > 0 && item.startFrame < itemEnd(items[index - 1]))) errors.push("Sobreposição na mesma faixa");
   }

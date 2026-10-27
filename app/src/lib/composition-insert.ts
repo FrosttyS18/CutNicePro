@@ -11,7 +11,8 @@ export function extractComposition(document: Composition, start: number, end: nu
     const to = Math.min(item.durationFrames, end - item.startFrame);
     return sliceItem(item, from, to, document.fps, Math.max(0, item.startFrame - start));
   });
-  return requireComposition({ ...document, revision: 0, items });
+  const markers = document.markers?.filter(marker => marker.frame >= start && marker.frame < end).map(marker => ({ ...marker, frame: marker.frame - start }));
+  return requireComposition({ ...document, revision: 0, items, ...(markers === undefined ? {} : { markers }) });
 }
 
 export function insertComposition(document: Composition, fragment: Composition, at: number, preserveIds = false): Composition {

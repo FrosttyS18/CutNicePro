@@ -22,6 +22,13 @@ export interface CompositionTrack {
   locked: boolean;
   hidden: boolean;
   muted: boolean;
+  color?: string;
+}
+export interface CompositionMarker {
+  id: string;
+  name: string;
+  frame: number;
+  color: string;
 }
 export interface CompositionPlacement {
   x: number;
@@ -52,4 +59,5 @@ export interface Composition {
   assets: CompositionAsset[];
   tracks: CompositionTrack[];
   items: CompositionItem[];
+  markers?: CompositionMarker[];
 }

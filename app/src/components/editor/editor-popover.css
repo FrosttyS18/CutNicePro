@@ -1,0 +1,15 @@
+.editor-popover{position:fixed;z-index:1000;padding:16px;border-radius:9px;background:var(--sh-surface,#252525);color:var(--ink,#eee);box-shadow:0 8px 24px #0005;font-size:12px;max-height:calc(100dvh - 16px);overflow:auto;scrollbar-width:thin;scrollbar-color:#555 transparent}
+.editor-popover form{display:grid;gap:12px;margin:0}
+.editor-popover label{display:grid;gap:8px;color:var(--sh-dim,#aaa);font-size:11px}
+.editor-popover input{min-width:0;width:100%;min-height:34px;padding:6px 12px;border:0;border-radius:4px;background:var(--sh-panel,#151515);color:var(--ink,#eee);font:inherit;font-size:12px}
+.editor-name-field{position:relative;min-width:0}
+.editor-name-field label{padding-top:0}
+.editor-name-field__count{position:absolute;top:0;right:0;color:var(--sh-dim,#aaa);font-size:10px;font-variant-numeric:tabular-nums;pointer-events:none}
+.editor-popover__colors{display:flex;align-items:center;gap:12px;border:0;padding:0;margin:0}
+.editor-popover__color{width:24px;height:24px;border:0;background:transparent;padding:4px;border-radius:50%;display:grid;place-items:center;cursor:pointer}
+.editor-popover__color>span{width:12px;height:12px;border-radius:50%;background:var(--swatch)}
+.editor-popover__color[aria-pressed=true]{background:var(--ink,#eee)}
+.editor-popover__actions{display:flex;justify-content:flex-end;align-items:center;gap:8px;margin-top:4px}
+.editor-popover__actions .flow-button{min-height:32px}
+.editor-popover__actions .dialog-action--danger{background:#353535;color:#fff}
+.editor-popover__error{margin:0;color:var(--error,#f27d79);font-size:11px;line-height:1.5}

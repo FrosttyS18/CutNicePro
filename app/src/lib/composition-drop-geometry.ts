@@ -3,7 +3,7 @@ import type { CompositionDropTarget } from "./composition-asset-drop";
 
 export interface CompositionDropPoint{x:number;y:number}
 interface Rect{left:number;right:number;top:number;bottom:number}
-interface Lane{rect:Rect;trackId:string;kind:"visual"|"audio"|"caption";locked:boolean}
+interface Lane{rect:Rect;trackId:string;kind:"visual"|"audio"|"caption";locked:boolean;primary?:boolean}
 export interface CompositionDropGeometry{
   rect:Rect;scrollLeft:number;inset:number;scale:number;lanes:Lane[];newTrack?:Rect;
 }
@@ -14,12 +14,15 @@ export function physicalDropPoint(point:CompositionDropPoint,pixelRatio:number):
   if(!Number.isFinite(point.x)||!Number.isFinite(point.y)||!Number.isFinite(pixelRatio)||pixelRatio<=0)return null;
   return {x:point.x/pixelRatio,y:point.y/pixelRatio};
 }
+export function compositionDropLane<T extends {rect:Rect;primary?:boolean}>(lanes:ReadonlyArray<T>,point:CompositionDropPoint):T|undefined{
+  return lanes.find(lane=>lane.primary&&containsDropPoint(lane.rect,point))??lanes.find(lane=>containsDropPoint(lane.rect,point));
+}
 export function compositionDropTarget(geometry:CompositionDropGeometry,point:CompositionDropPoint,kind:MediaKind):CompositionDropTarget|null{
   if(!containsDropPoint(geometry.rect,point)||point.x<geometry.rect.left+144||!Number.isFinite(geometry.scale)||geometry.scale<=0)return null;
   const frame=Math.round((point.x-geometry.rect.left+geometry.scrollLeft-144-geometry.inset)/geometry.scale);
   if(!Number.isSafeInteger(frame))return null;
-  if(geometry.newTrack&&containsDropPoint(geometry.newTrack,point))return {frame:Math.max(0,frame),trackId:null};
-  const lane=geometry.lanes.find(lane=>containsDropPoint(lane.rect,point));
+  const lane=compositionDropLane(geometry.lanes,point);
+  if(!lane?.primary&&geometry.newTrack&&containsDropPoint(geometry.newTrack,point))return {frame:Math.max(0,frame),trackId:null};
   if(!lane||lane.locked||lane.kind!==(kind==="audio"?"audio":"visual"))return null;
   return {frame:Math.max(0,frame),trackId:lane.trackId};
 }

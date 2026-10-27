@@ -6,7 +6,9 @@
 
 ## Auditoria de segurança — primeira passada, 2026-10-27
 
-Retomada da meta do editor autorizada posteriormente em2026-10-27: a pausa e a auditoria abaixo continuam registros históricos. Fonte visual/zoom corrigidos em `6f0e37b`, com161testes afetados/build/lint aprovados e uso normal ainda humano. Antes de iniciar a fila seguinte: publicar o checkpoint e confirmar o Graphify no commit novo. Próxima fatia: marcadores M/segundoM/duplo clique com nome/tempo/cor/excluir; abertura maior/central e principal acessível na base; renomear e colorir faixas. Referências do mantenedor e revisão pontual GPT-6.1 Terra orientam fidelidade, sem novos boxes/outlines nem aprovação estética automática. Nenhum destes três recursos foi implementado no checkpoint Complemento21.
+Retomada da meta do editor autorizada posteriormente em 2026-10-27: a pausa e a auditoria abaixo continuam registros históricos. O checkpoint anterior de fonte/zoom foi publicado em `b7092359faeb03828d0b59b6f7206d7aee0485b0` e confirmado no Graphify remoto, liberando a fatia de marcadores, organização da timeline e metadados das faixas. Esses recursos não existiam no Complemento21; a implementação posterior está IN REVIEW, com meta ACTIVE/PARTIAL. Contrato vigente: BR-EDITOR-09 e AC-EDITOR-09, JRN-009/EPIC-008, no plano existente.
+
+Direção aprovada: M/segundo M/duplo clique editam anotações absolutas de nome/tempo/cor, com exclusão e histórico; pós-fim não altera duração/render, e extrair clipe filtra/rebasa os marcadores. Nome/cor das faixas preservam identidade, mídia e composição. Nome limitado a 120 caracteres Unicode, contador visível/clamp na UI, validação TypeScript/Rust e texto JSX literal estão implementados/testados. A timeline abre maior, centraliza poucas faixas e mantém a principal na base com linha sutil de 1px; drops não atravessam a principal para faixas atrás. Checkpoint técnico: suíte integral 1.160 TS e 359 Rust aprovados, 33 opt-in ignorados, build/lint aprovados. O relato de M perder foco após duplo clique → Excluir foi reproduzido e corrigido; a verificação posterior passou 34/34 afetados, incluindo um caso novo, somando 1.161 casos únicos cobertos sem nova suíte integral. As três passagens Terra sobre fixtures, com ausência de colisões no escopo final, não validam o app normal nem aprovam a estética. Código desta fatia implementado/testado, com reteste humano pendente. Jornada normal, vídeo de 797MB e gates globais M0/M5/M6/M7 permanecem abertos; não retomar pesquisa ampla por consequência desta fatia.
 
 Estado **PARTIAL**, sem alteração funcional nem retomada da meta do editor. A skill oficial Cloudflare foi aplicada ao código `48aeca4`: zero vulnerabilidades confirmadas; uma hipótese de leitura `cnplocal` por origem remota exige validação independente das pré-condições e do runtime. Falta de Origin/CSP isoladamente não comprova vazamento. Continuidade e evidências no ENGINE-HANDOFF Complemento20 e no tooling.
 
@@ -225,6 +227,8 @@ Jornadas: JRN-009 (parte legendas). BR: BR-026. FR: FR-012. Prioridade: Should (
 ## EPIC-008 — Editor avançado
 Jornadas: JRN-009. BR: BR-020, BR-022. FR: FR-011, FR-013. Prioridade: Should (Must para o
 trim básico). Materialização: Proposta A como referência (DEC-006).
+
+Extensão aprovada em 2026-10-27: BR-EDITOR-09/AC-EDITOR-09 acrescentam marcadores, nome/cor de faixa e organização da timeline à mesma JRN-009. Código implementado/testado, estado IN REVIEW sem concluir o épico; correção de foco após excluir marcador passou a regressão automatizada e aguarda reteste humano. Contrato e critérios no BUSINESS-RULES/TRACEABILITY e na fatia correspondente do EDITOR-BASIC-IMPLEMENTATION-PLAN.
 
 - **US-019 — Trim in/out com versionamento** (Must) — AC: AC-050 editar cria versão com
   histórico navegável (BR-022); AC-051 saída sem salvar avisa; AC-052 original rastreável

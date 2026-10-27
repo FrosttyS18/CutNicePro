@@ -14,6 +14,7 @@ interface Props {
   onRange: (value: Range | null) => void; onSeek: (frame: number) => void;
   onError: (message: string) => void; onSave: () => unknown; onUndo: () => void;
   onRedo: () => void; onTogglePlay: () => void; enabled?: boolean;
+  onMarker?:()=>void;
   scope?:RefObject<HTMLElement|null>;
 }
 const commandInputSelector='input,textarea,select,[contenteditable="true"],[role="dialog"],dialog,[role="menu"],[data-editor-viewer="source"]';
@@ -99,7 +100,11 @@ export function useCompositionCommands(props: Props) {
         if(event.repeat){event.preventDefault();return;}
       }
       let action:(()=>unknown)|undefined;
-      if(control){
+      if(key==="m"&&!control){
+        if(event.repeat||event.isComposing||event.altKey||event.shiftKey||modalOpen())return;
+        action=current.onMarker;
+      }
+      else if(control){
         if(key==="d")action=duplicate;
         else if(key==="b")action=split;
         else if(key==="c")action=copy;

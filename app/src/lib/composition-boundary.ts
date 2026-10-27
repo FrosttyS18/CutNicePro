@@ -2,6 +2,8 @@ import { isEditorSettings, isRecord } from "./editor-settings-validation";
 import { requireComposition } from "./composition";
 import type { Composition } from "./composition-types";
 import { isCompositionPlacement } from "./composition-placement";
+import { isCompositionColor, isCompositionMarkers } from "./composition-markers";
+import { isCompositionName } from "./composition-text";
 
 function integer(value: unknown, min = 0): value is number {
   return typeof value === "number" && Number.isSafeInteger(value) && value >= min;
@@ -23,12 +25,14 @@ function shape(value: unknown): value is Composition {
   if (!isRecord(value) || value.version !== 1 || !integer(value.revision) || !isRecord(value.fps)
     || !integer(value.fps.numerator, 1) || !integer(value.fps.denominator, 1) || !isEditorSettings(value.settings)) return false;
   if (!Array.isArray(value.assets) || !Array.isArray(value.tracks) || !Array.isArray(value.items)) return false;
+  if (value.markers !== undefined && !isCompositionMarkers(value.markers)) return false;
   if (!value.assets.every(asset => isRecord(asset) && text(asset.id) && text(asset.mediaId) && text(asset.name)
     && ["video", "image", "audio"].includes(String(asset.kind)) && integer(asset.durationUs)
     && integer(asset.width) && integer(asset.height) && (asset.hasAudio===undefined||typeof asset.hasAudio==="boolean") && transcript(asset.transcript))) return false;
-  if (!value.tracks.every(track => isRecord(track) && text(track.id) && text(track.name)
+  if (!value.tracks.every(track => isRecord(track) && text(track.id) && isCompositionName(track.name)
     && ["visual", "audio", "caption"].includes(String(track.kind)) && typeof track.primary === "boolean"
-    && (!track.primary || track.kind === "visual") && [track.locked, track.hidden, track.muted].every(flag => typeof flag === "boolean"))) return false;
+    && (!track.primary || track.kind === "visual") && (track.color === undefined || isCompositionColor(track.color))
+    && [track.locked, track.hidden, track.muted].every(flag => typeof flag === "boolean"))) return false;
   return value.items.every(item => isRecord(item) && text(item.id) && text(item.trackId) && text(item.assetId) && text(item.groupId)
     && ["video", "image", "audio", "caption"].includes(String(item.kind)) && integer(item.startFrame)
     && integer(item.durationFrames, 1) && integer(item.sourceStartUs) && integer(item.sourceEndUs)
