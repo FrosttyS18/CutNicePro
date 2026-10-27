@@ -1,0 +1,127 @@
+╔════════════════════════════════════════════╗
+║       CUTNICEPRO — ZCODE REPORT            ║
+╚════════════════════════════════════════════╝
+
+TASK
+  Name: Fila do editor e biblioteca; publicação e pausa.
+  Status: PARTIAL — meta PAUSED por pedido do mantenedor.
+  Scope/Objective: concluir a implementação da fila e publicar.
+  Result: código publicado na main; validação manual pendente.
+  FUNCTIONAL STATUS: PARTIAL; REGRESSION STATUS: PASS no escopo testado.
+  VISUAL STATUS: PENDING HUMAN APPROVAL.
+
+IMPLEMENTATION
+  Completed:
+  - Miniatura de imagem corrigida; trechos curtos têm marcador
+    selecionável e ampliação por duplo clique/Enter, sem alterar duração.
+  - Filtros Ativos/Todos/Lixeira; antigos rejeitados voltam aos Ativos.
+  - Lixeira com restauração, exclusão permanente confirmada e prazo
+    nativo de 7 dias. Legados sem data recebem novo prazo na migração.
+  - Remoção sincronizada entre IA/editor, recuperação e cache exclusivo;
+    proteção contra gravações tardias. Originais e exports preservados.
+  - Salvar edição manual atualiza tempo/Novo por 1 hora, sem mudar criação.
+  - Importar mídia apenas adiciona à biblioteca. Arraste interno e do
+    Windows conecta arquivo ao ponto/faixa; cancelamento e locks tratados.
+  - Expiração não interrompe editor/jobs nem cria loop após falha.
+  Changes/Architecture: contratos tipados e módulos separados, sem
+    dependências novas nem outro diretório de build.
+  Not completed: teste humano Windows/DPI/aparência; prévia de imagens
+    acima de 4 MiB; jornada normal completa, 797 MB e lacunas M6/M7.
+
+FILES
+  Created: CompositionPreviewLoader/CompactItem, ClipPurgeDialog,
+    clip-trash, useClipTrashExpiry, hooks/helpers de importação/arraste,
+    módulo nativo clip_trash e testes pertinentes.
+  Modified: editor/timeline, biblioteca, persistência, stores e documentos.
+  Inventário integral: commits bd370ac (206 arquivos) e 48aeca4
+    (23 arquivos documentais), incluindo deltas anteriores da meta.
+  Deleted: nenhum. Unexpected changes: nenhum identificado.
+
+VALIDATION
+  Typecheck/Lint/Build frontend: PASS; Vite 4,77 s, sem avisos.
+  Unit/Integration frontend: 1032/1032, 167 arquivos, 24,73 s.
+  Rodada anterior: 987 PASS/5 FAIL em fixtures antigas; retry 53/53.
+  Native: suíte inicial 352 PASS/1 FAIL/33 ignored; falha real do lock
+    corrigida e retestada 1/1. Nove testes novos da lixeira aprovados.
+    A suíte nativa integral não foi repetida depois da correção.
+  Build nativa padrão: PASS, 24,32 s; execução canônica recompilou
+    em 29,83 s, sem avisos.
+  Regression: consumidores afetados aprovados, sem falha conhecida aberta.
+  Visual tests: SKIP — aprovação do mantenedor.
+  Runtime verification: inicialização normal confirmada, PID 44392.
+    Interações de Windows/drop nos testes foram simuladas.
+  Total final frontend: 1032 pass/0 fail. Native: limites acima.
+
+HOOKS / HARNESS
+  Hooks: não auditados neste Codex; Stop não foi usado como gate.
+  Harness: fixtures próprias/IPC controlado; sem controle interativo do PC.
+  Gate result: fila implementada; aceite humano e meta integral pendentes.
+
+MCP / SKILLS
+  Graphify remoto pré/pós confirmado em 72edd1b; delta local conferido
+    por fonte/diff. Após push, a consulta ainda retornou esse índice.
+  Skills: frontend/minimalist, diagnóstico, testes e revisão.
+  Referência adicional: documentação oficial do arraste nativo Tauri.
+  Pending activation: nenhuma; indexação nova ainda não confirmada.
+
+GIT
+  Branch: main.
+  HEAD: 48aeca4050fb2490522e4ecc9a32ffd86e279472
+  Latest commit: docs(engenharia): consolidar validação e fila antes da pausa
+  Commits created:
+    bd370ac feat(editor): consolidar montagem, mídia e biblioteca de clipes
+    48aeca4 docs(engenharia): consolidar validação e fila antes da pausa
+  Push: SUCCESS — main e codex/editor-basico-20261026 no mesmo HEAD,
+    confirmado por consulta ao GitHub; sem reescrita de histórico.
+  Remote: origin -> FrosttyS18/CutNicePro.
+  Working tree: código/documentação publicados; este recibo final fica
+    pendente em LATEST.txt e history/2026-10-26_192938_fila-publicada-pausa.txt.
+  Pending files: somente esses dois TXT de auditoria posterior ao push.
+  Pesquisa CapCut e laboratório continuam ignorados pelo Git.
+
+EVIDENCE
+  Commands: npm test; npm run lint/build; cargo build --locked;
+    testes Rust dirigidos; npm run tauri dev; git/ls-remote.
+  Logs: .superpowers/sdd/editor-basico-2026-10-26/
+    queue-final-{tests,lint,build}.log, native-build-trash.log,
+    trash-native-validation-receipt.json e focais da rodada.
+  Test artifacts: docs/reports/evidence/editor-basico-2026-10-26/checkpoint-16.json.
+  Screenshots: nenhuma; sem GUI automatizada.
+  Reproduction: testes cobrem imagem ignorada, fontes com duração zero,
+    expiração, gravação tardia, troca de clipe durante import e arraste.
+
+ISSUES
+  Bugs found: corrigidos os casos da fila descritos acima.
+  Unresolved failures: nenhuma nos testes finais executados.
+  Risks/limits: um arquivo externo por operação; colisão na mesma faixa
+    é recusada sem sobrescrever, sem ripple automático nesse novo caminho.
+    Limpeza de clipes não remove o vídeo original nem exports do usuário.
+  Blockers: nenhum para publicar; aceite manual continua pendente.
+
+FINAL
+  Delivery status: PARTIAL da meta integral; PAUSED, sem conclusão fictícia.
+  Requirements met: implementação da fila, builds, testes e push.
+  Remaining work: limites e critérios registrados no Complemento19.
+  User action required: testes manuais abaixo quando desejar.
+  Restart required: não agora; app normal já está aberto e atualizado.
+  Build: C:/CutNicePro/app/src-tauri/target/debug/cutnicepro.exe
+  SHA256: f2009de1d17fe486c319e0a510e43e837ca7b5f86e0aaf3f86993aa6c3537d26
+  Ready for next task: somente após retomada solicitada pelo mantenedor.
+
+REPORT
+  Latest file: docs/reports/LATEST.txt
+  Historical file: docs/reports/history/2026-10-26_192938_fila-publicada-pausa.txt
+  Persistência e igualdade verificadas após a gravação.
+
+GUIA DO MANTENEDOR — O QUE MUDOU E COMO TESTAR
+  1. Importar mídia: escolha uma imagem; aparece na biblioteca sem entrar
+     na timeline. Arraste para uma faixa livre ou nova camada. Repita
+     arrastando um arquivo do Windows para a biblioteca e para a timeline.
+  2. Diminua o zoom: trecho curto mantém marcador. Duplo clique/Enter
+     amplia para editar; duração e cursor permanecem iguais.
+  3. Edite um clipe antigo e Salvar: deve mostrar Agora e Novo por 1 hora.
+  4. Exclua um clipe de teste: na Lixeira há Restaurar e Excluir
+     permanentemente. Cancelar a confirmação deve preservar o clipe.
+     O prazo de 7 dias foi verificado com datas controladas nos testes.
+
+END OF REPORT

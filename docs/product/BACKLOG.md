@@ -4,6 +4,18 @@
 > Priorização MoSCoW justificada por valor/dependência/risco. Sem estimativas de horas
 > inventadas (dependem de avaliação técnica). Há código implementado e itens ainda PLANNED; IN REVIEW não equivale a aceite do mantenedor. Estado operacional e histórico de entregas são distintos.
 
+## Auditoria de segurança — primeira passada, 2026-10-27
+
+Estado **PARTIAL**, sem alteração funcional nem retomada da meta do editor. A skill oficial Cloudflare foi aplicada ao código `48aeca4`: zero vulnerabilidades confirmadas; uma hipótese de leitura `cnplocal` por origem remota exige validação independente das pré-condições e do runtime. Falta de Origin/CSP isoladamente não comprova vazamento. Continuidade e evidências no ENGINE-HANDOFF Complemento20 e no tooling.
+
+- Validar em ambiente descartável isolado se uma origem remota consegue ler somente uma mídia sintética registrada, distinguindo script controlado, seletor conhecido e políticas do WebView2. Nunca usar a sessão normal nem desabilitar segurança do navegador para obter resultado positivo.
+- Aprofundar proxy/cache `cnpmedia` da Home: limites de resposta, redirecionamento, concorrência, cancelamento e uso de recursos. Cobertura pendente, sem indisponibilidade demonstrada.
+- Verificar os acessos secundários que mídia não confiável pode induzir em FFmpeg/FFprobe nas chamadas do aplicativo. Não confundir o controle do caminho primário com contenção do decoder; nenhum acesso não autorizado foi observado.
+- Revisar exclusão de projetos, retomada por marcador, reconciliação e derivados, separadamente do purge de clipes já examinado. Preservação de originais/mídia compartilhada e promessas reais de retenção orientam os critérios; inconveniência do mesmo usuário não é automaticamente falha de segurança.
+- Avaliar CSP e vínculo explícito de origem como proteção adicional, com testes dos consumidores antes de alterar: mídia/blob, Home e projetos legados. Uma alteração funcional futura deve consultar impacto atual e manter compatibilidade.
+
+Os testes controlados do alvo ficaram bloqueados pela ausência do isolamento OS completo exigido pela skill. Revisão de fonte/JSON e busca por padrões de segredos não substituem essa etapa nem um scan completo de dependências. Não foram criadas severidades ou declarações de segurança para áreas não testadas.
+
 ## Fila adicional do mantenedor — 2026-10-26
 
 Fila atual antes da pausa solicitada: imagem/trechos curtos na timeline; lixeira7dias e filtros atuais; importar paraMídia e arrastar para timeline/desdeWindows; renovar Novo/tempo ao salvar edição manual; commits e push para o Graphify. Implementação e testes em consolidação, com reteste visual/Windows ainda do mantenedor. Depois dessa entrega, a meta integral deve ficar PAUSED por pedido explícito, preservando as lacunas abaixo para retomada. Não iniciar novas pesquisas CapCut nem o laboratório797MB antes de retomar.

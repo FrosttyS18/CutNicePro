@@ -8,6 +8,16 @@ o setup original não fez instalação global de npm/uv nem alteração de PATH/
 
 ## Abrir o aplicativo e controlar espaço — 2026-10-24
 
+### Auditoria de segurança Cloudflare — 2026-10-27
+
+Skill oficial [cloudflare/security-audit-skill](https://github.com/cloudflare/security-audit-skill), revisão `c1c8a8c1471069fb0e188eeaff69b8e8db6564a8`, instalada pelo helper do Codex em `C:/CutNicePro/.tooling/research/cloudflare-skills/security-audit/`. Uso explícito pela leitura de `SKILL.md`; não foi registrada globalmente nem adicionada às dependências do aplicativo. O diretório já é ignorado pelo Git. SHA-256 de `SKILL.md`: `5e3e96a1e438d8f35fef0a1e38f02d4f00e2bdf910401b7dfe00e6779c6dac85`.
+
+Primeira passada `quick`, somente código-fonte, sobre `48aeca4050fb2490522e4ecc9a32ffd86e279472`; Graphify remoto confirmou esse mesmo commit, build `5e80d294-6c2b-4dcd-9689-894383cd0368`. Artefatos locais em `C:/CutNicePro/.tooling/research/security-audit-2026-10-27/`: metadados, arquitetura, cobertura, registros e relatório. Sem envio de vídeos/chaves, execução de ataques contra a sessão normal, alteração funcional, novo target ou retomada da meta do editor.
+
+A skill exige isolamento pelo sistema operacional para executar o alvo: rede externa bloqueada, ambiente vazio com allowlist, alvo/ferramentas somente leitura, escrita somente em scratch e limites de recursos. Esses controles não foram demonstrados neste ambiente; nenhum build, teste do app, navegador ou decoder foi executado nesta auditoria. Não confundir isso com os testes de engenharia anteriores. A revisão permanece parcial e não certifica ausência de vulnerabilidades.
+
+Os CLIs dos validadores oficiais recusam execução no Windows sem `O_NOFOLLOW`/`O_NONBLOCK`. Não foram enfraquecidos. As estruturas JSON produzidas pela raiz são verificadas pelas APIs `validateDocument` dos mesmos validadores, sobre arquivos próprios, sem promover artefatos gerados pelo alvo; esse caminho não afirma equivalência à proteção de leitura do CLI. Resultado e pendências no registro canônico do `ENGINE-HANDOFF.md` e no relatório desta tarefa.
+
 ### Node e compatibilidade de scripts — 2026-10-26
 
 Atualização global autorizada pelo mantenedor e concluída pelo instalador oficial com elevação do Windows: `C:/Program Files/nodejs/node.exe` **26.12.1**, npm **11.20.0**. É a versão Current estável mais recente verificada; a LTS é 24.22.1. `.node-version` fixa 26.12.1 e o CI passa a ler esse arquivo. Não houve atualização indiscriminada de dependências, lock ou arquitetura. O comando normal continua `npm run tauri dev` em `C:/CutNicePro/app`; Node é ferramenta de desenvolvimento/build, não o decodificador da prévia no WebView.
