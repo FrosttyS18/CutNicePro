@@ -18,6 +18,7 @@ it.each([false, true])("preserva hover, foco, Escape e descarte com disabled=%s"
     expect(button.hasAttribute("title")).toBe(false);
     await act(async () => anchor.dispatchEvent(new window.MouseEvent("mouseover", { bubbles: true })));
     expect(document.querySelector('[role="tooltip"]')?.textContent).toBe("Descrição completa");
+    expect(document.querySelector('[role="tooltip"]')?.parentElement).toBe(document.body);
     expect(button.getAttribute("aria-describedby")).toBe(document.querySelector('[role="tooltip"]')?.id);
     await act(async () => anchor.dispatchEvent(new window.MouseEvent("mouseout", { bubbles: true })));
     expect(document.querySelector('[role="tooltip"]')).toBeNull();

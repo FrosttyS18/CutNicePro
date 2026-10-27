@@ -176,6 +176,24 @@ fn real_saved_implicit_editor_caption_preset_exports_video_image_audio_tail() {
     let frozen = super::export_snapshot::freeze(Some(&reopened), &saved.document).unwrap();
     let (rendered, output) =
         super::render::run(&base, &frozen, &sources, &control, |_| {}).unwrap();
+    let encoder = std::fs::read_to_string(rendered.path.join("encoder.txt")).unwrap();
+    assert!(matches!(encoder.as_str(), "h264_nvenc" | "libx264"));
+    let encoded = Command::new(&tools.ffprobe)
+        .args([
+            "-v",
+            "error",
+            "-select_streams",
+            "v:0",
+            "-show_entries",
+            "stream_tags=encoder",
+            "-of",
+            "default=noprint_wrappers=1:nokey=1",
+        ])
+        .arg(&output)
+        .output()
+        .unwrap();
+    assert!(encoded.status.success());
+    assert!(String::from_utf8_lossy(&encoded.stdout).contains(&encoder));
     let metadata = crate::media_analyze::analyze(&tools, &output).unwrap();
     assert!((metadata.duration_ms as i64 - 2900).abs() <= 100);
     assert!(metadata.has_audio);

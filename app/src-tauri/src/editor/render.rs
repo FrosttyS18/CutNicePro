@@ -12,6 +12,42 @@ use std::{
     process::Command,
 };
 
+fn render_with_encoder(
+    selected: Encoder,
+    directory: &Path,
+    control: &ProcessControl,
+    mut render_all: impl FnMut(Encoder) -> Result<(), String>,
+) -> Result<Encoder, String> {
+    control.check()?;
+    match selected {
+        Encoder::Nvenc => eprintln!("[editor] Codificação preferida: GPU NVIDIA (h264_nvenc)."),
+        Encoder::Cpu => eprintln!("[editor] GPU NVIDIA indisponível; usando CPU (libx264). Diagnóstico no log temporário nvenc-probe.log."),
+    }
+    let mut actual = selected;
+    if let Err(error) = render_all(selected) {
+        control.check()?;
+        if selected == Encoder::Cpu {
+            return Err(error);
+        }
+        std::fs::write(directory.join("encoder-fallback.log"), error)
+            .map_err(|error| error.to_string())?;
+        eprintln!("[editor] A codificação por GPU NVIDIA falhou; repetindo com CPU (libx264). Diagnóstico no log temporário encoder-fallback.log.");
+        actual = Encoder::Cpu;
+        render_all(actual)?;
+    }
+    control.check()?;
+    let name = match actual {
+        Encoder::Nvenc => "h264_nvenc",
+        Encoder::Cpu => "libx264",
+    };
+    std::fs::write(directory.join("encoder.txt"), name).map_err(|error| error.to_string())?;
+    match actual {
+        Encoder::Nvenc => eprintln!("[editor] Codificador efetivo: GPU NVIDIA (h264_nvenc)."),
+        Encoder::Cpu => eprintln!("[editor] Codificador efetivo: CPU (libx264)."),
+    }
+    Ok(actual)
+}
+
 pub fn run(
     base: &Path,
     document: &Composition,
@@ -60,14 +96,7 @@ pub fn run(
         }
         Ok(())
     };
-    if let Err(error) = render_all(selected) {
-        control.check()?;
-        if selected == Encoder::Nvenc {
-            render_all(Encoder::Cpu)?;
-        } else {
-            return Err(error);
-        }
-    }
+    render_with_encoder(selected, &scratch.path, control, &mut render_all)?;
     let list = windows
         .iter()
         .enumerate()
@@ -109,3 +138,7 @@ pub fn run(
     progress(100);
     Ok((scratch, output))
 }
+
+#[cfg(test)]
+#[path = "render_encoder_tests.rs"]
+mod encoder_tests;

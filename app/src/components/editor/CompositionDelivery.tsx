@@ -8,6 +8,7 @@ import { formatCompositionTimecode, parseCompositionRange } from "../../lib/comp
 import { createManualClip } from "../../lib/composition-persistence";
 import type { Composition } from "../../lib/composition-types";
 import { FlowDialog } from "../workspace/FlowDialog";
+import { ProcessingDialog } from "../workspace/ProcessingDialog";
 import { EditorAction } from "./EditorAction";
 
 interface Props {
@@ -31,6 +32,7 @@ export function CompositionDelivery(props: Props) {
   const exporter = useCompositionExport(props.projectId);
   const id = useId();
   const [confirmExport, setConfirmExport] = useState(false);
+  const [dismissedExport, setDismissedExport] = useState<string | null>(null);
   const [creating, setCreating] = useState(false);
   const [dialog, setDialog] = useState(false);
   const [name, setName] = useState("");
@@ -55,6 +57,13 @@ export function CompositionDelivery(props: Props) {
       if (result.status === "blocked") props.onError("Aguarde a exportação em andamento.");
       if (result.status === "cancelled") props.onNotice("Exportação cancelada.");
     } finally { pending.current = false; }
+  }
+
+  function requestExport() {
+    if (disabled) return;
+    props.onPause();
+    if (props.dirty) setConfirmExport(true);
+    else void exportSaved(false);
   }
 
   function openManual() {
@@ -86,21 +95,19 @@ export function CompositionDelivery(props: Props) {
 
   return <>
     {!props.clipId && <EditorAction label="Criar clipe" icon={<FilmStripIcon size={18}/>} disabled={disabled} onClick={openManual}/>}
-    <EditorAction label="Exportar" icon={<DownloadSimpleIcon size={18}/>} disabled={disabled} onClick={() => {
-      props.onPause();
-      if (props.dirty) setConfirmExport(true);
-      else void exportSaved(false);
-    }}/>
+    <EditorAction label="Exportar" icon={<DownloadSimpleIcon size={18}/>} disabled={disabled} onClick={requestExport}/>
     <FlowDialog open={confirmExport} title="Salvar antes de exportar?" busy={props.saving} onClose={() => setConfirmExport(false)}>
       <p>Confirme as alterações para exportar a montagem que está vendo.</p>
       <div className="composition-editor__dialog-actions"><button type="button" className="flow-button dialog-action--secondary" onClick={() => setConfirmExport(false)}>Cancelar</button><button type="button" className="flow-button dialog-action--primary" disabled={props.saving} onClick={() => void exportSaved(true)}>Salvar e exportar</button></div>
     </FlowDialog>
-    <FlowDialog open={exporter.busy} title="Exportando vídeo" busy allowCloseWhileBusy onClose={() => void exporter.cancel()}>
-      <p role="status">{exporter.job?.progress ? `Renderizando ${exporter.job.progress}%` : "Preparando exportação…"}</p>
-      <progress max={100} value={exporter.job?.progress ?? 0} aria-label="Progresso da exportação"/>
-      <div className="composition-editor__dialog-actions"><button type="button" className="flow-button" onClick={() => void exporter.cancel()}>Cancelar exportação</button></div>
-      {exporter.error && <p role="alert">{exporter.error}</p>}
-    </FlowDialog>
+    {exporter.job && <ProcessingDialog key={exporter.job.jobId} id={exporter.job.jobId}
+      open={exporter.busy || exporter.job.state === "failed" && dismissedExport !== exporter.job.jobId} busy={exporter.busy}
+      title="Exportando vídeo" status={exporter.job.progress > 0 ? "Renderizando seu vídeo" : "Preparando exportação…"}
+      progress={exporter.job.progress} progressLabel="Progresso da exportação" error={exporter.error ?? exporter.job.error ?? "Não foi possível exportar o vídeo. Tente novamente."}
+      cancelAction="Cancelar exportação" cancelDescription="A exportação será interrompida. Sua montagem e os arquivos originais serão mantidos."
+      onClose={() => setDismissedExport(exporter.job?.jobId ?? null)} onCancel={exporter.cancel}
+      onRetry={() => { if (!disabled) { setDismissedExport(exporter.job?.jobId ?? null); requestExport(); } }}
+    />}
     <FlowDialog open={dialog} title="Criar clipe" busy={creating} onClose={() => setDialog(false)}>
       <form onSubmit={event => { event.preventDefault(); void create(); }}>
         <div className="composition-editor__clip-fields">

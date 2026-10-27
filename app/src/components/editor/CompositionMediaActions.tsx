@@ -30,9 +30,9 @@ export function CompositionMediaActions(props: Props) {
   const editing = props.document.assets.find(value => value.id === edit?.assetId);
   const close = useCallback(() => setEdit(null), []);
   useEffect(() => { if (menu && !asset) onClose(); }, [menu, onClose, asset]);
-  let usage = 0, invalid = "";
+  let invalid = "";
   if (edit) {
-    try { usage = compositionAssetUsage(props.document, edit.assetId); }
+    try { compositionAssetUsage(props.document, edit.assetId); }
     catch { invalid = "Esta mídia não está mais disponível na montagem. Feche a janela e selecione outra mídia."; }
   }
   const locked = Boolean(edit?.mode === "remove" && props.document.items.some(item => item.assetId === edit.assetId && props.document.tracks.some(track => track.id === item.trackId && track.locked)));
@@ -70,12 +70,12 @@ export function CompositionMediaActions(props: Props) {
       { label: "Abrir local do arquivo", icon: <FolderOpenIcon size={17} aria-hidden="true"/>, disabled: Boolean(props.disabled || revealing || !props.media[asset.id]?.url), onSelect: () => { void reveal(); } },
     ]}/>}
     {revealing && <p className="flow-muted" role="status">Abrindo local do arquivo…</p>}
-    <FlowDialog open={Boolean(edit)} title={edit?.mode === "rename" ? "Renomear mídia" : "Excluir mídia?"} onClose={close}>
+    <FlowDialog open={Boolean(edit)} title={edit?.mode === "rename" ? "Renomear mídia" : "Excluir mídia da biblioteca?"} onClose={close}>
       <form onSubmit={event => { event.preventDefault(); confirm(); }}>
         {edit?.mode === "rename" ? <div className="composition-editor__clip-fields"><EditorNameField id={`${id}-name`} label="Nome da mídia" value={edit.name}
           onChange={name => setEdit(value => value ? { ...value, name, error: "" } : null)} invalid={Boolean(edit.error)} describedBy={edit.error ? `${id}-error` : undefined}/></div>
-          : <><p>{editing?.name}</p><p>{usage ? `${usage} ${usage === 1 ? "trecho será removido" : "trechos serão removidos"} da linha do tempo, com áudio e legendas vinculados. Os demais trechos ficam no mesmo lugar.` : "A mídia será removida da biblioteca deste projeto."}</p></>}
-        <p className="flow-muted">{edit?.mode === "rename" ? "O nome muda apenas neste projeto. O arquivo original não será renomeado." : "O arquivo original será mantido no computador."}</p>
+          : <p style={{overflowWrap:"anywhere"}}>O item “{editing?.name}” será removido da timeline ao remover da biblioteca.</p>}
+        {edit?.mode === "rename" && <p className="flow-muted">O nome muda apenas neste projeto. O arquivo original não será renomeado.</p>}
         {(edit?.error || invalid || locked) && <p id={`${id}-error`} role="alert">{edit?.error || invalid || "Há trechos desta mídia em faixas bloqueadas. Desbloqueie as faixas para excluí-la."}</p>}
         <div className="composition-editor__dialog-actions"><button type="button" className="flow-button dialog-action--secondary" onClick={close}>Cancelar</button>
           <button type="submit" className={`flow-button ${edit?.mode === "rename" ? "dialog-action--primary" : "dialog-action--danger"}`} disabled={blocked}>{edit?.mode === "rename" ? "Salvar nome" : "Excluir mídia"}</button></div>

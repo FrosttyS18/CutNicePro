@@ -83,7 +83,7 @@ it("renomear e excluir entram no histórico e só persistem ao salvar", async ()
   expect(current.assets.find(asset => asset.id === "source")!.name).toBe("Entrevista final.mp4");
   expect(current.items).toEqual(original.items); expect(ipc.saveEditorDocument).not.toHaveBeenCalled();
   await context("Entrevista final.mp4"); await menu("Excluir");
-  expect(dialog().textContent).toContain("1 trecho");
+  expect(dialog().textContent).toContain("O item “Entrevista final.mp4” será removido da timeline ao remover da biblioteca.");
   await view!.click("Cancelar"); expect(current.items).toEqual(original.items);
   await context("Entrevista final.mp4"); await menu("Excluir"); await submit();
   expect(current.assets.map(asset => asset.id)).toEqual(["image"]);
@@ -108,7 +108,26 @@ it("cancelar renomeação não altera nada e nomes longos/script permanecem text
   expect(Array.from(longName)).toHaveLength(120);
   await context(longName); await menu("Renomear"); const literal = '<img src=x onerror="alert(1)">'; await typeName(literal); await submit();
   expect(card(literal)).toBeDefined(); expect(view!.host.querySelector("img[onerror]")).toBeNull();
+  await context(literal); await menu("Excluir");
+  expect(dialog().textContent).toContain(`O item “${literal}” será removido da timeline ao remover da biblioteca.`);
+  expect(dialog().querySelector("img[onerror],script")).toBeNull();
+  await view!.click("Cancelar");
   expect(ipc.saveEditorDocument).not.toHaveBeenCalled();
+});
+
+it.each([false, true])("confirma exclusão com a mensagem solicitada, mídia sem uso=%s", async unused => {
+  const document = fixture();
+  if (unused) document.items = document.items.filter(item => item.assetId !== "image");
+  await mount(document);
+  await context(image.name); await menu("Excluir");
+  expect(dialog().querySelector("h2")?.textContent).toBe("Excluir mídia da biblioteca?");
+  expect([...dialog().querySelectorAll("form > p")].map(paragraph => paragraph.textContent)).toEqual([
+    `O item “${image.name}” será removido da timeline ao remover da biblioteca.`,
+  ]);
+  expect([...dialog().querySelectorAll("form button")].map(button => button.textContent)).toEqual(["Cancelar", "Excluir mídia"]);
+  await view!.click("Cancelar");
+  await context(image.name); await menu("Renomear");
+  expect(dialog().textContent).toContain("O nome muda apenas neste projeto. O arquivo original não será renomeado.");
 });
 
 it("faixa bloqueada explica a recusa de excluir e preserva todos os vínculos", async () => {

@@ -499,5 +499,67 @@
         "status": "created"
       }
     ]
+  },
+  "postAcceptanceRefinement": {
+    "date": "2026-10-27",
+    "previousPublishedCommit": "b4d45cd9b608719759e1f31c7400cbe14b49a4ea",
+    "humanAcceptance": "Mantenedor confirmou exportação normal funcionando; pediu animação da transcrição, GPU preferida e copy exata da exclusão.",
+    "ts": {
+      "durationSeconds": 83.59,
+      "passed": 1362,
+      "files": 194,
+      "failed": 0
+    },
+    "rust": {
+      "durationSeconds": 9.87,
+      "passed": 389,
+      "failed": 0,
+      "ignored": 33
+    },
+    "build": "tsc/Vite e cargo build --no-default-features PASS sem warnings",
+    "eslint": "PASS integral",
+    "mediaCopy": "Excluir mídia da biblioteca? / O item (nome) será removido da timeline ao remover da biblioteca. / Cancelar / Excluir mídia",
+    "exportAnimation": "ProcessingDialog compartilhado; progresso medido; cancelar/erro/retry preservados",
+    "tooltip": "Portal no dialog ancestral; fallback body fora do modal; removido ao fechar/erro/retry; padrão do projeto sem title nativo",
+    "gpu": {
+      "realFixture": "h264_nvenc efetivo na RTX5070, encoder.txt comparado à tag real do MP4",
+      "preference": "NVENC já existente, CPU por indisponibilidade/falha",
+      "deterministicTests": 7,
+      "previousUserExportEncoder": "Desconhecido: caminho do MP4 não informado",
+      "speedup": "Não medido; decodificação/composição/filtros permanecem CPU",
+      "newDiagnostics": "encoder.txt e mensagens fixas no terminal; causa detalhada só no log temporário",
+      "documentation": "https://docs.nvidia.com/video-technologies/video-codec-sdk/13.1/ffmpeg-with-nvidia-gpu/index.html"
+    },
+    "runtime": {
+      "pid": 24156,
+      "profile": "normal",
+      "sha256": "A60E80D9F27E2121F4B9B981382D85ABB44AAB54AA7CCCF6B63F131943D8F92F",
+      "executable": "C:/CutNicePro/app/src-tauri/target/debug/cutnicepro.exe",
+      "pcAutomation": false,
+      "frontendHttp": 200
+    },
+    "graphifyIndex": "de8ed09878b540cfb838ed4eb966571f0cf49f54",
+    "files": [
+      "app/src-tauri/src/editor/render_encoder_tests.rs",
+      "app/src-tauri/src/editor/render_tests.rs",
+      "app/src-tauri/src/editor/render.rs",
+      "app/src/components/editor/CompositionDelivery.tsx",
+      "app/src/components/editor/CompositionMediaActions.tsx",
+      "app/src/components/workspace/ProcessingDialog.tsx",
+      "app/src/hooks/useEditorTooltip.tsx",
+      "app/src/test/composition-export-dialog.test.tsx",
+      "app/src/test/composition-media-actions.test.tsx",
+      "app/src/test/editor-action-tooltip.test.tsx",
+      "app/src/test/processing-dialog-motion.test.tsx",
+      "docs/engineering/EDITOR-BASIC-IMPLEMENTATION-PLAN.md",
+      "docs/engineering/ENGINE-HANDOFF.md",
+      "docs/product/BACKLOG.md",
+      "docs/product/BUSINESS-RULES.md",
+      "docs/product/PRODUCT-BRAIN.md",
+      "docs/product/TRACEABILITY.md",
+      "docs/reports/evidence/editor-basico-2026-10-26/editor-arraste-selecao-2026-10-27.json"
+    ],
+    "pauseRequested": true,
+    "goalComplete": false
   }
 }
