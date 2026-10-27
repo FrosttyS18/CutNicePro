@@ -1,0 +1,135 @@
+╔════════════════════════════════════════════╗
+║       CUTNICEPRO — ZCODE REPORT            ║
+╚════════════════════════════════════════════╝
+
+TASK
+  Name: Marcadores, organização das faixas e limites dos nomes
+  Status: PARTIAL — fatia técnica entregue; aceite humano pendente
+  Scope: fila aprovada do editor, incluindo os retornos desta rodada.
+  Objective: marcar pontos, identificar faixas e manter a principal acessível.
+  Result: M/duplo clique, nomes/cores, contador120 e divisor implementados.
+  FUNCTIONAL STATUS: PASS no escopo automatizado
+  REGRESSION STATUS: PASS nos consumidores executados
+  VISUAL STATUS: PENDING HUMAN APPROVAL
+
+IMPLEMENTATION
+  Completed: marcadores com edição/exclusão, Undo/Redo e persistência;
+    nomes/cores de faixas; principal centralizada/fixa na base; divisor1px.
+    Contador X/120 nos dois nomes; limite Unicode na entrada e no TS/Rust.
+    Corrigido M após duplo clique→Excluir: foco retorna à timeline.
+    Popover usa altura real; drop não atravessa a principal fixada.
+  Not completed: aceite normal/visual e gates globais herdados.
+  Changes: mídia/duração/render preservados; anotações pós-fim não esticam saída.
+  Architecture impact: metadados opcionais compatíveis; sem dependências/versão.
+
+FILES
+  Created: app/src/components/editor/{CompositionMarkerEditor,CompositionMarkers,
+    CompositionTrackDetails,EditorNameField,EditorPopover}.tsx;
+    composition-markers.css e editor-popover.css no mesmo diretório;
+    app/src/hooks/useCompositionMarkers.ts;
+    app/src/lib/{composition-markers,composition-text}.ts;
+    app/src/test/{composition-marker-flow,composition-track-details,
+    composition-track-presentation,editor-name-field,editor-popover}.test.tsx;
+    app/src/test/{composition-markers,composition-text}.test.ts;
+    docs/reports/evidence/editor-basico-2026-10-26/marcadores-faixas-validacao.json.
+  Modified: app/src-tauri/src/editor/{types,tests,render_plan_tests}.rs;
+    editor/{CompositionEditor,CompositionTimeline,CompositionTrackLane,
+    useCompositionGesture}.tsx/ts e composition-timeline.css;
+    hooks/useCompositionCommands.ts; lib/{composition,composition-boundary,
+    composition-drop-geometry,composition-insert,composition-timecode,
+    composition-types}.ts; testes composition-{boundary,drop-geometry,
+    spatial-gesture,timecode,timeline-toolbar}; ENGINE-HANDOFF e plano do editor;
+    docs/product/{BACKLOG,BUSINESS-RULES,PRODUCT-BRAIN,TRACEABILITY}.md.
+  Deleted: nenhum fonte ou dado do mantenedor.
+  Unexpected changes: NONE. Fixture/capturas/logs locais ignorados.
+
+VALIDATION
+  Typecheck: PASS — build final
+  Lint: PASS — completo, zero avisos
+  Unit tests: TS1160/1160 na suíte integral; após foco,34/34 afetados,
+    incluindo1 caso novo:1161 únicos combinados, não uma suíte integral1161.
+  Integration tests: Rust359 PASS/0FAIL/33 opt-in ignored;
+    inclui persistência nativa e fixtures FFmpeg reais.
+  Regression tests: PASS — mídia/vínculos, zoom, teclado, metadados e foco.
+  Visual tests: Terra,3 passagens delimitadas; fixture de componentes reais.
+    Omissão de estilos na fixture corrigida; comparação final sem colisões
+    no escopo capturado. Não é aprovação estética ou da sessão normal.
+  Runtime verification: navegador headless sintético; principal acessível
+    com50camadas/scroll1800; sem overflow horizontal do documento.
+    Cargo build no target padrão; frontend em app/dist.
+  Total passed:1520 casos únicos combinados; failed atuais:0; skipped:33.
+  Falhas iniciais corrigidas: cancelamento do gesto, expectativa histórica
+    de ordenação, foco após exclusão e preparação/tipagem de fixtures.
+
+HOOKS / HARNESS
+  Hooks active: não aferidos; não afirmar execução dos hooks do ZCode.
+  PreToolUse/PostToolUse/Stop/Baseline: não usados como prova de PASS.
+  Gate result: contratos/suítes/build PASS; aceite humano pendente.
+  Evidence: JSON versionado e .tooling/research/ui-markers (ignorado).
+
+MCP / SKILLS
+  Tools used: Graphify remoto, agentes de contratos/layout, GPT-6.1 Terra,
+    Playwright CLI headless, skills de frontend/UX e validação proporcional.
+  Connection status: workspace wesley-s-workspace, repositório correto.
+  Graphify: pré-condição b709235 confirmada antes de implementar.
+    Última consulta ainda em b709235/build715902a7; novo push não é
+    confirmação de indexação. Código novo revisado por fonte/diff/testes.
+  Failures: permissões iniciais do laboratório e configuração da fixture
+    corrigidas; navegador e servidor1435 encerrados.
+  Pending activation: promoção do novo commit no Graphify.
+
+GIT
+  Snapshot: antes do commit documental deste relatório.
+  Branch: main
+  HEAD:9cdd0fe0b7ae2ebd41da6c9dde84c54443e1e841
+  Latest commit: feat(editor): adicionar marcadores e organização das faixas
+  Commits created: d0d1d1c docs(auditoria): registrar revisão de segurança e pendências;
+    6f0e37b fix(editor): corrigir zoom e seleção visual da fonte;
+    b709235 docs(editor): registrar entrega da fonte e próxima fila;
+    9cdd0fe feat(editor): adicionar marcadores e organização das faixas.
+  Push: SUCCESS — ls-remote confirmou9cdd0fe em origin/main.
+  Remote: origin→FrosttyS18/CutNicePro
+  Working tree: documentação pendente no snapshot; código já publicado.
+  Pending files: ENGINE-HANDOFF, TRACEABILITY, LATEST e este histórico;
+    serão publicados em commit documental, sem reescrever histórico.
+
+EVIDENCE
+  Commands executed: npm test; testes focais; npm run build; npm run lint;
+    cargo test --lib; cargo build; git diff --check; push/ls-remote.
+  Relevant logs: .tooling/research/ui-markers/final-{ts-tests,rust-tests,build,lint}.log
+  Screenshots: one-track.png, marker-popup.png, many-tracks.png no laboratório.
+  Test artifacts: marcadores-faixas-validacao.json
+  Reproduction details: teste do M falhou antes do fallback de foco e
+    passou depois; limites e texto literal cobertos no DOM e contratos.
+
+ISSUES
+  Bugs found: corrigidos nesta fatia; sem falha atual nas verificações executadas.
+  Unresolved failures: nenhum destes testes; reteste humano ainda necessário.
+  Regressions: nenhuma observada no escopo; não é garantia global.
+  Risks: proteção dos nomes não certifica segurança de todo o aplicativo.
+    Texto JSX/tooltip não interpreta HTML; cores aceitam somente HEX.
+    Limitação de120 não substitui o tratamento seguro da saída.
+  Blockers: Graphify ainda não confirmou a promoção posterior ao push.
+
+FINAL
+  Delivery status: PARTIAL no aceite global; implementação/testes desta fatia entregues.
+  Requirements met: M/edição, nomes/cores, contador/limite, divisor e foco.
+  Remaining work: reteste na sessão normal e gates globais já registrados.
+  User action required: roteiro abaixo; nenhuma nova autorização pedida.
+  Restart required: reabrir se a sessão ainda usar o motor anterior.
+  Ready for next task: não iniciar nova fatia dependente do grafo até promoção.
+  Meta: ACTIVE/PARTIAL; não marcada como concluída ou pausada automaticamente.
+
+REPORT
+  Latest file: docs/reports/LATEST.txt
+  Historical file: docs/reports/history/2026-10-27_041811_marcadores-faixas.txt
+
+GUIA DO MANTENEDOR — O QUE MUDOU E COMO TESTAR
+  1. Na timeline: M→duplo clique no marcador→Excluir→M, sem clicar de novo.
+     Esperado: cria outro marcador.
+  2. Editar nome do marcador e da faixa: digitar/colar mais de120 caracteres.
+     Esperado: contador visível e máximo120; Concluir→Salvar→reabrir preserva.
+  3. Rolar várias camadas: principal acessível na base e divisor discreto.
+     Desfazer/Refazer não altera nem apaga outras mídias.
+
+END OF REPORT
