@@ -1,6 +1,6 @@
 import type { CSSProperties } from "react";
 import type { TranscriptSegment } from "./workspace-types";
-import { cleanTranscriptText, displayWords } from "./transcript-text";
+import { captionGroups } from "./caption-cues";
 
 export const captionFonts = ["Poppins", "Arial", "Georgia", "Impact", "Verdana", "Courier New"] as const;
 export interface CaptionStyle {
@@ -61,28 +61,11 @@ export function captionPresentation(s:CaptionStyle, ratio=16/9, sample=false):CS
     paintOrder:"stroke fill", textShadow:s.shadow?"0 2px 4px #000a":"none", background:s.background };
 }
 export interface CaptionCue { words:{text:string;active:boolean;spoken:boolean}[] }
-/** Pausa maior que 0,6 s entre palavras fecha o grupo (paridade SupoClip). */
-const GROUP_GAP = 0.6;
 export function captionCue(segments:TranscriptSegment[],time:number,wordsPerCaption=5,bounds?:{start:number;end:number}):CaptionCue | null {
   const segment=segments.find(s=>time>=s.start && time<s.end);
   if (!segment) return null;
-  const partial = bounds && (segment.start < bounds.start || segment.end > bounds.end);
-  const words=displayWords(segment).filter(word => !bounds ||
-    (word.start === null || word.end === null ? !partial : word.start >= bounds.start && word.end <= bounds.end));
-  if (!words.length) return null;
-  const timed=words.some(word=>word.start!==null);
-  if (!timed) return {words:words.map(word=>({text:cleanTranscriptText(word.text),active:false,spoken:false}))};
-  const groups:typeof words[]=[];
-  let current:typeof words=[];
-  for (const word of words) {
-    const previous=current[current.length-1];
-    if (previous && previous.end!==null && word.start!==null &&
-      (current.length>=wordsPerCaption || word.start-previous.end>GROUP_GAP)) { groups.push(current); current=[]; }
-    current.push(word);
-  }
-  if (current.length) groups.push(current);
-  let active=groups[0];
-  for (const group of groups) if (group[0].start!==null && group[0].start<=time) active=group;
-  return {words:active.map(word=>({text:cleanTranscriptText(word.text),active:word.start!==null && word.end!==null && time>=word.start && time<word.end,
+  const active=captionGroups(segment,wordsPerCaption,bounds).find(group=>time>=group.start && time<group.end);
+  if (!active) return null;
+  return {words:active.words.map(word=>({text:word.text,active:word.start!==null && word.end!==null && time>=word.start && time<word.end,
     spoken:word.start!==null && time>=word.start}))};
 }

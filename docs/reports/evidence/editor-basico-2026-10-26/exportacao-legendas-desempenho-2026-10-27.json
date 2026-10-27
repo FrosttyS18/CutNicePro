@@ -1,0 +1,38 @@
+{
+  "date": "2026-10-27",
+  "head": "fbcaa12065f4958caeed39fdc22d7ab297bd925b",
+  "scope": "Paridade de legendas, desempenho da exportação e proteção do fechamento",
+  "graphify": {
+    "workspace": "wesley-s-workspace",
+    "repository": "FrosttyS18/CutNicePro",
+    "commit": "fbcaa12065f4958caeed39fdc22d7ab297bd925b",
+    "build": "cff3b8a2-1282-4dcb-8d2f-5c9010eb539e",
+    "localChangesIndexed": false
+  },
+  "previousNormalExportSeconds": { "video": 168.44, "audio": 1.75, "mux": 2.58, "total": 173.08 },
+  "finalFullPipelineSeconds": { "video": 127.06, "audio": 1.65, "mux": 2.57, "total": 131.58 },
+  "artifact": { "width": 1080, "height": 1920, "frames": 4855, "durationSeconds": 161.833333, "videoEncoder": "h264_nvenc", "audioCodec": "aac", "sizeBytes": 82205888 },
+  "captionParity": { "framesCompared": 4855, "cueOrHighlightDifferences": 0, "portraitFontBefore": 113.7777777778, "portraitFontAfter": 64, "absoluteRasterParityClaimed": false },
+  "performanceExperimentsMs": {
+    "pairedOrderA": { "repeatedResize": 17671, "sharedResize": 18707, "decodedFrameDifferences": 0 },
+    "pairedReverse": { "sharedResize": 18482, "repeatedResize": 25323, "decodedFrameDifferences": 0 },
+    "cudaResize": { "elapsed": 23115, "decodedFrameDifferences": 600, "adopted": false },
+    "identityAlphaRemoval": { "control": 18704, "withoutExplicitRgba": 9720, "withoutExplicitRgbaDifferences": 600, "withExplicitRgba": 16016, "withExplicitRgbaDifferences": 0, "adoptedOnlyWithExplicitRgba": true }
+  },
+  "validation": { "typescriptDistinctTestsPassed": 77, "rustDistinctTestsPassed": 80, "fullSuiteExecuted": false, "frontendBuild": "PASS", "nativeBuild": "PASS", "focalLint": "PASS", "touchedRustfmt": "PASS", "diffCheck": "PASS" },
+  "failuresFoundDuringValidation": [
+    "Legenda totalmente sem tempos desaparecia em recorte parcial: reproduzida por dois testes FFmpeg, corrigida sem relaxar limiares.",
+    "Override objeto sem words herdava tempos antigos após JSON roundtrip: corrigido e coberto por teste.",
+    "Antes da correção, testes RED reproduziram fonte, agrupamento, perda de texto, janelas técnicas e proteção de fechamento."
+  ],
+  "normalBuild": { "path": "app/src-tauri/target/debug/cutnicepro.exe", "sha256": "30DEE61BC8B2A4D696D4C95DD5F2C8AF68E1DA2BB4FAD91289C3AA836D9CD308", "pid": 1616, "frontendPort": 1420, "httpStatus": 200 },
+  "close": { "oldPid": 43316, "forceTerminationExplicitlyAuthorized": true, "originalHistoricalCauseProven": false, "guardRegressionTestsPassed": 33, "normalRetest": "PENDING" },
+  "humanFeedback": "Mantenedor informou que está exportando e avisará se houver falha; fontes congeladas e cargas pesadas encerradas.",
+  "capcut": { "staticExportStudyCompletedSlice": true, "gpuModeProven": false, "equivalentThirtySecondBenchmarkProven": false, "researchPath": ".tooling/research/capcut-study/native-export-checkpoint-2026-10-27.txt" },
+  "dataModified": false,
+  "commitsCreated": 0,
+  "pushExecuted": false,
+  "functionalStatus": "PARTIAL: paridade lógica e pipeline real PASS; reteste humano e diferença de desempenho para CapCut permanecem abertos",
+  "regressionStatus": "PASS no escopo executado",
+  "visualStatus": "PENDING HUMAN APPROVAL"
+}

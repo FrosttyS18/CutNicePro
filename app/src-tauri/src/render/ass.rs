@@ -1,24 +1,7 @@
 use super::settings::{CaptionStyle, RenderSettings};
-use crate::transcription::types::{Segment, Word};
-
-fn complete_word_sequence(segment: &Segment) -> bool {
-    let lexical = |text: &str| {
-        text.split(|c: char| !c.is_alphanumeric())
-            .filter(|word| !word.is_empty())
-            .map(str::to_lowercase)
-            .collect::<Vec<_>>()
-    };
-    !segment.words.is_empty()
-        && lexical(&segment.text)
-            == lexical(
-                &segment
-                    .words
-                    .iter()
-                    .map(|word| word.text.as_str())
-                    .collect::<Vec<_>>()
-                    .join(" "),
-            )
-}
+use crate::transcription::types::Segment;
+#[path = "caption_cues.rs"]
+mod cues;
 
 pub fn timestamp(seconds: f64) -> String {
     let cs = (seconds.max(0.0) * 100.0).round() as u64;
@@ -59,26 +42,9 @@ fn event(out: &mut String, start: f64, end: f64, style: &str, text: &str) {
     }
 }
 
-/** Pausa maior que 0,6 s fecha o grupo (paridade SupoClip). */
-const GROUP_GAP: f64 = 0.6;
-fn word_groups(words: &[Word], per_line: usize) -> Vec<&[Word]> {
-    let mut groups = Vec::new();
-    let mut start = 0;
-    for i in 1..=words.len() {
-        let boundary = i == words.len()
-            || (i - start) >= per_line
-            || words[i].start - words[i - 1].end > GROUP_GAP;
-        if boundary && i > start {
-            groups.push(&words[start..i]);
-            start = i;
-        }
-    }
-    groups
-}
-
 fn group(
     out: &mut String,
-    words: &[Word],
+    words: &[cues::Token],
     start: f64,
     end: f64,
     offset: f64,
@@ -109,10 +75,12 @@ fn group(
     }
     let mut boundaries = vec![start, end];
     for word in words {
-        boundaries.extend([
-            (word.start - offset).clamp(start, end),
-            (word.end - offset).clamp(start, end),
-        ]);
+        if let (Some(from), Some(until)) = (word.start, word.end) {
+            boundaries.extend([
+                (from - offset).clamp(start, end),
+                (until - offset).clamp(start, end),
+            ]);
+        }
     }
     boundaries.sort_by(f64::total_cmp);
     boundaries.dedup();
@@ -121,8 +89,12 @@ fn group(
         let text = words
             .iter()
             .map(|word| {
-                let active = time >= word.start && time < word.end;
-                let emphasized = active || (style.effect == "karaoke" && time >= word.start);
+                let active = word
+                    .start
+                    .zip(word.end)
+                    .is_some_and(|(start, end)| time >= start && time < end);
+                let emphasized = active
+                    || (style.effect == "karaoke" && word.start.is_some_and(|start| time >= start));
                 let tint = if emphasized {
                     &style.highlight_color
                 } else {
@@ -151,6 +123,17 @@ pub fn build(
     start: f64,
     end: f64,
 ) -> Result<String, String> {
+    build_for_window(segments, settings, start..end, start..end)
+}
+
+pub(crate) fn build_for_window(
+    segments: &[Segment],
+    settings: &RenderSettings,
+    window: std::ops::Range<f64>,
+    bounds: std::ops::Range<f64>,
+) -> Result<String, String> {
+    let start = window.start;
+    let end = window.end;
     let (width, height) = settings.dimensions()?;
     let mut out=format!("[Script Info]\nScriptType: v4.00+\nPlayResX: {width}\nPlayResY: {height}\nWrapStyle: 0\nScaledBorderAndShadow: yes\n\n[V4+ Styles]\nFormat: Name,Fontname,Fontsize,PrimaryColour,SecondaryColour,OutlineColour,BackColour,Bold,Italic,Underline,StrikeOut,ScaleX,ScaleY,Spacing,Angle,BorderStyle,Outline,Shadow,Alignment,MarginL,MarginR,MarginV,Encoding\n");
     if let Some(style) = settings
@@ -158,8 +141,8 @@ pub fn build(
         .as_ref()
         .filter(|_| settings.caption_model > 0)
     {
-        let size = style.size * height as f64 / 1080.0;
-        let outline = style.outline * height as f64 / 1080.0;
+        let size = style.size * width.min(height) as f64 / 1080.0;
+        let outline = style.outline * width.min(height) as f64 / 1080.0;
         let background = if style.background == "transparent" {
             "&H80000000".into()
         } else {
@@ -183,35 +166,16 @@ pub fn build(
             height as f64 * style.vertical()
         );
         for segment in segments.iter().filter(|s| s.start < end && s.end > start) {
-            if segment.words.is_empty()
-                || (!complete_word_sequence(segment)
-                    && segment.start >= start
-                    && segment.end <= end)
-            {
-                event(
+            for cue in cues::groups(segment, bounds.start, bounds.end, style.per_line()) {
+                group(
                     &mut out,
-                    segment.start.max(start) - start,
-                    segment.end.min(end) - start,
-                    "Main",
-                    &format!("{position}{}", styled(&segment.text, style)),
+                    &cue.words,
+                    cue.start.max(start),
+                    cue.end.min(end),
+                    start,
+                    style,
+                    &position,
                 );
-            } else {
-                for words in word_groups(&segment.words, style.per_line()) {
-                    let Some(first) = words
-                        .iter()
-                        .position(|word| word.start < end && word.end > start)
-                    else {
-                        continue;
-                    };
-                    let last = words
-                        .iter()
-                        .rposition(|word| word.start < end && word.end > start)
-                        .unwrap();
-                    let words = &words[first..=last];
-                    let from = words.first().unwrap().start.max(start);
-                    let until = words.last().unwrap().end.min(end);
-                    group(&mut out, words, from, until, start, style, &position);
-                }
             }
         }
     }

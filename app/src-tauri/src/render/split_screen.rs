@@ -49,14 +49,14 @@ impl Panel {
             && (1.0..=3.0).contains(&self.zoom)
     }
 
-    fn geometry(&self, width: u32, height: u32) -> String {
+    fn geometry(&self, width: u32, height: u32) -> (u32, u32, String) {
         let scale = (1080.0 / width as f64).max(960.0 / height as f64) * self.zoom;
         let even_up = |value: f64| (value / 2.0).ceil() as u32 * 2;
         let w = even_up(width as f64 * scale);
         let h = even_up(height as f64 * scale);
         let x = (((w - 1080) as f64 * self.x / 100.0 / 2.0).floor() as u32) * 2;
         let y = (((h - 960) as f64 * self.y / 100.0 / 2.0).floor() as u32) * 2;
-        format!("scale={w}:{h},crop=1080:960:{x}:{y},setsar=1")
+        (w, h, format!("crop=1080:960:{x}:{y},setsar=1"))
     }
 }
 
@@ -98,10 +98,19 @@ impl SplitScreen {
                     .into(),
             );
         }
+        let (top_width, top_height, top) = self.top.geometry(width, height);
+        let (bottom_width, bottom_height, bottom) = self.bottom.geometry(width, height);
+        let (resize, top, bottom) = if (top_width, top_height) == (bottom_width, bottom_height) {
+            (format!("scale={top_width}:{top_height},"), top, bottom)
+        } else {
+            (
+                String::new(),
+                format!("scale={top_width}:{top_height},{top}"),
+                format!("scale={bottom_width}:{bottom_height},{bottom}"),
+            )
+        };
         Ok(format!(
-            "split=2[top][bottom];[top]{}[t];[bottom]{}[b];[t][b]vstack=inputs=2,setsar=1",
-            self.top.geometry(width, height),
-            self.bottom.geometry(width, height)
+            "{resize}split=2[top][bottom];[top]{top}[t];[bottom]{bottom}[b];[t][b]vstack=inputs=2,setsar=1"
         ))
     }
 }

@@ -4,6 +4,9 @@ use crate::transcription::{
     types::{Segment, Word},
 };
 
+#[path = "caption_parity_tests.rs"]
+mod caption_parity_tests;
+
 fn settings() -> RenderSettings {
     serde_json::from_value(serde_json::json!({"ratio":"9:16","fit":"cover","captionModel":2,
         "captionStyle":{"font":"Poppins","size":64,"weight":600,"color":"#ffffff","italic":false,"underline":false,"uppercase":false,
@@ -97,12 +100,31 @@ fn incomplete_word_timings_keep_the_full_canonical_caption_without_fake_karaoke(
         ],
     }];
     let mut value = settings();
+    value.caption_style.as_mut().unwrap().highlight_color = "#00ff00".into();
     for effect in ["none", "highlight", "karaoke"] {
         value.caption_style.as_mut().unwrap().effect = effect.into();
         let output = ass::build(&segments, &value, 1.0, 5.0).unwrap();
-        assert!(output.contains("Quero preservar toda a conclusão."));
-        assert_eq!(output.matches("Dialogue:").count(), 1);
-        assert!(output.contains("Dialogue: 0,0:00:00.00,0:00:04.00"));
+        for (time, highlighted) in [(0.25, vec![0]), (0.75, vec![1]), (2.5, vec![])] {
+            let shown = caption_parity_tests::visible(&output, time);
+            assert_eq!(
+                shown
+                    .iter()
+                    .map(|(text, _)| text.as_str())
+                    .collect::<Vec<_>>(),
+                ["Quero", "preservar", "toda", "a", "conclusão."]
+            );
+            let active: Vec<usize> = shown
+                .iter()
+                .enumerate()
+                .filter_map(|(index, (_, active))| active.then_some(index))
+                .collect();
+            let expected = match effect {
+                "none" => Vec::new(),
+                "karaoke" if time >= 0.5 => vec![0, 1],
+                _ => highlighted,
+            };
+            assert_eq!(active, expected, "{effect} at {time}");
+        }
     }
 }
 
@@ -131,7 +153,7 @@ fn complete_lexical_timings_do_not_caption_words_outside_the_trim() {
             let output = ass::build(&segments, &value, 3.0, 5.0).unwrap();
             assert!(!output.contains("tarefa"), "{effect}: {output}");
             assert!(!output.contains("terminou"), "{effect}: {output}");
-            assert!(output.contains(last), "{effect}: {output}");
+            assert!(output.contains("sucesso."), "{effect}: {output}");
         }
     }
 }

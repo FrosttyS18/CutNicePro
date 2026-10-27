@@ -190,6 +190,89 @@ fn ui_two_panel_payload_keeps_distinct_source_regions() {
 }
 
 #[test]
+fn common_resize_shares_integer_dimensions_and_preserves_panel_crops() {
+    for (width, height, top_zoom, bottom_zoom, expected) in [
+        (1920, 1080, 1.0, 1.0, "scale=1708:960,split=2[top][bottom];[top]crop=1080:960:0:0,setsar=1[t];[bottom]crop=1080:960:628:0,setsar=1[b];[t][b]vstack=inputs=2,setsar=1"),
+        (1080, 1920, 1.0, 1.0, "scale=1080:1920,split=2[top][bottom];[top]crop=1080:960:0:480,setsar=1[t];[bottom]crop=1080:960:0:480,setsar=1[b];[t][b]vstack=inputs=2,setsar=1"),
+        (1920, 1080, 1.5, 1.5, "scale=2560:1440,split=2[top][bottom];[top]crop=1080:960:0:240,setsar=1[t];[bottom]crop=1080:960:1480:240,setsar=1[b];[t][b]vstack=inputs=2,setsar=1"),
+        (1920, 1080, 1.1001, 1.1002, "scale=1878:1058,split=2[top][bottom];[top]crop=1080:960:0:48,setsar=1[t];[bottom]crop=1080:960:798:48,setsar=1[b];[t][b]vstack=inputs=2,setsar=1"),
+    ] {
+        let mut input = payload();
+        input["sourceWidth"] = serde_json::json!(width);
+        input["sourceHeight"] = serde_json::json!(height);
+        input["splitScreen"]["top"]["zoom"] = serde_json::json!(top_zoom);
+        input["splitScreen"]["bottom"]["zoom"] = serde_json::json!(bottom_zoom);
+        let settings: RenderSettings = serde_json::from_value(input).unwrap();
+        assert_eq!(settings.geometry().unwrap(), expected);
+    }
+}
+
+#[test]
+fn common_resize_keeps_separate_scales_when_integer_dimensions_differ() {
+    let mut input = payload();
+    input["splitScreen"]["bottom"]["zoom"] = serde_json::json!(2.0);
+    let settings: RenderSettings = serde_json::from_value(input).unwrap();
+    assert_eq!(
+        settings.geometry().unwrap(),
+        "split=2[top][bottom];[top]scale=1708:960,crop=1080:960:0:0,setsar=1[t];[bottom]scale=3414:1920,crop=1080:960:2334:480,setsar=1[b];[t][b]vstack=inputs=2,setsar=1"
+    );
+}
+
+#[test]
+fn common_resize_follows_active_shot_geometry_and_preserves_the_gap() {
+    let mut input = scene_payload();
+    input["splitScreen"]["shots"][1]["bottom"]["zoom"] = serde_json::json!(2.0);
+    let settings: RenderSettings = serde_json::from_value(input).unwrap();
+    assert_eq!(
+        settings.geometry_at(0.5).unwrap(),
+        "scale=1708:960,split=2[top][bottom];[top]crop=1080:960:0:0,setsar=1[t];[bottom]crop=1080:960:628:0,setsar=1[b];[t][b]vstack=inputs=2,setsar=1"
+    );
+    assert!(!settings.geometry_at(1.5).unwrap().contains("split=2"));
+    assert_eq!(
+        settings.geometry_at(2.5).unwrap(),
+        "split=2[top][bottom];[top]scale=1708:960,crop=1080:960:628:0,setsar=1[t];[bottom]scale=3414:1920,crop=1080:960:0:480,setsar=1[b];[t][b]vstack=inputs=2,setsar=1"
+    );
+}
+
+#[test]
+fn common_resize_keeps_filter_labels_and_captions_after_the_stack() {
+    let settings: RenderSettings = serde_json::from_value(payload()).unwrap();
+    let args = super::pipeline::window_arguments(
+        std::path::Path::new("source.mp4"),
+        std::path::Path::new("output.mp4"),
+        &settings,
+        0.0,
+        1.0,
+        true,
+        super::encoder::Encoder::Cpu,
+        "scene.ass",
+    )
+    .unwrap();
+    let filter = &args[args.iter().position(|arg| arg == "-vf").unwrap() + 1];
+    assert_eq!(
+        filter.to_string_lossy(),
+        "scale=1708:960,split=2[top][bottom];[top]crop=1080:960:0:0,setsar=1[t];[bottom]crop=1080:960:628:0,setsar=1[b];[t][b]vstack=inputs=2,setsar=1,ass=filename=scene.ass:fontsdir=fonts"
+    );
+}
+
+#[test]
+fn common_resize_rejects_invalid_source_dimensions_and_nonfinite_panels() {
+    let settings: RenderSettings = serde_json::from_value(payload()).unwrap();
+    let layout = settings.split_screen.unwrap();
+    for (width, height) in [(0, 1080), (1920, 1)] {
+        assert!(layout.geometry(width, height).is_err());
+    }
+    for value in [f64::NAN, f64::INFINITY, f64::NEG_INFINITY] {
+        let mut invalid = layout.clone();
+        invalid.top.x = value;
+        assert!(invalid.geometry(1920, 1080).is_err());
+        let mut invalid = layout.clone();
+        invalid.bottom.zoom = value;
+        assert!(invalid.geometry(1920, 1080).is_err());
+    }
+}
+
+#[test]
 fn rejects_invalid_panel_version_coordinates_and_ratio() {
     for (key, value) in [
         ("version", serde_json::json!(2)),

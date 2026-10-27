@@ -2,6 +2,7 @@ import { itemEnd } from "./composition";
 import { frameToSeconds } from "./composition-time";
 import type { Composition, CompositionItem, FrameRate } from "./composition-types";
 import type { TranscriptSegment } from "./workspace-types";
+import { trimCaptionSegment } from "./caption-cues";
 
 function matchesSourceAudio(video: CompositionItem, audio: CompositionItem): boolean {
   return video.kind === "video" && audio.kind === "audio" && audio.followsMain
@@ -71,11 +72,12 @@ export function montageTranscript(document: Composition): MontageTranscriptEntry
       if (source.end <= start || source.start >= end) continue;
       const override = item.captionEdits[source.id];
       const edited=typeof override==="string" ? {text:override,words:undefined} : override;
-      const sourceWords = (edited===undefined ? source.words : edited.words)?.filter(word => word.end > start && word.start < end);
-      const words = sourceWords?.map(word => ({ ...word, start: Math.max(start, word.start) + offset, end: Math.min(end, word.end) + offset }));
+      const clipped = trimCaptionSegment(edited === undefined ? source : { ...source, text: edited.text, words: edited.words }, { start, end });
+      if (!clipped) continue;
+      const words = clipped.words?.map(word => ({ ...word, start: word.start + offset, end: word.end + offset }));
       entries.push({ itemId: item.id, sourceSegmentId: source.id, segment: {
-        ...source, id: `${item.id}/${source.id}`, text: edited?.text ?? (sourceWords?.map(word => word.text).join(" ") || source.text),
-        start: Math.max(source.start, start) + offset, end: Math.min(source.end, end) + offset, words,
+        ...clipped, id: `${item.id}/${source.id}`,
+        start: clipped.start + offset, end: clipped.end + offset, words,
       } });
     }
   }

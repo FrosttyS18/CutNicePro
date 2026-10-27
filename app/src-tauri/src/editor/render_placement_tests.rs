@@ -16,6 +16,35 @@ fn fixture(scale: f64) -> Composition {
 }
 
 #[test]
+fn opaque_layers_keep_rgba_without_an_identity_color_mixer() {
+    let base =
+        std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("target/test-editor-placement");
+    let scratch = Scratch::new(&base).unwrap();
+    let sources = HashMap::from([("picture".into(), scratch.path.join("picture.png"))]);
+    for (index, opacity) in [1.0, 0.7, 0.0].into_iter().enumerate() {
+        let mut document = fixture(1.0);
+        document.items[0].placement.as_mut().unwrap().opacity = opacity;
+        render_graph::video(
+            &document,
+            &Window { start: 0, end: 1 },
+            &sources,
+            &scratch.path,
+            index,
+            Encoder::Cpu,
+        )
+        .unwrap();
+        let graph =
+            std::fs::read_to_string(scratch.path.join(format!("video-{index}.txt"))).unwrap();
+        if opacity == 1.0 {
+            assert!(!graph.contains("colorchannelmixer"));
+            assert!(graph.contains(",format=rgba[layer1]"));
+        } else {
+            assert!(graph.contains(&format!(",colorchannelmixer=aa={opacity}[layer1]")));
+        }
+    }
+}
+
+#[test]
 fn enlarged_layers_crop_before_scale_and_keep_legacy_transform_unchanged() {
     let base =
         std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("target/test-editor-placement");

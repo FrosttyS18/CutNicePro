@@ -7,14 +7,14 @@ import { emptyWorkspace } from "../lib/workspace";
 import { reactHost } from "./react-host";
 
 const native = vi.hoisted(() => ({ closeHandler: null as ((event: { preventDefault: () => void }) => void | Promise<void>) | null,
-  unlisten: vi.fn(), native: true }));
+  unlisten: vi.fn(), destroy: vi.fn(async () => undefined), native: true }));
 const projects: ProjectMeta[] = [{ id: "one", name: "Um", created_at_ms: 1, updated_at_ms: 1, last_opened_at_ms: null },
   { id: "two", name: "Dois", created_at_ms: 1, updated_at_ms: 1, last_opened_at_ms: null }];
 
 vi.mock("@tauri-apps/api/core", async importOriginal => ({ ...await importOriginal<typeof import("@tauri-apps/api/core")>(), isTauri: () => native.native }));
 vi.mock("@tauri-apps/api/window", () => ({ getCurrentWindow: () => ({ onCloseRequested: vi.fn(async (handler: typeof native.closeHandler) => {
   native.closeHandler = handler; return native.unlisten;
-}) }) }));
+}), destroy: native.destroy }) }));
 vi.mock("../lib/ipc", () => ({ listProjects: vi.fn(async () => projects), listCollections: vi.fn(async () => []), openProject: vi.fn(async (id: string) => projects.find(project => project.id === id)),
   loadEditorProject: vi.fn(async () => ({ version: 1, project: null, clips: {} })), getEditorRecovery: vi.fn(async () => null),
   saveEditorRecovery: vi.fn(async () => undefined), discardEditorRecovery: vi.fn(async () => undefined),
@@ -144,6 +144,7 @@ describe("saída global com alterações da montagem", () => {
     await mounted!.click("Continuar editando");
     await closed!;
     expect(event.preventDefault).toHaveBeenCalledOnce();
+    expect(native.destroy).not.toHaveBeenCalled();
     expect(mounted!.host.querySelector('[data-testid="video-editor"]')).not.toBeNull();
   });
 
@@ -155,7 +156,8 @@ describe("saída global com alterações da montagem", () => {
     await mounted!.click("Salvar e sair");
     await closed!;
     expect(ipc.saveEditorDocument).toHaveBeenCalledOnce();
-    expect(event.preventDefault).not.toHaveBeenCalled();
+    expect(event.preventDefault).toHaveBeenCalledOnce();
+    expect(native.destroy).toHaveBeenCalledOnce();
   });
 
   it("avisa antes de recarregar uma janela com trabalho não salvo", async () => {

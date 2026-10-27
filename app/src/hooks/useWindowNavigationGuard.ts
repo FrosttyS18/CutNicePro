@@ -5,28 +5,48 @@ import type { NavigationGuard } from "../lib/navigation-guard";
 
 export function useWindowNavigationGuard(guard: NavigationGuard, onError: (message: string) => void): void {
   useEffect(() => {
+    let active = true;
+    let closing = false;
+    let unlisten: (() => void) | undefined;
     const beforeUnload = (event: BeforeUnloadEvent) => {
       if (!guard.hasUnsavedChanges()) return;
       event.preventDefault();
       event.returnValue = "";
     };
+    const cleanup = () => {
+      if (!active) return;
+      active = false;
+      window.removeEventListener("beforeunload", beforeUnload);
+      window.removeEventListener("unload", cleanup);
+      const stop = unlisten;
+      unlisten = undefined;
+      if (stop) void Promise.resolve(stop()).catch(() => undefined);
+    };
     window.addEventListener("beforeunload", beforeUnload);
-    let active = true;
-    let unlisten: (() => void) | undefined;
+    window.addEventListener("unload", cleanup);
     if (isTauri()) {
-      void getCurrentWindow().onCloseRequested(async event => {
-        if (!guard.hasUnsavedChanges()) return;
+      const nativeWindow = getCurrentWindow();
+      void nativeWindow.onCloseRequested(async event => {
+        event.preventDefault();
+        if (!active || closing) return;
+        closing = true;
         try {
           const allowed = await guard.requestNavigation(() => undefined);
-          if (!allowed) event.preventDefault();
+          if (!active || !allowed) return;
+          if (guard.hasUnsavedChanges()) {
+            onError("Há alterações novas no rascunho. Salve novamente antes de fechar.");
+            return;
+          }
+          await nativeWindow.destroy();
         } catch (error) {
-          event.preventDefault();
           if (active) onError(error instanceof Error ? error.message : "Não foi possível verificar as alterações antes de fechar.");
+        } finally {
+          closing = false;
         }
-      }).then(stop => { if (active) unlisten = stop; else stop(); }).catch(error => {
+      }).then(stop => { if (active) unlisten = stop; else return stop(); }).catch(error => {
         if (active) onError(error instanceof Error ? error.message : "Não foi possível proteger o fechamento desta janela.");
       });
     }
-    return () => { active = false; unlisten?.(); window.removeEventListener("beforeunload", beforeUnload); };
+    return cleanup;
   }, [guard, onError]);
 }

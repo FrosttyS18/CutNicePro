@@ -144,7 +144,12 @@ pub fn video(
                 caption_index += 1;
             }
         }
-        graph.push_str(&format!("[{input}:v]setpts=PTS-STARTPTS,fps={rate},format=rgba,{geometry}{effects}{captions},{transform},colorchannelmixer=aa={}[layer{input}];[{current}][layer{input}]overlay=x={x}:y={y}:eof_action=pass:repeatlast=0[mix{input}];",placement.opacity));
+        let alpha = if placement.opacity == 1.0 {
+            "format=rgba".to_owned()
+        } else {
+            format!("colorchannelmixer=aa={}", placement.opacity)
+        };
+        graph.push_str(&format!("[{input}:v]setpts=PTS-STARTPTS,fps={rate},format=rgba,{geometry}{effects}{captions},{transform},{alpha}[layer{input}];[{current}][layer{input}]overlay=x={x}:y={y}:eof_action=pass:repeatlast=0[mix{input}];"));
         current = format!("mix{input}");
         input += 1;
     }

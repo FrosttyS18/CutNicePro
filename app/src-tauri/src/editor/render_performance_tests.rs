@@ -195,22 +195,29 @@ fn real_composition_nvenc_filter_threads_one_vs_four() {
         "NVENC indisponível; consulte nvenc-probe.log. O laboratório não usa fallback CPU"
     );
     let mut measurements = Vec::new();
-    for threads in [1, 4] {
+    let cases = match env::var("CNP_RENDER_PERF_FILTER_THREADS").as_deref() {
+        Ok("4") => vec![4],
+        Err(env::VarError::NotPresent) => vec![1, 4],
+        _ => panic!("CNP_RENDER_PERF_FILTER_THREADS aceita somente 4; omita para comparar 1 e 4"),
+    };
+    for threads in &cases {
         measurements.push(run_case(
             &input,
             &window,
             &directory.join(format!("threads-{threads}")),
             &ffmpeg,
             &tools.ffprobe,
-            threads,
+            *threads,
             &control,
         ));
     }
-    assert_eq!(
-        fs::read(directory.join("threads-1/video-0.txt")).unwrap(),
-        fs::read(directory.join("threads-4/video-0.txt")).unwrap(),
-        "Os grafos das variantes devem ser idênticos"
-    );
+    if cases.len() == 2 {
+        assert_eq!(
+            fs::read(directory.join("threads-1/video-0.txt")).unwrap(),
+            fs::read(directory.join("threads-4/video-0.txt")).unwrap(),
+            "Os grafos das variantes devem ser idênticos"
+        );
+    }
     fs::write(
         directory.join("results.json"),
         serde_json::to_vec_pretty(&serde_json::json!({
@@ -224,4 +231,66 @@ fn real_composition_nvenc_filter_threads_one_vs_four() {
         .unwrap(),
     )
     .expect("Não foi possível preservar as medições");
+}
+
+#[test]
+#[ignore = "Exportação integral explícita; exige snapshot e destinos locais do laboratório"]
+fn real_saved_composition_full_export() {
+    let input_path = env::var_os("CNP_RENDER_PERF_INPUT").expect("Defina CNP_RENDER_PERF_INPUT");
+    let input: Input = serde_json::from_slice(&fs::read(input_path).unwrap()).unwrap();
+    for source in input.sources.values() {
+        assert!(source.is_absolute() && source.is_file());
+    }
+    let directory = output_directory();
+    eprintln!("[render-full] Artefatos locais: {}", directory.display());
+    let control = ProcessControl::default();
+    let started = Instant::now();
+    let (scratch, video) = super::render::run(
+        &directory,
+        &input.document,
+        &input.sources,
+        &control,
+        |_| {},
+    )
+    .expect("Exportação integral do laboratório falhou");
+    let elapsed_ms = started.elapsed().as_millis();
+    let encoder = fs::read_to_string(scratch.path.join("encoder.txt")).unwrap();
+    fs::copy(&video, directory.join("output.mp4")).unwrap();
+    for entry in fs::read_dir(&scratch.path).unwrap() {
+        let entry = entry.unwrap();
+        if entry.file_type().unwrap().is_file()
+            && entry.path().extension().is_some_and(|extension| {
+                extension == "ass" || extension == "txt" || extension == "log"
+            })
+        {
+            fs::copy(entry.path(), directory.join(entry.file_name())).unwrap();
+        }
+    }
+    let tools = crate::media_analyze::detect_fftools().unwrap();
+    let metadata = crate::media_analyze::analyze(&tools, &directory.join("output.mp4")).unwrap();
+    let expected_frames = input
+        .document
+        .items
+        .iter()
+        .map(|item| item.start_frame + item.duration_frames)
+        .max()
+        .unwrap();
+    fs::write(
+        directory.join("results.json"),
+        serde_json::to_vec_pretty(&serde_json::json!({
+            "elapsedMs": elapsed_ms,
+            "encoder": encoder,
+            "expectedFrames": expected_frames,
+            "durationMs": metadata.duration_ms,
+            "width": metadata.width,
+            "height": metadata.height,
+            "hasAudio": metadata.has_audio,
+            "fps": metadata.fps
+        }))
+        .unwrap(),
+    )
+    .unwrap();
+    eprintln!(
+        "[render-full] elapsed_ms={elapsed_ms} encoder={encoder} frames_expected={expected_frames}"
+    );
 }
