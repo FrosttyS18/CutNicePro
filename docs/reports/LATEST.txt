@@ -3,87 +3,105 @@
 ╚════════════════════════════════════════════╝
 
 TASK
-  Name: Aceite e publicação do zoom na fonte
-  Status: PASS desta entrega; editor integral não concluído.
-  Scope/Objective: registrar aceite, comitar, publicar e pausar a meta.
-  Result: teste manual aprovado; código enviado à main.
-  FUNCTIONAL STATUS: PASS na fatia aprovada.
-  REGRESSION STATUS: PASS no escopo previamente executado.
-  VISUAL STATUS: PENDING HUMAN APPROVAL para estética integral.
+  Name: Editor direto, biblioteca e exportação
+  Status: PARTIAL — editor integral permanece em revisão.
+  Result: exportação normal confirmada pelo mantenedor; fila publicada.
+  FUNCTIONAL STATUS: PASS técnico desta fatia; aceite amplo PARTIAL.
+  REGRESSION STATUS: PASS nas suítes executadas.
+  VISUAL STATUS: PENDING HUMAN APPROVAL.
 
 IMPLEMENTATION
-  Completed: aceite registrado, commit e push do zoom.
-  Changes: somente documentação nesta rodada; código aprovado preservado.
-  Architecture impact: nenhum novo.
-  Not completed: demais frentes adiadas; pausa solicitada será aplicada
-    como última ação, após publicar este registro.
+  Completed: entrada direta no Editor, transcrição opcional por mídia,
+    reprodução de imagem/áudio após vídeo, câmera da prévia e gestos;
+    menu Excluir/Renomear/Abrir local, histórico e proteção de originais.
+  Export corrigido: preset de legenda implícito era recusado antes do FFmpeg.
+    Configuração agora é completada somente na cópia usada pelo render.
+  Modal Exportar reutiliza a animação de Transcrever, progresso real,
+    confirmação de cancelamento e retry com salvamento explícito.
+  Exclusão: “Excluir mídia da biblioteca?” e subtexto solicitado com nome;
+    Cancelar/Excluir mídia, sem explicações internas.
+  GPU NVIDIA já era preferida. Novos registros identificam encoder efetivo
+    e fallback CPU; cancelamento não dispara outra tentativa.
+  Not completed: aceleração dos filtros/composição, desempenho797MB,
+    ASR real desta entrada e aprovação dos novos modais.
+  Architecture impact: sem dependências, versão ou target adicionais.
 
 FILES
-  Created: useSourceRangeZoom.ts, composition-source-zoom.test.tsx
-    e dois relatórios históricos desta fatia.
-  Modified: CompositionSource.tsx, CompositionSourceRange.tsx,
-    composition-source.css; ENGINE-HANDOFF.md; BUSINESS-RULES.md;
-    TRACEABILITY.md; LATEST.txt.
-  Deleted/Unexpected changes: nenhum.
+  Código/documentação: b4d45cd contém92arquivos (36novos/56modificados);
+    3aaa1b1 contém18arquivos (3novos/15modificados), com sobreposição.
+  Principais: CompositionEditorBody, CompositionMediaActions,
+    CompositionDelivery, ProcessingDialog, useEditorTooltip,
+    composition-assets, media_reveal e editor/render*.rs.
+  Inventário completo: docs/reports/evidence/editor-basico-2026-10-26/
+    editor-arraste-selecao-2026-10-27.json, campos files das duas continuações.
+  Deleted: nenhum. Unexpected changes: nenhuma identificada.
+  Este fechamento acrescenta LATEST, histórico e registro no ENGINE-HANDOFF.
 
 VALIDATION
-  Typecheck/build/Lint: PASS na implementação anterior.
-  Unit/Integration/Regression: 51 casos distintos cobertos anteriormente
-    (49/49 e reteste23/23 com dois novos); DOM simulado.
-  Total failed: 0 na validação anterior final.
-  Total skipped: nenhuma suíte repetida nesta publicação documental.
-  Runtime verification: mantenedor confirmou zoom, seleção após rolar
-    e Enter funcionando na build padrão.
-  Visual tests: aprovação estética integral não inferida desse teste.
-  Verificações atuais: diff-check PASS; hash local igual ao remoto.
+  Typecheck/build/lint: PASS, sem avisos de compilação.
+  TypeScript:1362/1362,194arquivos; Rust:389PASS/0FAIL/33opt-in ignored.
+  Total:1751 testes aprovados; zero falhas. Não somar os retestes focais.
+  Integração real: FFmpeg exportou vídeo→imagem+áudio, conferindo duração,
+    pixels, áudio final e preservação do snapshot salvo/reaberto.
+  Fixture confirmou h264_nvenc na RTX5070, com tag real do MP4.
+  Sete testes simulados cobrem escolha GPU/CPU, falha e cancelamento.
+  Runtime: build padrão aberta, perfil normal, PID24156/frontend1420HTTP200.
+    C:/CutNicePro/app/src-tauri/target/debug/cutnicepro.exe
+  Mantenedor confirmou arraste vertical e exportação normal.
+  Novos modais: testes DOM/contratos; aparência/interação normal pendentes.
 
 HOOKS / HARNESS
-  Hooks/PreToolUse/PostToolUse/Stop/Baseline: não auditados nesta rodada.
-  Gate result/Evidence: aceite explícito, revisão do diff e Git remoto.
+  Runners existentes; hooks externos não auditados.
+  Sem controle interativo do PC. Dados reais preservados.
+  Abertura inicial teve conflito WebView; mesmo servidor/build reutilizados.
+  Stop/baseline não foram usados como prova de sucesso.
 
 MCP / SKILLS
-  Tools used: Git e Graphify remoto; verificação antes da entrega.
-  Connection status: conectado; índice ainda em7e4056c.
-  Failures: nenhuma. Pending activation: aguardar indexação automática.
+  Graphify remoto pre/post, diagnóstico sistemático, TDD, revisão delegada
+    e diretrizes frontend/UX do projeto.
+  Índice ainda de8ed09 após os pushes; código local/diff complementaram.
+  Documentação oficial NVIDIA consultada; sem alegar aceleração integral.
 
-GIT
-  Branch: main.
-  HEAD: 03097433a34a201970e66078f7b144b0fde357f9.
-  Latest commit: feat(editor): permitir zoom na seleção da fonte.
-  Commits created: 0309743 — feat(editor): permitir zoom na seleção da fonte.
-  Push: SUCCESS, confirmado por ls-remote.
-  Remote: origin → FrosttyS18/CutNicePro, main.
-  Working tree: MODIFIED/UNTRACKED somente registros finais.
-  Pending files: ENGINE-HANDOFF.md, LATEST.txt e este histórico.
-    Este é o snapshot anterior ao commit documental de encerramento.
+GIT — SNAPSHOT ANTES DO COMMIT DESTE REGISTRO
+  Branch:main
+  HEAD:3aaa1b1435ef99facbf0e3b01b4548eb1660380b
+  Latest commit:fix(editor): alinhar modais e registrar uso da GPU
+  Commits: b4d45cd feat(editor): estabilizar edição direta e exportação
+    3aaa1b1 fix(editor): alinhar modais e registrar uso da GPU
+  Push:SUCCESS, origin/main conferida no mesmo HEAD.
+  Código sem pendências; apenas LATEST/histórico/ENGINE-HANDOFF deste
+    fechamento seguem para commit documental. Hash final informado no chat.
 
 EVIDENCE
-  Commands executed: git diff --check; git commit; git push;
-    git rev-parse HEAD; git ls-remote; Graphify graph_stats.
-  Relevant logs: main remota =03097433a34a201970e66078f7b144b0fde357f9.
-  Screenshots: nenhuma. Test artifacts: mantidos no commit publicado.
-  Reproduction details: teste manual confirmado pelo mantenedor.
+  npm test -- --maxWorkers=2 --minWorkers=1; npm run build; npm run lint;
+    cargo test --lib; cargo build --no-default-features; git diff --check.
+  Manifesto indicado em FILES. Sem novas capturas de tela.
 
 ISSUES
-  Bugs found/Unresolved failures: nenhum novo.
-  Regressions: nenhuma alteração funcional depois do teste aprovado.
-  Risks: push não comprova indexação; Graphify ainda estava no commit anterior.
-  Blockers: nenhum para encerrar esta publicação.
+  Corrigidos também foco após excluir e tooltip atrás do diálogo/ressurgindo
+    após retry. Testes reproduziram esses defeitos antes das correções.
+  Encoder do export anterior do mantenedor: desconhecido, caminho não informado.
+  Velocidade: nenhum ganho medido; composição e filtros continuam na CPU.
+  Herdado: divergência estática de escala de fonte prévia/ASS em retrato,
+    ainda sem medição/correção nesta fatia. Sem bloqueio da publicação.
 
 FINAL
-  Delivery status: PASS do zoom aprovado e publicado.
-  Requirements met: aceite, commit e push; pausa autorizada como última ação.
-  Remaining work: demais itens preservados para futura retomada.
-  User action required: nenhuma nesta entrega.
-  Restart required: não. Ready for next task: somente após nova solicitação.
+  Entrega técnica publicada; meta integral não concluída.
+  Após publicar este registro, aplicar a pausa expressamente solicitada.
+  Remaining work: reteste dos novos modais e pendências amplas registradas.
+  Restart required:NÃO, build normal atualizada já aberta.
+  Ready for next task: somente na retomada pelo mantenedor.
 
 REPORT
-  Latest file: C:/CutNicePro/docs/reports/LATEST.txt.
-  Historical file: C:/CutNicePro/docs/reports/history/2026-10-27_050238_aceite-zoom-publicacao.txt.
+  Latest:docs/reports/LATEST.txt
+  History:docs/reports/history/2026-10-27_081239_editor-publicacao-pausa.txt
 
 GUIA DO MANTENEDOR — O QUE MUDOU E COMO TESTAR
-  O teste já foi feito e aprovado por você. Não precisa repeti-lo.
-  Esta rodada publica a mesma implementação e preserva as demais pendências.
-  A meta será pausada após o envio deste registro, conforme solicitado.
+  1. Botão direito na mídia → Excluir: conferir título/subtexto/CTAs solicitados.
+     Cancelar preserva tudo; confirmar e Ctrl+Z restaura sem outro clique.
+  2. Exportar: mesma animação de Transcrever, percentual real e confirmação
+     para cancelar. Pausar animação não pausa a exportação.
+  3. No terminal, [editor] identifica GPU NVIDIA ou CPU e eventual fallback.
+     Isso não significa que toda a composição já esteja acelerada.
 
 END OF REPORT
