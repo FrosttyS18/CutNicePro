@@ -17,7 +17,7 @@ describe("navegação da fonte",()=>{
     expect(mounted.host.querySelector('video')!.currentTime).toBeCloseTo(1/24,7);
     await act(async()=>{section.dispatchEvent(new window.KeyboardEvent("keydown",{key:"i",bubbles:true}));section.dispatchEvent(new window.KeyboardEvent("keydown",{key:"o",bubbles:true}));});
     expect(insert).not.toHaveBeenCalled();
-    await act(async()=>{mounted!.host.querySelector<HTMLButtonElement>('[aria-label="Adicionar no cursor"]')!.click();});
+    await act(async()=>{mounted!.host.querySelector<HTMLButtonElement>('[aria-label="Adicionar em nova camada"]')!.click();});
     expect(insert).toHaveBeenCalledWith(0,1/24);
   });
 });

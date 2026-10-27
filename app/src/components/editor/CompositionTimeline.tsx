@@ -15,6 +15,7 @@ import { CompositionTimelineCursor } from "./CompositionTimelineCursor";
 import { CompositionAddMenu } from "./CompositionAddMenu";
 import type { EditorMenuItem } from "./EditorMenu";
 import { CompositionTrackLane, type CompositionTrackPatch, type TimelinePreviewData } from "./CompositionTrackLane";
+import { trackDisplayEnd } from "./composition-track-layout";
 import { useCompositionGesture } from "./useCompositionGesture";
 import { useTimelineWheelZoom, type TimelineZoomPointer } from "./useTimelineWheelZoom";
 import type { Composition, CompositionItem } from "../../lib/composition-types";
@@ -40,24 +41,31 @@ interface Props {
   additionsDisabled?:boolean; onAddOpen?:()=>void;
   dropController?:RefObject<CompositionTimelineDropController|null>;
 }
-function fitScale(width:number,duration:number,inset:number):number{const padding=144+inset*2;return Math.max(1e-6,(Math.max(padding+1,width)-padding)/Math.max(1,duration));}
+function maximumScale(duration:number):number{return Math.max(1e-6,Math.min(20,16_000_000/Math.max(1,duration)));}
+function fitScale(width:number,duration:number,inset:number):number{const padding=144+inset*2;return Math.max(1e-6,Math.min(maximumScale(duration),(Math.max(padding+1,width)-padding)/Math.max(1,duration)));}
 function zoomBounds(width:number,duration:number,inset:number):[number,number]{
-  const minimum=Math.min(fitScale(width,duration,inset),Math.max(1e-6,16/Math.max(1,duration),fitScale(width,duration,inset)/16));
-  return [minimum,Math.max(minimum,Math.min(20,16_000_000/Math.max(1,duration)))];
+  const maximum=maximumScale(duration);
+  const minimum=Math.max(1e-6,Math.min(maximum/16,fitScale(width,duration,inset),Math.max(1e-6,16/Math.max(1,duration),fitScale(width,duration,inset)/16)));
+  return [minimum,maximum];
 }
 export function CompositionTimeline(props: Props) {
-  const { document, frame, selected, onSelect, onSeek } = props;
+  const { document, frame, selected, onSelect, onSeek, onPreview } = props;
   const duration = compositionDuration(document);
   const inset=props.startAddItems||props.endAddItems?48:24;
   const extent = Math.max(duration,frame);
+  const primaryItems=useMemo(()=>{
+    const trackId=document.tracks.find(track=>track.primary)?.id;
+    return document.items.filter(item=>item.trackId===trackId);
+  },[document]);
   const timeline=useRef<HTMLElement>(null);
   const viewport = useRef<HTMLDivElement>(null);
   const [{width,height},setViewportSize] = useState({width:900,height:0});
   const [scroll,setScroll] = useState(0);
   const [focusedTrack,setFocusedTrack] = useState<string|null>(null);
+  const [gesturing,setGesturing]=useState(false);
   const [localMagnetic,setLocalMagnetic]=useState(true);
   const magnetic=props.magnetic??localMagnetic;
-  const [scale,setScale] = useState(()=>(900-144-inset*2)/Math.max(extent,document.fps.numerator/document.fps.denominator*10));
+  const [scale,setScale] = useState(()=>fitScale(900,Math.max(extent,document.fps.numerator/document.fps.denominator*10),inset));
   const dragCleanup=useRef<(()=>void)|null>(null);
   const latest=useRef(props);
   const fitted=useRef(false);
@@ -104,13 +112,17 @@ export function CompositionTimeline(props: Props) {
     item?.focus({preventScroll:true});
   },[scale,scroll]);
   useEffect(()=>()=>dragCleanup.current?.(),[]);
-  const gesture = useCompositionGesture({ ...props, magnetic, scale, viewport });
-  const zoomTo=(next:number,left:number,available:number)=>{
-    const offset=Math.max(0,Math.min(Math.max(0,144+inset*2+extent*next-available),left));
+  const previewGesture=useCallback((next:Composition|null,at?:number)=>{setGesturing(next!==null);onPreview(next,at);},[onPreview]);
+  const gesture = useCompositionGesture({ ...props, onPreview:previewGesture, magnetic, scale, viewport });
+  const contentWidthAt=useCallback((next:number,available:number)=>Math.max(available-144,inset*2+extent*next,
+    props.endAddItems?trackDisplayEnd(primaryItems,next,inset)+12+28+8:0),[extent,inset,primaryItems,props.endAddItems]);
+  const zoomTo=useCallback((next:number,left:number,available:number)=>{
+    const offset=Math.max(0,Math.min(Math.max(0,144+contentWidthAt(next,available)-available),left));
     pendingScroll.current=offset;
     setScale(next);setScroll(offset);
-  };
-  const anchoredZoom = (next: number, pointer?:TimelineZoomPointer) => {
+  },[contentWidthAt]);
+  const anchoredZoom = useCallback((next: number, pointer?:TimelineZoomPointer) => {
+    if(gesturing)return;
     fitted.current=true;
     const available=viewport.current?.clientWidth||width;
     const [minimum,maximum]=zoomBounds(available,extent,inset);
@@ -124,17 +136,22 @@ export function CompositionTimeline(props: Props) {
     const anchor=inside?point:cursor>=144&&cursor<=available?cursor:144+(available-144)/2;
     const at=(left+anchor-144-inset)/scale;
     zoomTo(next,144+inset+at*next-anchor,available);
-  };
+  },[extent,frame,gesturing,inset,scale,scroll,width,zoomTo]);
   const changeZoom=(direction:number,pointer?:TimelineZoomPointer)=>anchoredZoom(scale*1.5**direction,pointer);
   useTimelineWheelZoom(timeline,changeZoom);
   const [sliderMinimum,sliderMaximum]=zoomBounds(width,extent,inset);
+  useLayoutEffect(()=>{
+    if(fitted.current&&!gesturing&&(scale<sliderMinimum||scale>sliderMaximum))anchoredZoom(scale);
+  },[scale,sliderMinimum,sliderMaximum,gesturing,anchoredZoom]);
   const sliderValue=sliderMaximum===sliderMinimum?0:Math.max(0,Math.min(100,Math.log(scale/sliderMinimum)/Math.log(sliderMaximum/sliderMinimum)*100));
   const fitZoom = () => {
+    if(gesturing)return;
     fitted.current=true;
     const available=viewport.current?.clientWidth||width;
     zoomTo(fitScale(available,extent,inset),0,available);
   };
   const revealItem=(item:CompositionItem)=>{
+    if(gesturing)return;
     const available=viewport.current?.clientWidth||width;
     const [minimum,maximum]=zoomBounds(available,extent,inset);
     const next=Math.max(minimum,Math.min(maximum,Math.max(scale,96/item.durationFrames)));
@@ -146,10 +163,10 @@ export function CompositionTimeline(props: Props) {
   const fitInitial=useCallback(()=>{
     const available=viewport.current?.clientWidth??0;
     const frames=Math.max(compositionDuration(latest.current.document),latest.current.frame);
-    if(fitted.current||available<=144+inset*2||frames===0)return;
+    if(gesturing||fitted.current||available<=144+inset*2||frames===0)return;
     fitted.current=true;
-    setScale((available-144-inset*2)/frames);
-  },[inset]);
+    setScale(fitScale(available,frames,inset));
+  },[gesturing,inset]);
   useEffect(()=>{
     const element=viewport.current;
     if(!element)return;
@@ -181,7 +198,7 @@ export function CompositionTimeline(props: Props) {
       .filter(lane=>occupiedTracks.has(lane.track.id)?lane.track.kind==="visual"||lane.items.length>0:lane.track.primary||lane.track.locked||focusedTrack===lane.track.id)
       .sort((left,right)=>rank(left.track)-rank(right.track)||(rank(left.track)===1?right.index-left.index:left.index-right.index));
   },[document,sourceCaptions,focusedTrack]);
-  const contentWidth=Math.max(width-144,inset*2+extent*scale);
+  const contentWidth=contentWidthAt(scale,width);
   const secondsStep=[.1,.25,.5,1,2,5,10,15,30,60,120,300,600,1800].find(step=>step*document.fps.numerator/document.fps.denominator*scale>=90)??3600;
   const tickFrames=secondsStep*document.fps.numerator/document.fps.denominator;
   const firstTick=Math.max(0,Math.floor((scroll-inset)/scale/tickFrames));

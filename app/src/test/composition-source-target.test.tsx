@@ -75,13 +75,36 @@ it("atalho rápido da biblioteca continua no cursor com intenção de fonte pend
   expect(current.onSeek).not.toHaveBeenCalled();
 });
 
-it("falha por lock preserva rascunho e intenção para tentar novamente",async()=>{
+it("fonte entra em camada nova mesmo com principal bloqueada, sem deslocar os itens existentes",async()=>{
   const document=fixture();document.tracks[0].locked=true;const current=props(document);
   view=await reactHost(<CompositionEditorBody {...current} sourceRequest={{id:1,target:"end"}}/>);
   await click("Adicionar no fim",".composition-source");
-  expect(current.onChange).not.toHaveBeenCalled();expect(current.onSeek).not.toHaveBeenCalled();
-  expect(current.onError).toHaveBeenCalledWith("A faixa principal está bloqueada");
-  expect(view.host.querySelector('.composition-source [aria-label="Adicionar no fim"]')).not.toBeNull();
+  const next=vi.mocked(current.onChange).mock.lastCall?.[0];
+  expect(next).toBeDefined();
+  const incoming=inserted(document,next!)[0];
+  expect(incoming.startFrame).toBe(60);
+  expect(next!.tracks.find(track=>track.id===incoming.trackId)).toMatchObject({kind:"visual",primary:false,locked:false});
+  for(const item of document.items)expect(next!.items.find(value=>value.id===item.id)).toEqual(item);
+  for(const track of document.tracks)expect(next!.tracks.find(value=>value.id===track.id)).toEqual(track);
+  expect(current.onSeek).not.toHaveBeenCalled();expect(current.onError).not.toHaveBeenCalled();
+  expect(view.host.querySelector('.composition-source')).toBeNull();
+});
+
+it("adiciona o intervalo no cursor em nova camada com áudio e CC vinculados, sem ripple",async()=>{
+  const document=fixture();document.assets[0].hasAudio=true;
+  document.assets[0].transcript=[{id:"fala",start:0,end:2,text:"Uma fala completa."}];
+  const current=props(document);const before=JSON.stringify(document);
+  view=await reactHost(<CompositionEditorBody {...current} sourceRequest={{id:1,target:"cursor"}}/>);
+  await click("Adicionar no cursor",".composition-source");
+  const next=vi.mocked(current.onChange).mock.lastCall![0];
+  const incoming=inserted(document,next)[0];
+  expect(incoming).toMatchObject({startFrame:15,durationFrames:60,sourceStartUs:0,sourceEndUs:2_000_000});
+  expect(next.tracks.find(track=>track.id===incoming.trackId)).toMatchObject({kind:"visual",primary:false});
+  expect(next.items.filter(item=>item.groupId===incoming.groupId).map(item=>item.kind).sort()).toEqual(["audio","caption","video"]);
+  expect(next.items.filter(item=>item.groupId===incoming.groupId).every(item=>item.startFrame===15&&item.durationFrames===60)).toBe(true);
+  for(const item of document.items)expect(next.items.find(value=>value.id===item.id)).toEqual(item);
+  expect(JSON.stringify(document)).toBe(before);
+  expect(current.onSeek).not.toHaveBeenCalled();
 });
 
 it("resolve fim na principal atual e ignora a cauda de áudio",async()=>{
@@ -99,4 +122,16 @@ it("fim de principal vazia é zero mesmo com áudio independente",async()=>{
   await click("Adicionar no fim",".composition-source");
   expect(inserted(document,vi.mocked(current.onChange).mock.lastCall![0])[0].startFrame).toBe(0);
   expect(current.onSeek).not.toHaveBeenCalled();
+});
+
+it("abre as miniaturas da fonte escolhida sem preparar vídeos apenas por estarem na biblioteca",async()=>{
+  const current=props();
+  view=await reactHost(<CompositionEditorBody {...current} previews={{other:{frames:["blob:first","blob:last"],peaks:[]}}}/>);
+  expect(vi.mocked(current.onPreviews).mock.calls.some(([id])=>id==="other")).toBe(false);
+  await click("Selecionar mídia: Outra.mp4");
+  expect(vi.mocked(current.onPreviews).mock.calls.some(([id])=>id==="other")).toBe(false);
+  await click("Abrir fonte selecionada");
+  expect([...view.host.querySelectorAll('.composition-source-range__frames img')].map(image=>image.getAttribute("src"))).toEqual(["blob:first","blob:last"]);
+  expect(vi.mocked(current.onPreviews).mock.calls.some(([id])=>id==="other")).toBe(true);
+  expect(current.onChange).not.toHaveBeenCalled();expect(current.onSeek).not.toHaveBeenCalled();
 });

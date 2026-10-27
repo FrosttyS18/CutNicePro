@@ -10,6 +10,7 @@ import { frameToSeconds } from "../../lib/composition-time";
 import type { CompositionAsset, CompositionItem, CompositionTrack, FrameRate } from "../../lib/composition-types";
 import { EditorAction } from "./EditorAction";
 import { CompositionCompactItem } from "./CompositionCompactItem";
+import { compactItemThreshold, trackDisplayEnd } from "./composition-track-layout";
 
 export interface TimelinePreviewData { frames: string[]; peaks: number[] }
 export type CompositionTrackPatch = Partial<Pick<CompositionTrack, "locked" | "hidden" | "muted">>;
@@ -68,11 +69,11 @@ export const CompositionTrackLane = memo(function CompositionTrackLane({ track, 
     </div>
     <div className="composition-track__items" style={{ width }}>
       {startAddition&&<div className="composition-track__add" style={{left:8}}>{startAddition}</div>}
-      {endAddition&&<div className="composition-track__add" style={{left:inset+items.reduce((end,item)=>Math.max(end,item.startFrame+item.durationFrames),0)*scale+12}}>{endAddition}</div>}
+      {endAddition&&<div className="composition-track__add" style={{left:trackDisplayEnd(items,scale,inset,Boolean(onReveal))+12}}>{endAddition}</div>}
       {items.filter(item => item.startFrame*scale + item.durationFrames*scale > startPixel - 120 && item.startFrame*scale < startPixel + visibleWidth + 120).map(item => {
         const asset = assets.find(value => value.id === item.assetId)!;
         const itemWidth = item.durationFrames * scale;
-        const compact = itemWidth < 20 && Boolean(onReveal);
+        const compact = itemWidth < compactItemThreshold && Boolean(onReveal);
         const preview = previews[item.assetId];
         const markerIndex = asset.kind === "image" || asset.durationUs <= 0 ? 0 : Math.max(0,Math.min((preview?.frames.length??1)-1,Math.round(item.sourceStartUs/asset.durationUs*((preview?.frames.length??1)-1))));
         const first = Math.max(0,Math.floor((startPixel-item.startFrame*scale)/80));

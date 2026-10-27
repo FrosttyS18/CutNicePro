@@ -5,7 +5,7 @@ import { compositionContextItem, transcriptForItem } from "../../lib/composition
 import { formatMediaTime } from "../../lib/workspace";
 import { splitViewport } from "../../lib/split-screen";
 import { fragmentFromAsset } from "../../lib/composition-source";
-import { insertComposition } from "../../lib/composition-insert";
+import { insertComposition, overlayComposition } from "../../lib/composition-insert";
 import { insertionTargetLabel, resolveInsertionFrame, type CompositionInsertionTarget, type CompositionSourceRequest } from "../../lib/composition-insertion-target";
 import { linkedSelection } from "../../lib/composition-operations";
 import { frameToSeconds } from "../../lib/composition-time";
@@ -57,6 +57,7 @@ export function CompositionEditorBody({projectId,document,frame,playing,selected
   const [sourceIntent,setSourceIntent]=useState<{projectId:string;assetId:string;target:CompositionInsertionTarget}|null>(null);
   const panelId=useId();
   const stage=useRef<HTMLDivElement>(null);
+  const focusSource=useCallback(()=>{stage.current?.querySelector<HTMLElement>(".composition-source")?.focus({preventScroll:true});},[]);
   const canvas=useRef<HTMLDivElement>(null);
   const [panel,setPanel]=useState<EditorPanel>("captions");
   const [framing,setFraming]=useState(false);
@@ -72,6 +73,9 @@ export function CompositionEditorBody({projectId,document,frame,playing,selected
   const sourceAsset=document.assets.find(asset=>asset.id===source)??document.assets[0];
   const sourceTarget=sourceIntent?.projectId===projectId&&sourceIntent.assetId===sourceAsset?.id?sourceIntent.target:"cursor";
   const viewingSource=sourceOpen&&Boolean(sourceAsset);
+  useEffect(()=>{
+    if(viewingSource)focusSource();
+  },[viewingSource,sourceAsset?.id,sourceRequest.id,focusSource]);
   if(sourceRequest.id!==handledSourceRequest){
     setHandledSourceRequest(sourceRequest.id);
     setSourceIntent(sourceRequest.id>0&&sourceAsset?{projectId,assetId:sourceAsset.id,target:sourceRequest.target}:null);
@@ -83,10 +87,10 @@ export function CompositionEditorBody({projectId,document,frame,playing,selected
     window.addEventListener("keydown",stop);return()=>window.removeEventListener("keydown",stop);
   },[framing]);
   const selectSource=(asset:CompositionAsset)=>{if(asset.id!==sourceAsset?.id)setSourceIntent(null);setSource(asset.id);};
-  const openSource=(asset:CompositionAsset)=>{onPause();selectSource(asset);setSourceOpen(true);};
+  const openSource=(asset:CompositionAsset)=>{onPause();selectSource(asset);setSourceOpen(true);if(viewingSource&&asset.id===sourceAsset?.id)focusSource();};
   const closeSource=()=>{setSourceIntent(null);setSourceOpen(false);stage.current?.focus({preventScroll:true});};
-  const insertSource=(asset:CompositionAsset,start=0,end=asset.durationUs/1e6,target:CompositionInsertionTarget="cursor")=>{
-    try{onPause();onChange(insertComposition(document,fragmentFromAsset(document,asset,start,end,asset.mediaId!==sourceId||document.items.some(value=>value.kind==="audio"&&value.assetId===asset.id)),resolveInsertionFrame(document,target,frame)));setSourceIntent(null);return true;}
+  const insertSource=(asset:CompositionAsset,start=0,end=asset.durationUs/1e6,target:CompositionInsertionTarget="cursor",mode:"sequence"|"overlay"="sequence")=>{
+    try{onPause();const insert=mode==="overlay"?overlayComposition:insertComposition;onChange(insert(document,fragmentFromAsset(document,asset,start,end,asset.mediaId!==sourceId||document.items.some(value=>value.kind==="audio"&&value.assetId===asset.id)),resolveInsertionFrame(document,target,frame)));setSourceIntent(null);return true;}
     catch(error){onError(error instanceof Error?error.message:"Não foi possível adicionar a fonte");return false;}
   };
   const item=compositionContextItem(document,frame,selected);
@@ -160,13 +164,13 @@ export function CompositionEditorBody({projectId,document,frame,playing,selected
         {!libraryOpen&&<EditorAction compact label="Mostrar biblioteca" icon={<SidebarSimpleIcon size={18} aria-hidden="true"/>} onClick={()=>setLibraryOpen(true)}/>}
         {!inspectorOpen&&<EditorAction compact label="Mostrar propriedades" icon={<SlidersHorizontalIcon size={18} aria-hidden="true"/>} onClick={()=>setInspectorOpen(true)}/>}
       </div></div>
-      {viewingSource&&sourceAsset ? <div className="composition-editor__source-view"><CompositionSource key={sourceAsset.id} asset={sourceAsset} fps={document.fps} url={media[sourceAsset.id]?.url??null} onActivate={onPause} insertLabel={insertionTargetLabel(sourceTarget)}
-        onInsert={(start,end)=>{if(insertSource(sourceAsset,start,end,sourceTarget))closeSource();}}/></div>
+      {viewingSource&&sourceAsset ? <div className="composition-editor__source-view"><CompositionSource key={sourceAsset.id} asset={sourceAsset} fps={document.fps} frames={previews[sourceAsset.id]?.frames} url={media[sourceAsset.id]?.url??null} onActivate={onPause} insertLabel={insertionTargetLabel(sourceTarget)} target={sourceTarget}
+        onInsert={(start,end)=>{if(insertSource(sourceAsset,start,end,sourceTarget,"overlay"))closeSource();}}/></div>
         : <div ref={canvas} className="composition-editor__canvas" data-framing={framing} data-placement={Boolean(selectedVisual)&&!framing} onPointerDown={pointer}>
           <CompositionStage document={document} frame={frame} playing={playing} media={media} onError={onError} onReady={onReady}/>
           <CompositionSelection document={document} item={selectedVisual} frame={frame} containerRef={canvas} onPointerDown={pointer}/>
         </div>}
-      <div className="composition-editor__preview-status">{document.assets.filter(asset=>document.items.some(item=>item.assetId===asset.id)).map(asset=><CompositionPreviewLoader key={asset.id} asset={asset} imageUrl={media[asset.id]?.url} onData={onPreviews}/>)}</div>
+      <div className="composition-editor__preview-status">{document.assets.filter(asset=>document.items.some(item=>item.assetId===asset.id)||viewingSource&&asset.id===sourceAsset?.id).map(asset=><CompositionPreviewLoader key={asset.id} asset={asset} imageUrl={media[asset.id]?.url} onData={onPreviews}/>)}</div>
       {!viewingSource&&transport&&<div className="composition-editor__viewer-transport">{transport}</div>}
     </div>
     {inspectorOpen&&<CompositionSidePanel side="inspector" label="Propriedades" width={inspectorWidth} minimum={280} maximum={480} expanded={inspectorWidth>360}

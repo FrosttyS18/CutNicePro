@@ -211,6 +211,18 @@ O desenho definitivo deverá mostrar também estados vazio, carregando, erro, se
 
 ### Fonte e montagem são tempos diferentes
 
+Refinamento autorizado em 2026-10-27 (JRN-009, BR-EDITOR-02/03, AC-EDITOR-02/03): **Escolher trecho da fonte** usa uma faixa de miniaturas do arquivo original, com seleção por arraste como a ferramenta R e alças para ajustar os dois limites. O slider isolado e as ações empilhadas são substituídos por essa seleção visual e uma barra única. Marcar não altera a montagem; Enter ou Adicionar confirma uma vez e insere em **nova camada**, no cursor ou no destino início/fim que abriu a operação, sem deslocar nem aparar os itens existentes. Salvar continua explícito; áudio e CC acompanham o vídeo pelos vínculos atuais. Adição rápida da biblioteca e importação mantêm seus contratos anteriores.
+
+Plano desta fatia, sem retomar a pesquisa/goal integral pausado:
+
+- [x] Separar o espaço clicável dos marcadores compactos e dos botões+ nas extremidades, mantendo escala temporal, cursor e dados; teste de colisão com um frame e uma cauda longa.
+- [x] Reutilizar as miniaturas já carregadas, preparando também a fonte escolhida ainda ausente da montagem; nenhuma decodificação por movimento do mouse.
+- [x] Implementar seleção nos dois sentidos, ajustes de início/fim, duração mínima de um frame, teclado I/O/Enter/Espaço e cancelamento por Escape/blur/pointercancel. Desmontar limpa o gesto, sem inserção tardia.
+- [x] Usar `overlayComposition` somente na confirmação do viewer Fonte; preservar originais, grupos, camadas e cursor, inclusive com principal bloqueada. Testar Undo/Redo/Save e destino atual.
+- [x] Validar os consumidores alterados, lint e build padrão; entregar roteiro manual. UI/gestos no aplicativo normal e aprovação visual continuam com o mantenedor.
+
+Feedback adicional de zoom: trechos isolados de1/2frames faziam o mínimo superar o teto20px/frame; fit inicial/expresso também extrapolava esse teto. Limites agora são compartilhados por fit/reveal/controles e revalidados após duração/resize. Durante arraste a escala fica estável; normalização automática só após soltar/cancelar, sem consumir o primeiro ajuste à largura. Regressões cobrem também60fps, montagem vazia, troca para duração longa, marcadores compactos, botões, slider e Ctrl+roda. Validação final da fatia:161/161 testes em20arquivos, lint focal sem avisos, tsc/Vite e cargo build padrão aprovados. Isso não substitui o reteste humano nem encerra as pendências integrais do editor.
+
 Um trecho original de `03:00–03:30` pode aparecer em `00:00–00:30` da montagem. O mesmo trecho pode ser duplicado e aparecer novamente depois.
 
 Essa separação permite:
