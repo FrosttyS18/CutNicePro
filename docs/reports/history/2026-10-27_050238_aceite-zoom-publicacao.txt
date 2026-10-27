@@ -1,0 +1,89 @@
+╔════════════════════════════════════════════╗
+║       CUTNICEPRO — ZCODE REPORT            ║
+╚════════════════════════════════════════════╝
+
+TASK
+  Name: Aceite e publicação do zoom na fonte
+  Status: PASS desta entrega; editor integral não concluído.
+  Scope/Objective: registrar aceite, comitar, publicar e pausar a meta.
+  Result: teste manual aprovado; código enviado à main.
+  FUNCTIONAL STATUS: PASS na fatia aprovada.
+  REGRESSION STATUS: PASS no escopo previamente executado.
+  VISUAL STATUS: PENDING HUMAN APPROVAL para estética integral.
+
+IMPLEMENTATION
+  Completed: aceite registrado, commit e push do zoom.
+  Changes: somente documentação nesta rodada; código aprovado preservado.
+  Architecture impact: nenhum novo.
+  Not completed: demais frentes adiadas; pausa solicitada será aplicada
+    como última ação, após publicar este registro.
+
+FILES
+  Created: useSourceRangeZoom.ts, composition-source-zoom.test.tsx
+    e dois relatórios históricos desta fatia.
+  Modified: CompositionSource.tsx, CompositionSourceRange.tsx,
+    composition-source.css; ENGINE-HANDOFF.md; BUSINESS-RULES.md;
+    TRACEABILITY.md; LATEST.txt.
+  Deleted/Unexpected changes: nenhum.
+
+VALIDATION
+  Typecheck/build/Lint: PASS na implementação anterior.
+  Unit/Integration/Regression: 51 casos distintos cobertos anteriormente
+    (49/49 e reteste23/23 com dois novos); DOM simulado.
+  Total failed: 0 na validação anterior final.
+  Total skipped: nenhuma suíte repetida nesta publicação documental.
+  Runtime verification: mantenedor confirmou zoom, seleção após rolar
+    e Enter funcionando na build padrão.
+  Visual tests: aprovação estética integral não inferida desse teste.
+  Verificações atuais: diff-check PASS; hash local igual ao remoto.
+
+HOOKS / HARNESS
+  Hooks/PreToolUse/PostToolUse/Stop/Baseline: não auditados nesta rodada.
+  Gate result/Evidence: aceite explícito, revisão do diff e Git remoto.
+
+MCP / SKILLS
+  Tools used: Git e Graphify remoto; verificação antes da entrega.
+  Connection status: conectado; índice ainda em7e4056c.
+  Failures: nenhuma. Pending activation: aguardar indexação automática.
+
+GIT
+  Branch: main.
+  HEAD: 03097433a34a201970e66078f7b144b0fde357f9.
+  Latest commit: feat(editor): permitir zoom na seleção da fonte.
+  Commits created: 0309743 — feat(editor): permitir zoom na seleção da fonte.
+  Push: SUCCESS, confirmado por ls-remote.
+  Remote: origin → FrosttyS18/CutNicePro, main.
+  Working tree: MODIFIED/UNTRACKED somente registros finais.
+  Pending files: ENGINE-HANDOFF.md, LATEST.txt e este histórico.
+    Este é o snapshot anterior ao commit documental de encerramento.
+
+EVIDENCE
+  Commands executed: git diff --check; git commit; git push;
+    git rev-parse HEAD; git ls-remote; Graphify graph_stats.
+  Relevant logs: main remota =03097433a34a201970e66078f7b144b0fde357f9.
+  Screenshots: nenhuma. Test artifacts: mantidos no commit publicado.
+  Reproduction details: teste manual confirmado pelo mantenedor.
+
+ISSUES
+  Bugs found/Unresolved failures: nenhum novo.
+  Regressions: nenhuma alteração funcional depois do teste aprovado.
+  Risks: push não comprova indexação; Graphify ainda estava no commit anterior.
+  Blockers: nenhum para encerrar esta publicação.
+
+FINAL
+  Delivery status: PASS do zoom aprovado e publicado.
+  Requirements met: aceite, commit e push; pausa autorizada como última ação.
+  Remaining work: demais itens preservados para futura retomada.
+  User action required: nenhuma nesta entrega.
+  Restart required: não. Ready for next task: somente após nova solicitação.
+
+REPORT
+  Latest file: C:/CutNicePro/docs/reports/LATEST.txt.
+  Historical file: C:/CutNicePro/docs/reports/history/2026-10-27_050238_aceite-zoom-publicacao.txt.
+
+GUIA DO MANTENEDOR — O QUE MUDOU E COMO TESTAR
+  O teste já foi feito e aprovado por você. Não precisa repeti-lo.
+  Esta rodada publica a mesma implementação e preserva as demais pendências.
+  A meta será pausada após o envio deste registro, conforme solicitado.
+
+END OF REPORT
