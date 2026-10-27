@@ -36,3 +36,6 @@ mod render_roundtrip_tests;
 
 #[cfg(test)]
 mod render_placement_tests;
+
+#[cfg(test)]
+mod render_performance_tests;

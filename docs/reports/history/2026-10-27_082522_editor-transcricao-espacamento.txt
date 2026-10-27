@@ -1,0 +1,87 @@
+╔════════════════════════════════════════════╗
+║       CUTNICEPRO — ZCODE REPORT            ║
+╚════════════════════════════════════════════╝
+
+TASK
+  Name: Espaçamento da transcrição no editor
+  Status: PASS técnico; aprovação visual pendente
+  Scope/Objective: separar seletor de mídia e Transcrever.
+  Result: distância corrigida de 0 para 12px.
+  FUNCTIONAL STATUS: PASS no escopo automatizado
+  REGRESSION STATUS: PASS nos testes relacionados
+  VISUAL STATUS: PENDING HUMAN APPROVAL
+
+IMPLEMENTATION
+  Completed: layout vertical restrito a .editor-transcription.
+  Changes: três regras CSS; sem mudança no dropdown ou na transcrição.
+  Architecture impact: nenhum. Not completed: conferência humana.
+
+FILES
+  Modified: app/src/components/workspace/transcription.css;
+    docs/engineering/ENGINE-HANDOFF.md; docs/reports/LATEST.txt.
+  Created: docs/reports/history/2026-10-27_082522_editor-transcricao-espacamento.txt.
+  Deleted: nenhum. Unexpected changes: NONE.
+
+VALIDATION
+  Typecheck/build: PASS, npm run build, sem warnings.
+  Unit/regression: PASS, 21/21 testes em quatro arquivos de transcrição.
+  Layout: PASS, 21/21 cenários headless com CSS real, três larguras,
+    sete estados; espaçamento12px, sem overflow horizontal.
+  Integration/native ASR: SKIP; comportamento não alterado.
+  Lint/Rust: SKIP; somente CSS alterado.
+  Visual: PENDING HUMAN APPROVAL.
+  Runtime: app normal aberto, PID13684; CSS atualizado HTTP200.
+  Total: 42 verificações aprovadas, zero falhas finais.
+    Não equivalem a testar ASR real ou toda a interface.
+
+HOOKS / HARNESS
+  Revisão de diff e git diff --check: PASS.
+  Hooks/Stop/baseline: não usados como evidência de aprovação.
+  Fixture: estado equivalente ao bloco afetado, sem sessão do usuário.
+
+MCP / SKILLS
+  Graphify remoto pre/post conectado; componente, dependências e testes.
+  Índice b4d45cd, anterior ao HEAD643e1b6; leitura local complementar.
+  Skills: systematic-debugging, frontend-ui-engineering, minimalist-ui,
+    playwright. Revisão independente de leitura; sem controle do PC.
+
+GIT
+  Branch: main
+  HEAD: 643e1b6ded722f699c3359e44953153789bf7926
+  Latest commit: docs(editor): registrar publicação e pausa da fila
+  Commits created: nenhum. Push: NOT EXECUTED.
+  Remote: origin → FrosttyS18/CutNicePro; main.
+  Working tree: MODIFIED + UNTRACKED.
+  Pending files: os quatro arquivos relacionados em FILES.
+
+EVIDENCE
+  Commands: npm test (editor-transcription-ui/freshness/hook/contract),
+    npm run build, fixture headless, git diff --check.
+  Reprodução: fixture antes=0px; depois=12px nas três larguras.
+  Screenshots: nenhuma. Novos testes permanentes: nenhum.
+
+ISSUES
+  Bug: faltava gap entre blocos irmãos.
+  Abertura Tauri encontrou porta1420 ocupada; reutilizado o Vite existente
+    confirmado deste projeto, sem encerrar processos ou criar outra build.
+  Unresolved failures: nenhuma nos testes executados.
+  Risks: validação humana da aparência pendente; não há garantia global.
+
+FINAL
+  Delivery status: correção disponível na instância normal.
+  Requirements met: espaçamento, largura e estados preservados.
+  Remaining work/User action: teste curto abaixo.
+  Restart required: não; app já reaberto.
+  Ready for next task: somente mediante autorização; meta ampla PAUSED.
+
+REPORT
+  Latest file: docs/reports/LATEST.txt
+  Historical file: docs/reports/history/2026-10-27_082522_editor-transcricao-espacamento.txt
+
+GUIA DO MANTENEDOR — O QUE MUDOU E COMO TESTAR
+  O seletor de mídia e Transcrever agora têm espaço entre eles.
+  1. Editor → Biblioteca → Transcrição: confira a separação.
+  2. Abra o seletor e escolha outra mídia: o botão deve continuar separado,
+     e o menu deve abrir normalmente.
+
+END OF REPORT

@@ -2,6 +2,9 @@
 .transcription-controls__actions { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; }
 .transcription-controls__actions > span { font-size: 11px; overflow-wrap: anywhere; }
 .transcription-controls p { margin: 6px 0 0; }
+.editor-transcription { display: flex; flex: none; flex-direction: column; align-items: flex-start; gap: 12px; }
+.editor-transcription > :is(.transcription-setup__label, .transcription-controls__actions) { align-self: stretch; min-width: 0; }
+.editor-transcription > p { margin: 0; }
 .transcription-progress { min-width: 0; padding: 36px 12px 20px; text-align: center; }
 .transcription-progress__number { display: block; font-size: clamp(32px, 5vw, 44px); font-weight: 600; font-variant-numeric: tabular-nums; line-height: 1.2; }
 .transcription-progress > p { margin: 16px 0 0; font-size: 14px; }

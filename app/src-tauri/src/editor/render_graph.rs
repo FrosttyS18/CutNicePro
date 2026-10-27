@@ -9,6 +9,12 @@ use std::{
     path::{Path, PathBuf},
 };
 
+pub(super) fn filter_threads() -> usize {
+    std::thread::available_parallelism()
+        .map(|threads| threads.get().min(4))
+        .unwrap_or(1)
+}
+
 fn layer_transform(width: u32, height: u32, placement: &Placement) -> (String, f64, f64) {
     let even = |value: f64| ((value.round() as i64) / 2 * 2).max(2) as u32;
     let (scaled_width, scaled_height) = (
@@ -56,6 +62,12 @@ pub fn video(
     let rate = format!("{}/{}", document.fps.numerator, document.fps.denominator);
     let duration = (window.end - window.start) as f64 * document.fps.denominator as f64
         / document.fps.numerator as f64;
+    let filter_threads = if window.end - window.start == 1 {
+        1
+    } else {
+        filter_threads()
+    }
+    .to_string();
     let mut args: Vec<OsString> = [
         "-nostdin",
         "-hide_banner",
@@ -63,7 +75,7 @@ pub fn video(
         "error",
         "-y",
         "-filter_complex_threads",
-        "1",
+        &filter_threads,
         "-f",
         "lavfi",
         "-i",

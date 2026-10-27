@@ -10,6 +10,7 @@ use std::{
     collections::HashMap,
     path::{Path, PathBuf},
     process::Command,
+    time::Instant,
 };
 
 fn render_with_encoder(
@@ -55,6 +56,7 @@ pub fn run(
     control: &ProcessControl,
     mut progress: impl FnMut(u8),
 ) -> Result<(Scratch, PathBuf), String> {
+    let started = Instant::now();
     let windows = render_plan::windows(document)?;
     control.check()?;
     let scratch = Scratch::new(base)?;
@@ -67,6 +69,12 @@ pub fn run(
     });
     let selected = encoder::detect(&exe, &scratch.path, control)?;
     let total = document.duration_frames() as f64;
+    let video_started = Instant::now();
+    eprintln!(
+        "[editor] Preparando vídeo: {} janelas; filtros com até {} threads.",
+        windows.len(),
+        render_graph::filter_threads()
+    );
     let mut render_all = |selected: Encoder| -> Result<(), String> {
         for (index, window) in windows.iter().enumerate() {
             control.check()?;
@@ -97,12 +105,17 @@ pub fn run(
         Ok(())
     };
     render_with_encoder(selected, &scratch.path, control, &mut render_all)?;
+    eprintln!(
+        "[editor] Etapa vídeo concluída em {:.2}s.",
+        video_started.elapsed().as_secs_f64()
+    );
     let list = windows
         .iter()
         .enumerate()
         .map(|(index, _)| format!("file 'part-{index}.mp4'\n"))
         .collect::<String>();
     std::fs::write(scratch.path.join("concat.txt"), list).map_err(|error| error.to_string())?;
+    let audio_started = Instant::now();
     render_audio::run(
         document,
         &windows,
@@ -114,6 +127,11 @@ pub fn run(
             progress((70.0 + samples as f64 / total as f64 * 20.0).clamp(70.0, 90.0) as u8);
         },
     )?;
+    eprintln!(
+        "[editor] Etapa áudio concluída em {:.2}s.",
+        audio_started.elapsed().as_secs_f64()
+    );
+    let mix_started = Instant::now();
     let mut command = Command::new(&exe);
     command
         .current_dir(&scratch.path)
@@ -128,6 +146,10 @@ pub fn run(
             progress((90.0 + us / 1e6 / duration * 9.0).clamp(90.0, 99.0) as u8);
         }
     })?;
+    eprintln!(
+        "[editor] Etapa de combinação final concluída em {:.2}s.",
+        mix_started.elapsed().as_secs_f64()
+    );
     let output = scratch.path.join("output.part.mp4");
     control.check()?;
     let metadata = crate::media_analyze::analyze(&tools, &output)?;
@@ -135,6 +157,10 @@ pub fn run(
     if (metadata.duration_ms as f64 - duration * 1000.0).abs() > frame_ms + 1.0 {
         return Err("A duração exportada diverge da montagem salva".into());
     }
+    eprintln!(
+        "[editor] Renderização validada em {:.2}s.",
+        started.elapsed().as_secs_f64()
+    );
     progress(100);
     Ok((scratch, output))
 }

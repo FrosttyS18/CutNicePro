@@ -1,6 +1,14 @@
 
 # Editor básico completo e fluxo de projetos do CutNicePro
 
+## Fatia vigente — desempenho da exportação,2026-10-27
+
+Retomada da meta com relato de exportação lenta e baixa utilização de GPU. Escopo M3/M5: medir a montagem salva normal, sem alterar originais, resolução, FPS, qualidade, legendas, transformações ou contratos de salvamento. NVENC acelera a codificação; o grafo atual de composição/ASS e a decodificação continuam em CPU. O código limita o grafo a uma thread e renderiza vídeo, áudio e mux em etapas sequenciais; não atribuir todo o tempo ao encoder nem inferir o encoder de um percentual agregado.
+
+Plano: laboratório explicitamente ignorado nas suítes rápidas, com snapshot/referências copiados somente para .tooling/test-output; comparar20s da primeira janela real, usando render_graph::video e NVENC obrigatório sem fallback, variando apenas filter_complex_threads1→4. Conferir encoder efetivo, tempo, FPS/duração,600frames no snapshot30fps, igualdade do grafo/ASS/fontes e conteúdo decodificado. Registrar que A→B aquece caches e que a amostra mede somente vídeo; repetir uma vez em ordem inversa se o resultado exigir confirmação. Somente com ganho e integridade comprovados, substituir a limitação fixa por paralelismo limitado a quatro e à capacidade disponível, mantendo fallback1. Investigar os custos seguintes por etapa, sem substituir o pipeline inteiro ou adicionar CUDA cegamente.
+
+Regressão pertinente: composição com repetição/sobreposição, escala grande, ASS vinculado/independente, áudio na cauda, janelas/frames e cancelamento/fallback do encoder. Não relaxar testes nem reduzir qualidade para obter velocidade. Uma mudança de paralelismo não comprova exportação inteira na GPU nem ganho proporcional no vídeo completo. A aprovação humana do app e as demais lacunas da meta permanecem distintas.
+
 ## Fatia adicional autorizada — acesso direto ao editor,2026-10-27
 
 A meta anterior permanece pausada; este pedido é uma fatia nova delimitada, ligada a JRN-009 e BR/AC-EDITOR-10. Adicionar Editor abaixo de Home/Meus projetos, reaproveitando rail, estado ativo branco/ícone preto e tooltip do projeto. Abrir a montagem vazia existente, sem novo editor paralelo. Edições são projetos identificáveis em Meus projetos; reabrir esses projetos retorna ao editor. Evitar duplicação por cliques repetidos e reaproveitar apenas uma edição comprovadamente vazia, sem recuperação ou clipes, preservando edições existentes.

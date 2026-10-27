@@ -3,105 +3,105 @@
 ╚════════════════════════════════════════════╝
 
 TASK
-  Name: Editor direto, biblioteca e exportação
-  Status: PARTIAL — editor integral permanece em revisão.
-  Result: exportação normal confirmada pelo mantenedor; fila publicada.
-  FUNCTIONAL STATUS: PASS técnico desta fatia; aceite amplo PARTIAL.
-  REGRESSION STATUS: PASS nas suítes executadas.
+  Name: Desempenho da exportação e confirmação de NVENC
+  Status: PARTIAL — reteste completo na interface pendente.
+  Scope/Objective: investigar render lento e corrigir gargalo comprovado.
+  Result: mesma janela real de20s caiu de68,649s para26,585s.
+  FUNCTIONAL STATUS: PASS no laboratório e regressão executados.
+  REGRESSION STATUS: PASS no escopo relacionado.
   VISUAL STATUS: PENDING HUMAN APPROVAL.
 
 IMPLEMENTATION
-  Completed: entrada direta no Editor, transcrição opcional por mídia,
-    reprodução de imagem/áudio após vídeo, câmera da prévia e gestos;
-    menu Excluir/Renomear/Abrir local, histórico e proteção de originais.
-  Export corrigido: preset de legenda implícito era recusado antes do FFmpeg.
-    Configuração agora é completada somente na cópia usada pelo render.
-  Modal Exportar reutiliza a animação de Transcrever, progresso real,
-    confirmação de cancelamento e retry com salvamento explícito.
-  Exclusão: “Excluir mídia da biblioteca?” e subtexto solicitado com nome;
-    Cancelar/Excluir mídia, sem explicações internas.
-  GPU NVIDIA já era preferida. Novos registros identificam encoder efetivo
-    e fallback CPU; cancelamento não dispara outra tentativa.
-  Not completed: aceleração dos filtros/composição, desempenho797MB,
-    ASR real desta entrada e aprovação dos novos modais.
-  Architecture impact: sem dependências, versão ou target adicionais.
+  Completed: filtros limitados a até4 threads/capacidade disponível,
+    fallback1; miniaturas e janelas de um frame preservadas em1.
+  Changes: diagnóstico de tempos de vídeo, áudio, mux e render validado.
+  Architecture impact: nenhum novo motor, dependência ou contrato.
+  Not completed: medição da exportação inteira pela interface normal.
 
 FILES
-  Código/documentação: b4d45cd contém92arquivos (36novos/56modificados);
-    3aaa1b1 contém18arquivos (3novos/15modificados), com sobreposição.
-  Principais: CompositionEditorBody, CompositionMediaActions,
-    CompositionDelivery, ProcessingDialog, useEditorTooltip,
-    composition-assets, media_reveal e editor/render*.rs.
-  Inventário completo: docs/reports/evidence/editor-basico-2026-10-26/
-    editor-arraste-selecao-2026-10-27.json, campos files das duas continuações.
-  Deleted: nenhum. Unexpected changes: nenhuma identificada.
-  Este fechamento acrescenta LATEST, histórico e registro no ENGINE-HANDOFF.
+  Modified: editor/render_graph.rs, render.rs e mod.rs em app/src-tauri/src;
+    docs/engineering/EDITOR-BASIC-IMPLEMENTATION-PLAN.md, ENGINE-HANDOFF.md;
+    docs/product/PRODUCT-BRAIN.md, BACKLOG.md; docs/reports/LATEST.txt.
+  Created: app/src-tauri/src/editor/render_performance_tests.rs;
+    docs/reports/evidence/editor-basico-2026-10-26/exportacao-paralelismo-2026-10-27.json;
+    docs/reports/history/2026-10-27_092253_exportacao-paralelismo.txt.
+  Deleted: nenhum. Unexpected changes: NONE.
+  Herdados: transcription.css e histórico082522, preservados.
 
 VALIDATION
-  Typecheck/build/lint: PASS, sem avisos de compilação.
-  TypeScript:1362/1362,194arquivos; Rust:389PASS/0FAIL/33opt-in ignored.
-  Total:1751 testes aprovados; zero falhas. Não somar os retestes focais.
-  Integração real: FFmpeg exportou vídeo→imagem+áudio, conferindo duração,
-    pixels, áudio final e preservação do snapshot salvo/reaberto.
-  Fixture confirmou h264_nvenc na RTX5070, com tag real do MP4.
-  Sete testes simulados cobrem escolha GPU/CPU, falha e cancelamento.
-  Runtime: build padrão aberta, perfil normal, PID24156/frontend1420HTTP200.
-    C:/CutNicePro/app/src-tauri/target/debug/cutnicepro.exe
-  Mantenedor confirmou arraste vertical e exportação normal.
-  Novos modais: testes DOM/contratos; aparência/interação normal pendentes.
-
-HOOKS / HARNESS
-  Runners existentes; hooks externos não auditados.
-  Sem controle interativo do PC. Dados reais preservados.
-  Abertura inicial teve conflito WebView; mesmo servidor/build reutilizados.
-  Stop/baseline não foram usados como prova de sucesso.
-
-MCP / SKILLS
-  Graphify remoto pre/post, diagnóstico sistemático, TDD, revisão delegada
-    e diretrizes frontend/UX do projeto.
-  Índice ainda de8ed09 após os pushes; código local/diff complementaram.
-  Documentação oficial NVIDIA consultada; sem alegar aceleração integral.
-
-GIT — SNAPSHOT ANTES DO COMMIT DESTE REGISTRO
-  Branch:main
-  HEAD:3aaa1b1435ef99facbf0e3b01b4548eb1660380b
-  Latest commit:fix(editor): alinhar modais e registrar uso da GPU
-  Commits: b4d45cd feat(editor): estabilizar edição direta e exportação
-    3aaa1b1 fix(editor): alinhar modais e registrar uso da GPU
-  Push:SUCCESS, origin/main conferida no mesmo HEAD.
-  Código sem pendências; apenas LATEST/histórico/ENGINE-HANDOFF deste
-    fechamento seguem para commit documental. Hash final informado no chat.
+  Native build: PASS, cargo build --no-default-features, sem warnings.
+  Unit/integration/regression:34 testes de render+7 de miniaturas+1 laboratório
+    opt-in aprovados; caso de um frame repetido após proteger miniaturas.
+    Total42 testes distintos/43 execuções aprovadas; zero falhas finais.
+    Uma ocorrência ignored na suíte corresponde ao laboratório executado à parte.
+  Typecheck/lint/frontend build: SKIP nesta fatia Rust.
+  Format: arquivos tocados PASS; cargo fmt global aponta formatação
+    preexistente em editor/tests.rs, preservada fora do escopo.
+  Visual: PENDING HUMAN APPROVAL.
+  Runtime: executável padrão aberto, PID43316, frontendHTTP200.
 
 EVIDENCE
-  npm test -- --maxWorkers=2 --minWorkers=1; npm run build; npm run lint;
-    cargo test --lib; cargo build --no-default-features; git diff --check.
-  Manifesto indicado em FILES. Sem novas capturas de tela.
+  Composição salva real, janela inicial20s, split-screen e ASS,
+    1080×1920/30fps/600frames, NVENCp5/CQ20 em ambas variantes.
+  1thread:68649ms.4threads:26585ms. Ganho2,582× nesta etapa.
+  Grafo/argumentos iguais salvo threads;1ASS+6fontes idênticos.
+  MP4s20,000s; tags confirmam h264_nvenc em ambos.
+  Comparação RGB24 decodificada:600frames, zero diferenças.
+  Ordem1→4 e cacheOS não controlado; não extrapolar ao export completo.
+  Artefatos com mídia/caminhos ficam somente em .tooling/test-output, ignorado.
+  Screenshots: nenhuma. Processamento não alterou originais ou dados salvos.
+
+HOOKS / HARNESS
+  Diff-check e rustfmt dos arquivos tocados PASS.
+  Hooks/Stop não foram usados como prova de aprovação.
+  Laboratório exige execução explícita; não aumenta as suítes rápidas.
+
+MCP / SKILLS
+  Graphify remoto pre/post: FrosttyS18/CutNicePro, índiceb4d45cd.
+  HEAD643e1b6 e alterações locais complementados por fonte/diff.
+  Dois agentes: leitura do pipeline, documentação e revisão de regressão.
+  Fontes oficiais: FFmpeg9.0.2 e guia NVIDIA13.1; consulta web do manual
+    FFmpeg falhou, usada a documentação oficial distribuída com o binário.
+  Skills: systematic-debugging, frontend-ui-engineering e verificação.
+  Revisão independente não encontrou P1/P2 nesta fatia.
+
+GIT
+  Branch: main
+  HEAD:643e1b6ded722f699c3359e44953153789bf7926
+  Latest commit: docs(editor): registrar publicação e pausa da fila
+  Commits created: nenhum. Push: NOT EXECUTED.
+  Remote: origin → FrosttyS18/CutNicePro; main.
+  Working tree: MODIFIED + UNTRACKED.
+  Pending files: todos em FILES, incluindo os dois herdados.
 
 ISSUES
-  Corrigidos também foco após excluir e tooltip atrás do diálogo/ressurgindo
-    após retry. Testes reproduziram esses defeitos antes das correções.
-  Encoder do export anterior do mantenedor: desconhecido, caminho não informado.
-  Velocidade: nenhum ganho medido; composição e filtros continuam na CPU.
-  Herdado: divergência estática de escala de fonte prévia/ASS em retrato,
-    ainda sem medição/correção nesta fatia. Sem bloqueio da publicação.
+  Bug: composição/ASS limitados a uma thread antes do encoderGPU.
+  Na captura inicial o FFmpeg original já havia encerrado:
+    o print sozinho não confirma seu encoder nem eventual fallback.
+  Unresolved failures: nenhuma nos testes finais relacionados.
+  Limites: decode/filtros continuamCPU; áudio e mux são etapas separadas.
+    Quatro é limite do grafo, não de todas as threads do processo.
+    Pico de memória/PCs menores e tempo total real não foram medidos.
+  Pendência global de formatação descrita acima.
 
 FINAL
-  Entrega técnica publicada; meta integral não concluída.
-  Após publicar este registro, aplicar a pausa expressamente solicitada.
-  Remaining work: reteste dos novos modais e pendências amplas registradas.
-  Restart required:NÃO, build normal atualizada já aberta.
-  Ready for next task: somente na retomada pelo mantenedor.
+  Delivery status: correção disponível na build normal0.19.0.
+  Requirements met: gargalo medido, NVENC comprovado no teste, qualidade
+    preservada na amostra, regressão e compilação verificadas.
+  Remaining work: reteste completo e demais gates da meta, aindaACTIVE/PARTIAL.
+  User action required: roteiro abaixo. Restart required: não, app já aberto.
+  Ready for next task: continuidade sem declarar a meta integral concluída.
 
 REPORT
-  Latest:docs/reports/LATEST.txt
-  History:docs/reports/history/2026-10-27_081239_editor-publicacao-pausa.txt
+  Latest file: docs/reports/LATEST.txt
+  Historical file: docs/reports/history/2026-10-27_092253_exportacao-paralelismo.txt
 
 GUIA DO MANTENEDOR — O QUE MUDOU E COMO TESTAR
-  1. Botão direito na mídia → Excluir: conferir título/subtexto/CTAs solicitados.
-     Cancelar preserva tudo; confirmar e Ctrl+Z restaura sem outro clique.
-  2. Exportar: mesma animação de Transcrever, percentual real e confirmação
-     para cancelar. Pausar animação não pausa a exportação.
-  3. No terminal, [editor] identifica GPU NVIDIA ou CPU e eventual fallback.
-     Isso não significa que toda a composição já esteja acelerada.
+  A GPU codificava o vídeo, mas recebia quadros lentamente dos filtrosCPU.
+  Esse trabalho agora usa paralelismo limitado, mantendo a qualidade.
+  1. Na janela atualizada, exporte a mesma montagem.
+  2. Confira início/fim, imagem, áudio e legendas e relate o tempo total.
+  O terminal informa o encoder e os tempos de cada etapa para diagnosticar
+  o que ainda demora. O ganho medido foi de uma amostra, não do export inteiro.
 
 END OF REPORT
