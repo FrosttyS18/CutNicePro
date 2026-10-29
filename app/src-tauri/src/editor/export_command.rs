@@ -1,9 +1,14 @@
-use super::{export_snapshot, render, store::EditorStore, types::Composition};
-use crate::{clips::ClipJobs, media_store::MediaStore, processing::ProcessingGate};
-use std::{
-    io::{Read, Write},
-    sync::Arc,
+use super::{
+    export_artifact,
+    export_destination::{self, Destination},
+    export_dialog::{self, ExportReceipt},
+    export_options::ExportOptions,
+    export_snapshot,
+    store::EditorStore,
+    types::Composition,
 };
+use crate::{clips::ClipJobs, media_store::MediaStore, processing::ProcessingGate};
+use std::sync::Arc;
 use tauri::{AppHandle, Emitter, Manager};
 use tauri_plugin_dialog::DialogExt;
 
@@ -14,9 +19,39 @@ pub async fn export_editor_document(
     clip_id: Option<String>,
     job_id: String,
     document: Composition,
-) -> Result<bool, String> {
-    let lease = app.state::<Arc<ProcessingGate>>().acquire()?;
+    options: Option<ExportOptions>,
+    file_name: Option<String>,
+    directory: Option<String>,
+    overwrite: Option<bool>,
+) -> Result<Option<ExportReceipt>, String> {
+    let options = options.unwrap_or_default();
+    options.validate()?;
+    let extension = options.extension();
+    if file_name
+        .as_ref()
+        .is_some_and(|name| name.trim().is_empty() || name.chars().count() > 120)
+    {
+        return Err("Informe um nome com até 120 caracteres.".into());
+    }
     let base = crate::app_data_base(&app)?;
+    let direct = directory
+        .as_deref()
+        .map(|directory| {
+            export_destination::resolve(
+                &base,
+                directory,
+                file_name
+                    .as_deref()
+                    .ok_or("Informe o nome do arquivo para exportar.")?,
+                options,
+            )
+        })
+        .transpose()?;
+    let overwrite = overwrite.unwrap_or(false);
+    if let Some(destination) = &direct {
+        destination.recheck(overwrite)?;
+    }
+    let lease = app.state::<Arc<ProcessingGate>>().acquire()?;
     let project = crate::storage::Store::open(&base)?
         .load()?
         .into_iter()
@@ -49,30 +84,44 @@ pub async fn export_editor_document(
             title = format!("{}-{}", project.name, clip.title);
         }
     }
+    if let Some(name) = file_name {
+        title = name;
+    }
     let sources = export_snapshot::sources(&app.state::<MediaStore>(), &project_id, &mut frozen)?;
-    let dialog_app = app.clone();
-    let destination = tauri::async_runtime::spawn_blocking(move || {
-        let mut dialog = dialog_app
-            .dialog()
-            .file()
-            .set_title("Exportar vídeo")
-            .add_filter("Vídeo MP4", &["mp4"])
-            .set_file_name(crate::project_files::filename(&title, "mp4"));
-        if let Some(window) = dialog_app.get_webview_window("main") {
-            dialog = dialog.set_parent(&window);
-        }
-        dialog
-            .blocking_save_file()
-            .map(|selected| selected.into_path().map_err(|error| error.to_string()))
-            .transpose()
-    })
-    .await
-    .map_err(|error| error.to_string())??;
-    let Some(mut destination) = destination else {
-        return Ok(false);
+    let (destination, overwrite) = if let Some(destination) = direct {
+        (destination, overwrite)
+    } else {
+        let dialog_app = app.clone();
+        let destination = tauri::async_runtime::spawn_blocking(move || {
+            let mut dialog = dialog_app
+                .dialog()
+                .file()
+                .set_title("Exportar vídeo")
+                .add_filter(
+                    if extension == "mov" {
+                        "Vídeo MOV"
+                    } else {
+                        "Vídeo MP4"
+                    },
+                    &[extension],
+                )
+                .set_file_name(crate::project_files::filename(&title, extension));
+            if let Some(window) = dialog_app.get_webview_window("main") {
+                dialog = dialog.set_parent(&window);
+            }
+            dialog
+                .blocking_save_file()
+                .map(|selected| selected.into_path().map_err(|error| error.to_string()))
+                .transpose()
+        })
+        .await
+        .map_err(|error| error.to_string())??;
+        let Some(mut destination) = destination else {
+            return Ok(None);
+        };
+        destination.set_extension(extension);
+        (Destination::selected(&base, destination)?, true)
     };
-    destination.set_extension("mp4");
-    crate::project_files::destination_allowed(&base, &destination)?;
     let jobs = app.state::<ClipJobs>().0.clone();
     let control = jobs.start_operation(job_id.clone(), project_id, Some("export"))?;
     if let Some(snapshot) = jobs.stage(&job_id, "rendering") {
@@ -83,49 +132,46 @@ pub async fn export_editor_document(
     let task_id = job_id.clone();
     let task = tauri::async_runtime::spawn_blocking(move || {
         let _lease = lease;
-        let result = sources
-            .recheck()
+        let result = destination
+            .recheck(overwrite)
+            .and_then(|()| sources.recheck())
             .and_then(|()| {
-                render::run(&base, &frozen, &sources.paths, &control, |progress| {
-                    if let Some(snapshot) = task_jobs.progress(&task_id, progress) {
-                        let _ = task_app.emit("clips://job", snapshot);
-                    }
-                })
-            })
-            .and_then(|(scratch, output)| {
-                sources.recheck()?;
-                let prepared = crate::media_output_guard::prepare(&base, &destination, |file| {
-                    let mut source =
-                        std::fs::File::open(&output).map_err(|error| error.to_string())?;
-                    let mut buffer = vec![0_u8; 1024 * 1024];
-                    loop {
-                        control.check()?;
-                        let count = source
-                            .read(&mut buffer)
-                            .map_err(|error| error.to_string())?;
-                        if count == 0 {
-                            break;
+                export_artifact::produce(
+                    &base,
+                    &frozen,
+                    &sources.paths,
+                    &sources.stamps,
+                    options,
+                    &control,
+                    |progress| {
+                        if let Some(snapshot) = task_jobs.progress(&task_id, progress) {
+                            let _ = task_app.emit("clips://job", snapshot);
                         }
-                        file.write_all(&buffer[..count])
-                            .map_err(|error| error.to_string())?;
-                    }
-                    control.check()
-                })?;
-                Ok((scratch, prepared))
-            });
-        task_jobs
-            .finish(&task_id, result, |(_, prepared)| {
-                sources.recheck()?;
-                prepared.commit()
+                    },
+                )
             })
-            .map(|_| true)
+            .and_then(|mut artifact| {
+                sources.recheck()?;
+                let mut bytes = 0;
+                let prepared = destination.prepare(overwrite, |file| {
+                    bytes = artifact.copy(file, &control)?;
+                    Ok(())
+                })?;
+                Ok((artifact, prepared, bytes))
+            });
+        let (artifact, _, bytes) = task_jobs.finish(&task_id, result, |(_, prepared, _)| {
+            sources.recheck()?;
+            prepared.commit()
+        })?;
+        artifact.remember(&control);
+        export_dialog::register(destination.path(), bytes, artifact.reused()).map(Some)
     })
     .await;
     let result = task.unwrap_or_else(|error| {
         jobs.finish(
             &job_id,
             Err(format!("Falha ao exportar a montagem: {error}")),
-            |_: &bool| Ok(()),
+            |_: &Option<ExportReceipt>| Ok(()),
         )
     });
     if let Some(snapshot) = jobs.snapshot() {

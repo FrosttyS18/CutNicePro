@@ -45,7 +45,13 @@ impl ProcessControl {
         log: &Path,
         mut output: impl FnMut(&str),
     ) -> Result<(), String> {
-        let result = self.run_process(command, log, None, &mut output);
+        let result = self.run_process(
+            command,
+            log,
+            None,
+            Duration::from_secs(6 * 3600),
+            &mut output,
+        );
         if result.is_err() {
             self.stop();
         }
@@ -57,7 +63,28 @@ impl ProcessControl {
         log: &Path,
         destination: &Path,
     ) -> Result<(), String> {
-        let result = self.run_process(command, log, Some(destination), &mut |_| {});
+        self.run_to_file_with_timeout(command, log, destination, Duration::from_secs(6 * 3600))
+    }
+    pub fn run_with_timeout(
+        &self,
+        mut command: Command,
+        log: &Path,
+        timeout: Duration,
+    ) -> Result<(), String> {
+        let result = self.run_process(&mut command, log, None, timeout, &mut |_| {});
+        if result.is_err() {
+            self.stop();
+        }
+        result
+    }
+    pub fn run_to_file_with_timeout(
+        &self,
+        command: &mut Command,
+        log: &Path,
+        destination: &Path,
+        timeout: Duration,
+    ) -> Result<(), String> {
+        let result = self.run_process(command, log, Some(destination), timeout, &mut |_| {});
         if result.is_err() {
             self.stop();
         }
@@ -68,6 +95,7 @@ impl ProcessControl {
         command: &mut Command,
         log: &Path,
         destination: Option<&Path>,
+        timeout: Duration,
         on_output: &mut impl FnMut(&str),
     ) -> Result<(), String> {
         self.check()?;
@@ -132,9 +160,9 @@ impl ProcessControl {
                     Err(format!("O motor encerrou com erro ({status}). Verifique o arquivo, o modelo e a instalação. {}", tail.trim()))
                 };
             }
-            if started.elapsed() > Duration::from_secs(6 * 3600) {
+            if started.elapsed() > timeout {
                 self.stop();
-                return Err("Tempo limite do motor excedido. Tente um vídeo menor.".into());
+                return Err("O processamento excedeu o tempo limite. Tente novamente.".into());
             }
             std::thread::sleep(Duration::from_millis(80));
         }
@@ -146,3 +174,7 @@ impl Drop for ProcessControl {
         self.cancel();
     }
 }
+
+#[cfg(test)]
+#[path = "process_timeout_tests.rs"]
+mod timeout_tests;

@@ -8,6 +8,19 @@ pub struct Panel {
     pub zoom: f64,
 }
 
+pub(crate) struct PanelGeometry {
+    pub width: u32,
+    pub height: u32,
+    pub x: u32,
+    pub y: u32,
+}
+
+impl PanelGeometry {
+    fn crop(&self) -> String {
+        format!("crop=1080:960:{}:{},setsar=1", self.x, self.y)
+    }
+}
+
 #[derive(Clone, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase", deny_unknown_fields)]
 pub struct SplitScreen {
@@ -49,14 +62,19 @@ impl Panel {
             && (1.0..=3.0).contains(&self.zoom)
     }
 
-    fn geometry(&self, width: u32, height: u32) -> (u32, u32, String) {
+    pub(crate) fn geometry(&self, width: u32, height: u32) -> PanelGeometry {
         let scale = (1080.0 / width as f64).max(960.0 / height as f64) * self.zoom;
         let even_up = |value: f64| (value / 2.0).ceil() as u32 * 2;
         let w = even_up(width as f64 * scale);
         let h = even_up(height as f64 * scale);
         let x = (((w - 1080) as f64 * self.x / 100.0 / 2.0).floor() as u32) * 2;
         let y = (((h - 960) as f64 * self.y / 100.0 / 2.0).floor() as u32) * 2;
-        (w, h, format!("crop=1080:960:{x}:{y},setsar=1"))
+        PanelGeometry {
+            width: w,
+            height: h,
+            x,
+            y,
+        }
     }
 }
 
@@ -98,8 +116,15 @@ impl SplitScreen {
                     .into(),
             );
         }
-        let (top_width, top_height, top) = self.top.geometry(width, height);
-        let (bottom_width, bottom_height, bottom) = self.bottom.geometry(width, height);
+        let top_geometry = self.top.geometry(width, height);
+        let bottom_geometry = self.bottom.geometry(width, height);
+        let (top_width, top_height, top) =
+            (top_geometry.width, top_geometry.height, top_geometry.crop());
+        let (bottom_width, bottom_height, bottom) = (
+            bottom_geometry.width,
+            bottom_geometry.height,
+            bottom_geometry.crop(),
+        );
         let (resize, top, bottom) = if (top_width, top_height) == (bottom_width, bottom_height) {
             (format!("scale={top_width}:{top_height},"), top, bottom)
         } else {

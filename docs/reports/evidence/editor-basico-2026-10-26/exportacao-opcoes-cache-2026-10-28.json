@@ -1,0 +1,410 @@
+{
+  "generatedAt": "2026-10-28T13:30:43.1595358-03:00",
+  "head": "f98045eb9a7966d7c4e4691bf3809403aaa40a22",
+  "scope": "Perfis de exportacao do editor; fixtures pequenas, sem midia do usuario ou benchmark longo.",
+  "capabilities": [
+    {
+      "codec": "h264",
+      "supported": true
+    },
+    {
+      "codec": "hevc",
+      "supported": true
+    },
+    {
+      "codec": "hevcAlpha",
+      "supported": false,
+      "reason": "A transparência não foi preservada pelo codificador disponível."
+    },
+    {
+      "codec": "hevc422",
+      "supported": true
+    },
+    {
+      "codec": "av1",
+      "supported": true
+    },
+    {
+      "codec": "rle",
+      "supported": true
+    }
+  ],
+  "verification": [
+    {
+      "command": "cargo test --lib editor::render -- --test-threads=1",
+      "passed": 55,
+      "failed": 0,
+      "ignored": 3,
+      "elapsedSeconds": 62.5,
+      "compilerWarnings": 0
+    },
+    {
+      "command": "cargo test --lib editor::export_ -- --test-threads=1",
+      "passed": 33,
+      "failed": 0,
+      "ignored": 0,
+      "elapsedSeconds": 9.24,
+      "compilerWarnings": 0
+    }
+  ],
+  "realBehavior": {
+    "compositionSourceFps": 30,
+    "compositionSourceSeconds": 1,
+    "windows": 7,
+    "outputFpsCases": [
+      {
+        "fps": "24/1",
+        "validatedFrames": 24
+      },
+      {
+        "fps": "30000/1001",
+        "validatedFrames": 30
+      },
+      {
+        "fps": "60/1",
+        "validatedFrames": 60
+      }
+    ],
+    "rleMovDecodedAlphaByte": 127,
+    "gpuCompositionCodecs": [
+      "hevc",
+      "av1"
+    ],
+    "gpuValidatedOutputFramesPerCodec": 1,
+    "hevc422PixelFormatVerified": true,
+    "cbrRequestedKbps": 1000,
+    "cbrValidatedVideoBitrateBoundsBps": [
+      800000,
+      1300000
+    ],
+    "cacheSecondNameByteIdentical": true,
+    "cacheHitRendererProgressCalls": 0,
+    "audioPresentAndDurationValidated": true,
+    "lastWindowAssBytesEqualAcrossFpsCases": true
+  },
+  "limits": [
+    "Capacidades foram verificadas com um frame 320x192; nao garantem todas as resolucoes e FPS.",
+    "HEVC Alpha indisponivel nesta instalacao apos falha real do encoder.",
+    "Nenhuma build ou abertura do aplicativo nesta subtarefa.",
+    "Aprovacao visual pertence ao mantenedor."
+  ],
+  "integration": {
+    "frontendTestsPassed": 148,
+    "frontendTestFiles": 18,
+    "rustTestsPassed": 94,
+    "rustTestsIgnored": 3,
+    "processTestHelpersIncluded": 2,
+    "typecheckViteBuild": "PASS",
+    "eslintTouchedFiles": 25,
+    "standardBuild": {
+      "command": "npm run tauri dev",
+      "path": "C:/CutNicePro/app/src-tauri/target/debug/cutnicepro.exe",
+      "seconds": 26.53,
+      "compilerWarnings": 0,
+      "pid": 11640,
+      "windowHandle": 2362410,
+      "runtimeTargetPresent": true,
+      "exeSha256": "0e70d446b90df3cdc2c117c4d3d8ba8a314fd14ea0221328ffc1755323318443"
+    },
+    "cacheFixture": {
+      "firstSeconds": 6.1384772,
+      "secondSeconds": 0.0280609,
+      "sameBytes": true,
+      "rendererProgressCallsOnHit": 0,
+      "changedDimensions": [
+        1280,
+        720
+      ]
+    },
+    "humanWindowControls": "PASS - confirmado pelo mantenedor antes da build ampliada",
+    "humanExportOptions": "PASS - mantenedor confirmou seletores e segunda exportação rápida",
+    "visualStatus": "PENDING HUMAN APPROVAL",
+    "graphify": {
+      "commit": "f98045eb9a7966d7c4e4691bf3809403aaa40a22",
+      "build": "79b22831-14ec-4314-ad95-871c805f6d62",
+      "localChangesIndexed": false
+    },
+    "pendingGitFiles": [
+      " M .gitignore",
+      " M .zcode/config.json",
+      " M app/src-tauri/src/editor/export_command.rs",
+      " M app/src-tauri/src/editor/export_snapshot.rs",
+      " M app/src-tauri/src/editor/mod.rs",
+      " M app/src-tauri/src/editor/render.rs",
+      " M app/src-tauri/src/editor/render_graph.rs",
+      " M app/src-tauri/src/editor/render_performance_tests.rs",
+      " M app/src-tauri/src/editor/render_placement_tests.rs",
+      " M app/src-tauri/src/editor/thumbnail/jobs.rs",
+      " M app/src-tauri/src/file_output.rs",
+      " M app/src-tauri/src/lib.rs",
+      " M app/src-tauri/src/media_output_guard.rs",
+      " M app/src-tauri/src/media_reveal.rs",
+      " M app/src-tauri/src/render/split_screen.rs",
+      " M app/src-tauri/src/transcription/process.rs",
+      " M app/src/App.tsx",
+      " M app/src/components/WindowTitlebar.tsx",
+      " M app/src/components/editor/CompositionDelivery.tsx",
+      " M app/src/hooks/useCompositionExport.ts",
+      " M app/src/hooks/useCompositionMediaDrop.ts",
+      " M app/src/hooks/useWindowNavigationGuard.ts",
+      " M app/src/lib/ipc.ts",
+      " M app/src/test/composition-delivery.test.tsx",
+      " M app/src/test/composition-export-dialog.test.tsx",
+      " M app/src/test/composition-export.test.tsx",
+      " M app/src/test/composition-media-drop.test.tsx",
+      " M app/src/test/window-navigation-guard.test.tsx",
+      " M docs/TOOLING.md",
+      " M docs/engineering/EDITOR-BASIC-IMPLEMENTATION-PLAN.md",
+      " M docs/engineering/ENGINE-HANDOFF.md",
+      " M docs/product/BACKLOG.md",
+      " M docs/product/BUSINESS-RULES.md",
+      " M docs/product/PRODUCT-BRAIN.md",
+      " M docs/product/TRACEABILITY.md",
+      " M docs/references/OPEN-SOURCE-ENGINE-RESEARCH.md",
+      " M docs/reports/LATEST.txt",
+      "?? app/src-tauri/src/editor/export_artifact.rs",
+      "?? app/src-tauri/src/editor/export_artifact_tests.rs",
+      "?? app/src-tauri/src/editor/export_cache/",
+      "?? app/src-tauri/src/editor/export_destination.rs",
+      "?? app/src-tauri/src/editor/export_destination_tests.rs",
+      "?? app/src-tauri/src/editor/export_dialog.rs",
+      "?? app/src-tauri/src/editor/export_encoding.rs",
+      "?? app/src-tauri/src/editor/export_encoding/",
+      "?? app/src-tauri/src/editor/export_encoding_tests.rs",
+      "?? app/src-tauri/src/editor/export_options.rs",
+      "?? app/src-tauri/src/editor/export_options_tests.rs",
+      "?? app/src-tauri/src/editor/export_profile_tests.rs",
+      "?? app/src-tauri/src/editor/export_toolchain.rs",
+      "?? app/src-tauri/src/editor/export_toolchain_tests.rs",
+      "?? app/src-tauri/src/editor/render_gpu/",
+      "?? app/src-tauri/src/transcription/process_timeout_tests.rs",
+      "?? app/src/components/editor/CompositionExportDialog.tsx",
+      "?? app/src/components/editor/CompositionExportFinished.tsx",
+      "?? app/src/components/editor/CompositionExportOptions.tsx",
+      "?? app/src/components/editor/composition-export.css",
+      "?? app/src/hooks/useExportCapabilities.ts",
+      "?? app/src/lib/composition-export.ts",
+      "?? app/src/lib/native-media-drop.ts",
+      "?? app/src/test/composition-export-capabilities.test.ts",
+      "?? app/src/test/composition-export-contract.test.ts",
+      "?? app/src/test/composition-export-options.test.ts",
+      "?? app/src/test/composition-export-settings.test.tsx",
+      "?? app/src/test/composition-media-drop-startup.test.tsx",
+      "?? app/src/test/native-media-drop.test.ts",
+      "?? app/src/test/window-titlebar.test.tsx",
+      "?? docs/reports/evidence/editor-basico-2026-10-26/exportacao-gpu-2026-10-28.json",
+      "?? docs/reports/evidence/editor-basico-2026-10-26/exportacao-opcoes-cache-2026-10-28.json",
+      "?? docs/reports/evidence/editor-basico-2026-10-26/janela-runtime-2026-10-28.json",
+      "?? docs/reports/history/2026-10-28_072507_estudo-capcut-duplicacao.txt",
+      "?? docs/reports/history/2026-10-28_130100_recuperacao-janela-m9-parcial.txt",
+      "?? docs/reports/history/2026-10-28_140632_exportacao-destino-fps-pausa.txt",
+      "?? tools/dev/close-cutnicepro.ps1"
+    ]
+  },
+  "extension36": {
+    "date": "2026-10-28T14:07:13.4039321-03:00",
+    "goalStatus": "PAUSED - pedido expresso do mantenedor; objetivo amplo não concluído",
+    "scope": "Destino direto sem segundo diálogo e preservação da composição CUDA ao mudar FPS",
+    "frontend": {
+      "settingsOptionsContract": 60,
+      "ipc": 9,
+      "viteSeconds": 4.09,
+      "passedDistinct": 97,
+      "typecheckBuild": "PASS",
+      "consumers": 28,
+      "finalFailures": 0,
+      "eslintFinalFiles": 8
+    },
+    "native": {
+      "warnings": 0,
+      "cudaFpsMatrixAndUnits": 18,
+      "passedDistinct": 36,
+      "destinationPublicationMediaGuard": 18,
+      "finalFailures": 0
+    },
+    "gpuMatrix": {
+      "scope": "Short graph integration harness bypasses only the 60-second performance policy; production eligibility tested separately. Own BT709 fixture; CPU composition plus identical NVENC control. No long benchmark.",
+      "window": {
+        "startFrame": 901,
+        "endFrame": 910,
+        "sourceStartSeconds": 0.03333333333333333
+      },
+      "cases": [
+        {
+          "fps": "Fps60",
+          "resolution": "Hd720",
+          "frames": 18,
+          "minimumFullFrameSsim": 0.99057,
+          "minimumCaptionRegionSsim": 0.990139,
+          "ptsMaximumToleranceSeconds": 2E-06,
+          "allFramesCompared": true,
+          "assIdentical": true
+        },
+        {
+          "fps": "Fps24",
+          "resolution": "Hd1080",
+          "frames": 7,
+          "minimumFullFrameSsim": 0.990937,
+          "minimumCaptionRegionSsim": 0.990786,
+          "ptsMaximumToleranceSeconds": 2E-06,
+          "allFramesCompared": true,
+          "assIdentical": true
+        },
+        {
+          "fps": "Fps2997",
+          "resolution": "Uhd2160",
+          "frames": 9,
+          "minimumFullFrameSsim": 0.990598,
+          "minimumCaptionRegionSsim": 0.990085,
+          "ptsMaximumToleranceSeconds": 2E-06,
+          "allFramesCompared": true,
+          "assIdentical": true
+        }
+      ],
+      "verification": [
+        {
+          "command": "cargo test --lib real_changed_output_fps_cuda_frames_match_cpu_source_and_caption_content -- --nocapture --test-threads=1",
+          "passed": 1,
+          "failed": 0,
+          "elapsedSeconds": 60.86,
+          "warnings": 0
+        },
+        {
+          "command": "cargo test --lib editor::render_gpu::tests -- --test-threads=1",
+          "passed": 11,
+          "failed": 0,
+          "elapsedSeconds": 0.01,
+          "warnings": 0
+        },
+        {
+          "command": "cargo test --lib editor::export_options::tests -- --test-threads=1",
+          "passed": 5,
+          "failed": 0,
+          "elapsedSeconds": 0.0,
+          "warnings": 0
+        },
+        {
+          "command": "cargo test --lib editor::render_gpu::profile_tests::changed_output_fps_keeps_cuda_composition_and_the_absolute_window_phase -- --exact --test-threads=1",
+          "passed": 1,
+          "failed": 0,
+          "elapsedSeconds": 0.0,
+          "warnings": 0
+        }
+      ],
+      "defaultContract": "Original keeps native 30/1 and introduces no tpad, settb or retimed stage. Frame-rate changes remain CUDA candidates only within existing compatible source, codec and duration policy.",
+      "limits": [
+        "No user-media export or long performance benchmark was repeated.",
+        "No promised utilization percentage or speedup; initialization dominates the short fixture.",
+        "CPU/GPU images are not byte-identical; all measured SSIM values exceeded the existing 0.98 threshold.",
+        "Visual approval remains with the maintainer."
+      ]
+    },
+    "primarySources": {
+      "sourceRevision": "FFmpeg n9.0.2",
+      "status": "Implemented; contract RED then GREEN; local short CUDA/CPU matrix passed.",
+      "cause": "Session discarded CUDA whenever output rate differed from composition rate.",
+      "implementation": "Retain original composition and ASS clock. Apply settb/setpts, clone padding, fps, trim and PTS reset after CUDA placement/output resize, retaining CUDA surfaces and the named device. Use absolute output frame counts and existing rational concat durations.",
+      "sources": [
+        {
+          "url": "https://github.com/FFmpeg/FFmpeg/blob/n9.0.2/libavfilter/vf_fps.c#L225-L287",
+          "evidence": "Rescales timestamps and clones AVFrame references to duplicate frames, without pixel-plane processing."
+        },
+        {
+          "url": "https://github.com/FFmpeg/FFmpeg/blob/n9.0.2/libavfilter/vf_fps.c#L356-L367",
+          "evidence": "fps is registered as metadata-only."
+        },
+        {
+          "url": "https://github.com/FFmpeg/FFmpeg/blob/n9.0.2/libavfilter/vf_tpad.c#L66-L82",
+          "evidence": "Clone padding with no initial drawing advertises all video formats; drawing paths are separately restricted."
+        },
+        {
+          "url": "https://github.com/FFmpeg/FFmpeg/blob/n9.0.2/libavfilter/vf_tpad.c#L146-L182",
+          "evidence": "Clone padding caches and duplicates frame references instead of drawing pixels."
+        },
+        {
+          "url": "https://github.com/FFmpeg/FFmpeg/blob/n9.0.2/libavfilter/formats.c#L564-L618",
+          "evidence": "All video formats includes hardware pixel descriptors when neither wanted nor rejected flags are supplied."
+        },
+        {
+          "url": "https://github.com/FFmpeg/FFmpeg/blob/n9.0.2/libavfilter/avfilter.c#L394-L404",
+          "evidence": "Generic filters propagate the hardware frame context from their input."
+        },
+        {
+          "url": "https://github.com/FFmpeg/FFmpeg/blob/n9.0.2/libavutil/frame.c#L317-L323",
+          "evidence": "AVFrame reference cloning retains the hardware frame context."
+        },
+        {
+          "url": "https://github.com/FFmpeg/FFmpeg/blob/n9.0.2/libavfilter/settb.c#L113-L121",
+          "evidence": "Changes PTS and duration, forwards the same frame."
+        },
+        {
+          "url": "https://github.com/FFmpeg/FFmpeg/blob/n9.0.2/libavfilter/trim.c#L80-L128",
+          "evidence": "Video trim counts and selects frames without processing image pixels."
+        }
+      ],
+      "limits": [
+        "Source evidence supports feasibility; it does not prove this local CUDA graph until tested.",
+        "No frame interpolation or new motion is introduced when increasing FPS.",
+        "ASS still uses its existing CPU boundary; no additional download is required for output timing.",
+        "60-second production performance eligibility and codec/pixel/source restrictions remain."
+      ],
+      "runtimeEvidence": "C:/CutNicePro/.tooling/test-output/editor-export-cuda-fps-2026-10-28.json"
+    },
+    "standardBuild": {
+      "warnings": 0,
+      "pid": 24036,
+      "seconds": 25.98,
+      "exeSha256": "28ddd1c2a7b92143c6df58a8aeba5a9860b718a42eaf391780a5595dc88d3001",
+      "path": "C:/CutNicePro/app/src-tauri/target/debug/cutnicepro.exe",
+      "command": "npm run tauri dev"
+    },
+    "humanAcceptance": {
+      "separateOverwriteCancellation": "covered by tests; not separately narrated by maintainer",
+      "directDestinationAnd60fps": "PASS",
+      "aestheticApproval": "PENDING HUMAN APPROVAL",
+      "response": "funcionou bem."
+    },
+    "runtimeLog": {
+      "earlierLogTotalSeconds": 77.41,
+      "videoSeconds": 42.2,
+      "encoder": "h264_nvenc",
+      "cpuWindows": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        10,
+        11,
+        12
+      ],
+      "note": "User selected 60fps; log does not independently print output profile. No claim of all-GPU composition or fixed utilization.",
+      "controlledBenchmark": false,
+      "validatedTotalSeconds": 47.37,
+      "muxSeconds": 2.66,
+      "audioSeconds": 2.42,
+      "cudaWindows": [
+        9
+      ],
+      "windows": 12
+    },
+    "graphify": {
+      "postChangeQuery": "graph_stats and impact export_editor_document",
+      "localChangesIndexed": false,
+      "build": "79b22831-14ec-4314-ad95-871c805f6d62",
+      "commit": "f98045eb9a7966d7c4e4691bf3809403aaa40a22"
+    },
+    "limits": [
+      "No exhaustive codec/FPS/resolution matrix.",
+      "No long benchmark repeated after the short regression matrix.",
+      "ASS retains its existing CPU boundary; timing introduces no extra download.",
+      "HEVC Alpha unavailable after a real capability probe.",
+      "No new source edit or test while the maintainer exported.",
+      "Meta pausada após aceite; não retomar sem ordem."
+    ],
+    "report": "C:/CutNicePro/docs/reports/history/2026-10-28_140632_exportacao-destino-fps-pausa.txt"
+  }
+}

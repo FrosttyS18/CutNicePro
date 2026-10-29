@@ -37,13 +37,19 @@ export function useWindowNavigationGuard(guard: NavigationGuard, onError: (messa
             onError("Há alterações novas no rascunho. Salve novamente antes de fechar.");
             return;
           }
-          await nativeWindow.destroy();
+          try { await nativeWindow.destroy(); }
+          catch (error) {
+            console.warn("[CutNicePro:window:destroy]", error);
+            if (active) onError("Não foi possível fechar a janela. Salve suas alterações e tente novamente.");
+          }
         } catch (error) {
+          console.warn("[CutNicePro:window:guard]", error);
           if (active) onError(error instanceof Error ? error.message : "Não foi possível verificar as alterações antes de fechar.");
         } finally {
           closing = false;
         }
       }).then(stop => { if (active) unlisten = stop; else return stop(); }).catch(error => {
+        console.warn("[CutNicePro:window:listen]", error);
         if (active) onError(error instanceof Error ? error.message : "Não foi possível proteger o fechamento desta janela.");
       });
     }

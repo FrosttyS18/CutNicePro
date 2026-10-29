@@ -1,0 +1,57 @@
+{
+  "scope": "M8: composição CUDA opcional no exportador Rust existente",
+  "sourceRevision": "f98045eb9a7966d7c4e4691bf3809403aaa40a22",
+  "graphifyBuild": "79b22831-14ec-4314-ad95-871c805f6d62",
+  "localChangesNotIndexed": true,
+  "nativeExport": {
+    "durationSeconds": 161.833333,
+    "frames": 4855,
+    "dimensions": [1080, 1920],
+    "encoder": "h264_nvenc",
+    "elapsedMs": 38740,
+    "videoSeconds": 33.67,
+    "audioSeconds": 1.69,
+    "muxSeconds": 2.57,
+    "gpuWindows": 1,
+    "softwareWindows": 3,
+    "compositionFallbacks": 0,
+    "optimizedSoftwareControlMs": 73497,
+    "historicalControlMs": 131580,
+    "artifact": ".tooling/test-output/export-gpu-integrated-2026-10-28/run-0d93df89-b113-4a95-a296-f7f37dfae933",
+    "outputSha256": "4065c63a6babaab091c03fc2c6965434aea15665a8d1b09f4c1b6a0bed89f15f"
+  },
+  "parity": {
+    "comparedFrames": 4855,
+    "ssimMinimum": 0.986754,
+    "ssimAverage": 0.9913700619979412,
+    "audioPcmIdentical": true,
+    "audioPcmSha256": "e6c54152cf6f239dfdc67b5880a6ea537ecc37ab797d2922a02b8202569a4a9d",
+    "identicalAssFiles": 2,
+    "pixelByteIdentityClaimed": false
+  },
+  "offsetIntegration": {
+    "sourceStartSeconds": 30,
+    "durationSeconds": 60,
+    "comparedFrames": 1800,
+    "ssimMinimum": 0.986754,
+    "ssimAverage": 0.9909048561111113,
+    "assIdentical": true,
+    "artifact": ".tooling/test-output/export-gpu-offset-2026-10-28/run-52c62efc-3c66-4bb5-8c04-1221efa5f131"
+  },
+  "validation": {
+    "relatedEditorRenderPassed": 43,
+    "splitConsumersPassed": 15,
+    "encoderFallbackPassed": 7,
+    "explicitIntegrationPassed": 2,
+    "uniquePassed": 67,
+    "failed": 0,
+    "unexecutedRelatedOptIn": 1,
+    "fullSuiteRun": false,
+    "injectedGpuFailureAndCancellation": "simulated",
+    "standardBuild": "PASS; zero warnings",
+    "executable": "app/src-tauri/target/debug/cutnicepro.exe",
+    "executableSha256": "56136a7d93a06fc9cdcfb1e069822255bb184da3778f43ac58fe5473447e6369",
+    "humanNormalExport": "aceito: rápido e correto; mantenedor observou GPU em100%",
+    "capcutControlledBenchmarkRun": false
+  }
+}

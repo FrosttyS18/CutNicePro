@@ -1,4 +1,4 @@
-import { useId, useRef, useState } from "react";
+import { useId, useLayoutEffect, useRef, useState } from "react";
 import { DownloadSimpleIcon } from "@phosphor-icons/react/dist/csr/DownloadSimple";
 import { FilmStripIcon } from "@phosphor-icons/react/dist/csr/FilmStrip";
 import { useCompositionExport } from "../../hooks/useCompositionExport";
@@ -6,6 +6,9 @@ import { compositionDuration } from "../../lib/composition";
 import { extractComposition } from "../../lib/composition-insert";
 import { formatCompositionTimecode, parseCompositionRange } from "../../lib/composition-timecode";
 import { createManualClip } from "../../lib/composition-persistence";
+import type { ExportRequest } from "../../lib/composition-export";
+import { CompositionExportDialog } from "./CompositionExportDialog";
+import { CompositionExportFinished } from "./CompositionExportFinished";
 import type { Composition } from "../../lib/composition-types";
 import { FlowDialog } from "../workspace/FlowDialog";
 import { ProcessingDialog } from "../workspace/ProcessingDialog";
@@ -29,6 +32,10 @@ interface Props {
 }
 
 export function CompositionDelivery(props: Props) {
+  return <CompositionDeliverySession key={`${props.projectId}:${props.clipId ?? "project"}`} {...props} />;
+}
+
+function CompositionDeliverySession(props: Props) {
   const exporter = useCompositionExport(props.projectId);
   const id = useId();
   const [confirmExport, setConfirmExport] = useState(false);
@@ -40,23 +47,49 @@ export function CompositionDelivery(props: Props) {
   const [end, setEnd] = useState("0");
   const [localError, setLocalError] = useState<string | null>(null);
   const pending = useRef(false);
+  const context = useRef(0);
+  const [exportDocument, setExportDocument] = useState<Composition | null>(null);
+  const [lastRequest, setLastRequest] = useState<ExportRequest | undefined>();
+  const [showFinished, setShowFinished] = useState(false);
+  useLayoutEffect(() => {
+    context.current += 1;
+    pending.current = false;
+    return () => { context.current += 1; };
+  }, [props.projectId, props.clipId]);
   const duration = compositionDuration(props.document);
   const disabled = props.busy || props.saving || creating || exporter.busy || !duration;
 
   async function exportSaved(save: boolean) {
     if (pending.current) return;
     pending.current = true;
+    const epoch = context.current;
     props.onPause();
     try {
       const document = save ? await props.saveForExport() : props.readSavedDocument();
-      if (!document) return;
+      if (!document || context.current !== epoch) return;
       setConfirmExport(false);
-      const result = await exporter.exportDocument(document, props.clipId);
-      if (result.status === "completed") props.onNotice("Vídeo exportado.");
+      setShowFinished(false);
+      setExportDocument(structuredClone(document));
+    } finally { if (context.current === epoch) pending.current = false; }
+  }
+
+  async function exportConfigured(request: ExportRequest) {
+    if (pending.current || !exportDocument) return;
+    const snapshot = exportDocument;
+    const epoch = context.current;
+    pending.current = true;
+    setLastRequest(request);
+    setExportDocument(null);
+    props.onPause();
+    try {
+      const result = await exporter.exportDocument(snapshot, props.clipId, request);
+      if (context.current !== epoch) return;
+      if (result.status === "completed") { props.onNotice("Vídeo exportado."); setShowFinished(true); }
       if (result.status === "failed") props.onError(result.error);
       if (result.status === "blocked") props.onError("Aguarde a exportação em andamento.");
       if (result.status === "cancelled") props.onNotice("Exportação cancelada.");
-    } finally { pending.current = false; }
+      if (result.status === "dialog-cancelled") setExportDocument(snapshot);
+    } finally { if (context.current === epoch) pending.current = false; }
   }
 
   function requestExport() {
@@ -100,6 +133,8 @@ export function CompositionDelivery(props: Props) {
       <p>Confirme as alterações para exportar a montagem que está vendo.</p>
       <div className="composition-editor__dialog-actions"><button type="button" className="flow-button dialog-action--secondary" onClick={() => setConfirmExport(false)}>Cancelar</button><button type="button" className="flow-button dialog-action--primary" disabled={props.saving} onClick={() => void exportSaved(true)}>Salvar e exportar</button></div>
     </FlowDialog>
+    {exportDocument && <CompositionExportDialog open title={props.title} document={exportDocument} projectId={props.projectId} clipId={props.clipId} busy={exporter.busy} initialRequest={lastRequest} onClose={() => setExportDocument(null)} onExport={request => void exportConfigured(request)}/>}
+    {showFinished && exporter.receipt && <CompositionExportFinished receipt={exporter.receipt} onClose={() => setShowFinished(false)}/>}
     {exporter.job && <ProcessingDialog key={exporter.job.jobId} id={exporter.job.jobId}
       open={exporter.busy || exporter.job.state === "failed" && dismissedExport !== exporter.job.jobId} busy={exporter.busy}
       title="Exportando vídeo" status={exporter.job.progress > 0 ? "Renderizando seu vídeo" : "Preparando exportação…"}

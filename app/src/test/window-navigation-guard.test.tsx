@@ -76,7 +76,7 @@ describe("fechamento e ciclo de vida da janela", () => {
     native.destroy.mockRejectedValueOnce(new Error("Janela ocupada"));
     mounted = await reactHost(<Harness />);
     await expect(requestClose()).resolves.toBeDefined();
-    expect(onError).toHaveBeenCalledWith("Janela ocupada");
+    expect(onError).toHaveBeenCalledWith("Não foi possível fechar a janela. Salve suas alterações e tente novamente.");
     expect(native.destroy).toHaveBeenCalledOnce();
     await requestClose();
     expect(native.destroy).toHaveBeenCalledTimes(2);
@@ -197,7 +197,7 @@ describe("fechamento e ciclo de vida da janela", () => {
     const closing = requestClose();
     await guard.confirm("save");
     await closing;
-    expect(onError).toHaveBeenCalledWith("Janela ocupada");
+    expect(onError).toHaveBeenCalledWith("Não foi possível fechar a janela. Salve suas alterações e tente novamente.");
     expect(state.dirty).toBe(false);
     expect(guard.getSnapshot().open).toBe(false);
     await requestClose();
@@ -246,5 +246,17 @@ describe("fechamento e ciclo de vida da janela", () => {
     mounted = await reactHost(<Harness />);
     expect(onError).toHaveBeenCalledWith("Listener indisponível");
     expect(native.destroy).not.toHaveBeenCalled();
+  });
+
+  it("identifica falha nativa em texto como erro ao fechar, sem atribuí-la ao rascunho", async () => {
+    const warning = vi.spyOn(console, "warn").mockImplementation(() => undefined);
+    native.destroy.mockRejectedValueOnce("runtime error: failed to send message to the webview");
+    mounted = await reactHost(<Harness />);
+    await requestClose();
+    expect(onError).toHaveBeenCalledWith("Não foi possível fechar a janela. Salve suas alterações e tente novamente.");
+    expect(warning).toHaveBeenCalledWith("[CutNicePro:window:destroy]", "runtime error: failed to send message to the webview");
+    await requestClose();
+    expect(native.destroy).toHaveBeenCalledTimes(2);
+    warning.mockRestore();
   });
 });

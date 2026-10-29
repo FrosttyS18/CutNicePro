@@ -2,6 +2,7 @@ import { useCallback, useLayoutEffect, useRef, useState } from "react";
 import { listen } from "@tauri-apps/api/event";
 import { exportEditorDocument } from "../lib/ipc";
 import { cancelClips, clipMessage, getClipJob, isClipJob, type ClipJob } from "../lib/clips";
+import type { ExportReceipt, ExportRequest } from "../lib/composition-export";
 import type { Composition } from "../lib/composition-types";
 import type { ClipOperationResult } from "./useClips";
 
@@ -17,6 +18,7 @@ interface ExportOperation {
   stop?: () => void;
 }
 interface ExportState {
+  receipt: ExportReceipt | null;
   projectId: string;
   busy: boolean;
   job: ClipJob | null;
@@ -31,11 +33,11 @@ function stopListening(operation: ExportOperation) {
 export function useCompositionExport(projectId: string) {
   const identity = useRef({ projectId, epoch: 0, mounted: false });
   const owned = useRef<ExportOperation | null>(null);
-  const [state, setState] = useState<ExportState>({ projectId, busy: false, job: null, error: null });
+  const [state, setState] = useState<ExportState>({ projectId, busy: false, job: null, error: null, receipt: null });
 
   useLayoutEffect(() => {
     identity.current = { projectId, epoch: identity.current.epoch + 1, mounted: true };
-    setState({ projectId, busy: false, job: null, error: null });
+    setState({ projectId, busy: false, job: null, error: null, receipt: null });
     return () => {
       identity.current.mounted = false;
       identity.current.epoch += 1;
@@ -48,25 +50,26 @@ export function useCompositionExport(projectId: string) {
     && identity.current.projectId === operation.projectId && identity.current.epoch === operation.epoch
     && owned.current === operation, []);
 
-  const exportDocument = useCallback(async (document: Composition, clipId: string | null = null): Promise<CompositionExportResult> => {
+  const exportDocument = useCallback(async (document: Composition, clipId: string | null = null, request?: ExportRequest): Promise<CompositionExportResult> => {
     if (!identity.current.mounted || identity.current.projectId !== projectId) return { status: "abandoned" };
     if (owned.current) return { status: "blocked" };
     const operation: ExportOperation = { id: crypto.randomUUID(), projectId, epoch: identity.current.epoch,
       started: false, cancelBeforeStart: false, job: null };
     owned.current = operation;
     const initial: ClipJob = { jobId: operation.id, projectId, state: "running", stage: "rendering", operation: "export", progress: 0, error: null };
-    setState({ projectId, busy: true, job: initial, error: null });
+    setState({ projectId, busy: true, job: initial, error: null, receipt: null });
     const fail = (error: unknown, job: ClipJob | null): CompositionExportResult => {
       const message = clipMessage(error);
-      setState({ projectId, busy: true, job: { ...(job ?? initial), state: "failed", error: message }, error: message });
+      setState({ projectId, busy: true, job: { ...(job ?? initial), state: "failed", error: message }, error: message, receipt: null });
       return { status: "failed", error: message };
     };
     const cancelled = (job: ClipJob | null): CompositionExportResult => {
-      setState({ projectId, busy: true, job: { ...(job ?? initial), state: "cancelled", error: null }, error: null });
+      setState({ projectId, busy: true, job: { ...(job ?? initial), state: "cancelled", error: null }, error: null, receipt: null });
       return { status: "cancelled" };
     };
     try {
       const snapshot = structuredClone(document);
+      const settings = request ? structuredClone(request) : undefined;
       operation.stop = await listen<unknown>("clips://job", event => {
         const job = event.payload;
         if (!isCurrent(operation) || !isClipJob(job) || job.projectId !== projectId || job.jobId !== operation.id
@@ -78,15 +81,17 @@ export function useCompositionExport(projectId: string) {
       if (!isCurrent(operation)) return { status: "abandoned" };
       if (operation.cancelBeforeStart) return cancelled(null);
       operation.started = true;
-      const result = await exportEditorDocument(projectId, clipId, operation.id, snapshot);
+      const result = settings
+        ? await exportEditorDocument(projectId, clipId, operation.id, snapshot, settings)
+        : await exportEditorDocument(projectId, clipId, operation.id, snapshot);
       if (!isCurrent(operation)) return { status: "abandoned" };
       if (operation.job?.state === "cancelled") return cancelled(operation.job);
       if (operation.job?.state === "failed") return fail(operation.job.error, operation.job);
       if (!result) {
-        setState({ projectId, busy: true, job: null, error: null });
+        setState({ projectId, busy: true, job: null, error: null, receipt: null });
         return { status: "dialog-cancelled" };
       }
-      setState({ projectId, busy: true, job: { ...(operation.job ?? initial), state: "completed", progress: 100, error: null }, error: null });
+      setState({ projectId, busy: true, job: { ...(operation.job ?? initial), state: "completed", progress: 100, error: null }, error: null, receipt: result });
       return { status: "completed" };
     } catch (error) {
       if (!isCurrent(operation)) return { status: "abandoned" };
@@ -120,6 +125,6 @@ export function useCompositionExport(projectId: string) {
     }
   }, [isCurrent]);
 
-  const current = state.projectId === projectId ? state : { job: null, busy: false, error: null };
-  return { job: current.job, busy: current.busy, error: current.error, exportDocument, cancel };
+  const current = state.projectId === projectId ? state : { job: null, busy: false, error: null, receipt: null };
+  return { receipt: current.receipt, job: current.job, busy: current.busy, error: current.error, exportDocument, cancel };
 }

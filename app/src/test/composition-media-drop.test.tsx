@@ -7,7 +7,10 @@ import { reactHost } from "./react-host";
 
 type Payload={type:"drop"|"enter";position:{x:number;y:number};paths:string[]}|{type:"over";position:{x:number;y:number}}|{type:"leave"};
 const native=vi.hoisted(()=>({listen:vi.fn(),off:vi.fn()}));
-vi.mock("@tauri-apps/api/webview",()=>({getCurrentWebview:()=>({onDragDropEvent:native.listen})}));
+vi.mock("../lib/native-media-drop",()=>({subscribeNativeMediaDrop:async(callback:(event:{payload:Payload})=>void,signal:AbortSignal)=>{
+  const off=await native.listen(callback);if(signal.aborted){await off();return;}
+  signal.addEventListener("abort",()=>{void Promise.resolve().then(()=>off()).catch(()=>undefined);},{once:true});
+}}));
 let listener:(event:{payload:Payload})=>void;
 let view:Awaited<ReturnType<typeof reactHost>>|undefined;
 const asset:CompositionAsset={id:"image",mediaId:"image",name:"Imagem.png",kind:"image",durationUs:0,width:400,height:300,transcript:[]};

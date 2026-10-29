@@ -3,79 +3,99 @@
 ╚════════════════════════════════════════════╝
 
 TASK
-  Name: Legendas da exportação, desempenho e fechamento.
-  Status: PARTIAL — reteste humano em andamento.
-  Scope/Objective: corrigir a divergência prévia/MP4, medir render e proteger o fechamento sem perder rascunhos.
-  Result: cues/destaques iguais em4855frames; export integral131,58s, antes173,08s. Ainda acima dos30s relatados no CapCut.
-  FUNCTIONAL STATUS: PARTIAL. REGRESSION STATUS: PASS no escopo. VISUAL STATUS: PENDING HUMAN APPROVAL.
+  Name: Exportação — destino direto, FPS e pausa da meta
+  Status: PASS da fatia; meta PAUSED por pedido do mantenedor.
+  Scope: corrigir a janela de salvar repetida e manter GPU compatível ao mudar FPS.
+  Result: build padrão atualizada; mantenedor confirmou “funcionou bem”.
+  FUNCTIONAL STATUS: PASS no escopo solicitado.
+  REGRESSION STATUS: PASS nos casos testados.
+  VISUAL STATUS: PENDING HUMAN APPROVAL.
 
 IMPLEMENTATION
-  Completed: contrato TS/Rust para texto, agrupamento, tempos e janelas; fonte vertical64 em vez de113,78; preservação de correções após salvar/reabrir.
-  Completed: resize compartilhado quando equivalente e opacidade neutra sem mixer, preservandoRGBA. Transparência e CPU fallback mantidos.
-  Completed: fechamento com pedido único, limpeza de eventos obsoletos, proteção de rascunho e tratamento de erro/retry.
-  Not completed: aceite normal de legendas/fechamento; atingir o tempo observado no CapCut; meta integral do editor.
-  Architecture impact: módulos de cues separados; contratos salvos e dependências preservados.
+  Completed: pasta escolhida evita segundo Salvar; confirmação de substituição
+    no app; publicação protegida contra colisões e sobrescrita de originais.
+    Mudança para 60 fps deixa de desativar sozinha a composição CUDA.
+  Architecture impact: mesmos exportador, cache e contratos legados;
+    novo comando tipado de destino e publicação explícita sem substituição.
+  Not completed: objetivo amplo e frentes adiadas; nenhuma retomada automática.
 
 FILES
-  Created: render/caption_cues.rs, render/caption_parity_tests.rs; lib/caption-cues.ts; test/caption-parity.test.ts, window-navigation-guard.test.tsx, fixtures/caption-parity.json; evidência JSON e este relatório.
-  Modified: editor/render_captions.rs, render_graph.rs, render_performance_tests.rs, render_placement_tests.rs; render/ass.rs, split_screen.rs, split_screen_tests.rs, tests.rs; hooks/useWindowNavigationGuard.ts; lib/captions.ts, composition-playback.ts; test/app-unsaved-navigation.test.tsx.
-  Modified docs: ENGINE-HANDOFF, EDITOR-BASIC-IMPLEMENTATION-PLAN, PRODUCT-BRAIN, BACKLOG, OPEN-SOURCE-ENGINE-RESEARCH e LATEST.txt.
-  Source prefixes: app/src-tauri/src para Rust; app/src para TS.
-  Deleted: nenhum. Unexpected changes: NONE.
+  Created: editor/export_destination.rs e export_destination_tests.rs.
+  Modified: editor/export_command.rs, export_options.rs, render_gpu/, mod.rs;
+    file_output.rs, media_output_guard.rs, lib.rs; ipc.ts, composition-export.ts;
+    CompositionExportDialog/Options, estilos e testes relacionados.
+    Handoff, plano M9, Brain, backlog, regras/aceites e evidência atualizados.
+  Deleted: nenhum nesta extensão.
+  Unexpected changes: .zcode/config.json já alterado antes, preservado.
+    Demais pendências acumuladas identificadas no inventário da evidência.
 
 VALIDATION
-  Typecheck/build frontend: PASS. Build nativa padrão: PASS, sem warnings. Lint focal/rustfmt dos tocados/diff-check: PASS.
-  Unit/integration/regression:77TS e80Rust distintos PASS, sem somar repetições sobrepostas. Inclui FFmpeg real, cancelamento/fallback, transparência, legendas, repetição, cauda e thumbnails.
-  Total passed:157 testes distintos no escopo. Total failed final:0. Total skipped:3 opt-in não executados; suítes globais não repetidas.
-  Runtime: pipeline completo produziu4855frames/161,833s/1080×1920, H264NVENC+AAC; duração/áudio confirmados porffprobe.
-  Caption check:4855frames comparados entre cuesTS e eventosASS,0divergências; não equivale a identidade de todos os pixels entre rasterizadores.
-  Visual tests: frame exportado inspecionado; aprovação humana PENDING.
+  Typecheck/build frontend: PASS; Vite 4,09s. Lint final: oito arquivos PASS.
+  Tests desta extensão: 97 TypeScript e 36 Rust distintos PASS, sem falhas finais.
+    Incluem destino, originais/hardlinks, corrida de publicação, cancelamento,
+    respostas tardias, clique duplo, consumidores e contratos de GPU/FPS.
+  Integration: matriz real 720p60/1080p24/4K29,97; todos os frames/tempos
+    comparados ao controle CPU, ASS idêntico; SSIM mínimo acima de 0,990.
+    Isso não é matriz integral de codecs/resoluções nem comparação nova de áudio.
+  Failures corrected: validação de controle no nome e condição que excluía CUDA
+    ao mudar FPS; testes reproduziram os defeitos antes da correção.
+  Build nativa: npm run tauri dev, target único, 25,98s, sem warnings.
+  Runtime normal: h264_nvenc; 12 janelas, uma CUDA e demais CPU;
+    vídeo 42,20s, áudio 2,42s, combinação 2,66s; total validado 47,37s.
+    Registro anterior: 77,41s. Não é um A/B controlado.
+  Human: modal/opções/cache confirmados antes; destino direto/60fps confirmados
+    agora. Nenhum teste pesado repetido após esse aceite.
 
 HOOKS / HARNESS
-  Hooks active/PreToolUse/PostToolUse/Stop/Baseline: hooksZCode não invocados por esta execuçãoCodex; sem alegar aprovação automática.
-  Gate result: PASS focal; aceite normal pendente. Evidence: laboratórios ignorados, fontes/dados reais preservados.
+  Hooks: não afirmar execução dos hooks do ZCode neste Codex.
+  Baseline: nenhuma suíte integral nova; verificação proporcional ao impacto.
+  Harness: fixtures próprias; sem controle interativo do PC.
 
 MCP / SKILLS
-  Tools used: Graphify remoto pre/post, fonte local, três agentes, depuração sistemática/TDD/verificação, FFmpeg/ffprobe e documentação primária.
-  Connection status: workspace/repositório corretos; índiceHEADfbcaa12. Mudanças locais ainda não indexadas.
-  Failures: CUDA isolado foi mais lento e mudou600frames; rejeitado. Remoção do mixer sem formato explícito também rejeitada por diferença de pixels.
-  Pending activation: nenhuma. EstudoREA/CapCut: fatia estática de exportação registrada; não comprovaGPUativa nem benchmark equivalente.
+  Graphify remoto conectado: repo FrosttyS18/CutNicePro,
+    índice f98045e, build 79b22831-14ec-4314-ad95-871c805f6d62.
+  Impacto consultado; mudanças locais não indexadas complementadas por fonte/diff.
+  Skills: depuração sistemática, testes, verificação e diretrizes do projeto.
 
 GIT
-  Branch: main. HEAD:fbcaa12065f4958caeed39fdc22d7ab297bd925b.
-  Latest commit: perf(editor): acelerar filtros de renderização de vídeo.
-  Commits created: nenhum. Push: NOT EXECUTED. Remote: origin→FrosttyS18/CutNicePro, main.
-  Working tree: MODIFIED+UNTRACKED. Pending files: todos os listados emFILES, incluindo relatórios; nada ocultado ou descartado.
+  Branch: main
+  HEAD: f98045eb9a7966d7c4e4691bf3809403aaa40a22
+  Latest commit: fix(render): preserve captions and optimize video filters
+  Commits created: nenhum. Push: NOT EXECUTED nesta rodada.
+  Remote: origin → FrosttyS18/CutNicePro; main.
+  Working tree: MODIFIED + UNTRACKED; fontes, testes, documentação e relatórios
+    permanecem pendentes. Inventário completo na evidência abaixo.
 
 EVIDENCE
-  Commands executed: vitest focal; cargo test dos consumidores render/thumbnail; laboratório20s e export integral explícitos; cargo build; tsc/Vite; eslint; rustfmt; ffprobe; comparação de frames/cues.
-  Relevant logs: vídeo127,06s; áudio1,65s; combinação2,57s; total131,58s, NVENC confirmado.
-  Screenshots: frame598 exportado inspecionado, sem controle interativo doPC.
-  Test artifacts: .tooling/test-output/export-perf-2026-10-27, ignorado noGit.
-  Sanitized evidence: docs/reports/evidence/editor-basico-2026-10-26/exportacao-legendas-desempenho-2026-10-27.json.
-  Reproduction details: testesRED demonstraram fonte/grupos divergentes, perda de texto e eventos obsoletos; corrigidos. Dois testesFFmpeg detectaram legenda sem tempos sumindo no recorte; fallback corrigido sem relaxar limiares.
+  Registro: docs/engineering/ENGINE-HANDOFF.md, Complemento36.
+  Dados: docs/reports/evidence/editor-basico-2026-10-26/exportacao-opcoes-cache-2026-10-28.json
+  Matriz/fontes: .tooling/test-output/editor-export-cuda-fps-2026-10-28*.json
+  Commands: testes direcionados Vitest/cargo; npm run build; eslint;
+    npm run tauri dev; git diff --check; consultas Graphify.
+  Screenshots: não coletados; teste normal realizado pelo mantenedor.
 
 ISSUES
-  Bugs found: descritos acima, cobertos por regressão. Unresolved failures: desempenho ainda distante do relatoCapCut; fechamento histórico doPID antigo não teve causa única comprovada.
-  Regressions: nenhuma observada no escopo final testado; não há garantia global.
-  Risks: trecho sem âncoras suficientes mantém texto estático, sem tempos inventados; normalizaçãoUnicodeNFC completa não adicionada.
-  Blockers: aguardar relato do teste normal. Fontes congeladas, sem cargas pesadas durante a exportação do mantenedor.
+  Unresolved failures: nenhuma relatada na fatia após o reteste.
+  Limits: GPU depende de codec, hardware, fonte e composição; CPU continua
+    necessária em algumas etapas. Não prometer 100% de uso ou ganho universal.
+    HEVC Alpha indisponível nesta instalação. Frentes amplas seguem no backlog.
 
 FINAL
-  Delivery status: PARTIAL. Requirements met: correções técnicas e pipeline real; redução de cerca de24% no total comparado ao reteste anterior, em execuções distintas.
-  Remaining work: aceite normal e próxima otimização baseada no custo dos filtrosCPU. Meta integral permaneceACTIVE/PARTIAL.
-  User action required: mantenedor já está exportando e avisará o resultado. Restart required: não; build padrão atual aberta, PID1616, HTTP1420=200.
-  Build: app/src-tauri/target/debug/cutnicepro.exe; SHA25630DEE61BC8B2A4D696D4C95DD5F2C8AF68E1DA2BB4FAD91289C3AA836D9CD308.
-  Ready for next task: somente após avaliar este retorno; nenhuma alteração no app durante o teste.
+  Delivery status: fatia aceita; META PAUSED, objetivo amplo não concluído.
+  Remaining work: somente após novas ordens; retomar pelo Complemento36 e fila.
+  User action required: nenhuma agora. Restart required: não.
+  Processos: agentes encerrados; app normal preservado para o mantenedor.
 
 REPORT
-  Latest file: docs/reports/LATEST.txt.
-  Historical file: docs/reports/history/2026-10-27_115344_exportacao-legendas-fechamento.txt.
+  Latest file: docs/reports/LATEST.txt
+  Historical file: docs/reports/history/2026-10-28_140632_exportacao-destino-fps-pausa.txt
 
 GUIA DO MANTENEDOR — O QUE MUDOU E COMO TESTAR
-  O que mudou: o arquivo exportado usa os mesmos grupos, destaques e tamanho de legenda; fechamento protege suas alterações e permite tentar novamente em caso de erro.
-  Teste1: comparar a mesma fala na prévia e noMP4 → mesmas palavras, destaque, tamanho e tempo; conferir imagem/áudio no final.
-  Teste2: salvar e fechar peloX → janela encerra; com alterações não salvas, Continuar preserva e Salvar/Descartar permitem fechar.
-  Teste3: observar o tempo total → laboratório131,58s; não foi demonstrado resultado de30s. Seu teste está em andamento.
+  Meta pausada. Nada para testar agora: você já confirmou esta entrega.
+  O vídeo usa o destino escolhido sem outra janela de salvar; exportar em
+  60 fps aproveita a composição GPU quando compatível. Outras etapas podem
+  continuar na CPU, sem alterar a qualidade para aumentar uma porcentagem.
+  Build: C:/CutNicePro/app/src-tauri/target/debug/cutnicepro.exe
+  Quando retomarmos, começaremos do estado registrado, sem refazer aprovados.
 
 END OF REPORT

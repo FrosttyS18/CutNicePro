@@ -2,6 +2,7 @@
  * Camada de IPC — único ponto de contato com os comandos Tauri (Rust).
  * A UI nunca chama invoke diretamente; erros chegam como string legível.
  */
+import { parseExportCapabilities, parseExportDestination, parseExportReceipt, type ExportCapabilities, type ExportDestination, type ExportOptions, type ExportReceipt, type ExportRequest } from "./composition-export";
 import { invoke } from "@tauri-apps/api/core";
 import { runMediaFileJob, type MediaFileProgress } from "./media-file-job";
 import type { CollectionIcon, CollectionMeta, ProjectMeta } from "./types";
@@ -10,8 +11,23 @@ import type { Composition } from "./composition-types";
 export function loadEditorProject(projectId: string): Promise<unknown> {
   return invoke("load_editor_project", { projectId });
 }
-export function exportEditorDocument(projectId: string, clipId: string | null, jobId: string, document: Composition): Promise<boolean> {
-  return invoke("export_editor_document", { projectId, clipId, jobId, document });
+export async function exportEditorDocument(projectId: string, clipId: string | null, jobId: string, document: Composition, request?: ExportRequest): Promise<ExportReceipt | null> {
+  return parseExportReceipt(await invoke<unknown>("export_editor_document", { projectId, clipId, jobId, document, ...request }));
+}
+export function chooseEditorExportDirectory(): Promise<string | null> {
+  return invoke<string | null>("choose_editor_export_directory");
+}
+export async function getEditorExportCapabilities(): Promise<ExportCapabilities> {
+  return parseExportCapabilities(await invoke<unknown>("get_editor_export_capabilities"));
+}
+export async function getEditorExportDestination(directory: string, fileName: string, options: ExportOptions): Promise<ExportDestination> {
+  return parseExportDestination(await invoke<unknown>("get_editor_export_destination", { directory, fileName, options }));
+}
+export function getEditorExportPreview(projectId: string, clipId: string | null, document: Composition): Promise<unknown> {
+  return invoke<unknown>("get_editor_export_preview", { projectId, clipId, document });
+}
+export function revealEditorExport(receiptId: string): Promise<void> {
+  return invoke<void>("reveal_editor_export", { receiptId });
 }
 export function getEditorThumbnail(projectId: string, clipId: string, revision: number): Promise<number[]> {
   return invoke("get_editor_thumbnail", { projectId, clipId, revision });

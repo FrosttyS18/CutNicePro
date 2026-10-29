@@ -1,0 +1,101 @@
+╔════════════════════════════════════════════╗
+║       CUTNICEPRO — ZCODE REPORT            ║
+╚════════════════════════════════════════════╝
+
+TASK
+  Name: Exportação — destino direto, FPS e pausa da meta
+  Status: PASS da fatia; meta PAUSED por pedido do mantenedor.
+  Scope: corrigir a janela de salvar repetida e manter GPU compatível ao mudar FPS.
+  Result: build padrão atualizada; mantenedor confirmou “funcionou bem”.
+  FUNCTIONAL STATUS: PASS no escopo solicitado.
+  REGRESSION STATUS: PASS nos casos testados.
+  VISUAL STATUS: PENDING HUMAN APPROVAL.
+
+IMPLEMENTATION
+  Completed: pasta escolhida evita segundo Salvar; confirmação de substituição
+    no app; publicação protegida contra colisões e sobrescrita de originais.
+    Mudança para 60 fps deixa de desativar sozinha a composição CUDA.
+  Architecture impact: mesmos exportador, cache e contratos legados;
+    novo comando tipado de destino e publicação explícita sem substituição.
+  Not completed: objetivo amplo e frentes adiadas; nenhuma retomada automática.
+
+FILES
+  Created: editor/export_destination.rs e export_destination_tests.rs.
+  Modified: editor/export_command.rs, export_options.rs, render_gpu/, mod.rs;
+    file_output.rs, media_output_guard.rs, lib.rs; ipc.ts, composition-export.ts;
+    CompositionExportDialog/Options, estilos e testes relacionados.
+    Handoff, plano M9, Brain, backlog, regras/aceites e evidência atualizados.
+  Deleted: nenhum nesta extensão.
+  Unexpected changes: .zcode/config.json já alterado antes, preservado.
+    Demais pendências acumuladas identificadas no inventário da evidência.
+
+VALIDATION
+  Typecheck/build frontend: PASS; Vite 4,09s. Lint final: oito arquivos PASS.
+  Tests desta extensão: 97 TypeScript e 36 Rust distintos PASS, sem falhas finais.
+    Incluem destino, originais/hardlinks, corrida de publicação, cancelamento,
+    respostas tardias, clique duplo, consumidores e contratos de GPU/FPS.
+  Integration: matriz real 720p60/1080p24/4K29,97; todos os frames/tempos
+    comparados ao controle CPU, ASS idêntico; SSIM mínimo acima de 0,990.
+    Isso não é matriz integral de codecs/resoluções nem comparação nova de áudio.
+  Failures corrected: validação de controle no nome e condição que excluía CUDA
+    ao mudar FPS; testes reproduziram os defeitos antes da correção.
+  Build nativa: npm run tauri dev, target único, 25,98s, sem warnings.
+  Runtime normal: h264_nvenc; 12 janelas, uma CUDA e demais CPU;
+    vídeo 42,20s, áudio 2,42s, combinação 2,66s; total validado 47,37s.
+    Registro anterior: 77,41s. Não é um A/B controlado.
+  Human: modal/opções/cache confirmados antes; destino direto/60fps confirmados
+    agora. Nenhum teste pesado repetido após esse aceite.
+
+HOOKS / HARNESS
+  Hooks: não afirmar execução dos hooks do ZCode neste Codex.
+  Baseline: nenhuma suíte integral nova; verificação proporcional ao impacto.
+  Harness: fixtures próprias; sem controle interativo do PC.
+
+MCP / SKILLS
+  Graphify remoto conectado: repo FrosttyS18/CutNicePro,
+    índice f98045e, build 79b22831-14ec-4314-ad95-871c805f6d62.
+  Impacto consultado; mudanças locais não indexadas complementadas por fonte/diff.
+  Skills: depuração sistemática, testes, verificação e diretrizes do projeto.
+
+GIT
+  Branch: main
+  HEAD: f98045eb9a7966d7c4e4691bf3809403aaa40a22
+  Latest commit: fix(render): preserve captions and optimize video filters
+  Commits created: nenhum. Push: NOT EXECUTED nesta rodada.
+  Remote: origin → FrosttyS18/CutNicePro; main.
+  Working tree: MODIFIED + UNTRACKED; fontes, testes, documentação e relatórios
+    permanecem pendentes. Inventário completo na evidência abaixo.
+
+EVIDENCE
+  Registro: docs/engineering/ENGINE-HANDOFF.md, Complemento36.
+  Dados: docs/reports/evidence/editor-basico-2026-10-26/exportacao-opcoes-cache-2026-10-28.json
+  Matriz/fontes: .tooling/test-output/editor-export-cuda-fps-2026-10-28*.json
+  Commands: testes direcionados Vitest/cargo; npm run build; eslint;
+    npm run tauri dev; git diff --check; consultas Graphify.
+  Screenshots: não coletados; teste normal realizado pelo mantenedor.
+
+ISSUES
+  Unresolved failures: nenhuma relatada na fatia após o reteste.
+  Limits: GPU depende de codec, hardware, fonte e composição; CPU continua
+    necessária em algumas etapas. Não prometer 100% de uso ou ganho universal.
+    HEVC Alpha indisponível nesta instalação. Frentes amplas seguem no backlog.
+
+FINAL
+  Delivery status: fatia aceita; META PAUSED, objetivo amplo não concluído.
+  Remaining work: somente após novas ordens; retomar pelo Complemento36 e fila.
+  User action required: nenhuma agora. Restart required: não.
+  Processos: agentes encerrados; app normal preservado para o mantenedor.
+
+REPORT
+  Latest file: docs/reports/LATEST.txt
+  Historical file: docs/reports/history/2026-10-28_140632_exportacao-destino-fps-pausa.txt
+
+GUIA DO MANTENEDOR — O QUE MUDOU E COMO TESTAR
+  Meta pausada. Nada para testar agora: você já confirmou esta entrega.
+  O vídeo usa o destino escolhido sem outra janela de salvar; exportar em
+  60 fps aproveita a composição GPU quando compatível. Outras etapas podem
+  continuar na CPU, sem alterar a qualidade para aumentar uma porcentagem.
+  Build: C:/CutNicePro/app/src-tauri/target/debug/cutnicepro.exe
+  Quando retomarmos, começaremos do estado registrado, sem refazer aprovados.
+
+END OF REPORT

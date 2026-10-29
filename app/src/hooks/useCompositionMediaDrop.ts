@@ -1,5 +1,5 @@
 import { useCallback,useEffect,useLayoutEffect,useRef,useState,type PointerEvent,type RefObject } from "react";
-import { getCurrentWebview } from "@tauri-apps/api/webview";
+import { subscribeNativeMediaDrop } from "../lib/native-media-drop";
 import { compositionMediaKind,type CompositionImportIntent } from "../lib/composition-import-intent";
 import { containsDropPoint,physicalDropPoint,type CompositionDropPoint } from "../lib/composition-drop-geometry";
 import type { CompositionTimelineDropController } from "../lib/composition-drop-controller";
@@ -74,11 +74,12 @@ export function useCompositionMediaDrop(options:Options){
   useEffect(()=>()=>cancelPointer.current?.(),[options.sessionKey]);
   useEffect(()=>{
     if(!("__TAURI_INTERNALS__" in window))return;
-    let disposed=false,off:(()=>void)|undefined,raf=0;
+    let disposed=false,raf=0;
+    const subscription=new AbortController();
     let active:{paths:string[];point:CompositionDropPoint;kind:MediaKind}|null=null;
     const stop=()=>{window.cancelAnimationFrame(raf);raf=0;active=null;clear();};
     const tick=()=>{raf=0;if(disposed||!active)return;if(!available()){stop();return;}hover(active.point,active.kind,false);raf=window.requestAnimationFrame(tick);};
-    void getCurrentWebview().onDragDropEvent(event=>{
+    void subscribeNativeMediaDrop(event=>{
       if(disposed)return;
       const payload=event.payload;
       if(payload.type==="leave"){stop();return;}
@@ -101,8 +102,8 @@ export function useCompositionMediaDrop(options:Options){
         active=kind?{paths:payload.paths,point,kind}:null;
       }else if(active)active.point=point;
       if(active){hover(point,active.kind,false);if(!raf)raf=window.requestAnimationFrame(tick);}else clear();
-    }).then(unlisten=>{if(disposed)unlisten();else off=unlisten;}).catch(()=>{
-      if(!disposed)latest.current.onError("Arrastar arquivos indisponível. Use Importar mídia.");
+    },subscription.signal).catch(()=>{
+      if(!disposed)latest.current.onError("Não foi possível ativar o arraste de arquivos. Use Importar mídia ou reabra o editor para tentar novamente.");
     });
     const escape=(event:KeyboardEvent)=>{
       if(!active)return;
@@ -110,7 +111,7 @@ export function useCompositionMediaDrop(options:Options){
       else if(available()){event.preventDefault();event.stopImmediatePropagation();}
     };
     window.addEventListener("keydown",escape,true);
-    return()=>{disposed=true;off?.();stop();window.removeEventListener("keydown",escape,true);};
+    return()=>{disposed=true;subscription.abort();stop();window.removeEventListener("keydown",escape,true);};
   },[options.sessionKey,available,clear,destination,hover,libraryAt]);
   return {beginAssetDrag,libraryDropActive};
 }

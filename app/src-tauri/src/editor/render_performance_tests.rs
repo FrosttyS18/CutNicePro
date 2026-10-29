@@ -25,7 +25,7 @@ struct Measurement {
     encoder: String,
 }
 
-fn output_directory() -> PathBuf {
+pub(super) fn output_directory() -> PathBuf {
     let workspace = fs::canonicalize("C:/CutNicePro").expect("Workspace do laboratório ausente");
     let allowed = fs::canonicalize("C:/CutNicePro/.tooling/test-output")
         .expect("Crie .tooling/test-output antes de executar o laboratório");
@@ -245,14 +245,17 @@ fn real_saved_composition_full_export() {
     eprintln!("[render-full] Artefatos locais: {}", directory.display());
     let control = ProcessControl::default();
     let started = Instant::now();
+    let mut progress = Vec::new();
     let (scratch, video) = super::render::run(
         &directory,
         &input.document,
         &input.sources,
         &control,
-        |_| {},
+        |value| progress.push(value),
     )
     .expect("Exportação integral do laboratório falhou");
+    assert_eq!(progress.last(), Some(&100));
+    assert!(progress.windows(2).all(|pair| pair[0] <= pair[1]));
     let elapsed_ms = started.elapsed().as_millis();
     let encoder = fs::read_to_string(scratch.path.join("encoder.txt")).unwrap();
     fs::copy(&video, directory.join("output.mp4")).unwrap();
@@ -260,7 +263,10 @@ fn real_saved_composition_full_export() {
         let entry = entry.unwrap();
         if entry.file_type().unwrap().is_file()
             && entry.path().extension().is_some_and(|extension| {
-                extension == "ass" || extension == "txt" || extension == "log"
+                extension == "ass"
+                    || extension == "txt"
+                    || extension == "log"
+                    || extension == "json"
             })
         {
             fs::copy(entry.path(), directory.join(entry.file_name())).unwrap();

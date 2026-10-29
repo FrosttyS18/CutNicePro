@@ -1,3 +1,4 @@
+import { act } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { CompositionDelivery } from "../components/editor/CompositionDelivery";
 import { compositionFromLegacy } from "../lib/composition-legacy";
@@ -8,7 +9,19 @@ import type { Composition } from "../lib/composition-types";
 const mocks = vi.hoisted(() => ({ exportDocument: vi.fn(), cancel: vi.fn(), createManualClip: vi.fn() }));
 vi.mock("../hooks/useCompositionExport", () => ({ useCompositionExport: () => ({ ...mocks, busy: false, error: null, job: null }) }));
 vi.mock("../lib/composition-persistence", () => ({ createManualClip: mocks.createManualClip }));
+vi.mock("../lib/ipc", () => ({
+  getEditorExportPreview: vi.fn().mockRejectedValue(new Error("Prévia indisponível no teste")),
+  getEditorExportCapabilities: vi.fn().mockResolvedValue({ codecs: ["h264", "hevc", "hevcAlpha", "hevc422", "av1", "rle"].map(codec => ({ codec, supported: true })) }),
+  chooseEditorExportDirectory: vi.fn().mockResolvedValue(null),
+  revealEditorExport: vi.fn().mockResolvedValue(undefined),
+}));
 
+async function confirmSettings() {
+  const submit = mounted!.host.querySelector<HTMLButtonElement>(".composition-export button[type=submit]");
+  expect(submit).not.toBeNull();
+  expect(submit!.disabled).toBe(false);
+  await act(async () => submit!.click());
+}
 let mounted: Awaited<ReturnType<typeof reactHost>> | undefined;
 function fixture() {
   const workspace = emptyWorkspace();
@@ -27,7 +40,9 @@ describe("entrega explícita da montagem", () => {
     const input = props();
     mounted = await reactHost(<CompositionDelivery {...input}/>);
     await mounted.click("Exportar");
-    expect(mocks.exportDocument).toHaveBeenCalledWith(input.document, null);
+    expect(mocks.exportDocument).not.toHaveBeenCalled();
+    await confirmSettings();
+    expect(mocks.exportDocument).toHaveBeenCalledWith(input.document, null, expect.objectContaining({fileName:"Projeto", options:{resolution:"hd1080",quality:"high",codec:"h264",format:"mp4",frameRate:"fps30",bitrateMode:"vbr"}}));
     expect(input.saveForExport).not.toHaveBeenCalled();
     expect(mocks.createManualClip).not.toHaveBeenCalled();
     expect(input.onNotice).toHaveBeenCalledWith("Vídeo exportado.");
@@ -38,8 +53,9 @@ describe("entrega explícita da montagem", () => {
     await mounted.click("Exportar");
     expect(mocks.exportDocument).not.toHaveBeenCalled();
     await mounted.click("Salvar e exportar");
+    await confirmSettings();
     expect(input.saveForExport).toHaveBeenCalledOnce();
-    expect(mocks.exportDocument).toHaveBeenCalledWith(expect.objectContaining({ revision: 1 }), null);
+    expect(mocks.exportDocument).toHaveBeenCalledWith(expect.objectContaining({ revision: 1 }), null, expect.any(Object));
     expect(input.readSavedDocument).not.toHaveBeenCalled();
   });
   it("falha ao salvar mantém confirmação e não exporta nem mostra sucesso", async () => {
@@ -53,7 +69,7 @@ describe("entrega explícita da montagem", () => {
   it("cancelamento do destino não é sucesso", async () => {
     mocks.exportDocument.mockResolvedValue({ status: "dialog-cancelled" });
     const input = props(); mounted = await reactHost(<CompositionDelivery {...input}/>);
-    await mounted.click("Exportar"); expect(input.onNotice).not.toHaveBeenCalled(); expect(input.onError).not.toHaveBeenCalled();
+    await mounted.click("Exportar"); await confirmSettings(); expect(input.onNotice).not.toHaveBeenCalled(); expect(input.onError).not.toHaveBeenCalled();
   });
   it("Criar clipe recorta o intervalo de saída sem salvar a montagem", async () => {
     const input = { ...props(), dirty: true, range: { start: 30, end: 90 } };

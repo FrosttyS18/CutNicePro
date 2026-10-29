@@ -94,6 +94,11 @@ impl ProtectedOutput {
         check(&self.base, &self.destination)?;
         self.prepared.commit()
     }
+
+    pub(crate) fn commit_new(&self) -> Result<(), String> {
+        check(&self.base, &self.destination)?;
+        self.prepared.commit_new()
+    }
 }
 
 pub(crate) fn prepare(

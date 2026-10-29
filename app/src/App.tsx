@@ -320,7 +320,7 @@ function AppContent() {
         <SplashScreen leaving={splash.leaving} onAnimationComplete={splash.onAnimationComplete} />
       )}
 
-      <WindowTitlebar />
+      <WindowTitlebar onError={setActionError} />
       <AppShell
         expanded={expanded}
         onToggleExpanded={toggleExpanded}

@@ -1,4 +1,5 @@
 import { getCurrentWindow } from "@tauri-apps/api/window";
+import { useRef } from "react";
 
 /**
  * Titlebar personalizada (Fase 03B.9) — substitui a barra nativa do Windows
@@ -7,15 +8,27 @@ import { getCurrentWindow } from "@tauri-apps/api/window";
  * livre arrastável (data-tauri-drag-region + duplo clique alterna
  * maximizar). Global: montada fora da Home, acima do AppShell.
  */
-export function WindowTitlebar() {
+export function WindowTitlebar({ onError }: { onError: (message: string) => void }) {
   const win = getCurrentWindow();
+  const pending = useRef(new Set<string>());
+  const run = async (operation: "minimize" | "toggleMaximize" | "close") => {
+    if (pending.current.has(operation)) return;
+    pending.current.add(operation);
+    try { await win[operation](); }
+    catch (error) {
+      console.warn(`[CutNicePro:window:${operation}]`, error);
+      onError(operation === "minimize" ? "Não foi possível minimizar a janela. Tente novamente."
+        : operation === "toggleMaximize" ? "Não foi possível ajustar a janela. Tente novamente."
+        : "Não foi possível fechar a janela. Salve suas alterações e tente novamente.");
+    } finally { pending.current.delete(operation); }
+  };
 
   return (
     <div className="titlebar" role="toolbar" aria-label="Controles da janela">
       <div
         className="titlebar__drag"
         data-tauri-drag-region
-        onDoubleClick={() => void win.toggleMaximize()}
+        onDoubleClick={() => void run("toggleMaximize")}
       />
       <div className="titlebar__controls">
         <button
@@ -23,7 +36,7 @@ export function WindowTitlebar() {
           className="titlebar__btn"
           aria-label="Minimizar"
           title="Minimizar"
-          onClick={() => void win.minimize()}
+          onClick={() => void run("minimize")}
         >
           <svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="true">
             <path d="M0 5h10" stroke="currentColor" strokeWidth="1" />
@@ -34,7 +47,7 @@ export function WindowTitlebar() {
           className="titlebar__btn"
           aria-label="Maximizar ou restaurar"
           title="Maximizar ou restaurar"
-          onClick={() => void win.toggleMaximize()}
+          onClick={() => void run("toggleMaximize")}
         >
           <svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="true">
             <rect x="0.5" y="0.5" width="9" height="9" fill="none" stroke="currentColor" strokeWidth="1" />
@@ -45,7 +58,7 @@ export function WindowTitlebar() {
           className="titlebar__btn titlebar__btn--close"
           aria-label="Fechar"
           title="Fechar"
-          onClick={() => void win.close()}
+          onClick={() => void run("close")}
         >
           <svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="true">
             <path d="M0 0l10 10M10 0L0 10" stroke="currentColor" strokeWidth="1" />

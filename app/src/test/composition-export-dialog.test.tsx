@@ -10,6 +10,12 @@ import { reactHost } from "./react-host";
 const exporter = vi.hoisted(() => ({ busy: false, error: null as string | null, job: null as ClipJob | null, exportDocument: vi.fn(), cancel: vi.fn() }));
 vi.mock("../hooks/useCompositionExport", () => ({ useCompositionExport: () => exporter }));
 vi.mock("../lib/composition-persistence", () => ({ createManualClip: vi.fn() }));
+vi.mock("../lib/ipc", () => ({
+  getEditorExportPreview: vi.fn().mockRejectedValue(new Error("Prévia indisponível no teste")),
+  getEditorExportCapabilities: vi.fn().mockResolvedValue({ codecs: ["h264", "hevc", "hevcAlpha", "hevc422", "av1", "rle"].map(codec => ({ codec, supported: true })) }),
+  chooseEditorExportDirectory: vi.fn().mockResolvedValue(null),
+  revealEditorExport: vi.fn().mockResolvedValue(undefined),
+}));
 let view: Awaited<ReturnType<typeof reactHost>> | undefined;
 function props(dirty = false) {
   const data = emptyWorkspace();
@@ -19,6 +25,10 @@ function props(dirty = false) {
     readSavedDocument: vi.fn(() => document), saveForExport: vi.fn(async () => document), onPause: vi.fn(), onError: vi.fn(), onNotice: vi.fn() };
 }
 function running(progress = 0): ClipJob { return { jobId: "export-a", projectId: "p", stage: "rendering", operation: "export", state: "running", progress, error: null }; }
+async function confirmSettings() {
+  const submit = view!.host.querySelector<HTMLButtonElement>(".composition-export button[type=submit]");
+  expect(submit).not.toBeNull(); expect(submit!.disabled).toBe(false); await act(async () => submit!.click());
+}
 function progress() { return view!.host.querySelector<HTMLProgressElement>('[aria-label="Progresso da exportação"]')!; }
 async function action(label: string) {
   const button = view!.host.querySelector<HTMLButtonElement>(`[aria-label="${label}"]`)!;
@@ -77,7 +87,8 @@ it("falha permanece explicada no modal e permite fechar ou tentar novamente sem 
   const input = props(); view = await reactHost(<CompositionDelivery {...input}/>);
   expect(view.host.querySelector('dialog[open] [role="alert"]')?.textContent).toBe("Não foi possível gravar o vídeo.");
   await view.click("Tentar novamente");
-  expect(exporter.exportDocument).toHaveBeenCalledWith(input.document, null);
+  await confirmSettings();
+  expect(exporter.exportDocument).toHaveBeenCalledWith(input.document, null, expect.any(Object));
   expect(input.saveForExport).not.toHaveBeenCalled();
   expect(view.host.querySelector("dialog[open]")).toBeNull();
   exporter.job = { ...running(), jobId: "export-b", state: "failed", error: "Falhou novamente." };
@@ -93,8 +104,8 @@ it("retry de exportação com rascunho novo exige Salvar e exportar", async () =
   await view.click("Tentar novamente");
   expect(exporter.exportDocument).not.toHaveBeenCalled();
   expect(view.host.textContent).toContain("Salvar antes de exportar?");
-  await view.click("Salvar e exportar"); expect(input.saveForExport).toHaveBeenCalledTimes(1);
-  expect(exporter.exportDocument).toHaveBeenCalledWith(input.document, null);
+  await view.click("Salvar e exportar"); await confirmSettings(); expect(input.saveForExport).toHaveBeenCalledTimes(1);
+  expect(exporter.exportDocument).toHaveBeenCalledWith(input.document, null, expect.any(Object));
 });
 
 it.each(["completed", "cancelled"] as const)("job terminal %s fecha o modal sem inventar sucesso", async state => {

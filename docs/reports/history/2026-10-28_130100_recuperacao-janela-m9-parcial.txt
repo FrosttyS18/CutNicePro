@@ -1,0 +1,73 @@
+╔════════════════════════════════════════════╗
+║       CUTNICEPRO — ZCODE REPORT            ║
+╚════════════════════════════════════════════╝
+
+TASK
+  Name: Recuperação dos controles da janela; M9 permanece em andamento
+  Status: PARTIAL — instância recuperada; reteste humano pendente
+  Scope: minimizar, fechar, inscrição de arraste e prevenção no procedimento de atualização.
+  Result: build padrão recompilada/reaberta; janela interna de mensagens presente.
+  FUNCTIONAL STATUS: PARTIAL; REGRESSION STATUS: PASS no escopo testado
+  VISUAL STATUS: PENDING HUMAN APPROVAL
+
+IMPLEMENTATION
+  Diagnóstico real: erro nativo “failed to send message to the webview” e ausência da janela interna Tao no PID2272.
+  Causa provável: CloseMainWindow genérico usado pelo agente pode fechar essa janela transparente. O handle histórico não foi registrado; não é prova absoluta.
+  Recuperação: após confirmação de ausência de edições, somente instância2272 e servidor Vite próprio3412 encerrados; projetos preservados.
+  Prevenção: fechamento por PID/caminho/classe/título verificados; nenhum encerramento forçado no novo procedimento.
+  Controles observam rejeições; erro de fechar não é mais atribuído à verificação de rascunho. Salvar/descartar/cancelar preservados.
+  Arraste: inscrição transacional, limpeza parcial/tardia e uma repetição em falha transitória.
+  Sem mudanças de permissões, dependências ou versões.
+
+FILES
+  Janela: App.tsx, WindowTitlebar.tsx, useWindowNavigationGuard.ts e dois testes relacionados.
+  Arraste: useCompositionMediaDrop.ts, native-media-drop.ts e três testes relacionados.
+  Procedimento: tools/dev/close-cutnicepro.ps1; TOOLING.md; ENGINE-HANDOFF Complemento34; plano M9.
+  Continuação anterior: cache/toolchain, CompositionDelivery e protótipo de exportação preservados, ainda parciais.
+  Deleted: nenhuma fonte/mídia/projeto. Instrumentação temporária de diagnóstico removida.
+  Unexpected changes: .zcode/config.json preexistente preservado.
+
+VALIDATION
+  Typecheck: PASS integral; lint: PASS dos arquivos tocados.
+  Unit/regression: 43 testes janela/navegação/entrega +18 arraste +5 fingerprint: PASS.
+  Integração FFmpeg/cache: 2 PASS. Fixture0,5s: repetição0,0256s, bytes idênticos, sem render; não é benchmark da montagem completa.
+  Total desta verificação: 68 PASS; 0 falhas finais; 7 falhas RED reproduzidas antes da correção.
+  Runtime: npm run tauri dev, target único, compilação27,41s sem warnings; PID18876.
+  SHA256exe: 019765c59d177f84f5ef2bcd41b9b8bb7056eddbd8b345ea04067311621ea84a
+  Inspeção somente leitura: janela do editor selecionada corretamente e alvo Tao presente.
+  Teste humano de minimizar/restaurar/X: PENDING. Sem controle interativo da tela.
+
+HOOKS / HARNESS
+  Hooks/Stop: não executados como gate nesta rodada. git diff --check PASS; avisos de conversão de fim de linha registrados.
+
+MCP / SKILLS
+  Graphify remoto: impacto, consumidores e testes, índice f98045e/build79b22831; alterações locais complementadas por fonte/diff.
+  Skills: diagnóstico sistemático, TDD, frontend e verificação; agentes existentes em tarefas delimitadas.
+
+GIT
+  Branch: main; HEAD: f98045eb9a7966d7c4e4691bf3809403aaa40a22
+  Latest commit: fix(render): preserve captions and optimize video filters
+  Commits created: nenhum; Push: NOT EXECUTED; origin: FrosttyS18/CutNicePro.
+  Working tree: MODIFIED + UNTRACKED. Relação completa das pendências no JSON de evidência; relatórios também pendentes de commit.
+
+EVIDENCE
+  docs/reports/evidence/editor-basico-2026-10-26/janela-runtime-2026-10-28.json
+  app/src-tauri/target/test-export-artifact/result.json; código instalado Tao0.37.1 e fonte oficial.NET10.
+
+ISSUES / FINAL
+  Protótipo de opções de exportação REJEITADO: seletores reais de resolução, bitrate, codec, formato e FPS continuam pendentes.
+  Não há aceite do modal nem conclusão da meta integral. Meta ACTIVE; sem pausa automática.
+  Próximo passo: reteste dos controles, depois opções da referência com validação real do arquivo.
+
+REPORT
+  Latest: docs/reports/LATEST.txt
+  History: docs/reports/history/2026-10-28_130100_recuperacao-janela-m9-parcial.txt
+
+GUIA DO MANTENEDOR — O QUE MUDOU E COMO TESTAR
+  A instância travada foi substituída pela build padrão atualizada, sem apagar seus projetos.
+  1. Minimizar e restaurar → a janela deve responder normalmente.
+  2. Sem editar, clicar no X → deve fechar sem aviso incorreto sobre alterações.
+  3. Se houver edição, cancelar a confirmação → deve manter o editor e suas alterações.
+  Build: C:/CutNicePro/app/src-tauri/target/debug/cutnicepro.exe
+
+END OF REPORT

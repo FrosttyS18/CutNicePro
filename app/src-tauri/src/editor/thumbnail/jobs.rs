@@ -12,7 +12,7 @@ impl ThumbnailJobs {
         self.control.cancel();
     }
 
-    pub(super) fn run<T>(
+    pub(crate) fn run<T>(
         &self,
         work: impl FnOnce(&ProcessControl) -> Result<T, String>,
     ) -> Result<T, String> {

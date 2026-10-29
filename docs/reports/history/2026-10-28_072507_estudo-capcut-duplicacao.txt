@@ -1,0 +1,106 @@
+╔════════════════════════════════════════════╗
+║       CUTNICEPRO — ZCODE REPORT            ║
+╚════════════════════════════════════════════╝
+
+TASK
+  Name: Estudo de exportação CapCut e auditoria de duplicação.
+  Status: PARTIAL na meta integral; rodada de pesquisa encerrada.
+  Scope: Investigar, documentar e preservar o aplicativo.
+  Objective: Conferir o funcionamento e os alertas com evidências.
+  Result: Estudo estático delimitado entregue; duplicação auditada
+    nos casos acessíveis. Pausa solicitada após esta entrega.
+
+IMPLEMENTATION
+  Completed: REA/Ghidra, matriz de 14 etapas, revisão e documentação.
+  Not completed: Runtime/benchmark CapCut e cobertura dos 34/92
+    alertas, cujos membros não são expostos pelo MCP disponível.
+  Changes: Somente documentação e artefatos locais ignorados.
+  Architecture impact: NONE; nenhuma implementação no aplicativo.
+
+RESULTADOS
+  CapCut: seguidos decoder, composição, legendas até atlas/textura
+    e desenho OpenGL, encode, mux, conclusão e cancelamento.
+    Bundle final: 84 dossiês, 83 RVAs distintos, 106 registros.
+    Não comprova GPU ativa, cache hit, pixels ou exportação em 30s.
+    Limites: ramo CCModel stub -1, variantes não auditadas,
+    rename sem retorno verificado e callback já capturado após stop.
+  Duplicação: clones reais em labs e referências históricas.
+    Nenhuma causa demonstrada de lentidão/export/fechamento.
+    Materiais semelhantes da Home têm opacidades independentes:
+    compartilhar uma instância quebraria comportamento.
+  P1 condicional: m1-desktop.e2e.mjs:87 e
+    phase03b-desktop.e2e.mjs:114 removem dados reais do aplicativo;
+    ambos usam porta 9333 e aceitam qualquer página.
+    Não foram executados. Proteger antes de reutilizar.
+
+FILES
+  Created: Relatório histórico abaixo; evidências ignoradas em
+    C:\CutNicePro\.tooling\research\capcut-study\ e
+    C:\CutNicePro\.tooling\research\duplicate-audit-2026-10-28\.
+  Modified: docs/engineering/ENGINE-HANDOFF.md (Complemento32),
+    docs/product/PRODUCT-BRAIN.md, docs/product/BACKLOG.md,
+    docs/TOOLING.md, docs/references/OPEN-SOURCE-ENGINE-RESEARCH.md
+    e docs/reports/LATEST.txt, todos em C:\CutNicePro.
+  Deleted: Apenas runtime temporário pelo close normal do REA.
+  Unexpected changes: .zcode/config.json preexistente, preservado.
+
+VALIDATION
+  FUNCTIONAL STATUS: PARTIAL na meta; pesquisa estática entregue.
+  REGRESSION STATUS: NOT TESTED; VISUAL: PENDING HUMAN APPROVAL.
+  Typecheck/Lint/Unit/Integration/Regression/Visual/Runtime: SKIP
+    nesta rodada sem mudança funcional. Zero testes de produto.
+  Evidências: 13 checks de artefatos do agente sem falhas;
+    raiz reconferiu 14 hashes, todos iguais; git diff --check PASS.
+    Contagens de arquivos/dossiês não provam cobertura integral.
+
+HOOKS / HARNESS
+  Gate result: NOT RUN; nenhum lab destrutivo ou controle de tela.
+  Baseline/Stop: não usados como prova de funcionamento.
+
+MCP / SKILLS
+  Tools used: Graphify remoto, REA/Ghidra, AST, PE/objdump e leituras.
+  Graphify: wesley-s-workspace / FrosttyS18/CutNicePro.
+    Índice e HEAD coincidem; build 79b22831-14ec-4314-ad95-871c805f6d62.
+  Failures: créditos/capacidade interromperam agentes; checkpoints
+    preservados e sessão retomada sem duplicação, com Sol em alto.
+  Pending activation: NONE. Lista integral dos findings indisponível.
+
+GIT
+  Branch: main
+  HEAD: f98045eb9a7966d7c4e4691bf3809403aaa40a22
+  Latest commit: fix(render): preserve captions and optimize video filters
+  Commits created: NONE. Push: NOT EXECUTED.
+  Remote: origin -> FrosttyS18/CutNicePro; main.
+  Working tree: MODIFIED/UNTRACKED; pendentes os documentos acima,
+    este histórico e .zcode/config.json preexistente.
+
+EVIDENCE
+  CapCut: C:\CutNicePro\.tooling\research\capcut-study\
+    export-completion-final-report-2026-10-28.txt
+    export-completion-final-matrix-2026-10-28.tsv
+    export-completion-final-hashes-2026-10-28.json
+  Duplicação: C:\CutNicePro\.tooling\research\duplicate-audit-2026-10-28\
+    REPORT.txt, APPENDIX.md e graphify-evidence.json.
+  Cleanup: close normal 10:16:12UTC; consulta posterior confirmou
+    três processos próprios ausentes e runtime temporário removido.
+  Screenshots/benchmark novos: NONE.
+
+ISSUES / FINAL
+  Delivery status: PARTIAL; preservar pendências do editor.
+  Requirements met: investigação, rastreabilidade e preservação.
+  Remaining work: dados completos dos findings, teste humano
+    de export/X e futuras melhorias autorizadas de desempenho.
+  Regressions: nenhuma implementação; ausência global não testada.
+  User action required: nenhuma agora. Restart required: NO.
+  Ready for next task: aguardar novas ordens após a pausa solicitada.
+
+REPORT
+  Latest file: C:\CutNicePro\docs\reports\LATEST.txt
+  Historical file: C:\CutNicePro\docs\reports\history\2026-10-28_072507_estudo-capcut-duplicacao.txt
+
+GUIA DO MANTENEDOR — O QUE MUDOU E COMO TESTAR
+  Nada mudou no aplicativo nesta rodada; nada novo para testar.
+  O estudo e a auditoria estão documentados. Não executar labs
+  antigos para reproduzir os riscos. Reteste anterior segue pendente.
+
+END OF REPORT

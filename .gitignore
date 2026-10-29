@@ -59,3 +59,4 @@ __pycache__/
 /experiments/clip-selection-ab/scratch/discover-*-result.json
 /.tooling/research/
 /research-temp/
+/rea-ghidra-*/

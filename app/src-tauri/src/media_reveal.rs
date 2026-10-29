@@ -61,7 +61,7 @@ fn explorer_directory(path: &Path) -> PathBuf {
 }
 
 #[cfg(windows)]
-fn open_directory(path: &Path) -> Result<(), String> {
+pub(crate) fn open_directory(path: &Path) -> Result<(), String> {
     let windows = std::env::var_os("SystemRoot")
         .map(PathBuf::from)
         .filter(|path| path.is_absolute())

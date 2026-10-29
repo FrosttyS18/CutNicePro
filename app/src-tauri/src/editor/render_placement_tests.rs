@@ -16,6 +16,44 @@ fn fixture(scale: f64) -> Composition {
 }
 
 #[test]
+fn filter_budget_keeps_one_frame_windows_serial_and_longer_windows_bounded() {
+    let base = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+        .join("target/test-editor-filter-budget");
+    let scratch = Scratch::new(&base).unwrap();
+    let sources = HashMap::from([("picture".into(), scratch.path.join("picture.png"))]);
+    let mut document = fixture(1.0);
+    document.items[0].duration_frames = 10;
+    for (index, frames) in [1, 10].into_iter().enumerate() {
+        let args = render_graph::video(
+            &document,
+            &Window {
+                start: 0,
+                end: frames,
+            },
+            &sources,
+            &scratch.path,
+            index,
+            Encoder::Cpu,
+        )
+        .unwrap();
+        let parameter = args
+            .iter()
+            .position(|argument| argument == "-filter_complex_threads")
+            .unwrap();
+        let expected = if frames == 1 {
+            1
+        } else {
+            render_graph::filter_threads()
+        };
+        assert_eq!(
+            args[parameter + 1],
+            std::ffi::OsString::from(expected.to_string())
+        );
+        assert!((1..=16).contains(&expected));
+    }
+}
+
+#[test]
 fn opaque_layers_keep_rgba_without_an_identity_color_mixer() {
     let base =
         std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("target/test-editor-placement");

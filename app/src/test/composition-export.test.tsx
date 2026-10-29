@@ -12,6 +12,7 @@ vi.mock("../lib/ipc",()=>({exportEditorDocument:vi.fn()}));
 vi.mock("@tauri-apps/api/event",()=>({listen:vi.fn()}));
 vi.mock("../lib/clips",async importOriginal=>({...await importOriginal<typeof import("../lib/clips")>(),cancelClips:vi.fn(),getClipJob:vi.fn()}));
 
+const receipt = { id: "d7529093-d489-4ee7-b44c-1828d6763142", path: "C:/exports/teste.mp4", bytes: 100, reused: false };
 let mounted:Awaited<ReturnType<typeof reactHost>>|undefined;
 let receiver:EventCallback<unknown>|undefined;
 let hook:ReturnType<typeof useCompositionExport>;
@@ -30,7 +31,7 @@ beforeEach(()=>{
 afterEach(async()=>{await mounted?.close();mounted=undefined;});
 
 describe("exportação de uma revisão da montagem",()=>{
-  it.each([[true,"completed"],[false,"dialog-cancelled"]] as const)("retorno nativo %s produz %s",async(value,status)=>{
+  it.each([[receipt,"completed"],[null,"dialog-cancelled"]] as const)("retorno nativo %s produz %s",async(value,status)=>{
     vi.mocked(exportEditorDocument).mockResolvedValue(value);
     mounted=await reactHost(<Probe/>);
     await act(async()=>{expect(await hook.exportDocument(fixture(),null)).toEqual({status});});
@@ -40,19 +41,21 @@ describe("exportação de uma revisão da montagem",()=>{
   });
   it("clona antes de aguardar o listener e bloqueia duas exportações rápidas",async()=>{
     const subscribed=deferred<()=>void>();vi.mocked(listen).mockReturnValueOnce(subscribed.promise);
-    vi.mocked(exportEditorDocument).mockResolvedValue(true);
+    vi.mocked(exportEditorDocument).mockResolvedValue(receipt);
+    const request = { fileName: "Um", directory: null, options: { resolution: "original" as const, quality: "high" as const } };
     const document=fixture();mounted=await reactHost(<Probe/>);
     let pending:ReturnType<typeof hook.exportDocument>;
-    await act(async()=>{pending=hook.exportDocument(document,"clip");expect(await hook.exportDocument(document,"clip")).toEqual({status:"blocked"});});
-    document.items[0].durationFrames=1;
+    await act(async()=>{pending=hook.exportDocument(document,"clip",request);expect(await hook.exportDocument(document,"clip")).toEqual({status:"blocked"});});
+    document.items[0].durationFrames=1; request.fileName="Outro";
     expect(exportEditorDocument).not.toHaveBeenCalled();expect(hook.busy).toBe(true);
     await act(async()=>{subscribed.resolve(off);expect(await pending).toEqual({status:"completed"});});
     expect(exportEditorDocument).toHaveBeenCalledOnce();
     const [projectId,clipId,,snapshot]=vi.mocked(exportEditorDocument).mock.calls[0];
+    expect(vi.mocked(exportEditorDocument).mock.calls[0][4]?.fileName).toBe("Um");
     expect(projectId).toBe("project");expect(clipId).toBe("clip");expect(snapshot.items[0].durationFrames).toBe(300);
   });
   it("ignora jobs alheios e reconhece cancelamento real do próprio job",async()=>{
-    const native=deferred<boolean>();vi.mocked(exportEditorDocument).mockReturnValueOnce(native.promise);
+    const native=deferred<typeof receipt | null>();vi.mocked(exportEditorDocument).mockReturnValueOnce(native.promise);
     mounted=await reactHost(<Probe/>);let pending:ReturnType<typeof hook.exportDocument>;
     await act(async()=>{pending=hook.exportDocument(fixture(),null);});
     await act(async()=>{emit(event({jobId:"foreign",progress:90}));emit(event({projectId:"other",progress:80}));emit({jobId:hook.job?.jobId,progress:999});});
@@ -73,23 +76,23 @@ describe("exportação de uma revisão da montagem",()=>{
     expect(hook.error).toContain("espaço");expect(hook.job?.state).toBe("failed");
   });
   it("troca de projeto ignora retorno antigo sem liberar o novo bloqueio",async()=>{
-    const old=deferred<boolean>();const next=deferred<boolean>();vi.mocked(exportEditorDocument).mockReturnValueOnce(old.promise).mockReturnValueOnce(next.promise);
+    const old=deferred<typeof receipt | null>();const next=deferred<typeof receipt | null>();vi.mocked(exportEditorDocument).mockReturnValueOnce(old.promise).mockReturnValueOnce(next.promise);
     mounted=await reactHost(<Probe/>);let previous:ReturnType<typeof hook.exportDocument>;let current:ReturnType<typeof hook.exportDocument>;
     await act(async()=>{previous=hook.exportDocument(fixture(),null);});
     const oldReceiver=receiver;
     await mounted.render(<Probe projectId="next"/>);
     await act(async()=>{current=hook.exportDocument(fixture(),null);});
-    await act(async()=>{oldReceiver?.({event:"clips://job",id:0,payload:event({projectId:"project",state:"failed",error:"antigo"})});old.resolve(true);expect(await previous).toEqual({status:"abandoned"});});
+    await act(async()=>{oldReceiver?.({event:"clips://job",id:0,payload:event({projectId:"project",state:"failed",error:"antigo"})});old.resolve(receipt);expect(await previous).toEqual({status:"abandoned"});});
     expect(hook.busy).toBe(true);expect(hook.error).toBeNull();
-    await act(async()=>{expect(await hook.exportDocument(fixture(),null)).toEqual({status:"blocked"});next.resolve(true);expect(await current).toEqual({status:"completed"});});
+    await act(async()=>{expect(await hook.exportDocument(fixture(),null)).toEqual({status:"blocked"});next.resolve(receipt);expect(await current).toEqual({status:"completed"});});
     expect(cancelClips).not.toHaveBeenCalled();
   });
   it("desmontar retira listener sem cancelar job nativo e ignora conclusão tardia",async()=>{
-    const native=deferred<boolean>();vi.mocked(exportEditorDocument).mockReturnValueOnce(native.promise);
+    const native=deferred<typeof receipt | null>();vi.mocked(exportEditorDocument).mockReturnValueOnce(native.promise);
     mounted=await reactHost(<Probe/>);let pending:ReturnType<typeof hook.exportDocument>;
     await act(async()=>{pending=hook.exportDocument(fixture(),null);});
     await mounted.close();mounted=undefined;expect(off).toHaveBeenCalledOnce();expect(cancelClips).not.toHaveBeenCalled();
-    native.resolve(true);expect(await pending!).toEqual({status:"abandoned"});
+    native.resolve(receipt);expect(await pending!).toEqual({status:"abandoned"});
   });
   it("remove listener resolvido após desmontagem sem iniciar exportação",async()=>{
     const subscribed=deferred<()=>void>();vi.mocked(listen).mockReturnValueOnce(subscribed.promise);

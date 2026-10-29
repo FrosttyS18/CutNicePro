@@ -1,7 +1,7 @@
 use super::{store::Snapshot, types::Composition};
 use crate::{media_source::ResolvedMedia, media_store::MediaStore};
 use std::{
-    collections::{HashMap, HashSet},
+    collections::{BTreeMap, HashMap, HashSet},
     path::PathBuf,
 };
 
@@ -32,6 +32,7 @@ pub fn freeze(saved: Option<&Snapshot>, proposed: &Composition) -> Result<Compos
 pub struct ExportSources {
     pub paths: HashMap<String, PathBuf>,
     resolved: Vec<ResolvedMedia>,
+    pub stamps: BTreeMap<String, crate::media_source::SourceStamp>,
 }
 
 impl ExportSources {
@@ -55,6 +56,7 @@ pub fn sources(
         .collect();
     let mut paths = HashMap::new();
     let mut resolved = Vec::new();
+    let mut stamps = BTreeMap::new();
     for asset in document
         .assets
         .iter_mut()
@@ -71,10 +73,15 @@ pub fn sources(
         asset.duration_us = analysis.duration_ms.saturating_mul(1000);
         asset.has_audio = Some(analysis.has_audio);
         paths.insert(asset.id.clone(), source.path.clone());
+        stamps.insert(asset.id.clone(), source.guard.stamp().clone());
         resolved.push(source);
     }
     document.validate()?;
-    Ok(ExportSources { paths, resolved })
+    Ok(ExportSources {
+        paths,
+        resolved,
+        stamps,
+    })
 }
 
 #[cfg(test)]
